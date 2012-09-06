@@ -1,0 +1,18 @@
+  public static SourceFile scan(String target, CodeVisitor visitor) {
+    File sourceFile = new File("src/test/java/org/sonar/java/checks/targets/" + target + ".java");
+    File bytecodeFile = new File("target/test-classes/");
+
+    if (!sourceFile.isFile()) {
+      throw new IllegalArgumentException("File '" + sourceFile + "' not found.");
+    }
+
+    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), visitor);
+    javaSquid.scanFiles(Collections.singleton(sourceFile), Collections.singleton(bytecodeFile));
+
+    Collection<SourceCode> sources = javaSquid.getIndex().search(new QueryByType(SourceFile.class));
+    if (sources.size() != 1) {
+      throw new IllegalStateException("Only one SourceFile was expected whereas " + sources.size() + " has been returned.");
+    }
+    return (SourceFile) sources.iterator().next();
+  }
+

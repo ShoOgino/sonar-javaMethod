@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    SourceCode currentResource = getContext().peekSourceCode();
+    if (!WildcardPattern.match(getPatterns(), peekSourceClass().getKey())) {
+      return;
+    }
+    if (currentResource instanceof SourceMethod && ((SourceMethod) currentResource).isAccessor()) {
+      return;
+    }
+    if (currentResource.getInt(Metric.PUBLIC_API) != 0 && currentResource.getInt(Metric.PUBLIC_DOC_API) == 0) {
+      getContext().createLineViolation(this, "Avoid undocumented API.", astNode);
+    }
+  }
+

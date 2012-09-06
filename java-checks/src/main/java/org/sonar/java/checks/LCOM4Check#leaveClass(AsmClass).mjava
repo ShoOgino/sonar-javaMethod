@@ -1,0 +1,12 @@
+  @Override
+  public void leaveClass(AsmClass asmClass) {
+    SourceClass sourceClass = getSourceClass(asmClass);
+    int lcom4 = sourceClass.getInt(Metric.LCOM4);
+    if (lcom4 > max) {
+      CheckMessage message = new CheckMessage(this, "This class has an LCOM4 of " + lcom4 + ", which is greater than " + max + " authorized.");
+      message.setLine(sourceClass.getStartAtLine());
+      message.setCost(lcom4 - max);
+      sourceClass.getParent(SourceFile.class).log(message);
+    }
+  }
+
