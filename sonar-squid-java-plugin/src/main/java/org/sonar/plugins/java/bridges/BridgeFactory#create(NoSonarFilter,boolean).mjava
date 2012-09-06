@@ -1,0 +1,16 @@
+  private static List<Bridge> create(NoSonarFilter noSonarFilter, boolean skipPackageDesignAnalysis) {
+    ArrayList<Bridge> result = Lists.newArrayList(
+        new CopyBasicMeasuresBridge(),
+        new PackagesBridge(),
+        new PublicUndocumentedApiBridge(),
+        // new NoSonarFilterLoader(noSonarFilter),
+        new ChidamberKemererBridge(),
+        new RobertCMartinBridge(),
+        new Lcom4BlocksBridge(),
+        new ChecksBridge());
+    if (!skipPackageDesignAnalysis) {
+      result.add(new DesignBridge());
+    }
+    return result;
+  }
+

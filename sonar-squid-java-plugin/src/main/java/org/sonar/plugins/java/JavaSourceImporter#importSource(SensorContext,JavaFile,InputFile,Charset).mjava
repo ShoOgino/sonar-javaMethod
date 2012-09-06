@@ -1,0 +1,16 @@
+  void importSource(SensorContext context, JavaFile javaFile, InputFile inputFile, Charset sourcesEncoding) {
+    String source = null;
+    if (importSources) {
+      source = loadSourceFromFile(inputFile, sourcesEncoding);
+    }
+
+    try {
+      context.index(javaFile);
+      if (source != null) {
+        context.saveSource(javaFile, source);
+      }
+    } catch (SonarException e) {
+      throw new SonarException(e.getMessage() + ", on file: " + inputFile.getFile().getAbsolutePath(), e);
+    }
+  }
+

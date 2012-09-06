@@ -1,0 +1,20 @@
+  private JavaConfiguration createConfiguration(Project project) {
+    boolean analyzePropertyAccessors = project.getConfiguration().getBoolean(
+        JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_PROPERTY,
+        JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_DEFAULT_VALUE);
+    String fieldNamesToExcludeFromLcom4Computation = project.getConfiguration().getString(
+        JavaSquidPlugin.FIELDS_TO_EXCLUDE_FROM_LCOM4_COMPUTATION,
+        JavaSquidPlugin.FIELDS_TO_EXCLUDE_FROM_LCOM4_COMPUTATION_DEFAULT_VALUE);
+    Charset charset = project.getFileSystem().getSourceCharset();
+
+    JavaConfiguration conf = new JavaConfiguration(charset);
+    conf.setAnalyzePropertyAccessors(analyzePropertyAccessors);
+    for (String fieldName : StringUtils.split(fieldNamesToExcludeFromLcom4Computation, ',')) {
+      if (StringUtils.isNotBlank(fieldName)) {
+        conf.addFieldToExcludeFromLcom4Calculation(fieldName);
+      }
+    }
+
+    return conf;
+  }
+

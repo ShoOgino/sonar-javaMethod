@@ -1,0 +1,11 @@
+  public void analyse(Project project, SensorContext context) {
+    Collection<CodeVisitor> checks = annotationCheckFactory.getChecks();
+
+    JavaSquid squid = new JavaSquid(createConfiguration(project), fileLinesContextFactory, checks.toArray(new CodeVisitor[checks.size()]));
+    squid.scan(project.getFileSystem().getSourceDirs(), getBytecodeFiles(project));
+
+    new Bridges(squid).save(context, project, annotationCheckFactory);
+
+    save(squid.getIndex().search(new QueryByType(SourceFile.class)));
+  }
+

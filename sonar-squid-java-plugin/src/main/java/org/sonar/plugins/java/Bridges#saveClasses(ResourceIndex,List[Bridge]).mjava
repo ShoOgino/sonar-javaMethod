@@ -1,0 +1,13 @@
+  private void saveClasses(ResourceIndex resourceIndex, List<Bridge> bridges) {
+    Collection<SourceCode> squidClasses = squid.search(new QueryByType(SourceClass.class));
+    for (SourceCode squidClass : squidClasses) {
+      Resource sonarClass = resourceIndex.get(squidClass);
+      // can be null with anonymous classes
+      if (sonarClass != null) {
+        for (Bridge bridge : bridges) {
+          bridge.onClass((SourceClass) squidClass, (JavaClass) sonarClass);
+        }
+      }
+    }
+  }
+

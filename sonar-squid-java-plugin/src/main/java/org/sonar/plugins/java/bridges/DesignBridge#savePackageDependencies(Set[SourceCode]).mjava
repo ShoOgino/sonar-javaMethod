@@ -1,0 +1,17 @@
+  /**
+   * Save package dependencies, including root file dependencies
+   */
+  public void savePackageDependencies(Set<SourceCode> squidPackages) {
+    for (SourceCode squidPackage : squidPackages) {
+      for (SourceCodeEdge edge : squid.getOutgoingEdges(squidPackage)) {
+        Dependency dependency = saveEdge(edge, context, null);
+        if (dependency != null) {
+          // save file dependencies
+          for (SourceCodeEdge subEdge : edge.getRootEdges()) {
+            saveEdge(subEdge, context, dependency);
+          }
+        }
+      }
+    }
+  }
+
