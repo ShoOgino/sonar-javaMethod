@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    SourceMethod sourceMethod = (SourceMethod) getContext().peekSourceCode();
+
+    MethodHelper methodHelper = new MethodHelper(getContext().getGrammar(), astNode);
+    if (methodHelper.isPublic() && isAccessor(methodHelper)) {
+      sourceMethod.setMeasure(JavaMetric.ACCESSORS, 1);
+    }
+  }
+

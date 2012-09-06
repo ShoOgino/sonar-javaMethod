@@ -1,0 +1,111 @@
+  public static AstScanner create(JavaConfiguration conf, SquidAstVisitor<JavaGrammar>... visitors) {
+    final Parser<JavaGrammar> parser = JavaParser.create(conf);
+
+    AstScanner builder = new AstScanner(parser);
+
+    /* Metrics */
+    // builder.withMetrics(JavaMetric.values());
+
+    /* Packages */
+    builder.withSquidAstVisitor(new PackageVisitor());
+
+    /* Files */
+    builder.withSquidAstVisitor(new FileVisitor());
+
+    /* Classes */
+    builder.withSquidAstVisitor(new ClassVisitor());
+
+    /* Methods */
+    builder.withSquidAstVisitor(new MethodVisitor());
+    if (conf.isAnalysePropertyAccessors()) {
+      builder.withSquidAstVisitor(new AccessorVisitor());
+    }
+    builder.withSquidAstVisitor(new PublicApiVisitor());
+
+    /* Comments */
+    builder.setCommentAnalyser(
+        new CommentAnalyser() {
+          @Override
+          public boolean isBlank(String line) {
+            // Implementation of this method was taken from org.sonar.squid.text.Line#isThereBlankComment()
+            // TODO Godin: for some languages we use Character.isLetterOrDigit instead of Character.isWhitespace
+            for (int i = 0; i < line.length(); i++) {
+              char character = line.charAt(i);
+              if (!Character.isWhitespace(character) && character != '*' && character != '/') {
+                return false;
+              }
+            }
+            return true;
+          }
+
+          @Override
+          public String getContents(String comment) {
+            return comment.startsWith("//") ? comment.substring(2) : comment.substring(2, comment.length() - 2);
+          }
+        });
+
+    /* Metrics */
+
+    builder.withSquidAstVisitor(new LinesVisitor<JavaGrammar>(JavaMetric.LINES));
+    builder.withSquidAstVisitor(new LinesOfCodeVisitor<JavaGrammar>(JavaMetric.LINES_OF_CODE));
+    builder.withSquidAstVisitor(CommentsVisitor.<JavaGrammar> builder().withCommentMetric(JavaMetric.COMMENT_LINES)
+        .withBlankCommentMetric(JavaMetric.COMMENT_BLANK_LINES)
+        .withNoSonar(true)
+        .withIgnoreHeaderComment(conf.getIgnoreHeaderComments())
+        .build());
+    builder.withSquidAstVisitor(CounterVisitor.<JavaGrammar> builder()
+        .setMetricDef(JavaMetric.STATEMENTS)
+        .subscribeTo(
+            // This is mostly the same elements as for the grammar rule "statement", but "labeledStatement" and "block" were excluded
+            parser.getGrammar().localVariableDeclarationStatement,
+            parser.getGrammar().assertStatement,
+            parser.getGrammar().ifStatement,
+            parser.getGrammar().forStatement,
+            parser.getGrammar().whileStatement,
+            parser.getGrammar().doStatement,
+            // TODO Godin: in my opinion, following node should be included, but it is not counted in previous version
+            // parser.getGrammar().tryStatement,
+            parser.getGrammar().switchStatement,
+            parser.getGrammar().synchronizedStatement,
+            parser.getGrammar().returnStatement,
+            parser.getGrammar().throwStatement,
+            parser.getGrammar().breakStatement,
+            parser.getGrammar().continueStatement,
+            parser.getGrammar().expressionStatement,
+            parser.getGrammar().emptyStatement,
+            // TODO Godin: in my opinion, following nodes should not be included, but they are counted in previous version
+            JavaKeyword.ELSE,
+            parser.getGrammar().labeledStatement,
+            parser.getGrammar().switchLabel,
+            parser.getGrammar().catchClause,
+            parser.getGrammar().finally_)
+        .build());
+    builder.withSquidAstVisitor(ComplexityVisitor.<JavaGrammar> builder()
+        .setMetricDef(JavaMetric.COMPLEXITY)
+        .subscribeTo(
+            // Entry points
+            parser.getGrammar().methodBody,
+            // Branching nodes
+            parser.getGrammar().ifStatement,
+            parser.getGrammar().forStatement,
+            parser.getGrammar().whileStatement,
+            parser.getGrammar().doStatement,
+            parser.getGrammar().switchStatement,
+            parser.getGrammar().switchLabel,
+            parser.getGrammar().returnStatement,
+            parser.getGrammar().throwStatement,
+            parser.getGrammar().catchClause,
+            // Expressions
+            JavaPunctuator.QUERY,
+            JavaPunctuator.ANDAND,
+            JavaPunctuator.OROR)
+        .build());
+
+    /* External visitors (typically Check ones) */
+    for (SquidAstVisitor<JavaGrammar> visitor : visitors) {
+      builder.withSquidAstVisitor(visitor);
+    }
+
+    return builder;
+  }
+

@@ -1,0 +1,9 @@
+  @Test
+  public void testVisitMethodInsn() {
+    AsmClass sourceFileClass = asmClassProvider.getClass("tags/SourceFile");
+    AsmMethod readMethod = sourceFileClass.getMethod("read()V");
+    AsmMethod readSourceFileMethod = sourceFileClass.getMethod("readSourceFile()V");
+    assertThat(readSourceFileMethod.getCallsToMethod()).contains(readMethod).hasSize(2);
+    assertThat(readSourceFileMethod.getCallsToField()).hasSize(1);
+  }
+

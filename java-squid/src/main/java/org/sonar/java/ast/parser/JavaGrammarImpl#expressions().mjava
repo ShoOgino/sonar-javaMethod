@@ -1,0 +1,109 @@
+  /**
+   * 15. Expressions
+   */
+  private void expressions() {
+    statementExpression.is(expression);
+    constantExpression.is(expression);
+    expression.is(conditionalExpression, o2n(assignmentOperator, conditionalExpression));
+    assignmentOperator.is(or(
+        EQU,
+        PLUSEQU,
+        MINUSEQU,
+        STAREQU,
+        DIVEQU,
+        ANDEQU,
+        OREQU,
+        HATEQU,
+        MODEQU,
+        SLEQU,
+        srequ,
+        bsrequ));
+    conditionalExpression.is(conditionalOrExpression, o2n(QUERY, expression, COLON, conditionalOrExpression));
+    conditionalOrExpression.is(conditionalAndExpression, o2n(OROR, conditionalAndExpression));
+    conditionalAndExpression.is(inclusiveOrExpression, o2n(ANDAND, inclusiveOrExpression));
+    inclusiveOrExpression.is(exclusiveOrExpression, o2n(OR, exclusiveOrExpression));
+    exclusiveOrExpression.is(andExpression, o2n(HAT, andExpression));
+    andExpression.is(equalityExpression, o2n(AND, equalityExpression));
+    equalityExpression.is(relationalExpression, o2n(or(EQUAL, NOTEQUAL), relationalExpression));
+    relationalExpression.is(shiftExpression, o2n(or(
+        and(or(ge, GT, LE, LT), shiftExpression),
+        and(INSTANCEOF, referenceType))));
+    shiftExpression.is(additiveExpression, o2n(or(SL, bsr, sr), additiveExpression));
+    additiveExpression.is(multiplicativeExpression, o2n(or(PLUS, MINUS), multiplicativeExpression));
+    multiplicativeExpression.is(unaryExpression, o2n(or(STAR, DIV, MOD), unaryExpression));
+    unaryExpression.is(or(
+        and(prefixOp, unaryExpression),
+        and(LPAR, type, RPAR, unaryExpression),
+        and(primary, o2n(selector), o2n(postFixOp))));
+    primary.is(or(
+        parExpression,
+        and(nonWildcardTypeArguments, or(explicitGenericInvocationSuffix, and(THIS, arguments))),
+        and(THIS, opt(arguments)),
+        and(SUPER, superSuffix),
+        literal,
+        and(NEW, creator),
+        and(qualifiedIdentifier, opt(identifierSuffix)),
+        and(basicType, o2n(dim), DOT, CLASS),
+        and(VOID, DOT, CLASS)));
+    identifierSuffix.is(or(
+        and(LBRK, or(and(RBRK, o2n(dim), DOT, CLASS), and(expression, RBRK))),
+        arguments,
+        and(DOT, or(
+            CLASS,
+            explicitGenericInvocation,
+            THIS,
+            and(SUPER, arguments),
+            and(NEW, opt(nonWildcardTypeArguments), innerCreator)))));
+    explicitGenericInvocation.is(nonWildcardTypeArguments, explicitGenericInvocationSuffix);
+    nonWildcardTypeArguments.is(LT, referenceType, o2n(COMMA, referenceType), GT);
+    explicitGenericInvocationSuffix.is(or(
+        and(SUPER, superSuffix),
+        and(IDENTIFIER, arguments)));
+    prefixOp.is(or(
+        INC,
+        DEC,
+        BANG,
+        TILDA,
+        PLUS,
+        MINUS));
+    postFixOp.is(or(
+        INC,
+        DEC));
+    selector.is(or(
+        and(DOT, IDENTIFIER, opt(arguments)),
+        and(DOT, explicitGenericInvocation),
+        and(DOT, THIS),
+        and(DOT, SUPER, superSuffix),
+        and(DOT, NEW, opt(nonWildcardTypeArguments), innerCreator),
+        dimExpr));
+    superSuffix.is(or(
+        arguments,
+        and(DOT, IDENTIFIER, opt(arguments))));
+    basicType.is(or(
+        BYTE,
+        SHORT,
+        CHAR,
+        INT,
+        LONG,
+        FLOAT,
+        DOUBLE,
+        BOOLEAN));
+    arguments.is(LPAR, opt(expression, o2n(COMMA, expression)), RPAR);
+    creator.is(or(
+        and(opt(nonWildcardTypeArguments), createdName, classCreatorRest),
+        and(opt(nonWildcardTypeArguments), or(classType, basicType), arrayCreatorRest)));
+    createdName.is(IDENTIFIER, opt(nonWildcardTypeArguments), o2n(DOT, IDENTIFIER, opt(nonWildcardTypeArguments)));
+    innerCreator.is(IDENTIFIER, classCreatorRest);
+    arrayCreatorRest.is(LBRK, or(
+        and(RBRK, o2n(dim), arrayInitializer),
+        and(expression, RBRK, o2n(dimExpr), o2n(dim))));
+    classCreatorRest.is(opt(diamond), arguments, opt(classBody));
+    diamond.is(LT, GT);
+    arrayInitializer.is(LWING, opt(variableInitializer, o2n(COMMA, variableInitializer)), opt(COMMA), RWING);
+    variableInitializer.is(or(arrayInitializer, expression));
+    parExpression.is(LPAR, expression, RPAR);
+    qualifiedIdentifier.is(IDENTIFIER, o2n(DOT, IDENTIFIER));
+    dim.is(LBRK, RBRK);
+    dimExpr.is(LBRK, expression, RBRK);
+  }
+

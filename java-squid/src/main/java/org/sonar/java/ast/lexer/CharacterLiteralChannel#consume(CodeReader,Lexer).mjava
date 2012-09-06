@@ -1,0 +1,35 @@
+  @Override
+  public boolean consume(CodeReader code, Lexer lexer) {
+    if (code.peek() != ch) {
+      return false;
+    }
+    int line = code.getCursor().getLine();
+    int column = code.getCursor().getColumn();
+    char prev;
+    do {
+      prev = (char) code.pop();
+      sb.append(prev);
+      if (prev == '\\') {
+        prev = (char) code.pop();
+        sb.append(prev);
+      }
+    } while (code.peek() != ch);
+
+    sb.append((char) code.pop());
+    String value = sb.toString();
+
+    Token token = tokenBuilder
+        .setType(tokenType)
+        .setValueAndOriginalValue(value)
+        .setURI(lexer.getURI())
+        .setLine(line)
+        .setColumn(column)
+        .build();
+
+    lexer.addToken(token);
+
+    sb.delete(0, sb.length());
+
+    return true;
+  }
+

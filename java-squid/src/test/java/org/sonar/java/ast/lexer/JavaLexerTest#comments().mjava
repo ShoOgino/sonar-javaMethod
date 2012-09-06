@@ -1,0 +1,13 @@
+  /**
+   * http://docs.oracle.com/javase/specs/jls/se5.0/html/lexical.html#3.7
+   */
+  @Test
+  public void comments() {
+    assertThat(lexer.lex("// This is a comment"), hasComment("// This is a comment"));
+    assertThat(lexer.lex("// This is a comment \n and_this_is_not"), hasComment("// This is a comment "));
+    assertThat(lexer.lex("// This is a comment \r\n and_this_is_not"), hasComment("// This is a comment "));
+
+    assertThat(lexer.lex("/* This is a comment \n and the second line */"), hasComment("/* This is a comment \n and the second line */"));
+    assertThat(lexer.lex("/* this \n comment /* \n // /** ends \n here: */"), hasComment("/* this \n comment /* \n // /** ends \n here: */"));
+  }
+

@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    String className = astNode.getChild(1).getTokenValue();
+
+    final SourceClass sourceClass;
+    if (getContext().peekSourceCode().isType(SourceClass.class)) {
+      sourceClass = createSourceClass((SourceClass) getContext().peekSourceCode(), className);
+    } else {
+      sourceClass = createSourceClass(peekParentPackage(), className);
+    }
+
+    sourceClass.setStartAtLine(astNode.getTokenLine());
+    sourceClass.setMeasure(JavaMetric.CLASSES, 1);
+    getContext().addSourceCode(sourceClass);
+    // TODO sourceClass.setSuppressWarnings(suppressWarnings)
+  }
+

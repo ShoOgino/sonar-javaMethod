@@ -1,0 +1,37 @@
+  /**
+   * 9.7. Annotations
+   */
+  private void annotations() {
+    annotationTypeDeclaration.is(AT, INTERFACE, IDENTIFIER, annotationTypeBody);
+    annotationTypeBody.is(LWING, o2n(annotationTypeElementDeclaration), RWING);
+    annotationTypeElementDeclaration.is(or(
+        and(o2n(modifier), annotationTypeElementRest),
+        SEMI));
+    annotationTypeElementRest.is(or(
+        and(type, annotationMethodOrConstantRest, SEMI),
+        classDeclaration,
+        enumDeclaration,
+        interfaceDeclaration,
+        annotationTypeDeclaration));
+    annotationMethodOrConstantRest.is(or(
+        annotationMethodRest,
+        annotationConstantRest));
+    annotationMethodRest.is(IDENTIFIER, LPAR, RPAR, opt(defaultValue));
+    annotationConstantRest.is(variableDeclarators);
+    defaultValue.is(DEFAULT, elementValue);
+    annotation.is(AT, qualifiedIdentifier, opt(annotationRest));
+    annotationRest.is(or(
+        normalAnnotationRest,
+        singleElementAnnotationRest));
+    normalAnnotationRest.is(LPAR, opt(elementValuePairs), RPAR);
+    elementValuePairs.is(elementValuePair, o2n(COMMA, elementValuePair));
+    elementValuePair.is(IDENTIFIER, EQU, elementValue);
+    elementValue.is(or(
+        conditionalExpression,
+        annotation,
+        elementValueArrayInitializer));
+    elementValueArrayInitializer.is(LWING, opt(elementValues), opt(COMMA), RWING);
+    elementValues.is(elementValue, o2n(COMMA, elementValue));
+    singleElementAnnotationRest.is(LPAR, elementValue, RPAR);
+  }
+

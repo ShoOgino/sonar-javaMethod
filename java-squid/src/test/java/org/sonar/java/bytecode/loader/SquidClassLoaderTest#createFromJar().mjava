@@ -1,0 +1,19 @@
+  @Test
+  public void createFromJar() throws Exception {
+    File jar = new File("src/test/files/bytecode/lib/hello.jar");
+    SquidClassLoader classLoader = new SquidClassLoader(Arrays.asList(jar));
+
+    assertThat(classLoader.loadClass("org.sonar.tests.Hello")).isNotNull();
+    assertThat(classLoader.getResource("org/sonar/tests/Hello.class")).isNotNull();
+    List<URL> resources = Lists.newArrayList(Iterators.forEnumeration(classLoader.findResources("org/sonar/tests/Hello.class")));
+    assertThat(resources.size()).isEqualTo(1);
+    try {
+      classLoader.loadClass("foo.Unknown");
+      fail();
+    } catch (ClassNotFoundException e) {
+      // ok
+    }
+
+    classLoader.close();
+  }
+

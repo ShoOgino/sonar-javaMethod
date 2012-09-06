@@ -1,0 +1,16 @@
+  /**
+   * http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.1
+   */
+  @Test
+  public void underscore_in_numeric_literals() {
+    assertThat(lexer.lex("1_000_000"), hasToken("1_000_000", JavaTokenType.INTEGER_LITERAL));
+    assertThat(lexer.lex("0x7fff_ffff_ffff_ffffL"), hasToken("0x7fff_ffff_ffff_ffffL", JavaTokenType.INTEGER_LITERAL));
+    assertThat(lexer.lex("3.14_15F"), hasToken("3.14_15F", JavaTokenType.FLOATING_LITERAL));
+    assertThat(lexer.lex("1_234e1_0"), hasToken("1_234e1_0", JavaTokenType.FLOATING_LITERAL));
+    assertThat(lexer.lex("0x1.ffff_ffff_ffff_fP1_023"), hasToken("0x1.ffff_ffff_ffff_fP1_023", JavaTokenType.FLOATING_LITERAL));
+    assertThat(lexer.lex("5_______2"), hasToken("5_______2", JavaTokenType.INTEGER_LITERAL));
+
+    assertThat(lexer.lex("_0"), hasToken("_0", GenericTokenType.IDENTIFIER));
+    assertThat(lexer.lex("._list"), allOf(hasToken(".", JavaPunctuator.DOT), hasToken("_list", GenericTokenType.IDENTIFIER)));
+  }
+

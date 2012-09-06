@@ -1,0 +1,18 @@
+  @Test
+  public void scan() {
+    MethodSignature method = MethodSignatureScanner.scan("read(Ljava/lang/String;[S)V");
+    assertThat(method.getMethodName()).isEqualTo("read");
+
+    assertThat(method.getReturnType().getJvmJavaType()).isEqualTo(JvmJavaType.V);
+    assertThat(method.getArgumentTypes().size()).isEqualTo(2);
+
+    Parameter param1 = method.getArgumentTypes().get(0);
+    assertThat(param1.isOject()).isTrue();
+    assertThat(param1.getClassName()).isEqualTo("String");
+
+    Parameter param2 = method.getArgumentTypes().get(1);
+    assertThat(param2.isOject()).isFalse();
+    assertThat(param2.isArray()).isTrue();
+    assertThat(param2.getJvmJavaType()).isEqualTo(JvmJavaType.S);
+  }
+

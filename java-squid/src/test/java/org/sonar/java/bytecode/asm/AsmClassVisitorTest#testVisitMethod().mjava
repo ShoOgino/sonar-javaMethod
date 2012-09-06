@@ -1,0 +1,17 @@
+  @Test
+  public void testVisitMethod() {
+    AsmClass asmClass = asmClassProvider.getClass("java/lang/String");
+    assertThat(asmClass.getMethod("charAt(I)C")).isNotNull();
+    assertThat(asmClass.getMethod("charAt(I)C").isPublic()).isTrue();
+    assertThat(asmClass.getMethod("charAt(I)C").isDeprecated()).isFalse();
+    assertThat(asmClass.getMethod("charAt(I)C").isStatic()).isFalse();
+    assertThat(asmClass.getMethod("valueOf(C)Ljava/lang/String;").isStatic()).isTrue();
+
+    asmClass = asmClassProvider.getClass("tags/File");
+    AsmMethod getLines = asmClass.getMethod("read(Ljava/util/Collection;Ljava/lang/String;)Ljava/lang/String;");
+    assertThat(getLines.getDistinctUsedAsmClasses().contains(new AsmClass("java/util/Collection"))).isTrue();
+    assertThat(getLines.getDistinctUsedAsmClasses().contains(new AsmClass("tags/File"))).isTrue();
+    assertThat(getLines.getDistinctUsedAsmClasses().contains(new AsmClass("java/lang/String"))).isTrue();
+    assertThat(getLines.getDistinctUsedAsmClasses().contains(new AsmClass("java/lang/RuntimeException"))).isTrue();
+  }
+

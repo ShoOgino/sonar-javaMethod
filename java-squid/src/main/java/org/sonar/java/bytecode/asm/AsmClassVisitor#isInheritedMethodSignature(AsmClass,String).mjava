@@ -1,0 +1,13 @@
+  private boolean isInheritedMethodSignature(AsmClass parent, String key) {
+    if (parent.getSuperClass() != null
+        && (parent.getSuperClass().getMethod(key) != null || isInheritedMethodSignature(parent.getSuperClass(), key))) {
+      return true;
+    }
+    for (AsmClass interfaceClass : parent.getInterfaces()) {
+      if (interfaceClass.getMethod(key) != null || isInheritedMethodSignature(interfaceClass, key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+

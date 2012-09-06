@@ -1,0 +1,14 @@
+  public void visitToken(Token token) {
+    if (token.getType().equals(GenericTokenType.EOF)) {
+      return;
+    }
+
+    linesOfCode.add(token.getLine());
+    List<Trivia> trivias = token.getTrivia();
+    for (Trivia trivia : trivias) {
+      if (trivia.isComment()) {
+        linesOfComments.add(trivia.getToken().getLine());
+      }
+    }
+  }
+

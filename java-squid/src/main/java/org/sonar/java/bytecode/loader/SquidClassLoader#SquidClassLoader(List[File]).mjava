@@ -1,0 +1,17 @@
+  /**
+   * @param files ordered list of files and directories from which to load classes and resources
+   */
+  public SquidClassLoader(List<File> files) throws IOException {
+    super(null);
+    loaders = new ArrayList<Loader>();
+    for (File file : files) {
+      if (file.exists()) {
+        if (file.isDirectory()) {
+          loaders.add(new FileSystemLoader(file));
+        } else {
+          loaders.add(new JarLoader(file));
+        }
+      }
+    }
+  }
+

@@ -1,0 +1,19 @@
+  @Test
+  public void testLoadBytes() throws Exception {
+    File dir = new File("src/test/files/bytecode/bin/");
+    FileSystemLoader loader = new FileSystemLoader(dir);
+
+    assertThat(loader.loadBytes("notfound")).isNull();
+
+    assertThat(loader.loadBytes("tags/TagName.class")).isNotNull();
+
+    loader.close();
+
+    try {
+      loader.loadBytes("tags/TagName.class");
+      fail();
+    } catch (IllegalStateException e) {
+      // ok
+    }
+  }
+

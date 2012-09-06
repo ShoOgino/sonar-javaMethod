@@ -1,0 +1,32 @@
+  /**
+   * 4. Types, Values and Variables
+   */
+  private void types() {
+    type.is(or(basicType, classType), o2n(dim));
+    referenceType.is(or(
+        and(basicType, o2n(dim)),
+        and(classType, o2n(dim))));
+    classType.is(IDENTIFIER, opt(typeArguments), o2n(DOT, IDENTIFIER, opt(typeArguments)));
+    classTypeList.is(classType, o2n(COMMA, classType));
+    typeArguments.is(LT, typeArgument, o2n(COMMA, typeArgument), GT);
+    typeArgument.is(or(
+        referenceType,
+        and(QUERY, opt(or(EXTENDS, SUPER), referenceType))));
+    typeParameters.is(LT, typeParameter, o2n(COMMA, typeParameter), GT);
+    typeParameter.is(IDENTIFIER, opt(EXTENDS, bound));
+    bound.is(classType, o2n(AND, classType));
+    modifier.is(or(
+        annotation,
+        PUBLIC,
+        PROTECTED,
+        PRIVATE,
+        STATIC,
+        ABSTRACT,
+        FINAL,
+        NATIVE,
+        SYNCHRONIZED,
+        TRANSIENT,
+        VOLATILE,
+        STRICTFP));
+  }
+

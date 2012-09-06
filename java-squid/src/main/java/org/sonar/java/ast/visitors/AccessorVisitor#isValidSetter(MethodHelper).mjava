@@ -1,0 +1,10 @@
+  private boolean isValidSetter(MethodHelper method) {
+    String methodName = method.getName().getTokenValue();
+    if (methodName.startsWith("set") && (method.getParameters().size() == 1) && method.getReturnType().is(JavaKeyword.VOID)) {
+      // TODO Godin: in previous version we had a more complex check of method body
+      List<AstNode> statements = method.getStatements();
+      return statements.size() == 1 && "this".equals(statements.get(0).getTokenValue());
+    }
+    return false;
+  }
+

@@ -1,0 +1,12 @@
+  private boolean isPublic(AstNode astNode) {
+    if (astNode.is(getContext().getGrammar().annotationTypeElementDeclaration)) {
+      return true;
+    }
+    for (AstNode modifierNode : astNode.findDirectChildren(getContext().getGrammar().modifier)) {
+      if (modifierNode.getChild(0).is(JavaKeyword.PUBLIC)) {
+        return true;
+      }
+    }
+    return false;
+  }
+

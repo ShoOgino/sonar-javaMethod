@@ -1,0 +1,30 @@
+  @Override
+  public boolean consume(CodeReader code, Lexer lexer) {
+    if (!Character.isJavaIdentifierStart(code.peek())) {
+      return false;
+    }
+
+    int line = code.getCursor().getLine();
+    int column = code.getCursor().getColumn();
+    while (Character.isJavaIdentifierPart(code.peek())) {
+      tmpBuilder.append((char) code.pop());
+    }
+
+    String word = tmpBuilder.toString();
+
+    TokenType keywordType = keywordsMap.get(word);
+    Token token = tokenBuilder
+        .setType(keywordType == null ? GenericTokenType.IDENTIFIER : keywordType)
+        .setValueAndOriginalValue(word, word)
+        .setURI(lexer.getURI())
+        .setLine(line)
+        .setColumn(column)
+        .build();
+
+    lexer.addToken(token);
+
+    tmpBuilder.delete(0, tmpBuilder.length());
+
+    return true;
+  }
+

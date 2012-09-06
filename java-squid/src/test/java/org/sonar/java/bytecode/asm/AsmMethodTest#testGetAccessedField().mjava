@@ -1,0 +1,19 @@
+  @Test
+  public void testGetAccessedField() {
+    assertThat(javaBean.getMethod("getName()Ljava/lang/String;").getAccessedField().getName()).isEqualTo("name");
+    assertThat(javaBean.getMethod("getNameIndirect()Ljava/lang/String;").getAccessedField().getName()).isEqualTo("name");
+    assertThat(javaBean.getMethod("getNameOrEmpty()Ljava/lang/String;").getAccessedField().getName()).isEqualTo("name");
+    assertThat(javaBean.getMethod("setName(Ljava/lang/String;)V").getAccessedField().getName()).isEqualTo("name");
+    assertThat(javaBean.getMethod("setFrench(Z)V").getAccessedField().getName()).isEqualTo("french");
+    assertThat(javaBean.getMethod("isFrench()Z").getAccessedField().getName()).isEqualTo("french");
+    assertThat(javaBean.getMethod("anotherMethod()V").getAccessedField()).isNull();
+    assertThat(javaBean.getMethod("addFirstName(Ljava/lang/String;)V").getAccessedField().getName()).isEqualTo("firstNames");
+    assertThat(javaBean.getMethod("getNameOrDefault()Ljava/lang/String;").getAccessedField().getName()).isEqualTo("name");
+    assertThat(javaBean.getMethod("accessorWithABunchOfCalls()V").getAccessedField().getName()).isEqualTo("firstNames");
+    assertThat(javaBean.getMethod("iShouldBeAStaticSetter()V").getAccessedField()).isNull();
+    assertThat(javaBean.getMethod("getFirstName()Ljava/lang/String;").getAccessedField().getName()).isEqualTo("FirstName");
+    assertThat(javaBean.getMethod("getFirstNameAndOneArgument(Ljava/lang/String;)Ljava/lang/String;").getAccessedField().getName()).isEqualTo("FirstName");
+    assertThat(javaBean.getMethod("recursiveAbs(I)I").getAccessedField()).isNull();
+    assertThat(javaBean.getMethod("recursiveAbsNotAccessor(I)I").getAccessedField()).isNull();
+  }
+

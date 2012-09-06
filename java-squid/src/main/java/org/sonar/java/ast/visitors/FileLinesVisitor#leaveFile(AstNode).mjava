@@ -1,0 +1,17 @@
+  @Override
+  public void leaveFile(AstNode astNode) {
+    SourceFile file = (SourceFile) getContext().peekSourceCode();
+    JavaFile javaFile = SquidUtils.convertJavaFileKeyFromSquidFormat(file.getKey());
+    FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(javaFile);
+
+    int fileLength = file.getInt(JavaMetric.LINES);
+    for (int line = 1; line <= fileLength; line++) {
+      fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, linesOfCode.contains(line) ? 1 : 0);
+      fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, linesOfComments.contains(line) ? 1 : 0);
+    }
+    fileLinesContext.save();
+
+    linesOfCode.clear();
+    linesOfComments.clear();
+  }
+

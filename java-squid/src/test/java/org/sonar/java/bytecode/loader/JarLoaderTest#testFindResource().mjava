@@ -1,0 +1,29 @@
+  @Test
+  public void testFindResource() throws Exception {
+    File jar = new File("src/test/files/bytecode/lib/hello.jar");
+    JarLoader loader = new JarLoader(jar);
+
+    assertThat(loader.findResource("notfound")).isNull();
+
+    URL url = loader.findResource("META-INF/MANIFEST.MF");
+    assertThat(url).isNotNull();
+    assertThat(url.toString()).startsWith("jar:");
+    assertThat(url.toString()).endsWith("hello.jar!/META-INF/MANIFEST.MF");
+
+    InputStream is = url.openStream();
+    try {
+      assertThat(IOUtils.readLines(is)).contains("Manifest-Version: 1.0");
+    } finally {
+      IOUtils.closeQuietly(is);
+    }
+
+    loader.close();
+
+    try {
+      loader.findResource("META-INF/MANIFEST.MF");
+      fail();
+    } catch (IllegalStateException e) {
+      // ok
+    }
+  }
+

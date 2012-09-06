@@ -1,0 +1,22 @@
+  @Test
+  public void testFindResource() throws Exception {
+    File dir = new File("src/test/files/bytecode/bin/");
+    FileSystemLoader loader = new FileSystemLoader(dir);
+
+    assertThat(loader.findResource("notfound")).isNull();
+
+    URL url = loader.findResource("tags/TagName.class");
+    assertThat(url).isNotNull();
+    assertThat(url.toString()).startsWith("file:");
+    assertThat(url.toString()).endsWith("TagName.class");
+
+    loader.close();
+
+    try {
+      loader.findResource("tags/TagName.class");
+      fail();
+    } catch (IllegalStateException e) {
+      // ok
+    }
+  }
+

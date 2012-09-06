@@ -1,0 +1,15 @@
+  /**
+   * http://docs.oracle.com/javase/specs/jls/se5.0/html/lexical.html#3.12
+   */
+  @Test
+  public void operators() {
+    assertThat(lexer.lex("=="), hasToken("==", JavaPunctuator.EQUAL));
+
+    // Special cases, which should be handled by parser, but not by lexer
+    assertThat(lexer.lex(">>>"), hasTokens(">", ">", ">", "EOF"));
+    assertThat(lexer.lex(">>>="), hasTokens(">", ">", ">", "=", "EOF"));
+    assertThat(lexer.lex(">="), hasTokens(">", "=", "EOF"));
+    assertThat(lexer.lex(">>"), hasTokens(">", ">", "EOF"));
+    assertThat(lexer.lex(">>="), hasTokens(">", ">", "=", "EOF"));
+  }
+

@@ -1,0 +1,24 @@
+  @BeforeClass
+  public static void setup() {
+    JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
+    JavaSquid squid = new JavaSquid(conf);
+    squid.scan(
+        Collections.singleton(new File("src/test/files/bytecode/src")),
+        Collections.singleton(new File("src/test/files/bytecode/bin")));
+    index = squid.getIndex();
+    graph = squid.getGraph();
+
+    tag = index.search("tags/Tag");
+    tagFile = index.search("tags/Tag.java");
+    file = index.search("tags/File");
+    line = index.search("tags/Line");
+    tagName = index.search("tags/TagName");
+    tagException = index.search("tags/TagException");
+    language = index.search("tags/Language");
+    sourceFile = index.search("tags/SourceFile");
+    todo = index.search("tags/impl/Todo");
+    fixme = index.search("tags/impl/FixMe");
+    pacTag = index.search("tags");
+    pacImpl = index.search("tags/impl");
+  }
+

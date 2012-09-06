@@ -1,0 +1,30 @@
+  /**
+   * 8.1. Class Declaration
+   */
+  private void classDeclaration() {
+    classDeclaration.is(CLASS, IDENTIFIER, opt(typeParameters), opt(EXTENDS, classType), opt(IMPLEMENTS, classTypeList), classBody);
+
+    classBody.is(LWING, o2n(classBodyDeclaration), RWING);
+    classBodyDeclaration.is(or(
+        SEMI,
+        and(opt(STATIC), block),
+        and(o2n(modifier), memberDecl)));
+    memberDecl.is(or(
+        and(typeParameters, genericMethodOrConstructorRest),
+        and(type, IDENTIFIER, methodDeclaratorRest),
+        and(type, variableDeclarators, SEMI),
+        and(VOID, IDENTIFIER, voidMethodDeclaratorRest),
+        and(IDENTIFIER, constructorDeclaratorRest),
+        interfaceDeclaration,
+        classDeclaration,
+        enumDeclaration,
+        annotationTypeDeclaration));
+    genericMethodOrConstructorRest.is(or(
+        and(or(type, VOID), IDENTIFIER, methodDeclaratorRest),
+        and(IDENTIFIER, constructorDeclaratorRest)));
+    methodDeclaratorRest.is(formalParameters, o2n(dim), opt(THROWS, classTypeList), or(methodBody, SEMI));
+    voidMethodDeclaratorRest.is(formalParameters, opt(THROWS, classTypeList), or(methodBody, SEMI));
+    constructorDeclaratorRest.is(formalParameters, opt(THROWS, classTypeList), methodBody);
+    methodBody.is(block);
+  }
+

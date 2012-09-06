@@ -1,0 +1,50 @@
+  public void scan(Collection<File> files) {
+    SourceProject project = new SourceProject("Java Project");
+    index.index(project);
+    project.setSourceCodeIndexer(index);
+    VisitorContext context = new VisitorContext(project);
+    context.setGrammar(parser.getGrammar());
+    context.setCommentAnalyser(commentAnalyser);
+
+    for (SquidAstVisitor<JavaGrammar> visitor : visitors) {
+      visitor.setContext(context);
+      visitor.init();
+    }
+
+    AstWalker astWalker = new AstWalker(visitors);
+
+    for (File file : files) {
+      context.setFile(file);
+
+      try {
+        AstNode ast = parser.parse(file);
+        astWalker.walkAndVisit(ast);
+      } catch (RecognitionException e) {
+        LoggerFactory.getLogger(getClass()).error("Unable to parse source file : " + file.getAbsolutePath());
+
+        // TODO support extended stack trace
+
+        // Process the exception
+        for (SquidAstVisitor<JavaGrammar> visitor : visitors) {
+          visitor.visitFile(null);
+        }
+
+        for (AuditListener auditListener : auditListeners) {
+          auditListener.processRecognitionException(e);
+        }
+
+        for (SquidAstVisitor<JavaGrammar> visitor : Iterables.reverse(visitors)) {
+          visitor.leaveFile(null);
+        }
+      }
+    }
+
+    for (SquidAstVisitor<JavaGrammar> visitor : visitors) {
+      visitor.destroy();
+    }
+
+    SourceCodeTreeDecorator decorator = new SourceCodeTreeDecorator(project);
+    decorator.decorateWith(JavaMetric.values());
+    decorator.decorateWith(org.sonar.squid.measures.Metric.values());
+  }
+

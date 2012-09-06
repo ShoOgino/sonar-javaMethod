@@ -1,0 +1,10 @@
+  private boolean isValidBooleanGetter(MethodHelper method) {
+    String methodName = method.getName().getTokenValue();
+    if (methodName.startsWith("is") && !method.hasParameters() && hasBooleanReturnType(method)) {
+      // TODO Godin: in previous version we had a more complex check of method body
+      List<AstNode> statements = method.getStatements();
+      return statements.size() == 1 && "return".equals(statements.get(0).getTokenValue());
+    }
+    return false;
+  }
+

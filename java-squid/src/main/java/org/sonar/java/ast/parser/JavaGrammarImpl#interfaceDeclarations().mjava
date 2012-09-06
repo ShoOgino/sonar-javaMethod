@@ -1,0 +1,30 @@
+  /**
+   * 9.1. Interface Declarations
+   */
+  private void interfaceDeclarations() {
+    interfaceDeclaration.is(INTERFACE, IDENTIFIER, opt(typeParameters), opt(EXTENDS, classTypeList), interfaceBody);
+
+    interfaceBody.is(LWING, o2n(interfaceBodyDeclaration), RWING);
+    interfaceBodyDeclaration.is(or(
+        and(o2n(modifier), interfaceMemberDecl),
+        SEMI));
+    interfaceMemberDecl.is(or(
+        interfaceMethodOrFieldDecl,
+        interfaceGenericMethodDecl,
+        and(VOID, IDENTIFIER, voidInterfaceMethodDeclaratorsRest),
+        interfaceDeclaration,
+        annotationTypeDeclaration,
+        classDeclaration,
+        enumDeclaration));
+    interfaceMethodOrFieldDecl.is(type, IDENTIFIER, interfaceMethodOrFieldRest);
+    interfaceMethodOrFieldRest.is(or(
+        and(constantDeclaratorsRest, SEMI),
+        interfaceMethodDeclaratorRest));
+    interfaceMethodDeclaratorRest.is(formalParameters, o2n(dim), opt(THROWS, classTypeList), SEMI);
+    interfaceGenericMethodDecl.is(typeParameters, or(type, VOID), IDENTIFIER, interfaceMethodDeclaratorRest);
+    voidInterfaceMethodDeclaratorsRest.is(formalParameters, opt(THROWS, classTypeList), SEMI);
+    constantDeclaratorsRest.is(constantDeclaratorRest, o2n(COMMA, constantDeclarator));
+    constantDeclarator.is(IDENTIFIER, constantDeclaratorRest);
+    constantDeclaratorRest.is(o2n(dim), EQU, variableInitializer);
+  }
+

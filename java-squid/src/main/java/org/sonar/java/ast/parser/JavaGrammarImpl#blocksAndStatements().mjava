@@ -1,0 +1,100 @@
+  /**
+   * 14. Blocks and Statements
+   */
+  private void blocksAndStatements() {
+    // 14.2. Blocks
+    block.is(LWING, blockStatements, RWING);
+    blockStatements.is(o2n(blockStatement));
+    blockStatement.is(or(
+        localVariableDeclarationStatement,
+        and(o2n(modifier), or(classDeclaration, enumDeclaration)),
+        statement));
+
+    // 14.4. Local Variable Declaration Statements
+    localVariableDeclarationStatement.is(variableModifiers, type, variableDeclarators, SEMI);
+    variableModifiers.is(o2n(or(
+        annotation,
+        FINAL)));
+    variableDeclarators.is(variableDeclarator, o2n(COMMA, variableDeclarator));
+    variableDeclarator.is(IDENTIFIER, o2n(dim), opt(EQU, variableInitializer));
+
+    // 14.5. Statements
+    statement.is(or(
+        block,
+        assertStatement,
+        ifStatement,
+        forStatement,
+        whileStatement,
+        doStatement,
+        tryStatement,
+        switchStatement,
+        synchronizedStatement,
+        returnStatement,
+        throwStatement,
+        breakStatement,
+        continueStatement,
+        labeledStatement,
+        expressionStatement,
+        emptyStatement));
+
+    // 14.6. The Empty Statement
+    emptyStatement.is(SEMI);
+    // 14.7. Labeled Statements
+    labeledStatement.is(IDENTIFIER, COLON, statement);
+    // 14.8. Expression Statements
+    expressionStatement.is(statementExpression, SEMI);
+    // 14.9. The if Statement
+    ifStatement.is(IF, parExpression, statement, opt(ELSE, statement));
+    // 14.10. The assert Statement
+    assertStatement.is(ASSERT, expression, opt(COLON, expression), SEMI);
+
+    // 14.11. The switch statement
+    switchStatement.is(SWITCH, parExpression, LWING, switchBlockStatementGroups, RWING);
+    switchBlockStatementGroups.is(o2n(switchBlockStatementGroup));
+    switchBlockStatementGroup.is(switchLabel, blockStatements);
+    switchLabel.is(or(
+        and(CASE, constantExpression, COLON),
+        and(CASE, enumConstantName, COLON),
+        and(DEFAULT, COLON)));
+    enumConstantName.is(IDENTIFIER);
+
+    // 14.12. The while Statement
+    whileStatement.is(WHILE, parExpression, statement);
+    // 14.13. The do Statement
+    doStatement.is(DO, statement, WHILE, parExpression, SEMI);
+
+    // 14.14. The for Statement
+    forStatement.is(or(
+        and(FOR, LPAR, opt(forInit), SEMI, opt(expression), SEMI, opt(forUpdate), RPAR, statement),
+        and(FOR, LPAR, formalParameter, COLON, expression, RPAR, statement)));
+    forInit.is(or(
+        and(o2n(or(FINAL, annotation)), type, variableDeclarators),
+        and(statementExpression, o2n(COMMA, statementExpression))));
+    forUpdate.is(statementExpression, o2n(COMMA, statementExpression));
+
+    // 14.15. The break Statement
+    breakStatement.is(BREAK, opt(IDENTIFIER), SEMI);
+    // 14.16. The continue Statement
+    continueStatement.is(CONTINUE, opt(IDENTIFIER), SEMI);
+    // 14.17. The return Statement
+    returnStatement.is(RETURN, opt(expression), SEMI);
+    // 14.18. The throw Statement
+    throwStatement.is(THROW, expression, SEMI);
+    // 14.19. The synchronized Statement
+    synchronizedStatement.is(SYNCHRONIZED, parExpression, block);
+
+    // 14.20. The try Statement
+    tryStatement.is(or(
+        and(TRY, block, or(and(one2n(catchClause), opt(finally_)), finally_)),
+        tryWithResourcesStatement));
+    tryWithResourcesStatement.is(TRY, resourceSpecification, block, o2n(catchClause), opt(finally_));
+    resourceSpecification.is(LPAR, resource, o2n(SEMI, resource), opt(SEMI), RPAR);
+    resource.is(opt(variableModifiers), type, variableDeclaratorId, EQU, expression);
+
+    catchClause.is(CATCH, LPAR, catchFormalParameter, RPAR, block);
+    catchFormalParameter.is(opt(variableModifiers), catchType, variableDeclaratorId);
+    catchType.is(classType, o2n(OR, classType));
+
+    finally_.is(FINALLY, block);
+  }
+

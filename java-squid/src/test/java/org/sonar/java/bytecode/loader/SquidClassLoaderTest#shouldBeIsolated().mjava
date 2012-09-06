@@ -1,0 +1,18 @@
+  /**
+   * See SONAR-2824:
+   * Created ClassLoader should be able to load classes only from JDK and from provided list of JAR-files,
+   * thus it shouldn't be able to load his class.
+   */
+  @Test
+  public void shouldBeIsolated() throws Exception {
+    SquidClassLoader classLoader = new SquidClassLoader(Collections.EMPTY_LIST);
+    try {
+      classLoader.loadClass(SquidClassLoader.class.getName());
+      fail();
+    } catch (ClassNotFoundException e) {
+      // ok
+    }
+    assertThat(classLoader.loadClass("java.lang.Integer")).isNotNull();
+    assertThat(classLoader.getResource("java/lang/Integer.class")).isNotNull();
+  }
+

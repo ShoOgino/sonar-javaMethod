@@ -1,0 +1,14 @@
+  private String getPackageKey(AstNode astNode) {
+    if (astNode == null) {
+      // TODO error during parse, e.g. empty file
+      return "";
+    }
+    if (astNode.getChild(0).is(getContext().getGrammar().packageDeclaration)) {
+      AstNode packageNameNode = astNode.getChild(0).findFirstDirectChild(getContext().getGrammar().qualifiedIdentifier);
+      String packageName = getAstNodeValue(packageNameNode);
+      return packageName.replace('.', '/');
+    } else {
+      return "";
+    }
+  }
+

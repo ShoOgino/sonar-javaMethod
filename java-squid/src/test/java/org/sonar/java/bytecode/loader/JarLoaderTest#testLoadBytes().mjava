@@ -1,0 +1,22 @@
+  @Test
+  public void testLoadBytes() throws Exception {
+    File jar = new File("src/test/files/bytecode/lib/hello.jar");
+    JarLoader loader = new JarLoader(jar);
+
+    assertThat(loader.loadBytes("notfound")).isNull();
+
+    byte[] bytes = loader.loadBytes("META-INF/MANIFEST.MF");
+    assertThat(bytes).isNotNull();
+    ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+    assertThat(IOUtils.readLines(is)).contains("Manifest-Version: 1.0");
+
+    loader.close();
+
+    try {
+      loader.loadBytes("META-INF/MANIFEST.MF");
+      fail();
+    } catch (IllegalStateException e) {
+      // ok
+    }
+  }
+
