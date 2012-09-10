@@ -82,25 +82,8 @@
             parser.getGrammar().catchClause,
             parser.getGrammar().finally_)
         .build());
-    builder.withSquidAstVisitor(ComplexityVisitor.<JavaGrammar> builder()
-        .setMetricDef(JavaMetric.COMPLEXITY)
-        .subscribeTo(
-            // Entry points
-            parser.getGrammar().methodBody,
-            // Branching nodes
-            parser.getGrammar().ifStatement,
-            parser.getGrammar().forStatement,
-            parser.getGrammar().whileStatement,
-            parser.getGrammar().doStatement,
-            JavaKeyword.CASE,
-            parser.getGrammar().returnStatement,
-            parser.getGrammar().throwStatement,
-            parser.getGrammar().catchClause,
-            // Expressions
-            JavaPunctuator.QUERY,
-            JavaPunctuator.ANDAND,
-            JavaPunctuator.OROR)
-        .build());
+
+    builder.withSquidAstVisitor(new ComplexityVisitor());
 
     /* External visitors (typically Check ones) */
     for (SquidAstVisitor<JavaGrammar> visitor : visitors) {
