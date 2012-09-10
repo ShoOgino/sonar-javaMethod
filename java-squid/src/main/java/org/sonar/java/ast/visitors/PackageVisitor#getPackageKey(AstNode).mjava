@@ -1,14 +1,17 @@
   private String getPackageKey(AstNode astNode) {
     if (astNode == null) {
-      // TODO error during parse, e.g. empty file
+      // TODO error during parse?
       return "";
     }
+    String packageKey;
     if (astNode.getChild(0).is(getContext().getGrammar().packageDeclaration)) {
       AstNode packageNameNode = astNode.getChild(0).findFirstDirectChild(getContext().getGrammar().qualifiedIdentifier);
-      String packageName = getAstNodeValue(packageNameNode);
-      return packageName.replace('.', '/');
+      packageKey = getAstNodeValue(packageNameNode).replace('.', '/');
     } else {
-      return "";
+      // Guess package key from directory
+      packageKey = InputFileUtils.getRelativeDirectory(getInputFile());
     }
+    checkPhysicalDirectory(packageKey);
+    return packageKey;
   }
 

@@ -6,7 +6,8 @@
       throw new IllegalArgumentException("File '" + file + "' not found.");
     }
     org.sonar.java.ast.AstScanner scanner = create(new JavaConfiguration(Charset.forName("UTF-8")), visitors);
-    scanner.scan(Collections.singleton(file));
+    InputFile inputFile = InputFileUtils.create(file.getParentFile(), file);
+    scanner.scan(Collections.singleton(inputFile));
     Collection<SourceCode> sources = scanner.getIndex().search(new QueryByType(SourceFile.class));
     if (sources.size() != 1) {
       throw new IllegalStateException("Only one SourceFile was expected whereas " + sources.size() + " has been returned.");

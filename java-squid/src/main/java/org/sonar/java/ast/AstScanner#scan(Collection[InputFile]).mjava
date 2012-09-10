@@ -1,4 +1,4 @@
-  public void scan(Collection<File> files) {
+  public void scan(Collection<InputFile> files) {
     SourceProject project = new SourceProject("Java Project");
     index.index(project);
     project.setSourceCodeIndexer(index);
@@ -13,8 +13,10 @@
 
     AstWalker astWalker = new AstWalker(visitors);
 
-    for (File file : files) {
+    for (InputFile inputFile : files) {
+      File file = inputFile.getFile();
       context.setFile(file);
+      context.setInputFile(inputFile);
 
       try {
         AstNode ast = parser.parse(file);
