@@ -1,8 +1,12 @@
   private boolean isDocumentedApi(AstNode astNode) {
-    // TODO
-    for (Trivia trivia : astNode.getToken().getTrivia()) {
+    // TODO verify
+    AstNode declaration = getDeclaration(astNode);
+    for (Trivia trivia : declaration.getToken().getTrivia()) {
       if (trivia.isComment()) {
-        return true;
+        String value = trivia.getToken().getOriginalValue();
+        if (value.startsWith("/**")) {
+          return true;
+        }
       }
     }
     return false;

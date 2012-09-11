@@ -1,0 +1,29 @@
+  private AstNode getDeclaration(AstNode astNode) {
+    AstNode declaration;
+    JavaGrammar grammar = getContext().getGrammar();
+    if (astNode.getParent().is(grammar.memberDecl)) {
+      declaration = astNode.getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.classBodyDeclaration));
+    } else if (astNode.getParent().is(grammar.genericMethodOrConstructorRest)) {
+      declaration = astNode.getParent().getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.classBodyDeclaration));
+    } else if (astNode.getParent().is(grammar.interfaceMemberDecl)) {
+      declaration = astNode.getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.interfaceBodyDeclaration));
+    } else if (astNode.getParent().is(grammar.interfaceMethodOrFieldRest)) {
+      declaration = astNode.getParent().getParent().getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.interfaceBodyDeclaration));
+    } else if (astNode.getParent().is(grammar.interfaceGenericMethodDecl)) {
+      declaration = astNode.getParent().getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.interfaceBodyDeclaration));
+    } else if (astNode.getParent().is(grammar.annotationMethodOrConstantRest)) {
+      declaration = astNode.getParent().getParent().getParent();
+      Preconditions.checkState(declaration.is(grammar.annotationTypeElementDeclaration));
+    } else if (astNode.getParent().is(grammar.typeDeclaration)) {
+      declaration = astNode.getParent();
+    } else {
+      throw new IllegalStateException(astNode.getParent().getType().toString());
+    }
+    return declaration;
+  }
+
