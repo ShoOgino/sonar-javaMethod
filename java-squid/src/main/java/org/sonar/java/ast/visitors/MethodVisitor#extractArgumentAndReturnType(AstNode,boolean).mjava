@@ -1,9 +1,8 @@
-  private Parameter extractArgumentAndReturnType(AstNode astNode) {
+  private Parameter extractArgumentAndReturnType(AstNode astNode, boolean isArray) {
     Preconditions.checkArgument(astNode.is(JavaKeyword.VOID, getContext().getGrammar().type));
     if (astNode.is(JavaKeyword.VOID)) {
       return new Parameter(JvmJavaType.V, false);
     }
-    boolean isArray = astNode.hasDirectChildren(getContext().getGrammar().dim);
     if (astNode.getFirstChild().is(getContext().getGrammar().basicType)) {
       return new Parameter(JAVA_TYPE_MAPPING.get(astNode.getFirstChild().getFirstChild().getType()), isArray);
     } else if (astNode.getFirstChild().is(getContext().getGrammar().classType)) {

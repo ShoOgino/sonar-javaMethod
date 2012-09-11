@@ -2,7 +2,8 @@
     if (methodHelper.isConstructor()) {
       return new Parameter(JvmJavaType.V, false);
     }
-    Parameter returnType = extractArgumentAndReturnType(methodHelper.getReturnType());
-    return new Parameter(returnType);
+    AstNode returnType = methodHelper.getReturnType();
+    boolean isArray = returnType.hasDirectChildren(getContext().getGrammar().dim);
+    return new Parameter(extractArgumentAndReturnType(returnType, isArray));
   }
 
