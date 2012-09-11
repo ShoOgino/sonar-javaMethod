@@ -1,0 +1,21 @@
+  private boolean inspectGetterMethodBody(AstNode astNode) {
+    if (astNode.is(getContext().getGrammar().returnStatement) && astNode.hasDirectChildren(getContext().getGrammar().expression)) {
+      AstNode expression = astNode.findFirstDirectChild(getContext().getGrammar().expression);
+      if (expression.getNumberOfChildren() == 1 && expression.getFirstChild().is(getContext().getGrammar().primary)) {
+        AstNode primary = expression.getFirstChild();
+        if (primary.getNumberOfChildren() == 1 && primary.getFirstChild().is(getContext().getGrammar().qualifiedIdentifier)) {
+          AstNode qualifiedIdentifier = primary.getFirstChild();
+          if (qualifiedIdentifier.getNumberOfChildren() == 1) {
+            AstNode varReturned = qualifiedIdentifier.getFirstChild();
+            if (varReturned != null) {
+              if (findPrivateClassVariable(varReturned)) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+

@@ -1,0 +1,20 @@
+  private boolean findPrivateClassVariable(AstNode varReturned) {
+    AstNode classBody = varReturned.findFirstParent(getContext().getGrammar().classBody);
+    for (AstNode classBodyDeclaration : classBody.findDirectChildren(getContext().getGrammar().classBodyDeclaration)) {
+      if (!hasPrivateModifier(classBodyDeclaration)) {
+        continue;
+      }
+
+      for (AstNode memberDecl : classBodyDeclaration.findDirectChildren(getContext().getGrammar().memberDecl)) {
+        if (memberDecl.getFirstChild().is(getContext().getGrammar().fieldDeclaration)) {
+          for (AstNode variableDeclarator : memberDecl.findChildren(getContext().getGrammar().variableDeclarator)) {
+            if (varReturned.getTokenValue().equals(variableDeclarator.getFirstChild().getTokenValue())) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+

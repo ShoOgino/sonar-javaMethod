@@ -1,9 +1,12 @@
   private boolean isValidGetter(MethodHelper method) {
     String methodName = method.getName().getTokenValue();
     if (methodName.startsWith("get") && !method.hasParameters() && !method.getReturnType().is(JavaKeyword.VOID)) {
-      // TODO Godin: in previous version we had a more complex check of method body
       List<AstNode> statements = method.getStatements();
-      return statements.size() == 1 && "return".equals(statements.get(0).getTokenValue());
+      if (statements.size() == 1) {
+        AstNode blockStatement = statements.get(0);
+        Preconditions.checkState(blockStatement.is(getContext().getGrammar().blockStatement));
+        return inspectGetterMethodBody(blockStatement.getFirstChild().getFirstChild());
+      }
     }
     return false;
   }
