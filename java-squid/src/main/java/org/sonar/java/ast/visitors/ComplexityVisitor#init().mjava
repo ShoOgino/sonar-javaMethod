@@ -1,19 +1,26 @@
   @Override
   public void init() {
-    SquidAstVisitorContext<JavaGrammar> context = getContext();
+    JavaGrammar grammar = getContext().getGrammar();
     subscribeTo(
+        // FIXME hacks
+        grammar.methodDeclaratorRest,
+        grammar.voidMethodDeclaratorRest,
+        grammar.constructorDeclaratorRest,
+        grammar.interfaceMethodDeclaratorRest,
+        grammar.voidInterfaceMethodDeclaratorsRest,
+        grammar.annotationMethodRest,
         // Entry points
-        context.getGrammar().classInitDeclaration,
-        context.getGrammar().methodBody,
+        grammar.classInitDeclaration,
+        // FIXME context.getGrammar().methodBody,
         // Branching nodes
-        context.getGrammar().ifStatement,
-        context.getGrammar().forStatement,
-        context.getGrammar().whileStatement,
-        context.getGrammar().doStatement,
+        grammar.ifStatement,
+        grammar.forStatement,
+        grammar.whileStatement,
+        grammar.doStatement,
         JavaKeyword.CASE,
-        context.getGrammar().returnStatement,
-        context.getGrammar().throwStatement,
-        context.getGrammar().catchClause,
+        grammar.returnStatement,
+        grammar.throwStatement,
+        grammar.catchClause,
         // Expressions
         JavaPunctuator.QUERY,
         JavaPunctuator.ANDAND,

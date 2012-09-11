@@ -1,11 +1,6 @@
   private boolean isLastReturnStatement(AstNode astNode) {
-    if (!astNode.nextAstNode().is(JavaPunctuator.RWING)) {
-      return false;
-    }
-    AstNode block = astNode.findFirstParent(getContext().getGrammar().block);
-    if (block.getParent().is(getContext().getGrammar().methodBody)) {
-      return true;
-    }
-    return false;
+    AstNode parent = astNode.getParent().getParent().getParent();
+    AstNode block = astNode.findFirstParent(getContext().getGrammar().blockStatements);
+    return block.getParent().getParent().is(getContext().getGrammar().methodBody) && parent == block;
   }
 
