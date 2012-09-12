@@ -1,0 +1,21 @@
+  public void visitToken(Token token) {
+    for (Trivia trivia : token.getTrivia()) {
+      if (trivia.isComment()) {
+        if (seenFirstToken) {
+          String[] commentLines = getContext().getCommentAnalyser().getContents(trivia.getToken().getOriginalValue())
+              .split("(\r)?\n|\r", -1);
+          int line = trivia.getToken().getLine();
+          for (String commentLine : commentLines) {
+            if (!commentLine.contains("NOSONAR") && !getContext().getCommentAnalyser().isBlank(commentLine)) {
+              comments.add(line);
+            }
+            line++;
+          }
+        } else {
+          seenFirstToken = true;
+        }
+      }
+    }
+    seenFirstToken = true;
+  }
+
