@@ -1,4 +1,4 @@
-  public void save(SensorContext context, Project project, CheckFactory checkFactory) {
+  public void save(SensorContext context, Project project, CheckFactory checkFactory, NoSonarFilter noSonarFilter) {
     boolean skipPackageDesignAnalysis = project.getConfiguration().getBoolean(
         CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY,
         CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_DEFAULT_VALUE);
@@ -10,7 +10,8 @@
         context,
         checkFactory,
         resourceIndex,
-        squid, null /* TODO noSonarFilter */);
+        squid,
+        noSonarFilter);
     saveProject(resourceIndex, bridges);
     savePackages(resourceIndex, bridges);
     saveFiles(resourceIndex, bridges);
