@@ -1,6 +1,4 @@
   public static Lexer create(Charset charset) {
-    // FIXME BOM
-
     Lexer.Builder builder = Lexer.builder()
         .withCharset(charset)
         .withFailIfNoChannelToConsumeOneCharacter(true)
@@ -42,7 +40,9 @@
 
         .withChannel(new JavaIdentifierAndKeywordChannel(JavaKeyword.values()))
 
-        .withChannel(new PunctuatorChannel(JavaPunctuator.values()));
+        .withChannel(new PunctuatorChannel(JavaPunctuator.values()))
+
+        .withChannel(new UnknownCharacterChannel(true));
 
     return builder.build();
   }
