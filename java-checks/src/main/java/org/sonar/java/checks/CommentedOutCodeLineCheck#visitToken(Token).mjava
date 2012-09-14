@@ -1,0 +1,14 @@
+  /**
+   * Creates candidates for commented-out code - all comment blocks.
+   */
+  public void visitToken(Token token) {
+    for (Trivia trivia : token.getTrivia()) {
+      if (trivia.isComment()) {
+        Token comment = trivia.getToken();
+        if (!isHeader(comment) && !isJavadoc(comment.getOriginalValue()) && !isJSNI(comment.getOriginalValue())) {
+          comments.add(trivia.getToken());
+        }
+      }
+    }
+  }
+
