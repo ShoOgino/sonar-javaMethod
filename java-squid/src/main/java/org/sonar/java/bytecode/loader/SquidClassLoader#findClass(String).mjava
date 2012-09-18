@@ -1,10 +1,13 @@
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    byte[] classBytes = loadClassBytes(name);
-    if (classBytes == null) {
-      throw new ClassNotFoundException(name);
+    String resourceName = name.replace('.', '/') + ".class";
+    for (Loader loader : loaders) {
+      byte[] classBytes = loader.loadBytes(resourceName);
+      if (classBytes != null) {
+        // TODO Godin: definePackage ?
+        return defineClass(name, classBytes, 0, classBytes.length);
+      }
     }
-    // TODO Godin: definePackage ?
-    return defineClass(name, classBytes, 0, classBytes.length);
+    throw new ClassNotFoundException(name);
   }
 
