@@ -1,4 +1,9 @@
   public Parameter(String classCanonicalName, boolean isArray) {
-    this(JvmJavaType.L, classCanonicalName, isArray);
+    if (classCanonicalName == null || "".equals(classCanonicalName)) {
+      throw new IllegalArgumentException("With an Object JavaType, this is mandatory to specify the canonical name of the class.");
+    }
+    this.jvmJavaType = JvmJavaType.L;
+    this.className = extractClassName(classCanonicalName);
+    this.isArray = isArray;
   }
 
