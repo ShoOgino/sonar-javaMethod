@@ -5,14 +5,10 @@
    */
   @Test
   public void shouldBeIsolated() throws Exception {
-    SquidClassLoader classLoader = new SquidClassLoader(Collections.EMPTY_LIST);
-    try {
-      classLoader.loadClass(SquidClassLoader.class.getName());
-      fail();
-    } catch (ClassNotFoundException e) {
-      // ok
-    }
+    classLoader = new SquidClassLoader(Collections.EMPTY_LIST);
     assertThat(classLoader.loadClass("java.lang.Integer")).isNotNull();
     assertThat(classLoader.getResource("java/lang/Integer.class")).isNotNull();
+    thrown.expect(ClassNotFoundException.class);
+    classLoader.loadClass(SquidClassLoader.class.getName());
   }
 
