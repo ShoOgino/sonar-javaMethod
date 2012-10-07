@@ -1,0 +1,17 @@
+  public void visitToken(Token token) {
+    if (!tokensToBeMatched.isEmpty()) {
+      String expectedValue = tokensToBeMatched.get(tokenIndexToBeMatched).getOriginalValue();
+      String actualValue = token.getOriginalValue();
+
+      if (actualValue.equals(expectedValue)) {
+        tokenIndexToBeMatched++;
+        if (tokenIndexToBeMatched == tokensToBeMatched.size()) {
+          getContext().createLineViolation(this, "This should be rewritten as: " + doExample, token);
+          tokenIndexToBeMatched = 0;
+        }
+      } else {
+        tokenIndexToBeMatched = 0;
+      }
+    }
+  }
+
