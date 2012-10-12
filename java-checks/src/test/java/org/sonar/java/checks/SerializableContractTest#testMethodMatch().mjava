@@ -1,6 +1,11 @@
   @Test
   public void testMethodMatch() {
-    AsmMethod getter = new AsmMethod(new AsmClass("/com/sonar/Test"), "getParameter", "()I");
-    assertFalse(SerializableContract.methodMatch(getter));
+    AsmMethod method = mock(AsmMethod.class);
+    when(method.getName()).thenReturn("writeObject", "readObject", "writeReplace", "readResolve", "getParameter");
+    assertThat(SerializableContract.methodMatch(method)).isTrue();
+    assertThat(SerializableContract.methodMatch(method)).isTrue();
+    assertThat(SerializableContract.methodMatch(method)).isTrue();
+    assertThat(SerializableContract.methodMatch(method)).isTrue();
+    assertThat(SerializableContract.methodMatch(method)).isFalse();
   }
 
