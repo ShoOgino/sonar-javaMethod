@@ -1,4 +1,9 @@
   public AstScanner(Parser<JavaGrammar> parser) {
     this.parser = parser;
+    this.parserDebug = Parser.builder(parser)
+        .setParsingEventListeners()
+        .setExtendedStackTrace(new ExtendedStackTrace())
+        .setRecognictionExceptionListener(this.auditListeners.toArray(new AuditListener[this.auditListeners.size()]))
+        .build();
   }
 
