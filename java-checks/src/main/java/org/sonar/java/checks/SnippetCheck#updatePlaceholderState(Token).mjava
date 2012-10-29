@@ -1,0 +1,33 @@
+  private void updatePlaceholderState(Token token) {
+    String expectedValue = tokensToBeMatched.get(tokenIndexToBeMatched).getOriginalValue();
+    String actualValue = token.getOriginalValue();
+
+    if (placeholderState == PlaceholderState.LEAVING) {
+
+      if (actualValue.equals(expectedValue)) {
+        placeholderState = PlaceholderState.OUT;
+      } else {
+        placeholderState = PlaceholderState.IN;
+      }
+    }
+
+    if (placeholderState == PlaceholderState.IN) {
+      if ("(".equals(actualValue)) {
+        placeholderParenthesesBalancedLevel++;
+      } else if (")".equals(actualValue) && placeholderParenthesesBalancedLevel > 0) {
+        placeholderParenthesesBalancedLevel--;
+      } else if (placeholderParenthesesBalancedLevel == 0) {
+        if (",".equals(actualValue)) {
+          placeholderState = PlaceholderState.OUT;
+        } else if (".".equals(actualValue)) {
+          placeholderState = PlaceholderState.LEAVING;
+        } else if (actualValue.equals(expectedValue)) {
+          placeholderState = PlaceholderState.OUT;
+        }
+      }
+    } else if (isPlaceholder(tokensToBeMatched.get(tokenIndexToBeMatched))) {
+      placeholderState = PlaceholderState.IN;
+      tokenIndexToBeMatched++;
+    }
+  }
+

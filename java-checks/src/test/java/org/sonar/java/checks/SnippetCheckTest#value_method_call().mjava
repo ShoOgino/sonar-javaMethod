@@ -1,0 +1,11 @@
+  @Test
+  public void value_method_call() {
+    SnippetCheck check = new SnippetCheck();
+    check.dontExample = "assertThat(value).isEqualTo(true);";
+    check.doExample = "assertThat(value).isTrue();";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/snippet/ValueMethodCall.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(7);
+  }
+
