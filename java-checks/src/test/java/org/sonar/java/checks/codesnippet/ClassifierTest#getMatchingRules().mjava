@@ -1,0 +1,14 @@
+  @Test
+  public void getMatchingRules() {
+    Parser<MyGrammar> p = getParser();
+    MyGrammar g = p.getGrammar();
+
+    assertThat(new Classifier(p, Collections.EMPTY_SET).getMatchingRules(Lists.newArrayList("foo"))).containsOnly();
+    assertThat(new Classifier(p, Sets.newHashSet(g.foo)).getMatchingRules(Lists.newArrayList("bla"))).containsOnly(g.foo);
+    assertThat(new Classifier(p, Sets.newHashSet(g.foo, g.bar)).getMatchingRules(Lists.newArrayList("bla"))).containsOnly(g.foo, g.bar);
+    assertThat(new Classifier(p, Sets.newHashSet(g.foo, g.bar, g.baz)).getMatchingRules(Lists.newArrayList("bla"))).containsOnly(g.foo, g.bar);
+    assertThat(new Classifier(p, Sets.newHashSet(g.foo)).getMatchingRules(Lists.newArrayList("bla", " "))).containsOnly();
+    assertThat(new Classifier(p, Sets.newHashSet(g.foo, g.baz)).getMatchingRules(Lists.newArrayList("bla bla"))).containsOnly(g.baz);
+
+  }
+

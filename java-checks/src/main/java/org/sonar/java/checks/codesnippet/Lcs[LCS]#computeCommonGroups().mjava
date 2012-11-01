@@ -1,0 +1,25 @@
+  private void computeCommonGroups() {
+    ensureCComputed();
+
+    int i = inputI.length();
+    int j = inputJ.length();
+
+    while (i != 0 && j != 0) {
+      if (comparator.compare(inputI.elementAt(i - 1), inputJ.elementAt(j - 1)) == 0) {
+        CommonGroup currentCommonGroup = new CommonGroup();
+
+        do {
+          currentCommonGroup.prepend(i - 1, j - 1);
+          i--;
+          j--;
+        } while (i != 0 && j != 0 && comparator.compare(inputI.elementAt(i - 1), inputJ.elementAt(j - 1)) == 0);
+
+        commonGroups.add(0, currentCommonGroup);
+      } else if (c[i - 1][j] == c[i][j]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+  }
+

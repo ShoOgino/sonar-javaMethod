@@ -1,0 +1,25 @@
+  private void computeVaryingGroups() {
+    ensureCommonGroupsComputed();
+
+    int i = 0;
+    int j = 0;
+
+    for (CommonGroup commonGroup : commonGroups) {
+      List<Integer> indexesI = commonGroup.getIndexesI();
+      List<Integer> indexesJ = commonGroup.getIndexesJ();
+
+      VaryingGroup varyingGroup = getVaryingGroup(i, j, indexesI.get(0), indexesJ.get(0));
+      if (!varyingGroup.isEmpty()) {
+        varyingGroups.add(varyingGroup);
+      }
+
+      i = indexesI.get(indexesI.size() - 1) + 1;
+      j = indexesJ.get(indexesJ.size() - 1) + 1;
+    }
+
+    VaryingGroup varyingGroup = getVaryingGroup(i, j, inputI.length(), inputJ.length());
+    if (!varyingGroup.isEmpty()) {
+      varyingGroups.add(varyingGroup);
+    }
+  }
+

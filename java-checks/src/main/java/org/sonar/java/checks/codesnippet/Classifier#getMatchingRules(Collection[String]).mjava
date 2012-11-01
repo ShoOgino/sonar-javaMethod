@@ -1,0 +1,22 @@
+  public Set<Rule> getMatchingRules(Collection<String> inputs) {
+    checkNotNull(inputs);
+    checkArgument(!inputs.isEmpty(), "inputs cannot be empty");
+
+    Set<Rule> matchingRules = Sets.newHashSet();
+
+    for (Rule rule : rules) {
+      parser.setRootRule(rule);
+
+      try {
+        for (String input : inputs) {
+          parser.parse(input);
+        }
+        matchingRules.add(rule);
+      } catch (RecognitionException re) {
+        /* At least one of the inputs did not match */
+      }
+    }
+
+    return matchingRules;
+  }
+
