@@ -1,0 +1,24 @@
+  public Set<Rule> getMatchingRules(Collection<List<Token>> inputsTokens) {
+    checkNotNull(inputsTokens);
+    checkArgument(!inputsTokens.isEmpty(), "inputsTokens cannot be empty");
+
+    Set<Rule> matchingRules = Sets.newHashSet();
+
+    for (Rule rule : rules) {
+      parser.setRootRule(rule);
+
+      boolean allInputsMatched = true;
+      for (List<Token> inputTokens : inputsTokens) {
+        if (prefixParser.parse(inputTokens) != PrefixParseResult.FULL_MATCH) {
+          allInputsMatched = false;
+          break;
+        }
+      }
+      if (allInputsMatched) {
+        matchingRules.add(rule);
+      }
+    }
+
+    return matchingRules;
+  }
+
