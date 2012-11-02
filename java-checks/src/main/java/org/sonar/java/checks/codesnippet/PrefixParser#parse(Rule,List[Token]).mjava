@@ -1,6 +1,9 @@
-  public PrefixParseResult parse(List<Token> tokens) {
+  public PrefixParseResult parse(Rule rule, List<Token> tokens) {
+
+    Rule previousRootRule = parser.getRootRule();
 
     try {
+      parser.setRootRule(rule);
       parser.parse(tokens);
 
       int lastAttemptedTokenIndex = parser.getParsingState().getOutpostMatcherTokenIndex();
@@ -14,6 +17,8 @@
       return lastAttemptedTokenIndex == tokens.size() ?
           PrefixParseResult.PREFIX_MATCH :
           PrefixParseResult.MISMATCH;
+    } finally {
+      parser.setRootRule(previousRootRule);
     }
   }
 

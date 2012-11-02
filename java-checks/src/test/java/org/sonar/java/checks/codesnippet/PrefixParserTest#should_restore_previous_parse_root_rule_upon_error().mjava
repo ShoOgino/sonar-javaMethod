@@ -1,0 +1,14 @@
+  @Test
+  public void should_restore_previous_parse_root_rule_upon_error() {
+    Parser<MyGrammar> p = getParser();
+    MyGrammar g = p.getGrammar();
+
+    p.setRootRule(g.foo);
+
+    PrefixParser prefixParser = new PrefixParser(p);
+    assertThat(p.getRootRule()).isEqualTo(g.foo);
+
+    assertThat(prefixParser.parse(g.bar, Collections.EMPTY_LIST)).isEqualTo(PrefixParseResult.PREFIX_MATCH);
+    assertThat(p.getRootRule()).isEqualTo(g.foo);
+  }
+

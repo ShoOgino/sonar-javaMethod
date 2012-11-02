@@ -1,0 +1,22 @@
+  @Override
+  public boolean isMatching(List<Token> tokens) {
+    if (tokens.size() < tokensToMatch.size()) {
+      return false;
+    }
+
+    for (int i = 0; i < tokensToMatch.size(); i++) {
+      Token tokenToMatch = tokensToMatch.get(i);
+      Token token = tokens.get(i);
+
+      if (comparator.compare(tokenToMatch, token) != 0) {
+        return false;
+      }
+    }
+
+    if (hasNextPatternMatcher()) {
+      return getNextPatternMatcher().isMatching(tokens.subList(tokensToMatch.size(), tokens.size()));
+    } else {
+      return true;
+    }
+  }
+

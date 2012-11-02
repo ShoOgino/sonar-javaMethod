@@ -1,0 +1,18 @@
+  @Test
+  public void isMatching_should_call_next_pattern_matcher_with_right_tokens() {
+    Token token1 = mockToken("token1");
+    Token token2 = mockToken("token2");
+    Token token3 = mockToken("token3");
+
+    List<Token> tokensToMatch = Lists.newArrayList(token1);
+
+    Comparator<Token> comparator = mock(Comparator.class);
+
+    PatternMatcher nextPatternMatcher = mock(PatternMatcher.class);
+    when(nextPatternMatcher.isMatching(Lists.newArrayList(token2, token3))).thenReturn(true);
+    CommonPatternMatcher patternMatcher = new CommonPatternMatcher(nextPatternMatcher, tokensToMatch, comparator);
+
+    assertThat(patternMatcher.isMatching(Lists.newArrayList(token1, token2, token3))).isEqualTo(true);
+    assertThat(patternMatcher.isMatching(Lists.newArrayList(token1, token2))).isEqualTo(false);
+  }
+
