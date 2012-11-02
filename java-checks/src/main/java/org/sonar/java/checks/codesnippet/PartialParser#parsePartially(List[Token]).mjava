@@ -1,0 +1,14 @@
+  public PartialParseResult parsePartially(List<Token> tokens) {
+    try {
+      parser.parse(tokens);
+
+      return PartialParseResult.FULL_MATCH;
+    } catch (RecognitionException re) {
+      int lastAttemptedTokenIndex = parser.getParsingState().getOutpostMatcherTokenIndex();
+
+      return lastAttemptedTokenIndex == tokens.size() ?
+          PartialParseResult.PARTIAL_MATCH :
+          PartialParseResult.MISMATCH;
+    }
+  }
+
