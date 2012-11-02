@@ -4,16 +4,29 @@
 
     Set<Rule> matchingRules = Sets.newHashSet();
 
+    List<List<Token>> inputsTokens = Lists.newArrayList();
+    for (String input : inputs) {
+      try {
+        List<Token> tokens = lexer.lex(input);
+        tokens = removeEofToken(tokens);
+        inputsTokens.add(tokens);
+      } catch (LexerException e) {
+        throw new IllegalArgumentException("Unable to lex the input: " + input, e);
+      }
+    }
+
     for (Rule rule : rules) {
       parser.setRootRule(rule);
 
-      try {
-        for (String input : inputs) {
-          parser.parse(input);
+      boolean allInputsMatched = true;
+      for (List<Token> inputTokens : inputsTokens) {
+        if (prefixParser.parse(inputTokens) != PrefixParseResult.FULL_MATCH) {
+          allInputsMatched = false;
+          break;
         }
+      }
+      if (allInputsMatched) {
         matchingRules.add(rule);
-      } catch (RecognitionException re) {
-        /* At least one of the inputs did not match */
       }
     }
 
