@@ -1,22 +1,28 @@
   @Override
   public boolean isMatching(List<Token> tokens) {
-    boolean result = false;
-
+    Set<Rule> ruleCandidates = Sets.newHashSet(rules);
     Token nextCommonPatternMatcherTokenToMatch = getNextCommonPatternMatcherTokenToMatch();
 
     int prefixMatchTokens = 0;
     for (Token token : tokens) {
       if (getNextCommonPatternMatcherComparator().compare(token, nextCommonPatternMatcherTokenToMatch) == 0) {
-        PrefixParser.PrefixParseResult prefixParseResult = prefixParser.parse(rule, tokens.subList(0, prefixMatchTokens));
+        ImmutableSet.Builder<Rule> mismatchingRules = ImmutableSet.builder();
 
-        if (prefixParseResult == PrefixParseResult.MISMATCH) {
+        for (Rule ruleCandidate : ruleCandidates) {
+          PrefixParser.PrefixParseResult prefixParseResult = prefixParser.parse(ruleCandidate, tokens.subList(0, prefixMatchTokens));
 
-          result = false;
-          break;
-        } else if (prefixParseResult == PrefixParseResult.FULL_MATCH &&
-          getNextPatternMatcher().isMatching(tokens.subList(prefixMatchTokens, tokens.size()))) {
+          if (prefixParseResult == PrefixParseResult.MISMATCH) {
+            mismatchingRules.add(ruleCandidate);
+          } else if (prefixParseResult == PrefixParseResult.FULL_MATCH &&
+            getNextPatternMatcher().isMatching(tokens.subList(prefixMatchTokens, tokens.size()))) {
 
-          result = true;
+            return true;
+          }
+        }
+
+        ruleCandidates.removeAll(mismatchingRules.build());
+
+        if (ruleCandidates.isEmpty()) {
           break;
         }
       }
@@ -24,6 +30,6 @@
       prefixMatchTokens++;
     }
 
-    return result;
+    return false;
   }
 

@@ -1,0 +1,66 @@
+  @Test
+  public void getPatternMatcher() {
+    ElementSequence<Token> inputI = mock(ElementSequence.class);
+    ElementSequence<Token> inputJ = mock(ElementSequence.class);
+    Comparator<Token> comparator = mock(Comparator.class);
+    PrefixParser prefixParser = mock(PrefixParser.class);
+    Rule rule1 = mock(Rule.class);
+    Rule rule2 = mock(Rule.class);
+    Set<Rule> rules = ImmutableSet.of(rule1, rule2);
+
+    PatternMatcherBuilder patternMatcherBuilder = new PatternMatcherBuilder(inputI, inputJ, comparator, prefixParser, rules);
+
+    CommonGroup commonGroup1 = mock(CommonGroup.class);
+    when(commonGroup1.getIndexesI()).thenReturn(Lists.newArrayList(0));
+    when(commonGroup1.getIndexesJ()).thenReturn(Lists.newArrayList(0));
+
+    VaryingGroup varyingGroup = mock(VaryingGroup.class);
+    when(varyingGroup.getIndexesI()).thenReturn(Lists.newArrayList(1));
+    when(varyingGroup.getIndexesJ()).thenReturn(Lists.newArrayList(1, 2));
+
+    CommonGroup commonGroup2 = mock(CommonGroup.class);
+    when(commonGroup2.getIndexesI()).thenReturn(Lists.newArrayList(2));
+    when(commonGroup2.getIndexesJ()).thenReturn(Lists.newArrayList(3));
+
+    final List<Token> tokensI = Lists.newArrayList(mockToken("i0"), mockToken("i1"), mockToken("i2"));
+    final List<Token> tokensJ = Lists.newArrayList(mockToken("j0"), mockToken("j1"), mockToken("j2"), mockToken("j3"));
+
+    when(inputI.elementAt(Mockito.anyInt())).thenAnswer(new Answer<Token>() {
+      public Token answer(InvocationOnMock invocation) throws Throwable {
+        return tokensI.get((Integer) invocation.getArguments()[0]);
+      }
+    });
+    when(inputI.length()).thenReturn(tokensI.size());
+
+    when(inputJ.elementAt(Mockito.anyInt())).thenAnswer(new Answer<Token>() {
+      public Token answer(InvocationOnMock invocation) throws Throwable {
+        return tokensJ.get((Integer) invocation.getArguments()[0]);
+      }
+    });
+    when(inputJ.length()).thenReturn(tokensJ.size());
+
+    when(prefixParser.parse(rule1, tokensI.subList(1, 2))).thenReturn(PrefixParseResult.FULL_MATCH);
+    when(prefixParser.parse(rule2, tokensI.subList(1, 2))).thenReturn(PrefixParseResult.MISMATCH);
+    when(prefixParser.parse(rule1, tokensJ.subList(1, 3))).thenReturn(PrefixParseResult.FULL_MATCH);
+    when(prefixParser.parse(rule2, tokensI.subList(1, 2))).thenReturn(PrefixParseResult.PREFIX_MATCH);
+
+    PatternMatcher patternMatcher = patternMatcherBuilder.getPatternMatcher(Lists.newArrayList(commonGroup1, varyingGroup, commonGroup2));
+
+    assertThat(patternMatcher).isInstanceOf(CommonPatternMatcher.class);
+    CommonPatternMatcher commonPatternMatcher1 = (CommonPatternMatcher) patternMatcher;
+    assertThat(commonPatternMatcher1.getNextPatternMatcher()).isInstanceOf(VaryingPatternMatcher.class);
+    VaryingPatternMatcher varyingPatternMatcher = (VaryingPatternMatcher) commonPatternMatcher1.getNextPatternMatcher();
+    assertThat(varyingPatternMatcher.getNextPatternMatcher()).isInstanceOf(CommonPatternMatcher.class);
+    CommonPatternMatcher commonPatternMatcher2 = (CommonPatternMatcher) varyingPatternMatcher.getNextPatternMatcher();
+    assertThat(commonPatternMatcher2.getNextPatternMatcher()).isNull();
+
+    assertThat(commonPatternMatcher1.getComparator()).isEqualTo(comparator);
+    assertThat(commonPatternMatcher1.getTokensToMatch()).isEqualTo(tokensI.subList(0, 1));
+
+    assertThat(varyingPatternMatcher.getNextCommonPatternMatcherComparator()).isEqualTo(comparator);
+    assertThat(varyingPatternMatcher.getNextCommonPatternMatcherTokenToMatch()).isEqualTo(tokensI.get(2));
+
+    assertThat(commonPatternMatcher2.getComparator()).isEqualTo(comparator);
+    assertThat(commonPatternMatcher2.getTokensToMatch()).isEqualTo(tokensI.subList(2, 3));
+  }
+
