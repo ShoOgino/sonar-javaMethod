@@ -2,7 +2,8 @@
   public void leaveFile(AstNode node) {
     if (patternMatcher != null) {
       while (!tokens.isEmpty()) {
-        if (patternMatcher.match(tokens).isMatching()) {
+        PatternMatcherResult patternMatcherResult = patternMatcher.match(tokens);
+        if (patternMatcherResult.isMatching() && !isPrefixFalsePositive(patternMatcherResult, tokens)) {
           getContext().createLineViolation(this, "This should be rewritten as: {0}", tokens.get(0), doExample1);
         }
 

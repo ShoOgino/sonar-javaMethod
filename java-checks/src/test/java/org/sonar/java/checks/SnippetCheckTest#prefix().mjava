@@ -1,0 +1,11 @@
+  @Test
+  public void prefix() {
+    SnippetCheck check = new SnippetCheck();
+    check.dontExample1 = "@Ignore";
+    check.doExample1 = "@Ignore(\"message\")";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/snippet/Prefix.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(8);
+  }
+

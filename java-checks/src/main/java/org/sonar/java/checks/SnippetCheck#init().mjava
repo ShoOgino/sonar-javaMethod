@@ -1,7 +1,6 @@
   @Override
   public void init() {
     Lexer lexer = JavaLexer.create(Charset.forName("UTF-8"));
-    Comparator<Token> comparator = new TokenOriginalValueComparator();
 
     if (!StringUtils.isEmpty(dontExample1) && !StringUtils.isEmpty(dontExample2)) {
       TokenElementSequence inputI = new TokenElementSequence(getTokensWithoutEof(lexer.lex(dontExample1)));
@@ -21,16 +20,25 @@
 
       PrefixParser prefixParser = new PrefixParser(parser);
 
-      PatternMatcherBuilder patternMatcherBuilder = new PatternMatcherBuilder(inputI, inputJ, comparator, prefixParser, rules);
+      PatternMatcherBuilder patternMatcherBuilder = new PatternMatcherBuilder(inputI, inputJ, COMPARATOR, prefixParser, rules);
 
-      Lcs<Token> lcs = new Lcs<Token>(inputI, inputJ, comparator);
+      Lcs<Token> lcs = new Lcs<Token>(inputI, inputJ, COMPARATOR);
       List<Group> groups = lcs.getGroups();
 
       patternMatcher = patternMatcherBuilder.getPatternMatcher(groups);
     } else if (!StringUtils.isEmpty(dontExample1)) {
       List<Token> tokensToMatch = getTokensWithoutEof(lexer.lex(dontExample1));
 
-      patternMatcher = new CommonPatternMatcher(tokensToMatch, comparator);
+      patternMatcher = new CommonPatternMatcher(tokensToMatch, COMPARATOR);
+    }
+
+    if (!StringUtils.isEmpty(dontExample1) && !StringUtils.isEmpty(doExample1)) {
+      List<Token> dontExample1Tokens = getTokensWithoutEof(lexer.lex(dontExample1));
+      List<Token> doExample1Tokens = getTokensWithoutEof(lexer.lex(doExample1));
+
+      if (dontExample1Tokens.size() < doExample1Tokens.size() && isPrefix(dontExample1Tokens, doExample1Tokens)) {
+        firstTokenAfterPrefix = doExample1Tokens.get(dontExample1Tokens.size());
+      }
     }
   }
 
