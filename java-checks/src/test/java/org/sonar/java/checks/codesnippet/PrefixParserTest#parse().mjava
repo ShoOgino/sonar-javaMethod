@@ -2,16 +2,15 @@
   public void parse() {
     Parser<MyGrammar> p = getParser();
     MyGrammar g = p.getGrammar();
-    List<Token> tokens = getLexer().lex("foo");
-    tokens = tokens.subList(0, tokens.size() - 1); // Remove EOF
+    List<Token> tokens = lex("foo");
 
     PrefixParser prefixParser = new PrefixParser(p);
     assertThat(prefixParser.parse(g.foo, tokens)).isEqualTo(PrefixParser.PrefixParseResult.MISMATCH);
     assertThat(prefixParser.parse(g.bar, tokens)).isEqualTo(PrefixParser.PrefixParseResult.FULL_MATCH);
+    assertThat(prefixParser.parse(g.bar2, tokens)).isEqualTo(PrefixParser.PrefixParseResult.FULL_MATCH);
     assertThat(prefixParser.parse(g.baz, tokens)).isEqualTo(PrefixParser.PrefixParseResult.PREFIX_MATCH);
 
-    tokens = getLexer().lex("foo bar");
-    tokens = tokens.subList(0, tokens.size() - 1); // Remove EOF
+    tokens = lex("foo bar");
 
     assertThat(prefixParser.parse(g.bar, tokens)).isEqualTo(PrefixParser.PrefixParseResult.MISMATCH);
     assertThat(prefixParser.parse(g.baz, tokens)).isEqualTo(PrefixParser.PrefixParseResult.FULL_MATCH);

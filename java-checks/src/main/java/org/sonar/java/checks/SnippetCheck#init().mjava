@@ -1,16 +1,36 @@
   @Override
   public void init() {
-    if (!StringUtils.isEmpty(dontExample)) {
-      tokensToBeMatched = JavaLexer.create(Charset.forName("UTF-8")).lex(dontExample);
+    Lexer lexer = JavaLexer.create(Charset.forName("UTF-8"));
+    Comparator<Token> comparator = new TokenOriginalValueComparator();
 
-      // Exclude the EOF token
-      tokensToBeMatched = tokensToBeMatched.subList(0, tokensToBeMatched.size() - 1);
+    if (!StringUtils.isEmpty(dontExample1) && !StringUtils.isEmpty(dontExample2)) {
+      TokenElementSequence inputI = new TokenElementSequence(getTokensWithoutEof(lexer.lex(dontExample1)));
+      TokenElementSequence inputJ = new TokenElementSequence(getTokensWithoutEof(lexer.lex(dontExample2)));
 
-      // "value" cannot be last
-      // "value(" is not allowed
-      // "value.value" is not allowed
-    } else {
-      tokensToBeMatched = Lists.newArrayList();
+      JavaPatternGrammar g = new JavaPatternGrammar();
+      Parser<JavaPatternGrammar> parser = g.getParser(lexer);
+      Set<Rule> rules = ImmutableSet.of(
+          g.characterLiteral,
+          g.stringLiteral,
+          g.nullLiteral,
+          g.booleanLiteral,
+          g.integerLiteral,
+          g.floatingLiteral,
+          g.qualifiedIdentifier,
+          g.methodCall);
+
+      PrefixParser prefixParser = new PrefixParser(parser);
+
+      PatternMatcherBuilder patternMatcherBuilder = new PatternMatcherBuilder(inputI, inputJ, comparator, prefixParser, rules);
+
+      Lcs<Token> lcs = new Lcs<Token>(inputI, inputJ, comparator);
+      List<Group> groups = lcs.getGroups();
+
+      patternMatcher = patternMatcherBuilder.getPatternMatcher(groups);
+    } else if (!StringUtils.isEmpty(dontExample1)) {
+      List<Token> tokensToMatch = getTokensWithoutEof(lexer.lex(dontExample1));
+
+      patternMatcher = new CommonPatternMatcher(tokensToMatch, comparator);
     }
   }
 

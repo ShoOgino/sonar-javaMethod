@@ -1,0 +1,13 @@
+  @Override
+  public void leaveFile(AstNode node) {
+    if (patternMatcher != null) {
+      while (!tokens.isEmpty()) {
+        if (patternMatcher.isMatching(tokens)) {
+          getContext().createLineViolation(this, "This should be rewritten as: {0}", tokens.get(0), doExample1);
+        }
+
+        tokens.remove(0);
+      }
+    }
+  }
+
