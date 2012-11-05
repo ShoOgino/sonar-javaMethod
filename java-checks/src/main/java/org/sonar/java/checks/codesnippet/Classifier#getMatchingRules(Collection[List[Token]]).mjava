@@ -2,14 +2,18 @@
     checkNotNull(inputsTokens);
     checkArgument(!inputsTokens.isEmpty(), "inputsTokens cannot be empty");
 
-    ImmutableSet.Builder<Rule> matchingRulesBuilder = ImmutableSet.builder();
+    Set<Rule> matchingRules = Sets.newHashSet();
 
     for (List<Token> inputTokens : inputsTokens) {
       boolean atLeastOneRuleMatched = false;
 
       for (Rule rule : rules) {
+        if (matchingRules.contains(rule) && atLeastOneRuleMatched) {
+          continue;
+        }
+
         if (prefixParser.parse(rule, inputTokens) == PrefixParseResult.FULL_MATCH) {
-          matchingRulesBuilder.add(rule);
+          matchingRules.add(rule);
           atLeastOneRuleMatched = true;
         }
       }
@@ -17,6 +21,6 @@
       checkState(atLeastOneRuleMatched, "no rule matched the input: " + inputTokens + " (rules attempted: " + rules + ")");
     }
 
-    return matchingRulesBuilder.build();
+    return matchingRules;
   }
 
