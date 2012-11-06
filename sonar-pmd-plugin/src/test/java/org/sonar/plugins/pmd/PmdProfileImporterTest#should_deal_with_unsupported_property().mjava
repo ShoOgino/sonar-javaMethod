@@ -1,0 +1,11 @@
+  @Test
+  public void should_deal_with_unsupported_property() {
+    Reader reader = read("/org/sonar/plugins/pmd/simple.xml");
+
+    RulesProfile profile = importer.importProfile(reader, messages);
+    ActiveRule check = profile.getActiveRuleByConfigKey("pmd", "rulesets/coupling.xml/CouplingBetweenObjects");
+
+    assertThat(check.getParameter("threshold")).isNull();
+    assertThat(messages.getWarnings()).hasSize(1);
+  }
+

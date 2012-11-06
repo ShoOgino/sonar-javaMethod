@@ -1,0 +1,11 @@
+  @Test
+  public void should_warn_on_unknown_rule() {
+    Reader reader = read("/org/sonar/plugins/pmd/simple.xml");
+
+    importer = new PmdProfileImporter(mock(RuleFinder.class));
+    RulesProfile profile = importer.importProfile(reader, messages);
+
+    assertThat(profile.getActiveRules()).isEmpty();
+    assertThat(messages.getWarnings()).hasSize(3);
+  }
+

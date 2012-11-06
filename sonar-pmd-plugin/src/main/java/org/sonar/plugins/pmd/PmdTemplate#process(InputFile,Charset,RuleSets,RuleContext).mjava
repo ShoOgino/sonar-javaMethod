@@ -1,0 +1,18 @@
+  public void process(InputFile inputFile, Charset encoding, RuleSets rulesets, RuleContext ruleContext) {
+    File file = inputFile.getFile();
+    ruleContext.setSourceCodeFilename(file.getAbsolutePath());
+
+    InputStream inputStream = null;
+    try {
+      inputStream = inputFile.getInputStream();
+
+      pmd.processFile(inputStream, encoding.displayName(), rulesets, ruleContext);
+    } catch (PMDException e) {
+      LOG.error("Fail to execute PMD. Following file is ignored: " + file, e.getCause());
+    } catch (Exception e) {
+      LOG.error("Fail to execute PMD. Following file is ignored: " + file, e);
+    } finally {
+      Closeables.closeQuietly(inputStream);
+    }
+  }
+
