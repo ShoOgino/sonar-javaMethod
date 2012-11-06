@@ -1,0 +1,11 @@
+  protected void consume(String value, CodeReader code, Lexer lexer) {
+    Token token = tokenBuilder
+        .setType(value.endsWith("f") || value.endsWith("F") ? JavaTokenType.FLOAT_LITERAL : JavaTokenType.DOUBLE_LITERAL)
+        .setValueAndOriginalValue(value)
+        .setURI(lexer.getURI())
+        .setLine(code.getPreviousCursor().getLine())
+        .setColumn(code.getPreviousCursor().getColumn())
+        .build();
+    lexer.addToken(token);
+  }
+

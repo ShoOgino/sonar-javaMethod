@@ -18,25 +18,10 @@
         .withChannel(new CharacterLiteralChannel('\'', JavaTokenType.CHARACTER_LITERAL))
 
         // Floating-Point Literals
-        // Decimal
-        .withChannel(digitStart(new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "[0-9_]++\\.([0-9_]++)?+" + EXP + "?+" + FLOAT_SUFFIX + "?+")))
-        // Decimal
-        .withChannel(start('.', new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "\\.[0-9][0-9_]*+" + EXP + "?+" + FLOAT_SUFFIX + "?+")))
-        // Decimal
-        .withChannel(digitStart(new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "[0-9_]++" + FLOAT_SUFFIX)))
-        .withChannel(digitStart(new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "[0-9_]++" + EXP + FLOAT_SUFFIX + "?+")))
-        // Hexadecimal
-        .withChannel(start('0', new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "0[xX][0-9_a-fA-F]++\\.[0-9_a-fA-F]*+" + BINARY_EXP + "?+" + FLOAT_SUFFIX + "?+")))
-        // Hexadecimal
-        .withChannel(start('0', new RegexpChannel(JavaTokenType.FLOATING_LITERAL, "0[xX][0-9_a-fA-F]++" + BINARY_EXP + FLOAT_SUFFIX + "?+")))
+        .withChannel(new FloatLiteralChannel())
 
         // Integer Literals
-        // Hexadecimal
-        .withChannel(start('0', new RegexpChannel(JavaTokenType.INTEGER_LITERAL, "0[xX][0-9_a-fA-F]++" + INT_SUFFIX + "?+")))
-        // Binary (Java 7)
-        .withChannel(start('0', new RegexpChannel(JavaTokenType.INTEGER_LITERAL, "0[bB][01_]++" + INT_SUFFIX + "?+")))
-        // Decimal and Octal
-        .withChannel(digitStart(new RegexpChannel(JavaTokenType.INTEGER_LITERAL, "[0-9_]++" + INT_SUFFIX + "?+")))
+        .withChannel(new IntegerLiteralChannel())
 
         .withChannel(new JavaIdentifierAndKeywordChannel(JavaKeyword.values()))
 
