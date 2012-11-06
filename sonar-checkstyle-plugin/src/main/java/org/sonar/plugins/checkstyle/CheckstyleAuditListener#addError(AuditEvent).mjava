@@ -1,0 +1,19 @@
+  public void addError(AuditEvent event) {
+    String ruleKey = getRuleKey(event);
+    if (ruleKey != null) {
+      String message = getMessage(event);
+      // In Checkstyle 5.5 exceptions are reported as an events from TreeWalker
+      if ("com.puppycrawl.tools.checkstyle.TreeWalker".equals(ruleKey)) {
+        LOG.warn(message);
+      }
+      Rule rule = ruleFinder.findByKey(CheckstyleConstants.REPOSITORY_KEY, ruleKey);
+      if (rule != null) {
+        initResource(event);
+        Violation violation = Violation.create(rule, currentResource)
+            .setLineId(getLineId(event))
+            .setMessage(message);
+        context.saveViolation(violation);
+      }
+    }
+  }
+

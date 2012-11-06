@@ -1,0 +1,16 @@
+  private CheckstyleVersion() {
+    InputStream input = getClass().getResourceAsStream(PROPERTIES_PATH);
+    try {
+      Properties properties = new Properties();
+      properties.load(input);
+      this.version = properties.getProperty("checkstyle.version");
+
+    } catch (IOException e) {
+      LoggerFactory.getLogger(getClass()).warn("Can not load the Checkstyle version from the file " + PROPERTIES_PATH);
+      this.version = "";
+
+    } finally {
+      IOUtils.closeQuietly(input);
+    }
+  }
+

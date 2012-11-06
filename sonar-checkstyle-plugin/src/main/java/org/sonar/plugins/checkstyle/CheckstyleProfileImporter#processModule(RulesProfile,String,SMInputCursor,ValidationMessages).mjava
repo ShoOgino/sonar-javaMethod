@@ -1,0 +1,10 @@
+  private void processModule(RulesProfile profile, String path, SMInputCursor moduleCursor, ValidationMessages messages) throws XMLStreamException {
+    String moduleName = moduleCursor.getAttrValue("name");
+    if (isFilter(moduleName)) {
+      messages.addWarningText("Checkstyle filters are not imported: " + moduleName);
+
+    } else if (!isIgnored(moduleName)) {
+      processRule(profile, path, moduleName, moduleCursor, messages);
+    }
+  }
+

@@ -1,0 +1,18 @@
+  @VisibleForTesting
+  static String getRuleKey(AuditEvent event) {
+    String key = null;
+    try {
+      key = event.getModuleId();
+    } catch (Exception e) {
+      // checkstyle throws a NullPointerException if the message is not set
+    }
+    if (StringUtils.isBlank(key)) {
+      try {
+        key = event.getSourceName();
+      } catch (Exception e) {
+        // checkstyle can throw a NullPointerException if the message is not set
+      }
+    }
+    return key;
+  }
+

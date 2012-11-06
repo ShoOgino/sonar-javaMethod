@@ -1,0 +1,9 @@
+  @Test
+  public void priorityIsOptional() {
+    Reader reader = new StringReader(TestUtils.getResourceContent("/org/sonar/plugins/checkstyle/CheckstyleProfileImporterTest/simple.xml"));
+    RulesProfile profile = importer.importProfile(reader, messages);
+
+    ActiveRule activeRule = profile.getActiveRuleByConfigKey("checkstyle", "Checker/TreeWalker/EqualsHashCode");
+    assertThat(activeRule.getSeverity(), is(RulePriority.BLOCKER)); // reuse the rule default priority
+  }
+
