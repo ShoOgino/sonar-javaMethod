@@ -1,0 +1,14 @@
+  public void analyse(Project project, SensorContext context) {
+    String path = (String) project.getProperty(CoreProperties.COBERTURA_REPORT_PATH_PROPERTY);
+    if (path == null) {
+      // wasn't configured - skip
+      return;
+    }
+    File report = project.getFileSystem().resolvePath(path);
+    if (!report.exists() || !report.isFile()) {
+      LoggerFactory.getLogger(getClass()).warn("Cobertura report not found at {}", report);
+      return;
+    }
+    parseReport(report, context);
+  }
+

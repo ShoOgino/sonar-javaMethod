@@ -1,0 +1,8 @@
+  @Test
+  public void doNotCollectProjectLineCoverage() throws URISyntaxException {
+    sensor.parseReport(getCoverageReport(), context);
+
+    verify(context, never()).saveMeasure(eq(CoreMetrics.LINE_COVERAGE), anyDouble());
+    verify(context, never()).saveMeasure(argThat(new IsMeasure(CoreMetrics.COVERAGE_LINE_HITS_DATA)));
+  }
+
