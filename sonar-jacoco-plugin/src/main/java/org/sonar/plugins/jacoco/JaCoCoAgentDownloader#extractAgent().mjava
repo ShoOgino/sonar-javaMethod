@@ -1,0 +1,12 @@
+  private File extractAgent() {
+    try {
+      File agent = File.createTempFile("jacocoagent", ".jar");
+      AgentJar.extractTo(agent);
+      FileUtils.forceDeleteOnExit(agent); // TODO evil method
+      JaCoCoUtils.LOG.info("JaCoCo agent (version " + JaCoCo.VERSION + ") extracted: {}", agent);
+      return agent;
+    } catch (IOException e) {
+      throw new SonarException(e);
+    }
+  }
+

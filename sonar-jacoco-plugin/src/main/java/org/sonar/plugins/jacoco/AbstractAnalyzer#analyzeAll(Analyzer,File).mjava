@@ -1,0 +1,17 @@
+  /**
+   * Copied from {@link Analyzer#analyzeAll(File)} in order to add logging.
+   */
+  private void analyzeAll(Analyzer analyzer, File file) {
+    if (file.isDirectory()) {
+      for (File f : file.listFiles()) {
+        analyzeAll(analyzer, f);
+      }
+    } else if (file.getName().endsWith(".class")) {
+      try {
+        analyzer.analyzeAll(file);
+      } catch (Exception e) {
+        JaCoCoUtils.LOG.warn("Exception during analysis of file " + file.getAbsolutePath(), e);
+      }
+    }
+  }
+

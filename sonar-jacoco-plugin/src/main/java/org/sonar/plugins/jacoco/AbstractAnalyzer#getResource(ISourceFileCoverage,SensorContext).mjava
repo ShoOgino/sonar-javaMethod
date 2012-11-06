@@ -1,0 +1,18 @@
+  @VisibleForTesting
+  static JavaFile getResource(ISourceFileCoverage coverage, SensorContext context) {
+    String packageName = StringUtils.replaceChars(coverage.getPackageName(), '/', '.');
+    String fileName = StringUtils.substringBeforeLast(coverage.getName(), ".");
+
+    JavaFile resource = new JavaFile(packageName, fileName);
+
+    JavaFile resourceInContext = context.getResource(resource);
+    if (null == resourceInContext) {
+      return null; // Do not save measures on resource which doesn't exist in the context
+    }
+    if (ResourceUtils.isUnitTestClass(resourceInContext)) {
+      return null; // Ignore unit tests
+    }
+
+    return resourceInContext;
+  }
+
