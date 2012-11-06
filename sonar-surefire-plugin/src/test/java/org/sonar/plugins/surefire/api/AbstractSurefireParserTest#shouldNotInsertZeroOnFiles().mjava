@@ -1,0 +1,10 @@
+  @Test
+  public void shouldNotInsertZeroOnFiles() throws URISyntaxException {
+    AbstractSurefireParser parser = newParser();
+    SensorContext context = mockContext();
+
+    parser.collect(new Project("foo"), context, getDir("noTests"));
+
+    verify(context, never()).saveMeasure(any(Resource.class), any(Metric.class), anyDouble());
+  }
+
