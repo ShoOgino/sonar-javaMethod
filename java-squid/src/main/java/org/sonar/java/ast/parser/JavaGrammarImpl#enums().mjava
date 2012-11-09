@@ -2,10 +2,10 @@
    * 8.9. Enums
    */
   private void enums() {
-    enumDeclaration.is(ENUM, IDENTIFIER, opt(IMPLEMENTS, classTypeList), enumBody);
-    enumBody.is(LWING, opt(enumConstants), opt(COMMA), opt(enumBodyDeclarations), RWING);
-    enumConstants.is(enumConstant, o2n(COMMA, enumConstant));
-    enumConstant.is(o2n(annotation), IDENTIFIER, opt(arguments), opt(classBody));
-    enumBodyDeclarations.is(SEMI, o2n(classBodyDeclaration));
+    enumDeclaration.is(enumKeyword, identifier, optional(implementsKeyword, classTypeList), enumBody);
+    enumBody.is(lwing, optional(enumConstants), optional(comma), optional(enumBodyDeclarations), rwing);
+    enumConstants.is(enumConstant, zeroOrMore(comma, enumConstant));
+    enumConstant.is(zeroOrMore(annotation), identifier, optional(arguments), optional(classBody));
+    enumBodyDeclarations.is(semi, zeroOrMore(classBodyDeclaration));
   }
 

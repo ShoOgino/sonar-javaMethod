@@ -2,31 +2,31 @@
    * 8.1. Class Declaration
    */
   private void classDeclaration() {
-    classDeclaration.is(CLASS, IDENTIFIER, opt(typeParameters), opt(EXTENDS, classType), opt(IMPLEMENTS, classTypeList), classBody);
+    classDeclaration.is(classKeyword, identifier, optional(typeParameters), optional(extendsKeyword, classType), optional(implementsKeyword, classTypeList), classBody);
 
-    classBody.is(LWING, o2n(classBodyDeclaration), RWING);
+    classBody.is(lwing, zeroOrMore(classBodyDeclaration), rwing);
     classBodyDeclaration.is(firstOf(
-        SEMI,
+        semi,
         classInitDeclaration,
-        and(o2n(modifier), memberDecl)));
-    classInitDeclaration.is(opt(STATIC), block);
+        sequence(zeroOrMore(modifier), memberDecl)));
+    classInitDeclaration.is(optional(staticKeyword), block);
     memberDecl.is(firstOf(
-        and(typeParameters, genericMethodOrConstructorRest),
-        and(type, IDENTIFIER, methodDeclaratorRest),
+        sequence(typeParameters, genericMethodOrConstructorRest),
+        sequence(type, identifier, methodDeclaratorRest),
         fieldDeclaration,
-        and(VOID, IDENTIFIER, voidMethodDeclaratorRest),
-        and(IDENTIFIER, constructorDeclaratorRest),
+        sequence(voidKeyword, identifier, voidMethodDeclaratorRest),
+        sequence(identifier, constructorDeclaratorRest),
         interfaceDeclaration,
         classDeclaration,
         enumDeclaration,
         annotationTypeDeclaration));
-    fieldDeclaration.is(type, variableDeclarators, SEMI);
+    fieldDeclaration.is(type, variableDeclarators, semi);
     genericMethodOrConstructorRest.is(firstOf(
-        and(firstOf(type, VOID), IDENTIFIER, methodDeclaratorRest),
-        and(IDENTIFIER, constructorDeclaratorRest)));
-    methodDeclaratorRest.is(formalParameters, o2n(dim), opt(THROWS, classTypeList), firstOf(methodBody, SEMI));
-    voidMethodDeclaratorRest.is(formalParameters, opt(THROWS, classTypeList), firstOf(methodBody, SEMI));
-    constructorDeclaratorRest.is(formalParameters, opt(THROWS, classTypeList), methodBody);
+        sequence(firstOf(type, voidKeyword), identifier, methodDeclaratorRest),
+        sequence(identifier, constructorDeclaratorRest)));
+    methodDeclaratorRest.is(formalParameters, zeroOrMore(dim), optional(throwsKeyword, classTypeList), firstOf(methodBody, semi));
+    voidMethodDeclaratorRest.is(formalParameters, optional(throwsKeyword, classTypeList), firstOf(methodBody, semi));
+    constructorDeclaratorRest.is(formalParameters, optional(throwsKeyword, classTypeList), methodBody);
     methodBody.is(block);
   }
 

@@ -2,12 +2,12 @@
    * 8.4.1. Formal Parameters
    */
   private void formalParameters() {
-    formalParameters.is(LPAR, opt(formalParameterDecls), RPAR);
-    formalParameter.is(o2n(firstOf(FINAL, annotation)), type, variableDeclaratorId);
-    formalParameterDecls.is(o2n(firstOf(FINAL, annotation)), type, formalParametersDeclsRest);
+    formalParameters.is(lpar, optional(formalParameterDecls), rpar);
+    formalParameter.is(zeroOrMore(firstOf(finalKeyword, annotation)), type, variableDeclaratorId);
+    formalParameterDecls.is(zeroOrMore(firstOf(finalKeyword, annotation)), type, formalParametersDeclsRest);
     formalParametersDeclsRest.is(firstOf(
-        and(variableDeclaratorId, opt(COMMA, formalParameterDecls)),
-        and(ELLIPSIS, variableDeclaratorId)));
-    variableDeclaratorId.is(IDENTIFIER, o2n(dim));
+        sequence(variableDeclaratorId, optional(comma, formalParameterDecls)),
+        sequence(ellipsis, variableDeclaratorId)));
+    variableDeclaratorId.is(identifier, zeroOrMore(dim));
   }
 

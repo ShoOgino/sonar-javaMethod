@@ -3,20 +3,20 @@
    */
   private void blocksAndStatements() {
     // 14.2. Blocks
-    block.is(LWING, blockStatements, RWING);
-    blockStatements.is(o2n(blockStatement));
+    block.is(lwing, blockStatements, rwing);
+    blockStatements.is(zeroOrMore(blockStatement));
     blockStatement.is(firstOf(
         localVariableDeclarationStatement,
-        and(o2n(modifier), firstOf(classDeclaration, enumDeclaration)),
+        sequence(zeroOrMore(modifier), firstOf(classDeclaration, enumDeclaration)),
         statement));
 
     // 14.4. Local Variable Declaration Statements
-    localVariableDeclarationStatement.is(variableModifiers, type, variableDeclarators, SEMI);
-    variableModifiers.is(o2n(firstOf(
+    localVariableDeclarationStatement.is(variableModifiers, type, variableDeclarators, semi);
+    variableModifiers.is(zeroOrMore(firstOf(
         annotation,
-        FINAL)));
-    variableDeclarators.is(variableDeclarator, o2n(COMMA, variableDeclarator));
-    variableDeclarator.is(IDENTIFIER, o2n(dim), opt(EQU, variableInitializer));
+        finalKeyword)));
+    variableDeclarators.is(variableDeclarator, zeroOrMore(comma, variableDeclarator));
+    variableDeclarator.is(identifier, zeroOrMore(dim), optional(equ, variableInitializer));
 
     // 14.5. Statements
     statement.is(firstOf(
@@ -38,63 +38,63 @@
         emptyStatement));
 
     // 14.6. The Empty Statement
-    emptyStatement.is(SEMI);
+    emptyStatement.is(semi);
     // 14.7. Labeled Statements
-    labeledStatement.is(IDENTIFIER, COLON, statement);
+    labeledStatement.is(identifier, colon, statement);
     // 14.8. Expression Statements
-    expressionStatement.is(statementExpression, SEMI);
+    expressionStatement.is(statementExpression, semi);
     // 14.9. The if Statement
-    ifStatement.is(IF, parExpression, statement, opt(ELSE, statement));
+    ifStatement.is(ifKeyword, parExpression, statement, optional(elseKeyword, statement));
     // 14.10. The assert Statement
-    assertStatement.is(ASSERT, expression, opt(COLON, expression), SEMI);
+    assertStatement.is(assertKeyword, expression, optional(colon, expression), semi);
 
     // 14.11. The switch statement
-    switchStatement.is(SWITCH, parExpression, LWING, switchBlockStatementGroups, RWING);
-    switchBlockStatementGroups.is(o2n(switchBlockStatementGroup));
+    switchStatement.is(switchKeyword, parExpression, lwing, switchBlockStatementGroups, rwing);
+    switchBlockStatementGroups.is(zeroOrMore(switchBlockStatementGroup));
     switchBlockStatementGroup.is(switchLabel, blockStatements);
     switchLabel.is(firstOf(
-        and(CASE, constantExpression, COLON),
-        and(CASE, enumConstantName, COLON),
-        and(DEFAULT, COLON)));
-    enumConstantName.is(IDENTIFIER);
+        sequence(caseKeyword, constantExpression, colon),
+        sequence(caseKeyword, enumConstantName, colon),
+        sequence(defaultKeyword, colon)));
+    enumConstantName.is(identifier);
 
     // 14.12. The while Statement
-    whileStatement.is(WHILE, parExpression, statement);
+    whileStatement.is(whileKeyword, parExpression, statement);
     // 14.13. The do Statement
-    doStatement.is(DO, statement, WHILE, parExpression, SEMI);
+    doStatement.is(doKeyword, statement, whileKeyword, parExpression, semi);
 
     // 14.14. The for Statement
     forStatement.is(firstOf(
-        and(FOR, LPAR, opt(forInit), SEMI, opt(expression), SEMI, opt(forUpdate), RPAR, statement),
-        and(FOR, LPAR, formalParameter, COLON, expression, RPAR, statement)));
+        sequence(forKeyword, lpar, optional(forInit), semi, optional(expression), semi, optional(forUpdate), rpar, statement),
+        sequence(forKeyword, lpar, formalParameter, colon, expression, rpar, statement)));
     forInit.is(firstOf(
-        and(o2n(firstOf(FINAL, annotation)), type, variableDeclarators),
-        and(statementExpression, o2n(COMMA, statementExpression))));
-    forUpdate.is(statementExpression, o2n(COMMA, statementExpression));
+        sequence(zeroOrMore(firstOf(finalKeyword, annotation)), type, variableDeclarators),
+        sequence(statementExpression, zeroOrMore(comma, statementExpression))));
+    forUpdate.is(statementExpression, zeroOrMore(comma, statementExpression));
 
     // 14.15. The break Statement
-    breakStatement.is(BREAK, opt(IDENTIFIER), SEMI);
+    breakStatement.is(breakKeyword, optional(identifier), semi);
     // 14.16. The continue Statement
-    continueStatement.is(CONTINUE, opt(IDENTIFIER), SEMI);
+    continueStatement.is(continueKeyword, optional(identifier), semi);
     // 14.17. The return Statement
-    returnStatement.is(RETURN, opt(expression), SEMI);
+    returnStatement.is(returnKeyword, optional(expression), semi);
     // 14.18. The throw Statement
-    throwStatement.is(THROW, expression, SEMI);
+    throwStatement.is(throwKeyword, expression, semi);
     // 14.19. The synchronized Statement
-    synchronizedStatement.is(SYNCHRONIZED, parExpression, block);
+    synchronizedStatement.is(synchronizedKeyword, parExpression, block);
 
     // 14.20. The try Statement
     tryStatement.is(firstOf(
-        and(TRY, block, firstOf(and(one2n(catchClause), opt(finally_)), finally_)),
+        sequence(tryKeyword, block, firstOf(sequence(oneOrMore(catchClause), optional(finally_)), finally_)),
         tryWithResourcesStatement));
-    tryWithResourcesStatement.is(TRY, resourceSpecification, block, o2n(catchClause), opt(finally_));
-    resourceSpecification.is(LPAR, resource, o2n(SEMI, resource), opt(SEMI), RPAR);
-    resource.is(opt(variableModifiers), type, variableDeclaratorId, EQU, expression);
+    tryWithResourcesStatement.is(tryKeyword, resourceSpecification, block, zeroOrMore(catchClause), optional(finally_));
+    resourceSpecification.is(lpar, resource, zeroOrMore(semi, resource), optional(semi), rpar);
+    resource.is(optional(variableModifiers), type, variableDeclaratorId, equ, expression);
 
-    catchClause.is(CATCH, LPAR, catchFormalParameter, RPAR, block);
-    catchFormalParameter.is(opt(variableModifiers), catchType, variableDeclaratorId);
-    catchType.is(classType, o2n(OR, classType));
+    catchClause.is(catchKeyword, lpar, catchFormalParameter, rpar, block);
+    catchFormalParameter.is(optional(variableModifiers), catchType, variableDeclaratorId);
+    catchType.is(classType, zeroOrMore(or, classType));
 
-    finally_.is(FINALLY, block);
+    finally_.is(finallyKeyword, block);
   }
 

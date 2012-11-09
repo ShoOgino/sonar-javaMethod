@@ -2,29 +2,29 @@
    * 9.1. Interface Declarations
    */
   private void interfaceDeclarations() {
-    interfaceDeclaration.is(INTERFACE, IDENTIFIER, opt(typeParameters), opt(EXTENDS, classTypeList), interfaceBody);
+    interfaceDeclaration.is(interfaceKeyword, identifier, optional(typeParameters), optional(extendsKeyword, classTypeList), interfaceBody);
 
-    interfaceBody.is(LWING, o2n(interfaceBodyDeclaration), RWING);
+    interfaceBody.is(lwing, zeroOrMore(interfaceBodyDeclaration), rwing);
     interfaceBodyDeclaration.is(firstOf(
-        and(o2n(modifier), interfaceMemberDecl),
-        SEMI));
+        sequence(zeroOrMore(modifier), interfaceMemberDecl),
+        semi));
     interfaceMemberDecl.is(firstOf(
         interfaceMethodOrFieldDecl,
         interfaceGenericMethodDecl,
-        and(VOID, IDENTIFIER, voidInterfaceMethodDeclaratorsRest),
+        sequence(voidKeyword, identifier, voidInterfaceMethodDeclaratorsRest),
         interfaceDeclaration,
         annotationTypeDeclaration,
         classDeclaration,
         enumDeclaration));
-    interfaceMethodOrFieldDecl.is(type, IDENTIFIER, interfaceMethodOrFieldRest);
+    interfaceMethodOrFieldDecl.is(type, identifier, interfaceMethodOrFieldRest);
     interfaceMethodOrFieldRest.is(firstOf(
-        and(constantDeclaratorsRest, SEMI),
+        sequence(constantDeclaratorsRest, semi),
         interfaceMethodDeclaratorRest));
-    interfaceMethodDeclaratorRest.is(formalParameters, o2n(dim), opt(THROWS, classTypeList), SEMI);
-    interfaceGenericMethodDecl.is(typeParameters, firstOf(type, VOID), IDENTIFIER, interfaceMethodDeclaratorRest);
-    voidInterfaceMethodDeclaratorsRest.is(formalParameters, opt(THROWS, classTypeList), SEMI);
-    constantDeclaratorsRest.is(constantDeclaratorRest, o2n(COMMA, constantDeclarator));
-    constantDeclarator.is(IDENTIFIER, constantDeclaratorRest);
-    constantDeclaratorRest.is(o2n(dim), EQU, variableInitializer);
+    interfaceMethodDeclaratorRest.is(formalParameters, zeroOrMore(dim), optional(throwsKeyword, classTypeList), semi);
+    interfaceGenericMethodDecl.is(typeParameters, firstOf(type, voidKeyword), identifier, interfaceMethodDeclaratorRest);
+    voidInterfaceMethodDeclaratorsRest.is(formalParameters, optional(throwsKeyword, classTypeList), semi);
+    constantDeclaratorsRest.is(constantDeclaratorRest, zeroOrMore(comma, constantDeclarator));
+    constantDeclarator.is(identifier, constantDeclaratorRest);
+    constantDeclaratorRest.is(zeroOrMore(dim), equ, variableInitializer);
   }
 

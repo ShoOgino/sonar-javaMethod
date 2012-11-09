@@ -2,12 +2,12 @@
    * 7.3. Compilation Units
    */
   private void compilationsUnits() {
-    compilationUnit.is(opt(packageDeclaration), o2n(importDeclaration), o2n(typeDeclaration), EOF);
+    compilationUnit.is(optional(packageDeclaration), zeroOrMore(importDeclaration), zeroOrMore(typeDeclaration), eof);
 
-    packageDeclaration.is(o2n(annotation), PACKAGE, qualifiedIdentifier, SEMI);
-    importDeclaration.is(IMPORT, opt(STATIC), qualifiedIdentifier, opt(DOT, STAR), SEMI);
+    packageDeclaration.is(zeroOrMore(annotation), packageKeyword, qualifiedIdentifier, semi);
+    importDeclaration.is(importKeyword, optional(staticKeyword), qualifiedIdentifier, optional(dot, star), semi);
     typeDeclaration.is(firstOf(
-        and(o2n(modifier), firstOf(classDeclaration, enumDeclaration, interfaceDeclaration, annotationTypeDeclaration)),
-        SEMI));
+        sequence(zeroOrMore(modifier), firstOf(classDeclaration, enumDeclaration, interfaceDeclaration, annotationTypeDeclaration)),
+        semi));
   }
 

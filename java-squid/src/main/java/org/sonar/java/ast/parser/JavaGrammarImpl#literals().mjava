@@ -2,15 +2,60 @@
    * 3.10. Literals
    */
   private void literals() {
+    spacing.is(
+        whitespace(),
+        zeroOrMore(
+            token(GenericTokenType.COMMENT, firstOf(inlineComment(), multilineComment())),
+            whitespace())).skip();
+
+    eof.is(token(GenericTokenType.EOF, endOfInput())).skip();
+
+    characterLiteral.is(token(JavaTokenType.CHARACTER_LITERAL, characterLiteral()), spacing).skip();
+    stringLiteral.is(token(GenericTokenType.LITERAL, stringLiteral()), spacing).skip();
+
+    // FIXME underscore (Java 7)
+    exp.is(firstOf("E", "e"), optional(firstOf("+", "-")), decimalDigits());
+    binaryExp.is(firstOf("P", "p"), optional(firstOf("+", "-")), decimalDigits());
+    floatingLiteral.is(token(JavaTokenType.FLOAT_LITERAL, firstOf(
+        sequence(".", decimalDigits(), optional(exp), optional(firstOf("f", "F", "d", "D"))),
+        sequence(
+            decimalDigits(),
+            firstOf(
+                sequence(".", optional(decimalDigits()), optional(exp), optional(firstOf("f", "F", "d", "D"))),
+                firstOf("f", "F", "d", "D"),
+                sequence(exp, optional(firstOf("f", "F", "d", "D"))))),
+        sequence(
+            firstOf("0x", "0X"),
+            hexDigits(),
+            firstOf(
+                sequence(".", optional(hexDigits()), optional(binaryExp), optional(firstOf("f", "F", "d", "D"))),
+                sequence(binaryExp, optional(firstOf("f", "F", "d", "D"))))
+        ))), spacing).skip();
+    integerLiteral.is(token(JavaTokenType.INTEGER_LITERAL, firstOf(
+        sequence(firstOf("0x", "0X"), hexDigits(), optional(firstOf("L", "l"))),
+        sequence(firstOf("0b", "0B"), binaryDigits(), optional(firstOf("L", "l"))),
+        sequence(decimalDigits(), optional(firstOf("L", "l"))))), spacing).skip();
+
+    keyword.is(firstOf("assert", "break", "case", "catch", "class", "const", "continue", "default", "do", "else",
+        "enum", "extends", "finally", "final", "for", "goto", "if", "implements", "import", "interface",
+        "instanceof", "new", "package", "return", "static", "super", "switch", "synchronized", "this",
+        "throws", "throw", "try", "void", "while"
+        ), nextNot(letterOrDigit));
+    letterOrDigit.is(javaIdentifierPart());
+    identifier.is(nextNot(keyword), token(GenericTokenType.IDENTIFIER, javaIdentifier()), spacing).skip();
+
     literal.is(firstOf(
-        FLOAT_LITERAL,
-        INTEGER_LITERAL,
-        DOUBLE_LITERAL,
-        LONG_LITERAL,
-        CHARACTER_LITERAL,
-        LITERAL,
-        TRUE,
-        FALSE,
-        NULL));
+        trueKeyword,
+        falseKeyword,
+        nullKeyword,
+        characterLiteral,
+        stringLiteral,
+        floatingLiteral,
+        integerLiteral
+        // FIXME DOUBLE_LITERAL,
+        // FIXME LONG_LITERAL,
+        ));
+
+    root.is(spacing, compilationUnit).skip();
   }
 

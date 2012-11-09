@@ -2,31 +2,31 @@
    * 4. Types, Values and Variables
    */
   private void types() {
-    type.is(firstOf(basicType, classType), o2n(dim));
+    type.is(firstOf(basicType, classType), zeroOrMore(dim));
     referenceType.is(firstOf(
-        and(basicType, o2n(dim)),
-        and(classType, o2n(dim))));
-    classType.is(IDENTIFIER, opt(typeArguments), o2n(DOT, IDENTIFIER, opt(typeArguments)));
-    classTypeList.is(classType, o2n(COMMA, classType));
-    typeArguments.is(LT, typeArgument, o2n(COMMA, typeArgument), GT);
+        sequence(basicType, zeroOrMore(dim)),
+        sequence(classType, zeroOrMore(dim))));
+    classType.is(identifier, optional(typeArguments), zeroOrMore(dot, identifier, optional(typeArguments)));
+    classTypeList.is(classType, zeroOrMore(comma, classType));
+    typeArguments.is(lpoint, typeArgument, zeroOrMore(comma, typeArgument), rpoint);
     typeArgument.is(firstOf(
         referenceType,
-        and(QUERY, opt(firstOf(EXTENDS, SUPER), referenceType))));
-    typeParameters.is(LT, typeParameter, o2n(COMMA, typeParameter), GT);
-    typeParameter.is(IDENTIFIER, opt(EXTENDS, bound));
-    bound.is(classType, o2n(AND, classType));
+        sequence(query, optional(firstOf(extendsKeyword, superKeyword), referenceType))));
+    typeParameters.is(lpoint, typeParameter, zeroOrMore(comma, typeParameter), rpoint);
+    typeParameter.is(identifier, optional(extendsKeyword, bound));
+    bound.is(classType, zeroOrMore(and, classType));
     modifier.is(firstOf(
         annotation,
-        PUBLIC,
-        PROTECTED,
-        PRIVATE,
-        STATIC,
-        ABSTRACT,
-        FINAL,
-        NATIVE,
-        SYNCHRONIZED,
-        TRANSIENT,
-        VOLATILE,
-        STRICTFP));
+        publicKeyword,
+        protectedKeyword,
+        privateKeyword,
+        staticKeyword,
+        abstractKeyword,
+        finalKeyword,
+        nativeKeyword,
+        synchronizedKeyword,
+        transientKeyword,
+        volatileKeyword,
+        strictfpKeyword));
   }
 
