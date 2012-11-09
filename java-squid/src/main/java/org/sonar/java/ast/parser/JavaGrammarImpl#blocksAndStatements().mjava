@@ -5,21 +5,21 @@
     // 14.2. Blocks
     block.is(LWING, blockStatements, RWING);
     blockStatements.is(o2n(blockStatement));
-    blockStatement.is(or(
+    blockStatement.is(firstOf(
         localVariableDeclarationStatement,
-        and(o2n(modifier), or(classDeclaration, enumDeclaration)),
+        and(o2n(modifier), firstOf(classDeclaration, enumDeclaration)),
         statement));
 
     // 14.4. Local Variable Declaration Statements
     localVariableDeclarationStatement.is(variableModifiers, type, variableDeclarators, SEMI);
-    variableModifiers.is(o2n(or(
+    variableModifiers.is(o2n(firstOf(
         annotation,
         FINAL)));
     variableDeclarators.is(variableDeclarator, o2n(COMMA, variableDeclarator));
     variableDeclarator.is(IDENTIFIER, o2n(dim), opt(EQU, variableInitializer));
 
     // 14.5. Statements
-    statement.is(or(
+    statement.is(firstOf(
         block,
         assertStatement,
         ifStatement,
@@ -52,7 +52,7 @@
     switchStatement.is(SWITCH, parExpression, LWING, switchBlockStatementGroups, RWING);
     switchBlockStatementGroups.is(o2n(switchBlockStatementGroup));
     switchBlockStatementGroup.is(switchLabel, blockStatements);
-    switchLabel.is(or(
+    switchLabel.is(firstOf(
         and(CASE, constantExpression, COLON),
         and(CASE, enumConstantName, COLON),
         and(DEFAULT, COLON)));
@@ -64,11 +64,11 @@
     doStatement.is(DO, statement, WHILE, parExpression, SEMI);
 
     // 14.14. The for Statement
-    forStatement.is(or(
+    forStatement.is(firstOf(
         and(FOR, LPAR, opt(forInit), SEMI, opt(expression), SEMI, opt(forUpdate), RPAR, statement),
         and(FOR, LPAR, formalParameter, COLON, expression, RPAR, statement)));
-    forInit.is(or(
-        and(o2n(or(FINAL, annotation)), type, variableDeclarators),
+    forInit.is(firstOf(
+        and(o2n(firstOf(FINAL, annotation)), type, variableDeclarators),
         and(statementExpression, o2n(COMMA, statementExpression))));
     forUpdate.is(statementExpression, o2n(COMMA, statementExpression));
 
@@ -84,8 +84,8 @@
     synchronizedStatement.is(SYNCHRONIZED, parExpression, block);
 
     // 14.20. The try Statement
-    tryStatement.is(or(
-        and(TRY, block, or(and(one2n(catchClause), opt(finally_)), finally_)),
+    tryStatement.is(firstOf(
+        and(TRY, block, firstOf(and(one2n(catchClause), opt(finally_)), finally_)),
         tryWithResourcesStatement));
     tryWithResourcesStatement.is(TRY, resourceSpecification, block, o2n(catchClause), opt(finally_));
     resourceSpecification.is(LPAR, resource, o2n(SEMI, resource), opt(SEMI), RPAR);

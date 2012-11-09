@@ -4,29 +4,29 @@
   private void annotations() {
     annotationTypeDeclaration.is(AT, INTERFACE, IDENTIFIER, annotationTypeBody);
     annotationTypeBody.is(LWING, o2n(annotationTypeElementDeclaration), RWING);
-    annotationTypeElementDeclaration.is(or(
+    annotationTypeElementDeclaration.is(firstOf(
         and(o2n(modifier), annotationTypeElementRest),
         SEMI));
-    annotationTypeElementRest.is(or(
+    annotationTypeElementRest.is(firstOf(
         and(type, annotationMethodOrConstantRest, SEMI),
         classDeclaration,
         enumDeclaration,
         interfaceDeclaration,
         annotationTypeDeclaration));
-    annotationMethodOrConstantRest.is(or(
+    annotationMethodOrConstantRest.is(firstOf(
         annotationMethodRest,
         annotationConstantRest));
     annotationMethodRest.is(IDENTIFIER, LPAR, RPAR, opt(defaultValue));
     annotationConstantRest.is(variableDeclarators);
     defaultValue.is(DEFAULT, elementValue);
     annotation.is(AT, qualifiedIdentifier, opt(annotationRest));
-    annotationRest.is(or(
+    annotationRest.is(firstOf(
         normalAnnotationRest,
         singleElementAnnotationRest));
     normalAnnotationRest.is(LPAR, opt(elementValuePairs), RPAR);
     elementValuePairs.is(elementValuePair, o2n(COMMA, elementValuePair));
     elementValuePair.is(IDENTIFIER, EQU, elementValue);
-    elementValue.is(or(
+    elementValue.is(firstOf(
         conditionalExpression,
         annotation,
         elementValueArrayInitializer));

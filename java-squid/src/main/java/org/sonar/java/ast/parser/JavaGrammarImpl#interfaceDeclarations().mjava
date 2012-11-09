@@ -5,10 +5,10 @@
     interfaceDeclaration.is(INTERFACE, IDENTIFIER, opt(typeParameters), opt(EXTENDS, classTypeList), interfaceBody);
 
     interfaceBody.is(LWING, o2n(interfaceBodyDeclaration), RWING);
-    interfaceBodyDeclaration.is(or(
+    interfaceBodyDeclaration.is(firstOf(
         and(o2n(modifier), interfaceMemberDecl),
         SEMI));
-    interfaceMemberDecl.is(or(
+    interfaceMemberDecl.is(firstOf(
         interfaceMethodOrFieldDecl,
         interfaceGenericMethodDecl,
         and(VOID, IDENTIFIER, voidInterfaceMethodDeclaratorsRest),
@@ -17,11 +17,11 @@
         classDeclaration,
         enumDeclaration));
     interfaceMethodOrFieldDecl.is(type, IDENTIFIER, interfaceMethodOrFieldRest);
-    interfaceMethodOrFieldRest.is(or(
+    interfaceMethodOrFieldRest.is(firstOf(
         and(constantDeclaratorsRest, SEMI),
         interfaceMethodDeclaratorRest));
     interfaceMethodDeclaratorRest.is(formalParameters, o2n(dim), opt(THROWS, classTypeList), SEMI);
-    interfaceGenericMethodDecl.is(typeParameters, or(type, VOID), IDENTIFIER, interfaceMethodDeclaratorRest);
+    interfaceGenericMethodDecl.is(typeParameters, firstOf(type, VOID), IDENTIFIER, interfaceMethodDeclaratorRest);
     voidInterfaceMethodDeclaratorsRest.is(formalParameters, opt(THROWS, classTypeList), SEMI);
     constantDeclaratorsRest.is(constantDeclaratorRest, o2n(COMMA, constantDeclarator));
     constantDeclarator.is(IDENTIFIER, constantDeclaratorRest);

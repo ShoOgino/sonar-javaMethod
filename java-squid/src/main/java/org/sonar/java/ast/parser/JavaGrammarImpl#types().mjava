@@ -2,20 +2,20 @@
    * 4. Types, Values and Variables
    */
   private void types() {
-    type.is(or(basicType, classType), o2n(dim));
-    referenceType.is(or(
+    type.is(firstOf(basicType, classType), o2n(dim));
+    referenceType.is(firstOf(
         and(basicType, o2n(dim)),
         and(classType, o2n(dim))));
     classType.is(IDENTIFIER, opt(typeArguments), o2n(DOT, IDENTIFIER, opt(typeArguments)));
     classTypeList.is(classType, o2n(COMMA, classType));
     typeArguments.is(LT, typeArgument, o2n(COMMA, typeArgument), GT);
-    typeArgument.is(or(
+    typeArgument.is(firstOf(
         referenceType,
-        and(QUERY, opt(or(EXTENDS, SUPER), referenceType))));
+        and(QUERY, opt(firstOf(EXTENDS, SUPER), referenceType))));
     typeParameters.is(LT, typeParameter, o2n(COMMA, typeParameter), GT);
     typeParameter.is(IDENTIFIER, opt(EXTENDS, bound));
     bound.is(classType, o2n(AND, classType));
-    modifier.is(or(
+    modifier.is(firstOf(
         annotation,
         PUBLIC,
         PROTECTED,

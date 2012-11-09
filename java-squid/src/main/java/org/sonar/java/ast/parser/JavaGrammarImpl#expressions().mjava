@@ -6,7 +6,7 @@
     constantExpression.is(expression);
     expression.is(assignmentExpression);
     assignmentExpression.is(conditionalExpression, o2n(assignmentOperator, conditionalExpression)).skipIfOneChild();
-    assignmentOperator.is(or(
+    assignmentOperator.is(firstOf(
         EQU,
         PLUSEQU,
         MINUSEQU,
@@ -25,20 +25,20 @@
     inclusiveOrExpression.is(exclusiveOrExpression, o2n(OR, exclusiveOrExpression)).skipIfOneChild();
     exclusiveOrExpression.is(andExpression, o2n(HAT, andExpression)).skipIfOneChild();
     andExpression.is(equalityExpression, o2n(AND, equalityExpression)).skipIfOneChild();
-    equalityExpression.is(relationalExpression, o2n(or(EQUAL, NOTEQUAL), relationalExpression)).skipIfOneChild();
-    relationalExpression.is(shiftExpression, o2n(or(
-        and(or(ge, GT, LE, LT), shiftExpression),
+    equalityExpression.is(relationalExpression, o2n(firstOf(EQUAL, NOTEQUAL), relationalExpression)).skipIfOneChild();
+    relationalExpression.is(shiftExpression, o2n(firstOf(
+        and(firstOf(ge, GT, LE, LT), shiftExpression),
         and(INSTANCEOF, referenceType)))).skipIfOneChild();
-    shiftExpression.is(additiveExpression, o2n(or(SL, bsr, sr), additiveExpression)).skipIfOneChild();
-    additiveExpression.is(multiplicativeExpression, o2n(or(PLUS, MINUS), multiplicativeExpression)).skipIfOneChild();
-    multiplicativeExpression.is(unaryExpression, o2n(or(STAR, DIV, MOD), unaryExpression)).skipIfOneChild();
-    unaryExpression.is(or(
+    shiftExpression.is(additiveExpression, o2n(firstOf(SL, bsr, sr), additiveExpression)).skipIfOneChild();
+    additiveExpression.is(multiplicativeExpression, o2n(firstOf(PLUS, MINUS), multiplicativeExpression)).skipIfOneChild();
+    multiplicativeExpression.is(unaryExpression, o2n(firstOf(STAR, DIV, MOD), unaryExpression)).skipIfOneChild();
+    unaryExpression.is(firstOf(
         and(prefixOp, unaryExpression),
         and(LPAR, type, RPAR, unaryExpression),
         and(primary, o2n(selector), o2n(postFixOp)))).skipIfOneChild();
-    primary.is(or(
+    primary.is(firstOf(
         parExpression,
-        and(nonWildcardTypeArguments, or(explicitGenericInvocationSuffix, and(THIS, arguments))),
+        and(nonWildcardTypeArguments, firstOf(explicitGenericInvocationSuffix, and(THIS, arguments))),
         and(THIS, opt(arguments)),
         and(SUPER, superSuffix),
         literal,
@@ -46,10 +46,10 @@
         and(qualifiedIdentifier, opt(identifierSuffix)),
         and(basicType, o2n(dim), DOT, CLASS),
         and(VOID, DOT, CLASS)));
-    identifierSuffix.is(or(
-        and(LBRK, or(and(RBRK, o2n(dim), DOT, CLASS), and(expression, RBRK))),
+    identifierSuffix.is(firstOf(
+        and(LBRK, firstOf(and(RBRK, o2n(dim), DOT, CLASS), and(expression, RBRK))),
         arguments,
-        and(DOT, or(
+        and(DOT, firstOf(
             CLASS,
             explicitGenericInvocation,
             THIS,
@@ -57,30 +57,30 @@
             and(NEW, opt(nonWildcardTypeArguments), innerCreator)))));
     explicitGenericInvocation.is(nonWildcardTypeArguments, explicitGenericInvocationSuffix);
     nonWildcardTypeArguments.is(LT, referenceType, o2n(COMMA, referenceType), GT);
-    explicitGenericInvocationSuffix.is(or(
+    explicitGenericInvocationSuffix.is(firstOf(
         and(SUPER, superSuffix),
         and(IDENTIFIER, arguments)));
-    prefixOp.is(or(
+    prefixOp.is(firstOf(
         INC,
         DEC,
         BANG,
         TILDA,
         PLUS,
         MINUS));
-    postFixOp.is(or(
+    postFixOp.is(firstOf(
         INC,
         DEC));
-    selector.is(or(
+    selector.is(firstOf(
         and(DOT, IDENTIFIER, opt(arguments)),
         and(DOT, explicitGenericInvocation),
         and(DOT, THIS),
         and(DOT, SUPER, superSuffix),
         and(DOT, NEW, opt(nonWildcardTypeArguments), innerCreator),
         dimExpr));
-    superSuffix.is(or(
+    superSuffix.is(firstOf(
         arguments,
         and(DOT, IDENTIFIER, opt(arguments))));
-    basicType.is(or(
+    basicType.is(firstOf(
         BYTE,
         SHORT,
         CHAR,
@@ -90,18 +90,18 @@
         DOUBLE,
         BOOLEAN));
     arguments.is(LPAR, opt(expression, o2n(COMMA, expression)), RPAR);
-    creator.is(or(
+    creator.is(firstOf(
         and(opt(nonWildcardTypeArguments), createdName, classCreatorRest),
-        and(opt(nonWildcardTypeArguments), or(classType, basicType), arrayCreatorRest)));
+        and(opt(nonWildcardTypeArguments), firstOf(classType, basicType), arrayCreatorRest)));
     createdName.is(IDENTIFIER, opt(nonWildcardTypeArguments), o2n(DOT, IDENTIFIER, opt(nonWildcardTypeArguments)));
     innerCreator.is(IDENTIFIER, classCreatorRest);
-    arrayCreatorRest.is(LBRK, or(
+    arrayCreatorRest.is(LBRK, firstOf(
         and(RBRK, o2n(dim), arrayInitializer),
         and(expression, RBRK, o2n(dimExpr), o2n(dim))));
     classCreatorRest.is(opt(diamond), arguments, opt(classBody));
     diamond.is(LT, GT);
     arrayInitializer.is(LWING, opt(variableInitializer, o2n(COMMA, variableInitializer)), opt(COMMA), RWING);
-    variableInitializer.is(or(arrayInitializer, expression));
+    variableInitializer.is(firstOf(arrayInitializer, expression));
     parExpression.is(LPAR, expression, RPAR);
     qualifiedIdentifier.is(IDENTIFIER, o2n(DOT, IDENTIFIER));
     dim.is(LBRK, RBRK);
