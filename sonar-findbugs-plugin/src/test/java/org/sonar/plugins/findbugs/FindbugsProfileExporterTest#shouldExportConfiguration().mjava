@@ -1,0 +1,12 @@
+  @Test
+  public void shouldExportConfiguration() throws IOException, SAXException {
+    List<Rule> rules = buildRulesFixture();
+    List<ActiveRule> activeRulesExpected = buildActiveRulesFixture(rules);
+    RulesProfile profile = RulesProfile.create();
+    profile.setActiveRules(activeRulesExpected);
+
+    StringWriter xml = new StringWriter();
+    exporter.exportProfile(profile, xml);
+    assertXmlAreSimilar(xml.toString(), "test_xml_complete.xml");
+  }
+
