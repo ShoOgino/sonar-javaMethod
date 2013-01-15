@@ -1,0 +1,24 @@
+  public final void readTestsCoverageData(File jacocoExecutionData, final File buildOutputDir, final SensorContext context, final WildcardMatcher excludes,
+                                          final ProjectTests projectTests) throws IOException {
+    if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
+      JaCoCoUtils.LOG.info("No JaCoCo execution data for tests has been dumped: {}", jacocoExecutionData);
+    } else {
+      JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
+      final LastSessionInfo lastSessionInfo = new LastSessionInfo();
+      ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
+      reader.setSessionInfoVisitor(new ISessionInfoVisitor() {
+        public void visitSessionInfo(final SessionInfo info) {
+          lastSessionInfo.addSession(info);
+        }
+      });
+      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
+        public void visitClassExecution(final ExecutionData data) {
+          ExecutionDataStore executionDataStore = new ExecutionDataStore();
+          executionDataStore.visitClassExecution(data);
+          analyzeTestCoverage(lastSessionInfo.getLastSessionInfo(), executionDataStore, buildOutputDir, context, excludes, projectTests);
+        }
+      });
+      reader.read();
+    }
+  }
+

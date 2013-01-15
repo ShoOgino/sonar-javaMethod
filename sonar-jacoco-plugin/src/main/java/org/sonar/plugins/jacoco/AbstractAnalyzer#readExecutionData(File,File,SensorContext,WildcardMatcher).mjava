@@ -1,26 +1,14 @@
-  public final void readExecutionData(File jacocoExecutionData, File buildOutputDir, SensorContext context, WildcardMatcher excludes,
-                                      ProjectTests projectTests) throws IOException {
-    final SessionInfoStore sessionInfoStore = new SessionInfoStore();
-    final ExecutionDataStore executionDataStore = new ExecutionDataStore();
-    final MultipleDataStoreSession multipleDataStoreSession = new MultipleDataStoreSession();
+  public final void readExecutionData(File jacocoExecutionData, File buildOutputDir, SensorContext context, WildcardMatcher excludes) throws IOException {
+    SessionInfoStore sessionInfoStore = new SessionInfoStore();
+    ExecutionDataStore executionDataStore = new ExecutionDataStore();
 
     if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
       JaCoCoUtils.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
     } else {
       JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
       ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
-      reader.setSessionInfoVisitor(new ISessionInfoVisitor() {
-        public void visitSessionInfo(final SessionInfo info) {
-          sessionInfoStore.visitSessionInfo(info);
-          multipleDataStoreSession.addSession(info);
-        }
-      });
-      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
-        public void visitClassExecution(final ExecutionData data) {
-          executionDataStore.visitClassExecution(data);
-          multipleDataStoreSession.visitClassExecution(data);
-        }
-      });
+      reader.setSessionInfoVisitor(sessionInfoStore);
+      reader.setExecutionDataVisitor(executionDataStore);
       reader.read();
     }
 
@@ -38,8 +26,6 @@
     }
     if (analyzedResources == 0) {
       JaCoCoUtils.LOG.warn("Coverage information was not collected. Perhaps you forget to include debug information into compiled classes?");
-    } else {
-      analyzeLinesCoverage(multipleDataStoreSession, buildOutputDir, context, excludes, projectTests);
     }
   }
 
