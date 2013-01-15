@@ -1,0 +1,45 @@
+  public final void readExecutionData(File jacocoExecutionData, File buildOutputDir, SensorContext context, WildcardMatcher excludes,
+                                      ProjectTests projectTests) throws IOException {
+    final SessionInfoStore sessionInfoStore = new SessionInfoStore();
+    final ExecutionDataStore executionDataStore = new ExecutionDataStore();
+    final MultipleDataStoreSession multipleDataStoreSession = new MultipleDataStoreSession();
+
+    if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
+      JaCoCoUtils.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
+    } else {
+      JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
+      ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
+      reader.setSessionInfoVisitor(new ISessionInfoVisitor() {
+        public void visitSessionInfo(final SessionInfo info) {
+          sessionInfoStore.visitSessionInfo(info);
+          multipleDataStoreSession.addSession(info);
+        }
+      });
+      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
+        public void visitClassExecution(final ExecutionData data) {
+          executionDataStore.visitClassExecution(data);
+          multipleDataStoreSession.visitClassExecution(data);
+        }
+      });
+      reader.read();
+    }
+
+    CoverageBuilder coverageBuilder = analyze(executionDataStore, buildOutputDir);
+    int analyzedResources = 0;
+    for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
+      JavaFile resource = getResource(coverage, context);
+      if (resource != null) {
+        if (!isExcluded(coverage, excludes)) {
+          CoverageMeasuresBuilder builder = analyzeFile(resource, coverage, context);
+          saveMeasures(context, resource, builder.createMeasures());
+        }
+        analyzedResources++;
+      }
+    }
+    if (analyzedResources == 0) {
+      JaCoCoUtils.LOG.warn("Coverage information was not collected. Perhaps you forget to include debug information into compiled classes?");
+    } else {
+      analyzeLinesCoverage(multipleDataStoreSession, buildOutputDir, context, excludes, projectTests);
+    }
+  }
+

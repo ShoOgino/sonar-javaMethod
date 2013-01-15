@@ -1,0 +1,22 @@
+  private void analyzeLinesCoverage(MultipleDataStoreSession multipleDataStoreSession, File buildOutputDir, SensorContext context, WildcardMatcher excludes,
+                                    ProjectTests projectTests){
+    for (Map.Entry<SessionInfo, ExecutionDataStore> entry : multipleDataStoreSession.getDataStoreBySession().entrySet()){
+      SessionInfo sessionInfo = entry.getKey();
+      String id = sessionInfo.getId();
+      String test = Iterables.getLast(Splitter.on(".").split(id));
+      String fileTest = StringUtils.removeEnd(id, "." + test);
+      ExecutionDataStore executionDataStore = entry.getValue();
+      CoverageBuilder coverageBuilder = analyze(executionDataStore, buildOutputDir);
+
+      for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
+        JavaFile resource = getResource(coverage, context);
+        if (resource != null) {
+          if (!isExcluded(coverage, excludes)) {
+            CoverageMeasuresBuilder builder = analyzeFile(resource, coverage, context);
+            projectTests.cover(fileTest, test, "", builder.getHitsByLine().keySet());
+          }
+        }
+      }
+    }
+  }
+

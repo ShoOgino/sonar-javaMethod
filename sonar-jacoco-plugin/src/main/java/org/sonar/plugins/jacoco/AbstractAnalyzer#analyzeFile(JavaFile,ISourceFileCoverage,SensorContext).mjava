@@ -1,4 +1,4 @@
-  private void analyzeFile(JavaFile resource, ISourceFileCoverage coverage, SensorContext context) {
+  private CoverageMeasuresBuilder analyzeFile(JavaFile resource, ISourceFileCoverage coverage, SensorContext context) {
     CoverageMeasuresBuilder builder = CoverageMeasuresBuilder.create();
     for (int lineId = coverage.getFirstLine(); lineId <= coverage.getLastLine(); lineId++) {
       final int hits;
@@ -26,7 +26,6 @@
         builder.setConditions(lineId, conditions, coveredConditions);
       }
     }
-
-    saveMeasures(context, resource, builder.createMeasures());
+    return builder;
   }
 

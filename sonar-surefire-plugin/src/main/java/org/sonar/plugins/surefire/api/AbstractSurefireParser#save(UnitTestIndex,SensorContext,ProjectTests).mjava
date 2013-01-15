@@ -1,4 +1,4 @@
-  private void save(UnitTestIndex index, SensorContext context) {
+  private void save(UnitTestIndex index, SensorContext context, ProjectTests projectTests) {
     for (Map.Entry<String, UnitTestClassReport> entry : index.getIndexByClassname().entrySet()) {
       UnitTestClassReport report = entry.getValue();
       if (report.getTests() > 0) {
@@ -15,6 +15,7 @@
           saveMeasure(context, resource, CoreMetrics.TEST_SUCCESS_DENSITY, ParsingUtils.scaleValue(percentage));
         }
         saveResults(context, resource, report);
+        registerTests(resource, report, projectTests);
       }
     }
   }
