@@ -10,11 +10,9 @@
 
       for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
         JavaFile resource = getResource(coverage, context);
-        if (resource != null) {
-          if (!isExcluded(coverage, excludes)) {
-            CoverageMeasuresBuilder builder = analyzeFile(resource, coverage, context);
-            projectTests.cover(fileTest, test, resource.getKey(), getLinesCover(builder));
-          }
+        if (resource != null && !isExcluded(coverage, excludes)) {
+          CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
+          projectTests.cover(fileTest, test, resource.getKey(), getLinesCover(builder));
         }
       }
     }
