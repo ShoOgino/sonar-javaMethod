@@ -1,12 +1,13 @@
-  private void registerTests(Resource resource, UnitTestClassReport report) {
+  private void registerTests(Resource testFile, UnitTestClassReport report) {
     for (UnitTestResult unitTestResult : report.getResults()) {
-      Test test = new Test(unitTestResult.getName());
-      test.setDurationMilliseconds(unitTestResult.getDurationMilliseconds())
-          .setStatus(unitTestResult.getStatus())
-          .setMessage(unitTestResult.getMessage())
-          .setStackTrace(unitTestResult.getStackTrace())
-      ;
-      projectTests.addTest(resource.getKey(), test);
+
+      MutableTestPlan testPlan = perspectives.as(testFile, MutableTestPlan.class);
+      if (testPlan != null) {
+        testPlan.addTestCase(unitTestResult.getName())
+            .setDurationInMs(unitTestResult.getDurationMilliseconds())
+            .setStatus(unitTestResult.getStatus());
+        // TODO add message and stacktrace
+      }
     }
   }
 
