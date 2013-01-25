@@ -7,7 +7,8 @@
     when(testCase.setStatus(anyString())).thenReturn(testCase);
     MutableTestPlan testPlan = mock(MutableTestPlan.class);
     when(testPlan.addTestCase(anyString())).thenReturn(testCase);
-    when(perspectives.as(argThat(new ResourceMacher("ch.hortis.sonar.mvn.mc.MetricsCollectorRegistryTest")), eq(MutableTestPlan.class))).thenReturn(testPlan);
+    when(perspectives.as(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE, "ch.hortis.sonar.mvn.mc.MetricsCollectorRegistryTest")),
+        eq(MutableTestPlan.class))).thenReturn(testPlan);
 
     parser.collect(new Project("foo"), context, getDir("multipleReports"));
 
