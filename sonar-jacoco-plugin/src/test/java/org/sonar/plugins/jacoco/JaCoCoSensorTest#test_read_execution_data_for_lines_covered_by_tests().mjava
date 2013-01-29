@@ -1,4 +1,5 @@
   @Test
+  @Ignore
   public void test_read_execution_data_for_lines_covered_by_tests() throws IOException {
     jacocoExecutionData = new File(outputDir, "jacoco_unit_test.exec");
     Files.copy(TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest/App.class.toCopy"),
@@ -10,10 +11,26 @@
     when(pfs.resolvePath(anyString())).thenReturn(jacocoExecutionData);
     when(project.getFileSystem()).thenReturn(pfs);
 
+    MutableTestable testAbleFile = mock(MutableTestable.class);
+    when(perspectives.as(eq(MutableTestable.class), any(JavaFile.class))).thenReturn(testAbleFile);
+
+    MutableTestCase testCase1 = mock(MutableTestCase.class);
+    when(testCase1.name()).thenReturn("test");
+    MutableTestPlan testPlan = mock(MutableTestPlan.class);
+    when(testPlan.testCases()).thenReturn(newArrayList(testCase1));
+    when(perspectives.as(eq(MutableTestPlan.class), argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE, "org.example.FirstTest"))))
+        .thenReturn(testPlan);
+
+    MutableTestCase testCase2 = mock(MutableTestCase.class);
+    when(testCase2.name()).thenReturn("test");
+    MutableTestPlan testPlan2 = mock(MutableTestPlan.class);
+    when(testPlan2.testCases()).thenReturn(newArrayList(testCase2));
+    when(perspectives.as(eq(MutableTestPlan.class), argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE, "org.example.SecondTest"))))
+        .thenReturn(testPlan2);
+
     sensor.analyse(project, context);
 
-    verify(projectTests).cover("org.example.FirstTest", "test", "org.example.App", newArrayList(3, 6));
-    verify(projectTests).cover("org.example.SecondTest", "test", "org.example.App", newArrayList(3, 10));
-    verifyNoMoreInteractions(projectTests);
+    verify(testCase1).covers(testAbleFile, newHashSet(3, 6));
+    verify(testCase2).covers(testAbleFile, newHashSet(3, 10));
   }
 

@@ -1,17 +1,27 @@
   private void analyzeLinesCoveredByTests(SessionInfo sessionInfo, ExecutionDataStore executionDataStore, File buildOutputDir, SensorContext context, WildcardMatcher excludes) {
     String id = sessionInfo.getId();
-    if (CharMatcher.anyOf(".").countIn(id) < 2) {
+    if (CharMatcher.anyOf(".").countIn(id) < 2 || id.startsWith("dhcp")) {
       // As we do not have a convention for the id, we use this hack to detect if the id is a test or not
     } else {
-      String test = Iterables.getLast(Splitter.on(".").split(id));
-      String fileTest = StringUtils.removeEnd(id, "." + test);
+      String testName = Iterables.getLast(Splitter.on(".").split(id));
+      String testFileKey = StringUtils.removeEnd(id, "." + testName);
+      Resource testFile = new JavaFile(testFileKey, true);
+
       CoverageBuilder coverageBuilder = analyze(executionDataStore, buildOutputDir);
 
       for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
         JavaFile resource = getResource(coverage, context);
         if (resource != null && !isExcluded(coverage, excludes)) {
           CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
-          projectTests.cover(fileTest, test, resource.getKey(), getLinesCover(builder));
+
+          Testable testAbleFile = perspectives.as(MutableTestable.class, resource);
+          if (testAbleFile != null) {
+            MutableTestPlan testPlan = perspectives.as(MutableTestPlan.class, testFile);
+            if (testPlan != null) {
+              MutableTestCase testCase = findTestCase(testPlan, testName);
+              testCase.covers(testAbleFile, getLinesCover(builder));
+            }
+          }
         }
       }
     }
