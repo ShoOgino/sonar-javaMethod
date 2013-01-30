@@ -1,5 +1,14 @@
-  protected void saveResults(SensorContext context, Resource resource, UnitTestClassReport report) {
-    context.saveMeasure(resource, new Measure(CoreMetrics.TEST_DATA, report.toXml()));
-    registerTests(resource, report);
+  protected void saveResults(SensorContext context, Resource testFile, UnitTestClassReport report) {
+    for (UnitTestResult unitTestResult : report.getResults()) {
+      MutableTestPlan testPlan = perspectives.as(MutableTestPlan.class, testFile);
+      if (testPlan != null) {
+        testPlan.addTestCase(unitTestResult.getName())
+            .setName(unitTestResult.getName())
+            .setDurationInMs(unitTestResult.getDurationMilliseconds())
+            .setStatus(unitTestResult.getStatus())
+            .setMessage(unitTestResult.getMessage())
+            .setStackTrace(unitTestResult.getStackTrace());
+      }
+    }
   }
 
