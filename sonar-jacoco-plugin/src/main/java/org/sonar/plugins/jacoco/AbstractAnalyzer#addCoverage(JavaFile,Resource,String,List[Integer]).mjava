@@ -1,0 +1,11 @@
+  private void addCoverage(JavaFile resource, Resource testFile, String testName, List<Integer> linesCovered){
+    Testable testAbleFile = perspectives.as(MutableTestable.class, resource);
+    if (testAbleFile != null) {
+      MutableTestPlan testPlan = perspectives.as(MutableTestPlan.class, testFile);
+      if (testPlan != null) {
+        MutableTestCase testCase = findTestCase(testPlan, testName);
+        testCase.covers(testAbleFile, linesCovered);
+      }
+    }
+  }
+
