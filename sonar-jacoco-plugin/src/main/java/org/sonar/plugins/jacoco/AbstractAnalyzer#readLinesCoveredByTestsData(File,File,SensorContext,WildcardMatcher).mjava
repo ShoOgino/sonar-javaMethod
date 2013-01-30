@@ -13,9 +13,11 @@
       });
       reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
         public void visitClassExecution(final ExecutionData data) {
-          ExecutionDataStore executionDataStore = new ExecutionDataStore();
-          executionDataStore.visitClassExecution(data);
-          analyzeLinesCoveredByTests(lastSessionInfo.getLastSessionInfo(), executionDataStore, buildOutputDir, context, excludes);
+          if (resourceExists(data, context)) {
+            ExecutionDataStore executionDataStore = new ExecutionDataStore();
+            executionDataStore.visitClassExecution(data);
+            analyzeLinesCoveredByTests(lastSessionInfo.getLastSessionInfo(), executionDataStore, buildOutputDir, context, excludes);
+          }
         }
       });
       reader.read();

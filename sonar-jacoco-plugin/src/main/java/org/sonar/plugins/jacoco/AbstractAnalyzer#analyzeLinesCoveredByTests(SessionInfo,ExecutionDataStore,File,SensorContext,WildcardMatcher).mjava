@@ -7,8 +7,8 @@
       String testFileKey = StringUtils.removeEnd(id, "." + testName);
       Resource testFile = new JavaFile(testFileKey, true);
 
+      // FIXME Doing the analysis for each test takes too much time, we have to find a way to analyse the files only once
       CoverageBuilder coverageBuilder = analyze(executionDataStore, buildOutputDir);
-
       for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
         JavaFile resource = getResource(coverage, context);
         if (resource != null && !isExcluded(coverage, excludes)) {
