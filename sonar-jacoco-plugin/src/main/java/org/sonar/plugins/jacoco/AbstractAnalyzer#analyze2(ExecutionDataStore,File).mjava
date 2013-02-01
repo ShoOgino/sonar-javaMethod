@@ -1,0 +1,18 @@
+  private CoverageBuilder analyze2(ExecutionDataStore executionDataStore, File buildOutputDir) {
+    CoverageBuilder coverageBuilder = new CoverageBuilder();
+    Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
+    for (ExecutionData data : executionDataStore.getContents()) {
+      String vmClassName = data.getName();
+      String classFileName = vmClassName.replace('.', '/') + ".class";
+      File classFile = new File(buildOutputDir, classFileName);
+      if (classFile.isFile()) {
+        try {
+          analyzer.analyzeAll(classFile);
+        } catch (Exception e) {
+          JaCoCoUtils.LOG.warn("Exception during analysis of file " + classFile.getAbsolutePath(), e);
+        }
+      }
+    }
+    return coverageBuilder;
+  }
+
