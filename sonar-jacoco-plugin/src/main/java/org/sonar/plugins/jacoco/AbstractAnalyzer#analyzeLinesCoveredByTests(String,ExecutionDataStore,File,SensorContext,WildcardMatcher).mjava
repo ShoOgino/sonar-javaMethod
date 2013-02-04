@@ -1,0 +1,26 @@
+  private void analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore, File buildOutputDir, SensorContext context, WildcardMatcher excludes) {
+    int i = sessionId.indexOf(' ');
+    if (i < 0) {
+      return;
+    }
+    String testClassName = sessionId.substring(0, i);
+    String testName = sessionId.substring(i + 1);
+    Resource testResource = context.getResource(new JavaFile(testClassName, true));
+    if (testResource == null) {
+      // No such test class
+      return;
+    }
+
+    CoverageBuilder coverageBuilder = analyze2(executionDataStore, buildOutputDir);
+    for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
+      JavaFile resource = getResource(coverage, context);
+      if (resource != null && !isExcluded(coverage, excludes)) {
+        CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
+        List<Integer> coveredLines = getCoveredLines(builder);
+        if (!coveredLines.isEmpty()) {
+          addCoverage(resource, testResource, testName, coveredLines);
+        }
+      }
+    }
+  }
+

@@ -1,13 +1,14 @@
-  private void addCoverage(JavaFile resource, Resource testFile, String testName, List<Integer> linesCovered) {
+  private void addCoverage(JavaFile resource, Resource testFile, String testName, List<Integer> coveredLines) {
     Testable testAbleFile = perspectives.as(MutableTestable.class, resource);
     if (testAbleFile != null) {
       MutableTestPlan testPlan = perspectives.as(MutableTestPlan.class, testFile);
       if (testPlan != null) {
 
-        JaCoCoUtils.LOG.info("addCoverage source : " + resource.getKey() + ", testCase : " + testFile.getKey() + ", test : " + testName + ", lines : " + linesCovered);
+        // TODO remove:
+        JaCoCoUtils.LOG.info("addCoverage source : " + resource.getKey() + ", testCase : " + testFile.getKey() + ", test : " + testName + ", lines : " + coveredLines);
 
         MutableTestCase testCase = findTestCase(testPlan, testName);
-        testCase.setCover(testAbleFile, linesCovered);
+        testCase.setCover(testAbleFile, coveredLines);
       }
     }
   }

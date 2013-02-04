@@ -1,26 +1,19 @@
   public final void readLinesCoveredByTestsData(File jacocoExecutionData, final File buildOutputDir, final SensorContext context, final WildcardMatcher excludes)
-    throws IOException {
+      throws IOException {
     if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
       JaCoCoUtils.LOG.info("No JaCoCo execution data for tests has been dumped: {}", jacocoExecutionData);
-    } else {
-      JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
-      final LastSessionInfo lastSessionInfo = new LastSessionInfo();
-      ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
-      reader.setSessionInfoVisitor(new ISessionInfoVisitor() {
-        public void visitSessionInfo(final SessionInfo info) {
-          lastSessionInfo.addSession(info);
-        }
-      });
-      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
-        public void visitClassExecution(final ExecutionData data) {
-          if (resourceExists(data, context)) {
-            ExecutionDataStore executionDataStore = new ExecutionDataStore();
-            executionDataStore.visitClassExecution(data);
-            analyzeLinesCoveredByTests(lastSessionInfo.getLastSessionInfo(), executionDataStore, buildOutputDir, context, excludes);
-          }
-        }
-      });
-      reader.read();
+      return;
+    }
+    ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
+    ExecutionDataVisitor executionDataVisitor = new ExecutionDataVisitor();
+    reader.setSessionInfoVisitor(executionDataVisitor);
+    reader.setExecutionDataVisitor(executionDataVisitor);
+    reader.read();
+
+    for (Map.Entry<String, ExecutionDataStore> entry : executionDataVisitor.getSessions().entrySet()) {
+      String sessionId = entry.getKey();
+      ExecutionDataStore data = entry.getValue();
+      analyzeLinesCoveredByTests(sessionId, data, buildOutputDir, context, excludes);
     }
   }
 
