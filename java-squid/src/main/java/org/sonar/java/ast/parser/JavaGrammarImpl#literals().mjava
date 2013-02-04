@@ -3,10 +3,10 @@
    */
   private void literals() {
     spacing.is(
-        whitespace(),
+        skippedTrivia(whitespace()),
         zeroOrMore(
-            token(GenericTokenType.COMMENT, firstOf(inlineComment(), multilineComment())),
-            whitespace())).skip();
+            commentTrivia(firstOf(inlineComment(), multilineComment())),
+            skippedTrivia(whitespace()))).skip();
 
     eof.is(token(GenericTokenType.EOF, endOfInput())).skip();
 
