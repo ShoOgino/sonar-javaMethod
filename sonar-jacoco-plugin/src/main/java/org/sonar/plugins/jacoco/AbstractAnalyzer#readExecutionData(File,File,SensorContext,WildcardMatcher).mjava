@@ -1,18 +1,22 @@
   public final void readExecutionData(File jacocoExecutionData, File buildOutputDir, SensorContext context, WildcardMatcher excludes) throws IOException {
-    SessionInfoStore sessionInfoStore = new SessionInfoStore();
-    ExecutionDataStore executionDataStore = new ExecutionDataStore();
+    ExecutionDataVisitor executionDataVisitor = new ExecutionDataVisitor();
 
     if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
       JaCoCoUtils.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
     } else {
       JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
+
       ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
-      reader.setSessionInfoVisitor(sessionInfoStore);
-      reader.setExecutionDataVisitor(executionDataStore);
+      reader.setSessionInfoVisitor(executionDataVisitor);
+      reader.setExecutionDataVisitor(executionDataVisitor);
       reader.read();
     }
 
-    CoverageBuilder coverageBuilder = analyze(executionDataStore, buildOutputDir);
+    for (Map.Entry<String, ExecutionDataStore> entry : executionDataVisitor.getSessions().entrySet()) {
+      analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), buildOutputDir, context, excludes);
+    }
+
+    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged(), buildOutputDir);
     int analyzedResources = 0;
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       JavaFile resource = getResource(coverage, context);
