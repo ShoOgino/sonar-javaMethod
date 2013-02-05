@@ -1,10 +1,10 @@
   private List<Parameter> extractMethodArgumentTypes(MethodHelper methodHelper) {
     List<Parameter> argumentTypes = Lists.newArrayList();
     for (AstNode astNode : methodHelper.getParameters()) {
-      AstNode type = astNode.getFirstChild(getContext().getGrammar().type);
-      boolean isArray = type.hasDirectChildren(getContext().getGrammar().dim)
-        || astNode.getFirstChild(getContext().getGrammar().formalParametersDeclsRest).getFirstChild(getContext().getGrammar().variableDeclaratorId)
-            .hasDirectChildren(getContext().getGrammar().dim);
+      AstNode type = astNode.getFirstChild(JavaGrammar.TYPE);
+      boolean isArray = type.hasDirectChildren(JavaGrammar.DIM)
+        || astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETERS_DECLS_REST).getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID)
+            .hasDirectChildren(JavaGrammar.DIM);
       argumentTypes.add(extractArgumentAndReturnType(type, isArray));
     }
     return argumentTypes;

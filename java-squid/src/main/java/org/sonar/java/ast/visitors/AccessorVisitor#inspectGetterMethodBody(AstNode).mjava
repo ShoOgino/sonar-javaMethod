@@ -1,9 +1,9 @@
   private boolean inspectGetterMethodBody(AstNode astNode) {
-    if (astNode.is(getContext().getGrammar().returnStatement) && astNode.hasDirectChildren(getContext().getGrammar().expression)) {
-      AstNode expression = astNode.getFirstChild(getContext().getGrammar().expression);
-      if (expression.getNumberOfChildren() == 1 && expression.getFirstChild().is(getContext().getGrammar().primary)) {
+    if (astNode.is(JavaGrammar.RETURN_STATEMENT) && astNode.hasDirectChildren(JavaGrammar.EXPRESSION)) {
+      AstNode expression = astNode.getFirstChild(JavaGrammar.EXPRESSION);
+      if (expression.getNumberOfChildren() == 1 && expression.getFirstChild().is(JavaGrammar.PRIMARY)) {
         AstNode primary = expression.getFirstChild();
-        if (primary.getNumberOfChildren() == 1 && primary.getFirstChild().is(getContext().getGrammar().qualifiedIdentifier)) {
+        if (primary.getNumberOfChildren() == 1 && primary.getFirstChild().is(JavaGrammar.QUALIFIED_IDENTIFIER)) {
           AstNode qualifiedIdentifier = primary.getFirstChild();
           if (qualifiedIdentifier.getNumberOfChildren() == 1) {
             AstNode varReturned = qualifiedIdentifier.getFirstChild();

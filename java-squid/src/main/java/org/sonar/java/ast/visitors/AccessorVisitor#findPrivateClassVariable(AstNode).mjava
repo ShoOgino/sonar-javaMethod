@@ -1,14 +1,14 @@
   private boolean findPrivateClassVariable(AstNode varReturned) {
-    AstNode classBody = varReturned.getFirstAncestor(getContext().getGrammar().classBodyDeclaration).getParent();
-    for (AstNode classBodyDeclaration : classBody.getChildren(getContext().getGrammar().classBodyDeclaration)) {
+    AstNode classBody = varReturned.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION).getParent();
+    for (AstNode classBodyDeclaration : classBody.getChildren(JavaGrammar.CLASS_BODY_DECLARATION)) {
       if (!hasPrivateModifier(classBodyDeclaration)) {
         continue;
       }
 
-      for (AstNode memberDecl : classBodyDeclaration.getChildren(getContext().getGrammar().memberDecl)) {
-        AstNode fieldDeclaration = memberDecl.getFirstChild(getContext().getGrammar().fieldDeclaration);
+      for (AstNode memberDecl : classBodyDeclaration.getChildren(JavaGrammar.MEMBER_DECL)) {
+        AstNode fieldDeclaration = memberDecl.getFirstChild(JavaGrammar.FIELD_DECLARATION);
         if (fieldDeclaration != null) {
-          for (AstNode variableDeclarator : fieldDeclaration.getFirstChild(getContext().getGrammar().variableDeclarators).getChildren(getContext().getGrammar().variableDeclarator)) {
+          for (AstNode variableDeclarator : fieldDeclaration.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS).getChildren(JavaGrammar.VARIABLE_DECLARATOR)) {
             if (varReturned.getTokenValue().equals(variableDeclarator.getFirstChild().getTokenValue())) {
               return true;
             }

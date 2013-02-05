@@ -1,0 +1,40 @@
+  /**
+   * 3.10. Literals
+   */
+  private static void literals(LexerlessGrammarBuilder b) {
+    b.rule(SPACING).is(
+        b.skippedTrivia(whitespace(b)),
+        b.zeroOrMore(
+            b.commentTrivia(b.firstOf(inlineComment(b), multilineComment(b))),
+            b.skippedTrivia(whitespace(b)))).skip();
+
+    b.rule(EOF).is(b.token(GenericTokenType.EOF, b.endOfInput())).skip();
+
+    b.rule(CHARACTER_LITERAL).is(b.token(JavaTokenType.CHARACTER_LITERAL, characterLiteral(b)), SPACING).skip();
+    b.rule(STRING_LITERAL).is(b.token(GenericTokenType.LITERAL, stringLiteral(b)), SPACING).skip();
+
+    b.rule(FLOAT_LITERAL).is(b.token(JavaTokenType.FLOAT_LITERAL, b.regexp(FloatLiteralChannel.FLOATING_LITERAL_WITHOUT_SUFFIX + "[fF]|[0-9][0-9_]*+[fF]")), SPACING).skip();
+    b.rule(DOUBLE_LITERAL).is(b.token(JavaTokenType.DOUBLE_LITERAL, b.regexp(FloatLiteralChannel.FLOATING_LITERAL_WITHOUT_SUFFIX + "[dD]?+|[0-9][0-9_]*+[dD]")), SPACING).skip();
+
+    b.rule(LONG_LITERAL).is(b.token(JavaTokenType.LONG_LITERAL, b.regexp(IntegerLiteralChannel.INTEGER_LITERAL + "[lL]")), SPACING).skip();
+    b.rule(INTEGER_LITERAL).is(b.token(JavaTokenType.INTEGER_LITERAL, b.regexp(IntegerLiteralChannel.INTEGER_LITERAL)), SPACING).skip();
+
+    b.rule(KEYWORD).is(b.firstOf("assert", "break", "case", "catch", "class", "const", "continue", "default", "do", "else",
+        "enum", "extends", "finally", "final", "for", "goto", "if", "implements", "import", "interface",
+        "instanceof", "new", "package", "return", "static", "super", "switch", "synchronized", "this",
+        "throws", "throw", "try", "void", "while"), b.nextNot(LETTER_OR_DIGIT));
+    b.rule(LETTER_OR_DIGIT).is(javaIdentifierPart(b));
+    b.rule(IDENTIFIER).is(b.nextNot(KEYWORD), b.token(GenericTokenType.IDENTIFIER, javaIdentifier(b)), SPACING).skip();
+
+    b.rule(LITERAL).is(b.firstOf(
+        TRUE_KEYWORD,
+        FALSE_KEYWORD,
+        NULL_KEYWORD,
+        CHARACTER_LITERAL,
+        STRING_LITERAL,
+        FLOAT_LITERAL,
+        DOUBLE_LITERAL,
+        LONG_LITERAL,
+        INTEGER_LITERAL));
+  }
+

@@ -1,9 +1,9 @@
   @Override
   public void visitNode(AstNode astNode) {
-    String methodName = buildMethodSignature(new MethodHelper(getContext().getGrammar(), astNode));
+    String methodName = buildMethodSignature(new MethodHelper(astNode));
     SourceClass sourceClass = peekSourceClass();
     // TODO hack grammar to get proper start line
-    int startLine = PublicApiVisitor.getDeclaration(getContext().getGrammar(), astNode).getTokenLine();
+    int startLine = PublicApiVisitor.getDeclaration(astNode).getTokenLine();
     SourceMethod sourceMethod = new SourceMethod(sourceClass, methodName, startLine);
     sourceMethod.setMeasure(JavaMetric.METHODS, 1);
     getContext().addSourceCode(sourceMethod);

@@ -1,10 +1,10 @@
   private boolean hasAnnotation(AstNode astNode, String expected) {
     AstNode declaration = getDeclaration(astNode);
     for (AstNode modifier : getModifiers(declaration)) {
-      AstNode annotation = modifier.getFirstChild(getContext().getGrammar().annotation);
+      AstNode annotation = modifier.getFirstChild(JavaGrammar.ANNOTATION);
       if (annotation != null) {
         StringBuilder value = new StringBuilder();
-        for (AstNode identifier : annotation.getFirstChild(getContext().getGrammar().qualifiedIdentifier).getChildren()) {
+        for (AstNode identifier : annotation.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER).getChildren()) {
           value.append(identifier.getTokenValue());
         }
         if (value.toString().equals(expected)) {

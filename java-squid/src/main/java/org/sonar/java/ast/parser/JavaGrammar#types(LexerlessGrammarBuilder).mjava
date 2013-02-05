@@ -1,0 +1,32 @@
+  /**
+   * 4. Types, Values and Variables
+   */
+  private static void types(LexerlessGrammarBuilder b) {
+    b.rule(TYPE).is(b.firstOf(BASIC_TYPE, CLASS_TYPE), b.zeroOrMore(DIM));
+    b.rule(REFERENCE_TYPE).is(b.firstOf(
+        b.sequence(BASIC_TYPE, b.zeroOrMore(DIM)),
+        b.sequence(CLASS_TYPE, b.zeroOrMore(DIM))));
+    b.rule(CLASS_TYPE).is(IDENTIFIER, b.optional(TYPE_ARGUMENTS), b.zeroOrMore(DOT, IDENTIFIER, b.optional(TYPE_ARGUMENTS)));
+    b.rule(CLASS_TYPE_LIST).is(CLASS_TYPE, b.zeroOrMore(COMMA, CLASS_TYPE));
+    b.rule(TYPE_ARGUMENTS).is(LPOINT, TYPE_ARGUMENT, b.zeroOrMore(COMMA, TYPE_ARGUMENT), RPOINT);
+    b.rule(TYPE_ARGUMENT).is(b.firstOf(
+        REFERENCE_TYPE,
+        b.sequence(QUERY, b.optional(b.firstOf(EXTENDS_KEYWORD, SUPER_KEYWORD), REFERENCE_TYPE))));
+    b.rule(TYPE_PARAMETERS).is(LPOINT, TYPE_PARAMETER, b.zeroOrMore(COMMA, TYPE_PARAMETER), RPOINT);
+    b.rule(TYPE_PARAMETER).is(IDENTIFIER, b.optional(EXTENDS_KEYWORD, BOUND));
+    b.rule(BOUND).is(CLASS_TYPE, b.zeroOrMore(AND, CLASS_TYPE));
+    b.rule(MODIFIER).is(b.firstOf(
+        ANNOTATION,
+        PUBLIC_KEYWORD,
+        PROTECTED_KEYWORD,
+        PRIVATE_KEYWORD,
+        STATIC_KEYWORD,
+        ABSTRACT_KEYWORD,
+        FINAL_KEYWORD,
+        NATIVE_KEYWORD,
+        SYNCHRONIZED_KEYWORD,
+        TRANSIENT_KEYWORD,
+        VOLATILE_KEYWORD,
+        STRICTFP_KEYWORD));
+  }
+
