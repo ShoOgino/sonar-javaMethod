@@ -1,9 +1,10 @@
   public List<AstNode> getParameters() {
-    AstNode node = astNode.findFirstDirectChild(grammar.formalParameters);
+    AstNode node = astNode.getFirstChild(grammar.formalParameters);
     if (node == null) {
       // in case of annotationMethodRest
       return Collections.emptyList();
     }
-    return node.findChildren(grammar.formalParameterDecls);
+    // TODO try to avoid usage of "getDescendants" by refactoring grammar rule "formalParameterDecls"
+    return node.getDescendants(grammar.formalParameterDecls);
   }
 

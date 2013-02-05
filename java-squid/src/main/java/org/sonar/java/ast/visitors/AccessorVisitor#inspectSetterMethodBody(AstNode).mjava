@@ -1,10 +1,11 @@
   private boolean inspectSetterMethodBody(AstNode astNode) {
     if (astNode.is(getContext().getGrammar().expressionStatement)) {
-      AstNode expression = astNode.findFirstChild(getContext().getGrammar().expression);
+      AstNode expression = astNode.getFirstChild(getContext().getGrammar().statementExpression).getFirstChild(getContext().getGrammar().expression);
       AstNode assignmentExpression = expression.getFirstChild();
       if (assignmentExpression.is(getContext().getGrammar().assignmentExpression)) {
         // TODO in previous version we had a more complex check
-        AstNode varToAssign = assignmentExpression.findFirstChild(GenericTokenType.IDENTIFIER);
+        // TODO try to avoid usage of "getFirstDescendant" by refactoring grammar
+        AstNode varToAssign = assignmentExpression.getFirstDescendant(GenericTokenType.IDENTIFIER);
         return findPrivateClassVariable(varToAssign);
       }
     }

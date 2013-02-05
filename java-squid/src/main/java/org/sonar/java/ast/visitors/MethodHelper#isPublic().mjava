@@ -1,15 +1,15 @@
   public boolean isPublic() {
     final AstNode node;
     if (astNode.is(grammar.methodDeclaratorRest, grammar.voidMethodDeclaratorRest, grammar.constructorDeclaratorRest)) {
-      node = astNode.findFirstParent(grammar.classBodyDeclaration);
+      node = astNode.getFirstAncestor(grammar.classBodyDeclaration);
     } else if (astNode.is(grammar.interfaceMethodDeclaratorRest, grammar.voidInterfaceMethodDeclaratorsRest)) {
-      node = astNode.findFirstParent(grammar.interfaceBodyDeclaration);
+      node = astNode.getFirstAncestor(grammar.interfaceBodyDeclaration);
     } else if (astNode.is(grammar.annotationMethodRest)) {
-      node = astNode.findFirstParent(grammar.annotationTypeElementDeclaration);
+      node = astNode.getFirstAncestor(grammar.annotationTypeElementDeclaration);
     } else {
       throw new IllegalStateException();
     }
-    for (AstNode modifierNode : node.findDirectChildren(grammar.modifier)) {
+    for (AstNode modifierNode : node.getChildren(grammar.modifier)) {
       if (modifierNode.getChild(0).is(JavaKeyword.PUBLIC)) {
         return true;
       }
