@@ -1,5 +1,9 @@
-  public void onTestStart(String name) {
+  public synchronized void onTestStart(String name) {
+    if (testStarted) {
+      throw new Error("Looks like several tests executed in parallel in the same JVM, thus coverage per test can't be recorded correctly.");
+    }
     agent.reset();
     agent.setSessionId(name);
+    testStarted = true;
   }
 
