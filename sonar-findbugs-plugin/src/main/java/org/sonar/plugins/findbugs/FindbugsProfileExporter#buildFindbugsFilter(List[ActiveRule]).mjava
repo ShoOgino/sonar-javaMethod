@@ -1,9 +1,11 @@
   protected static FindBugsFilter buildFindbugsFilter(List<ActiveRule> activeRules) {
+    FindbugsLevelUtils level = new FindbugsLevelUtils();
     FindBugsFilter root = new FindBugsFilter();
     for (ActiveRule activeRule : activeRules) {
       if (FindbugsConstants.REPOSITORY_KEY.equals(activeRule.getRepositoryKey())) {
         Match child = new Match();
         child.setBug(new Bug(activeRule.getConfigKey()));
+        child.setPriority(new Priority(level.from(activeRule.getSeverity())));
         root.addMatch(child);
       }
     }
