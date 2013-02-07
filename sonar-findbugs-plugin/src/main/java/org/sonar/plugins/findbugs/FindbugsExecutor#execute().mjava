@@ -60,6 +60,8 @@
       profiler.stop();
 
       return xmlBugReporter.getBugCollection();
+    } catch (TimeoutException e) {
+      throw new SonarException("Can not execute Findbugs with a timeout threshold value of " + configuration.getTimeout() + " milliseconds", e);
     } catch (Exception e) {
       throw new SonarException("Can not execute Findbugs", e);
     } finally {
