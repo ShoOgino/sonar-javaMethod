@@ -1,0 +1,17 @@
+  private Module loadModule(SMInputCursor parentCursor) throws XMLStreamException {
+    Module result = new Module();
+    result.name = parentCursor.getAttrValue("name");
+    SMInputCursor cursor = parentCursor.childElementCursor();
+    while (cursor.getNext() != null) {
+      String nodeName = cursor.getLocalName();
+      if (MODULE_NODE.equals(nodeName)) {
+        result.modules.add(loadModule(cursor));
+      } else if ("property".equals(nodeName)) {
+        String key = cursor.getAttrValue("name");
+        String value = cursor.getAttrValue("value");
+        result.properties.put(key, value);
+      }
+    }
+    return result;
+  }
+
