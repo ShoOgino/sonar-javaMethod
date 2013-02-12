@@ -14,7 +14,7 @@
     b.rule(LOCAL_VARIABLE_DECLARATION_STATEMENT).is(VARIABLE_MODIFIERS, TYPE, VARIABLE_DECLARATORS, SEMI);
     b.rule(VARIABLE_MODIFIERS).is(b.zeroOrMore(b.firstOf(
         ANNOTATION,
-        FINAL_KEYWORD)));
+        FINAL)));
     b.rule(VARIABLE_DECLARATORS).is(VARIABLE_DECLARATOR, b.zeroOrMore(COMMA, VARIABLE_DECLARATOR));
     b.rule(VARIABLE_DECLARATOR).is(IDENTIFIER, b.zeroOrMore(DIM), b.optional(EQU, VARIABLE_INITIALIZER));
 
@@ -44,57 +44,57 @@
     // 14.8. Expression Statements
     b.rule(EXPRESSION_STATEMENT).is(STATEMENT_EXPRESSION, SEMI);
     // 14.9. The if Statement
-    b.rule(IF_STATEMENT).is(IF_KEYWORD, PAR_EXPRESSION, STATEMENT, b.optional(ELSE_KEYWORD, STATEMENT));
+    b.rule(IF_STATEMENT).is(IF, PAR_EXPRESSION, STATEMENT, b.optional(ELSE, STATEMENT));
     // 14.10. The assert Statement
-    b.rule(ASSERT_STATEMENT).is(ASSERT_KEYWORD, EXPRESSION, b.optional(COLON, EXPRESSION), SEMI);
+    b.rule(ASSERT_STATEMENT).is(ASSERT, EXPRESSION, b.optional(COLON, EXPRESSION), SEMI);
 
     // 14.11. The switch statement
-    b.rule(SWITCH_STATEMENT).is(SWITCH_KEYWORD, PAR_EXPRESSION, LWING, SWITCH_BLOCK_STATEMENT_GROUPS, RWING);
+    b.rule(SWITCH_STATEMENT).is(SWITCH, PAR_EXPRESSION, LWING, SWITCH_BLOCK_STATEMENT_GROUPS, RWING);
     b.rule(SWITCH_BLOCK_STATEMENT_GROUPS).is(b.zeroOrMore(SWITCH_BLOCK_STATEMENT_GROUP));
     b.rule(SWITCH_BLOCK_STATEMENT_GROUP).is(SWITCH_LABEL, BLOCK_STATEMENTS);
     b.rule(SWITCH_LABEL).is(b.firstOf(
-        b.sequence(CASE_KEYWORD, CONSTANT_EXPRESSION, COLON),
-        b.sequence(CASE_KEYWORD, ENUM_CONSTANT_NAME, COLON),
-        b.sequence(DEFAULT_KEYWORD, COLON)));
+        b.sequence(CASE, CONSTANT_EXPRESSION, COLON),
+        b.sequence(CASE, ENUM_CONSTANT_NAME, COLON),
+        b.sequence(DEFAULT, COLON)));
     b.rule(ENUM_CONSTANT_NAME).is(IDENTIFIER);
 
     // 14.12. The while Statement
-    b.rule(WHILE_STATEMENT).is(WHILE_KEYWORD, PAR_EXPRESSION, STATEMENT);
+    b.rule(WHILE_STATEMENT).is(WHILE, PAR_EXPRESSION, STATEMENT);
     // 14.13. The do Statement
-    b.rule(DO_STATEMENT).is(DO_KEYWORD, STATEMENT, WHILE_KEYWORD, PAR_EXPRESSION, SEMI);
+    b.rule(DO_STATEMENT).is(DO, STATEMENT, WHILE, PAR_EXPRESSION, SEMI);
 
     // 14.14. The for Statement
     b.rule(FOR_STATEMENT).is(b.firstOf(
-        b.sequence(FOR_KEYWORD, LPAR, b.optional(FOR_INIT), SEMI, b.optional(EXPRESSION), SEMI, b.optional(FOR_UPDATE), RPAR, STATEMENT),
-        b.sequence(FOR_KEYWORD, LPAR, FORMAL_PARAMETER, COLON, EXPRESSION, RPAR, STATEMENT)));
+        b.sequence(FOR, LPAR, b.optional(FOR_INIT), SEMI, b.optional(EXPRESSION), SEMI, b.optional(FOR_UPDATE), RPAR, STATEMENT),
+        b.sequence(FOR, LPAR, FORMAL_PARAMETER, COLON, EXPRESSION, RPAR, STATEMENT)));
     b.rule(FOR_INIT).is(b.firstOf(
-        b.sequence(b.zeroOrMore(b.firstOf(FINAL_KEYWORD, ANNOTATION)), TYPE, VARIABLE_DECLARATORS),
+        b.sequence(b.zeroOrMore(b.firstOf(FINAL, ANNOTATION)), TYPE, VARIABLE_DECLARATORS),
         b.sequence(STATEMENT_EXPRESSION, b.zeroOrMore(COMMA, STATEMENT_EXPRESSION))));
     b.rule(FOR_UPDATE).is(STATEMENT_EXPRESSION, b.zeroOrMore(COMMA, STATEMENT_EXPRESSION));
 
     // 14.15. The break Statement
-    b.rule(BREAK_STATEMENT).is(BREAK_KEYWORD, b.optional(IDENTIFIER), SEMI);
+    b.rule(BREAK_STATEMENT).is(BREAK, b.optional(IDENTIFIER), SEMI);
     // 14.16. The continue Statement
-    b.rule(CONTINUE_STATEMENT).is(CONTINUE_KEYWORD, b.optional(IDENTIFIER), SEMI);
+    b.rule(CONTINUE_STATEMENT).is(CONTINUE, b.optional(IDENTIFIER), SEMI);
     // 14.17. The return Statement
-    b.rule(RETURN_STATEMENT).is(RETURN_KEYWORD, b.optional(EXPRESSION), SEMI);
+    b.rule(RETURN_STATEMENT).is(RETURN, b.optional(EXPRESSION), SEMI);
     // 14.18. The throw Statement
-    b.rule(THROW_STATEMENT).is(THROW_KEYWORD, EXPRESSION, SEMI);
+    b.rule(THROW_STATEMENT).is(THROW, EXPRESSION, SEMI);
     // 14.19. The synchronized Statement
-    b.rule(SYNCHRONIZED_STATEMENT).is(SYNCHRONIZED_KEYWORD, PAR_EXPRESSION, BLOCK);
+    b.rule(SYNCHRONIZED_STATEMENT).is(SYNCHRONIZED, PAR_EXPRESSION, BLOCK);
 
     // 14.20. The try Statement
     b.rule(TRY_STATEMENT).is(b.firstOf(
-        b.sequence(TRY_KEYWORD, BLOCK, b.firstOf(b.sequence(b.oneOrMore(CATCH_CLAUSE), b.optional(FINALLY_)), FINALLY_)),
+        b.sequence(TRY, BLOCK, b.firstOf(b.sequence(b.oneOrMore(CATCH_CLAUSE), b.optional(FINALLY_)), FINALLY_)),
         TRY_WITH_RESOURCES_STATEMENT));
-    b.rule(TRY_WITH_RESOURCES_STATEMENT).is(TRY_KEYWORD, RESOURCE_SPECIFICATION, BLOCK, b.zeroOrMore(CATCH_CLAUSE), b.optional(FINALLY_));
+    b.rule(TRY_WITH_RESOURCES_STATEMENT).is(TRY, RESOURCE_SPECIFICATION, BLOCK, b.zeroOrMore(CATCH_CLAUSE), b.optional(FINALLY_));
     b.rule(RESOURCE_SPECIFICATION).is(LPAR, RESOURCE, b.zeroOrMore(SEMI, RESOURCE), b.optional(SEMI), RPAR);
     b.rule(RESOURCE).is(b.optional(VARIABLE_MODIFIERS), TYPE, VARIABLE_DECLARATOR_ID, EQU, EXPRESSION);
 
-    b.rule(CATCH_CLAUSE).is(CATCH_KEYWORD, LPAR, CATCH_FORMAL_PARAMETER, RPAR, BLOCK);
+    b.rule(CATCH_CLAUSE).is(CATCH, LPAR, CATCH_FORMAL_PARAMETER, RPAR, BLOCK);
     b.rule(CATCH_FORMAL_PARAMETER).is(b.optional(VARIABLE_MODIFIERS), CATCH_TYPE, VARIABLE_DECLARATOR_ID);
     b.rule(CATCH_TYPE).is(CLASS_TYPE, b.zeroOrMore(OR, CLASS_TYPE));
 
-    b.rule(FINALLY_).is(FINALLY_KEYWORD, BLOCK);
+    b.rule(FINALLY_).is(FINALLY, BLOCK);
   }
 

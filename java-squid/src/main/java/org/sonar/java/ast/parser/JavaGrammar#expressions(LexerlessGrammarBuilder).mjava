@@ -9,7 +9,7 @@
     b.rule(ASSIGNMENT_OPERATOR).is(b.firstOf(
         EQU,
         PLUSEQU,
-        MINSEQU,
+        MINUSEQU,
         STAREQU,
         DIVEQU,
         ANDEQU,
@@ -28,7 +28,7 @@
     b.rule(EQUALITY_EXPRESSION).is(RELATIONAL_EXPRESSION, b.zeroOrMore(b.firstOf(EQUAL, NOTEQUAL), RELATIONAL_EXPRESSION)).skipIfOneChild();
     b.rule(RELATIONAL_EXPRESSION).is(SHIFT_EXPRESSION, b.zeroOrMore(b.firstOf(
         b.sequence(b.firstOf(GE, GT, LE, LT), SHIFT_EXPRESSION),
-        b.sequence(INSTANCEOF_KEYWORD, REFERENCE_TYPE)))).skipIfOneChild();
+        b.sequence(INSTANCEOF, REFERENCE_TYPE)))).skipIfOneChild();
     b.rule(SHIFT_EXPRESSION).is(ADDITIVE_EXPRESSION, b.zeroOrMore(b.firstOf(SL, BSR, SR), ADDITIVE_EXPRESSION)).skipIfOneChild();
     b.rule(ADDITIVE_EXPRESSION).is(MULTIPLICATIVE_EXPRESSION, b.zeroOrMore(b.firstOf(PLUS, MINUS), MULTIPLICATIVE_EXPRESSION)).skipIfOneChild();
     b.rule(MULTIPLICATIVE_EXPRESSION).is(UNARY_EXPRESSION, b.zeroOrMore(b.firstOf(STAR, DIV, MOD), UNARY_EXPRESSION)).skipIfOneChild();
@@ -38,27 +38,27 @@
         b.sequence(PRIMARY, b.zeroOrMore(SELECTOR), b.zeroOrMore(POST_FIX_OP)))).skipIfOneChild();
     b.rule(PRIMARY).is(b.firstOf(
         PAR_EXPRESSION,
-        b.sequence(NON_WILDCARD_TYPE_ARGUMENTS, b.firstOf(EXPLICIT_GENERIC_INVOCATION_SUFFIX, b.sequence(THIS_KEYWORD, ARGUMENTS))),
-        b.sequence(THIS_KEYWORD, b.optional(ARGUMENTS)),
-        b.sequence(SUPER_KEYWORD, SUPER_SUFFIX),
+        b.sequence(NON_WILDCARD_TYPE_ARGUMENTS, b.firstOf(EXPLICIT_GENERIC_INVOCATION_SUFFIX, b.sequence(THIS, ARGUMENTS))),
+        b.sequence(THIS, b.optional(ARGUMENTS)),
+        b.sequence(SUPER, SUPER_SUFFIX),
         LITERAL,
-        b.sequence(NEW_KEYWORD, CREATOR),
+        b.sequence(NEW, CREATOR),
         b.sequence(QUALIFIED_IDENTIFIER, b.optional(IDENTIFIER_SUFFIX)),
-        b.sequence(BASIC_TYPE, b.zeroOrMore(DIM), DOT, CLASS_KEYWORD),
-        b.sequence(VOID_KEYWORD, DOT, CLASS_KEYWORD)));
+        b.sequence(BASIC_TYPE, b.zeroOrMore(DIM), DOT, CLASS),
+        b.sequence(VOID, DOT, CLASS)));
     b.rule(IDENTIFIER_SUFFIX).is(b.firstOf(
-        b.sequence(LBRK, b.firstOf(b.sequence(RBRK, b.zeroOrMore(DIM), DOT, CLASS_KEYWORD), b.sequence(EXPRESSION, RBRK))),
+        b.sequence(LBRK, b.firstOf(b.sequence(RBRK, b.zeroOrMore(DIM), DOT, CLASS), b.sequence(EXPRESSION, RBRK))),
         ARGUMENTS,
         b.sequence(DOT, b.firstOf(
-            CLASS_KEYWORD,
+            CLASS,
             EXPLICIT_GENERIC_INVOCATION,
-            THIS_KEYWORD,
-            b.sequence(SUPER_KEYWORD, ARGUMENTS),
-            b.sequence(NEW_KEYWORD, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR)))));
+            THIS,
+            b.sequence(SUPER, ARGUMENTS),
+            b.sequence(NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR)))));
     b.rule(EXPLICIT_GENERIC_INVOCATION).is(NON_WILDCARD_TYPE_ARGUMENTS, EXPLICIT_GENERIC_INVOCATION_SUFFIX);
     b.rule(NON_WILDCARD_TYPE_ARGUMENTS).is(LPOINT, REFERENCE_TYPE, b.zeroOrMore(COMMA, REFERENCE_TYPE), RPOINT);
     b.rule(EXPLICIT_GENERIC_INVOCATION_SUFFIX).is(b.firstOf(
-        b.sequence(SUPER_KEYWORD, SUPER_SUFFIX),
+        b.sequence(SUPER, SUPER_SUFFIX),
         b.sequence(IDENTIFIER, ARGUMENTS)));
     b.rule(PREFIX_OP).is(b.firstOf(
         INC,
@@ -73,22 +73,22 @@
     b.rule(SELECTOR).is(b.firstOf(
         b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS)),
         b.sequence(DOT, EXPLICIT_GENERIC_INVOCATION),
-        b.sequence(DOT, THIS_KEYWORD),
-        b.sequence(DOT, SUPER_KEYWORD, SUPER_SUFFIX),
-        b.sequence(DOT, NEW_KEYWORD, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR),
+        b.sequence(DOT, THIS),
+        b.sequence(DOT, SUPER, SUPER_SUFFIX),
+        b.sequence(DOT, NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR),
         DIM_EXPR));
     b.rule(SUPER_SUFFIX).is(b.firstOf(
         ARGUMENTS,
         b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS))));
     b.rule(BASIC_TYPE).is(b.firstOf(
-        BYTE_KEYWORD,
-        SHORT_KEYWORD,
-        CHAR_KEYWORD,
-        INT_KEYWORD,
-        LONG_KEYWORD,
-        FLOAT_KEYWORD,
-        DOUBLE_KEYWORD,
-        BOOLEAN_KEYWORD));
+        BYTE,
+        SHORT,
+        CHAR,
+        INT,
+        LONG,
+        FLOAT,
+        DOUBLE,
+        BOOLEAN));
     b.rule(ARGUMENTS).is(LPAR, b.optional(EXPRESSION, b.zeroOrMore(COMMA, EXPRESSION)), RPAR);
     b.rule(CREATOR).is(b.firstOf(
         b.sequence(b.optional(NON_WILDCARD_TYPE_ARGUMENTS), CREATED_NAME, CLASS_CREATOR_REST),
