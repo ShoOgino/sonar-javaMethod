@@ -12,8 +12,11 @@
       reader.read();
     }
 
+    boolean collectedCoveragePerTest = false;
     for (Map.Entry<String, ExecutionDataStore> entry : executionDataVisitor.getSessions().entrySet()) {
-      analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), buildOutputDir, context, excludes);
+      if (analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), buildOutputDir, context, excludes)) {
+        collectedCoveragePerTest = true;
+      }
     }
 
     CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged(), buildOutputDir);
@@ -30,6 +33,10 @@
     }
     if (analyzedResources == 0) {
       JaCoCoUtils.LOG.warn("Coverage information was not collected. Perhaps you forget to include debug information into compiled classes?");
+    } else if (collectedCoveragePerTest) {
+      JaCoCoUtils.LOG.info("Information about coverage per test has been collected.");
+    } else {
+      JaCoCoUtils.LOG.info("No information about coverage per test.");
     }
   }
 
