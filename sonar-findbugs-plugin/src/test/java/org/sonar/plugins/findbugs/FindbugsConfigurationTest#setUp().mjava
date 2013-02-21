@@ -1,9 +1,8 @@
   @Before
   public void setUp() {
-    project = mock(Project.class);
+    baseDir = tempFolder.newFolder("findbugs");
+    fs = new SimpleModuleFileSystem(baseDir);
     settings = new Settings(new PropertyDefinitions().addComponent(FindbugsPlugin.class));
-    findbugsTempDir = tempFolder.newFolder("findbugs");
-    when(project.getFileSystem()).thenReturn(new SimpleProjectFileSystem(findbugsTempDir));
-    conf = new FindbugsConfiguration(project, settings, RulesProfile.create(), new FindbugsProfileExporter(), null);
+    conf = new FindbugsConfiguration(fs, settings, RulesProfile.create(), new FindbugsProfileExporter(), null);
   }
 

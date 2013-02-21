@@ -1,23 +1,30 @@
-  public edu.umd.cs.findbugs.Project getFindbugsProject() {
-    File classesDir = project.getFileSystem().getBuildOutputDir();
-    if (classesDir == null || !classesDir.exists()) {
+  public edu.umd.cs.findbugs.Project getFindbugsProject() throws IOException {
+    edu.umd.cs.findbugs.Project findbugsProject = new edu.umd.cs.findbugs.Project();
+    for (File dir : fileSystem.sourceDirs()) {
+      findbugsProject.addSourceDir(dir.getAbsolutePath());
+    }
+    boolean hasExistingBinaryDir = false;
+    Set<String> binaryDirPaths = Sets.newHashSet();
+    for (File binaryDir : fileSystem.binaryDirs()) {
+      if (binaryDir.exists()) {
+        hasExistingBinaryDir = true;
+        findbugsProject.addFile(binaryDir.getAbsolutePath());
+        binaryDirPaths.add(binaryDir.getCanonicalPath());
+      }
+    }
+    if (!hasExistingBinaryDir) {
       throw new SonarException("Findbugs needs sources to be compiled. "
         + "Please build project before executing sonar and check the location of compiled classes.");
     }
 
-    edu.umd.cs.findbugs.Project findbugsProject = new edu.umd.cs.findbugs.Project();
-    for (File dir : project.getFileSystem().getSourceDirs()) {
-      findbugsProject.addSourceDir(dir.getAbsolutePath());
-    }
-    findbugsProject.addFile(classesDir.getAbsolutePath());
     for (File file : projectClasspath.getElements()) {
-      if (!file.equals(classesDir)) {
+      if (file.isFile() || !binaryDirPaths.contains(file.getCanonicalPath())) {
         findbugsProject.addAuxClasspathEntry(file.getAbsolutePath());
       }
     }
     findbugsProject.addAuxClasspathEntry(annotationsLib.getAbsolutePath());
     findbugsProject.addAuxClasspathEntry(jsr305Lib.getAbsolutePath());
-    findbugsProject.setCurrentWorkingDirectory(project.getFileSystem().getBuildDir());
+    findbugsProject.setCurrentWorkingDirectory(fileSystem.buildDir());
     return findbugsProject;
   }
 

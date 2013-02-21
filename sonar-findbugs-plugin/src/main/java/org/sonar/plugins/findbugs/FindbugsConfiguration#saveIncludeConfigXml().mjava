@@ -2,6 +2,8 @@
   File saveIncludeConfigXml() throws IOException {
     StringWriter conf = new StringWriter();
     exporter.exportProfile(profile, conf);
-    return project.getFileSystem().writeToWorkingDirectory(conf.toString(), "findbugs-include.xml");
+    File file = new File(fileSystem.workingDir(), "findbugs-include.xml");
+    FileUtils.write(file, conf.toString(), CharEncoding.UTF_8);
+    return file;
   }
 
