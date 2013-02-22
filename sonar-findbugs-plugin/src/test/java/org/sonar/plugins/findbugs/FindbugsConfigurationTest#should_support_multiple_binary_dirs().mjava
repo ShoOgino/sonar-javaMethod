@@ -1,0 +1,17 @@
+  /**
+   * @since 1.2
+   */
+  @Test
+  public void should_support_multiple_binary_dirs() throws IOException {
+    File binaryDir1 = temp.newFolder("binary1");
+    File binaryDir2 = temp.newFolder("binary2");
+    fs.addBinaryDir(binaryDir1);
+    fs.addBinaryDir(binaryDir2);
+
+    Project findbugsProject = conf.getFindbugsProject();
+
+    assertThat(findbugsProject.getFileCount()).isEqualTo(2);
+    assertThat(findbugsProject.getFile(0)).isEqualTo(binaryDir1.getAbsolutePath());
+    assertThat(findbugsProject.getFile(1)).isEqualTo(binaryDir2.getAbsolutePath());
+  }
+

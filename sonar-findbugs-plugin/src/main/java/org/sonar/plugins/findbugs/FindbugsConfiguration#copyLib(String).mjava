@@ -1,12 +1,14 @@
   private File copyLib(String name) {
+    InputStream input = null;
     try {
-      InputStream is = getClass().getResourceAsStream(name);
+      input = getClass().getResourceAsStream(name);
       File temp = File.createTempFile("findbugs", ".jar");
-      OutputStream os = FileUtils.openOutputStream(temp);
-      IOUtils.copy(is, os);
+      FileUtils.copyInputStreamToFile(input, temp);
       return temp;
     } catch (IOException e) {
-      throw new SonarException(e);
+      throw new IllegalStateException("Fail to extract Findbugs dependency", e);
+    } finally {
+      IOUtils.closeQuietly(input);
     }
   }
 

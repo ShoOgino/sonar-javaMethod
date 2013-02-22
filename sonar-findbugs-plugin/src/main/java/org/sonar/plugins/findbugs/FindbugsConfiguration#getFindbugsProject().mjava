@@ -22,8 +22,11 @@
         findbugsProject.addAuxClasspathEntry(file.getAbsolutePath());
       }
     }
-    findbugsProject.addAuxClasspathEntry(annotationsLib.getAbsolutePath());
-    findbugsProject.addAuxClasspathEntry(jsr305Lib.getAbsolutePath());
+    if (annotationsLib != null) {
+      // Findbugs dependencies are packaged by Maven. They are not available during execution of unit tests.
+      findbugsProject.addAuxClasspathEntry(annotationsLib.getAbsolutePath());
+      findbugsProject.addAuxClasspathEntry(jsr305Lib.getAbsolutePath());
+    }
     findbugsProject.setCurrentWorkingDirectory(fileSystem.buildDir());
     return findbugsProject;
   }
