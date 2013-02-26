@@ -2,7 +2,9 @@
   public void test_onFinish() throws Exception {
     when(agent.getExecutionData(false)).thenReturn(new byte[] {});
     jacoco.onTestFinish("test");
-    verify(agent).dump(true);
+    InOrder inOrder = Mockito.inOrder(agent);
+    inOrder.verify(agent).setSessionId("test");
+    inOrder.verify(agent).dump(true);
     verifyNoMoreInteractions(agent);
   }
 
