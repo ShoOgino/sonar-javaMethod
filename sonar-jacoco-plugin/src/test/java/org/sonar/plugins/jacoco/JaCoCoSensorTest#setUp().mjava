@@ -1,5 +1,10 @@
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
+    outputDir = TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest/");
+    jacocoExecutionData = new File(outputDir, "jacoco.exec");
+
+    Files.copy(TestUtils.getResource("Hello.class.toCopy"), new File(jacocoExecutionData.getParentFile(), "Hello.class"));
+
     context = mock(SensorContext.class);
     pfs = mock(ProjectFileSystem.class);
     project = mock(Project.class);
