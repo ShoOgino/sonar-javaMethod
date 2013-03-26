@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    check.maximum = 1;
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TooManyLinesOfCode.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().withMessage("This file has 2 lines of code, which is greater than 1 authorized. Split it into smaller files.")
+        .noMore();
+  }
+
