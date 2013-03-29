@@ -1,0 +1,13 @@
+  @Test
+  public void getPropertyOrDefaultValue_with_property_set() {
+    String oldValue = System.getProperty("foo");
+    System.setProperty("foo", "bar");
+    assertThat(JavaConfigurationModel.getPropertyOrDefaultValue("foo", "baz")).isEqualTo("bar");
+
+    if (oldValue == null) {
+      System.clearProperty("foo");
+    } else {
+      System.setProperty("foo", oldValue);
+    }
+  }
+
