@@ -1,0 +1,8 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    String name = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
+    if (!pattern.matcher(name).matches()) {
+      getContext().createLineViolation(this, "Rename this class name to match the regular expression '" + format + "'.", astNode);
+    }
+  }
+

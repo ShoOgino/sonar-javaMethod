@@ -1,0 +1,8 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadClassName.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(1).withMessage("Rename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.")
+        .noMore();
+  }
+
