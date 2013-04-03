@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    String name = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
+    if (pattern.matcher(name).matches()) {
+      if (!isAbstract(astNode)) {
+        getContext().createLineViolation(this, "Make this class abstract or rename it, since it matches the regular expression '" + format + "'.", astNode);
+      }
+    } else {
+      if (isAbstract(astNode)) {
+        getContext().createLineViolation(this, "Rename this abstract class name to match the regular expression '" + format + "'.", astNode);
+      }
+    }
+  }
+
