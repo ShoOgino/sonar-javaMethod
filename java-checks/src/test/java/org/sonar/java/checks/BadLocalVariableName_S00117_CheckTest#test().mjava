@@ -1,0 +1,8 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadLocalVariableName.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3).withMessage("Rename this local variable name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.")
+        .noMore();
+  }
+
