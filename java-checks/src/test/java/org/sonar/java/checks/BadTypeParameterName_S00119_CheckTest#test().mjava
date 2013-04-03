@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadGenericName.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(1).withMessage("Rename this generic name to match the regular expression '^[A-Z]$'.")
+        .next().atLine(2)
+        .noMore();
+  }
+
