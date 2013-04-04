@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TooManyStatementsPerLine.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3).withMessage("At most one statement is allowed per line, but 2 statements were found on this line.")
+        .next().atLine(7)
+        .noMore();
+  }
+
