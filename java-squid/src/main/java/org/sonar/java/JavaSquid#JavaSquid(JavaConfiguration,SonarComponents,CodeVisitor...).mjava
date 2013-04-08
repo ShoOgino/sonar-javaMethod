@@ -1,7 +1,8 @@
-  public JavaSquid(JavaConfiguration conf, @Nullable FileLinesContextFactory fileLinesContextFactory, CodeVisitor... visitors) {
+  public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, CodeVisitor... visitors) {
     astScanner = JavaAstScanner.create(conf);
-    if (fileLinesContextFactory != null) {
-      astScanner.accept(new FileLinesVisitor(fileLinesContextFactory, conf.getCharset()));
+    if (sonarComponents != null) {
+      astScanner.accept(new FileLinesVisitor(sonarComponents.getFileLinesContextFactory(), conf.getCharset()));
+      astScanner.accept(new SyntaxHighlighterVisitor(sonarComponents.getResourcePerspectives(), conf.getCharset()));
     }
 
     // TODO unchecked cast

@@ -1,0 +1,17 @@
+  public SyntaxHighlighterVisitor(ResourcePerspectives perspectives, Charset charset) {
+    this.charset = charset;
+    this.perspectives = perspectives;
+
+    ImmutableMap.Builder<AstNodeType, String> typesBuilder = ImmutableMap.builder();
+    for (AstNodeType type : JavaKeyword.values()) {
+      typesBuilder.put(type, HighlightableTextType.KEYWORD);
+    }
+    typesBuilder.put(JavaTokenType.CHARACTER_LITERAL, HighlightableTextType.LITERAL);
+    typesBuilder.put(JavaTokenType.LITERAL, HighlightableTextType.LITERAL);
+    typesBuilder.put(JavaTokenType.FLOAT_LITERAL, HighlightableTextType.CONSTANT);
+    typesBuilder.put(JavaTokenType.DOUBLE_LITERAL, HighlightableTextType.CONSTANT);
+    typesBuilder.put(JavaTokenType.LONG_LITERAL, HighlightableTextType.CONSTANT);
+    typesBuilder.put(JavaTokenType.INTEGER_LITERAL, HighlightableTextType.CONSTANT);
+    types = typesBuilder.build();
+  }
+

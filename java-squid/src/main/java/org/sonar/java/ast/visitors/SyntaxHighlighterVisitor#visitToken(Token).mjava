@@ -1,0 +1,11 @@
+  @Override
+  public void visitToken(Token token) {
+    for (Trivia trivia : token.getTrivia()) {
+      if (trivia.isComment()) {
+        Token triviaToken = trivia.getToken();
+        int offset = getOffset(triviaToken.getLine(), triviaToken.getLine());
+        highlightable.highlightText(offset, offset + triviaToken.getValue().length(), HighlightableTextType.BLOCK_COMMENT);
+      }
+    }
+  }
+
