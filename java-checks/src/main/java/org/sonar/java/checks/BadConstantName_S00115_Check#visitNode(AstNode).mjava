@@ -1,6 +1,8 @@
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(JavaGrammar.ENUM_CONSTANT)) {
+    if (astNode.is(JavaGrammar.CONSTANT_DECLARATORS_REST)) {
+      check(astNode.getPreviousAstNode());
+    } else if (astNode.is(JavaGrammar.ENUM_CONSTANT)) {
       check(astNode.getFirstChild(JavaTokenType.IDENTIFIER));
     } else {
       if (isConstant(astNode)) {
