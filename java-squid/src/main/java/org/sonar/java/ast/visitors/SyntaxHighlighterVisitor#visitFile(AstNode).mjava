@@ -1,8 +1,13 @@
   @Override
   public void visitFile(AstNode astNode) {
+    if (astNode == null) {
+      // parse error
+      return;
+    }
+
     SourceFile squidFile = peekSourceFile();
     JavaFile sonarFile = SquidUtils.convertJavaFileKeyFromSquidFormat(squidFile.getKey());
-    highlightable = perspectives.as(Highlightable.class, sonarFile);
+    highlighting = perspectives.as(Highlightable.class, sonarFile).newHighlighting();
 
     lineStart = Lists.newArrayList();
     final String content;

@@ -1,5 +1,9 @@
   @Override
   public void visitNode(AstNode astNode) {
-    highlightable.highlightText(astNode.getFromIndex(), astNode.getToIndex(), types.get(astNode.getType()));
+    if (astNode.is(JavaGrammar.ANNOTATION)) {
+      highlighting.highlight(astNode.getFromIndex(), astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER).getToIndex(), types.get(astNode.getType()));
+    } else {
+      highlighting.highlight(astNode.getFromIndex(), astNode.getToIndex(), types.get(astNode.getType()));
+    }
   }
 
