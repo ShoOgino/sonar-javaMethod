@@ -1,8 +1,10 @@
   private boolean isAbstract(AstNode astNode) {
-    for (AstNode modifier : astNode.getParent().getChildren(JavaGrammar.MODIFIER)) {
+    AstNode modifier = astNode.getPreviousAstNode();
+    while (modifier != null && modifier.is(JavaGrammar.MODIFIER)) {
       if (modifier.getFirstChild().is(JavaKeyword.ABSTRACT)) {
         return true;
       }
+      modifier = modifier.getPreviousAstNode();
     }
     return false;
   }
