@@ -1,0 +1,23 @@
+  private void visitClassCreatorRest(AstNode astNode) {
+    if (astNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
+      // Anonymous Class Declaration
+      Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), "", enclosingSymbol);
+
+      enclosingSymbol = symbol;
+
+      symbol.members = new Scope();
+      symbol.completer = completer;
+      uncompleted.add(symbol);
+
+      // Save current environment to be able to complete class later
+      semanticModel.saveEnv(symbol, env);
+
+      Resolve.Env classEnv = env.dup();
+      classEnv.outer = env;
+      classEnv.enclosingClass = symbol;
+      classEnv.scope = symbol.members;
+      env = classEnv;
+      semanticModel.associateEnv(astNode.getFirstChild(JavaGrammar.CLASS_BODY), env);
+    }
+  }
+
