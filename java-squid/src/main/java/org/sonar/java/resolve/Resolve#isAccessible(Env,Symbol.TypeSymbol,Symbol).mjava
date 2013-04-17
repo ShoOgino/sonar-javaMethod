@@ -5,15 +5,19 @@
     switch (symbol.flags() & Flags.ACCESS_FLAGS) {
       case Flags.PRIVATE:
         return (env.enclosingClass().outermostClass() == symbol.owner().outermostClass())
-            && isInheritedIn(symbol, site);
+          && isInheritedIn(symbol, site);
       case 0:
         return (env.packge() == symbol.packge())
-            && isAccessible(env, site);
+          && isAccessible(env, site)
+          && isInheritedIn(symbol, site)
+            /* TODO && notOverriddenIn(site, symbol) */;
       case Flags.PUBLIC:
-        return isAccessible(env, site);
+        return isAccessible(env, site)
+            /* TODO && notOverriddenIn(site, symbol) */;
       case Flags.PROTECTED:
         return ((env.packge() == symbol.packge()) || isProtectedAccessible(symbol, env.enclosingClass, site))
-            && isAccessible(env, site);
+          && isAccessible(env, site)
+            /* TODO && notOverriddenIn(site, symbol) */;
       default:
         throw new IllegalStateException();
     }
