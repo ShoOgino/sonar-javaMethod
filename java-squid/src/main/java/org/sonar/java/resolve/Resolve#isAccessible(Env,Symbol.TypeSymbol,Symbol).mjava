@@ -1,23 +1,26 @@
   /**
    * Is symbol accessible as a member of given class in given environment?
+   * <p/>
+   * Symbol is accessible only if not overridden by another symbol. If overridden, then strictly speaking it is not a member.
    */
   public boolean isAccessible(Env env, Symbol.TypeSymbol site, Symbol symbol) {
     switch (symbol.flags() & Flags.ACCESS_FLAGS) {
       case Flags.PRIVATE:
+        // no check of overriding, because private members cannot be overridden
         return (env.enclosingClass().outermostClass() == symbol.owner().outermostClass())
           && isInheritedIn(symbol, site);
       case 0:
         return (env.packge() == symbol.packge())
           && isAccessible(env, site)
           && isInheritedIn(symbol, site)
-            /* TODO && notOverriddenIn(site, symbol) */;
+          && notOverriddenIn(site, symbol);
       case Flags.PUBLIC:
         return isAccessible(env, site)
-            /* TODO && notOverriddenIn(site, symbol) */;
+          && notOverriddenIn(site, symbol);
       case Flags.PROTECTED:
         return ((env.packge() == symbol.packge()) || isProtectedAccessible(symbol, env.enclosingClass, site))
           && isAccessible(env, site)
-            /* TODO && notOverriddenIn(site, symbol) */;
+          && notOverriddenIn(site, symbol);
       default:
         throw new IllegalStateException();
     }
