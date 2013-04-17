@@ -1,0 +1,14 @@
+  @Override
+  public void leaveNode(AstNode astNode) {
+    if (astNode.is(scopeAndSymbolAstNodeTypes)) {
+      restoreEnvironment(astNode);
+      enclosingSymbol = enclosingSymbol.owner();
+    } else if (astNode.is(scopeAstNodeTypes)) {
+      restoreEnvironment(astNode);
+    } else if (astNode.is(symbolAstNodeTypes)) {
+      enclosingSymbol = enclosingSymbol.owner();
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
+    }
+  }
+

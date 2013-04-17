@@ -1,0 +1,23 @@
+  /**
+   * Is given class a subclass of given base class?
+   */
+  private boolean isSubClass(Symbol.TypeSymbol c, Symbol base) {
+    // TODO see Javac
+    if (c == base) {
+      // same class
+      return true;
+    } else if ((base.flags() & Flags.INTERFACE) != 0) {
+      // check if class implements base
+      for (Symbol.TypeSymbol interfaceSymbol : c.getInterfaces()) {
+        if (isSubClass(interfaceSymbol, base)) {
+          return true;
+        }
+      }
+      // check if superclass implements base
+      return isSubClass(c.getSuperclass(), base);
+    } else {
+      // check if class extends base or its superclass extends base
+      return c.getSuperclass() == base || isSubClass(c.getSuperclass(), base);
+    }
+  }
+

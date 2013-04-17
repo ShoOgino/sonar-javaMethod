@@ -1,0 +1,19 @@
+  private int computeMethodFlags(AstNode astNode) {
+    if (astNode.is(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.VOID_METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST)) {
+      AstNode node = astNode.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
+      int flags = 0;
+      for (AstNode modifierNode : node.getChildren(JavaGrammar.MODIFIER)) {
+        flags |= computeModifierFlag(modifierNode);
+      }
+      return flags;
+    } else if (astNode.is(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST, JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST)) {
+      // JLS7 6.6.1: All members of interfaces are implicitly public.
+      return Flags.PUBLIC;
+    } else if (astNode.is(JavaGrammar.ANNOTATION_METHOD_REST)) {
+      // JLS7 6.6.1: All members of interfaces are implicitly public.
+      return Flags.PUBLIC;
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
+    }
+  }
+

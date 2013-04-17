@@ -1,0 +1,27 @@
+  /**
+   * Is symbol inherited in given class?
+   */
+  @VisibleForTesting
+  boolean isInheritedIn(Symbol symbol, Symbol.TypeSymbol clazz) {
+    switch (symbol.flags() & Flags.ACCESS_FLAGS) {
+      case Flags.PUBLIC:
+        return true;
+      case Flags.PRIVATE:
+        return symbol.owner() == clazz;
+      case Flags.PROTECTED:
+        // TODO see Javac
+        return true;
+      case 0:
+        // TODO see Javac
+        Symbol.PackageSymbol thisPackage = symbol.packge();
+        for (Symbol.TypeSymbol sup = clazz; sup != null && sup != clazz.owner(); sup = sup.getSuperclass()) {
+          if (sup.packge() != thisPackage) {
+            return false;
+          }
+        }
+        return true;
+      default:
+        throw new IllegalStateException();
+    }
+  }
+

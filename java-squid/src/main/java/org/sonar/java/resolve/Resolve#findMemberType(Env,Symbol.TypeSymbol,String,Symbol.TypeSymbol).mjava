@@ -1,0 +1,24 @@
+  public Symbol findMemberType(Env env, Symbol.TypeSymbol site, String name, Symbol.TypeSymbol c) {
+    Symbol bestSoFar = symbolNotFound;
+    for (Symbol symbol : c.members().lookup(name)) {
+      if (symbol.kind == Symbol.TYP) {
+        return isAccessible(env, site, symbol)
+            ? symbol
+            : new AccessErrorSymbol(symbol);
+      }
+    }
+    if (c.getSuperclass() != null) {
+      Symbol symbol = findMemberType(env, site, name, c.getSuperclass());
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    for (Symbol.TypeSymbol interfaceType : c.getInterfaces()) {
+      Symbol symbol = findMemberType(env, site, name, interfaceType);
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    return bestSoFar;
+  }
+

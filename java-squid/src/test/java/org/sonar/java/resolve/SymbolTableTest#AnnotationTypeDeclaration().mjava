@@ -1,0 +1,32 @@
+  @Test
+  public void AnnotationTypeDeclaration() {
+    Result result = Result.createFor("declarations/AnnotationTypeDeclaration");
+
+    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
+    assertThat(typeSymbol.owner()).isSameAs(result.symbol("AnnotationTypeDeclaration"));
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.INTERFACE);
+    assertThat(typeSymbol.getSuperclass()).isNull(); // TODO should it be java.lang.Object?
+    assertThat(typeSymbol.getInterfaces()).isEmpty(); // FIXME should be java.lang.annotation.Annotation
+
+    Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) result.symbol("FIRST_CONSTANT");
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    variableSymbol = (Symbol.VariableSymbol) result.symbol("SECOND_CONSTANT");
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) result.symbol("value");
+    assertThat(methodSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedClass");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedInterface");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedEnum");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedAnnotationType");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE);
+  }
+

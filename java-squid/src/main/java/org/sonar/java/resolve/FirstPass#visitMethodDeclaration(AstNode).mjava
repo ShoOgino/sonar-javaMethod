@@ -1,0 +1,19 @@
+  private void visitMethodDeclaration(AstNode astNode) {
+    MethodHelper methodHelper = new MethodHelper(astNode);
+    AstNode identifierNode = methodHelper.getName();
+    String name = methodHelper.isConstructor() ? "<init>" : identifierNode.getTokenValue();
+    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeMethodFlags(astNode), name, enclosingSymbol);
+    enterSymbol(identifierNode, symbol);
+    symbol.parameters = new Scope();
+    symbol.completer = completer;
+    uncompleted.add(symbol);
+
+    // Save current environment to be able to complete method later
+    semanticModel.saveEnv(symbol, env);
+
+    // Create new environment - this is required, because new scope is created
+    Resolve.Env methodEnv = env.dup();
+    methodEnv.scope = symbol.parameters;
+    env = methodEnv;
+  }
+

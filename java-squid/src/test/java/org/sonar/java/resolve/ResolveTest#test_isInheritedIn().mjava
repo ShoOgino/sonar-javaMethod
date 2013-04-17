@@ -1,0 +1,29 @@
+  @Test
+  public void test_isInheritedIn() {
+    Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol("package", null);
+    Symbol.TypeSymbol clazz = new Symbol.TypeSymbol(Flags.PUBLIC, "class", packageSymbol);
+
+    // public symbol is always inherited
+    Symbol symbol = new Symbol(0, Flags.PUBLIC, "name", null);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isTrue();
+
+    // private symbol is inherited only if it's owned by class
+    symbol = new Symbol(0, Flags.PRIVATE, "name", null);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isFalse();
+
+    symbol = new Symbol(0, Flags.PRIVATE, "name", clazz);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isTrue();
+
+    // protected symbol is always inherited
+    symbol = new Symbol(0, Flags.PROTECTED, "name", null);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isTrue();
+
+    // package local symbol is inherited only if TODO...
+    symbol = new Symbol(0, 0, "name", clazz);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isTrue();
+
+    Symbol.PackageSymbol anotherPackageSymbol = new Symbol.PackageSymbol("package", null);
+    symbol = new Symbol(0, 0, "name", anotherPackageSymbol);
+    assertThat(resolve.isInheritedIn(symbol, clazz)).isFalse();
+  }
+

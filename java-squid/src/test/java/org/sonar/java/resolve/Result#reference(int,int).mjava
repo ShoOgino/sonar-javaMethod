@@ -1,0 +1,12 @@
+  public Symbol reference(int line, int column) {
+    // In SSLR column starts at 0, but here we want consistency with IDE, so we start from 1:
+    column -= 1;
+    for (Map.Entry<AstNode, Symbol> entry : semanticModel.references.entrySet()) {
+      Token token = entry.getKey().getToken();
+      if (token.getLine() == line && token.getColumn() == column) {
+        return entry.getValue();
+      }
+    }
+    throw new IllegalArgumentException("Reference not found");
+  }
+

@@ -1,0 +1,21 @@
+  /**
+   * Is symbol accessible as a member of given class in given environment?
+   */
+  public boolean isAccessible(Env env, Symbol.TypeSymbol site, Symbol symbol) {
+    switch (symbol.flags() & Flags.ACCESS_FLAGS) {
+      case Flags.PRIVATE:
+        return (env.enclosingClass().outermostClass() == symbol.owner().outermostClass())
+            && isInheritedIn(symbol, site);
+      case 0:
+        return (env.packge() == symbol.packge())
+            && isAccessible(env, site);
+      case Flags.PUBLIC:
+        return isAccessible(env, site);
+      case Flags.PROTECTED:
+        return ((env.packge() == symbol.packge()) || isProtectedAccessible(symbol, env.enclosingClass, site))
+            && isAccessible(env, site);
+      default:
+        throw new IllegalStateException();
+    }
+  }
+

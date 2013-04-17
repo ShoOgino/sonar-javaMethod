@@ -1,0 +1,16 @@
+  public Symbol symbol(String name, int line) {
+    Symbol result = null;
+    for (Symbol symbol : semanticModel.symbols.values()) {
+      if (name.equals(symbol.name) && semanticModel.getAstNode(symbol).getTokenLine() == line) {
+        if (result != null) {
+          throw new IllegalArgumentException("Ambiguous coordinates of symbol");
+        }
+        result = symbol;
+      }
+    }
+    if (result == null) {
+      throw new IllegalArgumentException("Symbol not found");
+    }
+    return result;
+  }
+

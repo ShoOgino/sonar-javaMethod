@@ -1,0 +1,13 @@
+  private void declareVariable(int flags, AstNode identifierNode) {
+    Preconditions.checkArgument(identifierNode.is(JavaTokenType.IDENTIFIER));
+
+    String name = identifierNode.getTokenValue();
+    Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(flags, name, enclosingSymbol);
+    enterSymbol(identifierNode, symbol);
+    symbol.completer = completer;
+    uncompleted.add(symbol);
+
+    // Save current environment to be able to complete variable declaration later
+    semanticModel.saveEnv(symbol, env);
+  }
+

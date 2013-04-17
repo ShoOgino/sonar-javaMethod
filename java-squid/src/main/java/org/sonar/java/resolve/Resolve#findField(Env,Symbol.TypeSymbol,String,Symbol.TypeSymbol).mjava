@@ -1,0 +1,28 @@
+  /**
+   * Finds field with given name.
+   */
+  private Symbol findField(Env env, Symbol.TypeSymbol site, String name, Symbol.TypeSymbol type) {
+    Symbol bestSoFar = symbolNotFound;
+    for (Symbol symbol : type.members().lookup(name)) {
+      if (symbol.kind == Symbol.VAR) {
+        return isAccessible(env, site, symbol)
+            ? symbol
+            : new AccessErrorSymbol(symbol);
+      }
+    }
+    Symbol symbol;
+    if (type.getSuperclass() != null) {
+      symbol = findField(env, site, name, type.getSuperclass());
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    for (Symbol.TypeSymbol interfaceType : type.getInterfaces()) {
+      symbol = findField(env, site, name, interfaceType);
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    return bestSoFar;
+  }
+

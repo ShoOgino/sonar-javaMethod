@@ -1,0 +1,24 @@
+  public void complete(Symbol.TypeSymbol symbol) {
+    AstNode astNode = semanticModel.getAstNode(symbol).getParent();
+    Resolve.Env env = semanticModel.getEnv(symbol);
+
+    AstNode superclassNode = astNode.getFirstChild(JavaGrammar.CLASS_TYPE);
+    if (superclassNode != null) {
+      symbol.superclass = castToTypeIfPossible(resolveType(env, superclassNode));
+    } else {
+      // TODO superclass is java.lang.Object or java.lang.Enum
+    }
+
+    ImmutableList.Builder<Symbol.TypeSymbol> interfaces = ImmutableList.builder();
+    if (astNode.hasDirectChildren(JavaGrammar.CLASS_TYPE_LIST)) {
+      for (AstNode interfaceNode : astNode.getFirstChild(JavaGrammar.CLASS_TYPE_LIST).getChildren(JavaGrammar.CLASS_TYPE)) {
+        Symbol interfaceSymbol = castToTypeIfPossible(resolveType(env, interfaceNode));
+        if (interfaceSymbol != null) {
+          interfaces.add((Symbol.TypeSymbol) interfaceSymbol);
+        }
+      }
+    }
+    // TODO interface of AnnotationType is java.lang.annotation.Annotation
+    symbol.interfaces = interfaces.build();
+  }
+

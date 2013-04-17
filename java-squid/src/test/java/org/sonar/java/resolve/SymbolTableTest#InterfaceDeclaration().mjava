@@ -1,0 +1,31 @@
+  @Test
+  public void InterfaceDeclaration() {
+    Result result = Result.createFor("declarations/InterfaceDeclaration");
+
+    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
+    assertThat(typeSymbol.owner()).isSameAs(result.symbol("InterfaceDeclaration"));
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.INTERFACE);
+    assertThat(typeSymbol.getSuperclass()).isNull(); // TODO should it be java.lang.Object?
+    assertThat(typeSymbol.getInterfaces()).containsExactly(
+        result.symbol("FirstInterface"),
+        result.symbol("SecondInterface"));
+
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) result.symbol("method");
+    assertThat((methodSymbol.flags() & Flags.ACCESS_FLAGS) == Flags.PUBLIC).isTrue();
+
+    Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) result.symbol("FIRST_CONSTANT");
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    variableSymbol = (Symbol.VariableSymbol) result.symbol("SECOND_CONSTANT");
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedClass");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedInterface");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE);
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedEnum");
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
+  }
+

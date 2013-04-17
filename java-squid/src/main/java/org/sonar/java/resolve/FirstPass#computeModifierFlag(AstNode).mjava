@@ -1,0 +1,16 @@
+  private int computeModifierFlag(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.MODIFIER));
+    final int flag;
+    AstNode modifierNode = astNode.getFirstChild();
+    if (modifierNode.is(JavaKeyword.PRIVATE)) {
+      flag = Flags.PRIVATE;
+    } else if (modifierNode.is(JavaKeyword.PROTECTED)) {
+      flag = Flags.PROTECTED;
+    } else if (modifierNode.is(JavaKeyword.PUBLIC)) {
+      flag = Flags.PUBLIC;
+    } else {
+      flag = 0;
+    }
+    return flag;
+  }
+

@@ -1,0 +1,25 @@
+  /**
+   * @param kind subset of {@link Symbol#VAR}, {@link Symbol#TYP}
+   */
+  public Symbol findIdentInType(Env env, Symbol.TypeSymbol site, String name, int kind) {
+    Symbol bestSoFar = symbolNotFound;
+    Symbol symbol;
+    if ((kind & Symbol.VAR) != 0) {
+      symbol = findField(env, site, name, site);
+      if (symbol.kind < Symbol.ERRONEOUS) { // symbol exists
+        return symbol;
+      } else if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    if ((kind & Symbol.TYP) != 0) {
+      symbol = findMemberType(env, site, name, site);
+      if (symbol.kind < Symbol.ERRONEOUS) { // symbol exists
+        return symbol;
+      } else if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    return bestSoFar;
+  }
+

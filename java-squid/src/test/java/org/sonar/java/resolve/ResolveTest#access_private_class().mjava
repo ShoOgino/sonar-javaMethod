@@ -1,0 +1,25 @@
+  /**
+   * <pre>
+   * public class OutermostClass {
+   *   private static class TargetClass {
+   *   }
+   *   // accessible
+   * }
+   * class AnotherOutermostClass {
+   *   // not accessible
+   * }
+   * </pre>
+   */
+  @Test
+  public void access_private_class() {
+    Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol(null, null);
+    Symbol.TypeSymbol outermostClassSymbol = new Symbol.TypeSymbol(0, "OutermostClass", packageSymbol);
+    Symbol.TypeSymbol targetClassSymbol = new Symbol.TypeSymbol(Flags.PRIVATE, "TargetClass", outermostClassSymbol);
+
+    when(env.enclosingClass()).thenReturn(outermostClassSymbol);
+    assertThat(resolve.isAccessible(env, targetClassSymbol)).isTrue();
+
+    when(env.enclosingClass()).thenReturn(new Symbol.TypeSymbol(0, "AnotherOutermostClass", packageSymbol));
+    assertThat(resolve.isAccessible(env, targetClassSymbol)).isFalse();
+  }
+

@@ -1,0 +1,15 @@
+  @Test
+  public void test_VariableSymbol() {
+    Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol("p", null);
+    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(42, "t", packageSymbol);
+    Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(42, "name", typeSymbol);
+    Symbol.VariableSymbol variableSymbol = new Symbol.VariableSymbol(42, "name", methodSymbol);
+
+    assertThat(variableSymbol.kind).isEqualTo(Symbol.VAR);
+    assertThat(variableSymbol.flags()).isEqualTo(42);
+    assertThat(variableSymbol.owner()).isSameAs(methodSymbol);
+
+    assertThat(variableSymbol.packge()).isSameAs(packageSymbol);
+    assertThat(variableSymbol.outermostClass()).isSameAs(typeSymbol);
+  }
+

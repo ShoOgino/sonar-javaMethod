@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode astNode) {
+    if (astNode.is(JavaGrammar.LABELED_STATEMENT)) {
+      visitLabeledStatement(astNode);
+    } else if (astNode.is(JavaGrammar.BREAK_STATEMENT, JavaGrammar.CONTINUE_STATEMENT)) {
+      visitBreakOrContinueStatement(astNode);
+    } else if (astNode.is(JavaGrammar.PRIMARY)) {
+      visitPrimary(astNode);
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
+    }
+  }
+

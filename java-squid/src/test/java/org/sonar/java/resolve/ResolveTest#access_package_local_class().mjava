@@ -1,0 +1,22 @@
+  /**
+   * <pre>
+   * package p1;
+   * class TargetClass {
+   * }
+   * // accessible
+   * package p2;
+   * // not accessible
+   * </pre>
+   */
+  @Test
+  public void access_package_local_class() {
+    Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol(null, null);
+    Symbol.TypeSymbol targetClassSymbol = new Symbol.TypeSymbol(0, "TargetClass", packageSymbol);
+
+    when(env.packge()).thenReturn(packageSymbol);
+    assertThat(resolve.isAccessible(env, targetClassSymbol)).isTrue();
+
+    when(env.packge()).thenReturn(new Symbol.PackageSymbol("AnotherPackage", null));
+    assertThat(resolve.isAccessible(env, targetClassSymbol)).isFalse();
+  }
+

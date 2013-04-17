@@ -1,0 +1,18 @@
+  public void complete(Symbol.MethodSymbol symbol) {
+    if ("<init>".equals(symbol.name)) {
+      // no return type for constructor
+      return;
+    }
+    AstNode identifierNode = semanticModel.getAstNode(symbol);
+    AstNode typeNode = identifierNode.getPreviousAstNode();
+
+    Preconditions.checkState(typeNode.is(JavaKeyword.VOID, JavaGrammar.TYPE));
+    AstNode classTypeNode = typeNode.getFirstChild(JavaGrammar.CLASS_TYPE);
+    if (classTypeNode == null) {
+      // TODO JavaGrammar.BASIC_TYPE
+      return;
+    }
+    Resolve.Env env = semanticModel.getEnv(symbol);
+    symbol.type = castToTypeIfPossible(resolveType(env, classTypeNode));
+  }
+

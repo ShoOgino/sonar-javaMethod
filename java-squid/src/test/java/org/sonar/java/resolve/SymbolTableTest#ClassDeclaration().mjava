@@ -1,0 +1,17 @@
+  @Test
+  public void ClassDeclaration() {
+    Result result = Result.createFor("declarations/ClassDeclaration");
+
+    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
+    assertThat(typeSymbol.owner()).isSameAs(result.symbol("ClassDeclaration"));
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PRIVATE);
+    assertThat(typeSymbol.getSuperclass()).isSameAs(result.symbol("Superclass"));
+    assertThat(typeSymbol.getInterfaces()).containsExactly(
+        result.symbol("FirstInterface"),
+        result.symbol("SecondInterface"));
+
+    typeSymbol = (Symbol.TypeSymbol) result.symbol("Superclass");
+    assertThat(typeSymbol.getSuperclass()).isNull(); // FIXME should be java.lang.Object
+    assertThat(typeSymbol.getInterfaces()).isEmpty();;
+  }
+

@@ -1,0 +1,20 @@
+  private void visitClassDeclaration(AstNode astNode) {
+    AstNode identifierNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
+    String name = identifierNode.getTokenValue();
+    Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), name, enclosingSymbol);
+    enterSymbol(identifierNode, symbol);
+    symbol.members = new Scope();
+    symbol.completer = completer;
+    uncompleted.add(symbol);
+
+    // Save current environment to be able to complete class later
+    semanticModel.saveEnv(symbol, env);
+
+    Resolve.Env classEnv = env.dup();
+    classEnv.outer = env;
+    classEnv.enclosingClass = symbol;
+    classEnv.scope = symbol.members;
+    env = classEnv;
+    semanticModel.associateEnv(astNode, env);
+  }
+

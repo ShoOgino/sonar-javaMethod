@@ -1,0 +1,15 @@
+  private void visitBreakOrContinueStatement(AstNode astNode) {
+    // idea: associate break and continue with jump target like in IntelliJ IDEA
+    AstNode identifier = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
+    if (identifier != null) {
+      String label = identifier.getTokenValue();
+      AstNode labelledStatement = astNode.getFirstAncestor(JavaGrammar.LABELED_STATEMENT);
+      while (labelledStatement != null && !label.equals(labelledStatement.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue())) {
+        labelledStatement = labelledStatement.getFirstAncestor(JavaGrammar.LABELED_STATEMENT);
+      }
+      if (labelledStatement != null) {
+        semanticModel.associateReference(identifier, semanticModel.getSymbol(labelledStatement.getFirstChild(JavaTokenType.IDENTIFIER)));
+      }
+    }
+  }
+

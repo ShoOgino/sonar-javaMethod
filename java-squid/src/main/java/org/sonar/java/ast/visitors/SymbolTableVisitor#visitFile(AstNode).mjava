@@ -1,0 +1,34 @@
+  @Override
+  public void visitFile(AstNode astNode) {
+    if (astNode == null) {
+      // parse error
+      return;
+    }
+
+    SemanticModel semanticModel;
+    try {
+      semanticModel = SemanticModel.createFor(astNode);
+    } catch (Exception e) {
+      LOG.error("Unable to create symbol table for " + getContext().getFile(), e);
+      return;
+    }
+
+    LOG.info("Created symbol table for " + getContext().getFile());
+
+    JavaFile sonarFile = SquidUtils.convertJavaFileKeyFromSquidFormat(peekSourceFile().getKey());
+    SymbolPerspective symbolPerspective = perspectives.as(SymbolPerspective.class, sonarFile).begin();
+    for (Map.Entry<Symbol, Collection<AstNode>> entry : semanticModel.getUsages().asMap().entrySet()) {
+      AstNode declaration = semanticModel.getAstNode(entry.getKey());
+      org.sonar.api.scan.source.Symbol sonarSymbol = symbolPerspective
+          .newSymbol()
+          .setDeclaration(startOffsetFor(declaration), endOffsetFor(declaration))
+          .build();
+
+      SymbolPerspective.ReferencesBuilder referencesBuilder = symbolPerspective.declareReferences(sonarSymbol);
+      for (AstNode usage : entry.getValue()) {
+        referencesBuilder.addReference(usage.getFromIndex());
+      }
+    }
+    symbolPerspective.end();
+  }
+
