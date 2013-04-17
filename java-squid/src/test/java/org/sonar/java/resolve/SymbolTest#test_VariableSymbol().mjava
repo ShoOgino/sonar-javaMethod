@@ -1,7 +1,8 @@
   @Test
   public void test_VariableSymbol() {
     Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol("p", null);
-    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(42, "t", packageSymbol);
+    Symbol.TypeSymbol outermostClass = new Symbol.TypeSymbol(42, "name", packageSymbol);
+    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(42, "t", outermostClass);
     Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(42, "name", typeSymbol);
     Symbol.VariableSymbol variableSymbol = new Symbol.VariableSymbol(42, "name", methodSymbol);
 
@@ -10,6 +11,7 @@
     assertThat(variableSymbol.owner()).isSameAs(methodSymbol);
 
     assertThat(variableSymbol.packge()).isSameAs(packageSymbol);
-    assertThat(variableSymbol.outermostClass()).isSameAs(typeSymbol);
+    assertThat(variableSymbol.outermostClass()).isSameAs(outermostClass);
+    assertThat(variableSymbol.enclosingClass()).isSameAs(typeSymbol);
   }
 

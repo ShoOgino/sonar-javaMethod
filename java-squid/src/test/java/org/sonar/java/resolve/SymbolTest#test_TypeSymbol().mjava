@@ -1,13 +1,15 @@
   @Test
   public void test_TypeSymbol() {
     Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol("p", null);
-    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(42, "name", packageSymbol);
+    Symbol.TypeSymbol outermostClass = new Symbol.TypeSymbol(42, "name", packageSymbol);
+    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(42, "name", outermostClass);
 
     assertThat(typeSymbol.kind).isEqualTo(Symbol.TYP);
     assertThat(typeSymbol.flags()).isEqualTo(42);
-    assertThat(typeSymbol.owner()).isSameAs(packageSymbol);
+    assertThat(typeSymbol.owner()).isSameAs(outermostClass);
 
     assertThat(typeSymbol.packge()).isSameAs(packageSymbol);
-    assertThat(typeSymbol.outermostClass()).isSameAs(typeSymbol);
+    assertThat(typeSymbol.outermostClass()).isSameAs(outermostClass);
+    assertThat(typeSymbol.enclosingClass()).isSameAs(typeSymbol);
   }
 
