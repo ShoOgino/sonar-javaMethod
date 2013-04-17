@@ -3,12 +3,11 @@
     if (astNode.is(scopeAndSymbolAstNodeTypes)) {
       if (astNode.isNot(JavaGrammar.CLASS_CREATOR_REST) || (astNode.is(JavaGrammar.CLASS_CREATOR_REST) && astNode.hasDirectChildren(JavaGrammar.CLASS_BODY))) {
         restoreEnvironment(astNode);
-        enclosingSymbol = enclosingSymbol.owner();
       }
     } else if (astNode.is(scopeAstNodeTypes)) {
       restoreEnvironment(astNode);
     } else if (astNode.is(symbolAstNodeTypes)) {
-      enclosingSymbol = enclosingSymbol.owner();
+      // nop
     } else {
       throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
     }

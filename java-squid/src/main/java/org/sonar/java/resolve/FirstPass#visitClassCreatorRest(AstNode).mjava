@@ -1,11 +1,9 @@
   private void visitClassCreatorRest(AstNode astNode) {
     if (astNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
       // Anonymous Class Declaration
-      Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), "", enclosingSymbol);
+      Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), "", env.scope.owner);
 
-      enclosingSymbol = symbol;
-
-      symbol.members = new Scope();
+      symbol.members = new Scope(symbol);
       symbol.completer = completer;
       uncompleted.add(symbol);
 

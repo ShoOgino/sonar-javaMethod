@@ -1,9 +1,9 @@
   private void visitClassDeclaration(AstNode astNode) {
     AstNode identifierNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
     String name = identifierNode.getTokenValue();
-    Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), name, enclosingSymbol);
+    Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(computeClassFlags(astNode), name, env.scope.owner);
     enterSymbol(identifierNode, symbol);
-    symbol.members = new Scope();
+    symbol.members = new Scope(symbol);
     symbol.completer = completer;
     uncompleted.add(symbol);
 

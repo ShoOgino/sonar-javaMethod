@@ -2,9 +2,9 @@
     MethodHelper methodHelper = new MethodHelper(astNode);
     AstNode identifierNode = methodHelper.getName();
     String name = methodHelper.isConstructor() ? "<init>" : identifierNode.getTokenValue();
-    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeMethodFlags(astNode), name, enclosingSymbol);
+    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeMethodFlags(astNode), name, env.scope.owner);
     enterSymbol(identifierNode, symbol);
-    symbol.parameters = new Scope();
+    symbol.parameters = new Scope(symbol);
     symbol.completer = completer;
     uncompleted.add(symbol);
 

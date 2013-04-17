@@ -1,14 +1,13 @@
   private void visitCompilationUnit(AstNode astNode) {
     // TODO package and imports
     Symbol.PackageSymbol symbol = new Symbol.PackageSymbol(null, null);
-    symbol.members = new Scope();
+    symbol.members = new Scope(symbol);
 
     env = new Resolve.Env();
     env.packge = symbol;
     env.scope = symbol.members;
     semanticModel.associateEnv(astNode, env);
 
-    enclosingSymbol = env.packge;
     if (astNode.hasDirectChildren(JavaGrammar.PACKAGE_DECLARATION)) {
       // named package
     } else {
