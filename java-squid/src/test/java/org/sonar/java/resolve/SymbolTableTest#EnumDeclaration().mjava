@@ -4,16 +4,16 @@
 
     Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
     assertThat(typeSymbol.owner()).isSameAs(result.symbol("EnumDeclaration"));
-    assertThat(typeSymbol.flags()).isEqualTo(Flags.PRIVATE);
+    assertThat(typeSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.ENUM);
     assertThat(typeSymbol.getSuperclass()).isNull(); // FIXME should be java.lang.Enum
     assertThat(typeSymbol.getInterfaces()).containsExactly(
         result.symbol("FirstInterface"),
         result.symbol("SecondInterface"));
 
     Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) result.symbol("FIRST_CONSTANT");
-    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.ENUM);
 
     variableSymbol = (Symbol.VariableSymbol) result.symbol("SECOND_CONSTANT");
-    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
+    assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.ENUM);
   }
 

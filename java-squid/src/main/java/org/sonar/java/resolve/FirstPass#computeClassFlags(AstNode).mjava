@@ -1,12 +1,11 @@
   private int computeClassFlags(AstNode astNode) {
-    int flags = 0;
-    AstNode modifierNode = astNode.getPreviousAstNode();
-    while (modifierNode != null && modifierNode.is(JavaGrammar.MODIFIER)) {
-      flags |= computeModifierFlag(modifierNode);
-      modifierNode = modifierNode.getPreviousAstNode();
-    }
-    if (astNode.is(JavaGrammar.INTERFACE_DECLARATION, JavaGrammar.ANNOTATION_TYPE_DECLARATION)) {
+    int flags = computeFlags(astNode);
+    if (astNode.is(JavaGrammar.INTERFACE_DECLARATION)) {
       flags |= Flags.INTERFACE;
+    } else if (astNode.is(JavaGrammar.ENUM_DECLARATION)) {
+      flags |= Flags.ENUM;
+    } else if (astNode.is(JavaGrammar.ANNOTATION_TYPE_DECLARATION)) {
+      flags |= Flags.ANNOTATION | Flags.INTERFACE;
     }
     if (env.scope.owner instanceof Symbol.TypeSymbol && ((env.enclosingClass.flags() & Flags.INTERFACE) != 0)) {
       // JLS7 6.6.1: All members of interfaces are implicitly public.
