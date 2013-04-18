@@ -1,6 +1,14 @@
   private void visitPrimary(AstNode astNode) {
-    if (astNode.hasDirectChildren(JavaGrammar.QUALIFIED_IDENTIFIER) && !astNode.hasDirectChildren(JavaGrammar.IDENTIFIER_SUFFIX)) {
-      resolve(astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+    AstNode qualifiedIdentifierNode = astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
+    if (qualifiedIdentifierNode != null) {
+      AstNode identifierSuffixNode = astNode.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
+      if (identifierSuffixNode != null) {
+        if (identifierSuffixNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+          resolveMethodCall(qualifiedIdentifierNode);
+        }
+      } else {
+        resolve(qualifiedIdentifierNode);
+      }
     }
   }
 
