@@ -2,11 +2,11 @@
   public void should_no_save_measures_when_ut_report_is_not_found() throws IOException {
     File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
 
-    when(project.getFileSystem()).thenReturn(pfs);
     when(configuration.getReportPath()).thenReturn("ut.not.found.exec");
     when(configuration.getItReportPath()).thenReturn("it.exec");
-    when(pfs.resolvePath("ut.not.found.exec")).thenReturn(new File("ut.not.found.exec"));
-    when(pfs.resolvePath("it.exec")).thenReturn(new File(outputDir, "it.exec"));
+
+    when(pathResolver.relativeFile(any(File.class), eq("ut.not.found.exec"))).thenReturn(new File(outputDir, "ut.not.found.exec"));
+    when(pathResolver.relativeFile(any(File.class), eq("it.exec"))).thenReturn(new File(outputDir, "it.not.found.exec"));
 
     sensor.analyse(project, context);
 

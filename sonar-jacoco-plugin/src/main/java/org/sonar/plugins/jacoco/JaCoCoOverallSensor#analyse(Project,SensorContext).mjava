@@ -1,13 +1,11 @@
   public void analyse(Project project, SensorContext context) {
-    ProjectFileSystem fs = project.getFileSystem();
-
-    File reportUTs = fs.resolvePath(configuration.getReportPath());
-    File reportITs = fs.resolvePath(configuration.getItReportPath());
+    File reportUTs = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getReportPath());
+    File reportITs = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getItReportPath());
     if ((!reportUTs.exists()) || (!reportITs.exists())) {
       return;
     }
 
-    File reportOverall = new File(fs.getSonarWorkingDirectory(), JACOCO_OVERALL);
+    File reportOverall = new File(fileSystem.workingDir(), JACOCO_OVERALL);
     reportOverall.getParentFile().mkdirs();
 
     mergeReports(reportOverall, reportUTs, reportITs);

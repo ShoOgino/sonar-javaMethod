@@ -7,9 +7,8 @@
 
     JavaFile resource = new JavaFile("org.example.App");
     when(context.getResource(any(Resource.class))).thenReturn(resource);
-    when(pfs.getBuildOutputDir()).thenReturn(outputDir);
-    when(pfs.resolvePath(anyString())).thenReturn(jacocoExecutionData);
-    when(project.getFileSystem()).thenReturn(pfs);
+    when(fileSystem.binaryDirs()).thenReturn(ImmutableList.of(outputDir));
+    when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     MutableTestable testAbleFile = mock(MutableTestable.class);
     when(perspectives.as(eq(MutableTestable.class), any(JavaFile.class))).thenReturn(testAbleFile);

@@ -2,12 +2,10 @@
   public void testReadExecutionData() {
     JavaFile resource = new JavaFile("org.sonar.plugins.jacoco.tests.Hello");
     SensorContext context = mock(SensorContext.class);
-    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
     Project project = mock(Project.class);
     when(context.getResource(any(Resource.class))).thenReturn(resource);
-    when(pfs.getBuildOutputDir()).thenReturn(outputDir);
-    when(pfs.resolvePath(anyString())).thenReturn(jacocoExecutionData);
-    when(project.getFileSystem()).thenReturn(pfs);
+    when(fileSystem.binaryDirs()).thenReturn(ImmutableList.of(outputDir));
+    when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     sensor.analyse(project, context);
 

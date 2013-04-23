@@ -1,11 +1,9 @@
   @Test
   public void doNotSaveMeasureOnResourceWhichDoesntExistInTheContext() {
     SensorContext context = mock(SensorContext.class);
-    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
     Project project = mock(Project.class);
     when(context.getResource(any(Resource.class))).thenReturn(null);
-    when(pfs.getBuildOutputDir()).thenReturn(outputDir);
-    when(project.getFileSystem()).thenReturn(pfs);
+    when(fileSystem.binaryDirs()).thenReturn(ImmutableList.of(outputDir));
 
     sensor.analyse(project, context);
 

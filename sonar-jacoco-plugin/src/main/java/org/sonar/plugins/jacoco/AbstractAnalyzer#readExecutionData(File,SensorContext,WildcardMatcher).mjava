@@ -1,4 +1,4 @@
-  public final void readExecutionData(File jacocoExecutionData, File buildOutputDir, SensorContext context, WildcardMatcher excludes) throws IOException {
+  public final void readExecutionData(File jacocoExecutionData, SensorContext context, WildcardMatcher excludes) throws IOException {
     ExecutionDataVisitor executionDataVisitor = new ExecutionDataVisitor();
 
     if (jacocoExecutionData == null || !jacocoExecutionData.exists() || !jacocoExecutionData.isFile()) {
@@ -14,12 +14,12 @@
 
     boolean collectedCoveragePerTest = false;
     for (Map.Entry<String, ExecutionDataStore> entry : executionDataVisitor.getSessions().entrySet()) {
-      if (analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), buildOutputDir, context, excludes)) {
+      if (analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), context, excludes)) {
         collectedCoveragePerTest = true;
       }
     }
 
-    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged(), buildOutputDir);
+    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged());
     int analyzedResources = 0;
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       JavaFile resource = getResource(coverage, context);

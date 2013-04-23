@@ -5,15 +5,14 @@
 
     JavaFile resource = new JavaFile("com.sonar.coverages.HelloWorld");
 
-    when(project.getFileSystem()).thenReturn(pfs);
     when(context.getResource(any(Resource.class))).thenReturn(resource);
     when(configuration.getReportPath()).thenReturn("ut.exec");
     when(configuration.getItReportPath()).thenReturn("it.exec");
-    when(pfs.getBuildOutputDir()).thenReturn(outputDir);
-    when(pfs.resolvePath("ut.exec")).thenReturn(new File(outputDir, "ut.exec"));
-    when(pfs.resolvePath("it.exec")).thenReturn(new File(outputDir, "it.exec"));
-    when(pfs.getSonarWorkingDirectory()).thenReturn(new File("target/sonar"));
-    when(pfs.resolvePath(new File("target/sonar/jacoco-overall.exec").getAbsolutePath())).thenReturn(new File("target/sonar/jacoco-overall.exec"));
+    when(fileSystem.binaryDirs()).thenReturn(ImmutableList.of(outputDir));
+    when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.exec"));
+    when(pathResolver.relativeFile(any(File.class), eq("it.exec"))).thenReturn(new File(outputDir, "it.exec"));
+    when(pathResolver.relativeFile(any(File.class), eq(new File("target/sonar/jacoco-overall.exec").getAbsolutePath()))).thenReturn(new File("target/sonar/jacoco-overall.exec"));
+    when(fileSystem.workingDir()).thenReturn(new File("target/sonar"));
 
     sensor.analyse(project, context);
 
