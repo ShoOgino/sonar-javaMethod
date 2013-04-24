@@ -1,7 +1,7 @@
   public void complete(Symbol.TypeSymbol symbol) {
     if ("".equals(symbol.name)) {
       // Anonymous Class Declaration
-      symbol.interfaces = ImmutableList.of();
+      ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
       return;
     }
 
@@ -10,21 +10,21 @@
 
     AstNode superclassNode = astNode.getFirstChild(JavaGrammar.CLASS_TYPE);
     if (superclassNode != null) {
-      symbol.superclass = castToTypeIfPossible(resolveType(env, superclassNode));
+      ((Type.ClassType) symbol.type).supertype = resolveType(env, superclassNode).type;
     } else {
       // TODO superclass is java.lang.Object or java.lang.Enum
     }
 
-    ImmutableList.Builder<Symbol.TypeSymbol> interfaces = ImmutableList.builder();
+    ImmutableList.Builder<Type> interfaces = ImmutableList.builder();
     if (astNode.hasDirectChildren(JavaGrammar.CLASS_TYPE_LIST)) {
       for (AstNode interfaceNode : astNode.getFirstChild(JavaGrammar.CLASS_TYPE_LIST).getChildren(JavaGrammar.CLASS_TYPE)) {
-        Symbol interfaceSymbol = castToTypeIfPossible(resolveType(env, interfaceNode));
-        if (interfaceSymbol != null) {
-          interfaces.add((Symbol.TypeSymbol) interfaceSymbol);
+        Type interfaceType = castToTypeIfPossible(resolveType(env, interfaceNode));
+        if (interfaceType != null) {
+          interfaces.add(interfaceType);
         }
       }
     }
     // TODO interface of AnnotationType is java.lang.annotation.Annotation
-    symbol.interfaces = interfaces.build();
+    ((Type.ClassType) symbol.type).interfaces = interfaces.build();
   }
 

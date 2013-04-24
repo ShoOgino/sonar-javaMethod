@@ -13,16 +13,16 @@
       return true;
     } else if ((base.flags() & Flags.INTERFACE) != 0) {
       // check if class implements base
-      for (Symbol.TypeSymbol interfaceSymbol : c.getInterfaces()) {
-        if (isSubClass(interfaceSymbol, base)) {
+      for (Type interfaceType : c.getInterfaces()) {
+        if (isSubClass(interfaceType.symbol, base)) {
           return true;
         }
       }
       // check if superclass implements base
-      return isSubClass(c.getSuperclass(), base);
+      return isSubClass(superclassSymbol(c), base);
     } else {
       // check if class extends base or its superclass extends base
-      return isSubClass(c.getSuperclass(), base);
+      return isSubClass(superclassSymbol(c), base);
     }
   }
 
