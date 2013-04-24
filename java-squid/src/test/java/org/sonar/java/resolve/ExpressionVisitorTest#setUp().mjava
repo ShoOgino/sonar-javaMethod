@@ -1,0 +1,37 @@
+  /**
+   * Simulates creation of symbols and types.
+   */
+  @Before
+  public void setUp() {
+    Symbol.PackageSymbol p = new Symbol.PackageSymbol(null, null);
+    p.members = new Scope(p);
+
+    classSymbol = new Symbol.TypeSymbol(0, "MyClass", p);
+    classType = ((Type.ClassType) classSymbol.type);
+    classType.supertype = symbols.unknownType;
+    classType.interfaces = ImmutableList.of();
+    classSymbol.members = new Scope(classSymbol);
+    p.members.enter(classSymbol);
+
+    variableSymbol = new Symbol.VariableSymbol(/* FIXME figure out why it fails with default visibility */Flags.PUBLIC, "var", classSymbol);
+    variableSymbol.type = new Type.ArrayType(new Type.ArrayType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
+    classSymbol.members.enter(variableSymbol);
+
+    classSymbol.members.enter(new Symbol.VariableSymbol(0, "this", classType, classSymbol));
+    classSymbol.members.enter(new Symbol.VariableSymbol(0, "super", classType.supertype, classSymbol));
+
+    // FIXME figure out why top is mandatory
+    Resolve.Env top = new Resolve.Env();
+
+    Resolve.Env compilationUnitEnv = new Resolve.Env();
+    compilationUnitEnv.outer = top;
+    compilationUnitEnv.packge = p;
+    compilationUnitEnv.scope = p.members;
+    compilationUnitEnv.enclosingClass = symbols.predefClass;
+
+    env = compilationUnitEnv.dup();
+    env.outer = compilationUnitEnv;
+    env.enclosingClass = classSymbol;
+    env.scope = classSymbol.members;
+  }
+

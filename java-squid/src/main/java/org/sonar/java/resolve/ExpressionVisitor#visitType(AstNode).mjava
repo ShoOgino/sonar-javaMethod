@@ -1,0 +1,13 @@
+  private Type visitType(AstNode astNode) {
+    final Type result;
+    AstNode firstChildNode = astNode.getFirstChild();
+    if (firstChildNode.is(JavaGrammar.BASIC_TYPE)) {
+      result = resolve.findIdent(env, firstChildNode.getFirstChild().getTokenValue(), Symbol.TYP).type;
+    } else if (firstChildNode.is(JavaGrammar.CLASS_TYPE)) {
+      result = resolveType(env, firstChildNode);
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + firstChildNode.getType());
+    }
+    return result;
+  }
+

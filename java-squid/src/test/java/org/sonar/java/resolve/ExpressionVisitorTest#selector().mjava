@@ -1,0 +1,11 @@
+  @Test
+  public void selector() {
+    b.setRootRule(JavaGrammar.UNARY_EXPRESSION);
+
+    assertThat(typeOf("this.var")).isSameAs(variableSymbol.type);
+    assertThat(typeOf("this.method(arguments)")).isSameAs(symbols.unknownType);
+
+    assertThat(typeOf("var[42].length")).isSameAs(symbols.intType);
+    assertThat(typeOf("var[42][42]")).isSameAs(((Type.ArrayType) ((Type.ArrayType) variableSymbol.type).elementType).elementType);
+  }
+

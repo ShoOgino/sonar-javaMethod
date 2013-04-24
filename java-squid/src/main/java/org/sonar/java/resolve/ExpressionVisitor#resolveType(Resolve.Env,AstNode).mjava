@@ -1,0 +1,27 @@
+  /**
+   * TODO duplication of {@link org.sonar.java.resolve.SecondPass#resolveType(org.sonar.java.resolve.Resolve.Env, com.sonar.sslr.api.AstNode)}
+   */
+  private Type resolveType(Resolve.Env env, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.CLASS_TYPE));
+
+    env = env.dup();
+    List<AstNode> identifiers = astNode.getChildren(JavaTokenType.IDENTIFIER);
+    Symbol site = resolve.findIdent(env, identifiers.get(0).getTokenValue(), Symbol.TYP | Symbol.PCK);
+    // FIXME associateReference(identifiers.get(0), site);
+    for (AstNode identifierNode : identifiers.subList(1, identifiers.size())) {
+      if (site.kind >= Symbol.ERRONEOUS) {
+        return symbols.unknownType;
+      }
+      String name = identifierNode.getTokenValue();
+      if (site.kind == Symbol.PCK) {
+        env.packge = (Symbol.PackageSymbol) site;
+        site = resolve.findIdentInPackage(env, site, name, Symbol.TYP | Symbol.PCK);
+      } else {
+        env.enclosingClass = (Symbol.TypeSymbol) site;
+        site = resolve.findMemberType(env, (Symbol.TypeSymbol) site, name, (Symbol.TypeSymbol) site);
+      }
+      // FIXME associateReference(identifierNode, site);
+    }
+    return getTypeOfSymbol(site);
+  }
+

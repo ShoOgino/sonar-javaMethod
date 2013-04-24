@@ -1,0 +1,93 @@
+  private Type visitPrimary(AstNode astNode) {
+    final Type result;
+    AstNode firstChildNode = astNode.getFirstChild();
+    if (firstChildNode.is(JavaGrammar.LITERAL)) {
+      result = getType(firstChildNode);
+    } else if (firstChildNode.is(JavaKeyword.THIS)) {
+      if (astNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+        // this(arguments)
+        result = symbols.unknownType;
+      } else {
+        // this
+        result = getTypeOfSymbol(resolve.findIdent(env, "this", Symbol.VAR));
+      }
+    } else if (firstChildNode.is(JavaKeyword.SUPER)) {
+      AstNode superSuffixNode = astNode.getFirstChild(JavaGrammar.SUPER_SUFFIX);
+      if (superSuffixNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+        // super(arguments)
+        // super.method(arguments)
+        result = symbols.unknownType;
+      } else {
+        // super.field
+        Type type = getTypeOfSymbol(resolve.findIdent(env, "super", Symbol.VAR));
+        // FIXME associateReference
+        result = getTypeOfSymbol(resolve.findIdentInType(env, type.symbol, superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(), Symbol.VAR));
+      }
+    } else if (firstChildNode.is(JavaGrammar.PAR_EXPRESSION)) {
+      // (expression)
+      result = getType(firstChildNode.getFirstChild(JavaGrammar.EXPRESSION));
+    } else if (firstChildNode.is(JavaKeyword.NEW)) {
+      // new...
+      result = symbols.unknownType;
+    } else if (firstChildNode.is(JavaGrammar.QUALIFIED_IDENTIFIER)) {
+      AstNode identifierSuffixNode = astNode.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
+      if (identifierSuffixNode == null) {
+        // id
+        result = resolveQualifiedIdentifier(env, firstChildNode);
+      } else {
+        if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.LBRK)) {
+          if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
+            // id[].class
+            // resolve qualified identifier, but discard result
+            resolveQualifiedIdentifier(env, firstChildNode);
+            result = symbols.classType;
+          } else {
+            // id[expression]
+            Type type = resolveQualifiedIdentifier(env, firstChildNode);
+            // TODO get rid of "instanceof"
+            if (type instanceof Type.ArrayType) {
+              result = ((Type.ArrayType) type).elementType;
+            } else {
+              result = symbols.unknownType;
+            }
+          }
+        } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
+          // id(arguments)
+          result = symbols.unknownType;
+        } else if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.DOT)) {
+          Type type = resolveQualifiedIdentifier(env, firstChildNode);
+          if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
+            // id.class
+            result = symbols.classType;
+          } else if (identifierSuffixNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
+            // id.<...>...
+            result = symbols.unknownType;
+          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.THIS)) {
+            // id.this
+            result = type;
+          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.SUPER)) {
+            // id.super(arguments)
+            result = symbols.unknownType;
+          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.NEW)) {
+            // id.new...
+            result = symbols.unknownType;
+          } else {
+            throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getChild(1));
+          }
+        } else {
+          throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getFirstChild());
+        }
+      }
+    } else if (firstChildNode.is(JavaGrammar.BASIC_TYPE)) {
+      // int.class
+      // int[].class
+      result = symbols.classType;
+    } else if (firstChildNode.is(JavaKeyword.VOID)) {
+      // void.class
+      result = symbols.classType;
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + firstChildNode.getType());
+    }
+    return result;
+  }
+

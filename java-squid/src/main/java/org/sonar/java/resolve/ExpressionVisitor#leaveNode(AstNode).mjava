@@ -1,0 +1,21 @@
+  @Override
+  public void leaveNode(AstNode astNode) {
+    final Type type;
+    if (astNode.is(JavaGrammar.EXPRESSION)) {
+      type = visitExpression(astNode);
+    } else if (astNode.is(JavaGrammar.PRIMARY)) {
+      type = visitPrimary(astNode);
+    } else if (astNode.is(JavaGrammar.UNARY_EXPRESSION)) {
+      type = visitUnaryExpression(astNode);
+    } else if (astNode.is(JavaGrammar.LITERAL)) {
+      type = visitLiteral(astNode);
+    } else if (astNode.is(JavaGrammar.TYPE)) {
+      type = visitType(astNode);
+    } else if (astNode.is(binaryOperatorAstNodeTypes)) {
+      type = visitBinaryOperation(astNode);
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
+    }
+    types.put(astNode, type);
+  }
+

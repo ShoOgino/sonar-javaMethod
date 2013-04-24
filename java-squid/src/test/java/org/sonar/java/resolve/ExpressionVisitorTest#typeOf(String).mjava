@@ -1,0 +1,13 @@
+  private Type typeOf(String input) {
+    AstNode astNode = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, b.build()).parse(input);
+    System.out.println(AstXmlPrinter.print(astNode));
+
+    AstWalker astWalker = new AstWalker();
+    ExpressionVisitor visitor = new ExpressionVisitor(symbols, new Resolve(), env);
+    visitor.init();
+    astWalker.addVisitor(visitor);
+    astWalker.walkAndVisit(astNode);
+
+    return visitor.getType(astNode);
+  }
+
