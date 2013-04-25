@@ -1,12 +1,15 @@
-  public List<Class<? extends Extension>> getExtensions() {
-    return ImmutableList.of(
-        FindbugsSensor.class,
-        FindbugsConfiguration.class,
-        FindbugsExecutor.class,
-        FindbugsRuleRepository.class,
-        FindbugsProfileExporter.class,
-        FindbugsProfileImporter.class,
-        SonarWayWithFindbugsProfile.class,
-        FindbugsMavenInitializer.class);
+  public List<?> getExtensions() {
+    ImmutableList.Builder<Object> extensions = ImmutableList.builder();
+    extensions.addAll(FindbugsConfiguration.getPropertyDefinitions());
+    extensions.add(
+      FindbugsSensor.class,
+      FindbugsConfiguration.class,
+      FindbugsExecutor.class,
+      FindbugsRuleRepository.class,
+      FindbugsProfileExporter.class,
+      FindbugsProfileImporter.class,
+      SonarWayWithFindbugsProfile.class,
+      FindbugsMavenInitializer.class);
+    return extensions.build();
   }
 

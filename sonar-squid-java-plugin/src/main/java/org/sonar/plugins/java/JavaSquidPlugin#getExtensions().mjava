@@ -1,15 +1,42 @@
   public List<?> getExtensions() {
     return ImmutableList.of(
-        JavaSourceImporter.class,
-        JavaRuleRepository.class,
-        JavaSonarWayProfile.class,
-        JavaSonarWayWithFindbugsProfile.class,
-        SonarComponents.class,
-        JavaSquidSensor.class,
-        ChidamberKemererDistributionBuilder.class,
-        ClassesDecorator.class,
-        FileComplexityDistributionDecorator.class,
-        FunctionComplexityDistributionBuilder.class,
-        FunctionsDecorator.class);
+      PropertyDefinition.builder(JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_PROPERTY)
+        .defaultValue(JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_DEFAULT_VALUE + "")
+        .category(CoreProperties.CATEGORY_JAVA)
+        .name("Separate accessors")
+        .description("Flag whether Squid should separate accessors (getters/setters) from methods. " +
+          "In that case, accessors are not counted in metrics such as complexity or API documentation.")
+        .type(PropertyType.BOOLEAN)
+        .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition.builder(JavaSquidPlugin.FIELDS_TO_EXCLUDE_FROM_LCOM4_COMPUTATION)
+        .defaultValue(JavaSquidPlugin.FIELDS_TO_EXCLUDE_FROM_LCOM4_COMPUTATION_DEFAULT_VALUE)
+        .category(CoreProperties.CATEGORY_JAVA)
+        .name("List of fields to exclude from LCOM4 computation")
+        .description("Some fields should not be taken into account when computing LCOM4 measure as they " +
+          "unexpectedly and artificially decrease the LCOM4 measure. " +
+          "The best example is a logger used by all methods of a class. " +
+          "All field names to exclude from LCOM4 computation must be separated by a comma.")
+        .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition.builder(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY)
+        .defaultValue(CoreProperties.DESIGN_SKIP_DESIGN_DEFAULT_VALUE + "")
+        .category(CoreProperties.CATEGORY_JAVA)
+        .name("Skip design analysis")
+        .type(PropertyType.BOOLEAN)
+        .hidden()
+        .build(),
+
+      JavaSourceImporter.class,
+      JavaRuleRepository.class,
+      JavaSonarWayProfile.class,
+      JavaSonarWayWithFindbugsProfile.class,
+      SonarComponents.class,
+      JavaSquidSensor.class,
+      ChidamberKemererDistributionBuilder.class,
+      ClassesDecorator.class,
+      FileComplexityDistributionDecorator.class,
+      FunctionComplexityDistributionBuilder.class,
+      FunctionsDecorator.class);
   }
 

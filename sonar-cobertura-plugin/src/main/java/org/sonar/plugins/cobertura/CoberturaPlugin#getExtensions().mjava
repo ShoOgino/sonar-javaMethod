@@ -1,8 +1,24 @@
   public List<?> getExtensions() {
     return ImmutableList.of(
-        CoberturaSettings.class,
-        CoberturaSensor.class,
-        CoberturaMavenPluginHandler.class,
-        CoberturaMavenInitializer.class);
+      PropertyDefinition.builder(CoberturaConstants.COBERTURA_REPORT_PATH_PROPERTY)
+        .category(CoreProperties.CATEGORY_JAVA)
+        .subCategory(COBERTURA_SUBCATEGORY_NAME)
+        .name("Report path")
+        .description("Path (absolute or relative) to Cobertura xml report file.")
+        .onlyOnQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition.builder(CoberturaConstants.COBERTURA_MAXMEM_PROPERTY)
+        .defaultValue(CoberturaConstants.COBERTURA_MAXMEM_DEFAULT_VALUE)
+        .category(CoreProperties.CATEGORY_JAVA)
+        .subCategory(COBERTURA_SUBCATEGORY_NAME)
+        .name("Maxmem")
+        .description("Maximum memory to pass to JVM of Cobertura processes.")
+        .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+
+      CoberturaSettings.class,
+      CoberturaSensor.class,
+      CoberturaMavenPluginHandler.class,
+      CoberturaMavenInitializer.class);
   }
 
