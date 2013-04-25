@@ -1,0 +1,11 @@
+  @Test
+  public void suppress_warnings_at_method_level() {
+    AstNode astNode;
+
+    astNode = p.parse("public class Foo { @SuppressWarnings(\"all\") public void method() {} }").getFirstDescendant(JavaGrammar.VOID_METHOD_DECLARATOR_REST);
+    assertThat(SuppressWarningsAnnotationUtils.isSuppressAllWarnings(astNode)).isTrue();
+
+    astNode = p.parse("public class Foo { public void method() {} }").getFirstDescendant(JavaGrammar.VOID_METHOD_DECLARATOR_REST);
+    assertThat(SuppressWarningsAnnotationUtils.isSuppressAllWarnings(astNode)).isFalse();
+  }
+
