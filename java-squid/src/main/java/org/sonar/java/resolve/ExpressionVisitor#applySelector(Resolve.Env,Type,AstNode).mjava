@@ -1,8 +1,8 @@
-  private Type applySelector(Type type, AstNode astNode) {
+  private Type applySelector(Resolve.Env env, Type type, AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.SELECTOR));
     final Type result;
-    if (type == symbols.unknownType) {
-      return type;
+    if (type == symbols.unknownType || /* TODO avoid null */ type == null) {
+      return symbols.unknownType;
     } else if (astNode.getFirstChild().is(JavaGrammar.DIM_EXPR)) {
       // array access
       // TODO get rid of "instanceof"
@@ -17,8 +17,10 @@
         result = symbols.unknownType;
       } else {
         // field access
-        // FIXME associateReference
-        result = getTypeOfSymbol(resolve.findIdentInType(env, type.symbol, astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(), Symbol.VAR));
+        AstNode identifierNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
+        Symbol symbol = resolve.findIdentInType(env, type.symbol, identifierNode.getTokenValue(), Symbol.VAR); // NPE
+        associateReference(identifierNode, symbol);
+        result = getTypeOfSymbol(symbol);
       }
     } else {
       result = symbols.unknownType;

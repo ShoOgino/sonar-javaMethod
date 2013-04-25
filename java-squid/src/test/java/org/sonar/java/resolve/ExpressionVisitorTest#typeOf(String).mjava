@@ -3,7 +3,9 @@
     System.out.println(AstXmlPrinter.print(astNode));
 
     AstWalker astWalker = new AstWalker();
-    ExpressionVisitor visitor = new ExpressionVisitor(symbols, new Resolve(), env);
+    SemanticModel semanticModel = mock(SemanticModel.class);
+    when(semanticModel.getEnv(any(AstNode.class))).thenReturn(env);
+    ExpressionVisitor visitor = new ExpressionVisitor(semanticModel, symbols, new Resolve());
     visitor.init();
     astWalker.addVisitor(visitor);
     astWalker.walkAndVisit(astNode);

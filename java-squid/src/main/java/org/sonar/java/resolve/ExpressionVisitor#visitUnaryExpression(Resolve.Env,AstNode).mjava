@@ -1,4 +1,4 @@
-  private Type visitUnaryExpression(AstNode astNode) {
+  private Type visitUnaryExpression(Resolve.Env env, AstNode astNode) {
     final Type result;
     AstNode firstChildNode = astNode.getFirstChild();
     if (firstChildNode.is(JavaPunctuator.LPAR)) {
@@ -7,7 +7,7 @@
     } else if (firstChildNode.is(JavaGrammar.PRIMARY)) {
       Type type = getType(firstChildNode);
       for (AstNode selectorNode : astNode.getChildren(JavaGrammar.SELECTOR)) {
-        type = applySelector(type, selectorNode);
+        type = applySelector(env, type, selectorNode);
       }
       result = type;
     } else if (astNode.getFirstChild().is(JavaGrammar.PREFIX_OP)) {

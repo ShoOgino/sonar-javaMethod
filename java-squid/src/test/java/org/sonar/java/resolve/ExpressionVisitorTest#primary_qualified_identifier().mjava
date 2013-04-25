@@ -2,11 +2,26 @@
   public void primary_qualified_identifier() {
     b.setRootRule(JavaGrammar.PRIMARY);
 
+    // qualified_identifier
     assertThat(typeOf("var")).isSameAs(variableSymbol.type);
-    assertThat(typeOf("var[expression]")).isSameAs(((Type.ArrayType) variableSymbol.type).elementType);
+    assertThat(typeOf("var.length")).isSameAs(symbols.intType);
+    assertThat(typeOf("MyClass.var")).isSameAs(variableSymbol.type);
+
+    // qualified_identifier[expression]
+    assertThat(typeOf("var[42]")).isSameAs(((Type.ArrayType) variableSymbol.type).elementType);
+
+    // qualified_identifier[].class
     assertThat(typeOf("id[].class")).isSameAs(symbols.classType);
-    assertThat(typeOf("id(arguments)")).isSameAs(symbols.unknownType);
+    assertThat(typeOf("id[][].class")).isSameAs(symbols.classType);
+
+    // qualified_identifier(arguments)
+    assertThat(typeOf("method(arguments)")).isSameAs(methodSymbol.type);
+    assertThat(typeOf("var2.method()")).isSameAs(methodSymbol.type);
+    assertThat(typeOf("MyClass.var2.method()")).isSameAs(methodSymbol.type);
+
+    // qualified_identifier.class
     assertThat(typeOf("id.class")).isSameAs(symbols.classType);
+
     // TODO id.<...>...
     assertThat(typeOf("MyClass.this")).isSameAs(classSymbol.type);
     assertThat(typeOf("id.super(arguments)")).isSameAs(symbols.unknownType);

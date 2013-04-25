@@ -1,4 +1,12 @@
   public void complete(Symbol.TypeSymbol symbol) {
+    Resolve.Env env = semanticModel.getEnv(symbol);
+
+    if ((symbol.flags() & Flags.INTERFACE) == 0) {
+      // If this is a class, enter symbols for "this" and "super".
+      symbol.members.enter(new Symbol.VariableSymbol(Flags.FINAL, "this", symbol.type, symbol));
+      // TODO super
+    }
+
     if ("".equals(symbol.name)) {
       // Anonymous Class Declaration
       ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
@@ -6,7 +14,6 @@
     }
 
     AstNode astNode = semanticModel.getAstNode(symbol).getParent();
-    Resolve.Env env = semanticModel.getEnv(symbol);
 
     AstNode superclassNode = astNode.getFirstChild(JavaGrammar.CLASS_TYPE);
     if (superclassNode != null) {

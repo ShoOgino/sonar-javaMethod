@@ -1,4 +1,4 @@
-  private Type visitPrimary(AstNode astNode) {
+  private Type visitPrimary(Resolve.Env env, AstNode astNode) {
     final Type result;
     AstNode firstChildNode = astNode.getFirstChild();
     if (firstChildNode.is(JavaGrammar.LITERAL)) {
@@ -20,8 +20,10 @@
       } else {
         // super.field
         Type type = getTypeOfSymbol(resolve.findIdent(env, "super", Symbol.VAR));
-        // FIXME associateReference
-        result = getTypeOfSymbol(resolve.findIdentInType(env, type.symbol, superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(), Symbol.VAR));
+        AstNode identifierNode = superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER);
+        Symbol symbol = resolve.findIdentInType(env, type.symbol, identifierNode.getTokenValue(), Symbol.VAR);
+        associateReference(identifierNode, symbol);
+        result = getTypeOfSymbol(symbol);
       }
     } else if (firstChildNode.is(JavaGrammar.PAR_EXPRESSION)) {
       // (expression)
@@ -53,7 +55,7 @@
           }
         } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
           // id(arguments)
-          result = symbols.unknownType;
+          result = resolveMethod(env, astNode);
         } else if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.DOT)) {
           Type type = resolveQualifiedIdentifier(env, firstChildNode);
           if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {

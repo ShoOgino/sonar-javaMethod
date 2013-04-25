@@ -1,0 +1,18 @@
+  private Type resolveMethod(Resolve.Env env, AstNode astNode) {
+    AstNode qualifiedIdentifierNode = astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
+    final Type type;
+    if (qualifiedIdentifierNode.getNumberOfChildren() > 1) {
+      type = resolveQualifiedIdentifier(env, qualifiedIdentifierNode, true);
+    } else {
+      type = env.enclosingClass.type;
+    }
+    // TODO avoid null, which may come from resolveQualifiedIdentifier
+    if (type == null) {
+      return symbols.unknownType;
+    }
+    final AstNode identifierNode = qualifiedIdentifierNode.getLastChild();
+    Symbol symbol = resolve.findMethod(env, type.symbol, identifierNode.getTokenValue());
+    associateReference(identifierNode, symbol);
+    return getTypeOfSymbol(symbol);
+  }
+

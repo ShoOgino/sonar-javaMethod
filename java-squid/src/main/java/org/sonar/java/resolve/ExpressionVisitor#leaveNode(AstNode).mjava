@@ -1,18 +1,19 @@
   @Override
   public void leaveNode(AstNode astNode) {
+    Resolve.Env env = semanticModel.getEnv(astNode);
     final Type type;
     if (astNode.is(JavaGrammar.EXPRESSION)) {
-      type = visitExpression(astNode);
+      type = visitExpression(env, astNode);
     } else if (astNode.is(JavaGrammar.PRIMARY)) {
-      type = visitPrimary(astNode);
+      type = visitPrimary(env, astNode);
     } else if (astNode.is(JavaGrammar.UNARY_EXPRESSION)) {
-      type = visitUnaryExpression(astNode);
+      type = visitUnaryExpression(env, astNode);
     } else if (astNode.is(JavaGrammar.LITERAL)) {
-      type = visitLiteral(astNode);
+      type = visitLiteral(env, astNode);
     } else if (astNode.is(JavaGrammar.TYPE)) {
-      type = visitType(astNode);
+      type = visitType(env, astNode);
     } else if (astNode.is(binaryOperatorAstNodeTypes)) {
-      type = visitBinaryOperation(astNode);
+      type = visitBinaryOperation(env, astNode);
     } else {
       throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
     }

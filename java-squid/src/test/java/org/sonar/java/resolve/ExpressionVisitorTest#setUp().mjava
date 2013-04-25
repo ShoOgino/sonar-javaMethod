@@ -6,16 +6,26 @@
     Symbol.PackageSymbol p = new Symbol.PackageSymbol(null, null);
     p.members = new Scope(p);
 
+    // class MyClass
     classSymbol = new Symbol.TypeSymbol(0, "MyClass", p);
     classType = ((Type.ClassType) classSymbol.type);
-    classType.supertype = symbols.unknownType;
+    classType.supertype = symbols.unknownType; // TODO extend some superclass
     classType.interfaces = ImmutableList.of();
     classSymbol.members = new Scope(classSymbol);
     p.members.enter(classSymbol);
 
-    variableSymbol = new Symbol.VariableSymbol(/* FIXME figure out why it fails with default visibility */Flags.PUBLIC, "var", classSymbol);
+    // int[][] var;
+    variableSymbol = new Symbol.VariableSymbol(0, "var", classSymbol);
     variableSymbol.type = new Type.ArrayType(new Type.ArrayType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
     classSymbol.members.enter(variableSymbol);
+
+    // MyClass var2;
+    classSymbol.members.enter(new Symbol.VariableSymbol(0, "var2", classType, classSymbol));
+
+    // int method()
+    methodSymbol = new Symbol.MethodSymbol(0, "method", classSymbol);
+    methodSymbol.type = symbols.intType;
+    classSymbol.members.enter(methodSymbol);
 
     classSymbol.members.enter(new Symbol.VariableSymbol(0, "this", classType, classSymbol));
     classSymbol.members.enter(new Symbol.VariableSymbol(0, "super", classType.supertype, classSymbol));
