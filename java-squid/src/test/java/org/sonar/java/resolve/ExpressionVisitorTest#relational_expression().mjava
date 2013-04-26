@@ -2,15 +2,14 @@
   public void relational_expression() {
     b.setRootRule(JavaGrammar.RELATIONAL_EXPRESSION);
 
-    // double, double = boolean
-    // float, float = boolean
-    // long, long = boolean
-    // int, int = boolean
-    assertThat(typeOf("42 >= 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 > 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 <= 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 < 42")).isSameAs(symbols.unknownType);
+    for (String op : Arrays.asList("<", ">", ">=", "<=")) {
+      for (String o1 : Arrays.asList(CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE)) {
+        for (String o2 : Arrays.asList(CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE)) {
+          assertThatTypeOf(o1, op, o2).isSameAs(symbols.booleanType);
+        }
+      }
+    }
 
-    assertThat(typeOf("var instanceof Object")).isSameAs(symbols.unknownType);
+    assertThat(typeOf("var instanceof Object")).isSameAs(symbols.booleanType);
   }
 

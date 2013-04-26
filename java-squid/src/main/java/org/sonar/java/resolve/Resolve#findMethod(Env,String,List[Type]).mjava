@@ -1,0 +1,20 @@
+  /**
+   * Finds method matching given name and types of arguments.
+   */
+  public Symbol findMethod(Env env, String name, List<Type> argTypes) {
+    Symbol bestSoFar = symbolNotFound;
+    Env env1 = env;
+    while (env1.outer() != null) {
+      Symbol sym = findMethod(env1, env1.enclosingClass(), name, argTypes);
+      if (sym.kind < Symbol.ERRONEOUS) {
+        // symbol exists
+        return sym;
+      } else if (sym.kind < bestSoFar.kind) {
+        bestSoFar = sym;
+      }
+      env1 = env1.outer;
+    }
+    // TODO imports
+    return bestSoFar;
+  }
+

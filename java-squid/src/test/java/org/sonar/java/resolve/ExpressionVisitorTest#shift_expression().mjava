@@ -2,12 +2,11 @@
   public void shift_expression() {
     b.setRootRule(JavaGrammar.SHIFT_EXPRESSION);
 
-    // long, long = long
-    // int, long = int
-    // long, int = long
-    // int, int = int
-    assertThat(typeOf("42 << 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 >> 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 >>> 42")).isSameAs(symbols.unknownType);
+    for (String op : Arrays.asList("<<", ">>", ">>>")) {
+      assertThatTypeOf(INT, op, INT).isSameAs(symbols.intType);
+      assertThatTypeOf(INT, op, LONG).isSameAs(symbols.intType);
+      assertThatTypeOf(LONG, op, LONG).isSameAs(symbols.longType);
+      assertThatTypeOf(LONG, op, INT).isSameAs(symbols.longType);
+    }
   }
 

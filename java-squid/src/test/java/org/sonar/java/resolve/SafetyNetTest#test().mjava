@@ -1,0 +1,14 @@
+  @Test
+  public void test() {
+    Parser<LexerlessGrammar> parser = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, JavaGrammar.createGrammar());
+    for (String dir : dirs) {
+      for (File file : FileUtils.listFiles(new File(dir), new String[]{"java"}, true)) {
+        try {
+          SemanticModel.createFor(parser.parse(file));
+        } catch (Exception e) {
+          throw new RuntimeException("Unable to process file " + file, e);
+        }
+      }
+    }
+  }
+

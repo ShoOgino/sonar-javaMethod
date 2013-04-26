@@ -13,7 +13,11 @@
     } else if (astNode.is(JavaGrammar.TYPE)) {
       type = visitType(env, astNode);
     } else if (astNode.is(binaryOperatorAstNodeTypes)) {
-      type = visitBinaryOperation();
+      type = visitBinaryOperation(env, astNode);
+    } else if (astNode.is(JavaGrammar.CONDITIONAL_EXPRESSION)) {
+      type = visitConditionalExpression();
+    } else if (astNode.is(JavaGrammar.ASSIGNMENT_EXPRESSION)) {
+      type = visitAssignmentExpression(astNode);
     } else {
       throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
     }

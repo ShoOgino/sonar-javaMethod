@@ -2,11 +2,12 @@
   public void and_expression() {
     b.setRootRule(JavaGrammar.AND_EXPRESSION);
 
-    // boolean, boolean = boolean
-    // int, int = int
-    // long, long = long
-    assertThat(typeOf("true & false")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42 & 42")).isSameAs(symbols.unknownType);
-    assertThat(typeOf("42L & 42L")).isSameAs(symbols.unknownType);
+    assertThatTypeOf(BOOLEAN, "&", BOOLEAN).isSameAs(symbols.booleanType);
+    for (String o1 : Arrays.asList(CHAR, BYTE, SHORT, INT)) {
+      for (String o2 : Arrays.asList(CHAR, BYTE, SHORT, INT)) {
+        assertThatTypeOf(o1, "&", o2).isSameAs(symbols.intType);
+      }
+    }
+    assertThatTypeOf(LONG, "&", LONG).isSameAs(symbols.longType);
   }
 

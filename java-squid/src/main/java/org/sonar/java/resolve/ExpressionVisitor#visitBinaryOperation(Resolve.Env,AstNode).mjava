@@ -1,0 +1,26 @@
+  /**
+   * Computes type of a binary operation.
+   */
+  private Type visitBinaryOperation(Resolve.Env env, AstNode astNode) {
+    Type left = getType(astNode.getFirstChild());
+    for (int i = 1; i < astNode.getNumberOfChildren(); i += 2) {
+      AstNode opNode = astNode.getChild(i);
+      if (opNode.is(JavaKeyword.INSTANCEOF)) {
+        left = symbols.booleanType;
+      } else {
+        Type right = getType(astNode.getChild(i + 1));
+        // TODO avoid nulls
+        if (left == null || right == null) {
+          return symbols.unknownType;
+        }
+        Symbol symbol = resolve.findMethod(env, opNode.getTokenValue(), ImmutableList.of(left, right));
+        if (symbol.kind != Symbol.MTH) {
+          // not found
+          return symbols.unknownType;
+        }
+        left = ((Type.MethodType) symbol.type).resultType;
+      }
+    }
+    return left;
+  }
+

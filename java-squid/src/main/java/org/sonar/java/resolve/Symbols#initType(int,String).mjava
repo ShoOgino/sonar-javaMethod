@@ -1,11 +1,12 @@
   /**
    * Registers builtin types as symbols, so that they can be found as an usual identifiers.
    */
-  private Type initType(String name) {
+  private Type initType(int tag, String name) {
     Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(Flags.PUBLIC, name, rootPackage);
     symbol.members = new Scope(symbol);
     predefClass.members.enter(symbol);
     ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
+    symbol.type.tag = tag;
     return symbol.type;
   }
 

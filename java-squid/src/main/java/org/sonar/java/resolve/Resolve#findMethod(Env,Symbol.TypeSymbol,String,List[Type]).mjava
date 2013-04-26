@@ -1,0 +1,27 @@
+  public Symbol findMethod(Env env, Symbol.TypeSymbol site, String name, List<Type> argTypes) {
+    Symbol bestSoFar = symbolNotFound;
+
+    // TODO search in supertypes
+    for (Symbol symbol : site.members().lookup(name)) {
+      if (symbol.kind == Symbol.MTH) {
+        bestSoFar = selectBest(env, site, argTypes, symbol, bestSoFar);
+      }
+    }
+
+    // best guess: method with unique name
+    // TODO remove, when search will be improved
+    if (bestSoFar.kind < Symbol.ERRONEOUS) {
+      return bestSoFar;
+    }
+    for (Symbol symbol : site.enclosingClass().members().lookup(name)) {
+      if ((symbol.kind == Symbol.MTH) && isAccessible(env, site, symbol)) {
+        if (bestSoFar.kind < Symbol.ERRONEOUS) {
+          return new AmbiguityErrorSymbol();
+        }
+        bestSoFar = symbol;
+      }
+    }
+
+    return bestSoFar;
+  }
+

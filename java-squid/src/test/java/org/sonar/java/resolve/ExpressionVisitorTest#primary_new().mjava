@@ -2,6 +2,12 @@
   public void primary_new() {
     b.setRootRule(JavaGrammar.PRIMARY);
 
-    assertThat(typeOf("new Object()")).isSameAs(symbols.unknownType);
+    assertThat(typeOf("new MyClass()")).isSameAs(classType);
+    assertThat(typeOf("new MyClass() {}")).isSameAs(symbols.unknownType);
+
+    // TODO proper implementation of this test requires definition of equality for types
+    assertThat(typeOf("new MyClass[]{}")).isInstanceOf(Type.ArrayType.class);
+    assertThat(typeOf("new int[]{}")).isInstanceOf(Type.ArrayType.class);
+    assertThat(typeOf("new int[][]{}")).isInstanceOf(Type.ArrayType.class);
   }
 

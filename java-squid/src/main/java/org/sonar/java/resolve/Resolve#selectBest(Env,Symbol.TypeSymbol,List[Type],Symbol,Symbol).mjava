@@ -1,0 +1,22 @@
+  /**
+   * @param symbol candidate
+   * @param bestSoFar previously found best match
+   */
+  private Symbol selectBest(Env env, Symbol.TypeSymbol site, List<Type> argTypes, Symbol symbol, Symbol bestSoFar) {
+    if (!isInheritedIn(symbol, site)) {
+      return bestSoFar;
+    }
+    // TODO get rid of null check
+    if (symbol.type == null) {
+      return bestSoFar;
+    }
+    if (!isArgumentsAcceptable(argTypes, ((Type.MethodType) symbol.type).argTypes)) {
+      return bestSoFar;
+    }
+    // TODO ambiguity, errors, ...
+    if (!isAccessible(env, site, symbol)) {
+      return new AccessErrorSymbol(symbol);
+    }
+    return selectMostSpecific(symbol, bestSoFar);
+  }
+

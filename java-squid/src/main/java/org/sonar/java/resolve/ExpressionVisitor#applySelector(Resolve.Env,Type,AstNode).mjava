@@ -6,11 +6,8 @@
     } else if (astNode.getFirstChild().is(JavaGrammar.DIM_EXPR)) {
       // array access
       // TODO get rid of "instanceof"
-      if (type instanceof Type.ArrayType) {
-        result = ((Type.ArrayType) type).elementType;
-      } else {
-        result = symbols.unknownType;
-      }
+      // if not array, then return errorType instead of unknownType
+      result = type instanceof Type.ArrayType ? ((Type.ArrayType) type).elementType : symbols.unknownType;
     } else if (astNode.hasDirectChildren(JavaTokenType.IDENTIFIER)) {
       if (astNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
         // method call
