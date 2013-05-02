@@ -7,7 +7,7 @@
     if (currentResource instanceof SourceMethod && ((SourceMethod) currentResource).isAccessor()) {
       return;
     }
-    if (currentResource.getInt(Metric.PUBLIC_API) != 0 && currentResource.getInt(Metric.PUBLIC_DOC_API) == 0) {
+    if (PublicApiVisitor.isPublicApi(astNode) && !PublicApiVisitor.isDocumentedApi(astNode)) {
       getContext().createLineViolation(this, "Avoid undocumented API.", astNode);
     }
   }
