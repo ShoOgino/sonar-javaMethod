@@ -16,6 +16,11 @@
     unknownType.interfaces = ImmutableList.of();
     unknownSymbol.type = unknownType;
 
+    // TODO should have type "noType":
+    noSymbol = new Symbol.TypeSymbol(0, "", rootPackage);
+
+    methodClass = new Symbol.TypeSymbol(Flags.PUBLIC, "", noSymbol);
+
     // builtin types
     byteType = initType(Type.BYTE, "byte");
     charType = initType(Type.CHAR, "char");
@@ -35,7 +40,7 @@
     serializableType = enterClass("java.io.Serializable");
 
     // TODO comment me
-    arrayClass = new Symbol.TypeSymbol(Flags.PUBLIC, "Array", null);
+    arrayClass = new Symbol.TypeSymbol(Flags.PUBLIC, "Array", noSymbol);
     Type.ClassType arrayClassType = (Type.ClassType) arrayClass.type;
     arrayClassType.supertype = objectType;
     arrayClassType.interfaces = ImmutableList.of(cloneableType, serializableType);
