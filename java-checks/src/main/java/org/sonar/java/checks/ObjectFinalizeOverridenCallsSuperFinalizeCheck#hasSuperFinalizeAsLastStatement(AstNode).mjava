@@ -1,0 +1,12 @@
+  private static boolean hasSuperFinalizeAsLastStatement(AstNode node) {
+    List<AstNode> blockStatements = ImmutableList.copyOf(node.select()
+        .children(JavaGrammar.VOID_METHOD_DECLARATOR_REST)
+        .children(JavaGrammar.METHOD_BODY)
+        .children(JavaGrammar.BLOCK)
+        .children(JavaGrammar.BLOCK_STATEMENTS)
+        .children(JavaGrammar.BLOCK_STATEMENT).iterator());
+
+    return !blockStatements.isEmpty() &&
+      isSuperFinalize(blockStatements.get(blockStatements.size() - 1));
+  }
+

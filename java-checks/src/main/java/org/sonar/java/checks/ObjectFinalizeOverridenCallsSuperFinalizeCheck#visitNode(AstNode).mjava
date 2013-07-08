@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (node.hasDirectChildren(JavaGrammar.VOID_METHOD_DECLARATOR_REST)) {
+      AstNode identifier = node.getFirstChild(JavaTokenType.IDENTIFIER);
+
+      if ("finalize".equals(identifier.getTokenValue()) && !hasSuperFinalizeAsLastStatement(node)) {
+        getContext().createLineViolation(this, "Add a call to 'super.finalize()' at the end of this Object.finalize() implementation.", identifier);
+      }
+    }
+  }
+
