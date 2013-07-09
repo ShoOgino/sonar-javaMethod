@@ -1,0 +1,13 @@
+  @Test
+  public void detected_with_package() {
+    ClassVariableVisibilityCheck check = new ClassVariableVisibilityCheck();
+    check.authorizedVisibility = "package";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ClassVariableVisibilityCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(4).withMessage("Make this class member package visible.")
+        .next().atLine(5)
+        .next().atLine(7)
+        .next().atLine(8);
+  }
+

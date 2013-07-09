@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(AstNode node) {
+    AstNode classBodyDeclaration = node.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
+
+    if (!isConstant(classBodyDeclaration) && !hasAllowedVisibility(classBodyDeclaration)) {
+      getContext().createLineViolation(this, "Make this class member " + authorizedVisibility + " visible.", node);
+    }
+  }
+

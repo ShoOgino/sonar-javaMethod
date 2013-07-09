@@ -1,0 +1,14 @@
+  private boolean hasAllowedVisibility(AstNode node) {
+    boolean result;
+
+    if ("private".equals(authorizedVisibility)) {
+      result = isPrivate(node);
+    } else if ("package".equals(authorizedVisibility)) {
+      result = isPrivate(node) || isPackage(node);
+    } else {
+      result = isPrivate(node) || isPackage(node) || isProtected(node);
+    }
+
+    return result;
+  }
+

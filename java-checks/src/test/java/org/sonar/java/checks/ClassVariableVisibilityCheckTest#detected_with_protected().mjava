@@ -1,0 +1,12 @@
+  @Test
+  public void detected_with_protected() {
+    ClassVariableVisibilityCheck check = new ClassVariableVisibilityCheck();
+    check.authorizedVisibility = "protected";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ClassVariableVisibilityCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(5).withMessage("Make this class member protected visible.")
+        .next().atLine(7)
+        .next().atLine(8);
+  }
+
