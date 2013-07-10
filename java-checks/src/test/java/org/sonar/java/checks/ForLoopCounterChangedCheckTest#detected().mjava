@@ -1,0 +1,15 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ForLoopCounterChangedCheck.java"), new ForLoopCounterChangedCheck());
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(10).withMessage("Refactor the code in order to not assign to this loop counter from within the loop body.")
+        .next().atLine(18)
+        .next().atLine(19)
+        .next().atLine(24)
+        .next().atLine(27)
+        .next().atLine(28)
+        .next().atLine(30)
+        .next().atLine(37)
+        .next().atLine(38);
+  }
+

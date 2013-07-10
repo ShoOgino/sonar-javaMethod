@@ -1,0 +1,25 @@
+  private Set<String> getLoopCounters(AstNode node) {
+    Set<String> result;
+
+    AstSelect identifiers = node.select()
+        .children(JavaGrammar.FOR_INIT)
+        .children(JavaGrammar.VARIABLE_DECLARATORS)
+        .children(JavaGrammar.VARIABLE_DECLARATOR)
+        .children(JavaTokenType.IDENTIFIER);
+
+    if (identifiers.isNotEmpty()) {
+      ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+      for (AstNode identifier : identifiers) {
+        builder.add(identifier.getTokenOriginalValue());
+      }
+
+      result = builder.build();
+    }
+    else {
+      result = Collections.EMPTY_SET;
+    }
+
+    return result;
+  }
+

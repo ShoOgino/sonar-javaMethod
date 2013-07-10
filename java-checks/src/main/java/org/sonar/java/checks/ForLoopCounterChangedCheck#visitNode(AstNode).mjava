@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (node.is(JavaGrammar.FOR_STATEMENT)) {
+      loopCounters.addAll(getLoopCounters(node));
+    } else if (!loopCounters.isEmpty()) {
+      for (int i = 0; i < node.getNumberOfChildren() - 1; i++) {
+        if (loopCounters.contains(merge(node.getChild(i)))) {
+          getContext().createLineViolation(this, "Refactor the code in order to not assign to this loop counter from within the loop body.", node.getChild(i));
+        }
+      }
+    }
+  }
+
