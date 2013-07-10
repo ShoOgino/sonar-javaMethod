@@ -1,0 +1,21 @@
+  @Test
+  public void lines_of_code_data() {
+    FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
+    FileLinesContext context = mock(FileLinesContext.class);
+    when(fileLinesContextFactory.createFor(Mockito.any(org.sonar.api.resources.Resource.class))).thenReturn(context);
+
+    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new FileLinesVisitor(fileLinesContextFactory, Charsets.UTF_8));
+    File baseDir = new File("src/test/files/metrics");
+    List<InputFile> inputFiles = InputFileUtils.create(baseDir, ImmutableList.of(new File("src/test/files/metrics/LinesOfCode.java")));
+    scanner.scan(inputFiles);
+
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 1, 0);
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 2, 0);
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 3, 0);
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 4, 0);
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 5, 1);
+    verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 6, 1);
+
+    verify(context).save();
+  }
+
