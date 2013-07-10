@@ -1,3 +1,4 @@
+  @Override
   public void visitToken(Token token) {
     if (token.getType().equals(GenericTokenType.EOF)) {
       return;
@@ -7,7 +8,11 @@
     List<Trivia> trivias = token.getTrivia();
     for (Trivia trivia : trivias) {
       if (trivia.isComment()) {
-        linesOfComments.add(trivia.getToken().getLine());
+        int baseLine = trivia.getToken().getLine();
+        String[] lines = trivia.getToken().getOriginalValue().split("(\r)?\n|\r", -1);
+        for (int i = 0; i < lines.length; i++) {
+          linesOfComments.add(baseLine + i);
+        }
       }
     }
   }
