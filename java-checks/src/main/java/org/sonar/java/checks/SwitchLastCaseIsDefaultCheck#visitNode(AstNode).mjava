@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(AstNode node) {
+    AstNode defaultLabel = getDefaultLabel(node);
+    AstNode lastLabel = getLastLabel(node);
+
+    if (defaultLabel == null) {
+      getContext().createLineViolation(this, "Add a default case to this switch.", node);
+    } else if (!defaultLabel.equals(lastLabel)) {
+      getContext().createLineViolation(this, "Move this default to the end of the switch.", defaultLabel);
+    }
+  }
+

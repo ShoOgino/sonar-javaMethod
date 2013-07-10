@@ -1,0 +1,11 @@
+  private AstNode getDefaultLabel(AstNode node) {
+    Iterator<AstNode> it = node.select()
+        .children(JavaGrammar.SWITCH_BLOCK_STATEMENT_GROUPS)
+        .children(JavaGrammar.SWITCH_BLOCK_STATEMENT_GROUP)
+        .children(JavaGrammar.SWITCH_LABEL)
+        .children(JavaKeyword.DEFAULT)
+        .iterator();
+
+    return !it.hasNext() ? null : it.next().getParent();
+  }
+
