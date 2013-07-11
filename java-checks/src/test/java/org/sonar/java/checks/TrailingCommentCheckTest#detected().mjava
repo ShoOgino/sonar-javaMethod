@@ -1,0 +1,11 @@
+  @Test
+  public void detected() {
+    TrailingCommentCheck check = new TrailingCommentCheck();
+    assertThat(check.legalCommentPattern).isEqualTo("^\\s*+[^\\s]++$");
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TrailingCommentCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(5).withMessage("Move this trailing comment on the previous empty line.")
+        .next().atLine(6);
+  }
+

@@ -1,0 +1,13 @@
+  @Test
+  public void custom() {
+    TrailingCommentCheck check = new TrailingCommentCheck();
+    check.legalCommentPattern = "";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TrailingCommentCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3)
+        .next().atLine(4)
+        .next().atLine(5)
+        .next().atLine(6);
+  }
+
