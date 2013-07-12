@@ -1,5 +1,7 @@
   @Override
   public void visitNode(AstNode node) {
-    getContext().createLineViolation(this, "Remove this empty statement.", node);
+    if (node.hasDirectChildren(JavaPunctuator.SEMI)) {
+      getContext().createLineViolation(this, "Remove this empty statement.", node);
+    }
   }
 
