@@ -1,0 +1,15 @@
+  private static String getReference(AstNode node) {
+    if (node.is(JavaGrammar.ANNOTATION)) {
+      node = node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (AstNode child : node.getChildren(JavaTokenType.IDENTIFIER)) {
+      sb.append(child.getTokenOriginalValue());
+      sb.append('.');
+    }
+    sb.deleteCharAt(sb.length() - 1);
+
+    return sb.toString();
+  }
+
