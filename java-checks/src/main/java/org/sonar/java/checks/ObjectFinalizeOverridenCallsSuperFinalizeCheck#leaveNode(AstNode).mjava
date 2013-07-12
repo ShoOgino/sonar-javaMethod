@@ -1,0 +1,22 @@
+  @Override
+  public void leaveNode(AstNode node) {
+    if (node.hasDirectChildren(JavaGrammar.VOID_METHOD_DECLARATOR_REST)) {
+      AstNode identifier = node.getFirstChild(JavaTokenType.IDENTIFIER);
+
+      if ("finalize".equals(identifier.getTokenValue())) {
+        AstSelect methodBlockStatement = node.select()
+            .children(JavaGrammar.VOID_METHOD_DECLARATOR_REST)
+            .children(JavaGrammar.METHOD_BODY)
+            .children(JavaGrammar.BLOCK)
+            .children(JavaGrammar.BLOCK_STATEMENTS)
+            .children(JavaGrammar.BLOCK_STATEMENT);
+
+        if (lastSuperFinalizeStatement == null) {
+          getContext().createLineViolation(this, "Add a call to 'super.finalize()' at the end of this Object.finalize() implementation.", identifier);
+        } else if (!lastSuperFinalizeStatement.equals(getLastEffectiveStatement(getLastBlockStatement(methodBlockStatement)))) {
+          getContext().createLineViolation(this, "Move this super.finalize() call to the end of this Object.finalize() implementation.", lastSuperFinalizeStatement);
+        }
+      }
+    }
+  }
+
