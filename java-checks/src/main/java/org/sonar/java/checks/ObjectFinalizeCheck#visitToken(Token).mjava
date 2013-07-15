@@ -11,7 +11,7 @@
         state = ")".equals(token.getOriginalValue()) ? State.EXPECT_SEMI : State.EXPECT_FINALIZE;
         break;
       case EXPECT_SEMI:
-        if (";".equals(token.getOriginalValue())) {
+        if (";".equals(token.getOriginalValue()) && !isInFinalizeMethod) {
           getContext().createLineViolation(this, "Remove this call to finalize().", token);
         }
         state = State.EXPECT_FINALIZE;
