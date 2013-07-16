@@ -1,0 +1,19 @@
+  private static Collection<String> getReferences(AstNode node) {
+    if (node.is(JavaKeyword.THROWS)) {
+      ImmutableList.Builder<String> builder = ImmutableList.builder();
+
+      for (AstNode qualifiedIdentifier : node.getNextSibling().getChildren(JavaGrammar.QUALIFIED_IDENTIFIER)) {
+        builder.add(mergeIdentifiers(qualifiedIdentifier));
+      }
+
+      return builder.build();
+    }
+    else {
+      if (node.is(JavaGrammar.ANNOTATION)) {
+        node = node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
+      }
+
+      return Collections.singleton(mergeIdentifiers(node));
+    }
+  }
+
