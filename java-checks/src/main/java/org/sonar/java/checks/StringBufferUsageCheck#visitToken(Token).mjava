@@ -1,7 +1,8 @@
   @Override
   public void visitToken(Token token) {
-    if ("StringBuffer".equals(token.getValue())) {
+    if ("StringBuffer".equals(token.getValue()) && lastReportedLine != token.getLine()) {
       getContext().createLineViolation(this, "Replace this StringBuilder by a StringBuffer.", token);
+      lastReportedLine = token.getLine();
     }
   }
 
