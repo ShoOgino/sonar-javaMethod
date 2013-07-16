@@ -1,0 +1,23 @@
+  @Override
+  public void visitClass(AsmClass asmClass) {
+    SourceFile file = getSourceFile(asmClass);
+    String className = getClassName(asmClass);
+    Collection<AsmField> fields = getAllFields(asmClass);
+
+    if (localVariableOccurencesByClassName.containsKey(className)) {
+      for (String localVariable : localVariableOccurencesByClassName.get(className).keySet()) {
+        for (AsmField field : fields) {
+          if (localVariable.equals(field.getName())) {
+            for (Integer line : localVariableOccurencesByClassName.get(className).get(localVariable)) {
+              CheckMessage message = new CheckMessage(this, "Rename this variable/parameter which hides a field of '" + field.getParent().getDisplayName() + "'.");
+              message.setLine(line);
+              file.log(message);
+            }
+
+            break;
+          }
+        }
+      }
+    }
+  }
+

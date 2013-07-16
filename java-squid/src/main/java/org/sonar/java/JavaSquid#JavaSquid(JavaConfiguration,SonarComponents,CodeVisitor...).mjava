@@ -21,6 +21,9 @@
       if (visitor instanceof CharsetAwareVisitor) {
         ((CharsetAwareVisitor) visitor).setCharset(conf.getCharset());
       }
+      if (visitor instanceof SourceAndBytecodeVisitor) {
+        astScanner.accept(((SourceAndBytecodeVisitor) visitor).getSourceVisitor());
+      }
       astScanner.accept(visitor);
       bytecodeScanner.accept(visitor);
     }
