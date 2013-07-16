@@ -1,10 +1,23 @@
   @Override
   public void visitNode(AstNode node) {
-    if (node.is(JavaGrammar.IMPORT_DECLARATION)) {
-      if (!isStaticImport(node) && !isImportOnDemand(node)) {
-        String reference = merge(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
-        lineByImportReference.put(reference, node.getTokenLine());
-        pendingImports.add(reference);
+    if (node.is(JavaGrammar.PACKAGE_DECLARATION)) {
+      currentPackage = mergeIdentifiers(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+    } else if (node.is(JavaGrammar.IMPORT_DECLARATION)) {
+      if (!isStaticImport(node)) {
+        String reference = mergeIdentifiers(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+
+        if (isJavaLangImport(reference)) {
+          getContext().createLineViolation(this, "Remove this unnecessary import: java.lang classes are always implicitly imported.", node);
+        } else if (isImportFromSamePackage(reference)) {
+          getContext().createLineViolation(this, "Remove this unnecessary import: same package classes are always implicitly imported.", node);
+        } else if (!isImportOnDemand(node)) {
+          if (isDuplicatedImport(reference)) {
+            getContext().createLineViolation(this, "Remove this duplicated import.", node);
+          } else {
+            lineByImportReference.put(reference, node.getTokenLine());
+            pendingImports.add(reference);
+          }
+        }
       }
     } else {
       for (String reference : getReferences(node)) {
