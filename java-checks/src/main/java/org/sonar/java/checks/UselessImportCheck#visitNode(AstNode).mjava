@@ -6,12 +6,14 @@
       if (!isStaticImport(node)) {
         String reference = mergeIdentifiers(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
 
-        if (isJavaLangImport(reference)) {
+        if ("java.lang".equals(reference)) {
           getContext().createLineViolation(this, "Remove this unnecessary import: java.lang classes are always implicitly imported.", node);
         } else if (isImportFromSamePackage(reference)) {
           getContext().createLineViolation(this, "Remove this unnecessary import: same package classes are always implicitly imported.", node);
         } else if (!isImportOnDemand(node)) {
-          if (isDuplicatedImport(reference)) {
+          if (isJavaLangImport(reference)) {
+            getContext().createLineViolation(this, "Remove this unnecessary import: java.lang classes are always implicitly imported.", node);
+          } else if (isDuplicatedImport(reference)) {
             getContext().createLineViolation(this, "Remove this duplicated import.", node);
           } else {
             lineByImportReference.put(reference, node.getTokenLine());
@@ -19,10 +21,8 @@
           }
         }
       }
-    } else {
-      for (String reference : getReferences(node)) {
-        updatePendingImports(reference);
-      }
+    } else if (!node.getParent().is(JavaGrammar.IMPORT_DECLARATION)) {
+      pendingReferences.addAll(getReferences(node));
     }
   }
 

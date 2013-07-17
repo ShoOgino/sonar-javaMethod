@@ -1,5 +1,9 @@
   @Override
   public void leaveFile(AstNode node) {
+    for (String reference : pendingReferences) {
+      updatePendingImports(reference);
+    }
+
     for (String pendingImport : pendingImports) {
       getContext().createLineViolation(this, "Remove this unused import '" + pendingImport + "'.", lineByImportReference.get(pendingImport));
     }
