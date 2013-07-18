@@ -1,0 +1,17 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/IndentationCheck.java"), new IndentationCheck());
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3).withMessage("Make this line start at column 3.")
+        .next().atLine(10)
+        .next().atLine(11)
+        .next().atLine(16)
+        .next().atLine(21)
+        .next().atLine(24).withMessage("Make this line start at column 9.")
+        .next().atLine(33)
+        .next().atLine(46)
+        .next().atLine(52)
+        .next().atLine(65)
+        .next().atLine(77);
+  }
+
