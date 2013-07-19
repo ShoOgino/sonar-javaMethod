@@ -1,4 +1,4 @@
-  public BugCollection execute() {
+  public Collection<ReportedBug> execute() {
     TimeProfiler profiler = new TimeProfiler().start("Execute Findbugs " + FindbugsVersion.getVersion());
     // We keep a handle on the current security manager because FB plays with it and we need to restore it before shutting down the executor
     // service
@@ -58,7 +58,7 @@
 
       profiler.stop();
 
-      return xmlBugReporter.getBugCollection();
+      return toReportedBugs(xmlBugReporter.getBugCollection());
     } catch (TimeoutException e) {
       throw new SonarException("Can not execute Findbugs with a timeout threshold value of " + configuration.getTimeout() + " milliseconds", e);
     } catch (Exception e) {
