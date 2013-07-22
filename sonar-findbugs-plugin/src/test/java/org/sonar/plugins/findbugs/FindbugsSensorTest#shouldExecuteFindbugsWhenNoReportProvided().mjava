@@ -1,5 +1,4 @@
   @Test
-  @Ignore("Fails either on Java 7 or on Windows")
   public void shouldExecuteFindbugsWhenNoReportProvided() throws Exception {
     Project project = createProject();
     FindbugsExecutor executor = mock(FindbugsExecutor.class);
@@ -25,9 +24,5 @@
 
     verify(executor).execute();
     verify(context, times(1)).saveViolation(any(Violation.class));
-
-    Violation wanted = Violation.create((Rule) null, new JavaFile("org.sonar.commons.ZipUtils")).setMessage(
-        "Empty zip file entry created in org.sonar.commons.ZipUtils._zip(String, File, ZipOutputStream)").setLineId(107);
-    verify(context).saveViolation(argThat(new IsViolation(wanted)));
   }
 
