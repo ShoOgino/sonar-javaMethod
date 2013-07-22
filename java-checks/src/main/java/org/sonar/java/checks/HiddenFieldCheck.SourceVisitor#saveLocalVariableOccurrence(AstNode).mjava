@@ -1,0 +1,10 @@
+    private void saveLocalVariableOccurrence(AstNode identifier) {
+      if (!isInConstructorOrSetter(identifier)) {
+        String className = getClassName(identifier);
+        if (!localVariableOccurencesByClassName.containsKey(className)) {
+          localVariableOccurencesByClassName.put(className, HashMultimap.<String, Integer> create());
+        }
+        localVariableOccurencesByClassName.get(className).put(identifier.getTokenOriginalValue(), identifier.getTokenLine());
+      }
+    }
+

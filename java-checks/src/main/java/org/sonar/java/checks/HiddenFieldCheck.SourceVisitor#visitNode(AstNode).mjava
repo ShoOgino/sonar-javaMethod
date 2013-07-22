@@ -1,0 +1,14 @@
+    @Override
+    public void visitNode(AstNode astNode) {
+      if (astNode.is(JavaGrammar.VARIABLE_DECLARATOR_ID)) {
+        saveLocalVariableOccurrence(astNode.getFirstChild(JavaTokenType.IDENTIFIER));
+      } else {
+        AstNode variableDeclarators = astNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS);
+        if (variableDeclarators != null) {
+          for (AstNode variableDeclarator : variableDeclarators.getChildren(JavaGrammar.VARIABLE_DECLARATOR)) {
+            saveLocalVariableOccurrence(variableDeclarator.getFirstChild(JavaTokenType.IDENTIFIER));
+          }
+        }
+      }
+    }
+
