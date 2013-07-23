@@ -1,0 +1,15 @@
+  private static boolean hasStaticMethods(AstNode node) {
+    AstSelect query = node.select()
+        .children(JavaGrammar.CLASS_BODY_DECLARATION)
+        .children(JavaGrammar.MEMBER_DECL)
+        .children(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.VOID_METHOD_DECLARATOR_REST, JavaGrammar.GENERIC_METHOD_OR_CONSTRUCTOR_REST);
+
+    for (AstNode methodOrGeneric : query) {
+      if (isMethod(methodOrGeneric) && isStaticMethod(methodOrGeneric)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
