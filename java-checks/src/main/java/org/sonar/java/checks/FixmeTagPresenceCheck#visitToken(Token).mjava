@@ -1,0 +1,10 @@
+  @Override
+  public void visitToken(Token token) {
+    for (Trivia trivia : token.getTrivia()) {
+      String comment = trivia.getToken().getOriginalValue();
+      if (StringUtils.containsIgnoreCase(comment, "FIXME")) {
+        getContext().createLineViolation(this, "Take the required action to fix the issue indicated by this comment.", trivia.getToken());
+      }
+    }
+  }
+
