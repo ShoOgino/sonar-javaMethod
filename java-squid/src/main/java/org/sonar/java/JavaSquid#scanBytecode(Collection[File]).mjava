@@ -2,19 +2,7 @@
     if (hasBytecode(bytecodeFilesOrDirectories)) {
       TimeProfiler profiler = new TimeProfiler(getClass()).start("Java bytecode scan");
 
-      ClassLoader classLoader = ClassLoaderBuilder.create(bytecodeFilesOrDirectories);
-      AsmClassProviderImpl classProvider = new AsmClassProviderImpl(classLoader);
-
-      for (BytecodeVisitor visitor : bytecodeScanner.getVisitors()) {
-        if (visitor instanceof ClassBytecodeProviderAwareVisitor) {
-          ((ClassBytecodeProviderAwareVisitor) visitor).setClassProvider(classProvider);
-        }
-      }
-
-      bytecodeScanner.scan(bytecodeFilesOrDirectories, classProvider);
-
-      ((SquidClassLoader) classLoader).close();
-
+      bytecodeScanner.scan(bytecodeFilesOrDirectories);
       bytecodeScanned = true;
       profiler.stop();
     } else {
