@@ -1,0 +1,10 @@
+  @Override
+  public void visitToken(Token token) {
+    for (Trivia trivia : token.getTrivia()) {
+      String comment = trivia.getToken().getOriginalValue();
+      if (StringUtils.containsIgnoreCase(comment, "TODO")) {
+        getContext().createLineViolation(this, "Complete the task associated to this TODO comment.", trivia.getToken());
+      }
+    }
+  }
+
