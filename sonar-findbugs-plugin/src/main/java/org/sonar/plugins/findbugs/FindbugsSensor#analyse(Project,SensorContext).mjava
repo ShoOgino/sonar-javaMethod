@@ -3,15 +3,9 @@
       LOG.warn("Reusing existing Findbugs configuration not supported any more.");
     }
 
-    BugCollection collection = executor.execute();
+    Collection<ReportedBug> collection = executor.execute();
 
-    for (BugInstance bugInstance : collection) {
-      SourceLineAnnotation sourceLine = bugInstance.getPrimarySourceLineAnnotation();
-      if (sourceLine == null) {
-        LOG.warn("No source line for " + bugInstance.getType());
-        continue;
-      }
-
+    for (ReportedBug bugInstance : collection) {
       Rule rule = ruleFinder.findByKey(FindbugsConstants.REPOSITORY_KEY, bugInstance.getType());
       if (rule == null) {
         // ignore violations from report, if rule not activated in Sonar
@@ -19,9 +13,9 @@
         continue;
       }
 
-      String longMessage = bugInstance.getMessageWithoutPrefix();
-      String className = bugInstance.getPrimarySourceLineAnnotation().getClassName();
-      int start = bugInstance.getPrimarySourceLineAnnotation().getStartLine();
+      String longMessage = bugInstance.getMessage();
+      String className = bugInstance.getClassName();
+      int start = bugInstance.getStartLine();
 
       JavaFile resource = new JavaFile(getSonarJavaFileKey(className));
       if (context.getResource(resource) != null) {

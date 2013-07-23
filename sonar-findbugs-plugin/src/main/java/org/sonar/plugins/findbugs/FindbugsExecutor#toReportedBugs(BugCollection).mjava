@@ -1,0 +1,16 @@
+  private Collection<ReportedBug> toReportedBugs(BugCollection bugCollection) {
+    // We need to retrieve information such as the message before we shut everything down as we will lose any custom
+    // bug messages
+    final Collection<ReportedBug> bugs = new ArrayList<ReportedBug>();
+
+    for (final BugInstance bugInstance : bugCollection) {
+      if (bugInstance.getPrimarySourceLineAnnotation() == null) {
+        LOG.warn("No source line for " + bugInstance.getType());
+        continue;
+      }
+
+      bugs.add(new ReportedBug(bugInstance));
+    }
+    return bugs;
+  }
+
