@@ -1,0 +1,12 @@
+  private static Iterable<AstNode> getThrowStatementExceptionNames(AstNode node) {
+    AstNode primary = node.getFirstChild(JavaGrammar.EXPRESSION).getFirstChild(JavaGrammar.PRIMARY);
+    if (primary == null || primary.getFirstChild().isNot(JavaKeyword.NEW)) {
+      return Collections.EMPTY_LIST;
+    }
+    AstNode createdName = primary.getFirstDescendant(JavaGrammar.CREATED_NAME);
+    if (createdName == null) {
+      return Collections.EMPTY_LIST;
+    }
+    return Collections.singleton(createdName);
+  }
+
