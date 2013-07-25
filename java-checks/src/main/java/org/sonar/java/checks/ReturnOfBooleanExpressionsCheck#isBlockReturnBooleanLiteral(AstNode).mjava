@@ -1,0 +1,12 @@
+  private static boolean isBlockReturnBooleanLiteral(AstNode node) {
+    AstNode block = node.getFirstChild(JavaGrammar.BLOCK);
+    if (block == null) {
+      return false;
+    }
+
+    List<AstNode> blockStatements = block.getFirstChild(JavaGrammar.BLOCK_STATEMENTS).getChildren(JavaGrammar.BLOCK_STATEMENT);
+    return blockStatements.size() == 1 &&
+      blockStatements.get(0).hasDirectChildren(JavaGrammar.STATEMENT) &&
+      isSimpleReturnBooleanLiteral(blockStatements.get(0).getFirstChild(JavaGrammar.STATEMENT));
+  }
+
