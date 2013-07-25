@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (node.is(JavaGrammar.EXPRESSION)) {
+      nestingLevel++;
+      if (nestingLevel == 1) {
+        operatorCounter = 0;
+      }
+    } else {
+      operatorCounter += node.getChildren(JavaPunctuator.QUERY, JavaPunctuator.OROR, JavaPunctuator.ANDAND).size();
+    }
+  }
+

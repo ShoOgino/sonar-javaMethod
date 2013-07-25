@@ -1,0 +1,13 @@
+  @Override
+  public void leaveNode(AstNode node) {
+    if (node.is(JavaGrammar.EXPRESSION)) {
+      nestingLevel--;
+      if (nestingLevel == 0 && operatorCounter > max) {
+        getContext().createLineViolation(
+            this,
+            "Reduce the number of conditional operators (" + operatorCounter + ") used in the expression (maximum allowed " + max + ").",
+            node);
+      }
+    }
+  }
+
