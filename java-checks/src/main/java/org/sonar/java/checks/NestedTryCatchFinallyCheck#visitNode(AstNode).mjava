@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (isTryBlock(node)) {
+      nestingLevel++;
+
+      if (nestingLevel > 1) {
+        getContext().createLineViolation(this, "Extract this nested try block into a separate method.", node);
+      }
+    }
+  }
+
