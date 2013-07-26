@@ -1,12 +1,17 @@
   @Override
   public void visitNode(AstNode node) {
     if (node.is(JavaGrammar.EXPRESSION)) {
-      nestingLevel++;
-      if (nestingLevel == 1) {
-        operatorCounter = 0;
+      int level = getExpressionNestingLevel();
+      level++;
+      setExpressionNestingLevel(level);
+
+      if (level == 1) {
+        setOperatorCounter(0);
       }
+    } else if (node.is(EXCLUSIONS)) {
+      pushExclusionLevel();
     } else {
-      operatorCounter += node.getChildren(JavaPunctuator.QUERY, JavaPunctuator.OROR, JavaPunctuator.ANDAND).size();
+      setOperatorCounter(getOperatorCounter() + node.getChildren(JavaPunctuator.QUERY, JavaPunctuator.OROR, JavaPunctuator.ANDAND).size());
     }
   }
 
