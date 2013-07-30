@@ -1,0 +1,18 @@
+  private static boolean isSizeCall(AstNode node) {
+    if (!node.is(JavaGrammar.PRIMARY)) {
+      return false;
+    }
+
+    AstNode identifierSuffix = node.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
+    if (identifierSuffix == null) {
+      return false;
+    }
+
+    AstNode arguments = identifierSuffix.getFirstChild(JavaGrammar.ARGUMENTS);
+    if (arguments == null || arguments.getNumberOfChildren() != 2) {
+      return false;
+    }
+
+    return isSizeQualifiedIdentifier(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+  }
+
