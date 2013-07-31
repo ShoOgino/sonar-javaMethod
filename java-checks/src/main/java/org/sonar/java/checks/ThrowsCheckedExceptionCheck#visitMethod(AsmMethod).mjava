@@ -1,0 +1,16 @@
+  @Override
+  public void visitMethod(AsmMethod asmMethod) {
+    List<AsmClass> thrownClasses = asmMethod.getThrows();
+    for (AsmClass thrownClass : thrownClasses) {
+      if (!isSubClassOfRuntimeException(thrownClass)) {
+        CheckMessage message = new CheckMessage(this, "Remove the usage of the checked exception '" + thrownClass.getDisplayName() + "'.");
+        SourceMethod sourceMethod = getSourceMethod(asmMethod);
+        if (sourceMethod != null) {
+          message.setLine(sourceMethod.getStartAtLine());
+        }
+        SourceFile file = getSourceFile(asmClass);
+        file.log(message);
+      }
+    }
+  }
+
