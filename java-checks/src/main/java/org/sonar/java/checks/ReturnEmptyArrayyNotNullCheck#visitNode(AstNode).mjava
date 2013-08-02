@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (isReturningNull(node)) {
+      AstNode method = getMethod(node);
+
+      if (isReturningArray(method)) {
+        getContext().createLineViolation(this, "Return an empty array instead of null.", node);
+      } else if (isReturningCollection(method)) {
+        getContext().createLineViolation(this, "Return an empty collection instead of null.", node);
+      }
+    }
+  }
+
