@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode node) {
+    AstNode classMemberDeclaration = node.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
+
+    if (isFinal(classMemberDeclaration) && !isStatic(classMemberDeclaration)) {
+      for (AstNode variableDeclarator : node.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS).getChildren(JavaGrammar.VARIABLE_DECLARATOR)) {
+        if (hasConstantInitializer(variableDeclarator)) {
+          getContext().createLineViolation(this, "Make this final field static too.", variableDeclarator);
+        }
+      }
+    }
+  }
+
