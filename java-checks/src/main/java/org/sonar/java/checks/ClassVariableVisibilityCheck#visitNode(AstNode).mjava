@@ -2,8 +2,8 @@
   public void visitNode(AstNode node) {
     AstNode classBodyDeclaration = node.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
 
-    if (!isConstant(classBodyDeclaration) && !hasAllowedVisibility(classBodyDeclaration)) {
-      getContext().createLineViolation(this, "Make this class member " + authorizedVisibility + " visible and provide accessors if needed.", node);
+    if (isPublic(classBodyDeclaration) && !isConstant(classBodyDeclaration) && !isAnnotated(classBodyDeclaration)) {
+      getContext().createLineViolation(this, "Make this class variable field non-public and provide accessors if needed.", node);
     }
   }
 
