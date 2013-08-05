@@ -1,0 +1,44 @@
+  @Override
+  public void visitToken(Token token) {
+    String value = token.getOriginalValue();
+
+    switch (state) {
+      case EXPECTING_DOT_1:
+        state = transitionIfMatch(value, ".", State.EXPECTING_TOLOWERCASE_OR_TOUPPERCASE);
+        break;
+      case EXPECTING_TOLOWERCASE_OR_TOUPPERCASE:
+        state = transitionIfMatch(value, "toLowerCase", State.EXPECTING_LPAR_1);
+        if (state != State.EXPECTING_LPAR_1) {
+          state = transitionIfMatch(value, "toUpperCase", State.EXPECTING_LPAR_1);
+        }
+        break;
+      case EXPECTING_LPAR_1:
+        state = transitionIfMatch(value, "(", State.EXPECTING_RPAR_1);
+        break;
+      case EXPECTING_RPAR_1:
+        state = transitionIfMatch(value, ")", State.EXPECTING_DOT_2);
+        break;
+      case EXPECTING_DOT_2:
+        state = transitionIfMatch(value, ".", State.EXPECTING_EQUALS);
+        break;
+      case EXPECTING_EQUALS:
+        state = transitionIfMatch(value, "equals", State.EXPECTING_LPAR_2);
+        if (state != State.EXPECTING_LPAR_2) {
+          state = transitionIfMatch(value, "toLowerCase", State.EXPECTING_LPAR_1);
+          if (state != State.EXPECTING_LPAR_1) {
+            state = transitionIfMatch(value, "toUpperCase", State.EXPECTING_LPAR_1);
+          }
+        }
+        break;
+      case EXPECTING_LPAR_2:
+        if ("(".equals(value)) {
+          createIssue(token.getLine());
+        }
+
+        state = State.EXPECTING_DOT_1;
+        break;
+      default:
+        throw new IllegalStateException("Illegal state " + state);
+    }
+  }
+
