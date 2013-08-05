@@ -1,7 +1,7 @@
   @Override
   public void visitToken(Token token) {
     String className = token.getOriginalValue();
-    if (isSynchronizedClass(className) && lastReportedLine != token.getLine()) {
+    if (!inImport && isSynchronizedClass(className) && lastReportedLine != token.getLine()) {
       getContext().createLineViolation(this, "Replace the synchronized class '" + className + "' by an unsynchronized one.", token);
       lastReportedLine = token.getLine();
     }
