@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (isException(node)) {
+      for (AstNode field : getFields(node)) {
+        if (!isFinal(field)) {
+          getContext().createLineViolation(this, "Make this field final.", field);
+        }
+      }
+    }
+  }
+
