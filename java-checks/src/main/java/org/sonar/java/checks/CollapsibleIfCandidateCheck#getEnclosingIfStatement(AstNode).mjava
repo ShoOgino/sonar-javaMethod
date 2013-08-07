@@ -1,0 +1,18 @@
+  @Nullable
+  private static AstNode getEnclosingIfStatement(AstNode node) {
+    AstNode grandParent = node.getParent().getParent();
+    if (grandParent.is(JavaGrammar.IF_STATEMENT)) {
+      return grandParent;
+    } else if (!grandParent.is(JavaGrammar.BLOCK_STATEMENT)) {
+      return null;
+    }
+
+    AstNode statement = grandParent.getFirstAncestor(JavaGrammar.BLOCK).getParent();
+    if (!statement.is(JavaGrammar.STATEMENT)) {
+      return null;
+    }
+
+    AstNode enclosingStatement = statement.getParent();
+    return enclosingStatement.is(JavaGrammar.IF_STATEMENT) ? enclosingStatement : null;
+  }
+
