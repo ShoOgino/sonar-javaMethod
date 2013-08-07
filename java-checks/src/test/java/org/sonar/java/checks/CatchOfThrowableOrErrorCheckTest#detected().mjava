@@ -1,0 +1,9 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CatchOfThrowableOrErrorCheck.java"), new CatchOfThrowableOrErrorCheck());
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(5).withMessage("Catch Exception instead of Throwable.")
+        .next().atLine(6).withMessage("Catch Exception instead of Error.")
+        .next().atLine(9).withMessage("Catch Exception instead of Error.");
+  }
+
