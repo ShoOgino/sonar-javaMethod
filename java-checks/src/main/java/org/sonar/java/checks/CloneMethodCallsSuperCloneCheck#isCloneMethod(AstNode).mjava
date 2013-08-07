@@ -1,0 +1,9 @@
+  private static boolean isCloneMethod(AstNode node) {
+    AstNode methodRest = node.getFirstChild(JavaGrammar.METHOD_DECLARATOR_REST);
+
+    return node.is(JavaGrammar.MEMBER_DECL) &&
+      methodRest != null &&
+      "clone".equals(node.getFirstChild(JavaTokenType.IDENTIFIER).getTokenOriginalValue()) &&
+      !methodRest.getFirstChild(JavaGrammar.FORMAL_PARAMETERS).hasDirectChildren(JavaGrammar.FORMAL_PARAMETER_DECLS);
+  }
+
