@@ -1,0 +1,12 @@
+  @Override
+  public void leaveNode(AstNode node) {
+    if (node.is(JavaGrammar.CATCH_CLAUSE)) {
+      exceptionVariables.pop();
+      boolean foundCorrectUsage = foundCorrectUsages.pop();
+
+      if (!foundCorrectUsage) {
+        getContext().createLineViolation(this, "", node);
+      }
+    }
+  }
+

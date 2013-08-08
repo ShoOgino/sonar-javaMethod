@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (node.is(JavaGrammar.CATCH_CLAUSE)) {
+      exceptionVariables.push(getCaughtVariable(node));
+      foundCorrectUsages.push(false);
+    } else if (isWithinCatch() && isArgumentsWithSeveralExpressions(node)) {
+      for (AstNode expression : node.getChildren(JavaGrammar.EXPRESSION)) {
+        if (isExceptionVariable(expression)) {
+          foundCorrectUsages.pop();
+          foundCorrectUsages.push(true);
+        }
+      }
+    }
+  }
+
