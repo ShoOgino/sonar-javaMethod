@@ -1,9 +1,11 @@
   @Override
   public void visitNode(AstNode node) {
-    nestingLevel++;
+    if (!isElseIf(node)) {
+      nestingLevel++;
 
-    if (nestingLevel == max + 1) {
-      getContext().createLineViolation(this, "Refactor this code to not nest more than " + max + " if statements.", node);
+      if (nestingLevel == max + 1) {
+        getContext().createLineViolation(this, "Refactor this code to not nest more than " + max + " if statements.", node);
+      }
     }
   }
 
