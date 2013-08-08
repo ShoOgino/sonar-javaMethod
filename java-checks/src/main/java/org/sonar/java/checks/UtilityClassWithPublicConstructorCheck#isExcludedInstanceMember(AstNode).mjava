@@ -1,0 +1,12 @@
+  private static boolean isExcludedInstanceMember(AstNode node) {
+    AstNode memberDecl = node.getFirstChild(JavaGrammar.MEMBER_DECL);
+    if (memberDecl == null) {
+      return true;
+    }
+
+    AstNode constructorOrGeneric = memberDecl.getFirstChild(JavaGrammar.CONSTRUCTOR_DECLARATOR_REST, JavaGrammar.GENERIC_METHOD_OR_CONSTRUCTOR_REST);
+
+    return constructorOrGeneric != null &&
+      isConstructor(constructorOrGeneric);
+  }
+
