@@ -1,0 +1,10 @@
+  @Test
+  public void custom_at_5() {
+    MethodTooBigCheck check = new MethodTooBigCheck();
+    check.max = 5;
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/MethodTooBigCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(2).withMessage("This method has 6 lines, which is greater than the 5 lines authorized. Split it into smaller methods.");
+  }
+
