@@ -1,0 +1,11 @@
+  @Test
+  public void custom() {
+    AnonymousClassesTooBigCheck check = new AnonymousClassesTooBigCheck();
+    check.max = 6;
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/AnonymousClassesTooBigCheck.java"), check);
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(12).withMessage("Reduce this anonymous class number of lines from 7 to at most 6, or make it a named class.")
+        .next().atLine(20).withMessage("Reduce this anonymous class number of lines from 21 to at most 6, or make it a named class.");
+  }
+
