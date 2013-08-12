@@ -1,0 +1,8 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (lastReportedLine != node.getTokenLine() && merge(node).startsWith("com.sun.")) {
+      getContext().createLineViolation(this, "Replace this usage of Sun classes by ones from the Java API.", node);
+      lastReportedLine = node.getTokenLine();
+    }
+  }
+
