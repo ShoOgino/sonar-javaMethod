@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (node.is(JavaGrammar.SWITCH_STATEMENT)) {
+      enterSwitch();
+    } else if (node.is(LOOP_NODES)) {
+      enterLoop(node.getTokenLine());
+    } else if (isInsideLoopOrSwitch()) {
+      if (!node.is(JavaGrammar.BREAK_STATEMENT) || isInLoop()) {
+        incrementLoopBreakAndContinueCounter();
+      }
+    }
+  }
+
