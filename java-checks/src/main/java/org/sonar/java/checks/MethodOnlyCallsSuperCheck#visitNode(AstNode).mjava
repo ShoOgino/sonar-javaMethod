@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(AstNode node) {
+    AstNode singleBlockStatement = getSingleBlockStatement(node);
+    if (singleBlockStatement != null && isSuperOrReturnOfSuperReference(singleBlockStatement)) {
+      String methodName = getMethodName(node);
+      List<String> parameters = getParameters(node);
+
+      if (isUselessSuperCall(singleBlockStatement, methodName, parameters)) {
+        getContext().createLineViolation(this, "", node);
+      }
+    }
+  }
+
