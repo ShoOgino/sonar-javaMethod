@@ -1,10 +1,14 @@
     @Override
-    public Object call() throws InterruptedException, IOException {
+    public Object call() {
       try {
         engine.execute();
+        return null;
+      } catch (InterruptedException e) {
+        throw Throwables.propagate(e);
+      } catch (IOException e) {
+        throw Throwables.propagate(e);
       } finally {
         engine.dispose();
       }
-      return null;
     }
 
