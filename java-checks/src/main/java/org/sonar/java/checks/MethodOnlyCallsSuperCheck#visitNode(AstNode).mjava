@@ -5,8 +5,8 @@
       String methodName = getMethodName(node);
       List<String> parameters = getParameters(node);
 
-      if (isUselessSuperCall(singleBlockStatement, methodName, parameters)) {
-        getContext().createLineViolation(this, "", node);
+      if (isUselessSuperCall(singleBlockStatement, methodName, parameters) && !hasAnnotationDifferentFromOverride(node)) {
+        getContext().createLineViolation(this, "Remove this method to simply inherit it.", node);
       }
     }
   }
