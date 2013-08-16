@@ -1,5 +1,5 @@
   @Override
-  public void visitNode(AstNode astNode) {
+  public void visitNode(AstNode node) {
     SourceCode currentResource = getContext().peekSourceCode();
     if (!WildcardPattern.match(getPatterns(), peekSourceClass().getKey())) {
       return;
@@ -7,8 +7,22 @@
     if (currentResource instanceof SourceMethod && ((SourceMethod) currentResource).isAccessor()) {
       return;
     }
-    if (PublicApiVisitor.isPublicApi(astNode) && !PublicApiVisitor.isDocumentedApi(astNode)) {
-      getContext().createLineViolation(this, "Document this public " + PublicApiVisitor.getType(astNode) + ".", astNode);
+    if (PublicApiVisitor.isPublicApi(node)) {
+      String javadoc = PublicApiVisitor.getApiJavadoc(node);
+
+      if (javadoc == null) {
+        getContext().createLineViolation(this, "Document this public " + PublicApiVisitor.getType(node) + ".", node);
+      } else {
+        for (String parameter : getParameters(node)) {
+          if (!hasParamJavadoc(javadoc, parameter)) {
+            getContext().createLineViolation(this, "Document this '" + parameter + "' parameter.", node);
+          }
+        }
+
+        if (hasNonVoidReturnType(node) && !hasReturnJavadoc(javadoc)) {
+          getContext().createLineViolation(this, "Document this method return value.", node);
+        }
+      }
     }
   }
 
