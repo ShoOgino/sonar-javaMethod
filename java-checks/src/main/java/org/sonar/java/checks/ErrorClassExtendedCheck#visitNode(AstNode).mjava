@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(AstNode node) {
+    AstNode extendedClass = node.getFirstChild(JavaGrammar.CLASS_TYPE);
+
+    if (extendedClass != null && isErrorClass(extendedClass)) {
+      getContext().createLineViolation(this, "Extend \"java.lang.Exception\" or one of its subclass.", node);
+    }
+  }
+
