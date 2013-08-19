@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (hasToStringSelector(node)) {
+      String newlyCreatedClassName = getNewlyCreatedClassName(node);
+
+      if (PRIMITIVE_WRAPPERS.contains(newlyCreatedClassName)) {
+        getContext().createLineViolation(
+            this,
+            "Call the static method " + newlyCreatedClassName + ".toString(...) instead of instantiating a temporary object to perform this to string conversion.",
+            node);
+      }
+    }
+  }
+
