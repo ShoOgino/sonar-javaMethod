@@ -1,0 +1,25 @@
+  public static boolean matches(AstNode node, String string) {
+    if (!node.hasToken()) {
+      return string.isEmpty();
+    }
+
+    String tokenValue = node.getTokenOriginalValue();
+    if (!string.startsWith(tokenValue)) {
+      return false;
+    }
+    int offset = tokenValue.length();
+
+    Iterator<Token> it = node.getTokens().iterator();
+    it.next();
+
+    while (it.hasNext()) {
+      tokenValue = it.next().getOriginalValue();
+      if (!string.regionMatches(offset, tokenValue, 0, tokenValue.length())) {
+        return false;
+      }
+      offset = offset + tokenValue.length();
+    }
+
+    return offset == string.length();
+  }
+
