@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(AstNode node) {
+    MethodHelper methodHelper = new MethodHelper(node);
+
+    if ("equals".equalsIgnoreCase(methodHelper.getName().getTokenOriginalValue()) && !hasSingleObjectParameter(methodHelper)) {
+      getContext().createLineViolation(this, "Either override Object.equals(Object), or totally rename the method to prevent any confusion.", methodHelper.getName());
+    }
+  }
+
