@@ -1,0 +1,12 @@
+  private static boolean isInAbstractClass(AstNode node) {
+    AstNode modifier = node.getFirstAncestor(JavaGrammar.CLASS_DECLARATION).getPreviousAstNode();
+    while (modifier != null && modifier.is(JavaGrammar.MODIFIER)) {
+      if (modifier.hasDirectChildren(JavaKeyword.ABSTRACT)) {
+        return true;
+      }
+      modifier = modifier.getPreviousAstNode();
+    }
+
+    return false;
+  }
+
