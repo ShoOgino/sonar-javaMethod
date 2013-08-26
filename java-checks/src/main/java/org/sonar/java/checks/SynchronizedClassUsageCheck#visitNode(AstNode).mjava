@@ -1,5 +1,10 @@
   @Override
   public void visitNode(AstNode node) {
-    inImport = true;
+    String className = getClassName(node);
+
+    if (lastReportedLine != node.getTokenLine() && isSynchronizedClass(className) && !isExcluded(node)) {
+      getContext().createLineViolation(this, "Replace the synchronized class \"" + className + "\" by an unsynchronized one such as " + REPLACEMENTS.get(className) + ".", node);
+      lastReportedLine = node.getTokenLine();
+    }
   }
 

@@ -1,0 +1,13 @@
+  private static String getClassName(AstNode node) {
+    String className;
+
+    if (!node.hasDirectChildren(JavaPunctuator.DOT)) {
+      className = node.getTokenOriginalValue();
+    } else {
+      List<AstNode> identifiers = node.getChildren(JavaTokenType.IDENTIFIER);
+      className = identifiers.get(identifiers.size() - 1).getTokenOriginalValue();
+    }
+
+    return className;
+  }
+
