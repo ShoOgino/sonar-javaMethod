@@ -1,13 +1,6 @@
   @Override
   public void visitNode(AstNode node) {
-    SourceCode currentResource = getContext().peekSourceCode();
-    if (!WildcardPattern.match(getPatterns(), peekSourceClass().getKey())) {
-      return;
-    }
-    if (currentResource instanceof SourceMethod && ((SourceMethod) currentResource).isAccessor()) {
-      return;
-    }
-    if (PublicApiVisitor.isPublicApi(node)) {
+    if (!isExcluded(node)) {
       String javadoc = PublicApiVisitor.getApiJavadoc(node);
 
       if (javadoc == null) {
