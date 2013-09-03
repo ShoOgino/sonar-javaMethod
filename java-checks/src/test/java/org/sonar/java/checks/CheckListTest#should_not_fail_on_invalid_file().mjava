@@ -1,0 +1,15 @@
+  /**
+   * Ensures that all checks are able to deal with unparsable files
+   */
+  @Test
+  public void should_not_fail_on_invalid_file() throws Exception {
+    List<Class> checks = CheckList.getChecks();
+
+    for (Class check : checks) {
+      CodeVisitor visitor = (CodeVisitor) check.newInstance();
+      if (visitor instanceof SquidAstVisitor) {
+        JavaAstScanner.scanSingleFile(new File("src/test/files/CheckListParseErrorTest.java"), (SquidAstVisitor) visitor);
+      }
+    }
+  }
+
