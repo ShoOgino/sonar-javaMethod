@@ -12,8 +12,15 @@
 
     AstWalker astWalker = new AstWalker(visitors);
 
+    ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer");
+    progressReport.start(files.size() + " source files to be analyzed");
+    int count = 0;
     for (InputFile inputFile : files) {
       File file = inputFile.getFile();
+
+      progressReport.message(count + "/" + files.size() + " files analyzed, current is " + file.getAbsolutePath());
+      count++;
+
       context.setFile(file);
       context.setInputFile(inputFile);
 
@@ -61,6 +68,7 @@
         throw new AnalysisException(errorMessage, e);
       }
     }
+    progressReport.stop(files.size() + "/" + files.size() + " source files analyzed");
 
     for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
       visitor.destroy();
