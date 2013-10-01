@@ -1,0 +1,17 @@
+  @Test
+  public void should_log_progress_message_twice() throws Exception {
+    ProgressReport report = new ProgressReport("");
+    report.period = PERIOD / 2;
+    report.start("");
+
+    report.message("foo progress 1");
+    Thread.sleep(PERIOD);
+    verifyLog("foo progress 1", Level.INFO, Mockito.atLeastOnce());
+
+    report.message("foo progress 2");
+    Thread.sleep(PERIOD);
+    verifyLog("foo progress 2", Level.INFO, Mockito.atLeastOnce());
+
+    report.stop("");
+  }
+
