@@ -1,13 +1,13 @@
   @Override
   public void run() {
-    while (!shouldStop) {
+    while (!Thread.interrupted()) {
       try {
         Thread.sleep(period);
         LOG.info(message);
       } catch (InterruptedException e) {
-        // no operation
+        thread.interrupt();
       }
     }
-    System.out.println("done");
+    LOG.info(stopMessage);
   }
 
