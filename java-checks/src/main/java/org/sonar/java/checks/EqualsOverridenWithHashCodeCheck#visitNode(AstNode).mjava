@@ -4,9 +4,9 @@
     boolean hasEquals = false;
 
     for (MethodHelper method : MethodHelper.getMethods(node)) {
-      if (method.getParameters().size() == 0 && "hashCode".equals(method.getName().getTokenOriginalValue())) {
+      if (method.getParameters().size() == 0 && HASHCODE.equals(method.getName().getTokenOriginalValue())) {
         hasHashCode = true;
-      } else if (method.getParameters().size() == 1 && "equals".equals(method.getName().getTokenOriginalValue())) {
+      } else if (method.getParameters().size() == 1 && EQUALS.equals(method.getName().getTokenOriginalValue())) {
         hasEquals = true;
       }
     }
@@ -14,11 +14,8 @@
     if (hasHashCode ^ hasEquals) {
       getContext().createLineViolation(
         this,
-        "This {0} overrides \"{1}()\" and should therefore also override \"{2}()\".",
-        node.is(JavaGrammar.CLASS_BODY) ? node : node.getParent(),
-        node.is(JavaGrammar.CLASS_BODY) ? "class" : "enum",
-        hasHashCode ? "hashCode" : "equals",
-        hasHashCode ? "equals" : "hashCode");
+        getMessage(node.is(JavaGrammar.CLASS_BODY), hasHashCode),
+        node.is(JavaGrammar.CLASS_BODY) ? node : node.getParent());
     }
   }
 
