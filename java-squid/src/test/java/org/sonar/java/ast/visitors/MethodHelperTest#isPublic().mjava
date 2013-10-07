@@ -1,0 +1,22 @@
+  @Test
+  public void isPublic() {
+    assertThat(new MethodHelper(parseMethod("class A { public void f() {} }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("class A { public int f() {} }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("class A { public <T> void f(T a) {} }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("class A { public A() {} }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("class A { private void f() {} }")).isPublic()).isFalse();
+    assertThat(new MethodHelper(parseMethod("class A { private int f() {} }")).isPublic()).isFalse();
+    assertThat(new MethodHelper(parseMethod("class A { private <T> void f(T a) {} }")).isPublic()).isFalse();
+    assertThat(new MethodHelper(parseMethod("class A { private A() {} }")).isPublic()).isFalse();
+
+    assertThat(new MethodHelper(parseMethod("interface A { public void f(); }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("interface A { public int f(); }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("interface A { public <T> int f(T a); }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("interface A { private void f(); }")).isPublic()).isFalse();
+    assertThat(new MethodHelper(parseMethod("interface A { private int f(); }")).isPublic()).isFalse();
+    assertThat(new MethodHelper(parseMethod("interface A { private <T> int f(T a); }")).isPublic()).isFalse();
+
+    assertThat(new MethodHelper(parseMethod("@interface Foo { public boolean value(); }")).isPublic()).isTrue();
+    assertThat(new MethodHelper(parseMethod("@interface Foo { private boolean value(); }")).isPublic()).isFalse();
+  }
+

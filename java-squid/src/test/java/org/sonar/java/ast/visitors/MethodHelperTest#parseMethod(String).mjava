@@ -1,0 +1,13 @@
+  private static AstNode parseMethod(String source) {
+    AstNode node = parse(source);
+    List<AstNode> descendants = node.getDescendants(
+      JavaGrammar.METHOD_DECLARATOR_REST,
+      JavaGrammar.VOID_METHOD_DECLARATOR_REST,
+      JavaGrammar.CONSTRUCTOR_DECLARATOR_REST,
+      JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST,
+      JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST,
+      JavaGrammar.ANNOTATION_METHOD_REST);
+    Preconditions.checkState(descendants.size() == 1);
+    return descendants.get(0);
+  }
+
