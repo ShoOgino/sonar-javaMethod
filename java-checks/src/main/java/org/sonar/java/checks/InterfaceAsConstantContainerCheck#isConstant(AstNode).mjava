@@ -1,4 +1,7 @@
-  private static boolean isConstant(AstNode node) {
-    return node.hasDirectChildren(JavaGrammar.CONSTANT_DECLARATORS_REST);
+  private static boolean isConstant(AstNode declaration) {
+    AstNode methodOrFieldDecl = declaration.getFirstChild(JavaGrammar.INTERFACE_MEMBER_DECL).getFirstChild(JavaGrammar.INTERFACE_METHOD_OR_FIELD_DECL);
+
+    return methodOrFieldDecl != null &&
+      methodOrFieldDecl.getFirstChild(JavaGrammar.INTERFACE_METHOD_OR_FIELD_REST).hasDirectChildren(JavaGrammar.CONSTANT_DECLARATORS_REST);
   }
 
