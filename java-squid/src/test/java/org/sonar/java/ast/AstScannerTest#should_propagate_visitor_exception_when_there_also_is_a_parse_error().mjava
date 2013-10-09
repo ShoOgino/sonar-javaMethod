@@ -1,0 +1,30 @@
+  @Test
+  public void should_propagate_visitor_exception_when_there_also_is_a_parse_error() {
+    AstScanner scanner = new AstScanner(new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, FakeGrammar.builder().build()));
+    scanner.withSquidAstVisitor(new SquidAstVisitor<LexerlessGrammar>() {
+
+      @Override
+      public void visitFile(AstNode node) {
+        throw new NullPointerException("foo");
+      }
+
+    });
+
+    thrown.expectMessage("SonarQube is unable to analyze file");
+    thrown.expect(new BaseMatcher() {
+
+      @Override
+      public boolean matches(Object item) {
+        return item instanceof AnalysisException &&
+          ((AnalysisException) item).getCause() instanceof NullPointerException;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("instanceof AnalysisException with NullPointerException cause");
+      }
+
+    });
+    scanner.scan(ImmutableList.of(mockInputFile()));
+  }
+
