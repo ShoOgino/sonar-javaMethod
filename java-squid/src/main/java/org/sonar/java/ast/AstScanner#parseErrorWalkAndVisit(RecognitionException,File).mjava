@@ -1,0 +1,20 @@
+  private void parseErrorWalkAndVisit(RecognitionException e, File file) {
+    try {
+      // Process the exception
+      for (SquidAstVisitor<? extends Grammar> visitor : visitors) {
+        visitor.visitFile(null);
+      }
+
+      for (AuditListener auditListener : auditListeners) {
+        auditListener.processRecognitionException(e);
+      }
+
+      for (SquidAstVisitor<? extends Grammar> visitor : Lists.reverse(visitors)) {
+        visitor.leaveFile(null);
+      }
+
+    } catch (Exception e2) {
+      throw new AnalysisException(getAnalyisExceptionMessage(file), e2);
+    }
+  }
+
