@@ -2,20 +2,20 @@
   public void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
     SensorContext context = mockContext();
     surefireSensor.collect(new Project("key"), context, new File(getClass().getResource(
-        "/org/sonar/plugins/surefire/SurefireSensorTest/shouldSaveErrorsAndFailuresInXML/").toURI()));
+      "/org/sonar/plugins/surefire/SurefireSensorTest/shouldSaveErrorsAndFailuresInXML/").toURI()));
 
     // 1 classes, 6 measures by class
     verify(context, times(1)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        eq(CoreMetrics.SKIPPED_TESTS), anyDouble());
+      eq(CoreMetrics.SKIPPED_TESTS), anyDouble());
 
     verify(context, times(1)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        eq(CoreMetrics.TESTS), anyDouble());
+      eq(CoreMetrics.TESTS), anyDouble());
     verify(context, times(6)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        any(Metric.class), anyDouble());
-//    verify(context, times(1)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-//        argThat(new IsMeasure(CoreMetrics.TEST_DATA)));
+      any(Metric.class), anyDouble());
+    // verify(context, times(1)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
+    // argThat(new IsMeasure(CoreMetrics.TEST_DATA)));
 
-//    verify(context).saveMeasure(eq(new JavaFile("org.sonar.core.ExtensionsFinderTest", true)),
-//        argThat(getTestDetailsMatcher("shouldSaveErrorsAndFailuresInXML/expected-test-details.xml")));
+    // verify(context).saveMeasure(eq(new JavaFile("org.sonar.core.ExtensionsFinderTest", true)),
+    // argThat(getTestDetailsMatcher("shouldSaveErrorsAndFailuresInXML/expected-test-details.xml")));
   }
 
