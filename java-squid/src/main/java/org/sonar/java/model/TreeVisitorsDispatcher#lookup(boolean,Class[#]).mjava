@@ -1,0 +1,11 @@
+  private Map<Class, Method> lookup(boolean leave, Class<?> treeClass) {
+    ImmutableMap.Builder<Class, Method> methodsBuilder = ImmutableMap.builder();
+    for (Class visitorClass : visitorClasses) {
+      Method method = lookup(visitorClass, leave ? "leave" : "visit", treeClass);
+      if (method != null) {
+        methodsBuilder.put(visitorClass, method);
+      }
+    }
+    return methodsBuilder.build();
+  }
+

@@ -1,0 +1,35 @@
+  /**
+   * 9.6.1. Annotation Type Elements
+   */
+  private void appendAnnotationTypeElementDeclaration(ImmutableList.Builder<Tree> members, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    AstNode declarationNode = astNode.getFirstChild(
+      JavaGrammar.INTERFACE_DECLARATION,
+      JavaGrammar.CLASS_DECLARATION,
+      JavaGrammar.ENUM_DECLARATION,
+      JavaGrammar.ANNOTATION_TYPE_DECLARATION
+    );
+    if (declarationNode != null) {
+      members.add(typeDeclaration(JavaTree.ModifiersTreeImpl.EMPTY, declarationNode));
+      return;
+    }
+    AstNode typeNode = astNode.getFirstChild(JavaGrammar.TYPE);
+    AstNode identifierNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
+    AstNode annotationMethodRestNode = astNode.getFirstChild(JavaGrammar.ANNOTATION_METHOD_OR_CONSTANT_REST).getFirstChild(JavaGrammar.ANNOTATION_METHOD_REST);
+    if (annotationMethodRestNode != null) {
+      members.add(new JavaTree.MethodTreeImpl(
+        annotationMethodRestNode,
+        /* modifiers */ JavaTree.ModifiersTreeImpl.EMPTY,
+        /* return type */ referenceType(typeNode),
+        /* name */ identifier(identifierNode),
+        /* parameters */ ImmutableList.<VariableTree>of(),
+        /* block */ null,
+        /* throws */ ImmutableList.<ExpressionTree>of(),
+        /* default value */ null // TODO DEFAULT_VALUE
+      ));
+      return;
+    } else {
+      appendConstantDeclarations(JavaTree.ModifiersTreeImpl.EMPTY, members, astNode);
+    }
+  }
+

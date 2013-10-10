@@ -1,0 +1,56 @@
+  /**
+   * 9.1.4. Interface Body and Member Declarations
+   */
+  private void appendInterfaceMember(ModifiersTree modifiers, ImmutableList.Builder<Tree> members, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.INTERFACE_MEMBER_DECL), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    AstNode declarationNode = astNode.getFirstChild(
+      JavaGrammar.INTERFACE_DECLARATION,
+      JavaGrammar.CLASS_DECLARATION,
+      JavaGrammar.ENUM_DECLARATION,
+      JavaGrammar.ANNOTATION_TYPE_DECLARATION
+    );
+    if (declarationNode != null) {
+      members.add(typeDeclaration(modifiers, declarationNode));
+      return;
+    }
+    declarationNode = astNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_OR_FIELD_DECL);
+    if (declarationNode != null) {
+      AstNode interfaceMethodOrFieldRestNode = declarationNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_OR_FIELD_REST);
+      AstNode interfaceMethodDeclaratorRestNode = interfaceMethodOrFieldRestNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST);
+      if (interfaceMethodDeclaratorRestNode != null) {
+        members.add(methodDeclarator(
+          modifiers,
+          declarationNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+          declarationNode.getFirstChild(JavaTokenType.IDENTIFIER),
+          interfaceMethodDeclaratorRestNode
+        ));
+        return;
+      } else {
+        appendConstantDeclarations(modifiers, members, declarationNode);
+        return;
+      }
+    }
+    declarationNode = astNode.getFirstChild(JavaGrammar.INTERFACE_GENERIC_METHOD_DECL);
+    if (declarationNode != null) {
+      // TODO TYPE_PARAMETERS
+      members.add(methodDeclarator(
+        modifiers,
+        /* type */ declarationNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* name */ declarationNode.getFirstChild(JavaTokenType.IDENTIFIER),
+        declarationNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST)
+      ));
+      return;
+    }
+    declarationNode = astNode.getFirstChild(JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST);
+    if (declarationNode != null) {
+      members.add(methodDeclarator(
+        modifiers,
+        /* type */ astNode.getFirstChild(JavaKeyword.VOID),
+        /* name */ astNode.getFirstChild(JavaTokenType.IDENTIFIER),
+        declarationNode
+      ));
+      return;
+    }
+    throw new IllegalStateException();
+  }
+

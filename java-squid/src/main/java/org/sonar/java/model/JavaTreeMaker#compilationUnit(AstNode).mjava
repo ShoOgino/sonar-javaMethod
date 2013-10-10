@@ -1,0 +1,36 @@
+  public CompilationUnitTree compilationUnit(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.COMPILATION_UNIT), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<ImportTree> imports = ImmutableList.builder();
+    for (AstNode importNode : astNode.getChildren(JavaGrammar.IMPORT_DECLARATION)) {
+      // TODO star import?
+      imports.add(new JavaTree.ImportTreeImpl(
+        importNode,
+        importNode.hasDirectChildren(JavaKeyword.STATIC),
+        qualifiedIdentifier(importNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER))
+      ));
+    }
+    ImmutableList.Builder<Tree> types = ImmutableList.builder();
+    for (AstNode typeNode : astNode.getChildren(JavaGrammar.TYPE_DECLARATION)) {
+      AstNode declarationNode = typeNode.getFirstChild(
+        JavaGrammar.CLASS_DECLARATION,
+        JavaGrammar.ENUM_DECLARATION,
+        JavaGrammar.INTERFACE_DECLARATION,
+        JavaGrammar.ANNOTATION_TYPE_DECLARATION
+      );
+      if (declarationNode != null) {
+        types.add(typeDeclaration(modifiers(typeNode.getChildren(JavaGrammar.MODIFIER)), declarationNode));
+      }
+    }
+    // TODO package annotations
+    ExpressionTree packageDeclaration = null;
+    if (astNode.hasDirectChildren(JavaGrammar.PACKAGE_DECLARATION)) {
+      packageDeclaration = qualifiedIdentifier(astNode.getFirstChild(JavaGrammar.PACKAGE_DECLARATION).getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+    }
+    return new JavaTree.CompilationUnitTreeImpl(
+      astNode,
+      packageDeclaration,
+      imports.build(),
+      types.build()
+    );
+  }
+

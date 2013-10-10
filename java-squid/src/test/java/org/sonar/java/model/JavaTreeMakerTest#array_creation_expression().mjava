@@ -1,0 +1,20 @@
+  /**
+   * 15.10. Array Creation Expressions
+   */
+  @Test
+  public void array_creation_expression() {
+    AstNode astNode = p.parse("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    NewArrayTree tree = (NewArrayTree) maker.primary(astNode);
+    assertThat(tree.type()).isNotNull();
+    assertThat(tree.dimensions()).isEmpty();
+    assertThat(tree.initializers()).hasSize(2);
+    assertThat(((NewArrayTree) tree.initializers().get(0)).initializers()).hasSize(1);
+    assertThat(((NewArrayTree) tree.initializers().get(1)).initializers()).hasSize(2);
+
+    astNode = p.parse("class T { int[] m() { return new int[2][2]; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    tree = (NewArrayTree) maker.primary(astNode);
+    assertThat(tree.type()).isNotNull();
+    assertThat(tree.dimensions()).hasSize(2);
+    assertThat(tree.initializers()).isEmpty();
+  }
+

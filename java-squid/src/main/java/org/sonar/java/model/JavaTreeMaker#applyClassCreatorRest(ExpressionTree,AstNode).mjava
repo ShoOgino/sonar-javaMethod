@@ -1,0 +1,19 @@
+  private ExpressionTree applyClassCreatorRest(ExpressionTree enclosingExpression, AstNode classCreatorRestNode) {
+    Preconditions.checkArgument(classCreatorRestNode.is(JavaGrammar.CLASS_CREATOR_REST), "Unexpected AstNodeType: %s", classCreatorRestNode.getType().toString());
+    ClassTree classBody = null;
+    if (classCreatorRestNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
+      classBody = new JavaTree.ClassTreeImpl(
+        classCreatorRestNode,
+        /* TODO verify: */ Tree.Kind.CLASS,
+        JavaTree.ModifiersTreeImpl.EMPTY,
+        classBody(classCreatorRestNode.getFirstChild(JavaGrammar.CLASS_BODY))
+      );
+    }
+    return new JavaTree.NewClassTreeImpl(
+      classCreatorRestNode,
+      enclosingExpression,
+      arguments(classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+      classBody
+    );
+  }
+

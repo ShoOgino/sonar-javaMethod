@@ -1,0 +1,11 @@
+  /**
+   * 15.8.4. Qualified this
+   */
+  @Test
+  public void qualified_this() {
+    AstNode astNode = p.parse("class T { Object m() { return ClassName.this; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    MemberSelectExpressionTree tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isNotNull();
+    assertThat(tree.identifier().name()).isEqualTo("this");
+  }
+

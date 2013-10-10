@@ -1,0 +1,11 @@
+  private VariableTree variableDeclarator(ModifiersTree modifiers, ExpressionTree type, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.VARIABLE_DECLARATOR), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    return new JavaTree.VariableTreeImpl(
+      astNode,
+      modifiers,
+      applyDim(type, astNode.getChildren(JavaGrammar.DIM).size()),
+      identifier(astNode.getFirstChild(JavaTokenType.IDENTIFIER)),
+      astNode.hasDirectChildren(JavaGrammar.VARIABLE_INITIALIZER) ? variableInitializer(astNode.getFirstChild(JavaGrammar.VARIABLE_INITIALIZER)) : null
+    );
+  }
+

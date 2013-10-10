@@ -1,0 +1,34 @@
+  @VisibleForTesting
+  public ExpressionTree expression(AstNode astNode) {
+    if (astNode.is(JavaGrammar.CONSTANT_EXPRESSION, JavaGrammar.STATEMENT_EXPRESSION)) {
+      astNode = astNode.getFirstChild(JavaGrammar.EXPRESSION).getFirstChild();
+    } else if (astNode.is(JavaGrammar.EXPRESSION)) {
+      astNode = astNode.getFirstChild();
+    }
+
+    if (astNode.is(JavaGrammar.PAR_EXPRESSION)) {
+      return new JavaTree.ParenthesizedTreeImpl(astNode, expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)));
+    } else if (astNode.is(JavaGrammar.PRIMARY)) {
+      return primary(astNode);
+    } else if (astNode.is(JavaGrammar.CONDITIONAL_OR_EXPRESSION,
+      JavaGrammar.CONDITIONAL_AND_EXPRESSION,
+      JavaGrammar.INCLUSIVE_OR_EXPRESSION,
+      JavaGrammar.EXCLUSIVE_OR_EXPRESSION,
+      JavaGrammar.AND_EXPRESSION,
+      JavaGrammar.EQUALITY_EXPRESSION,
+      JavaGrammar.RELATIONAL_EXPRESSION,
+      JavaGrammar.SHIFT_EXPRESSION,
+      JavaGrammar.ADDITIVE_EXPRESSION,
+      JavaGrammar.MULTIPLICATIVE_EXPRESSION)) {
+      return binaryExpression(astNode);
+    } else if (astNode.is(JavaGrammar.CONDITIONAL_EXPRESSION)) {
+      return conditionalExpression(astNode);
+    } else if (astNode.is(JavaGrammar.ASSIGNMENT_EXPRESSION)) {
+      return assignmentExpression(astNode);
+    } else if (astNode.is(JavaGrammar.UNARY_EXPRESSION)) {
+      return unaryExpression(astNode);
+    } else {
+      throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType().toString());
+    }
+  }
+

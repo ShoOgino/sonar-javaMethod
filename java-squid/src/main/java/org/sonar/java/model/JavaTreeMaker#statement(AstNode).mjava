@@ -1,0 +1,42 @@
+  @VisibleForTesting
+  public StatementTree statement(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.STATEMENT), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    astNode = astNode.getFirstChild();
+    switch ((JavaGrammar) astNode.getType()) {
+      case BLOCK:
+        return block(astNode);
+      case EMPTY_STATEMENT:
+        return emptyStatement(astNode);
+      case LABELED_STATEMENT:
+        return labeledStatement(astNode);
+      case EXPRESSION_STATEMENT:
+        return expressionStatement(astNode);
+      case IF_STATEMENT:
+        return ifStatement(astNode);
+      case ASSERT_STATEMENT:
+        return assertStatement(astNode);
+      case SWITCH_STATEMENT:
+        return switchStatement(astNode);
+      case WHILE_STATEMENT:
+        return whileStatement(astNode);
+      case DO_STATEMENT:
+        return doStatement(astNode);
+      case FOR_STATEMENT:
+        return forStatement(astNode);
+      case BREAK_STATEMENT:
+        return breakStatement(astNode);
+      case CONTINUE_STATEMENT:
+        return continueStatement(astNode);
+      case RETURN_STATEMENT:
+        return returnStatement(astNode);
+      case THROW_STATEMENT:
+        return throwStatement(astNode);
+      case SYNCHRONIZED_STATEMENT:
+        return synchronizedStatement(astNode);
+      case TRY_STATEMENT:
+        return tryStatement(astNode);
+      default:
+        throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
+    }
+  }
+

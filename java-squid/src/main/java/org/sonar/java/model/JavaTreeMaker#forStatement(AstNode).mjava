@@ -1,0 +1,44 @@
+  /**
+   * 14.14. The for Statement
+   */
+  private StatementTree forStatement(AstNode astNode) {
+    AstNode formalParameterNode = astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETER);
+    if (formalParameterNode == null) {
+      AstNode forInitNode = astNode.getFirstChild(JavaGrammar.FOR_INIT);
+      final List<StatementTree> forInit;
+      if (forInitNode == null) {
+        forInit = ImmutableList.of();
+      } else if (forInitNode.hasDirectChildren(JavaGrammar.VARIABLE_DECLARATORS)) {
+        // TODO modifiers
+        forInit = variableDeclarators(
+          JavaTree.ModifiersTreeImpl.EMPTY,
+          referenceType(forInitNode.getFirstChild(JavaGrammar.TYPE)),
+          forInitNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
+        );
+      } else {
+        forInit = statementExpressions(astNode.getFirstChild(JavaGrammar.FOR_INIT));
+      }
+      return new JavaTree.ForStatementTreeImpl(
+        astNode,
+        forInit,
+        astNode.hasDirectChildren(JavaGrammar.EXPRESSION) ? expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)) : null,
+        astNode.hasDirectChildren(JavaGrammar.FOR_UPDATE) ? statementExpressions(astNode.getFirstChild(JavaGrammar.FOR_UPDATE)) : ImmutableList.<StatementTree>of(),
+        statement(astNode.getFirstChild(JavaGrammar.STATEMENT))
+      );
+    } else {
+      return new JavaTree.EnhancedForStatementTreeImpl(
+        astNode,
+        new JavaTree.VariableTreeImpl(
+          formalParameterNode,
+          JavaTree.ModifiersTreeImpl.EMPTY,
+          // TODO dim
+          referenceType(formalParameterNode.getFirstChild(JavaGrammar.TYPE)),
+          identifier(formalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER)),
+          null
+        ),
+        expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)),
+        statement(astNode.getFirstChild(JavaGrammar.STATEMENT))
+      );
+    }
+  }
+

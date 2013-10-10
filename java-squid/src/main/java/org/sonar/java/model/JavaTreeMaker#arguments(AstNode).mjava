@@ -1,0 +1,9 @@
+  private List<? extends ExpressionTree> arguments(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.ARGUMENTS), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<ExpressionTree> arguments = ImmutableList.builder();
+    for (AstNode argument : astNode.getChildren(JavaGrammar.EXPRESSION)) {
+      arguments.add(expression(argument));
+    }
+    return arguments.build();
+  }
+

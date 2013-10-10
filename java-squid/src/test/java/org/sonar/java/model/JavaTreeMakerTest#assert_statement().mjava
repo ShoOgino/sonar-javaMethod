@@ -1,0 +1,16 @@
+  /**
+   * 14.10. The assert Statement
+   */
+  @Test
+  public void assert_statement() {
+    AstNode astNode = p.parse("class T { void m() { assert true; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    AssertStatementTree tree = (AssertStatementTree) maker.statement(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.detail()).isNull();
+
+    astNode = p.parse("class T { void m() { assert true : \"detail\"; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    tree = (AssertStatementTree) maker.statement(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.detail()).isNotNull();
+  }
+

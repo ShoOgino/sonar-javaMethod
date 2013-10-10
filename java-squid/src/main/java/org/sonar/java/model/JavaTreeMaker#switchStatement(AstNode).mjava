@@ -1,0 +1,33 @@
+  /**
+   * 14.11. The switch Statement
+   */
+  private SwitchStatementTree switchStatement(AstNode astNode) {
+    ImmutableList.Builder<CaseGroupTree> cases = ImmutableList.builder();
+    List<CaseLabelTree > labels = Lists.newArrayList();
+    for (AstNode caseNode : astNode.getFirstChild(JavaGrammar.SWITCH_BLOCK_STATEMENT_GROUPS).getChildren(JavaGrammar.SWITCH_BLOCK_STATEMENT_GROUP)) {
+      AstNode expressionNode = caseNode.getFirstChild(JavaGrammar.SWITCH_LABEL).getFirstChild(JavaGrammar.CONSTANT_EXPRESSION);
+      AstNode blockStatementsNode = caseNode.getFirstChild(JavaGrammar.BLOCK_STATEMENTS);
+      labels.add(new JavaTree.CaseLabelTreeImpl(caseNode, expressionNode != null ? expression(expressionNode) : null));
+      if (blockStatementsNode.hasChildren()) {
+        cases.add(new JavaTree.CaseGroupTreeImpl(
+          null, // TODO should not be null
+          ImmutableList.copyOf(labels),
+          blockStatements(caseNode.getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
+        ));
+        labels.clear();
+      }
+    }
+    if (!labels.isEmpty()) {
+      cases.add(new JavaTree.CaseGroupTreeImpl(
+        null, // TODO should not be null
+        ImmutableList.copyOf(labels),
+        ImmutableList.<StatementTree>of()
+      ));
+    }
+    return new JavaTree.SwitchStatementTreeImpl(
+      astNode,
+      expression(astNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
+      cases.build()
+    );
+  }
+

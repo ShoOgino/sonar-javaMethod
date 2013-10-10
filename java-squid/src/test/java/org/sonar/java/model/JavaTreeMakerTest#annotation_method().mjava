@@ -1,0 +1,13 @@
+  @Test
+  public void annotation_method() {
+    AstNode astNode = p.parse("@interface T { int m() default 0; }");
+    MethodTree tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.returnType()).isNotNull();
+    assertThat(tree.name()).isNotNull();
+    assertThat(tree.parameters()).isEmpty();
+    assertThat(tree.throwsClauses()).isEmpty();
+    assertThat(tree.block()).isNull();
+    // FIXME
+    // assertThat(tree.defaultValue()).isNotNull();
+  }
+

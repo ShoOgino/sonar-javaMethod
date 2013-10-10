@@ -1,0 +1,16 @@
+  /**
+   * 15.14. Postfix Expressions
+   */
+  @Test
+  public void postfix_expression() {
+    AstNode astNode = p.parse("class T { void m() { i++; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION);
+    UnaryExpressionTree tree = (UnaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.expression()).isNotNull();
+    assertThat(tree.is(Tree.Kind.POSTFIX_INCREMENT)).isTrue();
+
+    astNode = p.parse("class T { void m() { i--; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION);
+    tree = (UnaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.expression()).isNotNull();
+    assertThat(tree.is(Tree.Kind.POSTFIX_DECREMENT)).isTrue();
+  }
+

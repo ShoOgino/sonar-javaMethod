@@ -1,0 +1,22 @@
+  /**
+   * 14.4. Local Variable Declaration Statements
+   */
+  @Test
+  public void local_variable_declaration() {
+    AstNode astNode = p.parse("class T { void m() { int a = 42, b[]; } }").getFirstDescendant(JavaGrammar.BLOCK);
+    List<? extends StatementTree> declarations = maker.block(astNode).body();
+    assertThat(declarations).hasSize(2);
+
+    // TODO test modifiers
+
+    VariableTree tree = (VariableTree) declarations.get(0);
+    assertThat(tree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThat(tree.name()).isNotNull();
+    assertThat(tree.initializer()).isNotNull();
+
+    tree = (VariableTree) declarations.get(1);
+    assertThat(tree.type()).isInstanceOf(ArrayTypeTree.class);
+    assertThat(tree.name()).isNotNull();
+    assertThat(tree.initializer()).isNull();
+  }
+

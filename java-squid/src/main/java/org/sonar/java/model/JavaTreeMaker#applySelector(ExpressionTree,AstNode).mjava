@@ -1,0 +1,45 @@
+  private ExpressionTree applySelector(ExpressionTree expression, AstNode selectorNode) {
+    Preconditions.checkArgument(selectorNode.is(JavaGrammar.SELECTOR), "Unexpected AstNodeType: %s", selectorNode.getType().toString());
+    if (selectorNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+      return new JavaTree.MethodInvocationTreeImpl(
+        selectorNode,
+        new JavaTree.MemberSelectExpressionTreeImpl(
+          selectorNode,
+          expression,
+          identifier(selectorNode.getFirstChild(JavaTokenType.IDENTIFIER))
+        ),
+        arguments(selectorNode.getFirstChild(JavaGrammar.ARGUMENTS))
+      );
+    } else if (selectorNode.hasDirectChildren(JavaTokenType.IDENTIFIER)) {
+      return new JavaTree.MemberSelectExpressionTreeImpl(
+        selectorNode,
+        expression,
+        identifier(selectorNode.getFirstChild(JavaTokenType.IDENTIFIER))
+      );
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
+      return applyExplicitGenericInvocation(expression, selectorNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
+    } else if (selectorNode.hasDirectChildren(JavaKeyword.THIS)) {
+      return new JavaTree.MemberSelectExpressionTreeImpl(
+        selectorNode,
+        expression,
+        identifier(selectorNode.getFirstChild(JavaKeyword.THIS))
+      );
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
+      return applySuperSuffix(
+        expression,
+        selectorNode.getFirstChild(JavaGrammar.SUPER_SUFFIX)
+      );
+    } else if (selectorNode.hasDirectChildren(JavaKeyword.NEW)) {
+      // dead grammar part?
+      throw new UnsupportedOperationException("not implemented");
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.DIM_EXPR)) {
+      return new JavaTree.ArrayAccessExpressionTreeImpl(
+        selectorNode,
+        expression,
+        expression(selectorNode.getFirstChild(JavaGrammar.DIM_EXPR).getFirstChild(JavaGrammar.EXPRESSION))
+      );
+    } else {
+      throw new IllegalStateException(AstXmlPrinter.print(selectorNode));
+    }
+  }
+

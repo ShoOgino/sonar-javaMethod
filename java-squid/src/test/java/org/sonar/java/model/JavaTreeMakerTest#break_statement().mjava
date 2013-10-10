@@ -1,0 +1,14 @@
+  /**
+   * 14.15. The break Statement
+   */
+  @Test
+  public void break_statement() {
+    AstNode astNode = p.parse("class T { void m() { break ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    BreakStatementTree tree = (BreakStatementTree) maker.statement(astNode);
+    assertThat(tree.label()).isNull();
+
+    astNode = p.parse("class T { void m() { break label ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    tree = (BreakStatementTree) maker.statement(astNode);
+    assertThat(tree.label()).isEqualTo("label");
+  }
+

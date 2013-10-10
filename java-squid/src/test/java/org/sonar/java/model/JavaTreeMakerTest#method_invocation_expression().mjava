@@ -1,0 +1,38 @@
+  /**
+   * 15.12. Method Invocation Expressions
+   */
+  @Test
+  public void method_invocation_expression() {
+    // TODO test NonWildTypeArguments
+
+    AstNode astNode = p.parse("class T { void m() { identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    MethodInvocationTree tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { super.identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { TypeName.super.identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { TypeName.identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { TypeName.<T>identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { TypeName.<T>super(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.methodSelect()).isNotNull();
+    assertThat(tree.arguments()).hasSize(2);
+  }
+

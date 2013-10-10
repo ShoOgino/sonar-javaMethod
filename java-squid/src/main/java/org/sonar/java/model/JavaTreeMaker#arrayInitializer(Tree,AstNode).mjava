@@ -1,0 +1,8 @@
+  private ExpressionTree arrayInitializer(@Nullable Tree t, AstNode astNode) {
+    ImmutableList.Builder<ExpressionTree> elems = ImmutableList.builder();
+    for (AstNode elem : astNode.getChildren(JavaGrammar.VARIABLE_INITIALIZER)) {
+      elems.add(variableInitializer(elem));
+    }
+    return new JavaTree.NewArrayTreeImpl(astNode, t, ImmutableList.<ExpressionTree>of(), elems.build());
+  }
+

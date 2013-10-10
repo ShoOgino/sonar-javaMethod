@@ -1,0 +1,7 @@
+  @VisibleForTesting
+  ExpressionTree referenceType(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.REFERENCE_TYPE, JavaGrammar.TYPE), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ExpressionTree result = astNode.getFirstChild().is(JavaGrammar.BASIC_TYPE) ? basicType(astNode.getFirstChild()) : classType(astNode.getFirstChild());
+    return applyDim(result, astNode.getChildren(JavaGrammar.DIM).size());
+  }
+

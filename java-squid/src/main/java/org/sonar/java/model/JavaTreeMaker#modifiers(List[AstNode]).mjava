@@ -1,0 +1,19 @@
+  private ModifiersTree modifiers(List<AstNode> modifierNodes) {
+    if (modifierNodes.isEmpty()) {
+      return JavaTree.ModifiersTreeImpl.EMPTY;
+    }
+
+    ImmutableList.Builder<Modifier> modifiers = ImmutableList.builder();
+    for (AstNode astNode : modifierNodes) {
+      Preconditions.checkArgument(astNode.is(JavaGrammar.MODIFIER), "Unexpected AstNodeType: %s", astNode.getType().toString());
+      astNode = astNode.getFirstChild();
+      if (astNode.is(JavaGrammar.ANNOTATION)) {
+        // TODO
+      } else {
+        JavaKeyword keyword = (JavaKeyword) astNode.getType();
+        modifiers.add(Preconditions.checkNotNull(this.modifiers.get(keyword), "no kind fo " + keyword));
+      }
+    }
+    return new JavaTree.ModifiersTreeImpl(modifierNodes.get(0), modifiers.build());
+  }
+

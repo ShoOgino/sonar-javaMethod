@@ -1,0 +1,16 @@
+  /**
+   * 15.23. Conditional-And Operator &&
+   */
+  @Test
+  public void conditional_and_expression() {
+    AstNode astNode = p.parse("class T { boolean m() { return false && false && true; } }").getFirstDescendant(JavaGrammar.CONDITIONAL_AND_EXPRESSION);
+    BinaryExpressionTree tree = (BinaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.CONDITIONAL_AND)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.rightOperand();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.CONDITIONAL_AND)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+  }
+

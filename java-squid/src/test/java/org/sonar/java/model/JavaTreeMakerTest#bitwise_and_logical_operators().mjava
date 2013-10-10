@@ -1,0 +1,36 @@
+  /**
+   * 15.22. Bitwise and Logical Operators
+   */
+  @Test
+  public void bitwise_and_logical_operators() {
+    AstNode astNode = p.parse("class T { int m() { return 1 & 2 & 3; } }").getFirstDescendant(JavaGrammar.AND_EXPRESSION);
+    BinaryExpressionTree tree = (BinaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.AND)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.rightOperand();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.AND)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+
+    astNode = p.parse("class T { int m() { return 1 ^ 2 ^ 3; } }").getFirstDescendant(JavaGrammar.EXCLUSIVE_OR_EXPRESSION);
+    tree = (BinaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.XOR)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.rightOperand();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.XOR)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+
+    astNode = p.parse("class T { int m() { return 1 | 2 | 3; } }").getFirstDescendant(JavaGrammar.INCLUSIVE_OR_EXPRESSION);
+    tree = (BinaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.OR)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.rightOperand();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.OR)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+  }
+

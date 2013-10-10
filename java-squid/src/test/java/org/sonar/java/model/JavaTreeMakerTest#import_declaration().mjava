@@ -1,0 +1,23 @@
+  @Test
+  public void import_declaration() {
+    AstNode astNode = p.parse("import foo.Bar;");
+    ImportTree tree = maker.compilationUnit(astNode).imports().get(0);
+    assertThat(tree.isStatic()).isFalse();
+    assertThat(tree.qualifiedIdentifier()).isNotNull();
+
+    astNode = p.parse("import foo.bar.*;");
+    tree = maker.compilationUnit(astNode).imports().get(0);
+    assertThat(tree.isStatic()).isFalse();
+    assertThat(tree.qualifiedIdentifier()).isNotNull();
+
+    astNode = p.parse("import static foo.Bar.method;");
+    tree = maker.compilationUnit(astNode).imports().get(0);
+    assertThat(tree.isStatic()).isTrue();
+    assertThat(tree.qualifiedIdentifier()).isNotNull();
+
+    astNode = p.parse("import static foo.Bar.*;");
+    tree = maker.compilationUnit(astNode).imports().get(0);
+    assertThat(tree.isStatic()).isTrue();
+    assertThat(tree.qualifiedIdentifier()).isNotNull();
+  }
+

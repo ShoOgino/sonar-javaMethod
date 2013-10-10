@@ -1,0 +1,19 @@
+  @Test
+  public void enum_field() {
+    AstNode astNode = p.parse("enum T { ; public int f1 = 42, f2[]; }");
+    List<? extends Tree> declarations = ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members();
+    assertThat(declarations).hasSize(2);
+
+    VariableTree tree = (VariableTree) declarations.get(0);
+    assertThat(tree.modifiers().modifiers()).hasSize(1);
+    assertThat(tree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThat(tree.name()).isNotNull();
+    assertThat(tree.initializer()).isNotNull();
+
+    tree = (VariableTree) declarations.get(1);
+    assertThat(tree.modifiers().modifiers()).hasSize(1);
+    assertThat(tree.type()).isInstanceOf(ArrayTypeTree.class);
+    assertThat(tree.name()).isNotNull();
+    assertThat(tree.initializer()).isNull();
+  }
+

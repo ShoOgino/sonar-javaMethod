@@ -1,0 +1,17 @@
+  /**
+   * 15.25. Conditional Operators
+   */
+  private ExpressionTree conditionalExpression(AstNode astNode) {
+    // TODO verify
+    ExpressionTree expression = expression(astNode.getLastChild());
+    for (int i = astNode.getNumberOfChildren() - 5; i >= 0; i -= 4) {
+      expression = new JavaTree.ConditionalExpressionTreeImpl(
+        astNode,
+        expression(astNode.getChild(i)),
+        expression(astNode.getChild(i + 2)),
+        expression
+      );
+    }
+    return expression;
+  }
+

@@ -1,0 +1,14 @@
+  /**
+   * 14.17. The return Statement
+   */
+  @Test
+  public void return_statement() {
+    AstNode astNode = p.parse("class T { boolean m() { return ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    ReturnStatementTree tree = (ReturnStatementTree) maker.statement(astNode);
+    assertThat(tree.expression()).isNull();
+
+    astNode = p.parse("class T { boolean m() { return true; } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    tree = (ReturnStatementTree) maker.statement(astNode);
+    assertThat(tree.expression()).isNotNull();
+  }
+

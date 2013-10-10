@@ -1,0 +1,37 @@
+  /**
+   * 15.14. Postfix Expressions
+   * 15.15. Unary Operators
+   * 15.16. Cast Expressions
+   */
+  private ExpressionTree unaryExpression(AstNode astNode) {
+    if (astNode.hasDirectChildren(JavaGrammar.TYPE)) {
+      // 15.16. Cast Expressions
+      return new JavaTree.TypeCastExpressionTreeImpl(
+        astNode,
+        referenceType(astNode.getFirstChild(JavaGrammar.TYPE)),
+        expression(astNode.getChild(3))
+      );
+    } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP)) {
+      // 15.15. Unary Operators
+      JavaPunctuator punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP).getFirstChild().getType();
+      Tree.Kind kind = Preconditions.checkNotNull(prefixOperators.get(punctuator), "no kind fo " + punctuator);
+      return new JavaTree.UnaryExpressionTreeImpl(
+        astNode,
+        kind,
+        expression(astNode.getChild(1))
+      );
+    } else {
+      // 15.14. Postfix Expressions
+      ExpressionTree result = expression(astNode.getFirstChild());
+      for (AstNode selectorNode : astNode.getChildren(JavaGrammar.SELECTOR)) {
+        result = applySelector(result, selectorNode);
+      }
+      for (AstNode postfixOpNode : astNode.getChildren(JavaGrammar.POST_FIX_OP)) {
+        JavaPunctuator punctuator = (JavaPunctuator) postfixOpNode.getFirstChild().getType();
+        Tree.Kind kind = Preconditions.checkNotNull(postfixOperators.get(punctuator), "no kind fo " + punctuator);
+        result = new JavaTree.UnaryExpressionTreeImpl(astNode,kind, result);
+      }
+      return result;
+    }
+  }
+

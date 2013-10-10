@@ -1,0 +1,16 @@
+  /**
+   * 9.1. Interface Declarations
+   */
+  private ClassTree interfaceDeclaration(ModifiersTree modifiers, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.INTERFACE_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<Tree> members = ImmutableList.builder();
+    for (AstNode interfaceBodyDeclarationNode : astNode.getFirstChild(JavaGrammar.INTERFACE_BODY).getChildren(JavaGrammar.INTERFACE_BODY_DECLARATION)) {
+      ModifiersTree memberModifiers = modifiers(interfaceBodyDeclarationNode.getChildren(JavaGrammar.MODIFIER));
+      AstNode interfaceMemberDeclNode = interfaceBodyDeclarationNode.getFirstChild(JavaGrammar.INTERFACE_MEMBER_DECL);
+      if (interfaceMemberDeclNode != null) {
+        appendInterfaceMember(memberModifiers, members, interfaceMemberDeclNode);
+      }
+    }
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.INTERFACE, modifiers, members.build());
+  }
+

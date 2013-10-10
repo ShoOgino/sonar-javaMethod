@@ -1,0 +1,31 @@
+  /**
+   * 15.8.2. Class Literals
+   */
+  @Test
+  public void class_literal() {
+    AstNode astNode = p.parse("class T { m() { return void.class; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    MemberSelectExpressionTree tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isNotNull();
+    assertThat(tree.identifier().name()).isEqualTo("class");
+
+    astNode = p.parse("class T { m() { return int.class; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThat(tree.identifier().name()).isEqualTo("class");
+
+    astNode = p.parse("class T { m() { return int[].class; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isInstanceOf(ArrayTypeTree.class);
+    assertThat(tree.identifier().name()).isEqualTo("class");
+
+    astNode = p.parse("class T { m() { return T.class; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isNotNull();
+    assertThat(tree.identifier().name()).isEqualTo("class");
+
+    astNode = p.parse("class T { m() { return T[].class; } }").getFirstDescendant(JavaGrammar.PRIMARY);
+    tree = (MemberSelectExpressionTree) maker.primary(astNode);
+    assertThat(tree.expression()).isInstanceOf(ArrayTypeTree.class);
+    assertThat(tree.identifier().name()).isEqualTo("class");
+  }
+

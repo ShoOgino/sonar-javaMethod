@@ -1,0 +1,17 @@
+  private List<VariableTree> formalParameters(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.FORMAL_PARAMETERS), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<VariableTree> result = ImmutableList.builder();
+    for (AstNode variableDeclaratorIdNode : astNode.getDescendants(JavaGrammar.VARIABLE_DECLARATOR_ID)) {
+      AstNode typeNode = variableDeclaratorIdNode.getPreviousAstNode();
+      Tree type = typeNode.is(JavaPunctuator.ELLIPSIS) ? new JavaTree.ArrayTypeTreeImpl(typeNode, referenceType(typeNode.getPreviousAstNode())) : referenceType(typeNode);
+      result.add(new JavaTree.VariableTreeImpl(
+        astNode,
+        JavaTree.ModifiersTreeImpl.EMPTY,
+        type,
+        identifier(variableDeclaratorIdNode.getFirstChild(JavaTokenType.IDENTIFIER)),
+        null
+      ));
+    }
+    return result.build();
+  }
+

@@ -1,0 +1,18 @@
+  /**
+   * 14.9. The if Statement
+   */
+  @Test
+  public void if_statement() {
+    AstNode astNode = p.parse("class T { void m() { if (true) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    IfStatementTree tree = (IfStatementTree) maker.statement(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.thenStatement()).isNotNull();
+    assertThat(tree.elseStatement()).isNull();
+
+    astNode = p.parse("class T { void m() { if (true) { } else { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    tree = (IfStatementTree) maker.statement(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.thenStatement()).isNotNull();
+    assertThat(tree.elseStatement()).isNotNull();
+  }
+

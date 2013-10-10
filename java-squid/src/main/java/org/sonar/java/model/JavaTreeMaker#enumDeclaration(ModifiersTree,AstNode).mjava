@@ -1,0 +1,33 @@
+  /**
+   * 8.9. Enums
+   */
+  private ClassTree enumDeclaration(ModifiersTree modifiers, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.ENUM_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<Tree> members = ImmutableList.builder();
+    AstNode enumBodyNode = astNode.getFirstChild(JavaGrammar.ENUM_BODY);
+    AstNode enumConstantsNode = enumBodyNode.getFirstChild(JavaGrammar.ENUM_CONSTANTS);
+    if (enumConstantsNode != null) {
+      for (AstNode enumConstantNode : enumConstantsNode.getChildren(JavaGrammar.ENUM_CONSTANT)) {
+        // TODO identifier
+        AstNode argumentsNode = enumConstantNode.getFirstChild(JavaGrammar.ARGUMENTS);
+        AstNode classBodyNode = enumConstantNode.getFirstChild(JavaGrammar.CLASS_BODY);
+        members.add(new JavaTree.NewClassTreeImpl(
+          enumConstantNode,
+          /* enclosing expression: */ null,
+          argumentsNode != null ? arguments(argumentsNode) : ImmutableList.<ExpressionTree>of(),
+          classBodyNode != null ? new JavaTree.ClassTreeImpl(
+            classBodyNode,
+            /* TODO verify: */ Tree.Kind.CLASS,
+            JavaTree.ModifiersTreeImpl.EMPTY,
+            classBody(classBodyNode)
+          ) : null
+        ));
+      }
+    }
+    AstNode enumBodyDeclarationsNode = enumBodyNode.getFirstChild(JavaGrammar.ENUM_BODY_DECLARATIONS);
+    if (enumBodyDeclarationsNode != null) {
+      members.addAll(classBody(enumBodyDeclarationsNode));
+    }
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ENUM, modifiers, members.build());
+  }
+

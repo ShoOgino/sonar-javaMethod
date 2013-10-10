@@ -1,0 +1,22 @@
+  /**
+   * 15.25. Conditional Operator ? :
+   */
+  @Test
+  public void conditional_expression() {
+    AstNode astNode = p.parse("class T { boolean m() { return true ? true : false; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    ConditionalExpressionTree tree = (ConditionalExpressionTree) maker.expression(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.trueExpression()).isNotNull();
+    assertThat(tree.falseExpression()).isNotNull();
+
+    astNode = p.parse("class T { boolean m() { return true ? true : false ? true : false; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (ConditionalExpressionTree) maker.expression(astNode);
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.trueExpression()).isNotNull();
+    assertThat(tree.falseExpression()).isNotNull();
+    tree = (ConditionalExpressionTree) tree.falseExpression();
+    assertThat(tree.condition()).isNotNull();
+    assertThat(tree.trueExpression()).isNotNull();
+    assertThat(tree.falseExpression()).isNotNull();
+  }
+

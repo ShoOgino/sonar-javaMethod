@@ -1,0 +1,9 @@
+  private List<StatementTree> variableDeclarators(ModifiersTree modifiers, ExpressionTree type, AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.VARIABLE_DECLARATORS), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<StatementTree> result = ImmutableList.builder();
+    for (AstNode variableDeclaratorNode : astNode.getChildren(JavaGrammar.VARIABLE_DECLARATOR)) {
+      result.add(variableDeclarator(modifiers, type, variableDeclaratorNode));
+    }
+    return result.build();
+  }
+

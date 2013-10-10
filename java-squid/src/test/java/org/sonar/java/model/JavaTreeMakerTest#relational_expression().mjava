@@ -1,0 +1,16 @@
+  /**
+   * 15.20. Relational Operators
+   */
+  @Test
+  public void relational_expression() {
+    AstNode astNode = p.parse("class T { boolean m() { return 1 < 2 > 3; } }").getFirstDescendant(JavaGrammar.RELATIONAL_EXPRESSION);
+    BinaryExpressionTree tree = (BinaryExpressionTree) maker.expression(astNode);
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.LESS_THAN)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.rightOperand();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.is(Tree.Kind.GREATER_THAN)).isTrue();
+    assertThat(tree.rightOperand()).isNotNull();
+  }
+
