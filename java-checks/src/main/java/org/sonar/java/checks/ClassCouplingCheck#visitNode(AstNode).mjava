@@ -1,8 +1,9 @@
   @Override
   public void visitNode(AstNode node) {
     if (node.is(JavaGrammar.CLASS_DECLARATION)) {
-      types.clear();
-    } else {
+      nesting.push(types);
+      types = Sets.newHashSet();
+    } else if (types != null) {
       types.add(joinTokens(node.getTokens()));
     }
   }
