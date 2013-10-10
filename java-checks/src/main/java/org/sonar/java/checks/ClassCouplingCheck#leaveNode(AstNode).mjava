@@ -1,0 +1,11 @@
+  @Override
+  public void leaveNode(AstNode node) {
+    if (node.is(JavaGrammar.CLASS_DECLARATION) && types.size() > max) {
+      getContext().createLineViolation(
+        this,
+        "Split this class into smaller and more specialized ones to reduce its dependencies on other classes from " +
+          types.size() + " to the maximum authorized " + max + " or less.",
+        node);
+    }
+  }
+
