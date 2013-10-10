@@ -4,7 +4,9 @@
       nesting.push(types);
       types = Sets.newHashSet();
     } else if (types != null) {
-      types.add(joinTokens(node.getTokens()));
+      for (AstNode identifier : node.getChildren(JavaTokenType.IDENTIFIER)) {
+        types.add(identifier.getTokenOriginalValue());
+      }
     }
   }
 
