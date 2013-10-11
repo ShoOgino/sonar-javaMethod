@@ -3,6 +3,7 @@
    */
   private ClassTree interfaceDeclaration(ModifiersTree modifiers, AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.INTERFACE_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    String simpleName = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
     for (AstNode interfaceBodyDeclarationNode : astNode.getFirstChild(JavaGrammar.INTERFACE_BODY).getChildren(JavaGrammar.INTERFACE_BODY_DECLARATION)) {
       ModifiersTree memberModifiers = modifiers(interfaceBodyDeclarationNode.getChildren(JavaGrammar.MODIFIER));
@@ -11,6 +12,8 @@
         appendInterfaceMember(memberModifiers, members, interfaceMemberDeclNode);
       }
     }
-    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.INTERFACE, modifiers, members.build());
+    AstNode extendsNode = astNode.getFirstChild(JavaKeyword.EXTENDS);
+    List<? extends Tree> superInterfaces = extendsNode != null ? classTypeList(extendsNode.getNextSibling()) : ImmutableList.<Tree>of();
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.INTERFACE, modifiers, simpleName, null, superInterfaces, members.build());
   }
 

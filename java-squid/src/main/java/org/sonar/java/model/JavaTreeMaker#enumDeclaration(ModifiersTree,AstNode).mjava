@@ -3,6 +3,7 @@
    */
   private ClassTree enumDeclaration(ModifiersTree modifiers, AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.ENUM_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    String simpleName = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
     AstNode enumBodyNode = astNode.getFirstChild(JavaGrammar.ENUM_BODY);
     AstNode enumConstantsNode = enumBodyNode.getFirstChild(JavaGrammar.ENUM_CONSTANTS);
@@ -28,6 +29,8 @@
     if (enumBodyDeclarationsNode != null) {
       members.addAll(classBody(enumBodyDeclarationsNode));
     }
-    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ENUM, modifiers, members.build());
+    AstNode implementsNode = astNode.getFirstChild(JavaKeyword.IMPLEMENTS);
+    List<? extends Tree> superInterfaces = implementsNode != null ? classTypeList(implementsNode.getNextSibling()) : ImmutableList.<Tree>of();
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ENUM, modifiers, simpleName, null, superInterfaces, members.build());
   }
 

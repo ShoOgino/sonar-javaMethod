@@ -3,7 +3,17 @@
    */
   private ClassTree classDeclaration(ModifiersTree modifiers, AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.CLASS_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
-    // TODO modifiers, extends, implements
-    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.CLASS, modifiers, classBody(astNode.getFirstChild(JavaGrammar.CLASS_BODY)));
+    String simpleName = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
+    AstNode extendsNode = astNode.getFirstChild(JavaKeyword.EXTENDS);
+    Tree superClass = extendsNode != null ? classType(extendsNode.getNextSibling()) : null;
+    AstNode implementsNode = astNode.getFirstChild(JavaKeyword.IMPLEMENTS);
+    List<? extends Tree> superInterfaces = implementsNode != null ? classTypeList(implementsNode.getNextSibling()) : ImmutableList.<Tree>of();
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.CLASS,
+      modifiers,
+      simpleName,
+      superClass,
+      superInterfaces,
+      classBody(astNode.getFirstChild(JavaGrammar.CLASS_BODY))
+    );
   }
 

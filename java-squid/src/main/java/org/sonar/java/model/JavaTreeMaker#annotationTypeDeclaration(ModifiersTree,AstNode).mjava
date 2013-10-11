@@ -3,6 +3,7 @@
    */
   private ClassTree annotationTypeDeclaration(ModifiersTree modifiers, AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.ANNOTATION_TYPE_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    String simpleName = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
     for (AstNode annotationTypeElementDeclarationNode : astNode.getFirstChild(JavaGrammar.ANNOTATION_TYPE_BODY).getChildren(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
       AstNode annotationTypeElementRestNode = annotationTypeElementDeclarationNode.getFirstChild(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST);
@@ -10,6 +11,12 @@
         appendAnnotationTypeElementDeclaration(members, annotationTypeElementRestNode);
       }
     }
-    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ANNOTATION_TYPE, modifiers, members.build());
+    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ANNOTATION_TYPE,
+      modifiers,
+      simpleName,
+      null,
+      ImmutableList.<Tree>of(),
+      members.build()
+    );
   }
 
