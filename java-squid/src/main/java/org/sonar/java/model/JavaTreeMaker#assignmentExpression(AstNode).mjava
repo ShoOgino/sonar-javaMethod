@@ -5,7 +5,7 @@
     ExpressionTree expression = expression(astNode.getLastChild());
     for (int i = astNode.getNumberOfChildren() - 3; i >= 0; i -= 2) {
       JavaPunctuator punctuator = (JavaPunctuator) astNode.getChild(i + 1).getFirstChild().getType();
-      Tree.Kind kind = Preconditions.checkNotNull(assignmentOperators.get(punctuator), "no kind for " + punctuator);
+      Tree.Kind kind = kindMaps.getAssignmentOperator(punctuator);
       expression = new JavaTree.AssignmentExpressionTreeImpl(
         astNode,
         expression(astNode.getChild(i)),

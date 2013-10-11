@@ -14,7 +14,7 @@
     } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP)) {
       // 15.15. Unary Operators
       JavaPunctuator punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP).getFirstChild().getType();
-      Tree.Kind kind = Preconditions.checkNotNull(prefixOperators.get(punctuator), "no kind fo " + punctuator);
+      Tree.Kind kind = kindMaps.getPrefixOperator(punctuator);
       return new JavaTree.UnaryExpressionTreeImpl(
         astNode,
         kind,
@@ -28,7 +28,7 @@
       }
       for (AstNode postfixOpNode : astNode.getChildren(JavaGrammar.POST_FIX_OP)) {
         JavaPunctuator punctuator = (JavaPunctuator) postfixOpNode.getFirstChild().getType();
-        Tree.Kind kind = Preconditions.checkNotNull(postfixOperators.get(punctuator), "no kind fo " + punctuator);
+        Tree.Kind kind = kindMaps.getPostfixOperator(punctuator);
         result = new JavaTree.UnaryExpressionTreeImpl(astNode,kind, result);
       }
       return result;
