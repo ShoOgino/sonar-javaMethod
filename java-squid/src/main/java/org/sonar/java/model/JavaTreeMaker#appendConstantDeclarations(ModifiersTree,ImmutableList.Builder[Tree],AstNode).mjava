@@ -2,11 +2,13 @@
     Preconditions.checkArgument(astNode.is(JavaGrammar.INTERFACE_METHOD_OR_FIELD_DECL, JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST), "Unexpected AstNodeType: %s", astNode.getType().toString());
     ExpressionTree type = referenceType(astNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID));
     for (AstNode constantDeclaratorRestNode : astNode.getDescendants(JavaGrammar.CONSTANT_DECLARATOR_REST)) {
+      AstNode identifierNode = constantDeclaratorRestNode.getPreviousAstNode();
+      Preconditions.checkState(identifierNode.is(JavaTokenType.IDENTIFIER));
       members.add(new JavaTree.VariableTreeImpl(
         constantDeclaratorRestNode,
         modifiers,
         applyDim(type, constantDeclaratorRestNode.getChildren(JavaGrammar.DIM).size()),
-        identifier(constantDeclaratorRestNode.getPreviousAstNode()),
+        identifierNode.getTokenValue(),
         variableInitializer(constantDeclaratorRestNode.getFirstChild(JavaGrammar.VARIABLE_INITIALIZER))
       ));
     }
