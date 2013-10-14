@@ -1,10 +1,15 @@
   public VisitorsBridge(List<SquidAstVisitor<LexerlessGrammar>> visitors) {
-    ImmutableList.Builder<TreeVisitor> treeVisitors = ImmutableList.builder();
+    ImmutableList.Builder<JavaTreeVisitor> standardVisitors = ImmutableList.builder();
+    ImmutableList.Builder<TreeVisitor> reflectionVisitors = ImmutableList.builder();
     for (SquidAstVisitor visitor : visitors) {
       if (visitor instanceof TreeVisitor) {
-        treeVisitors.add((TreeVisitor) visitor);
+        reflectionVisitors.add((TreeVisitor) visitor);
+      }
+      if (visitor instanceof JavaTreeVisitorProvider) {
+        standardVisitors.add(((JavaTreeVisitorProvider) visitor).createJavaTreeVisitor());
       }
     }
-    this.visitors = new TreeVisitorsDispatcher(treeVisitors.build());
+    this.reflection = new TreeVisitorsDispatcher(reflectionVisitors.build());
+    this.visitors = standardVisitors.build();
   }
 

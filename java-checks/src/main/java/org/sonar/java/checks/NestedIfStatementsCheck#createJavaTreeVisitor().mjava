@@ -1,0 +1,31 @@
+  @Override
+  public JavaTreeVisitor createJavaTreeVisitor() {
+    return new BaseTreeVisitor() {
+      private int nestingLevel;
+
+      @Override
+      public void visitCompilationUnit(CompilationUnitTree tree) {
+        nestingLevel = 0;
+        super.visitCompilationUnit(tree);
+      }
+
+      @Override
+      public void visitIfStatement(IfStatementTree tree) {
+        nestingLevel++;
+        if (nestingLevel == max + 1) {
+          getContext().createLineViolation(NestedIfStatementsCheck.this, "Refactor this code to not nest more than " + max + " if statements.", ((JavaTree) tree).getLine());
+        }
+        scan(tree.condition());
+        scan(tree.thenStatement());
+        StatementTree elseStatement = tree.elseStatement();
+        if (elseStatement != null && elseStatement.is(Tree.Kind.IF_STATEMENT)) {
+          nestingLevel--;
+          scan(elseStatement);
+        } else {
+          scan(elseStatement);
+          nestingLevel--;
+        }
+      }
+    };
+  }
+
