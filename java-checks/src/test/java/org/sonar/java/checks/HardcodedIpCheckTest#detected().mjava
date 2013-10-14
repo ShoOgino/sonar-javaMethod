@@ -1,0 +1,8 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/HardcodedIpCheck.java"), new HardcodedIpCheck());
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(2).withMessage("Make this IP \"0.0.0.0\" address configurable.")
+      .next().atLine(3).withMessage("Make this IP \"192.168.0.1\" address configurable.");
+  }
+
