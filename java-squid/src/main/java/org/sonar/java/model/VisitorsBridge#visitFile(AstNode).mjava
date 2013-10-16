@@ -1,10 +1,14 @@
   @Override
   public void visitFile(@Nullable AstNode astNode) {
     if (astNode != null) {
-      Tree tree = treeMaker.compilationUnit(astNode);
+      CompilationUnitTree tree = treeMaker.compilationUnit(astNode);
 
-      for (JavaTreeVisitor visitor : visitors) {
-        ((JavaTree) tree).accept(visitor);
+      SourceFile sourceFile = peekSourceFile();
+      JavaFile sonarFile = SquidUtils.convertJavaFileKeyFromSquidFormat(sourceFile.getKey());
+      Issuable issuable = resourcePerspectives == null ? null : resourcePerspectives.as(Issuable.class, sonarFile);
+      JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, sourceFile, issuable);
+      for (JavaFileScanner scanner : scanners) {
+        scanner.scanFile(context);
       }
     }
   }

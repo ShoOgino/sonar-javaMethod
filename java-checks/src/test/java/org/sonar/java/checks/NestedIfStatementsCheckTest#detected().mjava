@@ -3,7 +3,7 @@
     NestedIfStatementsCheck check = new NestedIfStatementsCheck();
     assertThat(check.max).isEqualTo(3);
 
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NestedIfStatementsCheck.java"), check);
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NestedIfStatementsCheck.java"), new VisitorsBridge(check));
     checkMessagesVerifier.verify(file.getCheckMessages())
         .next().atLine(19).withMessage("Refactor this code to not nest more than 3 if statements.")
         .next().atLine(41)

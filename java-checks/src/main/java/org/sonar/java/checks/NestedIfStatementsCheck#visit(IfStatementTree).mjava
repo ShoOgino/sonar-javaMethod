@@ -1,0 +1,12 @@
+  private void visit(IfStatementTree tree) {
+    scan(tree.condition());
+    scan(tree.thenStatement());
+
+    StatementTree elseStatementTree = tree.elseStatement();
+    if (elseStatementTree != null && elseStatementTree.is(Tree.Kind.IF_STATEMENT)) {
+      visit((IfStatementTree) elseStatementTree);
+    } else {
+      scan(elseStatementTree);
+    }
+  }
+

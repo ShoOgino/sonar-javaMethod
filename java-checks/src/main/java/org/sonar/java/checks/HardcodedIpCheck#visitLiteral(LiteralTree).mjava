@@ -1,0 +1,11 @@
+  @Override
+  public void visitLiteral(LiteralTree tree) {
+    if (tree.is(Tree.Kind.STRING_LITERAL)) {
+      IP.reset(tree.value());
+      if (IP.matches()) {
+        String ip = IP.group(1);
+        context.addIssue(tree, RULE, "Make this IP \"" + ip + "\" address configurable.");
+      }
+    }
+  }
+

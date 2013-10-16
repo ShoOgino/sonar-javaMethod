@@ -1,0 +1,11 @@
+  public VisitorsBridge(@Nullable ResourcePerspectives resourcePerspectives, List visitors) {
+    this.resourcePerspectives = resourcePerspectives;
+    ImmutableList.Builder<JavaFileScanner> scannersBuilder = ImmutableList.builder();
+    for (Object visitor : visitors) {
+      if (visitor instanceof JavaFileScanner) {
+        scannersBuilder.add((JavaFileScanner) visitor);
+      }
+    }
+    this.scanners = scannersBuilder.build();
+  }
+
