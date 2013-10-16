@@ -5,14 +5,14 @@
       public void visitMethodInvocation(MethodInvocationTree tree) {
         if (tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
           MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) tree.methodSelect();
-          if ("equals".equals(memberSelect.identifier().name())) {
-            if (isToUpperCaseOrToLowerCase(memberSelect.expression()) || (tree.arguments().size() == 1 && isToUpperCaseOrToLowerCase(tree.arguments().get(0)))) {
-              getContext().createLineViolation(
-                CaseInsensitiveComparisonCheck.this,
-                "Replace these toUpperCase()/toLowerCase() and equals() calls with a single equalsIgnoreCase() call.",
-                ((JavaTree) tree).getLine()
-              );
-            }
+          boolean issue = ("equals".equals(memberSelect.identifier().name()))
+            && (isToUpperCaseOrToLowerCase(memberSelect.expression()) || (tree.arguments().size() == 1 && isToUpperCaseOrToLowerCase(tree.arguments().get(0))));
+          if (issue) {
+            getContext().createLineViolation(
+              CaseInsensitiveComparisonCheck.this,
+              "Replace these toUpperCase()/toLowerCase() and equals() calls with a single equalsIgnoreCase() call.",
+              ((JavaTree) tree).getLine()
+            );
           }
         }
 
