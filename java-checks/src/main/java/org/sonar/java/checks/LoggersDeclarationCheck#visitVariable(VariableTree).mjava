@@ -1,0 +1,18 @@
+  @Override
+  public void visitVariable(VariableTree tree) {
+    super.visitVariable(tree);
+
+    if (isLoggerType(tree.type())) {
+      boolean isPrivateStaticFinal = isPrivateStaticFinal(tree.modifiers());
+      boolean hasValidLoggerName = isValidLoggerName(tree.simpleName());
+
+      if (!isPrivateStaticFinal && !hasValidLoggerName) {
+        context.addIssue(tree, RULE_KEY, "Make the \"" + tree.simpleName() + "\" logger private static final and rename it to comply with the format \"" + format + "\".");
+      } else if (!isPrivateStaticFinal) {
+        context.addIssue(tree, RULE_KEY, "Make the \"" + tree.simpleName() + "\" logger private static final.");
+      } else if (!hasValidLoggerName) {
+        context.addIssue(tree, RULE_KEY, "Rename the \"" + tree.simpleName() + "\" logger to comply with the format \"" + format + "\".");
+      }
+    }
+  }
+
