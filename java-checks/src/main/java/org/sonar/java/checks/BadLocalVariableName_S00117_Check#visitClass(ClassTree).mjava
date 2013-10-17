@@ -1,0 +1,12 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    for (Tree member : tree.members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        // skip check of field
+        scan(((VariableTree) member).initializer());
+      } else {
+        scan(member);
+      }
+    }
+  }
+
