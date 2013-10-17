@@ -5,6 +5,7 @@
   public void for_statement() {
     AstNode astNode = p.parse("class T { void m() { for (int i = 0; i < 42; i ++) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     ForStatementTree tree = (ForStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.initializer()).hasSize(1);
     assertThat(tree.initializer().get(0)).isInstanceOf(VariableTree.class);
     assertThat(tree.condition()).isNotNull();
@@ -13,6 +14,7 @@
 
     astNode = p.parse("class T { void m() { for (i = 0; i < 42; i ++) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (ForStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.initializer()).hasSize(1);
     assertThat(tree.initializer().get(0)).isInstanceOf(ExpressionStatementTree.class);
     assertThat(tree.condition()).isNotNull();
@@ -21,6 +23,7 @@
 
     astNode = p.parse("class T { void m() { for ( ; ; ) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (ForStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.initializer()).isEmpty();
     assertThat(tree.condition()).isNull();
     assertThat(tree.update()).isEmpty();

@@ -5,6 +5,7 @@
 
     AstNode astNode = p.parse("class T { public int m(int p1, int... p2) throws Exception1, Exception2 {} }");
     MethodTree tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName()).isEqualTo("m");
@@ -18,6 +19,7 @@
     // void method
     astNode = p.parse("class T { public void m(int p) throws Exception1, Exception2 {} }");
     tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName()).isEqualTo("m");

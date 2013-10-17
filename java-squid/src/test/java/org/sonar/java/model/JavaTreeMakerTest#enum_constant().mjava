@@ -1,15 +1,21 @@
   @Test
   public void enum_constant() {
-    AstNode astNode = p.parse("enum T { C1(1) { }, C2(2) { }; }");
+    AstNode astNode = p.parse("enum T { C1, C2(2) { }; }");
     List<? extends Tree> declarations = ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members();
     assertThat(declarations).hasSize(2);
 
-    NewClassTree tree = (NewClassTree) declarations.get(0);
-    assertThat(tree.arguments()).hasSize(1);
-    assertThat(tree.classBody()).isNotNull();
+    EnumConstantTree tree = (EnumConstantTree) declarations.get(0);
+    assertThat(tree.is(Tree.Kind.ENUM_CONSTANT)).isTrue();
+    assertThat(tree.simpleName()).isEqualTo("C1");
+    NewClassTree newClassTree = (NewClassTree) tree.initializer();
+    assertThat(newClassTree.arguments()).isEmpty();
+    assertThat(newClassTree.classBody()).isNull();
 
-    tree = (NewClassTree) declarations.get(1);
-    assertThat(tree.arguments()).hasSize(1);
-    assertThat(tree.classBody()).isNotNull();
+    tree = (EnumConstantTree) declarations.get(1);
+    assertThat(tree.is(Tree.Kind.ENUM_CONSTANT)).isTrue();
+    assertThat(tree.simpleName()).isEqualTo("C2");
+    newClassTree = (NewClassTree) tree.initializer();
+    assertThat(newClassTree.arguments()).hasSize(1);
+    assertThat(newClassTree.classBody()).isNotNull();
   }
 

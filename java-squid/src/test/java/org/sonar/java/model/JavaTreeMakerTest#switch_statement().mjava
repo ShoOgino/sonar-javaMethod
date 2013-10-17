@@ -5,15 +5,23 @@
   public void switch_statement() {
     AstNode astNode = p.parse("class T { void m() { switch (e) { case 1: case 2: ; default: ; } } }").getFirstDescendant(JavaGrammar.STATEMENT);
     SwitchStatementTree tree = (SwitchStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.SWITCH_STATEMENT)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.cases()).hasSize(2);
+
     CaseGroupTree c = tree.cases().get(0);
+    assertThat(c.is(Tree.Kind.CASE_GROUP)).isTrue();
     assertThat(c.labels()).hasSize(2);
+    assertThat(c.labels().get(0).is(Tree.Kind.CASE_LABEL)).isTrue();
     assertThat(c.labels().get(0).expression()).isNotNull();
+    assertThat(c.labels().get(1).is(Tree.Kind.CASE_LABEL)).isTrue();
     assertThat(c.labels().get(1).expression()).isNotNull();
     assertThat(c.body()).hasSize(1);
+
     c = tree.cases().get(1);
+    assertThat(c.is(Tree.Kind.CASE_GROUP)).isTrue();
     assertThat(c.labels()).hasSize(1);
+    assertThat(c.labels().get(0).is(Tree.Kind.CASE_LABEL)).isTrue();
     assertThat(c.labels().get(0).expression()).isNull();
     assertThat(c.body()).hasSize(1);
 

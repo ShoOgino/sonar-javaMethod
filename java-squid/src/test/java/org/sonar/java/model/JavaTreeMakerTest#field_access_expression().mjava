@@ -14,11 +14,13 @@
 
     astNode = p.parse("class T { int m() { return super.identifier; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     tree = (MemberSelectExpressionTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.MEMBER_SELECT)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.identifier()).isNotNull();
 
     astNode = p.parse("class T { int m() { return ClassName.super.identifier; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     tree = (MemberSelectExpressionTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.MEMBER_SELECT)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.identifier()).isNotNull();
   }

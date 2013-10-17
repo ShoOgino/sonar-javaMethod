@@ -2,6 +2,7 @@
   public void interface_method() {
     AstNode astNode = p.parse("interface T { int m(int p1, int... p2) throws Exception1, Exception2; }");
     MethodTree tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName()).isEqualTo("m");
     assertThat(tree.parameters()).hasSize(2);
@@ -14,6 +15,7 @@
     // void method
     astNode = p.parse("interface T { void m(int p) throws Exception1, Exception2; }");
     tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName()).isEqualTo("m");
     assertThat(tree.parameters()).hasSize(1);

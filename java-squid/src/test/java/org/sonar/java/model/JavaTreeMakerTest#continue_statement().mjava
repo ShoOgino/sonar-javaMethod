@@ -5,10 +5,12 @@
   public void continue_statement() {
     AstNode astNode = p.parse("class T { void m() { continue ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     ContinueStatementTree tree = (ContinueStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
     assertThat(tree.label()).isNull();
 
     astNode = p.parse("class T { void m() { continue label ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (ContinueStatementTree) maker.statement(astNode);
+    assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
     assertThat(tree.label()).isEqualTo("label");
   }
 

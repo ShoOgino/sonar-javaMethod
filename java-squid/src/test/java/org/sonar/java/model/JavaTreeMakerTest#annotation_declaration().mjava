@@ -2,6 +2,7 @@
   public void annotation_declaration() {
     AstNode astNode = p.parse("public @interface T { }");
     ClassTree tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    assertThat(tree.is(Tree.Kind.ANNOTATION_TYPE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName()).isEqualTo("T");
     assertThat(tree.superClass()).isNull();

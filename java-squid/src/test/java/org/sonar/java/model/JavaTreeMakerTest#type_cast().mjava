@@ -5,6 +5,7 @@
   public void type_cast() {
     AstNode astNode = p.parse("class T { boolean m() { return (Boolean) true; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION);
     TypeCastTree tree = (TypeCastTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.TYPE_CAST)).isTrue();
     assertThat(tree.type()).isNotNull();
     assertThat(tree.expression()).isNotNull();
   }

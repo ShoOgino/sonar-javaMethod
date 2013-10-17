@@ -2,6 +2,7 @@
   public void interface_declaration() {
     AstNode astNode = p.parse("public interface T extends I1, I2 { }");
     ClassTree tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName()).isEqualTo("T");
     assertThat(tree.superClass()).isNull();
@@ -9,6 +10,7 @@
 
     astNode = p.parse("public interface T { }");
     tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName()).isEqualTo("T");
     assertThat(tree.superClass()).isNull();

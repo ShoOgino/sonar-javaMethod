@@ -7,16 +7,19 @@
 
     AstNode astNode = p.parse("class T { T() { this(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     MethodInvocationTree tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.METHOD_INVOCATION)).isTrue();
     assertThat(tree.methodSelect()).isNotNull();
     assertThat(tree.arguments()).hasSize(2);
 
     astNode = p.parse("class T { T() { super(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.METHOD_INVOCATION)).isTrue();
     assertThat(tree.methodSelect()).isNotNull();
     assertThat(tree.arguments()).hasSize(2);
 
     astNode = p.parse("class T { T() { ClassName.super(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.METHOD_INVOCATION)).isTrue();
     assertThat(tree.methodSelect()).isNotNull();
     assertThat(tree.arguments()).hasSize(2);
   }
