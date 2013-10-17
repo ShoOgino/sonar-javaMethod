@@ -1,10 +1,5 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
-    if (tree.variable().is(Tree.Kind.IDENTIFIER)) {
-      IdentifierTree identifier = (IdentifierTree) tree.variable();
-      if (variables.contains(identifier.name())) {
-        context.addIssue(tree, ruleKey, "Introduce a new variable instead of reusing the parameter \"" + identifier.name() + "\".");
-      }
-    }
+    checkExpression(tree.variable());
   }
 
