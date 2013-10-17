@@ -1,0 +1,13 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    for (Tree member : tree.members()) {
+      if (member.is(Tree.Kind.METHOD)) {
+        MethodTree method = (MethodTree) member;
+        if (method.simpleName().equals(tree.simpleName())) {
+          context.addIssue(method, ruleKey, "Rename this method to prevent any misunderstanding or make it a constructor.");
+        }
+      }
+    }
+    super.visitClass(tree);
+  }
+
