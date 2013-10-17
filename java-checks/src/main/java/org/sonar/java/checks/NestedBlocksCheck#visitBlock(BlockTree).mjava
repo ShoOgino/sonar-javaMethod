@@ -1,11 +1,6 @@
   @Override
   public void visitBlock(BlockTree tree) {
-    for (StatementTree statement : tree.body()) {
-      if (statement.is(Tree.Kind.BLOCK)) {
-        context.addIssue(statement, ruleKey, "Extract this nested code block into a method.");
-      }
-    }
-
+    checkStatements(tree.body());
     super.visitBlock(tree);
   }
 
