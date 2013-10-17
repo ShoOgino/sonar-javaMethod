@@ -1,0 +1,11 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    super.visitMethodInvocation(tree);
+
+    if (isCallToEquals(tree.methodSelect()) &&
+      tree.arguments().size() == 1 &&
+      isNull(tree.arguments().get(0))) {
+      context.addIssue(tree, RULE_KEY, "Use \"object == null\" instead of \"object.equals(null)\" to test for nullity to prevent null pointer exceptions.");
+    }
+  }
+
