@@ -1,0 +1,13 @@
+  @Override
+  public void visitSwitchStatement(SwitchStatementTree tree) {
+    int count = 0;
+    for (CaseGroupTree caseGroup : tree.cases()) {
+      count += caseGroup.labels().size();
+    }
+    if (count < 3) {
+      context.addIssue(tree, ruleKey, "Replace this \"switch\" statement by \"if\" statements to increase readability.");
+    }
+
+    super.visitSwitchStatement(tree);
+  }
+
