@@ -1,0 +1,17 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    for (Tree member : tree.members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) member;
+        if (tree.is(Tree.Kind.INTERFACE) || tree.is(Tree.Kind.ANNOTATION_TYPE)) {
+          checkName(variableTree);
+        } else if (isStaticFinal(variableTree)) {
+          checkName(variableTree);
+        }
+      } else if (member.is(Tree.Kind.ENUM_CONSTANT)) {
+        checkName((VariableTree) member);
+      }
+    }
+    super.visitClass(tree);
+  }
+
