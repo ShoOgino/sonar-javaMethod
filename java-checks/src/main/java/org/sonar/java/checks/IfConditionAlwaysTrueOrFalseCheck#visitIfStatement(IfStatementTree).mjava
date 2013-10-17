@@ -1,0 +1,9 @@
+  @Override
+  public void visitIfStatement(IfStatementTree tree) {
+    if (tree.condition().is(Tree.Kind.PARENTHESIZED_EXPRESSION) && ((ParenthesizedTree) tree.condition()).expression().is(Tree.Kind.BOOLEAN_LITERAL)) {
+      context.addIssue(tree, ruleKey, "Remove this if statement.");
+    }
+
+    super.visitIfStatement(tree);
+  }
+

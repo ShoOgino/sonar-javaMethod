@@ -1,0 +1,9 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    if (tree.is(Tree.Kind.INTERFACE) && !pattern.matcher(tree.simpleName()).matches()) {
+      context.addIssue(tree, ruleKey, "Rename this interface name to match the regular expression '" + format + "'.");
+    }
+
+    super.visitClass(tree);
+  }
+
