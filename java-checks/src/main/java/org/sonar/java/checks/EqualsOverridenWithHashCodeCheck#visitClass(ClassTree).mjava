@@ -1,0 +1,27 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    super.visitClass(tree);
+
+    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM) || tree.is(Tree.Kind.INTERFACE)) {
+      MethodTree equalsMethod = null;
+      MethodTree hashCodeMethod = null;
+
+      for (Tree memberTree : tree.members()) {
+        if (memberTree.is(Tree.Kind.METHOD)) {
+          MethodTree methodTree = (MethodTree) memberTree;
+          if (EQUALS.equals(methodTree.simpleName()) && methodTree.parameters().size() == 1) {
+            equalsMethod = methodTree;
+          } else if (HASHCODE.equals(methodTree.simpleName()) && methodTree.parameters().isEmpty()) {
+            hashCodeMethod = methodTree;
+          }
+        }
+      }
+
+      if (equalsMethod != null && hashCodeMethod == null) {
+        context.addIssue(equalsMethod, RULE_KEY, getMessage(classTreeType(tree), EQUALS, HASHCODE));
+      } else if (hashCodeMethod != null && equalsMethod == null) {
+        context.addIssue(hashCodeMethod, RULE_KEY, getMessage(classTreeType(tree), HASHCODE, EQUALS));
+      }
+    }
+  }
+
