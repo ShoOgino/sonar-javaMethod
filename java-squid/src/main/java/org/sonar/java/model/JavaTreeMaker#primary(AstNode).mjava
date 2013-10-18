@@ -100,7 +100,12 @@
             );
           } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.NEW)) {
             // id.new...
-            return applyClassCreatorRest(identifier, identifierSuffixNode.getFirstChild(JavaGrammar.INNER_CREATOR).getFirstChild(JavaGrammar.CLASS_CREATOR_REST));
+            AstNode innerCreatorNode = identifierSuffixNode.getFirstChild(JavaGrammar.INNER_CREATOR);
+            return applyClassCreatorRest(
+              identifier,
+              identifier(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)),
+              innerCreatorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST)
+            );
           } else {
             throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getChild(1));
           }

@@ -1,4 +1,4 @@
-  private ExpressionTree applyClassCreatorRest(ExpressionTree enclosingExpression, AstNode classCreatorRestNode) {
+  private ExpressionTree applyClassCreatorRest(ExpressionTree enclosingExpression, ExpressionTree identifier, AstNode classCreatorRestNode) {
     Preconditions.checkArgument(classCreatorRestNode.is(JavaGrammar.CLASS_CREATOR_REST), "Unexpected AstNodeType: %s", classCreatorRestNode.getType().toString());
     ClassTree classBody = null;
     if (classCreatorRestNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
@@ -12,6 +12,7 @@
     return new JavaTree.NewClassTreeImpl(
       classCreatorRestNode,
       enclosingExpression,
+      identifier,
       arguments(classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS)),
       classBody
     );

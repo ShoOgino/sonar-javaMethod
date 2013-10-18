@@ -1,0 +1,9 @@
+  private List<? extends Tree> nonWildcardTypeArguments(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    ImmutableList.Builder<Tree> result = ImmutableList.builder();
+    for (AstNode child : astNode.getChildren(JavaGrammar.REFERENCE_TYPE)) {
+      result.add(referenceType(child));
+    }
+    return result.build();
+  }
+
