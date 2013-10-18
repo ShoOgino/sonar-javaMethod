@@ -1,6 +1,17 @@
   private ExpressionTree classType(AstNode astNode) {
     Preconditions.checkArgument(astNode.is(JavaGrammar.CLASS_TYPE), "Unexpected AstNodeType: %s", astNode.getType().toString());
-    // TODO
-    return identifier(astNode.getFirstChild());
+    AstNode child = astNode.getFirstChild();
+    ExpressionTree result = identifier(child);
+    for (int i = 1; i < astNode.getNumberOfChildren(); i++) {
+      child = astNode.getChild(i);
+      if (child.is(JavaTokenType.IDENTIFIER)) {
+        result = new JavaTree.MemberSelectExpressionTreeImpl(child, result, identifier(child));
+      } else if (child.is(JavaGrammar.TYPE_ARGUMENTS)) {
+        result = new JavaTree.ParameterizedTypeTreeImpl(child, result, typeArguments(child));
+      } else if (!child.is(JavaPunctuator.DOT)) {
+        throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
+      }
+    }
+    return result;
   }
 
