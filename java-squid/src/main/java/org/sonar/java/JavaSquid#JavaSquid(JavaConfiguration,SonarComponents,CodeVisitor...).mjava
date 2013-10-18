@@ -5,7 +5,11 @@
       astScanner.accept(new SyntaxHighlighterVisitor(sonarComponents.getResourcePerspectives(), conf.getCharset()));
       astScanner.accept(new SymbolTableVisitor(sonarComponents.getResourcePerspectives()));
 
-      astScanner.accept(new VisitorsBridge(sonarComponents.getResourcePerspectives(), Arrays.asList(visitors)));
+      VisitorsBridge visitorsBridge = new VisitorsBridge(sonarComponents.getResourcePerspectives(), Iterables.concat(
+        sonarComponents.createJavaFileScanners(),
+        Arrays.asList(visitors)
+      ));
+      astScanner.accept(visitorsBridge);
     }
 
     // TODO unchecked cast
