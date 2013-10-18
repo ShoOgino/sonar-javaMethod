@@ -1,0 +1,54 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    int prev = 0;
+    for (int i = 0; i < tree.members().size(); i++) {
+      final Tree member = tree.members().get(i);
+      final int typePriority;
+      final ModifiersTree modifiers;
+      if (member.is(Tree.Kind.VARIABLE)) {
+        typePriority = 2;
+        modifiers = ((VariableTree) member).modifiers();
+      } else if (member.is(Tree.Kind.CONSTRUCTOR)) {
+        typePriority = 3;
+        modifiers = ((MethodTree) member).modifiers();
+      } else if (member.is(Tree.Kind.METHOD)) {
+        typePriority = 4;
+        modifiers = ((MethodTree) member).modifiers();
+      } else {
+        continue;
+      }
+      boolean isStatic = false;
+      int visibilityPriority = /* package local */ 2;
+      for (Modifier modifier : modifiers.modifiers()) {
+        switch (modifier) {
+          case STATIC:
+            isStatic = true;
+            break;
+          case PUBLIC:
+            visibilityPriority = 0;
+            break;
+          case PROTECTED:
+            visibilityPriority = 1;
+            break;
+          case PRIVATE:
+            visibilityPriority = 3;
+            break;
+        }
+      }
+      int priority = typePriority;
+      if (member.is(Tree.Kind.VARIABLE) && isStatic) {
+        priority--;
+      }
+      priority *= 4;
+      priority += visibilityPriority;
+
+      if (priority < prev) {
+        context.addIssue(tree, ruleKey, "Change order of members to comply with Java Coding conventions.");
+        break;
+      }
+      prev = priority;
+    }
+
+    super.visitClass(tree);
+  }
+
