@@ -1,4 +1,5 @@
-  private List<? extends Tree> typeArguments(AstNode astNode) {
+  @VisibleForTesting
+  List<? extends Tree> typeArguments(AstNode astNode) {
     checkType(astNode, JavaGrammar.TYPE_ARGUMENTS);
     ImmutableList.Builder<Tree> result = ImmutableList.builder();
     for (AstNode child : astNode.getChildren(JavaGrammar.TYPE_ARGUMENT)) {
@@ -6,9 +7,9 @@
       Tree typeArgument = referenceTypeNode != null ? referenceType(referenceTypeNode) : null;
       if (child.getFirstChild().is(JavaPunctuator.QUERY)) {
         final Tree.Kind kind;
-        if (child.getFirstChild().is(JavaKeyword.EXTENDS)) {
+        if (child.hasDirectChildren(JavaKeyword.EXTENDS)) {
           kind = Tree.Kind.EXTENDS_WILDCARD;
-        } else if (child.getFirstChild().is(JavaKeyword.SUPER)) {
+        } else if (child.hasDirectChildren(JavaKeyword.SUPER)) {
           kind = Tree.Kind.SUPER_WILDCARD;
         } else {
           kind = Tree.Kind.UNBOUNDED_WILDCARD;

@@ -1,0 +1,24 @@
+  /**
+   * 4.5.1. Type Arguments and Wildcards
+   */
+  @Test
+  public void type_arguments() {
+    AstNode astNode = p.parse("public class T { void m() { ClassType<? extends A, ? super B, ?, C> var; } }").getFirstDescendant(JavaGrammar.TYPE_ARGUMENTS);
+    List<? extends Tree> typeArguments = maker.typeArguments(astNode);
+    assertThat(typeArguments).hasSize(4);
+
+    WildcardTree wildcard = (WildcardTree) typeArguments.get(0);
+    assertThat(wildcard.is(Tree.Kind.EXTENDS_WILDCARD)).isTrue();
+    assertThat(wildcard.bound()).isInstanceOf(IdentifierTree.class);
+
+    wildcard = (WildcardTree) typeArguments.get(1);
+    assertThat(wildcard.is(Tree.Kind.SUPER_WILDCARD)).isTrue();
+    assertThat(wildcard.bound()).isInstanceOf(IdentifierTree.class);
+
+    wildcard = (WildcardTree) typeArguments.get(2);
+    assertThat(wildcard.is(Tree.Kind.UNBOUNDED_WILDCARD)).isTrue();
+    assertThat(wildcard.bound()).isNull();
+
+    assertThat(typeArguments.get(3)).isInstanceOf(IdentifierTree.class);
+  }
+
