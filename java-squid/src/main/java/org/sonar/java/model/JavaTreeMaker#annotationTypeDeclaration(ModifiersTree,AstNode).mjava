@@ -2,7 +2,7 @@
    * 9.6. Annotation Types
    */
   private ClassTree annotationTypeDeclaration(ModifiersTree modifiers, AstNode astNode) {
-    Preconditions.checkArgument(astNode.is(JavaGrammar.ANNOTATION_TYPE_DECLARATION), "Unexpected AstNodeType: %s", astNode.getType().toString());
+    checkType(astNode, JavaGrammar.ANNOTATION_TYPE_DECLARATION);
     String simpleName = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
     for (AstNode annotationTypeElementDeclarationNode : astNode.getFirstChild(JavaGrammar.ANNOTATION_TYPE_BODY).getChildren(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
@@ -14,7 +14,7 @@
     return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ANNOTATION_TYPE,
       modifiers,
       simpleName,
-      null,
+      /* super class: */ null,
       ImmutableList.<Tree>of(),
       members.build()
     );

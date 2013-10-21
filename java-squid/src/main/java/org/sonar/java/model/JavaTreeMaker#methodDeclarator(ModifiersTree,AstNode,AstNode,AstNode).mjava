@@ -2,14 +2,12 @@
    * 8.4. Method Declarations
    */
   private MethodTree methodDeclarator(ModifiersTree modifiers, @Nullable AstNode returnTypeNode, AstNode name, AstNode astNode) {
-    Preconditions.checkArgument(name.is(JavaTokenType.IDENTIFIER));
-    Preconditions.checkArgument(astNode.is(
-      JavaGrammar.METHOD_DECLARATOR_REST,
+    checkType(name, JavaTokenType.IDENTIFIER);
+    checkType(astNode, JavaGrammar.METHOD_DECLARATOR_REST,
       JavaGrammar.VOID_METHOD_DECLARATOR_REST,
       JavaGrammar.CONSTRUCTOR_DECLARATOR_REST,
       JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST,
-      JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST
-    ), "Unexpected AstNodeType: %s", astNode.getType().toString());
+      JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST);
     // TODO type parameters
     Tree returnType = null;
     if (returnTypeNode != null) {
