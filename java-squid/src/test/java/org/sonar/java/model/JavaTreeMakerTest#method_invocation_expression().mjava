@@ -4,7 +4,6 @@
   @Test
   public void method_invocation_expression() {
     // TODO test NonWildTypeArguments
-
     AstNode astNode = p.parse("class T { void m() { identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     MethodInvocationTree tree = (MethodInvocationTree) maker.expression(astNode);
     assertThat(tree.is(Tree.Kind.METHOD_INVOCATION)).isTrue();
@@ -51,6 +50,14 @@
     memberSelectExpression = (MemberSelectExpressionTree) tree.methodSelect();
     assertThat(memberSelectExpression.identifier().name()).isEqualTo("super");
     assertThat(((IdentifierTree) memberSelectExpression.expression()).name()).isEqualTo("TypeName");
+    assertThat(tree.arguments()).hasSize(2);
+
+    astNode = p.parse("class T { T() { primary().<T>identifier(true, false); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
+    tree = (MethodInvocationTree) maker.expression(astNode);
+    assertThat(tree.is(Tree.Kind.METHOD_INVOCATION)).isTrue();
+    memberSelectExpression = (MemberSelectExpressionTree) tree.methodSelect();
+    assertThat(memberSelectExpression.identifier().name()).isEqualTo("identifier");
+    assertThat(memberSelectExpression.expression()).isInstanceOf(MethodInvocationTree.class);
     assertThat(tree.arguments()).hasSize(2);
   }
 
