@@ -4,12 +4,10 @@
       findbugsProject.addSourceDir(dir.getAbsolutePath());
     }
     boolean hasExistingBinaryDir = false;
-    Set<String> binaryDirPaths = Sets.newHashSet();
     for (File binaryDir : fileSystem.binaryDirs()) {
       if (binaryDir.exists()) {
         hasExistingBinaryDir = true;
         findbugsProject.addFile(binaryDir.getAbsolutePath());
-        binaryDirPaths.add(binaryDir.getCanonicalPath());
       }
     }
     if (!hasExistingBinaryDir) {
@@ -18,7 +16,7 @@
     }
 
     for (File file : projectClasspath.getElements()) {
-      if (file.isFile() || !binaryDirPaths.contains(file.getCanonicalPath())) {
+      if (file.isFile()) {
         findbugsProject.addAuxClasspathEntry(file.getAbsolutePath());
       }
     }
