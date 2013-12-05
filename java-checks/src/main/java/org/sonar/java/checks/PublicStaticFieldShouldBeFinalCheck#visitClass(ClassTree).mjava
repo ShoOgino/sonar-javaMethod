@@ -1,0 +1,13 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    for (Tree member : tree.members()) {
+      if ((tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM))
+        && member.is(Tree.Kind.VARIABLE) && isPublicStaticNotFinal((VariableTree) member)) {
+
+        context.addIssue(member, ruleKey, "Make this \"public static\" field final");
+      }
+      scan(member);
+    }
+
+  }
+
