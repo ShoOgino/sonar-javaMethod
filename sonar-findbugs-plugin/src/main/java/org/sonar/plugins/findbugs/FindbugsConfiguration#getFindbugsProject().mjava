@@ -3,16 +3,18 @@
     for (File dir : fileSystem.sourceDirs()) {
       findbugsProject.addSourceDir(dir.getAbsolutePath());
     }
-    boolean hasExistingBinaryDir = false;
-    for (File binaryDir : fileSystem.binaryDirs()) {
-      if (binaryDir.isDirectory()) {
-        hasExistingBinaryDir = true;
-        for (File binaryFile : FileUtils.listFiles(binaryDir, new String[] {"class"}, true)) {
-          findbugsProject.addFile(binaryFile.getCanonicalPath());
-        }
-      }
+
+    List<File> classesToAnalyze = new FindbugsSourceBinaryMatcher(
+      fileSystem.files(FileQuery.onSource()),
+      fileSystem.sourceDirs(),
+      fileSystem.binaryDirs())
+      .classesToAnalyze(Collections.EMPTY_LIST);
+
+    for (File classToAnalyze : classesToAnalyze) {
+      findbugsProject.addFile(classToAnalyze.getCanonicalPath());
     }
-    if (!hasExistingBinaryDir) {
+
+    if (classesToAnalyze.isEmpty()) {
       throw new SonarException("Findbugs needs sources to be compiled. "
         + "Please build project before executing sonar and check the location of compiled classes.");
     }
