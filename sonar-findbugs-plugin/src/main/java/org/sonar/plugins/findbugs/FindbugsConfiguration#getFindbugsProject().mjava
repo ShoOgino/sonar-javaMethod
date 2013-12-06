@@ -5,10 +5,9 @@
     }
 
     List<File> classesToAnalyze = new FindbugsSourceBinaryMatcher(
-      fileSystem.files(FileQuery.onSource()),
       fileSystem.sourceDirs(),
       fileSystem.binaryDirs())
-      .classesToAnalyze(Collections.EMPTY_LIST);
+      .classesToAnalyze(fileSystem.files(FileQuery.onSource()));
 
     for (File classToAnalyze : classesToAnalyze) {
       findbugsProject.addFile(classToAnalyze.getCanonicalPath());
@@ -20,9 +19,7 @@
     }
 
     for (File file : projectClasspath.getElements()) {
-      if (file.isFile()) {
-        findbugsProject.addAuxClasspathEntry(file.getAbsolutePath());
-      }
+      findbugsProject.addAuxClasspathEntry(file.getAbsolutePath());
     }
     if (annotationsLib != null) {
       // Findbugs dependencies are packaged by Maven. They are not available during execution of unit tests.
