@@ -1,15 +1,8 @@
   @Override
   public void visitFile(AstNode astNode) {
-    if (astNode == null) {
-      // parse error
-      return;
-    }
-
-    SemanticModel semanticModel;
-    try {
-      semanticModel = SemanticModel.createFor(astNode);
-    } catch (Exception e) {
-      LOG.error("Unable to create symbol table for " + getContext().getFile(), e);
+    SemanticModel semanticModel = semanticModelProvider.semanticModel();
+    if (semanticModel == null) {
+      // parse or semantic error
       return;
     }
 
