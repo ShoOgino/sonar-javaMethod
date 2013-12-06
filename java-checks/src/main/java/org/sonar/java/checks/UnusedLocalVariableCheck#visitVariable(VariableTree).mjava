@@ -1,0 +1,14 @@
+  @Override
+  public void visitVariable(VariableTree tree) {
+    super.visitVariable(tree);
+
+    AstNode identifierAstNode = ((JavaTree) tree).getAstNode().getFirstChild(JavaTokenType.IDENTIFIER);
+
+    SemanticModel semanticModel = (SemanticModel) context.getSemanticModel();
+    Symbol symbol = semanticModel.getSymbol(identifierAstNode);
+
+    if (symbol != null && semanticModel.getUsages(symbol).isEmpty()) {
+      context.addIssue(tree, ruleKey, "Remove this unused \"" + tree.simpleName() + "\" local variable.");
+    }
+  }
+

@@ -1,9 +1,9 @@
   @Test
   public void files() {
-    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8));
+    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new SemanticModelVisitor());
     File baseDir = new File("src/test/files/metrics");
     List<InputFile> inputFiles = InputFileUtils.create(baseDir,
-        ImmutableList.of(new File("src/test/files/metrics/Lines.java"), new File("src/test/files/metrics/LinesOfCode.java")));
+      ImmutableList.of(new File("src/test/files/metrics/Lines.java"), new File("src/test/files/metrics/LinesOfCode.java")));
     scanner.scan(inputFiles);
     SourceProject project = (SourceProject) scanner.getIndex().search(new QueryByType(SourceProject.class)).iterator().next();
     assertThat(project.getInt(JavaMetric.FILES)).isEqualTo(2);
