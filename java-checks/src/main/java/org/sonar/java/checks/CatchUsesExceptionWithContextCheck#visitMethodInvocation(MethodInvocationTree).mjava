@@ -1,0 +1,8 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    if (!catchStack.empty() && tree.is(Tree.Kind.METHOD_INVOCATION) && (inThrow || tree.arguments().size() > 1)) {
+      checkArguments(tree.arguments());
+    }
+    super.visitMethodInvocation(tree);
+  }
+

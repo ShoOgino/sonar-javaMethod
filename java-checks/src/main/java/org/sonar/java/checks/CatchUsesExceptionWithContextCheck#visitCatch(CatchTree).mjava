@@ -1,0 +1,13 @@
+  @Override
+  public void visitCatch(CatchTree tree) {
+    if (tree.is(Tree.Kind.CATCH)) {
+      catchStack.push(new CatchState(tree.parameter().simpleName()));
+      super.visitCatch(tree);
+
+      if (!catchStack.pop().isExceptionCorrectlyUsed) {
+        context.addIssue(tree, ruleKey, "Either log or rethrow this exception along with some contextual information.");
+      }
+//      }
+    }
+  }
+
