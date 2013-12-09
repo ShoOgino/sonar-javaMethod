@@ -2,7 +2,14 @@
   public void visitVariable(VariableTree tree) {
     super.visitVariable(tree);
 
-    AstNode identifierAstNode = ((JavaTree) tree).getAstNode().getFirstChild(JavaTokenType.IDENTIFIER);
+    AstNode astNode = ((JavaTree) tree).getAstNode();
+    AstNode variableAstNode;
+    if (astNode.is(JavaGrammar.RESOURCE) || astNode.is(JavaGrammar.FORMAL_PARAMETER)) {
+      variableAstNode = astNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR, JavaGrammar.VARIABLE_DECLARATOR_ID);
+    } else {
+      variableAstNode = astNode;
+    }
+    AstNode identifierAstNode = variableAstNode.getFirstChild(JavaTokenType.IDENTIFIER);
 
     SemanticModel semanticModel = (SemanticModel) context.getSemanticModel();
     Symbol symbol = semanticModel.getSymbol(identifierAstNode);
