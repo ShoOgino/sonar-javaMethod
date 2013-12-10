@@ -1,16 +1,14 @@
   @Override
   public void visitCatch(CatchTree tree) {
-    if (tree.is(Tree.Kind.CATCH)) {
+    invalidCatchesCheck.add(tree);
 
-      if (isExcludedExceptionType(tree)) {
-        super.visitCatch(tree);
-      } else {
-        catchStack.push(new CatchState(tree.parameter().simpleName()));
-        super.visitCatch(tree);
+    super.visitCatch(tree);
 
-        if (!catchStack.pop().isExceptionCorrectlyUsed) {
-          context.addIssue(tree, ruleKey, "Either log or rethrow this exception along with some contextual information.");
-        }
+    if (invalidCatchesCheck.contains(tree)) {
+      invalidCatchesCheck.remove(tree);
+
+      if (!isExcludedType(tree.parameter().type())) {
+        context.addIssue(tree, ruleKey, "Either log or rethrow this exception along with some contextual information.");
       }
     }
   }

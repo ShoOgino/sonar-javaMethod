@@ -1,0 +1,16 @@
+  private void handleThrowExpression(ExpressionTree tree) {
+    if (tree.is(Kind.IDENTIFIER)) {
+      removeInvalidCatches(((IdentifierTree) tree).name());
+    } else if (tree.is(Kind.NEW_CLASS)) {
+      NewClassTree newClassTree = (NewClassTree) tree;
+
+      handleArguments(newClassTree.arguments());
+    } else if (tree.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
+
+      handleArguments(methodInvocationTree.arguments());
+    } else if (tree.is(Kind.TYPE_CAST)) {
+      handleThrowExpression(((TypeCastTree) tree).expression());
+    }
+  }
+
