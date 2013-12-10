@@ -1,0 +1,12 @@
+  @Override
+  public void visitNewClass(NewClassTree tree) {
+    if (TARGETED_CLASS.contains(getclassName(tree)) && tree.arguments().size() == 1) {
+      ExpressionTree argument = tree.arguments().get(0);
+
+      if (argument.is(Tree.Kind.CHAR_LITERAL)) {
+        String character = ((LiteralTree) argument).value();
+        context.addIssue(tree, ruleKey, "Replace the constructor character parameter " + character + " with string parameter " + character.replace("'", "\"") + ".");
+      }
+    }
+  }
+
