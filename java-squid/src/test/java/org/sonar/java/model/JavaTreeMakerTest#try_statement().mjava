@@ -38,7 +38,8 @@
     assertThat(tree.catches()).hasSize(1);
     assertThat(tree.finallyBlock()).isNotNull();
 
-    astNode = p.parse("class T { void m() { try (Resource r1 = open(); Resource r2 = open()) { } catch (Exception e) { } finally { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
+    astNode = p.parse("class T { void m() { try (Resource r1 = open(); Resource r2 = open()) { } catch (Exception e) { } finally { } } }")
+      .getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (TryStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.block()).isNotNull();

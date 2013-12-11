@@ -1,0 +1,15 @@
+  private ModifiersTree variableModifiers(@Nullable AstNode astNode) {
+    if (astNode == null) {
+      return JavaTree.ModifiersTreeImpl.EMPTY;
+    }
+
+    Preconditions.checkArgument(astNode.is(JavaGrammar.VARIABLE_MODIFIERS), "Unexpected AstNodeType: %s", astNode.getType().toString());
+
+    ImmutableList.Builder<Modifier> modifiers = ImmutableList.builder();
+    for (AstNode modifierAstNode : astNode.getChildren()) {
+      JavaKeyword keyword = (JavaKeyword) modifierAstNode.getType();
+      modifiers.add(kindMaps.getModifier(keyword));
+    }
+    return new JavaTree.ModifiersTreeImpl(astNode, modifiers.build());
+  }
+

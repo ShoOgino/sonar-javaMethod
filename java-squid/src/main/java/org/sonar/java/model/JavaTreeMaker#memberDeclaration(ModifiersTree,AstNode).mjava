@@ -8,7 +8,7 @@
       JavaGrammar.CLASS_DECLARATION,
       JavaGrammar.ENUM_DECLARATION,
       JavaGrammar.ANNOTATION_TYPE_DECLARATION
-    );
+      );
     if (declaration != null) {
       return typeDeclaration(modifiers, declaration);
     }
@@ -17,23 +17,21 @@
       // TODO TYPE_PARAMETERS
       return methodDeclarator(
         modifiers,
-        /* type */ declaration.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
-        /* name */ declaration.getFirstChild(JavaTokenType.IDENTIFIER),
-        declaration.getFirstChild(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST)
-      );
+        /* type */declaration.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* name */declaration.getFirstChild(JavaTokenType.IDENTIFIER),
+        declaration.getFirstChild(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST));
     }
     declaration = astNode.getFirstChild(
       JavaGrammar.METHOD_DECLARATOR_REST,
       JavaGrammar.VOID_METHOD_DECLARATOR_REST,
       JavaGrammar.CONSTRUCTOR_DECLARATOR_REST
-    );
+      );
     if (declaration != null) {
       return methodDeclarator(
         modifiers,
-        /* type */ astNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
-        /* name */ astNode.getFirstChild(JavaTokenType.IDENTIFIER),
-        declaration
-      );
+        /* type */astNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* name */astNode.getFirstChild(JavaTokenType.IDENTIFIER),
+        declaration);
     }
     throw new IllegalStateException();
   }

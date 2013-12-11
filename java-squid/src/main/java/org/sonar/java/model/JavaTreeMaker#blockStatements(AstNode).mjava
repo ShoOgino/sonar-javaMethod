@@ -1,26 +1,25 @@
   private List<StatementTree> blockStatements(AstNode astNode) {
     checkType(astNode, JavaGrammar.BLOCK_STATEMENTS);
     ImmutableList.Builder<StatementTree> statements = ImmutableList.builder();
-    for (AstNode statementNode : astNode.getChildren(JavaGrammar.BLOCK_STATEMENT)) {
-      statementNode = statementNode.getFirstChild(
+    for (AstNode blockStatementNode : astNode.getChildren(JavaGrammar.BLOCK_STATEMENT)) {
+      AstNode statementNode = blockStatementNode.getFirstChild(
         JavaGrammar.STATEMENT,
         JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
         JavaGrammar.CLASS_DECLARATION,
         JavaGrammar.ENUM_DECLARATION
-      );
+        );
       if (statementNode.is(JavaGrammar.STATEMENT)) {
         statements.add(statement(statementNode));
       } else if (statementNode.is(JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
-        // TODO modifiers
         statements.addAll(variableDeclarators(
-          JavaTree.ModifiersTreeImpl.EMPTY,
+          variableModifiers(statementNode.getFirstChild(JavaGrammar.VARIABLE_MODIFIERS)),
           referenceType(statementNode.getFirstChild(JavaGrammar.TYPE)),
           statementNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
-        ));
+          ));
       } else if (statementNode.is(JavaGrammar.CLASS_DECLARATION)) {
-        statements.add(classDeclaration(JavaTree.ModifiersTreeImpl.EMPTY, statementNode));
+        statements.add(classDeclaration(modifiers(blockStatementNode.getChildren(JavaGrammar.MODIFIER)), statementNode));
       } else if (statementNode.is(JavaGrammar.ENUM_DECLARATION)) {
-        statements.add(enumDeclaration(JavaTree.ModifiersTreeImpl.EMPTY, statementNode));
+        statements.add(enumDeclaration(modifiers(blockStatementNode.getChildren(JavaGrammar.MODIFIER)), statementNode));
       } else {
         throw new IllegalStateException("Unexpected AstNodeType: " + statementNode.getType().toString());
       }
