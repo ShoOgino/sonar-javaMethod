@@ -1,10 +1,8 @@
   public List<Symbol> lookup(String name) {
-    List<Symbol> result = symbols.get(name);
     Scope scope = this;
-    while (result.isEmpty() && scope.next != null) {
-      result = scope.next.lookup(name);
+    while (scope != null && !scope.symbols.containsKey(name)) {
       scope = scope.next;
     }
-    return result;
+    return scope == null ? ImmutableList.<Symbol>of() : scope.symbols.get(name);
   }
 
