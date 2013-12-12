@@ -1,0 +1,16 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    scan(tree.modifiers());
+    scan(tree.typeParameters());
+    scan(tree.returnType());
+    scan(tree.defaultValue());
+    scan(tree.block());
+    if (!isOverriding(tree)) {
+      for (VariableTree param : tree.parameters()) {
+        reportIssueIfDeprecatedType(param, getTypeName(param.type()));
+      }
+      reportIssueIfDeprecatedType(tree, getTypeName(tree.returnType()));
+    }
+
+  }
+
