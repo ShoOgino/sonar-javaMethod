@@ -2,8 +2,9 @@
   public void visitBinaryExpression(BinaryExpressionTree tree) {
     super.visitBinaryExpression(tree);
 
-    if (isEqualityExpression(tree) && hasBooleanLiteralOperands(tree)) {
-      context.addIssue(tree, ruleKey, "Remove the unnecessary boolean comparison to simplify this expression.");
+    String operator = operator(tree);
+    if (operator != null && hasBooleanLiteralOperands(tree)) {
+      addIssue(tree, operator);
     }
   }
 
