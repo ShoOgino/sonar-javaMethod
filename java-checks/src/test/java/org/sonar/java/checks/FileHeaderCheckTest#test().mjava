@@ -1,0 +1,38 @@
+  @Test
+  public void test() {
+    FileHeaderCheck check = new FileHeaderCheck();
+    check.headerFormat = "// copyright 2005";
+
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FileHeaderCheck/Class1.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .noMore();
+
+    check = new FileHeaderCheck();
+    check.headerFormat = "// copyright 2005";
+
+    file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FileHeaderCheck/Class2.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(null).withMessage("Add or update the header of this file.");
+
+    check = new FileHeaderCheck();
+    check.headerFormat = "// copyright 20\\d\\d";
+
+    file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FileHeaderCheck/Class1.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .noMore();
+
+    check = new FileHeaderCheck();
+    check.headerFormat = "// copyright 20\\d\\d";
+
+    file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FileHeaderCheck/Class2.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .noMore();
+
+    check = new FileHeaderCheck();
+    check.headerFormat = "/\\*foo http://www\\.example\\.org\\*/";
+
+    file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FileHeaderCheck/Class3.java"), check);
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .noMore();
+  }
+

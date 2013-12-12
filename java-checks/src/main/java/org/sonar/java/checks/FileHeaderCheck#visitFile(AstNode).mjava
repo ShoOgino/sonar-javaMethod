@@ -1,0 +1,14 @@
+  @Override
+  public void visitFile(AstNode astNode) {
+    String contents;
+    try {
+      contents = Files.toString(getContext().getFile(), charset);
+    } catch (IOException e) {
+      throw new SonarException(e);
+    }
+
+    if (!pattern.matcher(contents).lookingAt()) {
+      getContext().createFileViolation(this, "Add or update the header of this file.");
+    }
+  }
+
