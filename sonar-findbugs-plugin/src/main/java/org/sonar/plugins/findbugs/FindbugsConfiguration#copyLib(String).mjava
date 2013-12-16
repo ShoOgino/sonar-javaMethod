@@ -2,9 +2,11 @@
     InputStream input = null;
     try {
       input = getClass().getResourceAsStream(name);
-      File temp = File.createTempFile("findbugs", ".jar");
-      FileUtils.copyInputStreamToFile(input, temp);
-      return temp;
+      File dir = new File(fileSystem.workingDir(), "findbugs");
+      FileUtils.forceMkdir(dir);
+      File target = new File(dir, name);
+      FileUtils.copyInputStreamToFile(input, target);
+      return target;
     } catch (IOException e) {
       throw new IllegalStateException("Fail to extract Findbugs dependency", e);
     } finally {

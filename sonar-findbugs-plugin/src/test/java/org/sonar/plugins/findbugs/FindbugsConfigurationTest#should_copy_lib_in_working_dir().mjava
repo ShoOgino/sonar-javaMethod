@@ -1,0 +1,13 @@
+  @Test
+  public void should_copy_lib_in_working_dir() throws IOException {
+    String jsr205 = "findbugs/jsr305.jar";
+    String annotations = "findbugs/annotations.jar";
+
+    conf.start();
+    assertThat(new File(fs.workingDir(), jsr205)).isFile();
+    assertThat(new File(fs.workingDir(), annotations)).isFile();
+    conf.stop();
+    assertThat(new File(fs.workingDir(), jsr205)).doesNotExist();
+    assertThat(new File(fs.workingDir(), annotations)).doesNotExist();
+  }
+
