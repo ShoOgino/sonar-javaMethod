@@ -6,9 +6,11 @@
       Enumeration<URL> urls = contextClassLoader.getResources("findbugs.xml");
       while (urls.hasMoreElements()) {
         URL url = urls.nextElement();
-        pluginJarPathList.add(StringUtils.removeStart(StringUtils.substringBefore(url.toString(), "!"), "jar:file:"));
+        pluginJarPathList.add(StringUtils.removeStart(StringUtils.substringBefore(url.toURI().getSchemeSpecificPart(), "!"), "file:"));
       }
     } catch (IOException e) {
+      throw new SonarException(e);
+    } catch (URISyntaxException e) {
       throw new SonarException(e);
     }
 
