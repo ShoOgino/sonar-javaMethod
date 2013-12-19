@@ -16,6 +16,10 @@
       allowIfExceptionInExpression(((MemberSelectExpressionTree) tree).expression(), false);
     } else if (tree.is(Kind.PARENTHESIZED_EXPRESSION)) {
       allowIfExceptionInExpression(((ParenthesizedTree) tree).expression(), allowIdentifier);
+    } else if (tree.is(Kind.CONDITIONAL_EXPRESSION)) {
+      ConditionalExpressionTree conditionalExpressionTree = (ConditionalExpressionTree) tree;
+      allowIfExceptionInExpression(conditionalExpressionTree.trueExpression(), allowIdentifier);
+      allowIfExceptionInExpression(conditionalExpressionTree.falseExpression(), allowIdentifier);
     }
   }
 
