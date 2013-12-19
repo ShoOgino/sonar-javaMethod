@@ -1,0 +1,19 @@
+  private static boolean isQualifiedExcludedType(Tree tree) {
+    if (!tree.is(Kind.MEMBER_SELECT)) {
+      return false;
+    }
+
+    MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) tree;
+    if (!EXCLUDED_EXCEPTION_TYPE.contains(memberSelectExpressionTree.identifier().name()) || !memberSelectExpressionTree.expression().is(Kind.MEMBER_SELECT)) {
+      return false;
+    }
+
+    memberSelectExpressionTree = (MemberSelectExpressionTree) memberSelectExpressionTree.expression();
+    if (!JAVA_SUB_PACKAGE.contains(memberSelectExpressionTree.identifier().name()) || !memberSelectExpressionTree.expression().is(Kind.IDENTIFIER)) {
+      return false;
+    }
+
+    IdentifierTree identifierTree = (IdentifierTree) memberSelectExpressionTree.expression();
+    return "java".equals(identifierTree.name());
+  }
+
