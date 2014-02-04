@@ -1,0 +1,18 @@
+  /**
+   * SONAR-3804
+   */
+  @Test
+  public void shouldThrowCleanMessageIfFailToImportSoure() {
+    File file = new File("./src/test/java/org/sonar/plugins/java/JavaSourceImporterTest.java");
+
+    SensorContext context = mock(SensorContext.class);
+    JavaFile javaFile = mock(JavaFile.class);
+    InputFile inputFile = InputFileUtils.create(new File("."), file);
+    doThrow(IllegalArgumentException.class).when(context).saveSource(any(JavaFile.class), anyString());
+
+    thrown.expect(SonarException.class);
+    thrown.expectMessage("Unable to read and import the source file : '" + file.getAbsolutePath() + "' with the charset : 'UTF-8'.");
+
+    sensor.importSource(context, javaFile, inputFile, Charset.forName("UTF-8"));
+  }
+

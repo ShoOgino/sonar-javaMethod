@@ -1,0 +1,17 @@
+  void importSource(SensorContext context, JavaFile javaFile, InputFile inputFile, Charset sourcesEncoding) {
+    String source = null;
+    if (importSources) {
+      source = loadSourceFromFile(inputFile, sourcesEncoding);
+    }
+
+    try {
+      context.index(javaFile);
+      if (source != null) {
+        context.saveSource(javaFile, source);
+      }
+    } catch (Exception e) {
+      throw new SonarException("Unable to read and import the source file : '" + inputFile.getFile().getAbsolutePath() + "' with the charset : '"
+        + sourcesEncoding.name() + "'.", e);
+    }
+  }
+
