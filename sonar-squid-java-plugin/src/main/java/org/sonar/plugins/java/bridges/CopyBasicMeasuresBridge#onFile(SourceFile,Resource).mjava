@@ -3,11 +3,19 @@
     copy(squidFile, sonarResource, JavaMetric.LINES_OF_CODE, CoreMetrics.NCLOC);
     copy(squidFile, sonarResource, JavaMetric.LINES, CoreMetrics.LINES);
     copy(squidFile, sonarResource, JavaMetric.COMMENT_LINES_WITHOUT_HEADER, CoreMetrics.COMMENT_LINES);
-    copy(squidFile, sonarResource, Metric.PUBLIC_API, CoreMetrics.PUBLIC_API);
-    copy(squidFile, sonarResource, JavaMetric.COMPLEXITY, CoreMetrics.COMPLEXITY);
     copy(squidFile, sonarResource, JavaMetric.STATEMENTS, CoreMetrics.STATEMENTS);
     copy(squidFile, sonarResource, JavaMetric.FILES, CoreMetrics.FILES);
     copy(squidFile, sonarResource, JavaMetric.CLASSES, CoreMetrics.CLASSES);
+
+    copy(squidFile, sonarResource, JavaMetric.COMPLEXITY, CoreMetrics.COMPLEXITY);
+    context.saveMeasure(sonarResource, new RangeDistributionBuilder(CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, LIMITS)
+      .add(squidFile.getInt(JavaMetric.COMPLEXITY))
+      .build(true)
+      .setPersistenceMode(PersistenceMode.MEMORY));
+
+    copy(squidFile, sonarResource, Metric.PUBLIC_API, CoreMetrics.PUBLIC_API);
     context.saveMeasure(sonarResource, CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, ParsingUtils.scaleValue(squidFile.getDouble(Metric.PUBLIC_DOCUMENTED_API_DENSITY) * 100, 2));
+    double undocumentedApi = squidFile.getDouble(Metric.PUBLIC_API) - squidFile.getInt(Metric.PUBLIC_DOC_API);
+    context.saveMeasure(sonarResource, CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocumentedApi);
   }
 
