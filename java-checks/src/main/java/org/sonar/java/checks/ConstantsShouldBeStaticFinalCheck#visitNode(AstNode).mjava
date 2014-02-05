@@ -4,7 +4,7 @@
 
     if (isFinal(classMemberDeclaration) && !isStatic(classMemberDeclaration)) {
       for (AstNode variableDeclarator : node.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS).getChildren(JavaGrammar.VARIABLE_DECLARATOR)) {
-        if (hasConstantInitializer(variableDeclarator)) {
+        if ( !isObjectInInnerClass(classMemberDeclaration) && hasConstantInitializer(variableDeclarator)) {
           getContext().createLineViolation(this, "Make this final field static too.", variableDeclarator);
         }
       }
