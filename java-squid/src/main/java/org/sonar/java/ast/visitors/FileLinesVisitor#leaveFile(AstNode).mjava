@@ -1,8 +1,6 @@
   @Override
   public void leaveFile(AstNode astNode) {
-    SourceFile file = (SourceFile) getContext().peekSourceCode();
-    JavaFile javaFile = SquidUtils.convertJavaFileKeyFromSquidFormat(file.getKey());
-    FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(javaFile);
+    FileLinesContext fileLinesContext = sonarComponents.fileLinesContextFor(getContext().getFile());
 
     // TODO minimize access to files, another one in LinesVisitor
     int fileLength;

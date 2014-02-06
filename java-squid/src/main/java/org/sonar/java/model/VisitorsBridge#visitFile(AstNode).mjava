@@ -3,10 +3,8 @@
     if (astNode != null) {
       CompilationUnitTree tree = treeMaker.compilationUnit(astNode);
 
-      SourceFile sourceFile = peekSourceFile();
-      JavaFile sonarFile = SquidUtils.convertJavaFileKeyFromSquidFormat(sourceFile.getKey());
-      Issuable issuable = resourcePerspectives == null ? null : resourcePerspectives.as(Issuable.class, sonarFile);
-      JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, sourceFile, issuable, semanticModelProvider);
+      Issuable issuable = sonarComponents == null ? null : sonarComponents.issuableFor(getContext().getFile());
+      JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, peekSourceFile(), issuable, semanticModelProvider);
       for (JavaFileScanner scanner : scanners) {
         scanner.scanFile(context);
       }
