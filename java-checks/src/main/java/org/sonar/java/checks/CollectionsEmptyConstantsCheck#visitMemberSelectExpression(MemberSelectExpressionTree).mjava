@@ -1,0 +1,11 @@
+  @Override
+  public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+    super.visitMemberSelectExpression(tree);
+    String identifier = tree.identifier().name();
+    boolean isCollectionsCall = tree.expression().is(Kind.IDENTIFIER) && "Collections".equals(((IdentifierTree) tree.expression()).name());
+    boolean callEmptyConstant = identifier.startsWith("EMPTY_");
+    if (isCollectionsCall && callEmptyConstant) {
+      context.addIssue(tree, RULE, "Replace \"Collections."+identifier+"\" by \"Collections."+identifierReplacement.get(identifier)+"\".");
+    }
+  }
+
