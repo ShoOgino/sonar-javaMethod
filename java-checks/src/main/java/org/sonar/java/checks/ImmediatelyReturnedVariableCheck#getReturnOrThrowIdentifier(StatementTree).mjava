@@ -1,0 +1,17 @@
+  private String getReturnOrThrowIdentifier(StatementTree lastSatementOfBlock) {
+    String result = null;
+    lastTypeForMessage = null;
+    ExpressionTree expr = null;
+    if (lastSatementOfBlock.is(Kind.THROW_STATEMENT)) {
+      lastTypeForMessage = keys.get(Kind.THROW_STATEMENT);
+      expr = ((ThrowStatementTree) lastSatementOfBlock).expression();
+    } else if (lastSatementOfBlock.is(Kind.RETURN_STATEMENT)) {
+      lastTypeForMessage = keys.get(Kind.RETURN_STATEMENT);
+      expr = ((ReturnStatementTree) lastSatementOfBlock).expression();
+    }
+    if (expr != null && expr.is(Kind.IDENTIFIER)) {
+      result = ((IdentifierTree) expr).name();
+    }
+    return result;
+  }
+
