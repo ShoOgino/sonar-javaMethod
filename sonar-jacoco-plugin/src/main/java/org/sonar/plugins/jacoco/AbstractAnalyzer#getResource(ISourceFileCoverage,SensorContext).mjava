@@ -1,16 +1,8 @@
-  /**
-   * @deprecated usage of {@link JavaFile} should be removed for multi-language support in SQ 4.2 (SONARJAVA-438)
-   */
-  @Deprecated
-  @VisibleForTesting
-  static JavaFile getResource(ISourceFileCoverage coverage, SensorContext context) {
-    String packageName = StringUtils.replaceChars(coverage.getPackageName(), '/', '.');
-    String fileName = StringUtils.substringBeforeLast(coverage.getName(), ".");
+  private Resource getResource(ISourceFileCoverage coverage, SensorContext context) {
+    String className = coverage.getPackageName() + "/" + StringUtils.substringBeforeLast(coverage.getName(), ".");
 
-    JavaFile resource = new JavaFile(packageName, fileName);
-
-    JavaFile resourceInContext = context.getResource(resource);
-    if (null == resourceInContext) {
+    Resource resourceInContext = context.getResource(javaResourceLocator.findResourceByClassName(className));
+    if (resourceInContext == null) {
       // Do not save measures on resource which doesn't exist in the context
       return null;
     }

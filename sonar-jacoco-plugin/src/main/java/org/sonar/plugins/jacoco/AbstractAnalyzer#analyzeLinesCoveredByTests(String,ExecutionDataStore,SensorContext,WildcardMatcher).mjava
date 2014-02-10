@@ -1,3 +1,7 @@
+  /**
+   * @deprecated usage of {@link JavaFile} should be removed for multi-language support in SQ 4.2 (SONARJAVA-438)
+   */
+  @Deprecated
   private boolean analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore, SensorContext context, WildcardMatcher excludes) {
     int i = sessionId.indexOf(' ');
     if (i < 0) {
@@ -14,7 +18,7 @@
     boolean result = false;
     CoverageBuilder coverageBuilder = analyze2(executionDataStore);
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
-      JavaFile resource = getResource(coverage, context);
+      Resource resource = getResource(coverage, context);
       if (resource != null && !isExcluded(coverage, excludes)) {
         CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
         List<Integer> coveredLines = getCoveredLines(builder);
