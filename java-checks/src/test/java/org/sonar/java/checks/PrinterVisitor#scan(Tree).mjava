@@ -1,9 +1,14 @@
   @Override
   protected void scan(@Nullable Tree tree) {
     if (tree != null) {
-      indent().append(((JavaTree) tree).getKind().getAssociatedInterface());
+      Tree.Kind kind = ((JavaTree) tree).getKind();
+      String nodeName = ((JavaTree) tree).getClass().getSimpleName();
+      if (kind != null) {
+        nodeName = kind.getAssociatedInterface().getSimpleName();
+      }
+      indent().append(nodeName);
       AstNode node = ((JavaTree) tree).getAstNode();
-      if(node!=null){
+      if (node != null) {
         sb.append(" ").append(node.getTokenLine());
       }
       sb.append("\n");
