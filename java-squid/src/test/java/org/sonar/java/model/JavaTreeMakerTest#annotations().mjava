@@ -1,0 +1,29 @@
+  @Test
+  public void annotations() {
+    AstNode astNode = p.parse("@SuppressWarnings(\"unchecked\") class T { }");
+    ClassTree tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    List<AnnotationTree> annotations = tree.modifiers().annotations();
+    assertThat(annotations).hasSize(1);
+    AnnotationTree annotation = annotations.get(0);
+    assertThat(annotation.annotationType().is(Tree.Kind.IDENTIFIER)).isTrue();
+    assertThat(annotation.arguments()).hasSize(1);
+    assertThat(annotation.arguments().get(0).is(Tree.Kind.STRING_LITERAL)).isTrue();
+
+    astNode = p.parse("@Target({ElementType.METHOD}) class U {}");
+    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    annotations = tree.modifiers().annotations();
+    assertThat(annotations).hasSize(1);
+    annotation = annotations.get(0);
+    assertThat(annotation.arguments()).hasSize(1);
+    assertThat(annotation.arguments().get(0).is(Tree.Kind.NEW_ARRAY)).isTrue();
+
+    astNode = p.parse("@Target(value={ElementType.METHOD}, value2=\"toto\") class T { }");
+    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    annotations = tree.modifiers().annotations();
+    assertThat(annotations).hasSize(1);
+    annotation = annotations.get(0);
+    assertThat(annotation.annotationType().is(Tree.Kind.IDENTIFIER)).isTrue();
+    assertThat(annotation.arguments()).hasSize(2);
+    assertThat(annotation.arguments().get(0).is(Tree.Kind.ASSIGNMENT)).isTrue();
+  }
+

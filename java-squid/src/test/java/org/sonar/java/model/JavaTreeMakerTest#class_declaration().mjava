@@ -15,5 +15,10 @@
     assertThat(tree.simpleName()).isEqualTo("T");
     assertThat(tree.superClass()).isNull();
     assertThat(tree.superInterfaces()).isEmpty();
+
+    astNode = p.parse("@Deprecated class T { }");
+    assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
+    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    assertThat(tree.modifiers().annotations()).hasSize(1);
   }
 

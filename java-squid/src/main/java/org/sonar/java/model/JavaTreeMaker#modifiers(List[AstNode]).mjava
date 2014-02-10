@@ -4,16 +4,17 @@
     }
 
     ImmutableList.Builder<Modifier> modifiers = ImmutableList.builder();
+    ImmutableList.Builder<AnnotationTree> annotations = ImmutableList.builder();
     for (AstNode astNode : modifierNodes) {
       Preconditions.checkArgument(astNode.is(JavaGrammar.MODIFIER), "Unexpected AstNodeType: %s", astNode.getType().toString());
       astNode = astNode.getFirstChild();
       if (astNode.is(JavaGrammar.ANNOTATION)) {
-        // TODO
+        annotations.add(annotation(astNode));
       } else {
         JavaKeyword keyword = (JavaKeyword) astNode.getType();
         modifiers.add(kindMaps.getModifier(keyword));
       }
     }
-    return new JavaTree.ModifiersTreeImpl(modifierNodes.get(0), modifiers.build());
+    return new JavaTree.ModifiersTreeImpl(modifierNodes.get(0), modifiers.build(), annotations.build());
   }
 
