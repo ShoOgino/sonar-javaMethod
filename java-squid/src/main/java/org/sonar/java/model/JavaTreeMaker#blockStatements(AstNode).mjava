@@ -3,19 +3,19 @@
     ImmutableList.Builder<StatementTree> statements = ImmutableList.builder();
     for (AstNode blockStatementNode : astNode.getChildren(JavaGrammar.BLOCK_STATEMENT)) {
       AstNode statementNode = blockStatementNode.getFirstChild(
-        JavaGrammar.STATEMENT,
-        JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
-        JavaGrammar.CLASS_DECLARATION,
-        JavaGrammar.ENUM_DECLARATION
-        );
+          JavaGrammar.STATEMENT,
+          JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
+          JavaGrammar.CLASS_DECLARATION,
+          JavaGrammar.ENUM_DECLARATION
+      );
       if (statementNode.is(JavaGrammar.STATEMENT)) {
         statements.add(statement(statementNode));
       } else if (statementNode.is(JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
         statements.addAll(variableDeclarators(
-          variableModifiers(statementNode.getFirstChild(JavaGrammar.VARIABLE_MODIFIERS)),
-          referenceType(statementNode.getFirstChild(JavaGrammar.TYPE)),
-          statementNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
-          ));
+            variableModifiers(statementNode.getFirstChild(JavaGrammar.VARIABLE_MODIFIERS)),
+            referenceType(statementNode.getFirstChild(JavaGrammar.TYPE)),
+            statementNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
+        ));
       } else if (statementNode.is(JavaGrammar.CLASS_DECLARATION)) {
         statements.add(classDeclaration(modifiers(blockStatementNode.getChildren(JavaGrammar.MODIFIER)), statementNode));
       } else if (statementNode.is(JavaGrammar.ENUM_DECLARATION)) {

@@ -11,32 +11,32 @@
       } else if (forInitNode.hasDirectChildren(JavaGrammar.VARIABLE_DECLARATORS)) {
         // TODO modifiers
         forInit = variableDeclarators(
-          JavaTree.ModifiersTreeImpl.EMPTY,
-          referenceType(forInitNode.getFirstChild(JavaGrammar.TYPE)),
-          forInitNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
-          );
+            JavaTree.ModifiersTreeImpl.EMPTY,
+            referenceType(forInitNode.getFirstChild(JavaGrammar.TYPE)),
+            forInitNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS)
+        );
       } else {
         forInit = statementExpressions(astNode.getFirstChild(JavaGrammar.FOR_INIT));
       }
       return new JavaTree.ForStatementTreeImpl(
-        astNode,
-        forInit,
-        astNode.hasDirectChildren(JavaGrammar.EXPRESSION) ? expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)) : null,
-        astNode.hasDirectChildren(JavaGrammar.FOR_UPDATE) ? statementExpressions(astNode.getFirstChild(JavaGrammar.FOR_UPDATE)) : ImmutableList.<StatementTree>of(),
-        statement(astNode.getFirstChild(JavaGrammar.STATEMENT)));
+          astNode,
+          forInit,
+          astNode.hasDirectChildren(JavaGrammar.EXPRESSION) ? expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)) : null,
+          astNode.hasDirectChildren(JavaGrammar.FOR_UPDATE) ? statementExpressions(astNode.getFirstChild(JavaGrammar.FOR_UPDATE)) : ImmutableList.<StatementTree>of(),
+          statement(astNode.getFirstChild(JavaGrammar.STATEMENT)));
     } else {
       return new JavaTree.ForEachStatementImpl(
-        astNode,
-        new JavaTree.VariableTreeImpl(
-          formalParameterNode,
-          JavaTree.ModifiersTreeImpl.EMPTY,
-          // TODO dim
-          referenceType(formalParameterNode.getFirstChild(JavaGrammar.TYPE)),
-          formalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(),
+          astNode,
+          new JavaTree.VariableTreeImpl(
+              formalParameterNode,
+              JavaTree.ModifiersTreeImpl.EMPTY,
+              // TODO dim
+              referenceType(formalParameterNode.getFirstChild(JavaGrammar.TYPE)),
+              formalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(),
           /* initializer: */null
-        ),
-        expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)),
-        statement(astNode.getFirstChild(JavaGrammar.STATEMENT)));
+          ),
+          expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)),
+          statement(astNode.getFirstChild(JavaGrammar.STATEMENT)));
     }
   }
 

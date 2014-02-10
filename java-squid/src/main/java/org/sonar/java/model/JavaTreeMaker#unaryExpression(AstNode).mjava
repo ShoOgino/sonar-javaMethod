@@ -7,17 +7,17 @@
     if (astNode.hasDirectChildren(JavaGrammar.TYPE)) {
       // 15.16. Cast Expressions
       return new JavaTree.TypeCastExpressionTreeImpl(
-        astNode,
-        referenceType(astNode.getFirstChild(JavaGrammar.TYPE)),
-        expression(astNode.getChild(3)));
+          astNode,
+          referenceType(astNode.getFirstChild(JavaGrammar.TYPE)),
+          expression(astNode.getChild(3)));
     } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP)) {
       // 15.15. Unary Operators
       JavaPunctuator punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP).getFirstChild().getType();
       Tree.Kind kind = kindMaps.getPrefixOperator(punctuator);
       return new JavaTree.UnaryExpressionTreeImpl(
-        astNode,
-        kind,
-        expression(astNode.getChild(1)));
+          astNode,
+          kind,
+          expression(astNode.getChild(1)));
     } else {
       // 15.14. Postfix Expressions
       ExpressionTree result = expression(astNode.getFirstChild());

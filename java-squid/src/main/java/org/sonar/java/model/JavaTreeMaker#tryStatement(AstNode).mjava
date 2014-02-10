@@ -9,18 +9,18 @@
     for (AstNode catchNode : astNode.getChildren(JavaGrammar.CATCH_CLAUSE)) {
       AstNode catchFormalParameterNode = catchNode.getFirstChild(JavaGrammar.CATCH_FORMAL_PARAMETER);
       catches.add(new JavaTree.CatchTreeImpl(
-        catchNode,
-        new JavaTree.VariableTreeImpl(
-          catchFormalParameterNode,
-          // TODO modifiers:
-          JavaTree.ModifiersTreeImpl.EMPTY,
-          catchType(catchFormalParameterNode.getFirstChild(JavaGrammar.CATCH_TYPE)),
-          // TODO WTF why VARIABLE_DECLARATOR_ID in grammar?
-          catchFormalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(),
+          catchNode,
+          new JavaTree.VariableTreeImpl(
+              catchFormalParameterNode,
+              // TODO modifiers:
+              JavaTree.ModifiersTreeImpl.EMPTY,
+              catchType(catchFormalParameterNode.getFirstChild(JavaGrammar.CATCH_TYPE)),
+              // TODO WTF why VARIABLE_DECLARATOR_ID in grammar?
+              catchFormalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue(),
           /* initializer: */null
-        ),
-        block(catchNode.getFirstChild(JavaGrammar.BLOCK))
-        ));
+          ),
+          block(catchNode.getFirstChild(JavaGrammar.BLOCK))
+      ));
     }
     BlockTree finallyBlock = null;
     if (astNode.hasDirectChildren(JavaGrammar.FINALLY_)) {
@@ -28,10 +28,10 @@
     }
     AstNode resourceSpecificationNode = astNode.getFirstChild(JavaGrammar.RESOURCE_SPECIFICATION);
     return new JavaTree.TryStatementTreeImpl(
-      astNode,
-      resourceSpecificationNode == null ? ImmutableList.<VariableTree>of() : resourceSpecification(resourceSpecificationNode),
-      block(astNode.getFirstChild(JavaGrammar.BLOCK)),
-      catches.build(),
-      finallyBlock);
+        astNode,
+        resourceSpecificationNode == null ? ImmutableList.<VariableTree>of() : resourceSpecification(resourceSpecificationNode),
+        block(astNode.getFirstChild(JavaGrammar.BLOCK)),
+        catches.build(),
+        finallyBlock);
   }
 

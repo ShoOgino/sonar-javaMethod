@@ -4,20 +4,20 @@
     AstNode explicitGenericInvocationSuffixNode = astNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION_SUFFIX);
     if (explicitGenericInvocationSuffixNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
       expression = new JavaTree.MemberSelectExpressionTreeImpl(
-        astNode,
-        expression,
-        identifier(explicitGenericInvocationSuffixNode.getFirstChild(JavaKeyword.SUPER))
-        );
+          astNode,
+          expression,
+          identifier(explicitGenericInvocationSuffixNode.getFirstChild(JavaKeyword.SUPER))
+      );
       return applySuperSuffix(expression, explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.SUPER_SUFFIX));
     } else {
       return new JavaTree.MethodInvocationTreeImpl(
-        astNode,
-        new JavaTree.MemberSelectExpressionTreeImpl(
           astNode,
-          expression,
-          identifier(explicitGenericInvocationSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER))
-        ),
-        arguments(explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)));
+          new JavaTree.MemberSelectExpressionTreeImpl(
+              astNode,
+              expression,
+              identifier(explicitGenericInvocationSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER))
+          ),
+          arguments(explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)));
     }
   }
 

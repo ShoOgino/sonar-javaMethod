@@ -13,23 +13,23 @@
         AstNode classBodyNode = enumConstantNode.getFirstChild(JavaGrammar.CLASS_BODY);
         IdentifierTree enumIdentifier = identifier(enumConstantNode.getFirstChild(JavaTokenType.IDENTIFIER));
         members.add(new JavaTree.EnumConstantTreeImpl(
-          enumConstantNode,
-          JavaTree.ModifiersTreeImpl.EMPTY,
-          enumType,
-          enumIdentifier.name(),
-          new JavaTree.NewClassTreeImpl(
             enumConstantNode,
+            JavaTree.ModifiersTreeImpl.EMPTY,
+            enumType,
+            enumIdentifier.name(),
+            new JavaTree.NewClassTreeImpl(
+                enumConstantNode,
             /* enclosing expression: */null,
-            enumIdentifier,
-            argumentsNode != null ? arguments(argumentsNode) : ImmutableList.<ExpressionTree>of(),
-            classBodyNode == null ? null : new JavaTree.ClassTreeImpl(
-              classBodyNode,
-              Tree.Kind.CLASS,
-              JavaTree.ModifiersTreeImpl.EMPTY,
-              classBody(classBodyNode)
-              )
-          )
-          ));
+                enumIdentifier,
+                argumentsNode != null ? arguments(argumentsNode) : ImmutableList.<ExpressionTree>of(),
+                classBodyNode == null ? null : new JavaTree.ClassTreeImpl(
+                    classBodyNode,
+                    Tree.Kind.CLASS,
+                    JavaTree.ModifiersTreeImpl.EMPTY,
+                    classBody(classBodyNode)
+                )
+            )
+        ));
       }
     }
     AstNode enumBodyDeclarationsNode = enumBodyNode.getFirstChild(JavaGrammar.ENUM_BODY_DECLARATIONS);

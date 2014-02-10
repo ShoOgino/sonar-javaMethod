@@ -10,23 +10,23 @@
       labels.add(new JavaTree.CaseLabelTreeImpl(caseNode, expressionNode != null ? expression(expressionNode) : null));
       if (blockStatementsNode.hasChildren()) {
         cases.add(new JavaTree.CaseGroupTreeImpl(
-          labels.get(0).getAstNode(),
-          ImmutableList.<CaseLabelTree>copyOf(labels),
-          blockStatements(caseNode.getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
-          ));
+            labels.get(0).getAstNode(),
+            ImmutableList.<CaseLabelTree>copyOf(labels),
+            blockStatements(caseNode.getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
+        ));
         labels.clear();
       }
     }
     if (!labels.isEmpty()) {
       cases.add(new JavaTree.CaseGroupTreeImpl(
-        labels.get(0).getAstNode(),
-        ImmutableList.<CaseLabelTree>copyOf(labels),
-        ImmutableList.<StatementTree>of()
-        ));
+          labels.get(0).getAstNode(),
+          ImmutableList.<CaseLabelTree>copyOf(labels),
+          ImmutableList.<StatementTree>of()
+      ));
     }
     return new JavaTree.SwitchStatementTreeImpl(
-      astNode,
-      expression(astNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
-      cases.build());
+        astNode,
+        expression(astNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
+        cases.build());
   }
 

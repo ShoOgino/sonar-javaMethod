@@ -10,19 +10,19 @@
         AstNode memberDeclNode = classBodyDeclaration.getFirstChild(JavaGrammar.MEMBER_DECL);
         if (memberDeclNode.hasDirectChildren(JavaGrammar.FIELD_DECLARATION)) {
           members.addAll(fieldDeclaration(
-            modifiers,
-            memberDeclNode.getFirstChild(JavaGrammar.FIELD_DECLARATION)
-            ));
+              modifiers,
+              memberDeclNode.getFirstChild(JavaGrammar.FIELD_DECLARATION)
+          ));
         } else {
           members.add(memberDeclaration(modifiers, memberDeclNode));
         }
       } else if (classBodyDeclaration.getFirstChild().is(JavaGrammar.CLASS_INIT_DECLARATION)) {
         AstNode classInitDeclarationNode = classBodyDeclaration.getFirstChild();
         members.add(new JavaTree.BlockTreeImpl(
-          classInitDeclarationNode,
-          classInitDeclarationNode.hasDirectChildren(JavaKeyword.STATIC) ? Tree.Kind.STATIC_INITIALIZER : Tree.Kind.INITIALIZER,
-          blockStatements(classInitDeclarationNode.getFirstChild(JavaGrammar.BLOCK).getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
-          ));
+            classInitDeclarationNode,
+            classInitDeclarationNode.hasDirectChildren(JavaKeyword.STATIC) ? Tree.Kind.STATIC_INITIALIZER : Tree.Kind.INITIALIZER,
+            blockStatements(classInitDeclarationNode.getFirstChild(JavaGrammar.BLOCK).getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
+        ));
       }
     }
     return members.build();

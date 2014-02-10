@@ -25,5 +25,17 @@
     assertThat(annotation.annotationType().is(Tree.Kind.IDENTIFIER)).isTrue();
     assertThat(annotation.arguments()).hasSize(2);
     assertThat(annotation.arguments().get(0).is(Tree.Kind.ASSIGNMENT)).isTrue();
+
+    astNode = p.parse("class T { private void meth() { @NonNullable String str;}}");
+    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    VariableTree variable = (VariableTree)((MethodTree) tree.members().get(0)).block().body().get(0);
+    annotations = variable.modifiers().annotations();
+    assertThat(annotations).hasSize(1);
+    annotation = annotations.get(0);
+    assertThat(annotation.annotationType().is(Tree.Kind.IDENTIFIER)).isTrue();
+
+    astNode = p.parse("@PackageLevelAnnotation package blammy;");
+    annotations = maker.compilationUnit(astNode).packageAnnotations();
+    assertThat(annotations).hasSize(1);
   }
 
