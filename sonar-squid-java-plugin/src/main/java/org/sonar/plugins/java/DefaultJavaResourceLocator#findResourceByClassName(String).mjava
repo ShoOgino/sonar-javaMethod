@@ -1,0 +1,10 @@
+  @Override
+  public Resource findResourceByClassName(String name) {
+    Preconditions.checkState(squidIndex != null);
+    name = name.replace('.', '/');
+    SourceCode sourceCode = squidIndex.search(name);
+    Preconditions.checkState(sourceCode instanceof SourceClass);
+    String filePath = sourceCode.getParent(SourceFile.class).getName();
+    return org.sonar.api.resources.File.fromIOFile(new File(filePath), project);
+  }
+

@@ -9,6 +9,8 @@
     JavaSquid squid = new JavaSquid(createConfiguration(project), sonarComponents, checks.toArray(new CodeVisitor[checks.size()]));
     squid.scan(sourceFiles, getBytecodeFiles(project));
 
+    javaResourceLocator.setSquidIndex(squid.getIndex());
+
     new Bridges(squid).save(context, project, annotationCheckFactory, noSonarFilter);
   }
 
