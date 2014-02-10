@@ -1,10 +1,6 @@
   @Test
   public void shouldAnalyse() {
-    Project project = mock(Project.class);
-    ProjectFileSystem fs = mock(ProjectFileSystem.class);
-    when(fs.mainFiles("java")).thenReturn(Lists.newArrayList(InputFileUtils.create(null, "")));
-    when(project.getFileSystem()).thenReturn(fs);
-    when(project.getLanguageKey()).thenReturn("java");
+    when(fileSystem.mainFiles("java")).thenReturn(Collections.singletonList(mock(InputFile.class)));
     when(project.getAnalysisType()).thenReturn(Project.AnalysisType.DYNAMIC);
     assertThat(initializer.shouldExecuteOnProject(project)).isTrue();
   }
