@@ -1,6 +1,15 @@
   @Before
   public void before() {
     perspectives = mock(ResourcePerspectives.class);
-    parser = new SurefireJavaParser(perspectives);
+
+    javaResourceLocator = mock(JavaResourceLocator.class);
+    when(javaResourceLocator.findResourceByClassName(anyString())).thenAnswer(new Answer<Resource>() {
+      @Override
+      public Resource answer(InvocationOnMock invocation) throws Throwable {
+        return new JavaFile((String) invocation.getArguments()[0], true);
+      }
+    });
+
+    parser = new SurefireJavaParser(perspectives, javaResourceLocator);
   }
 
