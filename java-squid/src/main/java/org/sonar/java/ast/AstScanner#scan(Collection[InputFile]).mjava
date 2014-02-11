@@ -5,42 +5,7 @@
     VisitorContext context = new VisitorContext(project);
     context.setCommentAnalyser(commentAnalyser);
 
-    for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
-      visitor.setContext(context);
-      visitor.init();
-    }
-
-    AstWalker astWalker = new AstWalker(visitors);
-
-    ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer", TimeUnit.SECONDS.toMillis(10));
-    progressReport.start(files.size() + " source files to be analyzed");
-    int count = 0;
-    for (InputFile inputFile : files) {
-      File file = inputFile.getFile();
-
-      progressReport.message(count + "/" + files.size() + " files analyzed, current is " + file.getAbsolutePath());
-      count++;
-
-      context.setFile(file);
-      context.setInputFile(inputFile);
-
-      try {
-        AstNode ast = parser.parse(file);
-        astWalker.walkAndVisit(ast);
-      } catch (RecognitionException e) {
-        LOG.error("Unable to parse source file : " + file.getAbsolutePath());
-        LOG.error(e.getMessage());
-
-        parseErrorWalkAndVisit(e, file);
-      } catch (Exception e) {
-        throw new AnalysisException(getAnalyisExceptionMessage(file), e);
-      }
-    }
-    progressReport.stop(files.size() + "/" + files.size() + " source files analyzed");
-
-    for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
-      visitor.destroy();
-    }
+    simpleScan(files);
 
     SourceCodeTreeDecorator decorator = new SourceCodeTreeDecorator(project);
     decorator.decorateWith(JavaMetric.values());
