@@ -2,12 +2,12 @@
     ImmutableList.Builder<ExpressionTree> arguments = ImmutableList.builder();
     ExpressionTree annotationType = qualifiedIdentifier(astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
     if (astNode.hasDirectChildren(JavaGrammar.ANNOTATION_REST)) {
-      astNode = astNode.getFirstChild(JavaGrammar.ANNOTATION_REST).getFirstChild();
-      if (astNode.is(JavaGrammar.SINGLE_ELEMENT_ANNOTATION_REST)) {
-        arguments.add(elementValue(astNode.getFirstChild(JavaGrammar.ELEMENT_VALUE)));
-      } else if (astNode.is(JavaGrammar.NORMAL_ANNOTATION_REST)) {
-        astNode = astNode.getFirstChild(JavaGrammar.ELEMENT_VALUE_PAIRS);
-        List<AstNode> values = astNode.getChildren(JavaGrammar.ELEMENT_VALUE_PAIR);
+      AstNode annotationRest = astNode.getFirstChild(JavaGrammar.ANNOTATION_REST).getFirstChild();
+      if (annotationRest.is(JavaGrammar.SINGLE_ELEMENT_ANNOTATION_REST)) {
+        arguments.add(elementValue(annotationRest.getFirstChild(JavaGrammar.ELEMENT_VALUE)));
+      } else if (annotationRest.is(JavaGrammar.NORMAL_ANNOTATION_REST)) {
+        AstNode elementValuePairs = annotationRest.getFirstChild(JavaGrammar.ELEMENT_VALUE_PAIRS);
+        List<AstNode> values = elementValuePairs.getChildren(JavaGrammar.ELEMENT_VALUE_PAIR);
         for (AstNode value : values) {
           AstNode identifier = value.getFirstChild(JavaTokenType.IDENTIFIER);
           arguments.add(new JavaTree.AssignmentExpressionTreeImpl(
