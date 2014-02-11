@@ -1,12 +1,10 @@
   private String getPackageKey(AstNode astNode) {
-    String packageKey;
     if (astNode != null && astNode.getFirstChild().is(JavaGrammar.PACKAGE_DECLARATION)) {
       AstNode packageNameNode = astNode.getFirstChild().getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
-      packageKey = getAstNodeValue(packageNameNode).replace('.', '/');
+      return getAstNodeValue(packageNameNode).replace('.', '/');
     } else {
-      packageKey = guessPackageKey();
+      // unnamed package
+      return "";
     }
-    checkPhysicalDirectory(packageKey);
-    return packageKey;
   }
 
