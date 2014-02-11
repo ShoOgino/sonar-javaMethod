@@ -1,13 +1,13 @@
   @Override
   public void visitCaseGroup(CaseGroupTree tree) {
-    invalidCaseGroups.add(tree);
+    currentTree = tree;
+    invalidCaseGroups.push(tree);
 
     super.visitCaseGroup(tree);
 
-    boolean wasInInvalidSet = invalidCaseGroups.remove(tree);
-
-    if (wasInInvalidSet) {
+    if (invalidCaseGroups.remove(tree)) {
       context.addIssue(Iterables.getLast(tree.labels()), ruleKey, "End this switch case with an unconditional break, continue, return or throw statement.");
     }
+    currentTree = invalidCaseGroups.peek();
   }
 
