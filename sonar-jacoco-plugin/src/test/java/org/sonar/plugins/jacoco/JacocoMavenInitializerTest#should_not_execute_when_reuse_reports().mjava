@@ -1,0 +1,9 @@
+  @Test
+  public void should_not_execute_when_reuse_reports() {
+    when(jacocoSettings.isEnabled(project)).thenReturn(true);
+    when(project.getFileSystem().testFiles(Java.KEY)).thenReturn(Collections.singletonList(mock(InputFile.class)));
+    when(project.getAnalysisType()).thenReturn(Project.AnalysisType.REUSE_REPORTS);
+
+    assertThat(initializer.shouldExecuteOnProject(project)).isFalse();
+  }
+

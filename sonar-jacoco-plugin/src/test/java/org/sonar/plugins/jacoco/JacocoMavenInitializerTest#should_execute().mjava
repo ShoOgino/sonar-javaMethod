@@ -1,8 +1,7 @@
   @Test
-  public void shouldExecuteMaven() {
-    Project project = mockProject();
-    InputFile inputFile = mock(InputFile.class);
-    when(project.getFileSystem().testFiles(Java.KEY)).thenReturn(Collections.singletonList(inputFile));
+  public void should_execute() {
+    when(jacocoSettings.isEnabled(project)).thenReturn(true);
+    when(project.getFileSystem().testFiles(Java.KEY)).thenReturn(Collections.singletonList(mock(InputFile.class)));
     when(project.getAnalysisType()).thenReturn(Project.AnalysisType.DYNAMIC);
 
     assertThat(initializer.shouldExecuteOnProject(project)).isTrue();
