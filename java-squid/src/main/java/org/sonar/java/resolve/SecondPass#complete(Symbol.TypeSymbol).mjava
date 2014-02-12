@@ -18,6 +18,14 @@
     AstNode superclassNode = astNode.getFirstChild(JavaGrammar.CLASS_TYPE);
     if (superclassNode != null) {
       ((Type.ClassType) symbol.type).supertype = resolveType(env, superclassNode).type;
+      Set<Type.ClassType> types = Sets.newHashSet();
+      Type.ClassType type = (Type.ClassType) symbol.type;
+      while (type != null) {
+        if (!types.add(type)) {
+          throw new IllegalStateException();
+        }
+        type = (Type.ClassType) type.supertype;
+      }
     } else {
       // TODO superclass is java.lang.Object or java.lang.Enum
     }
