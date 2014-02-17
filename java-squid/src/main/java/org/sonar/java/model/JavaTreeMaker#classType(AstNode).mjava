@@ -1,6 +1,6 @@
   private ExpressionTree classType(AstNode astNode) {
     checkType(astNode, JavaGrammar.CLASS_TYPE, JavaGrammar.CREATED_NAME);
-    AstNode child = astNode.getFirstChild();
+    AstNode child = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
     ExpressionTree result = identifier(child);
     for (int i = 1; i < astNode.getNumberOfChildren(); i++) {
       child = astNode.getChild(i);
@@ -10,8 +10,8 @@
         result = new JavaTree.ParameterizedTypeTreeImpl(child, result, typeArguments(child));
       } else if (child.is(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
         result = new JavaTree.ParameterizedTypeTreeImpl(child, result, nonWildcardTypeArguments(child));
-      } else if (!child.is(JavaPunctuator.DOT)) {
-        throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
+      } else if (!(child.is(JavaPunctuator.DOT) || child.is(JavaGrammar.ANNOTATION))) {
+        throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString()+" at line "+astNode.getTokenLine()+" column "+astNode.getToken().getColumn());
       }
     }
     return result;

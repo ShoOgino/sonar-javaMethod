@@ -1,10 +1,7 @@
   private static AstNode getMethod(AstNode node) {
-    AstNode result = node.getParent();
-
-    while (result != null && !result.is(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.CLASS_BODY_DECLARATION)) {
-      result = result.getParent();
-    }
-
-    return result;
+    return node.getFirstAncestor(JavaGrammar.METHOD_DECLARATOR_REST,
+        JavaGrammar.CLASS_BODY_DECLARATION,
+        JavaGrammar.INTERFACE_METHOD_OR_FIELD_REST,
+        JavaGrammar.INTERFACE_GENERIC_METHOD_DECL);
   }
 

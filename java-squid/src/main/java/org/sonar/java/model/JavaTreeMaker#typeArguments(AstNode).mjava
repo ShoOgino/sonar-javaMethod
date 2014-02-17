@@ -3,9 +3,9 @@
     checkType(astNode, JavaGrammar.TYPE_ARGUMENTS);
     ImmutableList.Builder<Tree> result = ImmutableList.builder();
     for (AstNode child : astNode.getChildren(JavaGrammar.TYPE_ARGUMENT)) {
-      AstNode referenceTypeNode = child.getFirstChild(JavaGrammar.REFERENCE_TYPE);
+      AstNode referenceTypeNode = child.getFirstChild(JavaGrammar.TYPE);
       Tree typeArgument = referenceTypeNode != null ? referenceType(referenceTypeNode) : null;
-      if (child.getFirstChild().is(JavaPunctuator.QUERY)) {
+      if (child.hasDirectChildren(JavaPunctuator.QUERY)) {
         final Tree.Kind kind;
         if (child.hasDirectChildren(JavaKeyword.EXTENDS)) {
           kind = Tree.Kind.EXTENDS_WILDCARD;

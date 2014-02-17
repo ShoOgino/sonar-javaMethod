@@ -1,0 +1,7 @@
+  @Test
+  public void method_reference_expression_should_not_break_AST() throws Exception {
+    AstNode astNode = p.parse("class T { public void meth(){IntStream.range(1,12).map(new MethodReferences()::square).forEach(System.out::println);}}").getFirstDescendant(JavaGrammar.EXPRESSION);
+    ExpressionTree expressionTree = maker.expression(astNode);
+    assertThat(expressionTree).isNotNull();
+  }
+
