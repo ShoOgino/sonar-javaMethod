@@ -14,8 +14,9 @@
       .setPersistenceMode(PersistenceMode.MEMORY));
 
     copy(squidFile, sonarResource, Metric.PUBLIC_API, CoreMetrics.PUBLIC_API);
-    context.saveMeasure(sonarResource, CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, ParsingUtils.scaleValue(squidFile.getDouble(Metric.PUBLIC_DOCUMENTED_API_DENSITY) * 100, 2));
+    double undocumentedApiDensity = ParsingUtils.scaleValue(squidFile.getDouble(Metric.PUBLIC_DOCUMENTED_API_DENSITY) * 100, 2);
+    context.saveMeasure(sonarResource, new Measure(CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, undocumentedApiDensity));
     double undocumentedApi = squidFile.getDouble(Metric.PUBLIC_API) - squidFile.getInt(Metric.PUBLIC_DOC_API);
-    context.saveMeasure(sonarResource, CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocumentedApi);
+    context.saveMeasure(sonarResource, new Measure(CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocumentedApi));
   }
 
