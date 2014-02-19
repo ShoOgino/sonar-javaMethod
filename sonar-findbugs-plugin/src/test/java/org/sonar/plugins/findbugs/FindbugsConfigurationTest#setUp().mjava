@@ -1,7 +1,11 @@
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     baseDir = temp.newFolder("findbugs");
-    fs = new SimpleModuleFileSystem(baseDir);
+
+    fs = mock(ModuleFileSystem.class);
+    when(fs.workingDir()).thenReturn(temp.newFolder());
+    when(fs.baseDir()).thenReturn(baseDir);
+
     settings = new Settings(new PropertyDefinitions().addComponents(FindbugsConfiguration.getPropertyDefinitions()));
     classpath = mock(ProjectClasspath.class);
     javaResourceLocator = mock(JavaResourceLocator.class);
