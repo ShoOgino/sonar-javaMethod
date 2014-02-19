@@ -4,16 +4,12 @@
       findbugsProject.addSourceDir(dir.getAbsolutePath());
     }
 
-    List<File> classesToAnalyze = new FindbugsSourceBinaryMatcher(
-      fileSystem.sourceDirs(),
-      fileSystem.binaryDirs())
-      .classesToAnalyze(fileSystem.files(FileQuery.onSource()));
-
-    for (File classToAnalyze : classesToAnalyze) {
+    Collection<File> classFilesToAnalyze = javaResourceLocator.classFilesToAnalyze();
+    for (File classToAnalyze : classFilesToAnalyze) {
       findbugsProject.addFile(classToAnalyze.getCanonicalPath());
     }
 
-    if (classesToAnalyze.isEmpty()) {
+    if (classFilesToAnalyze.isEmpty()) {
       throw new SonarException("Findbugs needs sources to be compiled. "
         + "Please build project before executing sonar and check the location of compiled classes.");
     }
