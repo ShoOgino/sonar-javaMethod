@@ -1,8 +1,7 @@
   @Override
   public Collection<File> classFilesToAnalyze() {
-    Preconditions.checkState(squidIndex != null, "SquidIndex can't be null");
     ImmutableList.Builder<File> result = ImmutableList.builder();
-    Collection<SourceCode> sourceClasses = squidIndex.search(new QueryByType(SourceClass.class));
+    Collection<SourceCode> sourceClasses = getSquidIndex().search(new QueryByType(SourceClass.class));
 
     for (SourceCode sourceClass : sourceClasses) {
       String filePath = sourceClass.getKey() + ".class";
