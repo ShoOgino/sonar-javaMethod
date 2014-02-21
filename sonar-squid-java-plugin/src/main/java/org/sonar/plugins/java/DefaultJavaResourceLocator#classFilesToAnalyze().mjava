@@ -5,10 +5,12 @@
 
     for (SourceCode sourceClass : sourceClasses) {
       String filePath = sourceClass.getKey() + ".class";
-      // TODO can be several build directories
-      File classFile = new File(project.getFileSystem().getBuildOutputDir(), filePath);
-      if (classFile.isFile()) {
-        result.add(classFile);
+      for (File binaryDir : fileSystem.binaryDirs()) {
+        File classFile = new File(binaryDir, filePath);
+        if (classFile.isFile()) {
+          result.add(classFile);
+          break;
+        }
       }
     }
     return result.build();
