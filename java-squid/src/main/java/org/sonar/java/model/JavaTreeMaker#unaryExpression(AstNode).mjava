@@ -4,15 +4,27 @@
    * 15.16. Cast Expressions
    */
   private ExpressionTree unaryExpression(AstNode astNode) {
-    if (astNode.hasDirectChildren(JavaGrammar.TYPE)) {
+    if (astNode.is(JavaGrammar.CAST_EXPRESSION)) {
       // 15.16. Cast Expressions
+      AstNode typeNode = astNode.getFirstChild(JavaPunctuator.LPAR).getNextSibling();
+      Tree type;
+      if(typeNode.is(JavaGrammar.BASIC_TYPE)){
+        type = basicType(typeNode);
+      }else{
+        type = referenceType(typeNode);
+      }
       return new JavaTree.TypeCastExpressionTreeImpl(
           astNode,
-          referenceType(astNode.getFirstChild(JavaGrammar.TYPE)),
-          expression(astNode.getChild(3)));
-    } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP)) {
+          type,
+          expression(astNode.getFirstChild(JavaPunctuator.RPAR).getNextSibling()));
+    } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP, JavaPunctuator.TILDA, JavaPunctuator.BANG)) {
       // 15.15. Unary Operators
-      JavaPunctuator punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP).getFirstChild().getType();
+      JavaPunctuator punctuator;
+      if(astNode.hasDirectChildren(JavaPunctuator.TILDA, JavaPunctuator.BANG)){
+        punctuator = (JavaPunctuator) astNode.getFirstChild(JavaPunctuator.TILDA, JavaPunctuator.BANG).getType();
+      }else{
+        punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP, JavaPunctuator.TILDA, JavaPunctuator.BANG).getFirstChild().getType();
+      }
       Tree.Kind kind = kindMaps.getPrefixOperator(punctuator);
       return new JavaTree.UnaryExpressionTreeImpl(
           astNode,

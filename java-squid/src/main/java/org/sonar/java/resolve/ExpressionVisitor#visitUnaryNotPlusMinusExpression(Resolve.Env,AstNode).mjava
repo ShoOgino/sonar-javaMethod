@@ -1,0 +1,15 @@
+  private Type visitUnaryNotPlusMinusExpression(Resolve.Env env, AstNode astNode) {
+    Type result;
+    AstNode grandChild = astNode.getFirstChild();
+    if (grandChild.is(JavaGrammar.PRIMARY)) {
+      Type type = getType(grandChild);
+      for (AstNode selectorNode : astNode.getChildren(JavaGrammar.SELECTOR)) {
+        type = applySelector(env, type, selectorNode);
+      }
+      result = type;
+    } else {
+      result = getType(astNode.getFirstChild(JavaPunctuator.BANG, JavaPunctuator.TILDA).getNextSibling());
+    }
+    return result;
+  }
+
