@@ -1,0 +1,9 @@
+  @Override
+  public void visitLambdaExpression(LambdaExpressionTree lambdaExpressionTree) {
+    int lines = getNumberOfLines(((JavaTree) lambdaExpressionTree.body()).getAstNode());
+    if (lines > max) {
+      context.addIssue(lambdaExpressionTree, RULE, "Reduce this lambda expression number of lines from " + lines + " to at most " + max + ".");
+    }
+    super.visitLambdaExpression(lambdaExpressionTree);
+  }
+
