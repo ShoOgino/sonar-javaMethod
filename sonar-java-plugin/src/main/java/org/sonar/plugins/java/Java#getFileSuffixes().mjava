@@ -4,6 +4,10 @@
    * @see org.sonar.api.resources.AbstractLanguage#getFileSuffixes()
    */
   public String[] getFileSuffixes() {
-    return (String[]) ArrayUtils.clone(SUFFIXES);
+    String[] suffixes = filterEmptyStrings(settings.getStringArray(Java.FILE_SUFFIXES_KEY));
+    if (suffixes.length == 0) {
+      suffixes = StringUtils.split(DEFAULT_FILE_SUFFIXES, ",");
+    }
+    return suffixes;
   }
 
