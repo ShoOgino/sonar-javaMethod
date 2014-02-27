@@ -1,0 +1,8 @@
+  @Override
+  public void visitNode(AstNode node) {
+    if (!node.hasDirectChildren(JavaGrammar.FORMAL_PARAMETERS) && hasOneParameterWithParenthesis(node)) {
+      String identifier = node.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
+      getContext().createLineViolation(this, "Remove the parentheses around the \"" + identifier + "\" parameter", node);
+    }
+  }
+
