@@ -3,17 +3,27 @@
    * @see org.sonar.java.ast.visitors.PackageVisitor
    */
   private void loadSquidFilesAndPackages(SquidIndex squid, SensorContext context, Project project) {
+    Map<Resource, SourceCode> directoryReverseMap = Maps.newHashMap();
+
     Collection<SourceCode> files = squid.search(new QueryByType(SourceFile.class));
     for (SourceCode squidFile : files) {
       String filePath = squidFile.getName();
 
-      Resource sonarFile = org.sonar.api.resources.File.fromIOFile(new File(filePath), project);
+      File file = new File(filePath);
+      Resource sonarFile = org.sonar.api.resources.File.fromIOFile(file, project);
       // resource is reloaded to get the id:
       put(squidFile, context.getResource(sonarFile));
 
       SourceCode squidPackage = squidFile.getParent(SourcePackage.class);
-      Resource sonarDirectory = sonarFile.getParent();
-      put(squidPackage, context.getResource(sonarDirectory));
+      Resource sonarDirectory = context.getResource(sonarFile.getParent());
+
+      SourceCode previousDirectoryMapping = directoryReverseMap.get(sonarDirectory);
+      if (previousDirectoryMapping == null) {
+        directoryReverseMap.put(sonarDirectory, squidPackage);
+        put(squidPackage, sonarDirectory);
+      } else if (!previousDirectoryMapping.equals(squidPackage)) {
+        LOG.warn("Directory contains files belonging to different packages - some metrics could be reported incorrectly: {}", file.getParentFile());
+      }
     }
   }
 
