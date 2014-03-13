@@ -1,13 +1,8 @@
   public void analyse(Project project, SensorContext context) {
-    List<InputFile> sourceFiles = getSourceFiles(project);
-    if (sourceFiles.isEmpty()) {
-      return;
-    }
-
     Collection<CodeVisitor> checks = annotationCheckFactory.getChecks();
 
     JavaSquid squid = new JavaSquid(createConfiguration(project), sonarComponents, checks.toArray(new CodeVisitor[checks.size()]));
-    squid.scan(sourceFiles, getTestFiles(project), getBytecodeFiles(project));
+    squid.scan(getSourceFiles(project), getTestFiles(project), getBytecodeFiles(project));
 
     javaResourceLocator.setSquidIndex(squid.getIndex());
 
