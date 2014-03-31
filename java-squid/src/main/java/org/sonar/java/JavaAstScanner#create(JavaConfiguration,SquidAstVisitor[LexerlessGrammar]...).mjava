@@ -1,9 +1,8 @@
-  public static AstScanner create(JavaConfiguration conf, SemanticModelVisitor semanticModelVisitor, SquidAstVisitor<LexerlessGrammar>... visitors) {
+  public static AstScanner create(JavaConfiguration conf, SquidAstVisitor<LexerlessGrammar>... visitors) {
     final Parser<LexerlessGrammar> parser = new ParserAdapter<LexerlessGrammar>(conf.getCharset(), JavaGrammar.createGrammar());
 
     AstScanner builder = new AstScanner(parser);
 
-    builder.withSquidAstVisitor(new VisitorsBridge(semanticModelVisitor));
     /* Packages */
     builder.withSquidAstVisitor(new PackageVisitor());
 
@@ -82,9 +81,6 @@
     for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
       if (visitor instanceof CharsetAwareVisitor) {
         ((CharsetAwareVisitor) visitor).setCharset(conf.getCharset());
-      }
-      if (visitor instanceof SemanticModelProviderAwareVisitor) {
-        ((SemanticModelProviderAwareVisitor) visitor).setSemanticModelProvider(semanticModelVisitor);
       }
       builder.withSquidAstVisitor(visitor);
     }

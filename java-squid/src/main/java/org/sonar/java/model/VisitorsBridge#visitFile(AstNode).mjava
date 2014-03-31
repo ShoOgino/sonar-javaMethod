@@ -2,8 +2,14 @@
   public void visitFile(@Nullable AstNode astNode) {
     if (astNode != null) {
       CompilationUnitTree tree = treeMaker.compilationUnit(astNode);
-
-      JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, peekSourceFile(), semanticModelProvider);
+      try {
+        semanticModel = SemanticModel.createFor(astNode);
+      } catch (Exception e) {
+        LOG.error("Unable to create symbol table for : " + getContext().getFile().getName(), e);
+        semanticModel = null;
+        return;
+      }
+      JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, peekSourceFile(), semanticModel);
       for (JavaFileScanner scanner : scanners) {
         scanner.scanFile(context);
       }

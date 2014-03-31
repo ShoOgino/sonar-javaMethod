@@ -1,19 +1,21 @@
   public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, CodeVisitor... visitors) {
-    SemanticModelVisitor semanticModelVisitor = new SemanticModelVisitor();
 
-    astScanner = JavaAstScanner.create(conf, semanticModelVisitor);
+    astScanner = JavaAstScanner.create(conf);
+
+    Iterable<CodeVisitor> visitorsToBridge = Arrays.asList(visitors);
+    if (sonarComponents != null) {
+      visitorsToBridge = Iterables.concat(
+          sonarComponents.createJavaFileScanners(),
+          visitorsToBridge
+      );
+    }
+    VisitorsBridge visitorsBridge = new VisitorsBridge(visitorsToBridge);
+    astScanner.accept(visitorsBridge);
 
     if (sonarComponents != null) {
       astScanner.accept(new FileLinesVisitor(sonarComponents, conf.getCharset()));
       astScanner.accept(new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset()));
-      astScanner.accept(new SonarSymbolTableVisitor(sonarComponents, semanticModelVisitor));
-
-      VisitorsBridge visitorsBridge = new VisitorsBridge(Iterables.concat(
-        sonarComponents.createJavaFileScanners(),
-        Arrays.asList(visitors)
-        ));
-      visitorsBridge.setSemanticModelProvider(semanticModelVisitor);
-      astScanner.accept(visitorsBridge);
+      astScanner.accept(new SonarSymbolTableVisitor(sonarComponents, visitorsBridge));
     }
 
     // TODO unchecked cast
@@ -29,7 +31,7 @@
         ((CharsetAwareVisitor) visitor).setCharset(conf.getCharset());
       }
       if (visitor instanceof SemanticModelProviderAwareVisitor) {
-        ((SemanticModelProviderAwareVisitor) visitor).setSemanticModelProvider(semanticModelVisitor);
+        ((SemanticModelProviderAwareVisitor) visitor).setSemanticModelProvider(visitorsBridge);
       }
       astScanner.accept(visitor);
       bytecodeScanner.accept(visitor);
