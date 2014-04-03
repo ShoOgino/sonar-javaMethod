@@ -1,0 +1,12 @@
+  @Override
+  public void visitNewArray(NewArrayTree tree) {
+    super.visitNewArray(tree);
+    Type type = getType(tree.type());
+    int dimensions = tree.dimensions().size();
+    type = new Type.ArrayType(type, symbols.arrayClass); // TODO why?
+    for (int i = 1; i < dimensions; i++) {
+      type = new Type.ArrayType(type, symbols.arrayClass);
+    }
+    types.put(tree, type);
+  }
+

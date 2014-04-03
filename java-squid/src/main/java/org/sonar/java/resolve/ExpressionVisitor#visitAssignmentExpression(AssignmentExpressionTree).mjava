@@ -2,7 +2,9 @@
    * Computes type of an assignment expression. Which is always a type of lvalue.
    * For example in case of {@code double d; int i; res = d = i;} type of assignment expression {@code d = i} is double.
    */
-  private Type visitAssignmentExpression(AstNode astNode) {
-    return getType(astNode.getFirstChild());
+  @Override
+  public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+    super.visitAssignmentExpression(tree);
+    types.put(tree, getType(tree.variable()));
   }
 

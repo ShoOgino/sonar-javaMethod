@@ -1,0 +1,31 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    super.visitMethodInvocation(tree);
+    Tree methodSelect = tree.methodSelect();
+    Resolve.Env env = semanticModel.getEnv(tree);
+    IdentifierTree identifier;
+    Type type;
+    String name;
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodSelect;
+      type = getType(mset.expression());
+      identifier = mset.identifier();
+    } else if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
+      type = env.enclosingClass.type;
+      identifier = (IdentifierTree) methodSelect;
+    } else {
+      throw new IllegalStateException("Method select in method invocation is not of the expected type " + methodSelect);
+    }
+    name = identifier.name();
+    if (type == null) {
+      type = symbols.unknownType;
+    }
+    Symbol symbol = resolve.findMethod(env, type.symbol, name, ImmutableList.<Type>of());
+    associateReference(identifier, symbol);
+    type = getTypeOfSymbol(symbol);
+    if (type == null) {
+      type = symbols.unknownType;
+    }
+    types.put(tree, type);
+  }
+

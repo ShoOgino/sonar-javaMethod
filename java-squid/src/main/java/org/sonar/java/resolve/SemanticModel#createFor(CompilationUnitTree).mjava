@@ -1,5 +1,8 @@
   public static SemanticModel createFor(CompilationUnitTree tree) {
-    SemanticModel semanticModel = createFor(((JavaTree.CompilationUnitTreeImpl) tree).getAstNode());
+    Symbols symbols = new Symbols();
+    Resolve resolve = new Resolve();
+    SemanticModel semanticModel = createFor(((JavaTree.CompilationUnitTreeImpl) tree).getAstNode(), resolve);
+    new ExpressionVisitor(semanticModel, symbols, resolve).visitCompilationUnit(tree);
     new LabelsVisitor(semanticModel).visitCompilationUnit(tree);
     return semanticModel;
   }

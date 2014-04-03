@@ -1,14 +1,16 @@
   private Type typeOf(String input) {
-    AstNode astNode = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, b.build()).parse(input);
-
-    AstWalker astWalker = new AstWalker();
     SemanticModel semanticModel = mock(SemanticModel.class);
-    when(semanticModel.getEnv(any(AstNode.class))).thenReturn(env);
+    when(semanticModel.getEnv(any(Tree.class))).thenReturn(env);
     ExpressionVisitor visitor = new ExpressionVisitor(semanticModel, symbols, new Resolve());
-    visitor.init();
-    astWalker.addVisitor(visitor);
-    astWalker.walkAndVisit(astNode);
 
-    return visitor.getType(astNode);
+    b.setRootRule(JavaGrammar.COMPILATION_UNIT);
+    String p = "class Test { void wrapperMethod() { " + input + "; } }";
+    AstNode node = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, b.build()).parse(p);
+    CompilationUnitTree tree = new JavaTreeMaker().compilationUnit(node);
+    tree.accept(visitor);
+
+    TestedNodeExtractor testedNodeExtractor = new TestedNodeExtractor();
+    testedNodeExtractor.visitCompilationUnit(tree);
+    return visitor.getType(testedNodeExtractor.testedNode);
   }
 

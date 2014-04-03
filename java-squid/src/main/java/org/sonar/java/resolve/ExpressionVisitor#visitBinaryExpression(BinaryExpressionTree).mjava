@@ -1,0 +1,22 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    super.visitBinaryExpression(tree);
+    Resolve.Env env = semanticModel.getEnv(tree);
+    Type left = getType(tree.leftOperand());
+    AstNode astNode = ((JavaTree) tree).getAstNode();
+    AstNode opNode = astNode.getFirstChild().getNextSibling();
+    Type right = getType(tree.rightOperand());
+    // TODO avoid nulls
+    if (left == null || right == null) {
+      types.put(tree, symbols.unknownType);
+      return;
+    }
+    Symbol symbol = resolve.findMethod(env, opNode.getTokenValue(), ImmutableList.of(left, right));
+    if (symbol.kind != Symbol.MTH) {
+      // not found
+      types.put(tree, symbols.unknownType);
+      return;
+    }
+    types.put(tree, ((Type.MethodType) symbol.type).resultType);
+  }
+
