@@ -1,0 +1,11 @@
+  @Override
+  public void visitEnumConstant(EnumConstantTree tree) {
+    scan(tree.modifiers());
+    NewClassTree newClassTree = ((NewClassTree) tree.initializer());
+    scan(newClassTree.enclosingExpression());
+    // skip identifier
+    scan(newClassTree.typeArguments());
+    scan(newClassTree.arguments());
+    scan(newClassTree.classBody());
+  }
+
