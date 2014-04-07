@@ -1,13 +1,6 @@
   @Override
   public void visitContinueStatement(ContinueStatementTree tree) {
-    String label = tree.label();
-    AstNode identifier = ((JavaTree.ContinueStatementTreeImpl) tree).getAstNode().getFirstChild(JavaTokenType.IDENTIFIER);
-    if (label != null) {
-      LabeledStatementTree labelTree = labelTrees.get(label);
-      if (labelTree != null) {
-        semanticModel.associateReference(identifier, semanticModel.getSymbol(labelTree));
-      }
-    }
+    associateLabel(tree.label());
     super.visitContinueStatement(tree);
   }
 
