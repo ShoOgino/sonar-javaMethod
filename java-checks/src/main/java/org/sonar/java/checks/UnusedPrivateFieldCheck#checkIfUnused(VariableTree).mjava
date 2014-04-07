@@ -1,11 +1,9 @@
   public void checkIfUnused(VariableTree tree) {
     if (tree.modifiers().modifiers().contains(Modifier.PRIVATE) && !"serialVersionUID".equals(tree.simpleName())) {
-      AstNode identifierAstNode = ((JavaTree) tree).getAstNode().getFirstChild(JavaTokenType.IDENTIFIER);
-
       SemanticModel semanticModel = (SemanticModel) context.getSemanticModel();
-      Symbol symbol = semanticModel.getSymbol(identifierAstNode);
+      Symbol symbol = semanticModel.getSymbol(tree);
 
-      if (symbol != null && semanticModel.getUsages(symbol).isEmpty()) {
+      if (symbol != null && semanticModel.getUsagesTree(symbol).isEmpty()) {
         context.addIssue(tree, ruleKey, "Remove this unused \"" + tree.simpleName() + "\" private field.");
       }
     }

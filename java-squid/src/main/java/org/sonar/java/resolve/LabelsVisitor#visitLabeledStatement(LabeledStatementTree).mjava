@@ -1,7 +1,9 @@
   @Override
   public void visitLabeledStatement(LabeledStatementTree tree) {
-    AstNode identifierNode = getAstNodeFromLabelStatement(tree);
-    semanticModel.associateSymbol(identifierNode, new Symbol(0, 0, identifierNode.getTokenValue(), null));
+    AstNode identifierNode = ((JavaTree.LabeledStatementTreeImpl) tree).getAstNode().getFirstChild(JavaTokenType.IDENTIFIER);
+    Symbol symbol = new Symbol(0, 0, identifierNode.getTokenValue(), null);
+    semanticModel.associateSymbol(identifierNode, symbol);
+    semanticModel.associateSymbol(tree, symbol);
     labelTrees.put(tree.label(), tree);
     super.visitLabeledStatement(tree);
   }
