@@ -1,33 +1,10 @@
   public void complete(Symbol.VariableSymbol symbol) {
-    AstNode identifierNode = semanticModel.getAstNode(symbol);
-    AstNode typeNode;
-    if (identifierNode.getParent().is(JavaGrammar.VARIABLE_DECLARATOR)) {
-      typeNode = identifierNode.getFirstAncestor(JavaGrammar.VARIABLE_DECLARATORS).getPreviousAstNode();
-      Preconditions.checkState(typeNode.is(JavaGrammar.TYPE));
-    } else if (identifierNode.getParent().is(JavaGrammar.VARIABLE_DECLARATOR_ID)) {
-      typeNode = identifierNode.getParent().getPreviousAstNode();
-      if (typeNode.is(JavaPunctuator.ELLIPSIS)) {
-        // vararg
-        typeNode = typeNode.getPreviousAstNode();
-        while(typeNode.is(JavaGrammar.ANNOTATION)){
-          typeNode = typeNode.getPreviousAstNode();
-        }
-      }
-      Preconditions.checkState(typeNode.is(JavaGrammar.TYPE, JavaGrammar.CLASS_TYPE, JavaGrammar.CATCH_TYPE), "Type node error at line "+typeNode.getTokenLine()
-          +" column "+typeNode.getToken().getColumn());
-    } else if (identifierNode.getParent().is(JavaGrammar.ENUM_CONSTANT)) {
-      // Type of enum constant is enum
-      semanticModel.getEnv(symbol).enclosingClass();
-      return;
-    } else if (identifierNode.getParent().is(JavaGrammar.CONSTANT_DECLARATOR)) {
-      typeNode = identifierNode.getFirstAncestor(JavaGrammar.CONSTANT_DECLARATORS_REST).getPreviousAstNode().getPreviousAstNode();
-      Preconditions.checkState(typeNode.is(JavaGrammar.TYPE));
-    } else if (identifierNode.getParent().is(JavaGrammar.INTERFACE_METHOD_OR_FIELD_DECL, JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST)) {
-      typeNode = identifierNode.getPreviousAstNode();
-      Preconditions.checkState(typeNode.is(JavaGrammar.TYPE));
+    VariableTree variableTree = (VariableTree) semanticModel.getTree(symbol);
+    Resolve.Env env = semanticModel.getEnv(symbol);
+    if (variableTree.is(Tree.Kind.ENUM_CONSTANT)) {
+      symbol.type = env.enclosingClass().type;
     } else {
-      throw new IllegalStateException();
+      symbol.type = castToTypeIfPossible(resolveType(env, variableTree.type()));
     }
-    resolveVariableType(symbol, typeNode);
   }
 

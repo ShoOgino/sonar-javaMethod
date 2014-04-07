@@ -1,15 +1,12 @@
   public void complete(Symbol.MethodSymbol symbol) {
-    AstNode identifierNode = semanticModel.getAstNode(symbol);
+    MethodTree methodTree = (MethodTree) semanticModel.getTree(symbol);
     Resolve.Env env = semanticModel.getEnv(symbol);
 
-    AstNode throwsNode = identifierNode.getNextAstNode().getFirstChild(JavaKeyword.THROWS);
     ImmutableList.Builder<Symbol.TypeSymbol> thrown = ImmutableList.builder();
-    if (throwsNode != null) {
-      for (AstNode qualifiedIdentifier : throwsNode.getNextAstNode().getChildren(JavaGrammar.QUALIFIED_IDENTIFIER)) {
-        Type thrownType = castToTypeIfPossible(resolveType(env, qualifiedIdentifier));
-        if (thrownType != null) {
-          thrown.add(((Type.ClassType) thrownType).symbol);
-        }
+    for (ExpressionTree throwClause : methodTree.throwsClauses()) {
+      Type thrownType = castToTypeIfPossible(resolveType(env, throwClause));
+      if (thrownType != null) {
+        thrown.add(((Type.ClassType) thrownType).symbol);
       }
     }
     symbol.thrown = thrown.build();
@@ -18,14 +15,7 @@
       // no return type for constructor
       return;
     }
-    AstNode typeNode = identifierNode.getPreviousAstNode();
-    Preconditions.checkState(typeNode.is(JavaKeyword.VOID, JavaGrammar.TYPE));
-    AstNode classTypeNode = typeNode.getFirstChild(JavaGrammar.CLASS_TYPE);
-    if (classTypeNode == null) {
-      // TODO JavaGrammar.BASIC_TYPE
-      return;
-    }
-    Type type = castToTypeIfPossible(resolveType(env, classTypeNode));
+    Type type = castToTypeIfPossible(resolveType(env, methodTree.returnType()));
     if (type != null) {
       symbol.type = ((Type.ClassType) type).symbol;
     }

@@ -1,9 +1,8 @@
-  private void declareVariable(int flags, AstNode identifierNode) {
+  private void declareVariable(int flags, AstNode identifierNode, Tree tree) {
     Preconditions.checkArgument(identifierNode.is(JavaTokenType.IDENTIFIER));
-
     String name = identifierNode.getTokenValue();
     Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(flags, name, env.scope.owner);
-    enterSymbol(identifierNode, symbol);
+    enterSymbol(identifierNode, tree, symbol);
     symbol.completer = completer;
     uncompleted.add(symbol);
 

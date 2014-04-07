@@ -3,17 +3,15 @@
     String name = tree.simpleName();
     int flag = 0;
     AstNode astNode = getNode(tree);
-    AstNode toAssociate = astNode;
     boolean anonymousClass = StringUtils.isEmpty(name);
     if (anonymousClass) {
       name = "";
-      toAssociate = astNode.getFirstChild(JavaGrammar.CLASS_BODY);
     } else {
       flag = computeClassFlags(astNode);
     }
     Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(flag, name, env.scope.owner);
     if (!anonymousClass) {
-      enterSymbol(astNode.getFirstChild(JavaTokenType.IDENTIFIER), symbol);
+      enterSymbol(astNode.getFirstChild(JavaTokenType.IDENTIFIER), tree, symbol);
     }
     symbol.members = new Scope(symbol);
     symbol.completer = completer;
@@ -28,7 +26,7 @@
     classEnv.scope = symbol.members;
     env = classEnv;
 
-    semanticModel.associateEnv(toAssociate, env);
+    semanticModel.associateEnv(tree, env);
     super.visitClass(tree);
     restoreEnvironment(astNode); //TODO should we avoid restoring env for enum constants ?
   }
