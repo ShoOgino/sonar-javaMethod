@@ -22,12 +22,12 @@
     assertThat(catchTree.block()).isNotNull();
     VariableTree parameterTree = catchTree.parameter();
     assertThat(parameterTree.type()).isNotNull();
-    assertThat(parameterTree.simpleName()).isEqualTo("e1");
+    assertThat(parameterTree.simpleName().name()).isEqualTo("e1");
     assertThat(parameterTree.initializer()).isNull();
     catchTree = tree.catches().get(1);
     parameterTree = catchTree.parameter();
     assertThat(parameterTree.type()).isNotNull();
-    assertThat(parameterTree.simpleName()).isEqualTo("e2");
+    assertThat(parameterTree.simpleName().name()).isEqualTo("e2");
     assertThat(parameterTree.initializer()).isNull();
 
     astNode = p.parse("class T { void m() { try { } catch (Exception e) { } finally { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
@@ -47,10 +47,10 @@
     assertThat(tree.finallyBlock()).isNotNull();
     assertThat(tree.resources()).hasSize(2);
     VariableTree resource = tree.resources().get(0);
-    assertThat(resource.simpleName()).isEqualTo("r1");
+    assertThat(resource.simpleName().name()).isEqualTo("r1");
     assertThat(resource.initializer()).isNotNull();
     resource = tree.resources().get(1);
-    assertThat(resource.simpleName()).isEqualTo("r2");
+    assertThat(resource.simpleName().name()).isEqualTo("r2");
     assertThat(resource.initializer()).isNotNull();
 
     astNode = p.parse("class T { void m() { try { } catch (Exception1 | Exception2 e) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
