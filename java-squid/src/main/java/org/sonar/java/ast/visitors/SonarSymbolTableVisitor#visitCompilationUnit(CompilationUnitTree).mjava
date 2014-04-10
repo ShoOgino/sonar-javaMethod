@@ -1,0 +1,12 @@
+  @Override
+  public void visitCompilationUnit(CompilationUnitTree tree) {
+    if (outerClass == null) {
+      outerClass = tree;
+    }
+    super.visitCompilationUnit(tree);
+
+    if (tree.equals(outerClass)) {
+      symbolizable.setSymbolTable(symbolTableBuilder.build());
+    }
+  }
+
