@@ -1,0 +1,17 @@
+    @Override
+    public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+      scan(tree.expression());
+      if (site.kind >= Symbol.ERRONEOUS) {
+        return;
+      }
+      String name = tree.identifier().name();
+      if (site.kind == Symbol.PCK) {
+        env.packge = (Symbol.PackageSymbol) site;
+        site = resolve.findIdentInPackage(env, site, name, Symbol.TYP | Symbol.PCK);
+      } else {
+        env.enclosingClass = (Symbol.TypeSymbol) site;
+        site = resolve.findMemberType(env, (Symbol.TypeSymbol) site, name, (Symbol.TypeSymbol) site);
+      }
+      associateReference(tree.identifier(), site);
+    }
+
