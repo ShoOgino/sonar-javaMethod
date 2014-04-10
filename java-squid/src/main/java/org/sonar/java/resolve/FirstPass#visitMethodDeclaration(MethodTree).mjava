@@ -1,8 +1,6 @@
-  private void visitMethodDeclaration(AstNode astNode, MethodTree tree) {
-    MethodHelper methodHelper = new MethodHelper(astNode);
-    AstNode identifierNode = methodHelper.getName();
-    String name = methodHelper.isConstructor() ? "<init>" : identifierNode.getTokenValue();
-    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeMethodFlags(astNode), name, env.scope.owner);
+  private void visitMethodDeclaration(MethodTree tree) {
+    String name = tree.returnType()==null ? "<init>" : tree.simpleName().name();
+    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeMethodFlags(tree), name, env.scope.owner);
     enterSymbol(tree, symbol);
     symbol.parameters = new Scope(symbol);
     symbol.completer = completer;

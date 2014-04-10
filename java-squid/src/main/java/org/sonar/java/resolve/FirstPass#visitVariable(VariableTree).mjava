@@ -1,16 +1,6 @@
   @Override
   public void visitVariable(VariableTree tree) {
-    AstNode astNode = getNode(tree);
-    AstNode identifierNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
-    if (astNode.is(JavaGrammar.CONSTANT_DECLARATOR_REST)) {
-      identifierNode = astNode.getPreviousAstNode();
-    } else if (astNode.is(JavaGrammar.FORMAL_PARAMETER, JavaGrammar.CATCH_FORMAL_PARAMETER, JavaGrammar.RESOURCE)) {
-      identifierNode = astNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER);
-    }
-    if (identifierNode == null) {
-      throw new IllegalStateException("could not get identifier from node " + astNode.getType());
-    }
-    declareVariable(computeFlags(tree.modifiers()), identifierNode, tree);
+    declareVariable(computeFlags(tree.modifiers()), tree.simpleName(), tree);
     super.visitVariable(tree);
   }
 
