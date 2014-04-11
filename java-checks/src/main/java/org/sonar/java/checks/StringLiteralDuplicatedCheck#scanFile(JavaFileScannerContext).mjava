@@ -1,0 +1,13 @@
+  @Override
+  public void scanFile(JavaFileScannerContext context) {
+    firstOccurrence.clear();
+    occurences.clear();
+    scan(context.getTree());
+    for (String literal : occurences.elementSet()) {
+      int literalOccurence = occurences.count(literal);
+      if (literalOccurence >= threshold) {
+        context.addIssue(firstOccurrence.get(literal), ruleKey, "Define a constant instead of duplicating this literal " + literal + " " + literalOccurence + " times.");
+      }
+    }
+  }
+
