@@ -1,0 +1,19 @@
+  @Override
+  public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+    IdentifierTree identifier = null;
+    ExpressionTree expression = tree.expression();
+    if (expression.is(Kind.IDENTIFIER)) {
+      identifier = (IdentifierTree) expression;
+    } else if (expression.is(Kind.PARENTHESIZED_EXPRESSION) && ((ParenthesizedTree) expression).expression().is(Kind.IDENTIFIER)) {
+      identifier = (IdentifierTree) ((ParenthesizedTree) expression).expression();
+    }
+    if (!validUsagesStack.isEmpty() && identifier != null) {
+      Iterator<Collection<IdentifierTree>> iterator = validUsagesStack.iterator();
+      while (iterator.hasNext()) {
+        iterator.next().remove(identifier);
+      }
+    }
+    super.visitMemberSelectExpression(tree);
+
+  }
+

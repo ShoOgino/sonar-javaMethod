@@ -1,14 +1,13 @@
   @Override
   public void visitCatch(CatchTree tree) {
-    invalidCatchesCheck.add(tree);
-
-    super.visitCatch(tree);
-
-    if (invalidCatchesCheck.contains(tree)) {
-      invalidCatchesCheck.remove(tree);
-
-      if (!isExcludedType(tree.parameter().type())) {
-        context.addIssue(tree, ruleKey, "Either log or rethrow this exception along with some contextual information.");
+    if (!isExcludedType(tree.parameter().type())) {
+      SemanticModel semanticModel = (SemanticModel) context.getSemanticModel();
+      Symbol exception = semanticModel.getSymbol(tree.parameter());
+      validUsagesStack.addFirst(Lists.newArrayList(semanticModel.getUsages(exception)));
+      super.visitCatch(tree);
+      Collection<IdentifierTree> usages = validUsagesStack.pop();
+      if (usages.isEmpty()) {
+        context.addIssue(tree, ruleKey, "Either log or rethrow this exception.");
       }
     }
   }

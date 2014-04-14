@@ -1,7 +1,12 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
     this.context = context;
-
+    validUsagesStack = new ArrayDeque<Collection<IdentifierTree>>();
+    exceptions = Splitter.on(",").trimResults().split(exceptionsCommaSeparated);
+    exceptionIdentifiers = Lists.newArrayList();
+    for (String exception : exceptions) {
+      exceptionIdentifiers.add(exception.substring(exception.lastIndexOf(".") + 1));
+    }
     scan(context.getTree());
   }
 
