@@ -1,4 +1,9 @@
   public boolean shouldExecuteOnProject(Project project) {
-    return configuration.isEnabled();
+    File report = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getReportPath());
+    boolean shouldExecute = report.exists() && report.isFile();
+    if(!shouldExecute) {
+      JaCoCoUtils.LOG.info("JaCoCo report not found.");
+    }
+    return shouldExecute;
   }
 

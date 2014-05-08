@@ -1,0 +1,12 @@
+  @Test
+  public void should_execute_if_report_exists() {
+    Project project = mock(Project.class);
+    File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
+    when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.exec"));
+    when(configuration.getReportPath()).thenReturn("ut.exec");
+
+    assertThat(sensor.shouldExecuteOnProject(project)).isTrue();;
+    when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.not.found.exec"));
+    assertThat(sensor.shouldExecuteOnProject(project)).isFalse();
+  }
+

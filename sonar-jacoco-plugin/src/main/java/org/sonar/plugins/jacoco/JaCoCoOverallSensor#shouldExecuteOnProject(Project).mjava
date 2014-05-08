@@ -1,4 +1,10 @@
   public boolean shouldExecuteOnProject(Project project) {
-    return configuration.isEnabled() && StringUtils.isNotBlank(configuration.getItReportPath());
+    File reportUTs = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getReportPath());
+    File reportITs = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getItReportPath());
+    boolean foundBothReports = reportUTs.exists() && reportITs.exists();
+    if (!foundBothReports) {
+      JaCoCoUtils.LOG.info("JaCoCo reports not found.");
+    }
+    return foundBothReports;
   }
 
