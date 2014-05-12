@@ -2,7 +2,8 @@
   public void shouldExecuteIfReportPathIsDefined() {
     Project project = mock(Project.class);
     File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
-    when(configuration.hasJavaFiles()).thenReturn(true);
+    when(configuration.shouldExecuteOnProject(true)).thenReturn(true);
+    when(configuration.shouldExecuteOnProject(false)).thenReturn(false);
     when(configuration.getItReportPath()).thenReturn("it.exec");
     when(pathResolver.relativeFile(any(File.class), eq("it.exec"))).thenReturn(new File(outputDir, "it.exec"));
     assertThat(sensor.shouldExecuteOnProject(project)).isTrue();
