@@ -25,12 +25,20 @@
       return predefinedSymbol;
     }
 
-    // TODO imports
+    //named imports
+    for (Symbol symbol : env.namedImports().lookup(name)) {
+      if (symbol.kind < bestSoFar.kind) {
+        return symbol;
+      }
+    }
+    //package types
     for (Symbol symbol : env.packge().members.lookup(name)) {
       if (symbol.kind < bestSoFar.kind) {
         bestSoFar = symbol;
       }
     }
+
+    //TODO on demand imports
 
     return bestSoFar;
   }

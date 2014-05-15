@@ -1,13 +1,15 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
-    // TODO package and imports
+    // TODO package
     Symbol.PackageSymbol symbol = new Symbol.PackageSymbol(null, null);
     symbol.members = new Scope(symbol);
 
     env = new Resolve.Env();
     env.packge = symbol;
     env.scope = symbol.members;
+    env.namedImports = new Scope(symbol);
     semanticModel.associateEnv(tree, env);
+
     super.visitCompilationUnit(tree);
     restoreEnvironment(tree);
     completeSymbols();
