@@ -1,13 +1,15 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
-    // TODO package
-    Symbol.PackageSymbol symbol = new Symbol.PackageSymbol(null, null);
-    symbol.members = new Scope(symbol);
+    //Default package
+    //TODO default package name is null or empty ?
+    Symbol.PackageSymbol compilationUnitPackage = new Symbol.PackageSymbol(null, null);
+    compilationUnitPackage.members = new Scope(compilationUnitPackage);
+    defaultPackage = compilationUnitPackage;
 
     env = new Resolve.Env();
-    env.packge = symbol;
-    env.scope = symbol.members;
-    env.namedImports = new Scope(symbol);
+    env.packge = compilationUnitPackage;
+    env.scope = compilationUnitPackage.members;
+    env.namedImports = new Scope(compilationUnitPackage);
     semanticModel.associateEnv(tree, env);
 
     super.visitCompilationUnit(tree);
