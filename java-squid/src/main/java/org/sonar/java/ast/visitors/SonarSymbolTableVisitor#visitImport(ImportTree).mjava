@@ -1,0 +1,12 @@
+  @Override
+  public void visitImport(ImportTree tree) {
+    IdentifierTree identifierTree;
+    if(tree.qualifiedIdentifier().is(Tree.Kind.IDENTIFIER)) {
+      identifierTree = (IdentifierTree) tree.qualifiedIdentifier();
+    } else {
+      identifierTree = ((MemberSelectExpressionTree) tree.qualifiedIdentifier()).identifier();
+    }
+    createSymbol(tree, identifierTree);
+    super.visitImport(tree);
+  }
+
