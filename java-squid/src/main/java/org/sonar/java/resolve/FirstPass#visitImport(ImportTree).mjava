@@ -1,9 +1,30 @@
   @Override
   public void visitImport(ImportTree tree) {
-    ImportVisitor importVisitor = new ImportVisitor(defaultPackage, tree.isStatic());
-    tree.accept(importVisitor);
-    Symbol importSymbol = importVisitor.currentSymbol;
-    semanticModel.associateSymbol(tree, importSymbol);
+    Preconditions.checkArgument(tree.qualifiedIdentifier().is(Tree.Kind.MEMBER_SELECT));
+    //an import is always of the form : TypeName/PackName.Identifier
+    Tree typeToResolve = tree.qualifiedIdentifier();
+    if (tree.isStatic()) {
+      typeToResolve = ((MemberSelectExpressionTree) tree.qualifiedIdentifier()).expression();
+    }
+    ImportTypeVisitor importTypeVisitor = new ImportTypeVisitor(defaultPackage);
+    typeToResolve.accept(importTypeVisitor);
+    Symbol resolvedSymbol = importTypeVisitor.resolvedType;
+    if (tree.isStatic()) {
+      //static identifier is a static member and can be Method Variable or Type. So at this point symbol kind is ambiguous
+      String name = ((MemberSelectExpressionTree) tree.qualifiedIdentifier()).identifier().name();
+      List<Symbol> symbols = importTypeVisitor.resolvedType.members().lookup(name);
+      if (symbols.isEmpty()) {
+        //TODO : To be removed when lookup on resolvedType member is ok..
+        semanticModel.associateSymbol(tree, new Symbol(Symbol.AMBIGUOUS, Flags.PUBLIC, name, importTypeVisitor.resolvedType));
+      } else {
+        //associate first symbol found
+        //TODO associate all symbols found
+        semanticModel.associateSymbol(tree, symbols.get(0));
+      }
+    } else {
+      //named import is associated with the import tree.
+      semanticModel.associateSymbol(tree, resolvedSymbol);
+    }
     super.visitImport(tree);
   }
 

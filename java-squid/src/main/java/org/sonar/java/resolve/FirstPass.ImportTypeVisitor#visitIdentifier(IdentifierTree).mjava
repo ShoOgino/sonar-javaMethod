@@ -1,0 +1,20 @@
+    @Override
+    public void visitIdentifier(IdentifierTree tree) {
+      //Handle last identifier of import
+      if (level == 0) {
+        resolvedType = new Symbol.TypeSymbol(Flags.PUBLIC, tree.name(), currentSymbol);
+        resolvedType.members = new Scope(resolvedType);
+        //TODO : bytecode completer. This completer should be in charge to put a default value in interfaces.
+        ((Type.ClassType) resolvedType.type).interfaces = Lists.newArrayList();
+        env.namedImports.enter(resolvedType);
+      } else {
+        //each part of the qualified identifier of an import is either a package or a type symbol
+        Symbol symbol = resolve.findIdentInPackage(env, currentSymbol, tree.name(), Symbol.PCK | Symbol.TYP);
+        if(symbol.kind > Symbol.ERRONEOUS) {
+          //TODO ambiguity on package or type should be resolved by defining package symbols using bytecode completer.
+          symbol = new Symbol(Symbol.PCK | Symbol.TYP, Flags.PUBLIC, tree.name(), currentSymbol);
+        }
+        currentSymbol = symbol;
+      }
+    }
+
