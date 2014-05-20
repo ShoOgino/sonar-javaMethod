@@ -1,0 +1,16 @@
+    @Override
+    public void visit(int version, int flags, String name, String signature, String superName, String[] interfaces) {
+      Preconditions.checkState(name.endsWith(classSymbol.name));
+//      Preconditions.checkState(classSymbol.owner == null);
+      className = name;
+      classSymbol.flags = flags;
+      classSymbol.members = new Scope(classSymbol);
+      if (superName == null) {
+        // TODO superName == null only for java/lang/Object?
+        Preconditions.checkState("java/lang/Object".equals(className));
+      } else {
+        ((Type.ClassType)classSymbol.type).supertype = getCompletedClassSymbol(superName).type;
+      }
+      ((Type.ClassType)classSymbol.type).interfaces = Lists.newArrayList();//getCompletedClassSymbols(interfaces).t;
+    }
+

@@ -1,0 +1,13 @@
+  public Symbol.TypeSymbol getClassSymbol(String bytecodeName) {
+    Symbol.TypeSymbol symbol = classes.get(bytecodeName);
+    if (symbol == null) {
+      // !!! be careful: owner and flags not specified, name is in format as it appears in bytecode !!!
+      //TODO why owner is null ? InnerClasses ? should be deduced from bytecodeName.
+      symbol = new Symbol.TypeSymbol(0, bytecodeName, null);
+      symbol.members = new Scope(symbol);
+      symbol.completer = this;
+      classes.put(bytecodeName, symbol);
+    }
+    return symbol;
+  }
+

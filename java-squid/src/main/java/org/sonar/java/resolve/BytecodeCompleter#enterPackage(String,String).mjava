@@ -1,7 +1,6 @@
-  private Symbol.PackageSymbol getPackageSymbol(String fullname, String name) {
+  public Symbol.PackageSymbol enterPackage(String fullname, String name) {
     Symbol.PackageSymbol result = packages.get(fullname);
     if(result==null) {
-      System.out.println("Creating package "+fullname);
       String packageOwner;
       if(fullname.contains(".")) {
         packageOwner = fullname.substring(0, fullname.lastIndexOf('.'));
@@ -9,7 +8,7 @@
         packageOwner = fullname.substring(0, fullname.lastIndexOf(name));
       }
       result = new Symbol.PackageSymbol(name, packages.get(packageOwner));
-      result.completer = bytecodeCompleter;
+      result.completer = this;
       packages.put(fullname, result);
     }
     return result;
