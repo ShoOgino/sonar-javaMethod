@@ -1,0 +1,24 @@
+  /**
+   * Load a class from bytecode.
+   * @param env
+   * @param fullname class name.
+   * @return symbolNotFound if the class was not resolved.
+   */
+  public Symbol loadClass(Resolve.Env env, Symbol owner, String fullname, String name) {
+    if(classLoader == null ) {
+      classLoader = ClassLoaderBuilder.create(PROJECT_CLASSPATH);
+    }
+    try {
+      ClassReader asmReader = new ClassReader(classLoader.getResourceAsStream(fullname.replace('.', '/') + ".class"));
+      Symbol.TypeSymbol type = new Symbol.TypeSymbol(Flags.PUBLIC, name, owner);
+      System.out.println("==> "+fullname+" symbol as type found");
+      type.members = new Scope(type);
+//      ((Type.ClassType)type.type).interfaces = Arrays.asList(asmReader.getInterfaces());
+//      ((Type.ClassType)type.type).supertype = new Symbol.TypeSymbol(Flags.PUBLIC, asmReader.getSuperName());
+      type.completer = this;
+      return type;
+    } catch (IOException e) {
+      return new Resolve.SymbolNotFound();
+    }
+  }
+
