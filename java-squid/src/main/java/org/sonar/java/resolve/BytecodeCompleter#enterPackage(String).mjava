@@ -1,17 +1,10 @@
   public Symbol.PackageSymbol enterPackage(String fullname) {
-    if(fullname == null || fullname.isEmpty()) {
+    if(StringUtils.isBlank(fullname)) {
       return defaultPackage;
     }
-    String name = fullname.substring(fullname.lastIndexOf('.')+1);
     Symbol.PackageSymbol result = packages.get(fullname);
     if(result==null) {
-      String packageOwner;
-      if(fullname.contains(".")) {
-        packageOwner = fullname.substring(0, fullname.lastIndexOf('.'));
-      }else {
-        packageOwner = fullname.substring(0, fullname.lastIndexOf(name));
-      }
-      result = new Symbol.PackageSymbol(name, enterPackage(packageOwner));
+      result = new Symbol.PackageSymbol(Convert.shortName(fullname), enterPackage(Convert.packagePart(fullname)));
       result.completer = this;
       packages.put(fullname, result);
     }

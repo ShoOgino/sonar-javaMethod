@@ -1,15 +1,13 @@
   public Symbol.TypeSymbol getClassSymbol(String bytecodeName) {
-    Symbol.TypeSymbol symbol = classes.get(bytecodeName);
+    String flatName = Convert.flatName(bytecodeName);
+    Symbol.TypeSymbol symbol = classes.get(flatName);
     if (symbol == null) {
       // flags not specified
       //TODO handle innerClasses
-      String packageFullName = bytecodeName.substring(0, bytecodeName.lastIndexOf('/')).replace('/', '.');
-      String className = bytecodeName.substring(bytecodeName.lastIndexOf('/')+1);
-
-      symbol = new Symbol.TypeSymbol(0, className, enterPackage(packageFullName));
+      symbol = new Symbol.TypeSymbol(0, Convert.shortName(flatName), enterPackage(Convert.packagePart(flatName)));
       symbol.members = new Scope(symbol);
       symbol.completer = this;
-      classes.put(bytecodeName, symbol);
+      classes.put(flatName, symbol);
     }
     return symbol;
   }
