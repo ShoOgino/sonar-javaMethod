@@ -1,0 +1,16 @@
+    @Override
+    public FieldVisitor visitField(int flags, String name, String desc, String signature, Object value) {
+      if (!isSynthetic(flags)) {
+        Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(flags, name, classSymbol);
+        if (org.objectweb.asm.Type.getType(desc).getSort() == org.objectweb.asm.Type.OBJECT) {
+          symbol.type = getCompletedClassSymbol(org.objectweb.asm.Type.getType(desc).getInternalName()).type;
+        } else {
+          // FIXME
+        }
+        classSymbol.members.enter(symbol);
+      }
+
+      // TODO implement FieldVisitor?
+      return null;
+    }
+
