@@ -2,8 +2,13 @@
     String result = name;
     Symbol owner = site;
     while(owner!=null && owner.name!=null) {
-      //TODO inner classes
-      result = owner.name +"."+ result;
+      //Handle inner classes, if owner is a type, separate by $
+      String separator = ".";
+      if(owner.kind == Symbol.TYP) {
+        separator = "$";
+      }
+      result = owner.name +separator+ result;
+
       owner = owner.owner();
     }
     return result;

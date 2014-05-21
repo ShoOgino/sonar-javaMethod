@@ -2,13 +2,10 @@
   public void completing_symbol_ArrayList() throws Exception {
     BytecodeCompleter bytecodeCompleter = new BytecodeCompleter();
     BytecodeCompleter.PROJECT_CLASSPATH = Lists.newArrayList(new File("target/test-classes"), new File("target/classes"));
-    Symbol.PackageSymbol  util = bytecodeCompleter.enterPackage("java.util");
-    Symbol.TypeSymbol arrayList = new Symbol.TypeSymbol(Flags.PUBLIC, "ArrayList", util);
-    bytecodeCompleter.complete(arrayList);
+    Symbol.TypeSymbol arrayList = bytecodeCompleter.getClassSymbol("java/util/ArrayList");
     //Check supertype
     assertThat(arrayList.getSuperclass().symbol.name).isEqualTo("AbstractList");
-    assertThat(arrayList.getSuperclass().symbol.owner().name).isEqualTo(util.name);
-    assertThat(arrayList.getSuperclass().symbol.owner()).isEqualTo(util);
+    assertThat(arrayList.getSuperclass().symbol.owner().name).isEqualTo("util");
 
     //Check interfaces
     assertThat(arrayList.getInterfaces()).hasSize(4);
