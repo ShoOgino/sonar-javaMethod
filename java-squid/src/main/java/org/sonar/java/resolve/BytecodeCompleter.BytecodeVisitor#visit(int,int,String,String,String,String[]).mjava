@@ -1,7 +1,6 @@
     @Override
     public void visit(int version, int flags, String name, String signature, String superName, String[] interfaces) {
       Preconditions.checkState(name.endsWith(classSymbol.name));
-//      Preconditions.checkState(classSymbol.owner == null);
       className = name;
       classSymbol.flags = flags;
       classSymbol.members = new Scope(classSymbol);
@@ -11,7 +10,6 @@
       } else {
         ((Type.ClassType)classSymbol.type).supertype = getCompletedClassSymbol(superName).type;
       }
-      //Todo handle interfaces properly
-      ((Type.ClassType)classSymbol.type).interfaces = Lists.newArrayList();//getCompletedClassSymbols(interfaces).t;
+      ((Type.ClassType)classSymbol.type).interfaces = getCompletedClassSymbolsType(interfaces);
     }
 
