@@ -1,0 +1,13 @@
+  @Test
+  public void completing_symbol() throws Exception {
+    BytecodeCompleter bytecodeCompleter = new BytecodeCompleter();
+    BytecodeCompleter.PROJECT_CLASSPATH = Lists.newArrayList(new File("target/test-classes"), new File("target/classes"));
+    Symbol.PackageSymbol  util = bytecodeCompleter.enterPackage("java.util");
+    Symbol.TypeSymbol arrayList = new Symbol.TypeSymbol(Flags.PUBLIC, "ArrayList", util);
+    bytecodeCompleter.complete(arrayList);
+    Assertions.assertThat(arrayList.getSuperclass().symbol.name).isEqualTo("AbstractList");
+    Assertions.assertThat(arrayList.getSuperclass().symbol.owner().name).isEqualTo(util.name);
+    Assertions.assertThat(arrayList.getSuperclass().symbol.owner()).isEqualTo(util);
+
+  }
+

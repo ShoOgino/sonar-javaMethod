@@ -1,6 +1,6 @@
   @Override
   public void complete(Symbol symbol) {
-    LOG.info("Completing symbol : " + symbol.name);
+    LOG.debug("Completing symbol : " + symbol.name);
     String bytecodeName = formFullName(symbol.name, symbol.owner);
     InputStream inputStream = null;
     try {
@@ -10,7 +10,6 @@
 //      Preconditions.checkState(classSymbol == symbol);
       classReader.accept(new BytecodeVisitor((Symbol.TypeSymbol) symbol), 0);
     } catch (Exception e) {
-      //TODO
       ((Type.ClassType) symbol.type).interfaces = Lists.newArrayList();
       LOG.error("Cannot complete type : " + bytecodeName + "  " + e.getMessage());
     } finally {

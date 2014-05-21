@@ -1,4 +1,8 @@
-  public Symbol.PackageSymbol enterPackage(String fullname, String name) {
+  public Symbol.PackageSymbol enterPackage(String fullname) {
+    if(fullname == null || fullname.isEmpty()) {
+      return defaultPackage;
+    }
+    String name = fullname.substring(fullname.lastIndexOf('.')+1);
     Symbol.PackageSymbol result = packages.get(fullname);
     if(result==null) {
       String packageOwner;
@@ -7,7 +11,7 @@
       }else {
         packageOwner = fullname.substring(0, fullname.lastIndexOf(name));
       }
-      result = new Symbol.PackageSymbol(name, packages.get(packageOwner));
+      result = new Symbol.PackageSymbol(name, enterPackage(packageOwner));
       result.completer = this;
       packages.put(fullname, result);
     }
