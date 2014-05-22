@@ -28,11 +28,15 @@
         case org.objectweb.asm.Type.BOOLEAN:
           result = symbols.booleanType;
           break;
+        case org.objectweb.asm.Type.ARRAY:
+          result = new Type.ArrayType(convertAsmType(asmType.getElementType()), symbols.arrayClass);
+          break;
         case org.objectweb.asm.Type.VOID:
-        default:
           // FIXME
           result = null;
           break;
+        default:
+          throw new IllegalArgumentException(asmType.toString());
       }
       return result;
     }
