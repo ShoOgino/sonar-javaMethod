@@ -1,0 +1,17 @@
+    @Override
+    public MethodVisitor visitMethod(int flags, String name, String desc, String signature, String[] exceptions) {
+      if (!isSynthetic(flags)) {
+        Type.MethodType type = new Type.MethodType(
+          // TODO parameters, exceptions
+          ImmutableList.<Type>of(),
+          convertAsmType(org.objectweb.asm.Type.getReturnType(desc)),
+          ImmutableList.<Type>of(),
+          classSymbol
+        );
+        Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(flags, name, type, classSymbol);
+        classSymbol.members.enter(methodSymbol);
+      }
+      // TODO implement MethodVisitor?
+      return null;
+    }
+
