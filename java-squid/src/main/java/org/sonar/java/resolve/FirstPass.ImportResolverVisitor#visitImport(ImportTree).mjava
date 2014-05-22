@@ -1,0 +1,20 @@
+    @Override
+    public void visitImport(ImportTree tree) {
+      super.visitImport(tree);
+      //Associate symbol only if found.
+      if (currentSymbol.kind < Symbol.ERRONEOUS) {
+        enterSymbol(currentSymbol, tree);
+      } else {
+        if (tree.isStatic()) {
+          for (Symbol symbol : resolved) {
+            //add only static fields
+            //TODO accessibility should be checked : package/public
+            if((symbol.flags & Flags.STATIC) != 0){
+              //TODO only the first symbol found will be associated with the tree.
+              enterSymbol(symbol, tree);
+            }
+          }
+        }
+      }
+    }
+

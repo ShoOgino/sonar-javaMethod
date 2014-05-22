@@ -1,0 +1,10 @@
+    private void enterSymbol(Symbol symbol, ImportTree tree) {
+      try {
+        semanticModel.associateSymbol(tree, symbol);
+        env.namedImports.enter(symbol);
+      } catch (IllegalArgumentException ex) {
+        //Exception is raised because we associate the resolved symbol to different trees.
+        //TODO handle correctly on demand import so java.util.List and java.util.List.* are not resolved to the same symbol!
+      }
+    }
+

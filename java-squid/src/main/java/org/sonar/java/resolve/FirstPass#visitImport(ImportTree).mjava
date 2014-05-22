@@ -3,18 +3,7 @@
     //an import is always of the form : TypeName/PackName.Identifier
     Preconditions.checkArgument(tree.qualifiedIdentifier().is(Tree.Kind.MEMBER_SELECT));
     ImportResolverVisitor importResolverVisitor = new ImportResolverVisitor();
-    tree.qualifiedIdentifier().accept(importResolverVisitor);
-    Symbol resolvedSymbol = importResolverVisitor.currentSymbol;
-    //Associate symbol only if found.
-    if (resolvedSymbol.kind < Symbol.ERRONEOUS) {
-      try {
-        semanticModel.associateSymbol(tree, resolvedSymbol);
-        env.namedImports.enter(resolvedSymbol);
-      }catch (IllegalArgumentException ex) {
-        //Exception is raised because we associate the resolved symbol to different trees.
-        //TODO handle correctly on demand import so java.util.List and java.util.List.* are not resolved to the same symbol!
-      }
-    }
+    tree.accept(importResolverVisitor);
     super.visitImport(tree);
   }
 
