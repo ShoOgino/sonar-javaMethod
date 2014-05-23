@@ -1,5 +1,7 @@
     @Override
     public FieldVisitor visitField(int flags, String name, String desc, @Nullable String signature, @Nullable Object value) {
+      Preconditions.checkNotNull(name);
+      Preconditions.checkNotNull(desc);
       if (!isSynthetic(flags)) {
         //Flags from asm lib are defined in Opcodes class and map to flags defined in Flags class
         Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(filterBytecodeFlags(flags), name, convertAsmType(org.objectweb.asm.Type.getType(desc)), classSymbol);
