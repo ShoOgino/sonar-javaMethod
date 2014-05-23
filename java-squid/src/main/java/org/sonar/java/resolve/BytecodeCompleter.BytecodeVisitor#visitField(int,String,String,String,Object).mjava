@@ -2,10 +2,10 @@
     public FieldVisitor visitField(int flags, String name, String desc, @Nullable String signature, @Nullable Object value) {
       if (!isSynthetic(flags)) {
         //Flags from asm lib are defined in Opcodes class and map to flags defined in Flags class
-        Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(flags, name, convertAsmType(org.objectweb.asm.Type.getType(desc)), classSymbol);
+        Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(filterBytecodeFlags(flags), name, convertAsmType(org.objectweb.asm.Type.getType(desc)), classSymbol);
         classSymbol.members.enter(symbol);
       }
-      // TODO implement FieldVisitor?
+      // (Godin) can return FieldVisitor to read annotations
       return null;
     }
 

@@ -4,7 +4,10 @@
      * @param bytecodeNames bytecodeNames of interfaces to complete.
      * @return List of the types of those interfaces.
      */
-    private List<Type> getCompletedClassSymbolsType(String[] bytecodeNames) {
+    private List<Type> getCompletedClassSymbolsType(@Nullable String[] bytecodeNames) {
+      if (bytecodeNames == null) {
+        return ImmutableList.of();
+      }
       ImmutableList.Builder<Type> types = ImmutableList.builder();
       for (String bytecodeName : bytecodeNames) {
         types.add(getClassSymbol(bytecodeName).type);
