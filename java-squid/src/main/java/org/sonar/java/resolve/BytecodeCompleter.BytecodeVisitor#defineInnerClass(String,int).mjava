@@ -2,8 +2,9 @@
      * Invoked when current class classified as outer class of some inner class.
      * Completes inner class.
      */
-    private void defineInnerClass(String bytecodeName) {
-      Symbol.TypeSymbol innerClass = getCompletedClassSymbol(bytecodeName);
+    private void defineInnerClass(String bytecodeName, int flags) {
+      Symbol.TypeSymbol innerClass = getClassSymbol(bytecodeName, flags);
       Preconditions.checkState(innerClass.owner == classSymbol);
+      classSymbol.members.enter(innerClass);
     }
 

@@ -1,0 +1,20 @@
+  public Symbol.TypeSymbol getClassSymbol(String bytecodeName, int flags) {
+    String flatName = Convert.flatName(bytecodeName);
+    Symbol.TypeSymbol symbol = classes.get(flatName);
+    if (symbol == null) {
+      String shortName = Convert.shortName(flatName);
+      String packageName = Convert.packagePart(flatName);
+      String enclosingClassName = Convert.enclosingClassName(shortName);
+      if (StringUtils.isNotEmpty(enclosingClassName)) {
+        //handle innerClasses
+        symbol = new Symbol.TypeSymbol(flags, Convert.innerClassName(shortName), getClassSymbol(Convert.bytecodeName(packageName + "." + enclosingClassName)));
+      } else {
+        symbol = new Symbol.TypeSymbol(flags, shortName, enterPackage(packageName));
+      }
+      symbol.members = new Scope(symbol);
+      symbol.completer = this;
+      classes.put(flatName, symbol);
+    }
+    return symbol;
+  }
+
