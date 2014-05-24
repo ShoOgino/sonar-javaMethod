@@ -1,4 +1,4 @@
-  // FIXME(Godin): or parameter must be renamed, or should not receive flat name
+  // FIXME(Godin): or parameter must be renamed, or should not receive flat name, in a former case - first transformation in this method seems useless
   private Symbol.TypeSymbol getClassSymbol(String bytecodeName, int flags) {
     String flatName = Convert.flatName(bytecodeName);
     Symbol.TypeSymbol symbol = classes.get(flatName);
@@ -13,7 +13,16 @@
         symbol = new Symbol.TypeSymbol(filterBytecodeFlags(flags), shortName, enterPackage(packageName));
       }
       symbol.members = new Scope(symbol);
-      symbol.completer = this;
+
+      // (Godin): IOException will happen without this condition in case of missing class:
+      if (getClassLoader().getResource(Convert.bytecodeName(flatName) + ".class") != null) {
+        symbol.completer = this;
+      } else {
+        LOG.error("Class not found: " + bytecodeName);
+        // TODO(Godin): why only interfaces, but not supertype for example?
+        ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
+      }
+
       classes.put(flatName, symbol);
     }
     return symbol;

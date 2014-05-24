@@ -4,20 +4,19 @@
     String bytecodeName = formFullName(symbol);
     Symbol.TypeSymbol classSymbol = getClassSymbol(bytecodeName);
     Preconditions.checkState(classSymbol == symbol);
+
     InputStream inputStream = null;
+    ClassReader classReader = null;
     try {
       inputStream = inputStreamFor(bytecodeName);
-      ClassReader classReader = new ClassReader(inputStream);
-      classReader.accept(new BytecodeVisitor((Symbol.TypeSymbol) symbol), ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
-    } catch (Exception e) {
-      // TODO(Godin): why only interfaces, but not supertype for example?
-      // In fact the only exception, which we forced to catch - IOException, which indicates corrupted class file.
-      // The others indicate incorrect implementation on our side.
-      // And thus it might make sense to propagate it in any case.
-      ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
-      LOG.error("Cannot complete type : " + bytecodeName + "  " + e.getMessage(), e);
+      classReader = new ClassReader(inputStream);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
     } finally {
       Closeables.closeQuietly(inputStream);
+    }
+    if (classReader != null) {
+      classReader.accept(new BytecodeVisitor((Symbol.TypeSymbol) symbol), ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
     }
   }
 
