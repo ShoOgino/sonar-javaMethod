@@ -1,0 +1,8 @@
+  @Test
+  public void inner_class_before_outer() {
+    Symbol.TypeSymbol symbol = bytecodeCompleter.getClassSymbol(InnerClassBeforeOuter.class.getName());
+    Symbol.TypeSymbol innerClass = symbol.getSuperclass().symbol;
+    Symbol.TypeSymbol outerClass = (Symbol.TypeSymbol) innerClass.owner();
+    assertThat(outerClass.members().lookup(HasInnerClass.InnerClass.class.getSimpleName())).containsExactly(innerClass);
+  }
+
