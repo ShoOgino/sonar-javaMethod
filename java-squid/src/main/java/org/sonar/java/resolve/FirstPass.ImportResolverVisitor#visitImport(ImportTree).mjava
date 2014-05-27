@@ -1,11 +1,12 @@
     @Override
     public void visitImport(ImportTree tree) {
+      isStatic = tree.isStatic();
       super.visitImport(tree);
       //Associate symbol only if found.
       if (currentSymbol.kind < Symbol.ERRONEOUS) {
         enterSymbol(currentSymbol, tree);
       } else {
-        if (tree.isStatic()) {
+        if (isStatic) {
           for (Symbol symbol : resolved) {
             //add only static fields
             //TODO accessibility should be checked : package/public
