@@ -1,7 +1,7 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
     Symbol.PackageSymbol compilationUnitPackage = symbols.defaultPackage;
-    if(tree.packageName() != null) {
+    if (tree.packageName() != null) {
       PackageResolverVisitor packageResolver = new PackageResolverVisitor();
       tree.packageName().accept(packageResolver);
       compilationUnitPackage = (Symbol.PackageSymbol) resolve.findIdentInPackage(env, compilationUnitPackage, packageResolver.packageName, Symbol.PCK);
@@ -13,6 +13,7 @@
     env.packge = compilationUnitPackage;
     env.scope = compilationUnitPackage.members;
     env.namedImports = new Scope(compilationUnitPackage);
+    env.starImports = resolve.createStarImportScope(compilationUnitPackage);
     semanticModel.associateEnv(tree, env);
 
     super.visitCompilationUnit(tree);

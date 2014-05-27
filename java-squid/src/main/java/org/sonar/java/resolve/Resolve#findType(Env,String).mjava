@@ -34,13 +34,17 @@
       }
     }
     //package types
-    Symbol symbol = findIdentInPackage(env, env.packge(), name, Symbol.TYP);
-    if (symbol.kind < bestSoFar.kind) {
-      bestSoFar = symbol;
+    Symbol sym = findIdentInPackage(env, env.packge(), name, Symbol.TYP);
+    if (sym.kind < bestSoFar.kind) {
+      return sym;
     }
 
-    //TODO on demand imports
-
+    //on demand imports
+    for (Symbol symbol : env.starImports().lookup(name)) {
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
     return bestSoFar;
   }
 
