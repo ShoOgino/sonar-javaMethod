@@ -1,0 +1,10 @@
+  private boolean isNonStaticNonDefaultMethod(Tree memberTree) {
+    boolean result = memberTree.is(Tree.Kind.METHOD);
+    if (result) {
+      MethodTree methodTree = (MethodTree) memberTree;
+      List<Modifier> modifiers = methodTree.modifiers().modifiers();
+      result = !modifiers.contains(Modifier.STATIC) && !modifiers.contains(Modifier.DEFAULT);
+    }
+    return result;
+  }
+
