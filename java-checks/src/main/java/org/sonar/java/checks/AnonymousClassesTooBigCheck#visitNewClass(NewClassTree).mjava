@@ -1,12 +1,12 @@
   @Override
   public void visitNewClass(NewClassTree tree) {
-    if (tree.classBody() != null) {
-
+    if (tree.classBody() != null && !isEnumConstantBody) {
       int lines = getNumberOfLines(tree.classBody());
       if (lines > max) {
         context.addIssue(tree, RULE, "Reduce this anonymous class number of lines from " + lines + " to at most " + max + ", or make it a named class.");
       }
     }
+    isEnumConstantBody = false;
     super.visitNewClass(tree);
   }
 
