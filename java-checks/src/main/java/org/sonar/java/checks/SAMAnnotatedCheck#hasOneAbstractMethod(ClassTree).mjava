@@ -1,0 +1,24 @@
+  private boolean hasOneAbstractMethod(ClassTree classTree) {
+
+    Symbol.TypeSymbol symbol = ((JavaTree.ClassTreeImpl) classTree).getSymbol();
+    if (symbol != null) {
+      List<Type> types = symbol.getInterfaces();
+      for (Type type : types) {
+        if (!((Type.ClassType) type).getSymbol().members().scopeSymbols().isEmpty()) {
+          return false;
+        }
+      }
+    }
+    int methods = 0;
+    for (Tree member : classTree.members()) {
+      boolean isMethod = member.is(Tree.Kind.METHOD);
+      if (!isMethod) {
+        return false;
+      }
+      if (isNotObjectMethod((MethodTree) member) && isNonStaticNonDefaultMethod(member)) {
+        methods++;
+      }
+    }
+    return methods == 1;
+  }
+

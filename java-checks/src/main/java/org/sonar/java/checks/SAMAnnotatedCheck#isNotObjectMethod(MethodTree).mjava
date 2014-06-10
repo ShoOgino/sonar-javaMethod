@@ -1,0 +1,18 @@
+  private boolean isNotObjectMethod(MethodTree method) {
+    ImmutableCollection<List<String>> methods = OBJECT_METHODS.get(method.simpleName().name());
+    if (methods != null) {
+      for (List<String> arguments : methods) {
+        List<String> args = Lists.newArrayList(arguments);
+        if (method.parameters().size() == args.size()) {
+          for (VariableTree var : method.parameters()) {
+            args.remove(((JavaTree.VariableTreeImpl) var).getSymbol().type());
+          }
+          if (args.isEmpty()) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
