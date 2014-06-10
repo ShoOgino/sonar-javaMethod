@@ -1,8 +1,5 @@
   public void save(SensorContext context, Project project, CheckFactory checkFactory, NoSonarFilter noSonarFilter, RulesProfile profile) {
-    boolean skipPackageDesignAnalysis = project.getConfiguration().getBoolean(
-        CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY,
-        CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_DEFAULT_VALUE);
-
+    boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     ResourceIndex resourceIndex = new ResourceIndex(skipPackageDesignAnalysis).loadSquidResources(squid, context, project);
     List<Bridge> bridges = BridgeFactory.create(
         squid.isBytecodeScanned(),

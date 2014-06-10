@@ -1,9 +1,7 @@
   @Test
   public void doNotSetExcludesFiltersIfAlreadyConfigured() {
-    Configuration configuration = mock(Configuration.class);
-    when(configuration.containsKey(FindbugsConstants.EXCLUDES_FILTERS_PROPERTY)).thenReturn(true);
-    when(project.getConfiguration()).thenReturn(configuration);
+    settings.setProperty(FindbugsConstants.EXCLUDES_FILTERS_PROPERTY, "toto");
     initializer.execute(project);
-    verify(configuration, never()).setProperty(eq(FindbugsConstants.EXCLUDES_FILTERS_PROPERTY), anyString());
+    assertThat(settings.getString(FindbugsConstants.EXCLUDES_FILTERS_PROPERTY)).isEqualTo("toto");
   }
 
