@@ -1,0 +1,22 @@
+  private boolean isOverriden(MethodTree tree) {
+    for (AnnotationTree annotationTree : tree.modifiers().annotations()) {
+      Tree annotationType = annotationTree.annotationType();
+      if (annotationType.is(Tree.Kind.IDENTIFIER) && "Override".equals(((IdentifierTree) annotationType).name())) {
+        return true;
+      }
+    }
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) semanticModel.getSymbol(tree);
+    Type.ClassType superClass = (Type.ClassType) methodSymbol.enclosingClass().getSuperclass();
+    while (superClass != null) {
+      List<Symbol> symbols = superClass.getSymbol().members().lookup(tree.simpleName().name());
+      for (Symbol symbol : symbols) {
+        if (symbol.isKind(Symbol.MTH)) {
+          //FIXME : better way to detect method overrides
+          return true;
+        }
+      }
+      superClass = (Type.ClassType) superClass.getSymbol().getSuperclass();
+    }
+    return false;
+  }
+
