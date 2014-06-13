@@ -8,15 +8,15 @@
     Type right = getType(tree.rightOperand());
     // TODO avoid nulls
     if (left == null || right == null) {
-      types.put(tree, symbols.unknownType);
+      registerType(tree, symbols.unknownType);
       return;
     }
     Symbol symbol = resolve.findMethod(env, opNode.getTokenValue(), ImmutableList.of(left, right));
     if (symbol.kind != Symbol.MTH) {
       // not found
-      types.put(tree, symbols.unknownType);
+      registerType(tree, symbols.unknownType);
       return;
     }
-    types.put(tree, ((Type.MethodType) symbol.type).resultType);
+    registerType(tree, ((Type.MethodType) symbol.type).resultType);
   }
 

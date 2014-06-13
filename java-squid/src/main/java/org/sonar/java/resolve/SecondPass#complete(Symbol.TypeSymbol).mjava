@@ -16,7 +16,7 @@
     ClassTree tree = (ClassTree) semanticModel.getTree(symbol);
     Tree superClassTree = tree.superClass();
     if (superClassTree != null && (superClassTree.is(Tree.Kind.MEMBER_SELECT) || superClassTree.is(Tree.Kind.IDENTIFIER))) {
-      ((Type.ClassType) symbol.type).supertype = resolveType(env, superClassTree).type;
+      ((Type.ClassType) symbol.type).supertype = resolveType(env, superClassTree);
       checkHierarchyCycles(symbol.type);
     } else {
       // TODO superclass is java.lang.Object or java.lang.Enum or java.lang.Annotation
@@ -36,7 +36,7 @@
 
     ImmutableList.Builder<Type> interfaces = ImmutableList.builder();
     for (Tree interfaceTree : tree.superInterfaces()) {
-      Type interfaceType = castToTypeIfPossible(resolveType(env, interfaceTree));
+      Type interfaceType = resolveType(env, interfaceTree);
       if (interfaceType != null) {
         interfaces.add(interfaceType);
       }

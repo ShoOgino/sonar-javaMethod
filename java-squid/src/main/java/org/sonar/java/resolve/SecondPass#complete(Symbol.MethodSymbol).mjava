@@ -4,7 +4,7 @@
 
     ImmutableList.Builder<Symbol.TypeSymbol> thrown = ImmutableList.builder();
     for (ExpressionTree throwClause : methodTree.throwsClauses()) {
-      Type thrownType = castToTypeIfPossible(resolveType(env, throwClause));
+      Type thrownType = resolveType(env, throwClause);
       if (thrownType != null) {
         thrown.add(((Type.ClassType) thrownType).symbol);
       }
@@ -15,9 +15,13 @@
       // no return type for constructor
       return;
     }
-    Type type = castToTypeIfPossible(resolveType(env, methodTree.returnType()));
+    Type type = resolveType(env, methodTree.returnType());
     if (type != null) {
-      symbol.type = ((Type.ClassType) type).symbol;
+      if(type.isTagged(Type.CLASS)) {
+        symbol.type = ((Type.ClassType) type).symbol;
+      } else if(type.isTagged(Type.ARRAY)) {
+        symbol.type = symbols.arrayClass;
+      }
     }
   }
 

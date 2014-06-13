@@ -8,18 +8,18 @@
         scan(tree.expression());
         String name = tree.identifier().name();
         if (JavaKeyword.CLASS.getValue().equals(name)) {
-          types.put(tree, symbols.classType);
+          registerType(tree, symbols.classType);
           return;
         }
         if (site.kind >= Symbol.ERRONEOUS) {
-          types.put(tree, symbols.unknownType);
+          registerType(tree, symbols.unknownType);
           return;
         }
         if (site.kind == Symbol.VAR) {
           Type siteType = ((Symbol.VariableSymbol) site).type;
           // TODO avoid null
           if (siteType == null) {
-            types.put(tree, symbols.unknownType);
+            registerType(tree, symbols.unknownType);
             return;
           }
           site = resolve.findIdentInType(env, siteType.symbol, name, Symbol.VAR | Symbol.TYP);
@@ -31,13 +31,13 @@
           throw new IllegalStateException();
         }
         associateReference(tree.identifier(), site);
-        types.put(tree, getTypeOfSymbol(site));
+        registerType(tree, getTypeOfSymbol(site));
       }
 
       @Override
       public void visitArrayType(ArrayTypeTree tree) {
         super.visitArrayType(tree);
-        types.put(tree, new Type.ArrayType(getType(tree.type()), symbols.arrayClass));
+        registerType(tree, new Type.ArrayType(getType(tree.type()), symbols.arrayClass));
       }
 
       @Override
@@ -46,9 +46,9 @@
         Type arrayType = getType(tree.expression());
         if (arrayType != null && arrayType.tag == Type.ARRAY) {
           site = arrayType.symbol;
-          types.put(tree, ((Type.ArrayType) arrayType).elementType);
+          registerType(tree, ((Type.ArrayType) arrayType).elementType);
         } else {
-          types.put(tree, symbols.unknownType);
+          registerType(tree, symbols.unknownType);
         }
       }
 
@@ -56,21 +56,21 @@
       public void visitIdentifier(IdentifierTree tree) {
         site = resolve.findIdent(semanticModel.getEnv(tree), tree.name(), Symbol.VAR | Symbol.TYP | Symbol.PCK);
         associateReference(tree, site);
-        types.put(tree, getTypeOfSymbol(site));
+        registerType(tree, getTypeOfSymbol(site));
       }
 
       @Override
       public void visitLiteral(LiteralTree tree) {
         Type literalType = typesOfLiterals.get(((JavaTree) tree).getKind());
         site = literalType.symbol;
-        types.put(tree, literalType);
+        registerType(tree, literalType);
       }
 
       @Override
       public void visitPrimitiveType(PrimitiveTypeTree tree) {
         AstNode astNode = ((JavaTree) tree).getAstNode();
         site = resolve.findIdent(semanticModel.getEnv(tree), astNode.getLastChild().getTokenValue(), Symbol.TYP);
-        types.put(tree, site.type);
+        registerType(tree, site.type);
       }
     }
     FQV visitor = new FQV();

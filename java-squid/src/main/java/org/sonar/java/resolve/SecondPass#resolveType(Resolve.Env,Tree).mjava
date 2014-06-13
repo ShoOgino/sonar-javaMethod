@@ -1,7 +1,10 @@
-  private Symbol resolveType(Resolve.Env env, Tree tree) {
+  private Type resolveType(Resolve.Env env, Tree tree) {
     Preconditions.checkArgument(checkTypeOfTree(tree), "Kind of tree unexpected " + ((JavaTree) tree).getKind());
     TypeResolverVisitor typeResolverVisitor = new TypeResolverVisitor(env.dup());
     tree.accept(typeResolverVisitor);
-    return typeResolverVisitor.site;
+    if(typeResolverVisitor.arrayType != null) {
+      return typeResolverVisitor.arrayType;
+    }
+    return castToTypeIfPossible(typeResolverVisitor.site);
   }
 

@@ -1,0 +1,10 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CompareObjectWithEqualsCheck.java"), new VisitorsBridge(new CompareObjectWithEqualsCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(7).withMessage("Change this comparison to use the equals method.")
+      .next().atLine(8).withMessage("Change this comparison to use the equals method.")
+      .next().atLine(21).withMessage("Change this comparison to use the equals method.")
+    ;
+  }
+

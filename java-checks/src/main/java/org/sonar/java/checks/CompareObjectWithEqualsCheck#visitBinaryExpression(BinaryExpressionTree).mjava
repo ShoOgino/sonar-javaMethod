@@ -1,0 +1,16 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    super.visitBinaryExpression(tree);
+    if (tree.is(Tree.Kind.EQUAL_TO)) {
+      Type leftOperandType = ((JavaTree.AbstractExpressionTree) tree.leftOperand()).getType();
+      Type rightOperandType = ((JavaTree.AbstractExpressionTree) tree.rightOperand()).getType();
+      if (leftOperandType == null || rightOperandType == null) {
+        //FIXME null type should not happen.
+        return;
+      }
+      if (!isNullComparison(leftOperandType, rightOperandType) && (leftOperandType.isTagged(Type.CLASS) || rightOperandType.isTagged(Type.CLASS))) {
+        context.addIssue(tree, ruleKey, "Change this comparison to use the equals method.");
+      }
+    }
+  }
+
