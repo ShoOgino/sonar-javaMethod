@@ -1,0 +1,14 @@
+  @Test
+  public void should_create_sonar_way_profile() {
+    ValidationMessages validation = ValidationMessages.create();
+
+    JavaSonarWayProfile definition = new JavaSonarWayProfile(new AnnotationProfileParser(ruleFinder()));
+    RulesProfile profile = definition.createProfile(validation);
+
+    assertThat(profile.getLanguage()).isEqualTo(Java.KEY);
+    assertThat(profile.getActiveRulesByRepository(CheckList.REPOSITORY_KEY))
+      .hasSize(115);
+    assertThat(profile.getName()).isEqualTo(RulesProfile.SONAR_WAY_NAME);
+    assertThat(validation.hasErrors()).isFalse();
+  }
+
