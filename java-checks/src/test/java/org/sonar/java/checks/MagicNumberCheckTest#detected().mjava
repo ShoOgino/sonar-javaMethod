@@ -1,0 +1,11 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/MagicNumberCheck.java"), new VisitorsBridge(new MagicNumberCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(8).withMessage("Assign this magic number 42 to a well-named constant, and use the constant instead.")
+        .next().atLine(9).withMessage("Assign this magic number 12L to a well-named constant, and use the constant instead.")
+        .next().atLine(10).withMessage("Assign this magic number 12.3d to a well-named constant, and use the constant instead.")
+        .next().atLine(11).withMessage("Assign this magic number 12.3F to a well-named constant, and use the constant instead.")
+    ;
+  }
+
