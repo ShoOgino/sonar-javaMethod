@@ -1,10 +1,12 @@
   @Override
   public void visitNode(AstNode astNode) {
     String className = astNode.getFirstChild(JavaTokenType.IDENTIFIER).getTokenValue();
-
     final SourceClass sourceClass;
     if (getContext().peekSourceCode().isType(SourceClass.class)) {
       sourceClass = createSourceClass((SourceClass) getContext().peekSourceCode(), className);
+    } else if (getContext().peekSourceCode().isType(SourceMethod.class)) {
+      localNameCounter++;
+      sourceClass = createSourceClass((SourceClass) getContext().peekSourceCode().getParent(), localNameCounter+className);
     } else {
       sourceClass = createSourceClass(peekParentPackage(), className);
     }
