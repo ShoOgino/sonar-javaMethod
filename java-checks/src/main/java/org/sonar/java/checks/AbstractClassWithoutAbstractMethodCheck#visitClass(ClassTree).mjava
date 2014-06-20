@@ -2,7 +2,7 @@
   public void visitClass(ClassTree tree) {
     if (tree.is(Tree.Kind.CLASS)) {
       Symbol.TypeSymbol typeSymbol = ((JavaTree.ClassTreeImpl) tree).getSymbol();
-      if (typeSymbol != null && isAbstract(typeSymbol)) {
+      if (typeSymbol != null && typeSymbol.isAbstract()) {
         Collection<Symbol> symbols = typeSymbol.members().scopeSymbols();
         int abstractMethod = countAbstractMethods(symbols);
         if (symbols.size() == 1 || abstractMethod == symbols.size() - 1) {
