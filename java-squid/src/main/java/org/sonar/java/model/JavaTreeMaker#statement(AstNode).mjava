@@ -9,11 +9,11 @@
         break;
       case EMPTY_STATEMENT:
         // 14.6. The Empty Statement
-        result = new JavaTree.EmptyStatementTreeImpl(statementNode);
+        result = new EmptyStatementTreeImpl(statementNode);
         break;
       case LABELED_STATEMENT:
         // 14.7. Labeled Statement
-        result = new JavaTree.LabeledStatementTreeImpl(
+        result = new LabeledStatementTreeImpl(
             statementNode,
             identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)),
             statement(statementNode.getFirstChild(JavaGrammar.STATEMENT))
@@ -21,7 +21,7 @@
         break;
       case EXPRESSION_STATEMENT:
         // 14.8. Expression Statement
-        result = new JavaTree.ExpressionStatementTreeImpl(
+        result = new ExpressionStatementTreeImpl(
             statementNode,
             expression(statementNode.getFirstChild(JavaGrammar.STATEMENT_EXPRESSION))
         );
@@ -29,7 +29,7 @@
       case IF_STATEMENT:
         // 14.9. The if Statement
         List<AstNode> statements = statementNode.getChildren(JavaGrammar.STATEMENT);
-        result = new JavaTree.IfStatementTreeImpl(
+        result = new IfStatementTreeImpl(
             statementNode,
             expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
             statement(statements.get(0)),
@@ -39,7 +39,7 @@
       case ASSERT_STATEMENT:
         // 14.10. The assert Statement
         List<AstNode> expressions = statementNode.getChildren(JavaGrammar.EXPRESSION);
-        result = new JavaTree.AssertStatementTreeImpl(
+        result = new AssertStatementTreeImpl(
             statementNode,
             expression(expressions.get(0)),
             expressions.size() > 1 ? expression(expressions.get(1)) : null
@@ -50,7 +50,7 @@
         break;
       case WHILE_STATEMENT:
         // 14.12. The while Statement
-        result = new JavaTree.WhileStatementTreeImpl(
+        result = new WhileStatementTreeImpl(
             statementNode,
             expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
             statement(statementNode.getFirstChild(JavaGrammar.STATEMENT))
@@ -58,7 +58,7 @@
         break;
       case DO_STATEMENT:
         // 14.13. The do Statement
-        result = new JavaTree.DoWhileStatementTreeImpl(
+        result = new DoWhileStatementTreeImpl(
             statementNode,
             statement(statementNode.getFirstChild(JavaGrammar.STATEMENT)),
             expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION))
@@ -69,35 +69,35 @@
         break;
       case BREAK_STATEMENT:
         // 14.15. The break Statement
-        result = new JavaTree.BreakStatementTreeImpl(
+        result = new BreakStatementTreeImpl(
             statementNode,
             statementNode.hasDirectChildren(JavaTokenType.IDENTIFIER) ? identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)) : null
         );
         break;
       case CONTINUE_STATEMENT:
         // 14.16. The continue Statement
-        result = new JavaTree.ContinueStatementTreeImpl(
+        result = new ContinueStatementTreeImpl(
             statementNode,
             statementNode.hasDirectChildren(JavaTokenType.IDENTIFIER) ? identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)) : null
         );
         break;
       case RETURN_STATEMENT:
         // 14.17. The return Statement
-        result = new JavaTree.ReturnStatementTreeImpl(
+        result = new ReturnStatementTreeImpl(
             statementNode,
             statementNode.hasDirectChildren(JavaGrammar.EXPRESSION) ? expression(statementNode.getFirstChild(JavaGrammar.EXPRESSION)) : null
         );
         break;
       case THROW_STATEMENT:
         // 14.18. The throw Statement
-        result = new JavaTree.ThrowStatementTreeImpl(
+        result = new ThrowStatementTreeImpl(
             statementNode,
             expression(statementNode.getFirstChild(JavaGrammar.EXPRESSION))
         );
         break;
       case SYNCHRONIZED_STATEMENT:
         // 14.19. The synchronized Statement
-        result = new JavaTree.SynchronizedStatementTreeImpl(
+        result = new SynchronizedStatementTreeImpl(
             statementNode,
             expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
             block(statementNode.getFirstChild(JavaGrammar.BLOCK))

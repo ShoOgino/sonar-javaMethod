@@ -12,7 +12,7 @@
     } else if (firstChildNode.is(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
       if (astNode.hasDirectChildren(JavaKeyword.THIS)) {
         // <T>this(arguments)
-        return new JavaTree.MethodInvocationTreeImpl(
+        return new MethodInvocationTreeImpl(
             astNode,
             identifier(astNode.getFirstChild(JavaKeyword.THIS)),
             arguments(astNode.getFirstChild(JavaGrammar.ARGUMENTS)));
@@ -25,7 +25,7 @@
               explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.SUPER_SUFFIX));
         } else {
           // <T>id(arguments)
-          return new JavaTree.MethodInvocationTreeImpl(
+          return new MethodInvocationTreeImpl(
               astNode,
               identifier(explicitGenericInvocationSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)),
               arguments(explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)));
@@ -35,7 +35,7 @@
       IdentifierTree identifier = identifier(firstChildNode);
       if (astNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
         // this(arguments)
-        return new JavaTree.MethodInvocationTreeImpl(
+        return new MethodInvocationTreeImpl(
             astNode,
             identifier,
             arguments(astNode.getFirstChild(JavaGrammar.ARGUMENTS)));
@@ -65,20 +65,20 @@
           if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
             // 15.8.2. Class Literals
             // id[].class
-            return new JavaTree.MemberSelectExpressionTreeImpl(
+            return new MemberSelectExpressionTreeImpl(
                 astNode,
                 applyDim(identifier, identifierSuffixNode.getChildren(JavaGrammar.DIM).size() + 1),
                 identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)));
           } else {
             // id[expression]
-            return new JavaTree.ArrayAccessExpressionTreeImpl(
+            return new ArrayAccessExpressionTreeImpl(
                 astNode,
                 identifier,
                 expression(identifierSuffixNode.getFirstChild(JavaGrammar.EXPRESSION)));
           }
         } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
           // id(arguments)
-          return new JavaTree.MethodInvocationTreeImpl(
+          return new MethodInvocationTreeImpl(
               astNode,
               identifier,
               arguments(identifierSuffixNode.getFirstChild()));
@@ -86,7 +86,7 @@
           if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
             // 15.8.2. Class Literals
             // id.class
-            return new JavaTree.MemberSelectExpressionTreeImpl(
+            return new MemberSelectExpressionTreeImpl(
                 astNode,
                 identifier,
                 identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)));
@@ -95,15 +95,15 @@
             return applyExplicitGenericInvocation(identifier, identifierSuffixNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
           } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.THIS)) {
             // id.this
-            return new JavaTree.MemberSelectExpressionTreeImpl(
+            return new MemberSelectExpressionTreeImpl(
                 astNode,
                 identifier,
                 identifier(identifierSuffixNode.getFirstChild(JavaKeyword.THIS)));
           } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.SUPER)) {
             // id.super(arguments)
-            return new JavaTree.MethodInvocationTreeImpl(
+            return new MethodInvocationTreeImpl(
                 astNode,
-                new JavaTree.MemberSelectExpressionTreeImpl(
+                new MemberSelectExpressionTreeImpl(
                     astNode,
                     identifier,
                     identifier(identifierSuffixNode.getFirstChild(JavaKeyword.SUPER))
@@ -128,7 +128,7 @@
       // int.class
       // int[].class
       // void.class
-      return new JavaTree.MemberSelectExpressionTreeImpl(
+      return new MemberSelectExpressionTreeImpl(
           astNode,
           applyDim(basicType(firstChildNode), astNode.getChildren(JavaGrammar.DIM).size()),
           identifier(astNode.getFirstChild(JavaKeyword.CLASS)));

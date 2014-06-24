@@ -13,7 +13,7 @@
       }else{
         type = referenceType(typeNode);
       }
-      return new JavaTree.TypeCastExpressionTreeImpl(
+      return new TypeCastExpressionTreeImpl(
           astNode,
           type,
           expression(astNode.getFirstChild(JavaPunctuator.RPAR).getNextSibling()));
@@ -26,7 +26,7 @@
         punctuator = (JavaPunctuator) astNode.getFirstChild(JavaGrammar.PREFIX_OP, JavaPunctuator.TILDA, JavaPunctuator.BANG).getFirstChild().getType();
       }
       Tree.Kind kind = kindMaps.getPrefixOperator(punctuator);
-      return new JavaTree.UnaryExpressionTreeImpl(
+      return new UnaryExpressionTreeImpl(
           astNode,
           kind,
           expression(astNode.getChild(1)));
@@ -39,7 +39,7 @@
       for (AstNode postfixOpNode : astNode.getChildren(JavaGrammar.POST_FIX_OP)) {
         JavaPunctuator punctuator = (JavaPunctuator) postfixOpNode.getFirstChild().getType();
         Tree.Kind kind = kindMaps.getPostfixOperator(punctuator);
-        result = new JavaTree.UnaryExpressionTreeImpl(astNode, kind, result);
+        result = new UnaryExpressionTreeImpl(astNode, kind, result);
       }
       return result;
     }

@@ -1,29 +1,29 @@
   private ExpressionTree applySelector(ExpressionTree expression, AstNode selectorNode) {
     checkType(selectorNode, JavaGrammar.SELECTOR);
     if (selectorNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
-      return new JavaTree.MethodInvocationTreeImpl(
+      return new MethodInvocationTreeImpl(
           selectorNode,
-          new JavaTree.MemberSelectExpressionTreeImpl(
+          new MemberSelectExpressionTreeImpl(
               selectorNode,
               expression,
               identifier(selectorNode.getFirstChild(JavaTokenType.IDENTIFIER))
           ),
           arguments(selectorNode.getFirstChild(JavaGrammar.ARGUMENTS)));
     } else if (selectorNode.hasDirectChildren(JavaTokenType.IDENTIFIER)) {
-      return new JavaTree.MemberSelectExpressionTreeImpl(
+      return new MemberSelectExpressionTreeImpl(
           selectorNode,
           expression,
           identifier(selectorNode.getFirstChild(JavaTokenType.IDENTIFIER)));
     } else if (selectorNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
       return applyExplicitGenericInvocation(expression, selectorNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
     } else if (selectorNode.hasDirectChildren(JavaKeyword.THIS)) {
-      return new JavaTree.MemberSelectExpressionTreeImpl(
+      return new MemberSelectExpressionTreeImpl(
           selectorNode,
           expression,
           identifier(selectorNode.getFirstChild(JavaKeyword.THIS)));
     } else if (selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
       return applySuperSuffix(
-          new JavaTree.MemberSelectExpressionTreeImpl(
+          new MemberSelectExpressionTreeImpl(
               selectorNode,
               expression,
               identifier(selectorNode.getFirstChild(JavaKeyword.SUPER))
@@ -36,7 +36,7 @@
           identifier(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)),
           innerCreatorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST));
     } else if (selectorNode.hasDirectChildren(JavaGrammar.DIM_EXPR)) {
-      return new JavaTree.ArrayAccessExpressionTreeImpl(
+      return new ArrayAccessExpressionTreeImpl(
           selectorNode,
           expression,
           expression(selectorNode.getFirstChild(JavaGrammar.DIM_EXPR).getFirstChild(JavaGrammar.EXPRESSION)));

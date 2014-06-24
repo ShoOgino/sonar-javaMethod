@@ -12,7 +12,7 @@
     if (astNode.hasDirectChildren(JavaKeyword.INSTANCEOF)) {
       // 15.20.2. Type Comparison Operator instanceof
       // TODO fix grammar - instanceof can't be chained
-      return new JavaTree.InstanceOfTreeImpl(
+      return new InstanceOfTreeImpl(
           astNode,
           expression(astNode.getFirstChild()),
           referenceType(astNode.getFirstChild(JavaGrammar.TYPE)));
@@ -22,7 +22,7 @@
     for (int i = astNode.getNumberOfChildren() - 3; i >= 0; i -= 2) {
       JavaPunctuator punctuator = (JavaPunctuator) astNode.getChild(i + 1).getType();
       Tree.Kind kind = kindMaps.getBinaryOperator(punctuator);
-      expression = new JavaTree.BinaryExpressionTreeImpl(
+      expression = new BinaryExpressionTreeImpl(
           astNode,
           expression(astNode.getChild(i)),
           kind,
