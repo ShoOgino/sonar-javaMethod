@@ -4,10 +4,10 @@
   private ExpressionTree assignmentExpression(AstNode astNode) {
     ExpressionTree expression = expression(astNode.getLastChild());
     for (int i = astNode.getNumberOfChildren() - 3; i >= 0; i -= 2) {
-      JavaPunctuator punctuator = (JavaPunctuator) astNode.getChild(i + 1).getFirstChild().getType();
-      Tree.Kind kind = kindMaps.getAssignmentOperator(punctuator);
+      AstNode operator = astNode.getChild(i + 1).getFirstChild();
+      Tree.Kind kind = kindMaps.getAssignmentOperator((JavaPunctuator) operator.getType());
       expression = new AssignmentExpressionTreeImpl(
-          astNode,
+          operator,
           expression(astNode.getChild(i)),
           kind,
           expression
