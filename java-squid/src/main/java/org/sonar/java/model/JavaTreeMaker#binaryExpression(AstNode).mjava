@@ -20,10 +20,10 @@
 
     ExpressionTree expression = expression(astNode.getLastChild());
     for (int i = astNode.getNumberOfChildren() - 3; i >= 0; i -= 2) {
-      JavaPunctuator punctuator = (JavaPunctuator) astNode.getChild(i + 1).getType();
-      Tree.Kind kind = kindMaps.getBinaryOperator(punctuator);
+      AstNode operatorNode = astNode.getChild(i + 1);
+      Tree.Kind kind = kindMaps.getBinaryOperator((JavaPunctuator) operatorNode.getType());
       expression = new BinaryExpressionTreeImpl(
-          astNode,
+          operatorNode,
           expression(astNode.getChild(i)),
           kind,
           expression
