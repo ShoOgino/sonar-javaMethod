@@ -6,6 +6,8 @@
     AstNode astNode = p.parse("class T { void m() { throw e; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     ThrowStatementTree tree = (ThrowStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.THROW_STATEMENT)).isTrue();
+    assertThat(tree.throwKeyword().text()).isEqualTo("throw");
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
   }
 

@@ -3,8 +3,12 @@
     AstNode astNode = p.parse("class T { void m() { for (Object o : objects) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     ForEachStatement tree = (ForEachStatement) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.FOR_EACH_STATEMENT)).isTrue();
+    assertThat(tree.forKeyword().text()).isEqualTo("for");
+    assertThat(tree.openParenToken().text()).isEqualTo("(");
     assertThat(tree.variable()).isNotNull();
+    assertThat(tree.colonToken().text()).isEqualTo(":");
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.closeParenToken().text()).isEqualTo(")");
     assertThat(tree.statement()).isNotNull();
   }
 

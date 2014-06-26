@@ -7,10 +7,12 @@
     UnaryExpressionTree tree = (UnaryExpressionTree) maker.expression(astNode);
     assertThat(tree.is(Tree.Kind.POSTFIX_INCREMENT)).isTrue();
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("++");
 
     astNode = p.parse("class T { void m() { i--; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION_NOT_PLUS_MINUS);
     tree = (UnaryExpressionTree) maker.expression(astNode);
     assertThat(tree.is(Tree.Kind.POSTFIX_DECREMENT)).isTrue();
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("--");
   }
 

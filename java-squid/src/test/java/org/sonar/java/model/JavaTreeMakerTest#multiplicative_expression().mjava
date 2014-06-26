@@ -5,16 +5,19 @@
   public void multiplicative_expression() {
     AstNode astNode = p.parse("class T { int m() { return 1 * 2 / 3 % 4; } }").getFirstDescendant(JavaGrammar.MULTIPLICATIVE_EXPRESSION);
     BinaryExpressionTree tree = (BinaryExpressionTree) maker.expression(astNode);
-    assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.is(Tree.Kind.MULTIPLY)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("*");
     assertThat(tree.rightOperand()).isNotNull();
     tree = (BinaryExpressionTree) tree.rightOperand();
-    assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.is(Tree.Kind.DIVIDE)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("/");
     assertThat(tree.rightOperand()).isNotNull();
     tree = (BinaryExpressionTree) tree.rightOperand();
-    assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.is(Tree.Kind.REMAINDER)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("%");
     assertThat(tree.rightOperand()).isNotNull();
   }
 

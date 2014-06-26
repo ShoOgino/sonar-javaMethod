@@ -6,11 +6,15 @@
     AstNode astNode = p.parse("class T { void m() { continue ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     ContinueStatementTree tree = (ContinueStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
+    assertThat(tree.continueKeyword().text()).isEqualTo("continue");
     assertThat(tree.label()).isNull();
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
 
     astNode = p.parse("class T { void m() { continue label ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (ContinueStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
+    assertThat(tree.continueKeyword().text()).isEqualTo("continue");
     assertThat(tree.label().name()).isEqualTo("label");
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
   }
 

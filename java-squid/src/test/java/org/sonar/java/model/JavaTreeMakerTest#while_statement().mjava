@@ -6,7 +6,10 @@
     AstNode astNode = p.parse("class T { void m() { while (true) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     WhileStatementTree tree = (WhileStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.WHILE_STATEMENT)).isTrue();
+    assertThat(tree.whileKeyword().text()).isEqualTo("while");
+    assertThat(tree.openParenToken().text()).isEqualTo("(");
     assertThat(tree.condition()).isNotNull();
+    assertThat(tree.closeParenToken().text()).isEqualTo(")");
     assertThat(tree.statement()).isNotNull();
   }
 

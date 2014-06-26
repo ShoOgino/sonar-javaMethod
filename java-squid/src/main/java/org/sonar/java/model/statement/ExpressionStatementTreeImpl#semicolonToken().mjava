@@ -1,0 +1,11 @@
+  @Override
+  public SyntaxToken semicolonToken() {
+    if (astNode.is(JavaGrammar.EXPRESSION_STATEMENT)) {
+      return new InternalSyntaxToken(astNode.getFirstChild(JavaPunctuator.SEMI).getToken());
+    } else if (astNode.is(JavaGrammar.STATEMENT_EXPRESSION)) {
+      return new InternalSyntaxToken(astNode.getParent().getFirstChild(JavaPunctuator.SEMI).getToken());
+    } else {
+      throw new IllegalStateException();
+    }
+  }
+

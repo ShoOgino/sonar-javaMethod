@@ -9,17 +9,25 @@
     assertThat(tree.resources()).isEmpty();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).isEmpty();
+    assertThat(tree.finallyKeyword().text()).isEqualTo("finally");
     assertThat(tree.finallyBlock()).isNotNull();
 
     astNode = p.parse("class T { void m() { try { } catch (RuntimeException e1) { } catch (Exception e2) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (TryStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
+    assertThat(tree.tryKeyword().text()).isEqualTo("try");
+    assertThat(tree.openParenToken()).isNull();
     assertThat(tree.resources()).isEmpty();
+    assertThat(tree.closeParenToken()).isNull();
     assertThat(tree.block()).isNotNull();
+    assertThat(tree.finallyKeyword()).isNull();
     assertThat(tree.finallyBlock()).isNull();
     assertThat(tree.catches()).hasSize(2);
     CatchTree catchTree = tree.catches().get(0);
+    assertThat(catchTree.catchKeyword().text()).isEqualTo("catch");
     assertThat(catchTree.block()).isNotNull();
+    assertThat(catchTree.openParenToken().text()).isEqualTo("(");
+    assertThat(catchTree.closeParenToken().text()).isEqualTo(")");
     VariableTree parameterTree = catchTree.parameter();
     assertThat(parameterTree.type()).isNotNull();
     assertThat(parameterTree.simpleName().name()).isEqualTo("e1");
@@ -45,7 +53,9 @@
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).hasSize(1);
     assertThat(tree.finallyBlock()).isNotNull();
+    assertThat(tree.openParenToken().text()).isEqualTo("(");
     assertThat(tree.resources()).hasSize(2);
+    assertThat(tree.closeParenToken().text()).isEqualTo(")");
     VariableTree resource = tree.resources().get(0);
     assertThat(resource.simpleName().name()).isEqualTo("r1");
     assertThat(resource.initializer()).isNotNull();

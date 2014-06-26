@@ -6,11 +6,15 @@
     AstNode astNode = p.parse("class T { void m() { break ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     BreakStatementTree tree = (BreakStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.BREAK_STATEMENT)).isTrue();
+    assertThat(tree.breakKeyword().text()).isEqualTo("break");
     assertThat(tree.label()).isNull();
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
 
     astNode = p.parse("class T { void m() { break label ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
     tree = (BreakStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.BREAK_STATEMENT)).isTrue();
+    assertThat(tree.breakKeyword().text()).isEqualTo("break");
     assertThat(tree.label().name()).isEqualTo("label");
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
   }
 

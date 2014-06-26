@@ -6,6 +6,8 @@
     AstNode astNode = p.parse("class T { void m() { ; ; } }").getFirstDescendant(JavaGrammar.BLOCK);
     BlockTree tree = maker.block(astNode);
     assertThat(tree.is(Tree.Kind.BLOCK)).isTrue();
+    assertThat(tree.openBraceToken().text()).isEqualTo("{");
     assertThat(tree.body()).hasSize(2);
+    assertThat(tree.closeBraceToken().text()).isEqualTo("}");
   }
 

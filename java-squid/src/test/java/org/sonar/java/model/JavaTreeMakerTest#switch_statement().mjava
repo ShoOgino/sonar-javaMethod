@@ -6,23 +6,32 @@
     AstNode astNode = p.parse("class T { void m() { switch (e) { case 1: case 2: ; default: ; } } }").getFirstDescendant(JavaGrammar.STATEMENT);
     SwitchStatementTree tree = (SwitchStatementTree) maker.statement(astNode);
     assertThat(tree.is(Tree.Kind.SWITCH_STATEMENT)).isTrue();
+    assertThat(tree.switchKeyword().text()).isEqualTo("switch");
+    assertThat(tree.openParenToken().text()).isEqualTo("(");
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.closeParenToken().text()).isEqualTo(")");
     assertThat(tree.cases()).hasSize(2);
 
     CaseGroupTree c = tree.cases().get(0);
     assertThat(c.is(Tree.Kind.CASE_GROUP)).isTrue();
     assertThat(c.labels()).hasSize(2);
     assertThat(c.labels().get(0).is(Tree.Kind.CASE_LABEL)).isTrue();
+    assertThat(c.labels().get(0).caseOrDefaultKeyword().text()).isEqualTo("case");
     assertThat(c.labels().get(0).expression()).isNotNull();
+    assertThat(c.labels().get(0).colonToken().text()).isEqualTo(":");
     assertThat(c.labels().get(1).is(Tree.Kind.CASE_LABEL)).isTrue();
+    assertThat(c.labels().get(1).caseOrDefaultKeyword().text()).isEqualTo("case");
     assertThat(c.labels().get(1).expression()).isNotNull();
+    assertThat(c.labels().get(1).colonToken().text()).isEqualTo(":");
     assertThat(c.body()).hasSize(1);
 
     c = tree.cases().get(1);
     assertThat(c.is(Tree.Kind.CASE_GROUP)).isTrue();
     assertThat(c.labels()).hasSize(1);
     assertThat(c.labels().get(0).is(Tree.Kind.CASE_LABEL)).isTrue();
+    assertThat(c.labels().get(0).caseOrDefaultKeyword().text()).isEqualTo("default");
     assertThat(c.labels().get(0).expression()).isNull();
+    assertThat(c.labels().get(0).colonToken().text()).isEqualTo(":");
     assertThat(c.body()).hasSize(1);
 
     astNode = p.parse("class T { void m() { switch (e) { default: } } }").getFirstDescendant(JavaGrammar.STATEMENT);
