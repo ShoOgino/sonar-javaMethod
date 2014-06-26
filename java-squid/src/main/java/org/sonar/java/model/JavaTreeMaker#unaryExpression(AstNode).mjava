@@ -26,7 +26,7 @@
         operatorNode = astNode.getFirstChild(JavaGrammar.PREFIX_OP).getFirstChild();
       }
       Tree.Kind kind = kindMaps.getPrefixOperator((JavaPunctuator) operatorNode.getType());
-      return new UnaryExpressionTreeImpl(
+      return new InternalPrefixUnaryExpression(
           astNode,
           kind,
           expression(astNode.getChild(1)));
@@ -39,7 +39,7 @@
       for (AstNode postfixOpNode : astNode.getChildren(JavaGrammar.POST_FIX_OP)) {
         JavaPunctuator punctuator = (JavaPunctuator) postfixOpNode.getFirstChild().getType();
         Tree.Kind kind = kindMaps.getPostfixOperator(punctuator);
-        result = new UnaryExpressionTreeImpl(astNode, kind, result);
+        result = new InternalPostfixUnaryExpression(astNode, kind, result);
       }
       return result;
     }
