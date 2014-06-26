@@ -12,9 +12,9 @@
         AstNode argumentsNode = enumConstantNode.getFirstChild(JavaGrammar.ARGUMENTS);
         AstNode classBodyNode = enumConstantNode.getFirstChild(JavaGrammar.CLASS_BODY);
         IdentifierTree enumIdentifier = identifier(enumConstantNode.getFirstChild(JavaTokenType.IDENTIFIER));
-        members.add(new JavaTree.EnumConstantTreeImpl(
+        members.add(new EnumConstantTreeImpl(
             enumConstantNode,
-            JavaTree.ModifiersTreeImpl.EMPTY,
+            ModifiersTreeImpl.EMPTY,
             enumType,
             enumIdentifier,
             new NewClassTreeImpl(
@@ -22,10 +22,10 @@
             /* enclosing expression: */null,
                 enumIdentifier,
                 argumentsNode != null ? arguments(argumentsNode) : ImmutableList.<ExpressionTree>of(),
-                classBodyNode == null ? null : new JavaTree.ClassTreeImpl(
+                classBodyNode == null ? null : new ClassTreeImpl(
                     classBodyNode,
                     Tree.Kind.CLASS,
-                    JavaTree.ModifiersTreeImpl.EMPTY,
+                    ModifiersTreeImpl.EMPTY,
                     classBody(classBodyNode)
                 )
             )
@@ -38,6 +38,6 @@
     }
     AstNode implementsNode = astNode.getFirstChild(JavaKeyword.IMPLEMENTS);
     List<Tree> superInterfaces = implementsNode != null ? classTypeList(implementsNode.getNextSibling()) : ImmutableList.<Tree>of();
-    return new JavaTree.ClassTreeImpl(astNode, Tree.Kind.ENUM, modifiers, enumType, /* super class: */null, superInterfaces, members.build());
+    return new ClassTreeImpl(astNode, Tree.Kind.ENUM, modifiers, enumType, /* super class: */null, superInterfaces, members.build());
   }
 
