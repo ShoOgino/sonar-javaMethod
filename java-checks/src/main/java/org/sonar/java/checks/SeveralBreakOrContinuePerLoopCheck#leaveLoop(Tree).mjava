@@ -1,0 +1,16 @@
+  private void leaveLoop(Tree tree) {
+    int count = 0;
+    if (!breakAndContinueCounter.isEmpty()) {
+      count = breakAndContinueCounter.pop();
+    }
+    if (!breakAndContinueCounter.isEmpty()) {
+      int pushBack = breakAndContinueCounter.pop() + count;
+      breakAndContinueCounter.push(pushBack);
+    }
+    if (count > 1) {
+      context.addIssue(tree, ruleKey, "Reduce the total number of break and continue statement in this loop to use at most one.");
+    }
+    loopCount--;
+    currentScopeIsSwitch.pop();
+  }
+
