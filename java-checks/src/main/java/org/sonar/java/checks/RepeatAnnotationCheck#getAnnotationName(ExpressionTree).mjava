@@ -1,0 +1,13 @@
+  private String getAnnotationName(ExpressionTree initializer) {
+    String result = "";
+    if (initializer.is(Tree.Kind.ANNOTATION)) {
+      Tree annotationType = ((AnnotationTree) initializer).annotationType();
+      if (annotationType.is(Tree.Kind.IDENTIFIER)) {
+        result = ((IdentifierTree) annotationType).name();
+      } else if (annotationType.is(Tree.Kind.MEMBER_SELECT)) {
+        result = fullName((MemberSelectExpressionTree) annotationType);
+      }
+    }
+    return result;
+  }
+

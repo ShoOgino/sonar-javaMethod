@@ -1,0 +1,11 @@
+  @Override
+  public void visitAnnotation(AnnotationTree annotationTree) {
+    if (isArrayInitialized(annotationTree)) {
+      NewArrayTree arrayTree = (NewArrayTree) annotationTree.arguments().get(0);
+      if (isAllSameAnnotation(arrayTree.initializers())) {
+        context.addIssue(annotationTree, ruleKey, "Remove the '" + getAnnotationName(annotationTree) + "' wrapper from this annotation group");
+      }
+    }
+    super.visitAnnotation(annotationTree);
+  }
+
