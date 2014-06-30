@@ -6,6 +6,8 @@
     AstNode astNode = p.parse("class T { boolean m() { return (true); } }").getFirstDescendant(JavaGrammar.EXPRESSION);
     ParenthesizedTree tree = (ParenthesizedTree) maker.expression(astNode);
     assertThat(tree.is(Tree.Kind.PARENTHESIZED_EXPRESSION)).isTrue();
+    assertThat(tree.openParenToken().text()).isEqualTo("(");
     assertThat(tree.expression()).isNotNull();
+    assertThat(tree.closeParenToken().text()).isEqualTo(")");
   }
 
