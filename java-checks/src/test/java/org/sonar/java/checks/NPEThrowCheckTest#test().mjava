@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NPEThrowCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(2).withMessage("Throw some other exception here, such as \"IllegalArgumentException\".")
+        .next().atLine(5).withMessage("Throw some other exception here, such as \"IllegalArgumentException\".")
+        .noMore();
+  }
+
