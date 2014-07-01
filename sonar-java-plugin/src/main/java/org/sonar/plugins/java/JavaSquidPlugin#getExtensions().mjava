@@ -1,6 +1,10 @@
   @Override
   public List getExtensions() {
-    return ImmutableList.of(
+    ImmutableList.Builder<Object> builder = ImmutableList.builder();
+    builder.addAll(JavaPlugin.getExtensions());
+    builder.addAll(SurefirePlugin.getExtensions());
+    builder.addAll(JaCoCoPlugin.getExtensions());
+     builder.add(
       PropertyDefinition.builder(JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_PROPERTY)
         .defaultValue(JavaSquidPlugin.SQUID_ANALYSE_ACCESSORS_DEFAULT_VALUE + "")
         .category(JAVA_CATEGORY)
@@ -26,5 +30,6 @@
       SonarComponents.class,
       DefaultJavaResourceLocator.class,
       JavaSquidSensor.class);
+    return builder.build();
   }
 
