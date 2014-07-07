@@ -1,0 +1,16 @@
+  private String concatenate(ExpressionTree tree) {
+    StringBuilder sb = new StringBuilder();
+
+    while (tree.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+      sb.insert(0,mse.identifier());
+      sb.insert(0,'.');
+      tree = mse.expression();
+    }
+    if (tree.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree idt = (IdentifierTree) tree;
+      sb.insert(0,idt.name());
+    }
+    return sb.toString();
+  }
+

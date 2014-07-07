@@ -1,12 +1,8 @@
   @Test
   public void test2() {
     check.format = "^[a-zA-Z0-9]*$";
-    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), check);
-    File baseDir = new File("src/test/files/checks");
-    List<InputFile> inputFiles = InputFileUtils.create(baseDir,
-      ImmutableList.of(new File("src/test/files/checks/PACKAGE/BadPackageName.java")));
-    scanner.scan(inputFiles);
-    SourceFile file = (SourceFile) scanner.getIndex().search(new QueryByType(SourceFile.class)).iterator().next();
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/PACKAGE/BadPackageName.java"), new VisitorsBridge(check));
+
     CheckMessagesVerifier.verify(file.getCheckMessages())
       .noMore();
   }

@@ -1,11 +1,7 @@
   @Test
   public void test() {
-    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), check);
-    File baseDir = new File("src/test/files/checks");
-    List<InputFile> inputFiles = InputFileUtils.create(baseDir,
-      ImmutableList.of(new File("src/test/files/checks/PACKAGE/BadPackageName.java")));
-    scanner.scan(inputFiles);
-    SourceFile file = (SourceFile) scanner.getIndex().search(new QueryByType(SourceFile.class)).iterator().next();
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/PACKAGE/BadPackageName.java"), new VisitorsBridge(check));
+
     CheckMessagesVerifier.verify(file.getCheckMessages())
       .next().atLine(1).withMessage("Rename this package name to match the regular expression '^[a-z]+(\\.[a-z][a-z0-9]*)*$'.")
       .noMore();
