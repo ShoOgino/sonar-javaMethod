@@ -1,10 +1,12 @@
-  private void visitMethodDeclaration(MethodTree tree) {
+  private void visitMethodDeclaration(MethodTreeImpl tree) {
     String name = tree.returnType() == null ? "<init>" : tree.simpleName().name();
     Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeFlags(tree.modifiers()), name, env.scope.owner);
     enterSymbol(tree, symbol);
     symbol.parameters = new Scope(symbol);
     symbol.completer = completer;
     uncompleted.add(symbol);
+
+    tree.setSymbol(symbol);
 
     // Save current environment to be able to complete method later
     semanticModel.saveEnv(symbol, env);
