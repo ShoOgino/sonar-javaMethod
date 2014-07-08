@@ -1,0 +1,16 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    if (isAndWithNullComparison(tree) || isOrWithNullExclusion(tree)) {
+      Tree nonNullOperand = getNonNullOperand(tree.leftOperand());
+      IdentifierTree identifierTree = getIdentifier(nonNullOperand);
+      if (identifierTree != null) {
+        IdentifierVisitor visitor = new IdentifierVisitor(identifierTree);
+        tree.rightOperand().accept(visitor);
+        if (visitor.raiseIssue) {
+          context.addIssue(tree, ruleKey, "Either reverse the equality operator in the \"" + identifierTree.name() + "\" null test, or reverse the logical operator that follows it.");
+        }
+      }
+    }
+    super.visitBinaryExpression(tree);
+  }
+

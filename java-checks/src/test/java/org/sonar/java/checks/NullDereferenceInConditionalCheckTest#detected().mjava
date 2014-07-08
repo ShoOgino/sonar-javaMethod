@@ -1,0 +1,13 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NullDereferenceInConditionalCheck.java"), new VisitorsBridge(new NullDereferenceInConditionalCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(3).withMessage("Either reverse the equality operator in the \"str\" null test, or reverse the logical operator that follows it.")
+      .next().atLine(4).withMessage("Either reverse the equality operator in the \"str\" null test, or reverse the logical operator that follows it.")
+      .next().atLine(10).withMessage("Either reverse the equality operator in the \"str\" null test, or reverse the logical operator that follows it.")
+      .next().atLine(11).withMessage("Either reverse the equality operator in the \"b\" null test, or reverse the logical operator that follows it.")
+      .next().atLine(12).withMessage("Either reverse the equality operator in the \"str\" null test, or reverse the logical operator that follows it.")
+      .next().atLine(13).withMessage("Either reverse the equality operator in the \"str\" null test, or reverse the logical operator that follows it.")
+    ;
+  }
+
