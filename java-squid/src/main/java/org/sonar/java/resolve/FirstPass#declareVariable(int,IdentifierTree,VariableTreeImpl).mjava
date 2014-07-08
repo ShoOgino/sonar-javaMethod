@@ -1,8 +1,10 @@
-  private void declareVariable(int flags, IdentifierTree identifierTree, Tree tree) {
+  private void declareVariable(int flags, IdentifierTree identifierTree, VariableTreeImpl tree) {
     Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(flags, identifierTree.name(), env.scope.owner);
     enterSymbol(tree, symbol);
     symbol.completer = completer;
     uncompleted.add(symbol);
+
+    tree.setSymbol(symbol);
 
     // Save current environment to be able to complete variable declaration later
     semanticModel.saveEnv(symbol, env);
