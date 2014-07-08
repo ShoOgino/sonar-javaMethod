@@ -1,5 +1,6 @@
   private boolean returnsVoid(MethodTree tree) {
-    Tree returnType = tree.returnType();
-    return returnType != null && returnType.is(Tree.Kind.PRIMITIVE_TYPE) && ((JavaTree.PrimitiveTypeTreeImpl) returnType).getType().isTagged(Type.VOID);
+    Symbol.MethodSymbol methodSymbol = ((MethodTreeImpl) tree).getSymbol();
+    // TODO(Godin): Not very convenient way to get a return type
+    return (methodSymbol != null) && (methodSymbol.getReturnType().getType().isTagged(Type.VOID));
   }
 
