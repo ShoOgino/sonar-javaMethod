@@ -1,0 +1,23 @@
+  @Override
+  public void visitIfStatement(IfStatementTree tree) {
+
+    if (!outerIf.isEmpty() && !hasElseClause(tree)) {
+      context.addIssue(tree, ruleKey, "Merge this if statement with the enclosing one.");
+    }
+
+    if (!hasElseClause(tree) && hasBodySingleIfStatement(tree.thenStatement())) {
+      // children of this if statement are eligible for issues
+      outerIf.push(Boolean.TRUE);
+      // recurse into sub-tree
+      super.visitIfStatement(tree);
+      if (!outerIf.isEmpty()) {
+        outerIf.pop();
+      }
+    }
+    else {
+      // direct children of this if statement not eligible for issues. Reset nesting count
+      outerIf.clear();
+      super.visitIfStatement(tree);
+    }
+  }
+

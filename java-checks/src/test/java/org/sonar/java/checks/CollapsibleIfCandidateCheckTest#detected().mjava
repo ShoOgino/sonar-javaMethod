@@ -1,9 +1,12 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CollapsibleIfCandidateCheck.java"), new CollapsibleIfCandidateCheck());
-    checkMessagesVerifier.verify(file.getCheckMessages())
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CollapsibleIfCandidateCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
         .next().atLine(11).withMessage("Merge this if statement with the enclosing one.")
         .next().atLine(41)
-        .next().atLine(46);
+        .next().atLine(46)
+        .next().atLine(74)
+        .next().atLine(90)
+        .next().atLine(91);
   }
 
