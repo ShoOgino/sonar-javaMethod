@@ -1,22 +1,22 @@
   @Override
   public void visitClass(ClassTree tree) {
-
-    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM)) {
+    if ((tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM)) && isComparable(tree)) {
       boolean hasEquals = false;
-      MethodTree compare = null;
+      Tree compare = null;
+
       for (Tree member : tree.members()) {
         if (member.is(Tree.Kind.METHOD)) {
           MethodTree method = (MethodTree) member;
-          if (method.parameters().size() == 1) {
-            String name = method.simpleName().name();
-            if (name.equals("equals")) {
-              hasEquals = true;
-            } else if (name.equals("compareTo")) {
-              compare = method;
-            }
+          String name = method.simpleName().name();
+
+          if ("equals".equals(name) && hasObjectParam(method) && returnsBoolean(method)) {
+            hasEquals = true;
+          } else if ("compareTo".equals(name) && returnsInt(method) && method.parameters().size() == 1) {
+            compare = member;
           }
         }
       }
+
       if (compare != null && !hasEquals) {
         context.addIssue(compare, ruleKey, "Override \"equals(Object obj)\" to comply with the contract of the \"compareTo(T o)\" method.");
       }
