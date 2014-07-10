@@ -1,7 +1,16 @@
   @Override
   public void onProject(SourceProject squidProject, Project sonarProject) {
     Set<SourceCode> squidPackages = squidProject.getChildren();
-    if (squidPackages != null && !squidPackages.isEmpty()) {
+    if (squidPackages != null) {
+      squidPackages = Sets.filter(squidPackages, new Predicate<SourceCode>() {
+        @Override
+        public boolean apply(@Nullable SourceCode input) {
+          return input != null && !PackageVisitor.UNRESOLVED_PACKAGE.equals(input.getKey());
+        }
+      });
+      if (squidPackages.isEmpty()) {
+        return;
+      }
       TimeProfiler profiler = new TimeProfiler(LOG).start("Package design analysis");
       LOG.debug("{} packages to analyze", squidPackages.size());
 
