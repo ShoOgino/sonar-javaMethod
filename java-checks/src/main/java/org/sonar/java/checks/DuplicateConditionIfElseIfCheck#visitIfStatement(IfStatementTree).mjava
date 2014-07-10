@@ -1,0 +1,20 @@
+  @Override
+  public void visitIfStatement(IfStatementTree tree) {
+    ExpressionTree condition = tree.condition();
+
+    StatementTree statement = tree.elseStatement();
+    while (statement != null && statement.is(Tree.Kind.IF_STATEMENT)) {
+      IfStatementTree ifStatement = (IfStatementTree) statement;
+      if (SyntacticEquivalence.areEquivalent(condition, ifStatement.condition())) {
+        context.addIssue(
+          ifStatement.condition(),
+          ruleKey,
+          "This branch can not be reached because the condition duplicates a previous condition in the same sequence of \"if/else if\" statements"
+        );
+      }
+      statement = ifStatement.elseStatement();
+    }
+
+    super.visitIfStatement(tree);
+  }
+

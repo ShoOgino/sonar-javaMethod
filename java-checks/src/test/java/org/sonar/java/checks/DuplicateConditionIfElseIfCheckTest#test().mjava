@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/DuplicateConditionIfElseIfCheck.java"), new VisitorsBridge(new DuplicateConditionIfElseIfCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(4).withMessage("This branch can not be reached because the condition duplicates a previous condition in the same sequence of \"if/else if\" statements")
+      .next().atLine(9)
+      .next().atLine(14);
+  }
+
