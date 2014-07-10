@@ -1,8 +1,9 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/EnumAsIdentifierCheck.java"), new EnumAsIdentifierCheck());
-    checkMessagesVerifier.verify(file.getCheckMessages())
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/EnumAsIdentifierCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
         .next().atLine(3).withMessage("Use a different name than \"enum\".")
-        .next().atLine(7);
+        .next().atLine(9)
+        .next().atLine(15);
   }
 
