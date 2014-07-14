@@ -7,11 +7,10 @@
       for (Tree member : tree.members()) {
         if (member.is(Tree.Kind.METHOD)) {
           MethodTree method = (MethodTree) member;
-          String name = method.simpleName().name();
 
-          if ("equals".equals(name) && hasObjectParam(method) && returnsBoolean(method)) {
+          if (isEqualsMethod(method)) {
             hasEquals = true;
-          } else if ("compareTo".equals(name) && returnsInt(method) && method.parameters().size() == 1) {
+          } else if (isCompareToMethod(method)) {
             compare = member;
           }
         }
