@@ -1,0 +1,9 @@
+  @Override
+  public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+    //Check only = kind of assignements (not +=, *=, etc.)
+    if (tree.is(Tree.Kind.ASSIGNMENT) && SyntacticEquivalence.areEquivalent(tree.expression(), tree.variable())) {
+      context.addIssue(tree, ruleKey, "Remove or correct this useless self-assignment");
+    }
+    super.visitAssignmentExpression(tree);
+  }
+

@@ -1,0 +1,12 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SelfAssignementCheck.java"), new VisitorsBridge(new SelfAssignementCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(5).withMessage("Remove or correct this useless self-assignment")
+        .next().atLine(6)
+        .next().atLine(8)
+        .next().atLine(9)
+        .next().atLine(10)
+    ;
+  }
+
