@@ -1,0 +1,11 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    super.visitMethodInvocation(tree);
+    if (tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      IdentifierTree identifierTree = ((MemberSelectExpressionTree) tree.methodSelect()).identifier();
+      if (!enclosingClassExtendsThrowable() && identifierTree.name().equals("printStackTrace") && calledOnTypeInheritedFromThrowable(tree)) {
+        context.addIssue(identifierTree, ruleKey, "Use a logger to log this exception.");
+      }
+    }
+  }
+
