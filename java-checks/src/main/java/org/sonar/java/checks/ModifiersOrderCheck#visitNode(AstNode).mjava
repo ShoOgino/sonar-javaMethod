@@ -2,9 +2,9 @@
   public void visitNode(AstNode node) {
     if (isFirstModifer(node)) {
       List<AstNode> modifiers = getModifiers(node);
-
-      if (isBadlyOrdered(modifiers)) {
-        getContext().createLineViolation(this, "Reorder the modifiers to comply with the Java Language Specification.", node);
+      AstNode badlyOrderedModifier = isBadlyOrdered(modifiers);
+      if (badlyOrderedModifier != null) {
+        getContext().createLineViolation(this, "Reorder the modifiers to comply with the Java Language Specification.", badlyOrderedModifier);
       }
     }
   }
