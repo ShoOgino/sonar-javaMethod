@@ -1,0 +1,19 @@
+  /**
+   * Handles missing types in Syntax Tree to prevent NPE in subsequent steps of analysis.
+   */
+  private static void handleMissingTypes(final Symbols symbols, Tree tree) {
+    // (Godin): Another and probably better (safer) way to do the same - is to assign default value during creation of nodes, so that to guarantee that this step won't be skipped.
+    tree.accept(new BaseTreeVisitor() {
+      @Override
+      protected void scan(@Nullable Tree tree) {
+        if (tree instanceof AbstractTypedTree) {
+          AbstractTypedTree typedNode = (AbstractTypedTree) tree;
+          if (typedNode.getType() == null) {
+            typedNode.setType(symbols.unknownType);
+          }
+        }
+        super.scan(tree);
+      }
+    });
+  }
+
