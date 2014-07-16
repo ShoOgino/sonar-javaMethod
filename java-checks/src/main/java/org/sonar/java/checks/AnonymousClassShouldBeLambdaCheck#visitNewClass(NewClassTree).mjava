@@ -3,7 +3,7 @@
     super.visitNewClass(tree);
     if (tree.classBody() != null) {
       List<Tree> members = tree.classBody().members();
-      if (!enumConstants.contains(tree.identifier()) && members.size() == 1 && members.get(0).is(Tree.Kind.METHOD)) {
+      if (!useThisIdentifier(tree.classBody()) && !enumConstants.contains(tree.identifier()) && members.size() == 1 && members.get(0).is(Tree.Kind.METHOD)) {
         context.addIssue(tree, RULE, "Make this anonymous inner class a lambda");
       }
     }
