@@ -1,10 +1,10 @@
   @Before
   public void before() {
     project = mock(Project.class);
-    fileSystem = mock(ProjectFileSystem.class);
-    when(fileSystem.mainFiles("java")).thenReturn(Collections.singletonList(mock(InputFile.class)));
-    when(project.getFileSystem()).thenReturn(fileSystem);
-
+    fs = new DefaultFileSystem();
+    DefaultInputFile javaFile = new DefaultInputFile("src/org/foo/java");
+    javaFile.setLanguage("java");
+    fs.add(javaFile);
     perspectives = mock(ResourcePerspectives.class);
 
     javaResourceLocator = mock(JavaResourceLocator.class);
@@ -15,6 +15,6 @@
       }
     });
 
-    surefireSensor = new SurefireSensor(new SurefireJavaParser(perspectives, javaResourceLocator), mock(Settings.class));
+    surefireSensor = new SurefireSensor(new SurefireJavaParser(perspectives, javaResourceLocator), mock(Settings.class), fs);
   }
 
