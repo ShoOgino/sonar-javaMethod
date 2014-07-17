@@ -2,10 +2,10 @@
     ExecutionDataVisitor executionDataVisitor = new ExecutionDataVisitor();
 
     if (jacocoExecutionData == null || !jacocoExecutionData.isFile()) {
-      JaCoCoUtils.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
+      JaCoCoExtensions.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
       jacocoExecutionData = null;
     } else {
-      JaCoCoUtils.LOG.info("Analysing {}", jacocoExecutionData);
+      JaCoCoExtensions.LOG.info("Analysing {}", jacocoExecutionData);
 
       ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
       reader.setSessionInfoVisitor(executionDataVisitor);
@@ -33,11 +33,11 @@
       }
     }
     if (analyzedResources == 0) {
-      JaCoCoUtils.LOG.warn("Coverage information was not collected. Perhaps you forget to include debug information into compiled classes?");
+      JaCoCoExtensions.LOG.warn("Coverage information was not collected. Perhaps you forget to include debug information into compiled classes?");
     } else if (collectedCoveragePerTest) {
-      JaCoCoUtils.LOG.info("Information about coverage per test has been collected.");
+      JaCoCoExtensions.LOG.info("Information about coverage per test has been collected.");
     } else if (jacocoExecutionData != null) {
-      JaCoCoUtils.LOG.info("No information about coverage per test.");
+      JaCoCoExtensions.LOG.info("No information about coverage per test.");
     }
   }
 
