@@ -1,0 +1,12 @@
+  private String getIssueMessage(List<AsmClass> thrownClasses, AsmClass thrownClass) {
+    String thrownClassName = thrownClass.getDisplayName();
+    if (isSubClassOfAny(thrownClass, thrownClasses)) {
+      return "Remove the declaration of thrown exception '" + thrownClassName + "' which is a subclass of another one.";
+    } else if (isSubClassOfRuntimeException(thrownClass)) {
+      return "Remove the declaration of thrown exception '" + thrownClassName + "' which is a runtime exception.";
+    } else if (isDeclaredMoreThanOnce(thrownClass, thrownClasses)) {
+      return "Remove the redundant '" + thrownClassName + "' thrown exception declaration(s).";
+    }
+    return null;
+  }
+
