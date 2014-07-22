@@ -1,5 +1,5 @@
   /**
-   * Copied from {@link Analyzer#analyzeAll(File)} in order to add logging.
+   * In comparison with {@link Analyzer#analyzeAll(File)}, instead of stop of analysis this method produces warning for individual files, which cannot be properly analysed.
    */
   private void analyzeAll(Analyzer analyzer, File file) {
     if (file.isDirectory()) {
@@ -7,11 +7,7 @@
         analyzeAll(analyzer, f);
       }
     } else if (file.getName().endsWith(".class")) {
-      try {
-        analyzer.analyzeAll(file);
-      } catch (Exception e) {
-        JaCoCoExtensions.LOG.warn("Exception during analysis of file " + file.getAbsolutePath(), e);
-      }
+      analyzeClassFile(analyzer, file);
     }
   }
 

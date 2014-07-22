@@ -1,0 +1,16 @@
+  /**
+   * Caller must guarantee that {@code classFile} is actually class file.
+   */
+  private void analyzeClassFile(Analyzer analyzer, File classFile) {
+    InputStream inputStream = null;
+    try {
+      inputStream = new FileInputStream(classFile);
+      analyzer.analyzeClass(inputStream, classFile.getPath());
+    } catch (IOException e) {
+      // (Godin): in fact JaCoCo includes name into exception
+      JaCoCoExtensions.LOG.warn("Exception during analysis of file " + classFile.getAbsolutePath(), e);
+    } finally {
+      Closeables.closeQuietly(inputStream);
+    }
+  }
+
