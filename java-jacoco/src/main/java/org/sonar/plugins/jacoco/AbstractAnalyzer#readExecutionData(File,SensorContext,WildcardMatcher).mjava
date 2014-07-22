@@ -7,10 +7,16 @@
     } else {
       JaCoCoExtensions.LOG.info("Analysing {}", jacocoExecutionData);
 
-      ExecutionDataReader reader = new ExecutionDataReader(new FileInputStream(jacocoExecutionData));
-      reader.setSessionInfoVisitor(executionDataVisitor);
-      reader.setExecutionDataVisitor(executionDataVisitor);
-      reader.read();
+      InputStream inputStream = null;
+      try {
+        inputStream = new BufferedInputStream(new FileInputStream(jacocoExecutionData));
+        ExecutionDataReader reader = new ExecutionDataReader(inputStream);
+        reader.setSessionInfoVisitor(executionDataVisitor);
+        reader.setExecutionDataVisitor(executionDataVisitor);
+        reader.read();
+      } finally {
+        Closeables.closeQuietly(inputStream);
+      }
     }
 
     boolean collectedCoveragePerTest = false;
