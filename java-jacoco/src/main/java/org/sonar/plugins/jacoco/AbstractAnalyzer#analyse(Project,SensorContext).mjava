@@ -1,6 +1,11 @@
   public final void analyse(Project project, SensorContext context) {
-    if (!atLeastOneBinaryDirectoryExists()) {
-      JaCoCoExtensions.LOG.info("No JaCoCo analysis of project coverage can be done since there is no directories with classes.");
+    classFilesCache = Maps.newHashMap();
+    for (File classesDir : fileSystem.binaryDirs()) {
+      populateClassFilesCache(classesDir, "");
+    }
+
+    if (classFilesCache.isEmpty()) {
+      JaCoCoExtensions.LOG.info("No JaCoCo analysis of project coverage can be done since there is no class files.");
       return;
     }
     String path = getReportPath(project);
@@ -11,5 +16,7 @@
     } catch (IOException e) {
       throw new SonarException(e);
     }
+
+    classFilesCache = null;
   }
 
