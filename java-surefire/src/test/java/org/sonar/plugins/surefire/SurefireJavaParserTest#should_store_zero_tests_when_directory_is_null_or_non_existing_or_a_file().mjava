@@ -3,15 +3,15 @@
     Project project = mock(Project.class);
 
     SensorContext context = mockContext();
-    parser.collect(project, context, null);
+    parser.collect(context, null);
     verify(context, never()).saveMeasure(eq(CoreMetrics.TESTS), anyDouble());
 
     context = mockContext();
-    parser.collect(project, context, getDir("nonExistingReportsDirectory"));
+    parser.collect(context, getDir("nonExistingReportsDirectory"));
     verify(context, never()).saveMeasure(eq(CoreMetrics.TESTS), anyDouble());
 
     context = mockContext();
-    parser.collect(project, context, getDir("file.txt"));
+    parser.collect(context, getDir("file.txt"));
     verify(context, never()).saveMeasure(eq(CoreMetrics.TESTS), anyDouble());
   }
 
