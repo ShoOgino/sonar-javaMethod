@@ -1,4 +1,9 @@
   public void setSquidIndex(SquidIndex squidIndex) {
-    this.squidIndex = Preconditions.checkNotNull(squidIndex);
+    this.resourcesCache = Maps.newHashMap();
+    for (SourceCode sourceClass : squidIndex.search(new QueryByType(SourceClass.class))) {
+      String filePath = sourceClass.getParent(SourceFile.class).getName();
+      Resource resource = org.sonar.api.resources.File.fromIOFile(new File(filePath), project);
+      resourcesCache.put(sourceClass.getKey(), resource);
+    }
   }
 
