@@ -1,10 +1,12 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.VARIABLE_DECLARATOR).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.VARIABLE_DECLARATORS))
-        .matches("variableDeclarator , variableDeclarator , variableDeclarator")
-        .matches("variableDeclarator , variableDeclarator")
-        .matches("variableDeclarator");
+    b.rule(JavaGrammar.VARIABLE_DECLARATOR).override(RuleMock.word(b, "variableDeclarator"));
+
+    assertThat(b, JavaGrammar.VARIABLE_DECLARATORS)
+      .matches("variableDeclarator , variableDeclarator , variableDeclarator")
+      .matches("variableDeclarator , variableDeclarator")
+      .matches("variableDeclarator");
   }
 

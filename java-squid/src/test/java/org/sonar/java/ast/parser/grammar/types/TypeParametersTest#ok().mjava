@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.TYPE_PARAMETER).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.TYPE_PARAMETERS))
-        .matches("< typeParameter >")
-        .matches("< typeParameter , typeParameter >");
+    b.rule(JavaGrammar.TYPE_PARAMETER).override(RuleMock.word(b, "typeParameter"));
+
+    assertThat(b, JavaGrammar.TYPE_PARAMETERS)
+      .matches("< typeParameter >")
+      .matches("< typeParameter , typeParameter >");
   }
 

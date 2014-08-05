@@ -1,9 +1,10 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.CATCH_FORMAL_PARAMETER).mock();
-    g.rule(JavaGrammar.BLOCK).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.CATCH_CLAUSE))
-        .matches("catch ( catchFormalParameter ) block");
+    b.rule(JavaGrammar.CATCH_FORMAL_PARAMETER).override(RuleMock.word(b, "catchFormalParameter"));
+
+    assertThat(b, JavaGrammar.CATCH_CLAUSE)
+      .matches("catch ( catchFormalParameter ) {}");
   }
 

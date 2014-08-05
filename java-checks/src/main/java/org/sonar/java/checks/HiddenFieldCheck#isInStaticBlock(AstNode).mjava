@@ -1,10 +1,10 @@
   private static boolean isInStaticBlock(AstNode node) {
     AstSelect query = node.select()
       .firstAncestor(JavaGrammar.CLASS_BODY_DECLARATION, JavaGrammar.CLASS_INIT_DECLARATION)
-      .children(JavaGrammar.MODIFIER, JavaKeyword.STATIC);
+      .children(JavaGrammar.MODIFIERS, JavaKeyword.STATIC);
 
-    for (AstNode modifierOrStatic : query) {
-      if (modifierOrStatic.is(JavaKeyword.STATIC) || modifierOrStatic.hasDirectChildren(JavaKeyword.STATIC)) {
+    for (AstNode modifiersOrStatic : query) {
+      if (modifiersOrStatic.is(JavaKeyword.STATIC) || ((ModifiersTree) modifiersOrStatic).modifiers().contains(Modifier.STATIC)) {
         return true;
       }
     }

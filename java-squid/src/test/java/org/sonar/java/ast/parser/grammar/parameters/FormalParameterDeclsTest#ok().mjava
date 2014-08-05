@@ -1,14 +1,16 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.ANNOTATION).mock();
-    g.rule(JavaGrammar.FORMAL_PARAMETERS_DECLS_REST).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.FORMAL_PARAMETER_DECLS))
-        .matches("type formalParametersDeclsRest")
-        .matches("final type formalParametersDeclsRest")
-        .matches("annotation type formalParametersDeclsRest")
-        .matches("final final type formalParametersDeclsRest")
-        .matches("annotation annotation type formalParametersDeclsRest")
-        .matches("annotation final annotation final type formalParametersDeclsRest");
+    b.rule(JavaGrammar.ANNOTATION).override(RuleMock.word(b, "annotation"));
+    b.rule(JavaGrammar.FORMAL_PARAMETERS_DECLS_REST).override(RuleMock.word(b, "formalParametersDeclsRest"));
+
+    assertThat(b, JavaGrammar.FORMAL_PARAMETER_DECLS)
+      .matches("type formalParametersDeclsRest")
+      .matches("final type formalParametersDeclsRest")
+      .matches("annotation type formalParametersDeclsRest")
+      .matches("final final type formalParametersDeclsRest")
+      .matches("annotation annotation type formalParametersDeclsRest")
+      .matches("annotation final annotation final type formalParametersDeclsRest");
   }
 

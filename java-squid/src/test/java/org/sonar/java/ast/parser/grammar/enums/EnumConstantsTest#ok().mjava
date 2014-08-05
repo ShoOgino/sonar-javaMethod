@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.ENUM_CONSTANT).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.ENUM_CONSTANTS))
-        .matches("enumConstant")
-        .matches("enumConstant , enumConstant");
+    b.rule(JavaGrammar.ENUM_CONSTANT).override(RuleMock.word(b, "enumConstant"));
+
+    assertThat(b, JavaGrammar.ENUM_CONSTANTS)
+      .matches("enumConstant")
+      .matches("enumConstant , enumConstant");
   }
 

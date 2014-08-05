@@ -1,19 +1,21 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.ANNOTATION).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.MODIFIER))
-        .matches("annotation")
-        .matches("public")
-        .matches("protected")
-        .matches("private")
-        .matches("static")
-        .matches("abstract")
-        .matches("final")
-        .matches("native")
-        .matches("synchronized")
-        .matches("transient")
-        .matches("volatile")
-        .matches("strictfp");
+    b.rule(JavaGrammar.ANNOTATION).override(RuleMock.word(b, "annotation"));
+
+    assertThat(b, JavaGrammar.MODIFIER)
+      .matches("annotation")
+      .matches("public")
+      .matches("protected")
+      .matches("private")
+      .matches("static")
+      .matches("abstract")
+      .matches("final")
+      .matches("native")
+      .matches("synchronized")
+      .matches("transient")
+      .matches("volatile")
+      .matches("strictfp");
   }
 

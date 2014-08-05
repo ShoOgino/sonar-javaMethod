@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.STATEMENT_EXPRESSION).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.FOR_UPDATE))
-        .matches("statementExpression , statementExpression")
-        .matches("statementExpression");
+    b.rule(JavaGrammar.STATEMENT_EXPRESSION).override(RuleMock.word(b, "statementExpression"));
+
+    assertThat(b, JavaGrammar.FOR_UPDATE)
+      .matches("statementExpression , statementExpression")
+      .matches("statementExpression");
   }
 

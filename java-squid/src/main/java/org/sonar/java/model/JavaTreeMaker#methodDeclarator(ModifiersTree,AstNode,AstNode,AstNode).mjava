@@ -4,10 +4,10 @@
   private MethodTree methodDeclarator(ModifiersTree modifiers, @Nullable AstNode returnTypeNode, AstNode name, AstNode astNode) {
     checkType(name, JavaTokenType.IDENTIFIER);
     checkType(astNode, JavaGrammar.METHOD_DECLARATOR_REST,
-        JavaGrammar.VOID_METHOD_DECLARATOR_REST,
-        JavaGrammar.CONSTRUCTOR_DECLARATOR_REST,
-        JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST,
-        JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST);
+      JavaGrammar.VOID_METHOD_DECLARATOR_REST,
+      JavaGrammar.CONSTRUCTOR_DECLARATOR_REST,
+      JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST,
+      JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST);
     // TODO type parameters
     Tree returnType = null;
     if (returnTypeNode != null) {
@@ -19,17 +19,17 @@
     }
     BlockTree body = null;
     if (astNode.hasDirectChildren(JavaGrammar.METHOD_BODY)) {
-      body = block(astNode.getFirstChild(JavaGrammar.METHOD_BODY).getFirstChild(JavaGrammar.BLOCK));
+      body = (BlockTree) astNode.getFirstChild(JavaGrammar.METHOD_BODY).getFirstChild(JavaGrammar.BLOCK);
     }
     AstNode throwsClauseNode = astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER_LIST);
     return new MethodTreeImpl(
-        astNode,
-        modifiers,
-        returnType,
-        identifier(name),
-        formalParameters(astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETERS)),
-        body,
-        throwsClauseNode != null ? qualifiedIdentifierList(throwsClauseNode) : ImmutableList.<ExpressionTree>of(),
-        null);
+      astNode,
+      modifiers,
+      returnType,
+      identifier(name),
+      formalParameters(astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETERS)),
+      body,
+      throwsClauseNode != null ? qualifiedIdentifierList(throwsClauseNode) : ImmutableList.<ExpressionTree>of(),
+      null);
   }
 

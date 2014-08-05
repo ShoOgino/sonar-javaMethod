@@ -3,9 +3,8 @@
     when(semanticModel.getEnv(any(Tree.class))).thenReturn(env);
     ExpressionVisitor visitor = new ExpressionVisitor(semanticModel, symbols, new Resolve(symbols, bytecodeCompleter));
 
-    b.setRootRule(JavaGrammar.COMPILATION_UNIT);
     String p = "class Test { void wrapperMethod() { " + input + "; } }";
-    AstNode node = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, b.build()).parse(p);
+    AstNode node = JavaParser.createParser(Charsets.UTF_8).parse(p);
     CompilationUnitTree tree = new JavaTreeMaker().compilationUnit(node);
     tree.accept(visitor);
 

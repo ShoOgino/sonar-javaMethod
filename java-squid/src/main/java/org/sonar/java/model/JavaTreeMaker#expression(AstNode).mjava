@@ -1,5 +1,4 @@
-  @VisibleForTesting
-  ExpressionTree expression(AstNode astNode) {
+  public ExpressionTree expression(AstNode astNode) {
     if (astNode.is(JavaGrammar.CONSTANT_EXPRESSION, JavaGrammar.STATEMENT_EXPRESSION)) {
       astNode = astNode.getFirstChild(JavaGrammar.EXPRESSION).getFirstChild();
     } else if (astNode.is(JavaGrammar.EXPRESSION)) {
@@ -7,19 +6,19 @@
     }
 
     if (astNode.is(JavaGrammar.PAR_EXPRESSION)) {
-      return new ParenthesizedTreeImpl(astNode, expression(astNode.getFirstChild(JavaGrammar.EXPRESSION)));
+      return (ParenthesizedTreeImpl) astNode;
     } else if (astNode.is(JavaGrammar.PRIMARY)) {
       return primary(astNode);
     } else if (astNode.is(JavaGrammar.CONDITIONAL_OR_EXPRESSION,
-        JavaGrammar.CONDITIONAL_AND_EXPRESSION,
-        JavaGrammar.INCLUSIVE_OR_EXPRESSION,
-        JavaGrammar.EXCLUSIVE_OR_EXPRESSION,
-        JavaGrammar.AND_EXPRESSION,
-        JavaGrammar.EQUALITY_EXPRESSION,
-        JavaGrammar.RELATIONAL_EXPRESSION,
-        JavaGrammar.SHIFT_EXPRESSION,
-        JavaGrammar.ADDITIVE_EXPRESSION,
-        JavaGrammar.MULTIPLICATIVE_EXPRESSION)) {
+      JavaGrammar.CONDITIONAL_AND_EXPRESSION,
+      JavaGrammar.INCLUSIVE_OR_EXPRESSION,
+      JavaGrammar.EXCLUSIVE_OR_EXPRESSION,
+      JavaGrammar.AND_EXPRESSION,
+      JavaGrammar.EQUALITY_EXPRESSION,
+      JavaGrammar.RELATIONAL_EXPRESSION,
+      JavaGrammar.SHIFT_EXPRESSION,
+      JavaGrammar.ADDITIVE_EXPRESSION,
+      JavaGrammar.MULTIPLICATIVE_EXPRESSION)) {
       return binaryExpression(astNode);
     } else if (astNode.is(JavaGrammar.CONDITIONAL_EXPRESSION)) {
       return conditionalExpression(astNode);

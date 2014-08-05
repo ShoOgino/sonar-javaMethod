@@ -1,12 +1,14 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.TYPE).mock();
-    g.rule(JavaGrammar.VARIABLE_DECLARATORS).mock();
-    g.rule(JavaGrammar.STATEMENT_EXPRESSION).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.FOR_INIT))
-        .matches("final type variableDeclarators")
-        .matches("statementExpression , statementExpression")
-        .matches("statementExpression");
+    b.rule(JavaGrammar.TYPE).override(RuleMock.word(b, "type"));
+    b.rule(JavaGrammar.VARIABLE_DECLARATORS).override(RuleMock.word(b, "variableDeclarators"));
+    b.rule(JavaGrammar.STATEMENT_EXPRESSION).override(RuleMock.word(b, "statementExpression"));
+
+    assertThat(b, JavaGrammar.FOR_INIT)
+      .matches("final type variableDeclarators")
+      .matches("statementExpression , statementExpression")
+      .matches("statementExpression");
   }
 

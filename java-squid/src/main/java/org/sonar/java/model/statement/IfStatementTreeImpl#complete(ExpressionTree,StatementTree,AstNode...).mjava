@@ -1,0 +1,18 @@
+  public IfStatementTreeImpl complete(ExpressionTree condition, StatementTree thenStatement, AstNode... children) {
+    Preconditions.checkState(this.condition == null, "Already completed");
+
+    this.condition = Preconditions.checkNotNull(condition);
+    this.thenStatement = Preconditions.checkNotNull(thenStatement);
+
+    for (AstNode child : children) {
+      addChild(child);
+    }
+
+    for (AstNode child : this.children) {
+      addChild(child);
+    }
+    this.children = null;
+
+    return this;
+  }
+

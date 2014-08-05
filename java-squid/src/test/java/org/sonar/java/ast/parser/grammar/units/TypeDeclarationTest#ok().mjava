@@ -1,18 +1,19 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.MODIFIER).mock();
-    g.rule(JavaGrammar.CLASS_DECLARATION).mock();
-    g.rule(JavaGrammar.ENUM_DECLARATION).mock();
-    g.rule(JavaGrammar.INTERFACE_DECLARATION).mock();
-    g.rule(JavaGrammar.ANNOTATION_TYPE_DECLARATION).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.TYPE_DECLARATION))
-        .matches("classDeclaration")
-        .matches("enumDeclaration")
-        .matches("interfaceDeclaration")
-        .matches("annotationTypeDeclaration")
-        .matches("modifier classDeclaration")
-        .matches("modifier modifier classDeclaration")
-        .matches(";");
+    b.rule(JavaGrammar.CLASS_DECLARATION).override(RuleMock.word(b, "classDeclaration"));
+    b.rule(JavaGrammar.ENUM_DECLARATION).override(RuleMock.word(b, "enumDeclaration"));
+    b.rule(JavaGrammar.INTERFACE_DECLARATION).override(RuleMock.word(b, "interfaceDeclaration"));
+    b.rule(JavaGrammar.ANNOTATION_TYPE_DECLARATION).override(RuleMock.word(b, "annotationTypeDeclaration"));
+
+    assertThat(b, JavaGrammar.TYPE_DECLARATION)
+      .matches("classDeclaration")
+      .matches("enumDeclaration")
+      .matches("interfaceDeclaration")
+      .matches("annotationTypeDeclaration")
+      .matches("public classDeclaration")
+      .matches("public private classDeclaration")
+      .matches(";");
   }
 

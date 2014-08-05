@@ -1,13 +1,12 @@
   public static boolean isSuppressAllWarnings(AstNode astNode) {
     if (astNode.is(JavaGrammar.CLASS_DECLARATION, JavaGrammar.INTERFACE_DECLARATION, JavaGrammar.ENUM_DECLARATION, JavaGrammar.ANNOTATION_TYPE_DECLARATION)) {
-      AstNode modifierNode = astNode.getPreviousAstNode();
-      while (modifierNode != null && modifierNode.is(JavaGrammar.MODIFIER)) {
-        if (isAnnotationSupressAllWarnings(modifierNode)) {
-          return true;
-        }
-        modifierNode = modifierNode.getPreviousAstNode();
+      AstNode modifiersCandidate = astNode.getPreviousAstNode();
+      if (!modifiersCandidate.is(JavaGrammar.MODIFIERS)) {
+        return false;
       }
-      return false;
+
+      ModifiersTree modifiers = (ModifiersTree) modifiersCandidate;
+      return containsAnnotationSuppressAllWarnings(modifiers.annotations());
     }
     final AstNode node;
     if (astNode.is(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.VOID_METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST)) {
@@ -19,11 +18,7 @@
     } else {
       throw new IllegalArgumentException("Unexpected AstNodeType: " + astNode.getType());
     }
-    for (AstNode modifierNode : node.getChildren(JavaGrammar.MODIFIER)) {
-      if (isAnnotationSupressAllWarnings(modifierNode)) {
-        return true;
-      }
-    }
-    return false;
+    ModifiersTree modifiers = (ModifiersTree) node.getFirstChild(JavaGrammar.MODIFIERS);
+    return containsAnnotationSuppressAllWarnings(modifiers.annotations());
   }
 

@@ -1,7 +1,8 @@
   @Override
   public void visitNode(AstNode node) {
-    if (node.is(JavaGrammar.SWITCH_BLOCK_STATEMENT_GROUPS)) {
-      if (!node.hasChildren()) {
+    if (node.is(JavaGrammar.SWITCH_STATEMENT)) {
+      SwitchStatementTree tree = (SwitchStatementTree) node;
+      if (tree.cases().isEmpty()) {
         getContext().createLineViolation(this, "Either remove or fill this block of code.", node.getParent());
       }
     } else {

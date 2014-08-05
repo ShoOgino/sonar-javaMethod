@@ -1,109 +1,56 @@
-  @VisibleForTesting
-  StatementTree statement(AstNode astNode) {
+  public StatementTree statement(AstNode astNode) {
     checkType(astNode, JavaGrammar.STATEMENT);
     final AstNode statementNode = astNode.getFirstChild();
     final StatementTree result;
     switch ((JavaGrammar) statementNode.getType()) {
       case BLOCK:
-        result = block(statementNode);
+        result = (BlockTree) statementNode;
         break;
       case EMPTY_STATEMENT:
-        // 14.6. The Empty Statement
-        result = new EmptyStatementTreeImpl(statementNode);
+        result = (EmptyStatementTree) statementNode;
         break;
       case LABELED_STATEMENT:
-        // 14.7. Labeled Statement
-        result = new LabeledStatementTreeImpl(
-            statementNode,
-            identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)),
-            statement(statementNode.getFirstChild(JavaGrammar.STATEMENT))
-        );
+        result = (LabeledStatementTree) statementNode;
         break;
       case EXPRESSION_STATEMENT:
-        // 14.8. Expression Statement
-        result = new ExpressionStatementTreeImpl(
-            statementNode,
-            expression(statementNode.getFirstChild(JavaGrammar.STATEMENT_EXPRESSION))
-        );
+        result = (ExpressionStatementTree) statementNode;
         break;
       case IF_STATEMENT:
-        // 14.9. The if Statement
-        List<AstNode> statements = statementNode.getChildren(JavaGrammar.STATEMENT);
-        result = new IfStatementTreeImpl(
-            statementNode,
-            expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
-            statement(statements.get(0)),
-            statements.size() > 1 ? statement(statements.get(1)) : null
-        );
+        result = (IfStatementTree) statementNode;
         break;
       case ASSERT_STATEMENT:
-        // 14.10. The assert Statement
-        List<AstNode> expressions = statementNode.getChildren(JavaGrammar.EXPRESSION);
-        result = new AssertStatementTreeImpl(
-            statementNode,
-            expression(expressions.get(0)),
-            expressions.size() > 1 ? expression(expressions.get(1)) : null
-        );
+        result = (AssertStatementTree) statementNode;
         break;
       case SWITCH_STATEMENT:
-        result = switchStatement(statementNode);
+        result = (SwitchStatementTree) statementNode;
         break;
       case WHILE_STATEMENT:
-        // 14.12. The while Statement
-        result = new WhileStatementTreeImpl(
-            statementNode,
-            expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
-            statement(statementNode.getFirstChild(JavaGrammar.STATEMENT))
-        );
+        result = (WhileStatementTreeImpl) statementNode;
         break;
       case DO_STATEMENT:
-        // 14.13. The do Statement
-        result = new DoWhileStatementTreeImpl(
-            statementNode,
-            statement(statementNode.getFirstChild(JavaGrammar.STATEMENT)),
-            expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION))
-        );
+        result = (DoWhileStatementTree) statementNode;
         break;
       case FOR_STATEMENT:
+        // TODO
         result = forStatement(statementNode);
         break;
       case BREAK_STATEMENT:
-        // 14.15. The break Statement
-        result = new BreakStatementTreeImpl(
-            statementNode,
-            statementNode.hasDirectChildren(JavaTokenType.IDENTIFIER) ? identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)) : null
-        );
+        result = (BreakStatementTree) statementNode;
         break;
       case CONTINUE_STATEMENT:
-        // 14.16. The continue Statement
-        result = new ContinueStatementTreeImpl(
-            statementNode,
-            statementNode.hasDirectChildren(JavaTokenType.IDENTIFIER) ? identifier(statementNode.getFirstChild(JavaTokenType.IDENTIFIER)) : null
-        );
+        result = (ContinueStatementTree) statementNode;
         break;
       case RETURN_STATEMENT:
-        // 14.17. The return Statement
-        result = new ReturnStatementTreeImpl(
-            statementNode,
-            statementNode.hasDirectChildren(JavaGrammar.EXPRESSION) ? expression(statementNode.getFirstChild(JavaGrammar.EXPRESSION)) : null
-        );
+        result = (ReturnStatementTree) statementNode;
         break;
       case THROW_STATEMENT:
-        // 14.18. The throw Statement
-        result = new ThrowStatementTreeImpl(
-            statementNode,
-            expression(statementNode.getFirstChild(JavaGrammar.EXPRESSION))
-        );
+        result = (ThrowStatementTree) statementNode;
         break;
       case SYNCHRONIZED_STATEMENT:
-        // 14.19. The synchronized Statement
-        result = new SynchronizedStatementTreeImpl(
-            statementNode,
-            expression(statementNode.getFirstChild(JavaGrammar.PAR_EXPRESSION)),
-            block(statementNode.getFirstChild(JavaGrammar.BLOCK))
-        );
+        result = (SynchronizedStatementTreeImpl) statementNode;
         break;
       case TRY_STATEMENT:
+        // TODO
         result = tryStatement(statementNode);
         break;
       default:

@@ -4,31 +4,31 @@
     for (AstNode importNode : astNode.getChildren(JavaGrammar.IMPORT_DECLARATION)) {
       AstNode astNodeQualifiedIdentifier = importNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
       ExpressionTree qualifiedIdentifier = qualifiedIdentifier(astNodeQualifiedIdentifier);
-      //star import : if there is a star then add it as an identifier.
-      if(astNodeQualifiedIdentifier.getNextSibling().is(JavaPunctuator.DOT) && astNodeQualifiedIdentifier.getNextSibling().getNextSibling().is(JavaPunctuator.STAR)) {
+      // star import : if there is a star then add it as an identifier.
+      if (astNodeQualifiedIdentifier.getNextSibling().is(JavaPunctuator.DOT) && astNodeQualifiedIdentifier.getNextSibling().getNextSibling().is(JavaPunctuator.STAR)) {
         qualifiedIdentifier = new MemberSelectExpressionTreeImpl(
-            astNodeQualifiedIdentifier.getNextSibling().getNextSibling(),
-            qualifiedIdentifier,
-            new IdentifierTreeImpl(astNodeQualifiedIdentifier.getNextSibling().getNextSibling(), JavaPunctuator.STAR.getValue())
-        );
+          astNodeQualifiedIdentifier.getNextSibling().getNextSibling(),
+          qualifiedIdentifier,
+          new IdentifierTreeImpl(astNodeQualifiedIdentifier.getNextSibling().getNextSibling(), JavaPunctuator.STAR.getValue())
+          );
       }
 
       imports.add(new JavaTree.ImportTreeImpl(
-          importNode,
-          importNode.hasDirectChildren(JavaKeyword.STATIC),
-          qualifiedIdentifier
-      ));
+        importNode,
+        importNode.hasDirectChildren(JavaKeyword.STATIC),
+        qualifiedIdentifier
+        ));
     }
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
     for (AstNode typeNode : astNode.getChildren(JavaGrammar.TYPE_DECLARATION)) {
       AstNode declarationNode = typeNode.getFirstChild(
-          JavaGrammar.CLASS_DECLARATION,
-          JavaGrammar.ENUM_DECLARATION,
-          JavaGrammar.INTERFACE_DECLARATION,
-          JavaGrammar.ANNOTATION_TYPE_DECLARATION
-      );
+        JavaGrammar.CLASS_DECLARATION,
+        JavaGrammar.ENUM_DECLARATION,
+        JavaGrammar.INTERFACE_DECLARATION,
+        JavaGrammar.ANNOTATION_TYPE_DECLARATION
+        );
       if (declarationNode != null) {
-        types.add(typeDeclaration(modifiers(typeNode.getChildren(JavaGrammar.MODIFIER)), declarationNode));
+        types.add(typeDeclaration((ModifiersTree) typeNode.getFirstChild(JavaGrammar.MODIFIERS), declarationNode));
       }
     }
 
@@ -42,11 +42,10 @@
       }
     }
     return new JavaTree.CompilationUnitTreeImpl(
-        astNode,
-        packageDeclaration,
-        imports.build(),
-        types.build(),
-        packageAnnotations.build()
-    );
+      astNode,
+      packageDeclaration,
+      imports.build(),
+      types.build(),
+      packageAnnotations.build());
   }
 

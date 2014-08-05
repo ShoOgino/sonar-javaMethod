@@ -1,9 +1,15 @@
   private static boolean isStringValueOfCall(AstNode node) {
-    AstNode identifierSuffix = node.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
+    AstNode qualifiedIdExpression = node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER_EXPRESSION);
+    if (qualifiedIdExpression == null) {
+      return false;
+    }
+
+    AstNode identifierSuffix = qualifiedIdExpression.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
 
     return node.is(JavaGrammar.PRIMARY) &&
+      qualifiedIdExpression != null &&
       identifierSuffix != null &&
       hasSingleArgumentIdentifierSuffix(identifierSuffix) &&
-      isStringValueOfQualifiedIdentifier(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+      isStringValueOfQualifiedIdentifier(qualifiedIdExpression.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
   }
 

@@ -1,4 +1,4 @@
-  private AnnotationTree annotation(AstNode astNode) {
+  public AnnotationTree annotation(AstNode astNode) {
     ImmutableList.Builder<ExpressionTree> arguments = ImmutableList.builder();
     ExpressionTree annotationType = qualifiedIdentifier(astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
     if (astNode.hasDirectChildren(JavaGrammar.ANNOTATION_REST)) {
@@ -13,11 +13,11 @@
             AstNode identifier = value.getFirstChild(JavaTokenType.IDENTIFIER);
             AstNode operator = value.getFirstChild(JavaPunctuator.EQU);
             arguments.add(new AssignmentExpressionTreeImpl(
-                operator,
-                identifier(identifier),
-                kindMaps.getAssignmentOperator(JavaPunctuator.EQU),
-                elementValue(value.getFirstChild(JavaGrammar.ELEMENT_VALUE))
-            ));
+              operator,
+              identifier(identifier),
+              kindMaps.getAssignmentOperator(JavaPunctuator.EQU),
+              elementValue(value.getFirstChild(JavaGrammar.ELEMENT_VALUE))
+              ));
           }
         }
       }

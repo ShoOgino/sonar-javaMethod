@@ -6,7 +6,7 @@
     for (int i = 1; i < astNode.getNumberOfChildren(); i++) {
       child = astNode.getChild(i);
       if (child.is(JavaTokenType.IDENTIFIER)) {
-        if(!child.equals(firstIdentifier)) {
+        if (!child.equals(firstIdentifier)) {
           result = new MemberSelectExpressionTreeImpl(child, result, identifier(child));
         }
       } else if (child.is(JavaGrammar.TYPE_ARGUMENTS)) {
@@ -15,7 +15,7 @@
         result = new JavaTree.ParameterizedTypeTreeImpl(child, result, nonWildcardTypeArguments(child));
       } else if (!(child.is(JavaPunctuator.DOT) || child.is(JavaGrammar.ANNOTATION))) {
         throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString()
-            + " at line " + astNode.getTokenLine() + " column " + astNode.getToken().getColumn());
+          + " at line " + astNode.getTokenLine() + " column " + astNode.getToken().getColumn());
       }
     }
     return result;
