@@ -1,0 +1,18 @@
+  @Override
+  public void leaveNode(Tree tree) {
+    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.NEW_ARRAY)) {
+      count.pop();
+      level.pop();
+    } else {
+      int currentLevel = level.peek();
+      if (currentLevel == 1) {
+        int opCount = count.pop();
+        if (opCount > max) {
+          addIssue(tree, "Reduce the number of conditional operators (" + opCount + ") used in the expression (maximum allowed " + max + ").");
+        }
+        count.push(0);
+      }
+      level.push(level.pop() - 1);
+    }
+  }
+

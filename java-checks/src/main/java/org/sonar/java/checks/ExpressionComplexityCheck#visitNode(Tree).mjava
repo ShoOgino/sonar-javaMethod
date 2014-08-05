@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.NEW_ARRAY)) {
+      count.push(0);
+      level.push(0);
+    } else {
+      if (tree.is(Tree.Kind.CONDITIONAL_OR) || tree.is(Tree.Kind.CONDITIONAL_AND) || tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)) {
+        count.push(count.pop() + 1);
+      }
+      level.push(level.pop() + 1);
+    }
+  }
+
