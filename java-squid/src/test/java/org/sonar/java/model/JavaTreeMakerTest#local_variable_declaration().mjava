@@ -3,8 +3,8 @@
    */
   @Test
   public void local_variable_declaration() {
-    AstNode astNode = p.parse("class T { void m() { int a = 42, b[]; final @Nullable int c = 42; } }").getFirstDescendant(JavaGrammar.BLOCK);
-    List<StatementTree> declarations = maker.block(astNode).body();
+    BlockTree block = (BlockTree) p.parse("class T { void m() { int a = 42, b[]; final @Nullable int c = 42; } }").getFirstDescendant(JavaGrammar.BLOCK);
+    List<StatementTree> declarations = block.body();
     assertThat(declarations).hasSize(3);
 
     VariableTree tree = (VariableTree) declarations.get(0);

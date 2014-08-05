@@ -1,8 +1,8 @@
   @Test
   public void test() {
-    Parser<LexerlessGrammar> parser = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, JavaGrammar.createGrammar());
+    Parser parser = JavaParser.createParser(Charsets.UTF_8);
     for (String dir : dirs) {
-      for (File file : FileUtils.listFiles(new File(dir), new String[]{"java"}, true)) {
+      for (File file : FileUtils.listFiles(new File(dir), new String[] {"java"}, true)) {
         try {
           SemanticModel.createFor(new JavaTreeMaker().compilationUnit(parser.parse(file)), Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
         } catch (Exception e) {

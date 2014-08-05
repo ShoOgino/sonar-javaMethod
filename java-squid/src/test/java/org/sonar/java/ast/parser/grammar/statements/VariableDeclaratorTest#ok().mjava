@@ -1,14 +1,16 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.DIM).mock();
-    g.rule(JavaGrammar.VARIABLE_INITIALIZER).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.VARIABLE_DECLARATOR))
-        .matches("identifier dim dim = variableInitializer")
-        .matches("identifier dim dim")
-        .matches("identifier dim = variableInitializer")
-        .matches("identifier dim")
-        .matches("identifier = variableInitializer")
-        .matches("identifier");
+    b.rule(JavaGrammar.DIM).override(RuleMock.word(b, "dim"));
+    b.rule(JavaGrammar.VARIABLE_INITIALIZER).override(RuleMock.word(b, "variableInitializer"));
+
+    assertThat(b, JavaGrammar.VARIABLE_DECLARATOR)
+      .matches("identifier dim dim = variableInitializer")
+      .matches("identifier dim dim")
+      .matches("identifier dim = variableInitializer")
+      .matches("identifier dim")
+      .matches("identifier = variableInitializer")
+      .matches("identifier");
   }
 

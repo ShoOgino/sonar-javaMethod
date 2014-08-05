@@ -4,11 +4,11 @@
   private void appendAnnotationTypeElementDeclaration(ImmutableList.Builder<Tree> members, AstNode astNode) {
     checkType(astNode, JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST);
     AstNode declarationNode = astNode.getFirstChild(
-        JavaGrammar.INTERFACE_DECLARATION,
-        JavaGrammar.CLASS_DECLARATION,
-        JavaGrammar.ENUM_DECLARATION,
-        JavaGrammar.ANNOTATION_TYPE_DECLARATION
-    );
+      JavaGrammar.INTERFACE_DECLARATION,
+      JavaGrammar.CLASS_DECLARATION,
+      JavaGrammar.ENUM_DECLARATION,
+      JavaGrammar.ANNOTATION_TYPE_DECLARATION
+      );
     if (declarationNode != null) {
       members.add(typeDeclaration(ModifiersTreeImpl.EMPTY, declarationNode));
       return;
@@ -18,16 +18,16 @@
     AstNode annotationMethodRestNode = astNode.getFirstChild(JavaGrammar.ANNOTATION_METHOD_OR_CONSTANT_REST).getFirstChild(JavaGrammar.ANNOTATION_METHOD_REST);
     if (annotationMethodRestNode != null) {
       members.add(new MethodTreeImpl(
-          annotationMethodRestNode,
+        annotationMethodRestNode,
         /* modifiers */ModifiersTreeImpl.EMPTY,
         /* return type */referenceType(typeNode),
         /* name */identifier(identifierNode),
         /* parameters */ImmutableList.<VariableTree>of(),
         /* block */null,
         /* throws */ImmutableList.<ExpressionTree>of(),
-          // TODO DEFAULT_VALUE
+        // TODO DEFAULT_VALUE
         /* default value */null
-      ));
+        ));
     } else {
       appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, astNode);
     }

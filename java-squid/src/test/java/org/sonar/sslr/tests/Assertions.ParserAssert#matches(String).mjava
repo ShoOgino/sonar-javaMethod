@@ -1,0 +1,12 @@
+    public ParserAssert matches(String input) {
+      isNotNull();
+      String expected = "Rule '" + getRuleName() + "' should match:\n" + input;
+      try {
+        parseTillEof(input);
+      } catch (RecognitionException e) {
+        String actual = e.getMessage();
+        throw new ParsingResultComparisonFailure(expected, actual);
+      }
+      return this;
+    }
+

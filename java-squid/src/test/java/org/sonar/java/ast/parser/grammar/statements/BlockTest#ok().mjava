@@ -1,8 +1,10 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.BLOCK_STATEMENTS).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.BLOCK))
-        .matches("{ blockStatements }");
+    b.rule(JavaGrammar.BLOCK_STATEMENTS).override(RuleMock.word(b, "blockStatements"));
+
+    assertThat(b, JavaGrammar.BLOCK)
+      .matches("{ blockStatements }");
   }
 

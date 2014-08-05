@@ -3,10 +3,10 @@
    */
   private static void literals(LexerlessGrammarBuilder b) {
     b.rule(SPACING).is(
-        b.skippedTrivia(whitespace(b)),
-        b.zeroOrMore(
-            b.commentTrivia(b.firstOf(inlineComment(b), multilineComment(b))),
-            b.skippedTrivia(whitespace(b)))).skip();
+      b.skippedTrivia(whitespace(b)),
+      b.zeroOrMore(
+        b.commentTrivia(b.firstOf(inlineComment(b), multilineComment(b))),
+        b.skippedTrivia(whitespace(b)))).skip();
 
     b.rule(EOF).is(b.token(GenericTokenType.EOF, b.endOfInput())).skip();
 
@@ -20,21 +20,21 @@
     b.rule(INTEGER_LITERAL).is(b.regexp(INTEGER_LITERAL_REGEXP), SPACING);
 
     b.rule(IDENTIFIER).is(
-        b.firstOf(
-            b.next(ENUM),
-            b.nextNot(KEYWORD)),
-        javaIdentifier(b),
-        SPACING);
+      b.firstOf(
+        b.next(ENUM),
+        b.nextNot(KEYWORD)),
+      javaIdentifier(b),
+      SPACING);
 
     b.rule(LITERAL).is(b.firstOf(
-        TRUE,
-        FALSE,
-        NULL,
-        CHARACTER_LITERAL,
-        JavaTokenType.LITERAL,
-        FLOAT_LITERAL,
-        DOUBLE_LITERAL,
-        LONG_LITERAL,
-        INTEGER_LITERAL));
+      TRUE,
+      FALSE,
+      NULL,
+      CHARACTER_LITERAL,
+      JavaTokenType.LITERAL,
+      FLOAT_LITERAL,
+      DOUBLE_LITERAL,
+      LONG_LITERAL,
+      INTEGER_LITERAL));
   }
 

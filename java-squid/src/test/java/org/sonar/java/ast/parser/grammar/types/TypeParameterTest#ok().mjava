@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.BOUND).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.TYPE_PARAMETER))
-        .matches("identifier")
-        .matches("identifier extends bound");
+    b.rule(JavaGrammar.BOUND).override(RuleMock.word(b, "bound"));
+
+    assertThat(b, JavaGrammar.TYPE_PARAMETER)
+      .matches("identifier")
+      .matches("identifier extends bound");
   }
 

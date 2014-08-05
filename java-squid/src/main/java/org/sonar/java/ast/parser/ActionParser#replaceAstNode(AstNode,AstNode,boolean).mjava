@@ -1,0 +1,38 @@
+  private void replaceAstNode(AstNode o, AstNode n, boolean overwriteChildren) {
+    for (Field field : fields) {
+      if (childrenField.equals(field) && !overwriteChildren) {
+        continue;
+      }
+
+      try {
+        field.set(n, field.get(o));
+      } catch (IllegalAccessException e) {
+        throw Throwables.propagate(e);
+      }
+    }
+
+    if (overwriteChildren) {
+      for (AstNode childAstNode : n.getChildren()) {
+        try {
+          parentField.set(childAstNode, n);
+        } catch (IllegalAccessException e) {
+          throw Throwables.propagate(e);
+        }
+      }
+    }
+
+    AstNode parent = n.getParent();
+    if (parent != null) {
+      List<AstNode> children = parent.getChildren();
+      // TODO Replace iteration by childIndex
+      for (int i = 0; i < children.size(); i++) {
+        if (o.equals(children.get(i))) {
+          children.set(i, n);
+          break;
+        }
+      }
+    } else {
+      rootNode = n;
+    }
+  }
+

@@ -8,15 +8,15 @@
       // 15.16. Cast Expressions
       AstNode typeNode = astNode.getFirstChild(JavaPunctuator.LPAR).getNextSibling();
       Tree type;
-      if(typeNode.is(JavaGrammar.BASIC_TYPE)){
+      if (typeNode.is(JavaGrammar.BASIC_TYPE)) {
         type = basicType(typeNode);
-      }else{
+      } else {
         type = referenceType(typeNode);
       }
       return new TypeCastExpressionTreeImpl(
-          astNode,
-          type,
-          expression(astNode.getFirstChild(JavaPunctuator.RPAR).getNextSibling()));
+        astNode,
+        type,
+        expression(astNode.getFirstChild(JavaPunctuator.RPAR).getNextSibling()));
     } else if (astNode.hasDirectChildren(JavaGrammar.PREFIX_OP, JavaPunctuator.TILDA, JavaPunctuator.BANG)) {
       // 15.15. Unary Operators
       AstNode operatorNode;
@@ -27,9 +27,9 @@
       }
       Tree.Kind kind = kindMaps.getPrefixOperator((JavaPunctuator) operatorNode.getType());
       return new InternalPrefixUnaryExpression(
-          operatorNode,
-          kind,
-          expression(astNode.getChild(1)));
+        operatorNode,
+        kind,
+        expression(astNode.getChild(1)));
     } else {
       // 15.14. Postfix Expressions
       ExpressionTree result = expression(astNode.getFirstChild());

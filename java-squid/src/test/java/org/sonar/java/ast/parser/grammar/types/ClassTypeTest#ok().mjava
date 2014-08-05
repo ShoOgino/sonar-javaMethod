@@ -1,14 +1,14 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.TYPE_ARGUMENTS).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.CLASS_TYPE))
-        .matches("identifier")
-        .matches("identifier typeArguments")
-        .matches("identifier typeArguments . identifier typeArguments")
-        .matches("identifier typeArguments . identifier typeArguments . identifier typeArguments")
-        .matches("identifier typeArguments . @Annotated identifier typeArguments . identifier typeArguments")
+    b.rule(JavaGrammar.TYPE_ARGUMENTS).override(RuleMock.word(b, "typeArguments"));
 
-    ;
+    assertThat(b, JavaGrammar.CLASS_TYPE)
+      .matches("identifier")
+      .matches("identifier typeArguments")
+      .matches("identifier typeArguments . identifier typeArguments")
+      .matches("identifier typeArguments . identifier typeArguments . identifier typeArguments")
+      .matches("identifier typeArguments . @Annotated identifier typeArguments . identifier typeArguments");
   }
 

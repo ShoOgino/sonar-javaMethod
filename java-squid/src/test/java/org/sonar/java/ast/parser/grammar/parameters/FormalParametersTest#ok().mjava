@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.FORMAL_PARAMETER_DECLS).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.FORMAL_PARAMETERS))
-        .matches("( )")
-        .matches("( formalParameterDecls )");
+    b.rule(JavaGrammar.FORMAL_PARAMETER_DECLS).override(RuleMock.word(b, "formalParameterDecls"));
+
+    assertThat(b, JavaGrammar.FORMAL_PARAMETERS)
+      .matches("( )")
+      .matches("( formalParameterDecls )");
   }
 

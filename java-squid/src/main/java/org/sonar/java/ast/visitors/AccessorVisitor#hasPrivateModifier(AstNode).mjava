@@ -1,9 +1,6 @@
   private boolean hasPrivateModifier(AstNode classBodyDeclaration) {
-    for (AstNode modifierNode : classBodyDeclaration.getChildren(JavaGrammar.MODIFIER)) {
-      if (modifierNode.getChild(0).is(JavaKeyword.PRIVATE)) {
-        return true;
-      }
-    }
-    return false;
+    ModifiersTree modifiers = (ModifiersTree) classBodyDeclaration.getFirstChild(JavaGrammar.MODIFIERS);
+    return modifiers != null &&
+      modifiers.modifiers().contains(Modifier.PRIVATE);
   }
 

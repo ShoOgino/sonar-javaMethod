@@ -5,24 +5,24 @@
     checkType(astNode, JavaGrammar.CLASS_BODY, JavaGrammar.ENUM_BODY_DECLARATIONS);
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
     for (AstNode classBodyDeclaration : astNode.getChildren(JavaGrammar.CLASS_BODY_DECLARATION)) {
-      ModifiersTree modifiers = modifiers(classBodyDeclaration.getChildren(JavaGrammar.MODIFIER));
+      ModifiersTree modifiers = (ModifiersTree) classBodyDeclaration.getFirstChild(JavaGrammar.MODIFIERS);
       if (classBodyDeclaration.hasDirectChildren(JavaGrammar.MEMBER_DECL)) {
         AstNode memberDeclNode = classBodyDeclaration.getFirstChild(JavaGrammar.MEMBER_DECL);
         if (memberDeclNode.hasDirectChildren(JavaGrammar.FIELD_DECLARATION)) {
           members.addAll(fieldDeclaration(
-              modifiers,
-              memberDeclNode.getFirstChild(JavaGrammar.FIELD_DECLARATION)
-          ));
+            modifiers,
+            memberDeclNode.getFirstChild(JavaGrammar.FIELD_DECLARATION)
+            ));
         } else {
           members.add(memberDeclaration(modifiers, memberDeclNode));
         }
       } else if (classBodyDeclaration.getFirstChild().is(JavaGrammar.CLASS_INIT_DECLARATION)) {
         AstNode classInitDeclarationNode = classBodyDeclaration.getFirstChild();
         members.add(new BlockTreeImpl(
-            classInitDeclarationNode,
-            classInitDeclarationNode.hasDirectChildren(JavaKeyword.STATIC) ? Tree.Kind.STATIC_INITIALIZER : Tree.Kind.INITIALIZER,
-            blockStatements(classInitDeclarationNode.getFirstChild(JavaGrammar.BLOCK).getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
-        ));
+          classInitDeclarationNode,
+          classInitDeclarationNode.hasDirectChildren(JavaKeyword.STATIC) ? Tree.Kind.STATIC_INITIALIZER : Tree.Kind.INITIALIZER,
+          blockStatements(classInitDeclarationNode.getFirstChild(JavaGrammar.BLOCK).getFirstChild(JavaGrammar.BLOCK_STATEMENTS))
+          ));
       }
     }
     return members.build();

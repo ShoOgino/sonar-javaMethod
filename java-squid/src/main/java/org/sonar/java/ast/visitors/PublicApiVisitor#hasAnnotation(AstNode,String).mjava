@@ -1,7 +1,8 @@
   private static boolean hasAnnotation(AstNode astNode, String expected) {
     AstNode declaration = getDeclaration(astNode);
-    for (AstNode modifier : getModifiers(declaration)) {
-      AstNode annotation = modifier.getFirstChild(JavaGrammar.ANNOTATION);
+    for (AnnotationTree annotationTree : getModifiers(declaration).annotations()) {
+      // FIXME
+      AstNode annotation = ((JavaTree) annotationTree).getAstNode();
       if (annotation != null) {
         StringBuilder value = new StringBuilder();
         for (AstNode identifier : annotation.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER).getChildren()) {

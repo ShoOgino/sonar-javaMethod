@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.CLASS_TYPE).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.CLASS_TYPE_LIST))
-        .matches("classType")
-        .matches("classType , classType");
+    b.rule(JavaGrammar.CLASS_TYPE).override(RuleMock.word(b, "classType"));
+
+    assertThat(b, JavaGrammar.CLASS_TYPE_LIST)
+      .matches("classType")
+      .matches("classType , classType");
   }
 

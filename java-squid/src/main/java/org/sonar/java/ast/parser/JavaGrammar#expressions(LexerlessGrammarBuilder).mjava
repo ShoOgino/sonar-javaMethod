@@ -7,18 +7,18 @@
     b.rule(EXPRESSION).is(ASSIGNMENT_EXPRESSION);
     b.rule(ASSIGNMENT_EXPRESSION).is(CONDITIONAL_EXPRESSION, b.zeroOrMore(ASSIGNMENT_OPERATOR, CONDITIONAL_EXPRESSION)).skipIfOneChild();
     b.rule(ASSIGNMENT_OPERATOR).is(b.firstOf(
-        EQU,
-        PLUSEQU,
-        MINUSEQU,
-        STAREQU,
-        DIVEQU,
-        ANDEQU,
-        OREQU,
-        HATEQU,
-        MODEQU,
-        SLEQU,
-        SREQU,
-        BSREQU));
+      EQU,
+      PLUSEQU,
+      MINUSEQU,
+      STAREQU,
+      DIVEQU,
+      ANDEQU,
+      OREQU,
+      HATEQU,
+      MODEQU,
+      SLEQU,
+      SREQU,
+      BSREQU));
     b.rule(CONDITIONAL_EXPRESSION).is(CONDITIONAL_OR_EXPRESSION, b.zeroOrMore(QUERY, EXPRESSION, COLON, CONDITIONAL_OR_EXPRESSION)).skipIfOneChild();
     b.rule(CONDITIONAL_OR_EXPRESSION).is(CONDITIONAL_AND_EXPRESSION, b.zeroOrMore(OROR, CONDITIONAL_AND_EXPRESSION)).skipIfOneChild();
     b.rule(CONDITIONAL_AND_EXPRESSION).is(INCLUSIVE_OR_EXPRESSION, b.zeroOrMore(ANDAND, INCLUSIVE_OR_EXPRESSION)).skipIfOneChild();
@@ -27,115 +27,124 @@
     b.rule(AND_EXPRESSION).is(EQUALITY_EXPRESSION, b.zeroOrMore(AND, EQUALITY_EXPRESSION)).skipIfOneChild();
     b.rule(EQUALITY_EXPRESSION).is(RELATIONAL_EXPRESSION, b.zeroOrMore(b.firstOf(EQUAL, NOTEQUAL), RELATIONAL_EXPRESSION)).skipIfOneChild();
     b.rule(RELATIONAL_EXPRESSION).is(SHIFT_EXPRESSION, b.zeroOrMore(b.firstOf(
-        b.sequence(b.firstOf(GE, GT, LE, LT), SHIFT_EXPRESSION),
-        b.sequence(INSTANCEOF, TYPE)))).skipIfOneChild();
+      b.sequence(b.firstOf(GE, GT, LE, LT), SHIFT_EXPRESSION),
+      b.sequence(INSTANCEOF, TYPE)))).skipIfOneChild();
     b.rule(SHIFT_EXPRESSION).is(ADDITIVE_EXPRESSION, b.zeroOrMore(b.firstOf(SL, BSR, SR), ADDITIVE_EXPRESSION)).skipIfOneChild();
     b.rule(ADDITIVE_EXPRESSION).is(MULTIPLICATIVE_EXPRESSION, b.zeroOrMore(b.firstOf(PLUS, MINUS), MULTIPLICATIVE_EXPRESSION)).skipIfOneChild();
     b.rule(MULTIPLICATIVE_EXPRESSION).is(UNARY_EXPRESSION, b.zeroOrMore(b.firstOf(STAR, DIV, MOD), UNARY_EXPRESSION)).skipIfOneChild();
     b.rule(UNARY_EXPRESSION_NOT_PLUS_MINUS).is(b.firstOf(
-        CAST_EXPRESSION,
-        METHOD_REFERENCE,
-        b.sequence(PRIMARY, b.zeroOrMore(SELECTOR), b.zeroOrMore(POST_FIX_OP)),
-        b.sequence(TILDA, UNARY_EXPRESSION),
-        b.sequence(BANG, UNARY_EXPRESSION)
-    )).skipIfOneChild();
+      CAST_EXPRESSION,
+      METHOD_REFERENCE,
+      b.sequence(PRIMARY, b.zeroOrMore(SELECTOR), b.zeroOrMore(POST_FIX_OP)),
+      b.sequence(TILDA, UNARY_EXPRESSION),
+      b.sequence(BANG, UNARY_EXPRESSION)
+      )).skipIfOneChild();
     b.rule(CAST_EXPRESSION).is(LPAR, b.firstOf(
       b.sequence(BASIC_TYPE, RPAR, UNARY_EXPRESSION),
       b.sequence(TYPE, b.zeroOrMore(AND, CLASS_TYPE), RPAR, UNARY_EXPRESSION_NOT_PLUS_MINUS)
-    ));
+      ));
     b.rule(UNARY_EXPRESSION).is(b.firstOf(
-        b.sequence(PREFIX_OP, UNARY_EXPRESSION),
-        UNARY_EXPRESSION_NOT_PLUS_MINUS
-    )).skipIfOneChild();
+      b.sequence(PREFIX_OP, UNARY_EXPRESSION),
+      UNARY_EXPRESSION_NOT_PLUS_MINUS
+      )).skipIfOneChild();
+
     b.rule(PRIMARY).is(b.firstOf(
-        LAMBDA_EXPRESSION,
-        PAR_EXPRESSION,
-        b.sequence(NON_WILDCARD_TYPE_ARGUMENTS, b.firstOf(EXPLICIT_GENERIC_INVOCATION_SUFFIX, b.sequence(THIS, ARGUMENTS))),
-        b.sequence(THIS, b.optional(ARGUMENTS)),
-        b.sequence(SUPER, SUPER_SUFFIX),
-        LITERAL,
-        b.sequence(NEW, b.zeroOrMore(ANNOTATION), CREATOR),
-        b.sequence(QUALIFIED_IDENTIFIER, b.optional(IDENTIFIER_SUFFIX)),
-        b.sequence(BASIC_TYPE, b.zeroOrMore(DIM), DOT, CLASS),
-        b.sequence(VOID, DOT, CLASS)
-        ));
+      LAMBDA_EXPRESSION,
+      PAR_EXPRESSION,
+      EXPLICIT_GENERIC_INVOCATION_EXPRESSION,
+      THIS_EXPRESSION,
+      SUPER_EXPRESSION,
+      LITERAL,
+      NEW_EXPRESSION,
+      QUALIFIED_IDENTIFIER_EXPRESSION,
+      BASIC_CLASS_EXPRESSION,
+      VOID_CLASS_EXPRESSION));
+    b.rule(EXPLICIT_GENERIC_INVOCATION_EXPRESSION).is(
+      NON_WILDCARD_TYPE_ARGUMENTS,
+      b.firstOf(
+        EXPLICIT_GENERIC_INVOCATION_SUFFIX,
+        b.sequence(THIS, ARGUMENTS)));
+    b.rule(THIS_EXPRESSION).is(THIS, b.optional(ARGUMENTS));
+    b.rule(SUPER_EXPRESSION).is(SUPER, SUPER_SUFFIX);
+    b.rule(NEW_EXPRESSION).is(NEW, b.zeroOrMore(ANNOTATION), CREATOR);
+    b.rule(QUALIFIED_IDENTIFIER_EXPRESSION).is(QUALIFIED_IDENTIFIER, b.optional(IDENTIFIER_SUFFIX));
+    b.rule(BASIC_CLASS_EXPRESSION).is(BASIC_TYPE, b.zeroOrMore(DIM), DOT, CLASS);
+    b.rule(VOID_CLASS_EXPRESSION).is(VOID, DOT, CLASS);
 
     b.rule(METHOD_REFERENCE).is(b.firstOf(
-        b.sequence(SUPER, DBLECOLON),
-        b.sequence(TYPE, DBLECOLON),
-        b.sequence(PRIMARY, b.zeroOrMore(SELECTOR), DBLECOLON)
-        ),
-        b.optional(TYPE_ARGUMENTS), b.firstOf(NEW,IDENTIFIER)
-    );
+      b.sequence(SUPER, DBLECOLON),
+      b.sequence(TYPE, DBLECOLON),
+      b.sequence(PRIMARY, b.zeroOrMore(SELECTOR), DBLECOLON)
+      ),
+      b.optional(TYPE_ARGUMENTS), b.firstOf(NEW, IDENTIFIER)
+      );
     b.rule(IDENTIFIER_SUFFIX).is(b.firstOf(
-        b.sequence(LBRK, b.firstOf(b.sequence(RBRK, b.zeroOrMore(DIM), DOT, CLASS), b.sequence(EXPRESSION, RBRK))),
-        ARGUMENTS,
-        b.sequence(DOT, b.firstOf(
-            CLASS,
-            EXPLICIT_GENERIC_INVOCATION,
-            THIS,
-            b.sequence(SUPER, ARGUMENTS),
-            b.sequence(NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR)))));
+      b.sequence(LBRK, b.firstOf(b.sequence(RBRK, b.zeroOrMore(DIM), DOT, CLASS), b.sequence(EXPRESSION, RBRK))),
+      ARGUMENTS,
+      b.sequence(DOT, b.firstOf(
+        CLASS,
+        EXPLICIT_GENERIC_INVOCATION,
+        THIS,
+        b.sequence(SUPER, ARGUMENTS),
+        b.sequence(NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR)))));
     b.rule(EXPLICIT_GENERIC_INVOCATION).is(NON_WILDCARD_TYPE_ARGUMENTS, EXPLICIT_GENERIC_INVOCATION_SUFFIX);
     b.rule(NON_WILDCARD_TYPE_ARGUMENTS).is(LPOINT, TYPE, b.zeroOrMore(COMMA, TYPE), RPOINT);
     b.rule(EXPLICIT_GENERIC_INVOCATION_SUFFIX).is(b.firstOf(
-        b.sequence(SUPER, SUPER_SUFFIX),
-        b.sequence(IDENTIFIER, ARGUMENTS)));
+      b.sequence(SUPER, SUPER_SUFFIX),
+      b.sequence(IDENTIFIER, ARGUMENTS)));
     b.rule(PREFIX_OP).is(b.firstOf(
-        INC,
-        DEC,
-        PLUS,
-        MINUS));
+      INC,
+      DEC,
+      PLUS,
+      MINUS));
     b.rule(POST_FIX_OP).is(b.firstOf(
-        INC,
-        DEC));
+      INC,
+      DEC));
     b.rule(SELECTOR).is(b.firstOf(
-        b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS)),
-        b.sequence(DOT, EXPLICIT_GENERIC_INVOCATION),
-        b.sequence(DOT, THIS),
-        b.sequence(DOT, SUPER, SUPER_SUFFIX),
-        b.sequence(DOT, NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR),
-        DIM_EXPR));
+      b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS)),
+      b.sequence(DOT, EXPLICIT_GENERIC_INVOCATION),
+      b.sequence(DOT, THIS),
+      b.sequence(DOT, SUPER, SUPER_SUFFIX),
+      b.sequence(DOT, NEW, b.optional(NON_WILDCARD_TYPE_ARGUMENTS), INNER_CREATOR),
+      DIM_EXPR));
     b.rule(SUPER_SUFFIX).is(b.firstOf(
-        ARGUMENTS,
-        b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS)),
-        b.sequence(DOT, NON_WILDCARD_TYPE_ARGUMENTS, IDENTIFIER, ARGUMENTS)));
+      ARGUMENTS,
+      b.sequence(DOT, IDENTIFIER, b.optional(ARGUMENTS)),
+      b.sequence(DOT, NON_WILDCARD_TYPE_ARGUMENTS, IDENTIFIER, ARGUMENTS)));
     b.rule(BASIC_TYPE).is(b.zeroOrMore(ANNOTATION), b.firstOf(
-        BYTE,
-        SHORT,
-        CHAR,
-        INT,
-        LONG,
-        FLOAT,
-        DOUBLE,
-        BOOLEAN));
+      BYTE,
+      SHORT,
+      CHAR,
+      INT,
+      LONG,
+      FLOAT,
+      DOUBLE,
+      BOOLEAN));
     b.rule(ARGUMENTS).is(LPAR, b.optional(EXPRESSION, b.zeroOrMore(COMMA, EXPRESSION)), RPAR);
     b.rule(CREATOR).is(b.firstOf(
-        b.sequence(b.optional(NON_WILDCARD_TYPE_ARGUMENTS), CREATED_NAME, CLASS_CREATOR_REST),
-        b.sequence(b.optional(NON_WILDCARD_TYPE_ARGUMENTS), b.firstOf(CLASS_TYPE, BASIC_TYPE), ARRAY_CREATOR_REST)));
+      b.sequence(b.optional(NON_WILDCARD_TYPE_ARGUMENTS), CREATED_NAME, CLASS_CREATOR_REST),
+      b.sequence(b.optional(NON_WILDCARD_TYPE_ARGUMENTS), b.firstOf(CLASS_TYPE, BASIC_TYPE), ARRAY_CREATOR_REST)));
     b.rule(CREATED_NAME).is(b.zeroOrMore(ANNOTATION), IDENTIFIER, b.optional(NON_WILDCARD_TYPE_ARGUMENTS),
-        b.zeroOrMore(DOT, b.zeroOrMore(ANNOTATION), IDENTIFIER, b.optional(NON_WILDCARD_TYPE_ARGUMENTS)));
+      b.zeroOrMore(DOT, b.zeroOrMore(ANNOTATION), IDENTIFIER, b.optional(NON_WILDCARD_TYPE_ARGUMENTS)));
     b.rule(INNER_CREATOR).is(IDENTIFIER, CLASS_CREATOR_REST);
     b.rule(ARRAY_CREATOR_REST).is(b.zeroOrMore(ANNOTATION), LBRK, b.firstOf(
-        b.sequence(RBRK, b.zeroOrMore(DIM), ARRAY_INITIALIZER),
-        b.sequence(EXPRESSION, RBRK, b.zeroOrMore(DIM_EXPR), b.zeroOrMore(b.zeroOrMore(ANNOTATION), DIM))));
+      b.sequence(RBRK, b.zeroOrMore(DIM), ARRAY_INITIALIZER),
+      b.sequence(EXPRESSION, RBRK, b.zeroOrMore(DIM_EXPR), b.zeroOrMore(b.zeroOrMore(ANNOTATION), DIM))));
     b.rule(CLASS_CREATOR_REST).is(b.optional(b.firstOf(DIAMOND, TYPE_ARGUMENTS)), ARGUMENTS, b.optional(CLASS_BODY));
     b.rule(DIAMOND).is(LT, GT);
     b.rule(ARRAY_INITIALIZER).is(LWING, b.optional(VARIABLE_INITIALIZER, b.zeroOrMore(COMMA, VARIABLE_INITIALIZER)), b.optional(COMMA), RWING);
     b.rule(VARIABLE_INITIALIZER).is(b.firstOf(ARRAY_INITIALIZER, EXPRESSION));
-    b.rule(PAR_EXPRESSION).is(LPAR, EXPRESSION, RPAR);
     b.rule(QUALIFIED_IDENTIFIER).is(b.zeroOrMore(ANNOTATION), IDENTIFIER, b.zeroOrMore(DOT, b.zeroOrMore(ANNOTATION), IDENTIFIER));
     b.rule(QUALIFIED_IDENTIFIER_LIST).is(QUALIFIED_IDENTIFIER, b.zeroOrMore(COMMA, QUALIFIED_IDENTIFIER));
     b.rule(DIM).is(LBRK, RBRK);
     b.rule(DIM_EXPR).is(b.zeroOrMore(ANNOTATION), LBRK, EXPRESSION, RBRK);
 
-    //Java 8 lambda expressions.
-    b.rule(LAMBDA_EXPRESSION).is(LAMBDA_PARAMETERS, ARROW, LAMBDA_BODY);
+    // Java 8 lambda expressions.
     b.rule(LAMBDA_PARAMETERS).is(b.firstOf(
-     b.sequence(LPAR, b.optional(IDENTIFIER, b.zeroOrMore(COMMA, IDENTIFIER)), RPAR),
-     FORMAL_PARAMETERS,
-     IDENTIFIER
-    ));
+      b.sequence(LPAR, b.optional(IDENTIFIER, b.zeroOrMore(COMMA, IDENTIFIER)), RPAR),
+      FORMAL_PARAMETERS,
+      IDENTIFIER
+      ));
     b.rule(LAMBDA_BODY).is(b.firstOf(BLOCK, EXPRESSION));
 
   }

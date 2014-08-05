@@ -1,9 +1,11 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.CLASS_TYPE_LIST).mock();
-    g.rule(JavaGrammar.ENUM_BODY).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.ENUM_DECLARATION))
-        .matches("enum identifier implements classTypeList enumBody");
+    b.rule(JavaGrammar.CLASS_TYPE_LIST).override(RuleMock.word(b, "classTypeList"));
+    b.rule(JavaGrammar.ENUM_BODY).override(RuleMock.word(b, "enumBody"));
+
+    assertThat(b, JavaGrammar.ENUM_DECLARATION)
+      .matches("enum identifier implements classTypeList enumBody");
   }
 

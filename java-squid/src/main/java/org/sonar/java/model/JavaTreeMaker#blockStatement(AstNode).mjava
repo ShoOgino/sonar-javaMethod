@@ -1,0 +1,24 @@
+  public List<StatementTree> blockStatement(AstNode astNode) {
+    checkType(astNode, JavaGrammar.BLOCK_STATEMENT);
+    AstNode statementNode = astNode.getFirstChild(
+      JavaGrammar.STATEMENT,
+      JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
+      JavaGrammar.CLASS_DECLARATION,
+      JavaGrammar.ENUM_DECLARATION
+      );
+    if (statementNode.is(JavaGrammar.STATEMENT)) {
+      return ImmutableList.of(statement(statementNode));
+    } else if (statementNode.is(JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
+      return variableDeclarators(
+        variableModifiers(statementNode.getFirstChild(JavaGrammar.VARIABLE_MODIFIERS)),
+        referenceType(statementNode.getFirstChild(JavaGrammar.TYPE)),
+        statementNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS));
+    } else if (statementNode.is(JavaGrammar.CLASS_DECLARATION)) {
+      return ImmutableList.<StatementTree>of(classDeclaration((ModifiersTree) astNode.getFirstChild(JavaGrammar.MODIFIERS), statementNode));
+    } else if (statementNode.is(JavaGrammar.ENUM_DECLARATION)) {
+      return ImmutableList.<StatementTree>of(enumDeclaration((ModifiersTree) astNode.getFirstChild(JavaGrammar.MODIFIERS), statementNode));
+    } else {
+      throw new IllegalStateException("Unexpected AstNodeType: " + statementNode.getType().toString());
+    }
+  }
+

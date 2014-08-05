@@ -1,7 +1,7 @@
   private boolean isOverriding(MethodTree tree) {
-    AstNode memberDec = ((JavaTree) tree).getAstNode().getParent().getParent();
-    for (AstNode modifier : memberDec.getChildren(JavaGrammar.MODIFIER)) {
-      if (AstNodeTokensMatcher.matches(modifier, "@Override")) {
+    for (AnnotationTree annotation : tree.modifiers().annotations()) {
+      AstNode node = ((JavaTree) annotation).getAstNode();
+      if (AstNodeTokensMatcher.matches(node, "@Override")) {
         return true;
       }
     }

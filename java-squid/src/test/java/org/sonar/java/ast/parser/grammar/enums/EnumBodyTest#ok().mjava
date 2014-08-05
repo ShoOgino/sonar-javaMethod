@@ -1,13 +1,15 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.ENUM_CONSTANTS).mock();
-    g.rule(JavaGrammar.ENUM_BODY_DECLARATIONS).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.ENUM_BODY))
-        .matches("{ }")
-        .matches("{ enumConstants }")
-        .matches("{ enumBodyDeclarations }")
-        .matches("{ enumConstants enumBodyDeclarations }")
-        .matches("{ enumConstants , enumBodyDeclarations }");
+    b.rule(JavaGrammar.ENUM_CONSTANTS).override(RuleMock.word(b, "enumConstants"));
+    b.rule(JavaGrammar.ENUM_BODY_DECLARATIONS).override(RuleMock.word(b, "enumBodyDeclarations"));
+
+    assertThat(b, JavaGrammar.ENUM_BODY)
+      .matches("{ }")
+      .matches("{ enumConstants }")
+      .matches("{ enumBodyDeclarations }")
+      .matches("{ enumConstants enumBodyDeclarations }")
+      .matches("{ enumConstants , enumBodyDeclarations }");
   }
 

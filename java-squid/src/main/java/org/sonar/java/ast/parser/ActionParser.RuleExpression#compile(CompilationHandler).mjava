@@ -1,0 +1,11 @@
+    @Override
+    public Instruction[] compile(CompilationHandler compiler) {
+      // TODO Horrible
+      if (ruleKey == null) {
+        ruleKey = grammarBuilderInterceptor.ruleKeyForMethod(method);
+        Preconditions.checkState(ruleKey != null, "Cannot find rule key for method: " + method.getName());
+      }
+
+      return compiler.compile((ParsingExpression) b.sequence(b.nextNot(b.nothing()), ruleKey));
+    }
+

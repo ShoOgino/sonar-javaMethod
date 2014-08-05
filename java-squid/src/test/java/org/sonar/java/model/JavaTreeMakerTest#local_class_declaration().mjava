@@ -3,14 +3,14 @@
    */
   @Test
   public void local_class_declaration() {
-    AstNode astNode = p.parse("class T { void m() { abstract class Local { } } }").getFirstDescendant(JavaGrammar.BLOCK);
-    ClassTree tree = (ClassTree) maker.block(astNode).body().get(0);
+    BlockTree block = (BlockTree) p.parse("class T { void m() { abstract class Local { } } }").getFirstDescendant(JavaGrammar.BLOCK);
+    ClassTree tree = (ClassTree) block.body().get(0);
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
     assertThat(tree.modifiers().modifiers()).containsOnly(Modifier.ABSTRACT);
     assertThat(tree).isNotNull();
 
-    astNode = p.parse("class T { void m() { static enum Local { ; } } }").getFirstDescendant(JavaGrammar.BLOCK);
-    tree = (ClassTree) maker.block(astNode).body().get(0);
+    block = (BlockTree) p.parse("class T { void m() { static enum Local { ; } } }").getFirstDescendant(JavaGrammar.BLOCK);
+    tree = (ClassTree) block.body().get(0);
     assertThat(tree.is(Tree.Kind.ENUM)).isTrue();
     assertThat(tree.modifiers().modifiers()).containsOnly(Modifier.STATIC);
     assertThat(tree).isNotNull();

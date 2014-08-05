@@ -1,14 +1,16 @@
   @Test
   public void ok() {
-    g.rule(JavaGrammar.PACKAGE_DECLARATION).mock();
-    g.rule(JavaGrammar.IMPORT_DECLARATION).mock();
-    g.rule(JavaGrammar.TYPE_DECLARATION).mock();
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    assertThat(g.rule(JavaGrammar.COMPILATION_UNIT))
-        .matches("packageDeclaration importDeclaration importDeclaration typeDeclaration typeDeclaration")
-        .matches("packageDeclaration importDeclaration typeDeclaration")
-        .matches("packageDeclaration importDeclaration")
-        .matches("packageDeclaration")
-        .matches("");
+    b.rule(JavaGrammar.PACKAGE_DECLARATION).override(RuleMock.word(b, "packageDeclaration"));
+    b.rule(JavaGrammar.IMPORT_DECLARATION).override(RuleMock.word(b, "importDeclaration"));
+    b.rule(JavaGrammar.TYPE_DECLARATION).override(RuleMock.word(b, "typeDeclaration"));
+
+    assertThat(b, JavaGrammar.COMPILATION_UNIT)
+      .matches("packageDeclaration importDeclaration importDeclaration typeDeclaration typeDeclaration")
+      .matches("packageDeclaration importDeclaration typeDeclaration")
+      .matches("packageDeclaration importDeclaration")
+      .matches("packageDeclaration")
+      .matches("");
   }
 
