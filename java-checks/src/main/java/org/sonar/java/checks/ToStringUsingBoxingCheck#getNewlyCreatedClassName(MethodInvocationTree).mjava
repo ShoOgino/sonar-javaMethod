@@ -1,0 +1,13 @@
+  private String getNewlyCreatedClassName(MethodInvocationTree mit) {
+    MemberSelectExpressionTree mset = ((MemberSelectExpressionTree) mit.methodSelect());
+    if (mset.expression().is(Tree.Kind.NEW_CLASS)) {
+      Tree classId = ((NewClassTree) mset.expression()).identifier();
+      if (classId.is(Tree.Kind.IDENTIFIER)) {
+        return ((IdentifierTree) classId).name();
+      } else if (classId.is(Tree.Kind.MEMBER_SELECT)) {
+        return ((MemberSelectExpressionTree) classId).identifier().name();
+      }
+    }
+    return "";
+  }
+
