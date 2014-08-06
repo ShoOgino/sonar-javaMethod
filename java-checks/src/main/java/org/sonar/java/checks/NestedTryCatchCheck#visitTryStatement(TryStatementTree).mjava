@@ -1,0 +1,17 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    scan(tree.resources());
+    if (!tree.catches().isEmpty()) {
+      nestingLevel++;
+      if (nestingLevel > 1) {
+        context.addIssue(tree.block(), ruleKey, "Extract this nested try block into a separate method.");
+      }
+    }
+    scan(tree.block());
+    if (!tree.catches().isEmpty()) {
+      nestingLevel--;
+    }
+    scan(tree.catches());
+    scan(tree.finallyBlock());
+  }
+
