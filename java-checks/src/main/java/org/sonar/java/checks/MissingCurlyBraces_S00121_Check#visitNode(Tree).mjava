@@ -1,0 +1,28 @@
+  @Override
+  public void visitNode(Tree tree) {
+    switch (((JavaTree) tree).getKind()) {
+      case WHILE_STATEMENT:
+        checkStatement(((WhileStatementTree) tree).statement(), tree);
+        break;
+      case DO_STATEMENT:
+        checkStatement(((DoWhileStatementTree) tree).statement(), tree);
+        break;
+      case FOR_STATEMENT:
+        checkStatement(((ForStatementTree) tree).statement(), tree);
+        break;
+      case FOR_EACH_STATEMENT:
+        checkStatement(((ForEachStatement) tree).statement(), tree);
+        break;
+      case IF_STATEMENT:
+        IfStatementTree ifStmt = (IfStatementTree) tree;
+        checkStatement(ifStmt.thenStatement(), tree);
+        StatementTree elseStmt = ifStmt.elseStatement();
+        if (elseStmt != null && !elseStmt.is(Tree.Kind.IF_STATEMENT)) {
+          checkStatement(elseStmt, ifStmt.elseKeyword());
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
