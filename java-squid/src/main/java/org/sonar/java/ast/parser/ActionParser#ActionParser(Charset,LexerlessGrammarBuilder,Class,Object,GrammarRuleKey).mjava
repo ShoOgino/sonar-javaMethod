@@ -2,27 +2,23 @@
     super(null);
 
     List<Field> fields = Lists.newArrayList();
-    Field parentField = null;
-    Field childrenField = null;
+    Set<String> foundFields = Sets.newHashSet();
 
     for (Field field : AstNode.class.getDeclaredFields()) {
-      if (!"type".equals(field.getName()) && !"name".equals(field.getName())) {
+      if (FIELDS_TO_FIND.contains(field.getName())) {
+        foundFields.add(field.getName());
+      }
+
+      if (FIELDS_TO_COPY.contains(field.getName())) {
         field.setAccessible(true);
-        if ("parent".equals(field.getName())) {
-          parentField = field;
-        } else if ("children".equals(field.getName())) {
-          childrenField = field;
-        }
         fields.add(field);
       }
     }
 
-    Preconditions.checkState(parentField != null, "Unable to find the parent field!");
-    Preconditions.checkState(childrenField != null, "Unable to find the children field!");
+    Preconditions.checkState(foundFields.size() == FIELDS_TO_FIND.size(), "Did not find all expected fields");
+    Preconditions.checkState(fields.size() == FIELDS_TO_COPY.size(), "Did not find all fields to copy");
 
     this.fields = fields.toArray(new Field[fields.size()]);
-    this.parentField = parentField;
-    this.childrenField = childrenField;
 
     this.action = action;
 

@@ -1,23 +1,9 @@
-  private void replaceAstNode(AstNode o, AstNode n, boolean overwriteChildren) {
+  private void replaceAstNode(AstNode o, AstNode n) {
     for (Field field : fields) {
-      if (childrenField.equals(field) && !overwriteChildren) {
-        continue;
-      }
-
       try {
         field.set(n, field.get(o));
       } catch (IllegalAccessException e) {
         throw Throwables.propagate(e);
-      }
-    }
-
-    if (overwriteChildren) {
-      for (AstNode childAstNode : n.getChildren()) {
-        try {
-          parentField.set(childAstNode, n);
-        } catch (IllegalAccessException e) {
-          throw Throwables.propagate(e);
-        }
       }
     }
 
