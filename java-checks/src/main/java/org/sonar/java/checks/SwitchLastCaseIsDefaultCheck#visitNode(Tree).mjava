@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
+    CaseLabelTree defaultLabel = getDefaultLabel(switchStatementTree);
+    CaseLabelTree lastLabel = getLastLabel(switchStatementTree);
+    if (defaultLabel == null) {
+      addIssue(tree, "Add a default case to this switch.");
+    } else if (!defaultLabel.equals(lastLabel)) {
+      addIssue(defaultLabel, "Move this default to the end of the switch.");
+    }
+  }
+
