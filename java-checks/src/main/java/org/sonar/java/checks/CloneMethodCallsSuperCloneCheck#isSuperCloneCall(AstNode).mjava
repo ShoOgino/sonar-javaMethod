@@ -1,5 +1,12 @@
   private static boolean isSuperCloneCall(AstNode node) {
-    return node.is(JavaGrammar.SUPER_EXPRESSION) &&
-      isCloneCallSuffix(node.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+    if (!node.is(JavaGrammar.METHOD_INVOCATION_EXPRESSION)) {
+      return false;
+    }
+
+    MethodInvocationTree tree = (MethodInvocationTree) node;
+
+    return tree.arguments().isEmpty() &&
+      tree.methodSelect().is(Kind.MEMBER_SELECT) &&
+      isSuperClone((MemberSelectExpressionTree) tree.methodSelect());
   }
 

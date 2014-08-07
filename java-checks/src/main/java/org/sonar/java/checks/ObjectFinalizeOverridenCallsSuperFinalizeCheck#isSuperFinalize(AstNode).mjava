@@ -1,5 +1,11 @@
   private static boolean isSuperFinalize(AstNode node) {
-    return node.is(JavaGrammar.SUPER_EXPRESSION) &&
-      isFinalizeCallSuffix(node.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+    if (!node.is(JavaGrammar.METHOD_INVOCATION_EXPRESSION)) {
+      return false;
+    }
+
+    MethodInvocationTree tree = (MethodInvocationTree) node;
+
+    return tree.methodSelect().is(Kind.MEMBER_SELECT) &&
+      isSuperFinalize((MemberSelectExpressionTree) tree.methodSelect());
   }
 
