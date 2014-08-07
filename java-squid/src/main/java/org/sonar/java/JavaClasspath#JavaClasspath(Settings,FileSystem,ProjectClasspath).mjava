@@ -1,10 +1,10 @@
   public JavaClasspath(Settings settings, FileSystem fileSystem, @Nullable ProjectClasspath projectClasspath) {
-    binaries = getFilesFromProperty(SONAR_JAVA_BINARIES, settings, fileSystem.baseDir());
-    libraries = getFilesFromProperty(SONAR_JAVA_LIBRARIES, settings, fileSystem.baseDir());
-    if(projectClasspath == null || !binaries.isEmpty() || !libraries.isEmpty()) {
+    binaries = getBinaryDirFromProperty(SONAR_JAVA_BINARIES, settings, fileSystem.baseDir());
+    libraries = getLibraryFilesFromProperty(SONAR_JAVA_LIBRARIES, settings, fileSystem.baseDir());
+    if (projectClasspath == null || !binaries.isEmpty() || !libraries.isEmpty()) {
       elements = Lists.newArrayList(binaries);
       elements.addAll(libraries);
-    }else {
+    } else {
       elements = projectClasspath.getElements();
     }
   }
