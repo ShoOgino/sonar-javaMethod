@@ -3,10 +3,9 @@
     fs.setBaseDir(new File("src/test/files/classpath"));
     settings.setProperty(JavaClasspath.SONAR_JAVA_LIBRARIES, "lib/*");
     javaClasspath = new JavaClasspath(settings, fs, null);
-    assertThat(javaClasspath.getBinaryDirs()).isEmpty();
-    assertThat(javaClasspath.getLibraries()).hasSize(1);
-    assertThat(javaClasspath.getElements()).hasSize(1);
+    assertThat(javaClasspath.getElements()).hasSize(2);
     assertThat(javaClasspath.getElements().get(0)).exists();
-    assertThat(javaClasspath.getElements().get(0).getName()).isEqualTo("hello.jar");
+    assertThat(javaClasspath.getElements().get(1)).exists();
+    assertThat(javaClasspath.getElements()).onProperty("name").contains("hello.jar","world.jar");
   }
 
