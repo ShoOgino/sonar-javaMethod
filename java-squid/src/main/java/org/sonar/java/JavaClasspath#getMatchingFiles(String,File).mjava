@@ -1,0 +1,9 @@
+  private List<File> getMatchingFiles(String pattern, File dir) {
+    FileFilter fileFilter = new WilcardPatternFileFilter(dir, pattern);
+    if (pattern.endsWith("*")) {
+      fileFilter = new AndFileFilter((IOFileFilter) fileFilter,
+          new OrFileFilter(Lists.newArrayList(suffixFileFilter(".jar", IOCase.INSENSITIVE), suffixFileFilter(".zip", IOCase.INSENSITIVE))));
+    }
+    return Lists.newArrayList(FileUtils.listFiles(dir, (IOFileFilter) fileFilter, TrueFileFilter.TRUE));
+  }
+

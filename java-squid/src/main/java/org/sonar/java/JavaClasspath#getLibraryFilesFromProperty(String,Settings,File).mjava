@@ -4,24 +4,21 @@
     if (StringUtils.isNotEmpty(fileList)) {
       List<String> fileNames = Lists.newArrayList(StringUtils.split(fileList, SEPARATOR));
       for (String fileName : fileNames) {
-        int wildcardIndex = fileName.indexOf('*');
-        if (wildcardIndex >= 0) {
-          int lastPathSeparator = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-          String dir = fileName.substring(0, lastPathSeparator);
-          String pattern = fileName.substring(lastPathSeparator+1);
-          FileFilter fileFilter;
-          if(pattern.isEmpty()) {
-            fileFilter = new OrFileFilter(Lists.newArrayList(suffixFileFilter(".jar", IOCase.INSENSITIVE), suffixFileFilter(".zip", IOCase.INSENSITIVE)));
-          } else {
-            fileFilter = new WildcardFileFilter(pattern);
-          }
-          File jarDir = resolvePath(baseDir, dir);
-          List<File> jarFiles = Arrays.asList(jarDir.listFiles((FileFilter) new AndFileFilter((IOFileFilter) fileFilter, FileFileFilter.FILE)));
-          result.addAll(jarFiles);
-        } else {
-          File file = resolvePath(baseDir, fileName);
-          result.add(file);
+        String pattern = fileName;
+        File dir = baseDir;
+        int wildcardIndex = pattern.indexOf('*');
+        if (wildcardIndex > 0) {
+          pattern = pattern.substring(0, wildcardIndex);
         }
+        int lastPathSeparator = Math.max(pattern.lastIndexOf('/'), pattern.lastIndexOf('\\'));
+        File filenameDir = new File(pattern.substring(0, lastPathSeparator));
+        if (filenameDir.isAbsolute()) {
+          dir = filenameDir;
+          pattern = fileName.substring(dir.getAbsolutePath().length());
+        } else {
+          pattern = fileName;
+        }
+        result.addAll(getMatchingFiles(pattern, dir));
       }
     }
     return result;
