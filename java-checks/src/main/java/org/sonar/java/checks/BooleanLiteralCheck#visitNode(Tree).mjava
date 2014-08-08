@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    String literal;
+    if(tree.is(Kind.LOGICAL_COMPLEMENT)) {
+      literal = getBooleanLiteral(((UnaryExpressionTree)tree).expression());
+    } else {
+      literal = getBooleanLiteralOperands((BinaryExpressionTree)tree);
+    }
+    if(literal != null) {
+      addIssue(tree, "Remove the literal \"" + literal + "\" boolean value.");
+    }
+  }
+
