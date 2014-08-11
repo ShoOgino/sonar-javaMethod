@@ -1,0 +1,18 @@
+  private boolean containsChildrenOfKind(JavaTree tree, Tree.Kind... kinds) {
+    for (Tree.Kind kind : kinds) {
+      if (tree.is(kind)) {
+        return true;
+      }
+    }
+    if(!tree.isLeaf()) {
+      Iterator<Tree> treeIterator = tree.childrenIterator();
+      while (treeIterator.hasNext()) {
+        JavaTree javaTree = (JavaTree) treeIterator.next();
+        if(containsChildrenOfKind(javaTree, kinds)){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

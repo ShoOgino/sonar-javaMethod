@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    nestedClassesLevel++;
+    for (Tree member : ((ClassTree) tree).members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) member;
+        if (staticNonFinal(variableTree) && hasConstantInitializer(variableTree) && !isObjectInInnerClass(variableTree)) {
+          addIssue(variableTree, "Make this final field static too.");
+        }
+      }
+    }
+  }
+
