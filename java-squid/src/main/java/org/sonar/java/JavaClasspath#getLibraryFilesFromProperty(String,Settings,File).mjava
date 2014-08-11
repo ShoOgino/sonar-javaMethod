@@ -18,7 +18,16 @@
         } else {
           pattern = fileName;
         }
-        result.addAll(getMatchingFiles(pattern, dir));
+        List<File> matchingFiles = getMatchingFiles(pattern, dir);
+        if (matchingFiles.isEmpty()) {
+          LOG.error("Invalid value for " + property);
+          String message = "No files nor directories matching '" + fileName + "' ";
+          if (!filenameDir.isAbsolute()) {
+            message += "in directory " + baseDir;
+          }
+          throw new IllegalStateException(message);
+        }
+        result.addAll(matchingFiles);
       }
     }
     return result;
