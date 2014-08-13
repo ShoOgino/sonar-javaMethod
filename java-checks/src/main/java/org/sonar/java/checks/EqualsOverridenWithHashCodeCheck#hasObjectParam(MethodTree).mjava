@@ -1,0 +1,15 @@
+  private boolean hasObjectParam(MethodTree tree) {
+    if (tree.parameters().size() == 1) {
+      Tree type = tree.parameters().get(0).type();
+      //FIXME : should rely on type symbol when problem of expression visitor is solved.
+      String name = "";
+      if(type.is(Tree.Kind.MEMBER_SELECT)){
+        name = ((MemberSelectExpressionTree) type).identifier().name();
+      }else if(type.is(Tree.Kind.IDENTIFIER)) {
+        name = ((IdentifierTree) type).name();
+      }
+      return name.endsWith("Object");
+    }
+    return false;
+  }
+

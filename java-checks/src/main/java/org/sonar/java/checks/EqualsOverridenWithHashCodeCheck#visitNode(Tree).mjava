@@ -1,12 +1,10 @@
   @Override
-  public void visitClass(ClassTree tree) {
-    super.visitClass(tree);
-
-    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.INTERFACE)) {
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (classTree.is(Tree.Kind.CLASS)) {
       MethodTree equalsMethod = null;
       MethodTree hashCodeMethod = null;
-
-      for (Tree memberTree : tree.members()) {
+      for (Tree memberTree : classTree.members()) {
         if (memberTree.is(Tree.Kind.METHOD)) {
           MethodTree methodTree = (MethodTree) memberTree;
           if (isEquals(methodTree)) {
@@ -18,9 +16,9 @@
       }
 
       if (equalsMethod != null && hashCodeMethod == null) {
-        context.addIssue(equalsMethod, RULE_KEY, getMessage(classTreeType(tree), EQUALS, HASHCODE));
+        addIssue(equalsMethod, getMessage(EQUALS, HASHCODE));
       } else if (hashCodeMethod != null && equalsMethod == null) {
-        context.addIssue(hashCodeMethod, RULE_KEY, getMessage(classTreeType(tree), HASHCODE, EQUALS));
+        addIssue(hashCodeMethod, getMessage(HASHCODE, EQUALS));
       }
     }
   }
