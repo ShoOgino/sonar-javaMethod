@@ -1,0 +1,14 @@
+  public ExpressionTree lambdaExpression(AstNode parameters, AstNode arrowToken, AstNode body) {
+    Tree bodyTree;
+    if (body.hasDirectChildren(JavaGrammar.BLOCK)) {
+      bodyTree = (BlockTree) body.getFirstChild(JavaGrammar.BLOCK);
+    } else {
+      bodyTree = treeMaker.expression(body.getFirstChild());
+    }
+    List<VariableTree> params = Lists.newArrayList();
+    // FIXME(Godin): params always empty
+
+    return new LambdaExpressionTreeImpl(params, bodyTree,
+      parameters, arrowToken, body);
+  }
+
