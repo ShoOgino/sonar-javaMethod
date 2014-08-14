@@ -1,0 +1,14 @@
+  private static void addDescendants(List<JavaTree> result, JavaTree tree) {
+    result.add(tree);
+    if (!tree.isLeaf()) {
+      Iterator<Tree> it = tree.childrenIterator();
+      while (it.hasNext()) {
+        JavaTree child = (JavaTree) it.next();
+        if (child != null) {
+          // TODO It's crappy, but classes such as ClassTreeImpl can return null in their children iterator
+          addDescendants(result, child);
+        }
+      }
+    }
+  }
+

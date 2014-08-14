@@ -1,13 +1,11 @@
   public ExpressionTree thisExpression(AstNode thisToken, Optional<AstNode> arguments) {
-    IdentifierTreeImpl identifier = new IdentifierTreeImpl(new InternalSyntaxToken(thisToken.getToken()));
-
     if (arguments.isPresent()) {
       // this(arguments)
-      return new MethodInvocationTreeImpl(identifier, treeMaker.arguments(arguments.get()),
-        identifier, arguments.get());
+      return new MethodInvocationTreeImpl(treeMaker.identifier(thisToken), treeMaker.arguments(arguments.get()),
+        thisToken, arguments.get());
     } else {
       // this
-      return identifier;
+      return new IdentifierTreeImpl(new InternalSyntaxToken(thisToken.getToken()), thisToken);
     }
   }
 

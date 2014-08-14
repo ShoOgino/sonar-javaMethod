@@ -1,4 +1,9 @@
   private void replaceAstNode(AstNode o, AstNode n) {
+    if (verifyAssertions) {
+      verifyNoInjectionFromJavaTreeMaker(n);
+      verifyNoInjectionOfSeveralNewStronglyTypedNodes(o, n);
+    }
+
     for (Field field : fields) {
       try {
         field.set(n, field.get(o));
