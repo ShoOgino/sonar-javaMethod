@@ -1,0 +1,16 @@
+  private static boolean isSubClassOfRuntimeException(Symbol.TypeSymbol thrownClass) {
+    Symbol.TypeSymbol typeSymbol = thrownClass;
+    while (typeSymbol != null) {
+      if (isRuntimeException(typeSymbol)) {
+        return true;
+      }
+      Type superType = typeSymbol.getSuperclass();
+      if (superType == null) {
+        typeSymbol = null;
+      } else {
+        typeSymbol = ((Type.ClassType) superType).getSymbol();
+      }
+    }
+    return false;
+  }
+

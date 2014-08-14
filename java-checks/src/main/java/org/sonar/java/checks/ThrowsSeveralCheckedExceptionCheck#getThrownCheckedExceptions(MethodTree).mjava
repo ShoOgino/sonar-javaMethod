@@ -1,0 +1,11 @@
+  private List<String> getThrownCheckedExceptions(MethodTree methodTree) {
+    List<Symbol.TypeSymbol> thrownClasses = ((MethodTreeImpl) methodTree).getSymbol().getThrownTypes();
+    ImmutableList.Builder<String> builder = ImmutableList.builder();
+    for (Symbol.TypeSymbol thrownClass : thrownClasses) {
+      if (!isSubClassOfRuntimeException(thrownClass)) {
+        builder.add(thrownClass.owner().getName() + "." + thrownClass.getName());
+      }
+    }
+    return builder.build();
+  }
+

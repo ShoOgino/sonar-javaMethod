@@ -3,9 +3,11 @@
     Resolve.Env env = semanticModel.getEnv(symbol);
 
     ImmutableList.Builder<Symbol.TypeSymbol> thrown = ImmutableList.builder();
+    ImmutableList.Builder<Type> thrownTypes = ImmutableList.builder();
     for (ExpressionTree throwClause : methodTree.throwsClauses()) {
       Type thrownType = resolveType(env, throwClause);
       if (thrownType != null) {
+        thrownTypes.add(thrownType);
         ((AbstractTypedTree) throwClause).setType(thrownType);
         thrown.add(((Type.ClassType) thrownType).symbol);
       }
@@ -16,9 +18,21 @@
       // no return type for constructor
       return;
     }
-    Type type = resolveType(env, methodTree.returnType());
-    if (type != null) {
-      symbol.type = type.symbol;
+    Type returnType = resolveType(env, methodTree.returnType());
+    if (returnType != null) {
+      symbol.type = returnType.symbol;
     }
+    List<Type> argTypes = Lists.newArrayList();
+    //Guarantee order of params.
+    for (VariableTree variableTree : methodTree.parameters()) {
+      for (Symbol param : symbol.parameters.scopeSymbols()) {
+        if (variableTree.simpleName().name().equals(param.getName())) {
+          param.complete();
+          argTypes.add(param.getType());
+        }
+      }
+    }
+    Type.MethodType methodType = new Type.MethodType(argTypes, returnType, thrownTypes.build() , (Symbol.TypeSymbol) symbol.owner);
+    symbol.setMethodType(methodType);
   }
 
