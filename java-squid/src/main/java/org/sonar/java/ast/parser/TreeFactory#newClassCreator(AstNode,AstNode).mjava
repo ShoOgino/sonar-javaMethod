@@ -1,0 +1,10 @@
+  public ExpressionTree newClassCreator(AstNode createdName, AstNode classCreatorRest) {
+    ClassTreeImpl classBody = null;
+    if (classCreatorRest.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
+      List<Tree> body = treeMaker.classBody(classCreatorRest.getFirstChild(JavaGrammar.CLASS_BODY));
+      classBody = new ClassTreeImpl(classCreatorRest, Tree.Kind.CLASS, ModifiersTreeImpl.EMPTY, null, null, ImmutableList.<Tree>of(), body);
+    }
+    return new NewClassTreeImpl(null, treeMaker.classType(createdName), treeMaker.arguments(classCreatorRest.getFirstChild(JavaGrammar.ARGUMENTS)), classBody,
+      createdName, classCreatorRest);
+  }
+
