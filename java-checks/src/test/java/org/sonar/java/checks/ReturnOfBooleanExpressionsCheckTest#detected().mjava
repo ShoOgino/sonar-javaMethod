@@ -1,9 +1,11 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ReturnOfBooleanExpressionsCheck.java"), new ReturnOfBooleanExpressionsCheck());
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ReturnOfBooleanExpressionsCheck.java"), new VisitorsBridge(new ReturnOfBooleanExpressionsCheck()));
     checkMessagesVerifier.verify(file.getCheckMessages())
         .next().atLine(3).withMessage("Replace this if-then-else statement by a single return statement.")
         .next().atLine(9)
-        .next().atLine(27);
+        .next().atLine(27)
+        .next().atLine(66)
+    ;
   }
 
