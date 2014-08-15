@@ -1,0 +1,10 @@
+    private static boolean isCollection(Tree methodReturnType) {
+      IdentifierTree identifierTree = null;
+      if (methodReturnType.is(Tree.Kind.IDENTIFIER)) {
+        identifierTree = ((IdentifierTree) methodReturnType);
+      } else if (methodReturnType.is(Tree.Kind.MEMBER_SELECT)) {
+        identifierTree = ((MemberSelectExpressionTree) methodReturnType).identifier();
+      }
+      return identifierTree != null && COLLECTION_TYPES.contains(identifierTree.name());
+    }
+

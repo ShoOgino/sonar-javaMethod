@@ -1,0 +1,15 @@
+    public static Returns getReturnType(@Nullable Tree tree){
+      if (tree != null) {
+        Tree returnType = tree;
+        while(returnType.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+          returnType = ((ParameterizedTypeTree) returnType).type();
+        }
+        if (returnType.is(Tree.Kind.ARRAY_TYPE)) {
+          return ARRAY;
+        } else if (isCollection(returnType)) {
+          return COLLECTION;
+        }
+      }
+      return OTHERS;
+    }
+
