@@ -1,0 +1,18 @@
+  private void prependChild(AstNode astNode) {
+    Preconditions.checkState(getAstNode() == this, "Legacy strongly typed node");
+
+    List<AstNode> children = (List<AstNode>) getField(CHILDREN_FIELD, this);
+    if (children.isEmpty()) {
+      // addChild() will take care of everything
+      addChild(astNode);
+    } else {
+      setField(PARENT_FIELD, astNode, this);
+      children.add(0, astNode);
+
+      // Reset the childIndex field of all children
+      for (int i = 0; i < children.size(); i++) {
+        setField(CHILD_INDEX_FIELD, children.get(i), i);
+      }
+    }
+  }
+

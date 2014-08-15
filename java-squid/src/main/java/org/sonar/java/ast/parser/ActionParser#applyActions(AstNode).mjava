@@ -15,8 +15,9 @@
           AstXmlPrinter.print(astNode));
 
       try {
+        List<Token> oldTokens = verifyAssertions ? astNode.getTokens() : Collections.<Token>emptyList();
         AstNode typedNode = (AstNode) method.invoke(action, convertedChildren);
-        replaceAstNode(astNode, typedNode);
+        replaceAstNode(astNode, typedNode, oldTokens);
       } catch (InvocationTargetException e) {
         throw Throwables.propagate(e);
       } catch (IllegalAccessException e) {
@@ -25,10 +26,11 @@
     }
 
     if (grammarBuilderInterceptor.hasMethodForRuleKey(astNode.getType())) {
+      List<Token> oldTokens = verifyAssertions ? astNode.getTokens() : Collections.<Token>emptyList();
       children = astNode.getChildren().toArray(new AstNode[astNode.getChildren().size()]);
       Preconditions.checkState(children.length == 1, "Unexpected number of children: " + children.length);
       AstNode typedNode = children[0];
-      replaceAstNode(astNode, typedNode);
+      replaceAstNode(astNode, typedNode, oldTokens);
     }
   }
 

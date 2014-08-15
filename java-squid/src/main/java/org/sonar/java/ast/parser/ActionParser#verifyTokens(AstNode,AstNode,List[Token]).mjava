@@ -1,0 +1,20 @@
+  private void verifyTokens(AstNode o, AstNode n, List<Token> oldTokens) {
+    List<Token> newTokens = n.getTokens();
+
+    Preconditions.checkArgument(
+      oldTokens.size() == newTokens.size(),
+      "Different number of reinjected tokens: old = " + oldTokens.size() + " vs new = " + newTokens.size()
+        + "\nOld node: " + o
+        + "\nNew node: " + n
+        + "\nOld tokens: " + firstTokens(oldTokens)
+        + "\nNew tokens: " + firstTokens(newTokens));
+
+    for (int i = 0; i < oldTokens.size(); i++) {
+      Preconditions.checkArgument(
+        oldTokens.get(i) == newTokens.get(i),
+        "Difference in tokens number " + i
+          + "\nExpected: " + oldTokens.get(i).getOriginalValue()
+          + "\nActual: " + newTokens.get(i).getOriginalValue());
+    }
+  }
+
