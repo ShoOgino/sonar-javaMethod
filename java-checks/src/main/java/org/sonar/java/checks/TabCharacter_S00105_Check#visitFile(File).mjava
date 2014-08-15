@@ -1,0 +1,15 @@
+  public void visitFile(File file) {
+    List<String> lines;
+    try {
+      lines = Files.readLines(file, charset);
+    } catch (IOException e) {
+      throw new SonarException(e);
+    }
+    for (String line : lines) {
+      if (line.contains("\t")) {
+        addIssueOnFile("Replace all tab characters in this file by sequences of white-spaces.");
+        break;
+      }
+    }
+  }
+
