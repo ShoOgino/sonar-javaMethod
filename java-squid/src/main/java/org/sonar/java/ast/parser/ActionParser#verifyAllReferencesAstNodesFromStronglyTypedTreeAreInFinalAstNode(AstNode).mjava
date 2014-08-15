@@ -1,0 +1,51 @@
+  private void verifyAllReferencesAstNodesFromStronglyTypedTreeAreInFinalAstNode(AstNode astNode) {
+    if (!astNode.is(JavaGrammar.COMPILATION_UNIT)) {
+      return;
+    }
+
+    Set<AstNode> nodesSet = Sets.newHashSet(getDescendants(rootNode));
+    nodesSet.add(rootNode);
+    JavaTree compilationUnitTree = (JavaTree) new JavaTreeMaker().compilationUnit(rootNode);
+
+    for (JavaTree tree : getDescendants(compilationUnitTree)) {
+      AstNode node = tree.getAstNode();
+      if (node == null) {
+        continue;
+      }
+
+      if (!nodesSet.contains(node)) {
+        throw new IllegalStateException("The following AstNode is dangling:"
+          + "\n" + nodeToString(node)
+          + "\nAt line: " + (node.hasToken() ? node.getTokenLine() : "N/A")
+          + "\nToken: " + (node.hasToken() ? node.getTokenOriginalValue() : "N/A")
+          + "\nAssociated to: " + tree.getClass().getSimpleName()
+          + "\nAll nodes:"
+          + "\n" + AstXmlPrinter.print(rootNode));
+      }
+
+      StringBuilder sb = new StringBuilder();
+      sb.append(nodeToString(node));
+
+      for (node = node.getParent(); node != null; node = node.getParent()) {
+        if (node instanceof JavaTree && ((JavaTree) node).isLegacy()) {
+          // Legacy nodes are not re-injected, and so will not be found
+          continue;
+        }
+
+        if (!nodesSet.contains(node)) {
+          throw new IllegalStateException("The following AstNode is dangling:"
+            + "\n" + nodeToString(node)
+            + "\nAt line: " + (node.hasToken() ? node.getTokenLine() : "N/A")
+            + "\nToken: " + (node.hasToken() ? node.getTokenOriginalValue() : "N/A")
+            + "\nAssociated to: " + tree.getClass().getSimpleName()
+            + "\nThrough ancestors: " + sb.toString()
+            + "\nAll nodes:"
+            + "\n" + AstXmlPrinter.print(rootNode));
+        }
+
+        sb.append(" -> ");
+        sb.append(nodeToString(node));
+      }
+    }
+  }
+

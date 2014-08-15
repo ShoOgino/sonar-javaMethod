@@ -1,0 +1,37 @@
+  private static Set<JavaTree> treesToVisit(JavaTree tree) {
+    Set<JavaTree> result = Sets.newHashSet();
+
+    // Get children from iterator
+    if (!tree.isLeaf()) {
+      Iterator<Tree> it = tree.childrenIterator();
+      while (it.hasNext()) {
+        JavaTree child = (JavaTree) it.next();
+        if (child != null) {
+          // TODO It's crappy, but classes such as ClassTreeImpl can return null in their children iterator
+          result.add(child);
+        }
+      }
+    }
+
+    // Get children which are not exposed from the iterator, but stored in fields
+    for (Field field : tree.getClass().getDeclaredFields()) {
+      if (Modifier.isStatic(field.getModifiers())) {
+        // Skip static fields, only instance onces are of interest
+        continue;
+      }
+
+      field.setAccessible(true);
+      try {
+        Object obj = field.get(tree);
+
+        if (obj instanceof JavaTree) {
+          result.add((JavaTree) obj);
+        }
+      } catch (IllegalAccessException e) {
+        throw Throwables.propagate(e);
+      }
+    }
+
+    return result;
+  }
+

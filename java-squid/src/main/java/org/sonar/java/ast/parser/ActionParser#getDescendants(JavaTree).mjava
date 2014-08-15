@@ -1,6 +1,16 @@
-  private static List<JavaTree> getDescendants(JavaTree tree) {
-    List<JavaTree> result = Lists.newArrayList();
-    addDescendants(result, tree);
-    return result;
+  private static Set<JavaTree> getDescendants(JavaTree rootTree) {
+    Deque<JavaTree> toVisit = Lists.newLinkedList();
+    Set<JavaTree> visited = Sets.newHashSet();
+
+    toVisit.push(rootTree);
+    while (!toVisit.isEmpty()) {
+      JavaTree tree = toVisit.pop();
+      if (!visited.contains(tree)) {
+        visited.add(tree);
+        toVisit.addAll(treesToVisit(tree));
+      }
+    }
+
+    return visited;
   }
 

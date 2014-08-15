@@ -10,15 +10,13 @@
         qualifiedIdentifier = new MemberSelectExpressionTreeImpl(
           astNodeQualifiedIdentifier.getNextSibling().getNextSibling(),
           qualifiedIdentifier,
-          new IdentifierTreeImpl(nextNextSibling, new InternalSyntaxToken(nextNextSibling))
-          );
+          new IdentifierTreeImpl(InternalSyntaxToken.createLegacy(nextNextSibling), nextNextSibling));
       }
 
       imports.add(new JavaTree.ImportTreeImpl(
         importNode,
         importNode.hasDirectChildren(JavaKeyword.STATIC),
-        qualifiedIdentifier
-        ));
+        qualifiedIdentifier));
     }
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
     for (AstNode typeNode : astNode.getChildren(JavaGrammar.TYPE_DECLARATION)) {

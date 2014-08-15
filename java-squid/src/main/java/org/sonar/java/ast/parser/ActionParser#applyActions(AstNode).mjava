@@ -9,10 +9,11 @@
       children = astNode.getChildren().toArray(new AstNode[astNode.getChildren().size()]);
       Object[] convertedChildren = convertTypes(children);
 
-      Preconditions.checkState(
-        convertedChildren.length == method.getParameterTypes().length,
-        "Argument mismatch! Expected: " + method.getParameterTypes().length + " parameters, but got: " + convertedChildren.length + "\n" +
-          AstXmlPrinter.print(astNode));
+      if (convertedChildren.length != method.getParameterTypes().length) {
+        throw new IllegalStateException(
+          "Argument mismatch! Expected: " + method.getParameterTypes().length + " parameters, but got: " + convertedChildren.length + "\n" +
+            AstXmlPrinter.print(astNode));
+      }
 
       try {
         List<Token> oldTokens = verifyAssertions ? astNode.getTokens() : Collections.<Token>emptyList();
