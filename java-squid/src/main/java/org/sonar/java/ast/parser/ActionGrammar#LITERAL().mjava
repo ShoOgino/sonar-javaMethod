@@ -1,6 +1,16 @@
   public ExpressionTree LITERAL() {
     return b.<ExpressionTree>nonterminal(JavaGrammar.LITERAL)
       .is(
-        f.literal(LITERAL_TOKEN()));
+        f.literal(
+          b.firstOf(
+            b.invokeRule(JavaKeyword.TRUE),
+            b.invokeRule(JavaKeyword.FALSE),
+            b.invokeRule(JavaKeyword.NULL),
+            b.invokeRule(JavaTokenType.CHARACTER_LITERAL),
+            b.invokeRule(JavaTokenType.LITERAL),
+            b.invokeRule(JavaTokenType.FLOAT_LITERAL),
+            b.invokeRule(JavaTokenType.DOUBLE_LITERAL),
+            b.invokeRule(JavaTokenType.LONG_LITERAL),
+            b.invokeRule(JavaTokenType.INTEGER_LITERAL))));
   }
 
