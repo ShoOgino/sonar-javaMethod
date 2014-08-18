@@ -1,9 +1,9 @@
   public Resolve.Env getEnv(Tree tree) {
-    AstNode astNode = ((JavaTree) tree).getAstNode();
+    JavaTree javaTree = (JavaTree) tree;
     Resolve.Env result = null;
-    while (result == null && astNode != null) {
-      result = envs.get(astNode);
-      astNode = astNode.getParent();
+    while (result == null && javaTree != null) {
+      result = envs.get(javaTree);
+      javaTree = (JavaTree) parentLink.get(javaTree);
     }
     return result;
   }
