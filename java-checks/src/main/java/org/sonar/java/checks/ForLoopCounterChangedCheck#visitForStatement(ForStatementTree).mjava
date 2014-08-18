@@ -1,0 +1,16 @@
+  @Override
+  public void visitForStatement(ForStatementTree tree) {
+    Set<String> pendingLoopCounters = Sets.newHashSet();
+    for (StatementTree statementTree : tree.initializer()) {
+      if(statementTree.is(Tree.Kind.VARIABLE)){
+        pendingLoopCounters.add(((VariableTree) statementTree).simpleName().name());
+      }
+    }
+    scan(tree.initializer());
+    scan(tree.condition());
+    scan(tree.update());
+    loopCounters.addAll(pendingLoopCounters);
+    scan(tree.statement());
+    loopCounters.removeAll(pendingLoopCounters);
+  }
+
