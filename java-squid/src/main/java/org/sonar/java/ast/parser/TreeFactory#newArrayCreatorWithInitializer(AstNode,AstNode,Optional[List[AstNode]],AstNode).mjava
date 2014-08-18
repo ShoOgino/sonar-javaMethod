@@ -1,0 +1,18 @@
+  public NewArrayTreeImpl newArrayCreatorWithInitializer(AstNode openBracketToken, AstNode closeBracketToken, Optional<List<AstNode>> dims, AstNode arrayInitializer) {
+    ImmutableList.Builder<ExpressionTree> elems = ImmutableList.builder();
+    for (AstNode elem : arrayInitializer.getChildren(JavaGrammar.VARIABLE_INITIALIZER)) {
+      elems.add(treeMaker.variableInitializer(elem));
+    }
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(openBracketToken);
+    children.add(closeBracketToken);
+    if (dims.isPresent()) {
+      children.addAll(dims.get());
+    }
+    children.add(arrayInitializer);
+
+    return new NewArrayTreeImpl(ImmutableList.<ExpressionTree>of(), elems.build(),
+      children);
+  }
+

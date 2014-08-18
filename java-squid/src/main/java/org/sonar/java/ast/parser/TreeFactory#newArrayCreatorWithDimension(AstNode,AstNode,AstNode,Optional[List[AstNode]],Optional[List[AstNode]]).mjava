@@ -1,0 +1,27 @@
+  public NewArrayTreeImpl newArrayCreatorWithDimension(AstNode openBracketToken, AstNode expression, AstNode closeBracketToken,
+    Optional<List<AstNode>> dimExpressions,
+    Optional<List<AstNode>> dims) {
+
+    ImmutableList.Builder<ExpressionTree> dimensions = ImmutableList.builder();
+    dimensions.add(treeMaker.expression(expression));
+    if (dimExpressions.isPresent()) {
+      for (AstNode dimExpr : dimExpressions.get()) {
+        dimensions.add(treeMaker.expression(dimExpr.getFirstChild(JavaGrammar.EXPRESSION)));
+      }
+    }
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(openBracketToken);
+    children.add(expression);
+    children.add(closeBracketToken);
+    if (dimExpressions.isPresent()) {
+      children.addAll(dimExpressions.get());
+    }
+    if (dims.isPresent()) {
+      children.addAll(dims.get());
+    }
+
+    return new NewArrayTreeImpl(dimensions.build(), ImmutableList.<ExpressionTree>of(),
+      children);
+  }
+
