@@ -1,0 +1,38 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM) || tree.is(Tree.Kind.INTERFACE) || tree.is(Tree.Kind.ANNOTATION_TYPE)) {
+      ClassTree classTree = (ClassTree) tree;
+      ImmutableMap.Builder<String, VariableTree> builder = ImmutableMap.builder();
+      for (Tree member : classTree.members()) {
+        if (member.is(Tree.Kind.VARIABLE)) {
+          VariableTree variableTree = (VariableTree) member;
+          builder.put(variableTree.simpleName().name(), variableTree);
+        }
+      }
+      fields.push(builder.build());
+      excludedVariables.push(Lists.<VariableTree>newArrayList());
+    } else if (tree.is(Tree.Kind.VARIABLE)) {
+      VariableTree variableTree = (VariableTree) tree;
+      for (ImmutableMap<String, VariableTree> variables : fields) {
+        if (variables.values().contains(variableTree)) {
+          return;
+        }
+        String identifier = variableTree.simpleName().name();
+        VariableTree hiddenVariable = variables.get(identifier);
+        if (!flattenExcludedVariables.contains(variableTree) && hiddenVariable != null) {
+          addIssue(variableTree, "Rename \"" + identifier + "\" which hides the field declared at line " + ((JavaTree) hiddenVariable).getLine() + ".");
+          return;
+        }
+      }
+    } else if (tree.is(Tree.Kind.STATIC_INITIALIZER)) {
+      excludeVariablesFromBlock((BlockTree) tree);
+    } else {
+      MethodTree methodTree = (MethodTree) tree;
+      excludedVariables.peek().addAll(methodTree.parameters());
+      flattenExcludedVariables.addAll(methodTree.parameters());
+      if (methodTree.modifiers().modifiers().contains(Modifier.STATIC)) {
+        excludeVariablesFromBlock(methodTree.block());
+      }
+    }
+  }
+
