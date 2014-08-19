@@ -1,0 +1,29 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    if (!tree.is(Kind.PLUS)) {
+      super.visitBinaryExpression(tree);
+      return;
+    }
+
+    // TODO This code exploits the associativity bug SONARJAVA-610
+    boolean seenStringLiteral = false;
+    ExpressionTree current = tree;
+    while (current.is(Kind.PLUS)) {
+      BinaryExpressionTree binOp = (BinaryExpressionTree) current;
+      scan(binOp.leftOperand());
+
+      if (!seenStringLiteral) {
+        if (binOp.leftOperand().is(Kind.STRING_LITERAL)) {
+          seenStringLiteral = true;
+          check(binOp.rightOperand());
+        }
+      } else if (isStringValueOf(binOp.leftOperand())) {
+        check(binOp.leftOperand());
+      }
+
+      current = ((BinaryExpressionTree) current).rightOperand();
+    }
+
+    scan(current);
+  }
+
