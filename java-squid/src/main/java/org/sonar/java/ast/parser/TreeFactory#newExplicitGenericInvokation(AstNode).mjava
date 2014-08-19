@@ -1,7 +1,9 @@
   public ExpressionTree newExplicitGenericInvokation(AstNode explicitGenericInvocationSuffix) {
     if (explicitGenericInvocationSuffix.hasDirectChildren(JavaKeyword.SUPER)) {
       // <T>super...
-      return applySuperSuffix(explicitGenericInvocationSuffix.getFirstChild(JavaKeyword.SUPER), explicitGenericInvocationSuffix.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+      return applySuperSuffix(
+        new IdentifierTreeImpl(InternalSyntaxToken.create(explicitGenericInvocationSuffix.getFirstChild(JavaKeyword.SUPER))),
+        explicitGenericInvocationSuffix.getFirstChild(JavaGrammar.SUPER_SUFFIX));
     } else {
       // <T>id(arguments)
       AstNode identifierNode = explicitGenericInvocationSuffix.getFirstChild(JavaTokenType.IDENTIFIER);

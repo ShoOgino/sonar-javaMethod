@@ -1,0 +1,27 @@
+  private ExpressionTree applySuperSuffix(ExpressionTree expression, AstNode superSuffixNode) {
+    Preconditions.checkArgument(!((JavaTree) expression).isLegacy());
+    JavaTreeMaker.checkType(superSuffixNode, JavaGrammar.SUPER_SUFFIX);
+
+    if (superSuffixNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+      // super(arguments)
+      // super.method(arguments)
+      // super.<T>method(arguments)
+      // TODO typeArguments
+      if (superSuffixNode.hasDirectChildren(JavaTokenType.IDENTIFIER)) {
+        MemberSelectExpressionTreeImpl memberSelect = new MemberSelectExpressionTreeImpl(
+          expression, treeMaker.identifier(superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)),
+          (AstNode) expression);
+
+        return new MethodInvocationTreeImpl(memberSelect, treeMaker.arguments(superSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+          memberSelect, superSuffixNode);
+      } else {
+        return new MethodInvocationTreeImpl(expression, treeMaker.arguments(superSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+          (AstNode) expression, superSuffixNode);
+      }
+    } else {
+      // super.field
+      return new MemberSelectExpressionTreeImpl(expression, treeMaker.identifier(superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)),
+        (AstNode) expression, superSuffixNode);
+    }
+  }
+

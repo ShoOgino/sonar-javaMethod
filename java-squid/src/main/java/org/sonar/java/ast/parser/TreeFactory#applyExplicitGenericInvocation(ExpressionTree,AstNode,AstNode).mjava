@@ -1,0 +1,24 @@
+  public ExpressionTree applyExplicitGenericInvocation(ExpressionTree expression, AstNode dotToken, AstNode astNode) {
+    JavaTreeMaker.checkType(astNode, JavaGrammar.EXPLICIT_GENERIC_INVOCATION);
+    // TODO NON_WILDCARD_TYPE_ARGUMENTS
+    AstNode nonWildcardTypeArguments = astNode.getFirstChild(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS);
+
+    AstNode explicitGenericInvocationSuffixNode = astNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION_SUFFIX);
+    if (explicitGenericInvocationSuffixNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
+      IdentifierTreeImpl superIdentifier = new IdentifierTreeImpl(InternalSyntaxToken.create(explicitGenericInvocationSuffixNode.getFirstChild(JavaKeyword.SUPER)));
+      expression = new MemberSelectExpressionTreeImpl(expression, superIdentifier,
+        (AstNode) expression, dotToken, nonWildcardTypeArguments, superIdentifier);
+      return applySuperSuffix(expression, explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+    } else {
+      IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(explicitGenericInvocationSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)));
+
+      MemberSelectExpressionTreeImpl memberSelect = new MemberSelectExpressionTreeImpl(
+        expression, identifier,
+        (AstNode) expression, dotToken, nonWildcardTypeArguments, identifier);
+
+      return new MethodInvocationTreeImpl(
+        memberSelect, treeMaker.arguments(explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+        memberSelect, explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS));
+    }
+  }
+

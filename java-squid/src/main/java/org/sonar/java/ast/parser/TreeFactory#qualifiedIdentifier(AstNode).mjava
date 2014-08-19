@@ -1,0 +1,36 @@
+  private ExpressionTree qualifiedIdentifier(AstNode astNode) {
+    JavaTreeMaker.checkType(astNode, JavaGrammar.QUALIFIED_IDENTIFIER);
+
+    JavaTree result = null;
+
+    List<AstNode> children = astNode.getChildren();
+    List<AstNode> pendingChildren = Lists.newArrayList();
+    for (int i = 0; i < children.size(); i++) {
+      AstNode child = children.get(i);
+
+      if (!child.is(JavaTokenType.IDENTIFIER)) {
+        pendingChildren.add(child);
+      } else {
+        InternalSyntaxToken identifierToken = InternalSyntaxToken.create(child);
+
+        if (result == null) {
+          // TODO SemanticModel should work on the tokens, rather than on IdentifierTree, or the grammar should be updated
+          Preconditions.checkState(pendingChildren.size() == 0, "Cannot add several children to identifier tree");
+          pendingChildren.add(identifierToken);
+          result = new IdentifierTreeImpl(identifierToken, pendingChildren);
+        } else {
+          IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+          pendingChildren.add(0, result);
+          pendingChildren.add(identifier);
+
+          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, identifier,
+            pendingChildren.toArray(new AstNode[pendingChildren.size()]));
+        }
+
+        pendingChildren.clear();
+      }
+    }
+
+    return (ExpressionTree) result;
+  }
+
