@@ -1,0 +1,13 @@
+  private boolean isCallToSuper(MethodTree methodTree, Tree callToSuper) {
+    if (callToSuper.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) callToSuper;
+      if (methodInvocationTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodInvocationTree.methodSelect();
+        if (callSuperMethodWithSameName(mset, methodTree) && callsWithSameParameters(methodInvocationTree.arguments(), methodTree.parameters())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

@@ -1,0 +1,11 @@
+  private boolean isUselessSuperCall(MethodTree methodTree) {
+    ExpressionTree callToSuper = null;
+    StatementTree statementTree = methodTree.block().body().get(0);
+    if (returnsVoid(methodTree) && statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      callToSuper = ((ExpressionStatementTree) statementTree).expression();
+    } else if (statementTree.is(Tree.Kind.RETURN_STATEMENT)) {
+      callToSuper = ((ReturnStatementTree) statementTree).expression();
+    }
+    return callToSuper != null && isCallToSuper(methodTree, callToSuper);
+  }
+
