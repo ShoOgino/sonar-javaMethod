@@ -1,0 +1,10 @@
+  private boolean isSystem(ExpressionTree expression) {
+    IdentifierTree identifierTree = null;
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      identifierTree = (IdentifierTree) expression;
+    } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      identifierTree = ((MemberSelectExpressionTree) expression).identifier();
+    }
+    return identifierTree != null && "System".equals(identifierTree.name());
+  }
+
