@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    for (Tree superInterface : classTree.superInterfaces()) {
+      IdentifierTree identifierTree = null;
+      if (superInterface.is(Tree.Kind.IDENTIFIER)) {
+        identifierTree = (IdentifierTree) superInterface;
+      } else if (superInterface.is(Tree.Kind.PARAMETERIZED_TYPE) && ((ParameterizedTypeTree) superInterface).type().is(Tree.Kind.IDENTIFIER)) {
+        identifierTree = (IdentifierTree) ((ParameterizedTypeTree) superInterface).type();
+      }
+      if (isEnumeration(identifierTree)) {
+        addIssue(superInterface, "Implement Iterator rather than Enumeration.");
+      }
+    }
+  }
+
