@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (isException(classTree)) {
+      for (Tree member : classTree.members()) {
+        if(member.is(Tree.Kind.VARIABLE) && !isFinal((VariableTree) member)){
+          addIssue(member, "Make this \"" + ((VariableTree) member).simpleName().name()+ "\" field final.");
+        }
+      }
+    }
+  }
+
