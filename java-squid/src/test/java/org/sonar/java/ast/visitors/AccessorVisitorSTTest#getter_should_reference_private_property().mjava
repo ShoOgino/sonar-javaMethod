@@ -1,0 +1,11 @@
+  @Test
+  public void getter_should_reference_private_property() {
+    assertThat(isAccessor("class T { private boolean a; boolean isA() { return true;} }")).isFalse();
+    assertThat(isAccessor("class T { boolean a; boolean isA() { return a;} }")).isFalse();
+    assertThat(isAccessor("class T { private boolean a; boolean isA() { return a;} }")).isTrue();
+    assertThat(isAccessor("class T { private int a; int getA() { return 1; } }")).isFalse();
+    assertThat(isAccessor("class T { int a; int getA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { int a; void getA() { return; } }")).isFalse();
+    assertThat(isAccessor("class T { private int a; int getA() { return a; } }")).isTrue();
+  }
+

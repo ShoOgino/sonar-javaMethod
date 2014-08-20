@@ -1,0 +1,13 @@
+  private boolean referencePrivateProperty(ExpressionTree expression, ClassTree classTree) {
+    String variableReturned = "";
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      variableReturned = ((IdentifierTree) expression).name();
+    } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      variableReturned = ((MemberSelectExpressionTree) expression).identifier().name();
+    }
+    if (StringUtils.isEmpty(variableReturned)) {
+      return false;
+    }
+    return referencePrivateProperty(variableReturned, classTree);
+  }
+
