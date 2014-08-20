@@ -21,7 +21,7 @@
       } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
         // id(arguments)
         return new MethodInvocationTreeImpl(
-          qualifiedIdentifier, treeMaker.arguments(identifierSuffixNode.getFirstChild()),
+          qualifiedIdentifier, (ArgumentListTreeImpl) identifierSuffixNode.getFirstChild(),
           (AstNode) qualifiedIdentifier, identifierSuffixNode);
       } else if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.DOT)) {
         if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
@@ -48,7 +48,7 @@
             (AstNode) qualifiedIdentifier, identifierSuffixNode.getFirstChild(JavaPunctuator.DOT), superIdentifier);
 
           return new MethodInvocationTreeImpl(
-            memberSelect, treeMaker.arguments(identifierSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+            memberSelect, (ArgumentListTreeImpl) identifierSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS),
             memberSelect, identifierSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS));
         } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.NEW)) {
           // id.new...
@@ -67,7 +67,7 @@
           return new NewClassTreeImpl(
             qualifiedIdentifier,
             treeMaker.identifier(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)),
-            treeMaker.arguments(classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS)),
+            (ArgumentListTreeImpl) classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS),
             classBody,
             (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else {
