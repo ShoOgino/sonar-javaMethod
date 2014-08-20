@@ -1,0 +1,24 @@
+  @Test
+  public void no_regression_in_complexity_computation() {
+
+    for (String dir : dirs) {
+      for (File file : FileUtils.listFiles(new File(dir), new String[]{"java"}, true)) {
+        final int[] complexity = new int[1];
+        SourceFile sourceFile = JavaAstScanner.scanSingleFile(file, new VisitorsBridge(new SubscriptionVisitor() {
+          @Override
+          public List<Tree.Kind> nodesToVisit() {
+            return ImmutableList.of(Tree.Kind.COMPILATION_UNIT);
+          }
+
+          @Override
+          public void visitNode(Tree tree) {
+            complexity[0] = new ComplexityVisitorST().scan(tree);
+          }
+        }));
+        int fileCplxity = sourceFile.getInt(JavaMetric.COMPLEXITY);
+        assertThat(fileCplxity).as(sourceFile.getName() + " : old complexity : " + fileCplxity + " - " + complexity[0]).isEqualTo(complexity[0]).as(sourceFile.getName());
+      }
+    }
+
+  }
+
