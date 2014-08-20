@@ -1,8 +1,11 @@
   private boolean referencePrivateProperty(ReturnStatementTree returnStatementTree, ClassTree classTree) {
     ExpressionTree expression = returnStatementTree.expression();
+    String variableName = "";
     if (expression == null) {
       return false;
+    } else if(expression.is(Tree.Kind.IDENTIFIER)) {
+      variableName = ((IdentifierTree)expression).name();
     }
-    return referencePrivateProperty(expression, classTree);
+    return !StringUtils.isEmpty(variableName) && referencePrivateProperty(variableName, classTree);
   }
 
