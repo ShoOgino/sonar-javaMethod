@@ -3,8 +3,9 @@
     if (astNode.is(JavaKeyword.VOID)) {
       return new Parameter(JvmJavaType.V, false);
     }
-    if (astNode.getFirstChild().is(JavaGrammar.BASIC_TYPE)) {
-      return new Parameter(JAVA_TYPE_MAPPING.get(astNode.getFirstChild().getFirstChild().getType()), isArray);
+    if (astNode.getFirstChild().is(Kind.PRIMITIVE_TYPE)) {
+      PrimitiveTypeTree primitve = (PrimitiveTypeTree) astNode.getFirstChild();
+      return new Parameter(JAVA_TYPE_MAPPING.get(((AstNode) primitve.keyword()).getType()), isArray);
     } else if (astNode.getFirstChild().is(JavaGrammar.CLASS_TYPE)) {
       return new Parameter(extractClassName(astNode.getFirstChild()), isArray);
     } else {

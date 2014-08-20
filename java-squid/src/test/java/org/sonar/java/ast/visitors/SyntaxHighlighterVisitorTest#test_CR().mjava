@@ -1,5 +1,21 @@
   @Test
   public void test_CR() throws Exception {
-    test("\r");
+    this.eol = "\r";
+    File file = temp.newFile();
+    Files.write(Files.toString(new File("src/test/files/highlighter/Example.java"), Charsets.UTF_8).replaceAll("\\r\\n", "\n").replaceAll("\\n", eol), file, Charsets.UTF_8);
+
+    JavaAstScanner.scanSingleFile(file, syntaxHighlighterVisitor);
+
+    lines = Files.readLines(file, Charsets.UTF_8);
+    Mockito.verify(highlighting).highlight(offset(1, 1), offset(3, 4), "cppd");
+    Mockito.verify(highlighting).highlight(offset(5, 1), offset(7, 4), "cppd");
+    Mockito.verify(highlighting).highlight(offset(8, 1), offset(8, 18), "a");
+    Mockito.verify(highlighting).highlight(offset(8, 19), offset(8, 27), "s");
+    Mockito.verify(highlighting).highlight(offset(9, 1), offset(9, 6), "k");
+    Mockito.verify(highlighting).highlight(offset(11, 3), offset(11, 7), "k");
+    Mockito.verify(highlighting).highlight(offset(12, 5), offset(12, 11), "k");
+    Mockito.verify(highlighting).highlight(offset(12, 12), offset(12, 14), "c");
+    Mockito.verify(highlighting).done();
+    Mockito.verifyNoMoreInteractions(highlighting);
   }
 

@@ -1,4 +1,4 @@
-  public ExpressionTree basicClassExpression(AstNode basicType, Optional<List<AstNode>> dims, AstNode dotToken, AstNode classToken) {
+  public ExpressionTree basicClassExpression(PrimitiveTypeTreeImpl basicType, Optional<List<AstNode>> dims, AstNode dotToken, AstNode classToken) {
     // 15.8.2. Class Literals
     // int.class
     // int[].class
@@ -12,7 +12,7 @@
     children.add(classToken);
 
     return new MemberSelectExpressionTreeImpl(
-      treeMaker.applyDim(treeMaker.basicType(basicType), dims.isPresent() ? dims.get().size() : 0), treeMaker.identifier(classToken),
+      treeMaker.applyDim(basicType, dims.isPresent() ? dims.get().size() : 0), treeMaker.identifier(classToken),
       children.toArray(new AstNode[children.size()]));
   }
 
