@@ -2,8 +2,8 @@
     checkType(astNode, JavaGrammar.COMPILATION_UNIT);
     ImmutableList.Builder<ImportTree> imports = ImmutableList.builder();
     for (AstNode importNode : astNode.getChildren(JavaGrammar.IMPORT_DECLARATION)) {
-      AstNode astNodeQualifiedIdentifier = importNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
-      ExpressionTree qualifiedIdentifier = qualifiedIdentifier(astNodeQualifiedIdentifier);
+      ExpressionTree qualifiedIdentifier = (ExpressionTree) importNode.getFirstChild(QUALIFIED_EXPRESSION_KINDS);
+      AstNode astNodeQualifiedIdentifier = (AstNode) qualifiedIdentifier;
       // star import : if there is a star then add it as an identifier.
       AstNode nextNextSibling = astNodeQualifiedIdentifier.getNextSibling().getNextSibling();
       if (astNodeQualifiedIdentifier.getNextSibling().is(JavaPunctuator.DOT) && nextNextSibling.is(JavaPunctuator.STAR)) {
@@ -35,7 +35,7 @@
     ImmutableList.Builder<AnnotationTree> packageAnnotations = ImmutableList.builder();
     if (astNode.hasDirectChildren(JavaGrammar.PACKAGE_DECLARATION)) {
       AstNode packageDeclarationNode = astNode.getFirstChild(JavaGrammar.PACKAGE_DECLARATION);
-      packageDeclaration = qualifiedIdentifier(packageDeclarationNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+      packageDeclaration = (ExpressionTree) packageDeclarationNode.getFirstChild(QUALIFIED_EXPRESSION_KINDS);
       for (AstNode annotationNode : packageDeclarationNode.getChildren(JavaGrammar.ANNOTATION)) {
         packageAnnotations.add(annotation(annotationNode));
       }

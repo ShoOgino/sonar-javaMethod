@@ -1,12 +1,12 @@
   private Tree catchType(AstNode astNode) {
     checkType(astNode, JavaGrammar.CATCH_TYPE);
-    List<AstNode> children = astNode.getChildren(JavaGrammar.QUALIFIED_IDENTIFIER);
+    List<AstNode> children = astNode.getChildren(QUALIFIED_EXPRESSION_KINDS);
     if (children.size() == 1) {
-      return qualifiedIdentifier(children.get(0));
+      return (ExpressionTree) children.get(0);
     } else {
       ImmutableList.Builder<Tree> typeAlternatives = ImmutableList.builder();
       for (AstNode child : children) {
-        typeAlternatives.add(qualifiedIdentifier(child));
+        typeAlternatives.add((ExpressionTree) child);
       }
       return new JavaTree.UnionTypeTreeImpl(astNode, typeAlternatives.build());
     }

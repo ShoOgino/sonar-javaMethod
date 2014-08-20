@@ -1,14 +1,14 @@
   private void setAstNodeFields(AstNode astNode, @Nullable AstNode parent, int childIndex, Set<AstNode> ancestors) {
     if (verifyAssertions && parent != null) {
-      if (AstNodeReflector.getChildIndex(astNode) != childIndex) {
+      if (AstNodeHacks.getChildIndex(astNode) != childIndex) {
         throw new IllegalArgumentException("Bad childIndex on node: " + nodeToString(astNode) + ": " + astNode
           + "\nExpected: " + childIndex
-          + "\nActual: " + AstNodeReflector.getChildIndex(astNode)
+          + "\nActual: " + AstNodeHacks.getChildIndex(astNode)
           + "\nParent:"
           + "\n" + AstXmlPrinter.print(parent));
       }
     }
-    AstNodeReflector.setParent(astNode, parent);
+    AstNodeHacks.setParent(astNode, parent);
 
     List<AstNode> children = astNode.getChildren();
     if (!children.isEmpty()) {
@@ -38,7 +38,7 @@
         ancestors.remove(astNode);
       }
 
-      AstNodeReflector.setToken(astNode, token);
+      AstNodeHacks.setToken(astNode, token);
       astNode.setFromIndex(fromIndex);
       astNode.setToIndex(toIndex);
     }

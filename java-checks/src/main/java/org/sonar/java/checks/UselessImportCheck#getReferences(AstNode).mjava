@@ -2,7 +2,7 @@
     if (node.is(JavaKeyword.THROWS)) {
       ImmutableList.Builder<String> builder = ImmutableList.builder();
 
-      for (AstNode qualifiedIdentifier : node.getNextSibling().getChildren(JavaGrammar.QUALIFIED_IDENTIFIER)) {
+      for (AstNode qualifiedIdentifier : node.getNextSibling().getChildren(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS)) {
         builder.add(mergeIdentifiers(qualifiedIdentifier));
       }
 
@@ -10,7 +10,7 @@
     } else {
       AstNode actualNode = node;
       if (node.is(JavaGrammar.ANNOTATION)) {
-        actualNode = node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER);
+        actualNode = node.getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS);
       }
 
       return Collections.singleton(mergeIdentifiers(actualNode));

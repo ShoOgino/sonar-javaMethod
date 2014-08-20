@@ -1,10 +1,10 @@
   @Override
   public void visitNode(AstNode node) {
     if (node.is(JavaGrammar.PACKAGE_DECLARATION)) {
-      currentPackage = mergeIdentifiers(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+      currentPackage = mergeIdentifiers(node.getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS));
     } else if (node.is(JavaGrammar.IMPORT_DECLARATION)) {
       if (!isStaticImport(node)) {
-        String reference = mergeIdentifiers(node.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER));
+        String reference = mergeIdentifiers(node.getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS));
 
         if ("java.lang".equals(reference)) {
           getContext().createLineViolation(this, "Remove this unnecessary import: java.lang classes are always implicitly imported.", node);

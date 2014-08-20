@@ -1,8 +1,10 @@
   private List<ExpressionTree> qualifiedIdentifierList(AstNode astNode) {
     checkType(astNode, JavaGrammar.QUALIFIED_IDENTIFIER_LIST);
     ImmutableList.Builder<ExpressionTree> result = ImmutableList.builder();
-    for (AstNode qualifiedIdentifierNode : astNode.getChildren(JavaGrammar.QUALIFIED_IDENTIFIER)) {
-      result.add(qualifiedIdentifier(qualifiedIdentifierNode));
+    for (AstNode child : astNode.getChildren()) {
+      if (child instanceof ExpressionTree && !((JavaTree) child).isLegacy()) {
+        result.add((ExpressionTree) child);
+      }
     }
     return result.build();
   }

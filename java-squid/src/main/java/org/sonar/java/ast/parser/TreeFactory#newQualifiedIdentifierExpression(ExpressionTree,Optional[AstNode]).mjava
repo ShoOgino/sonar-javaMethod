@@ -1,8 +1,7 @@
-  public ExpressionTree newQualifiedIdentifierExpression(AstNode qualifiedIdentifier, Optional<AstNode> identifierSuffix) {
-    ExpressionTree identifier = qualifiedIdentifier(qualifiedIdentifier);
+  public ExpressionTree newQualifiedIdentifierExpression(ExpressionTree qualifiedIdentifier, Optional<AstNode> identifierSuffix) {
     if (!identifierSuffix.isPresent()) {
       // id
-      return identifier;
+      return qualifiedIdentifier;
     } else {
       AstNode identifierSuffixNode = identifierSuffix.get();
       if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.LBRK)) {
@@ -10,43 +9,43 @@
           // 15.8.2. Class Literals
           // id[].class
           return new MemberSelectExpressionTreeImpl(
-            treeMaker.applyDim(identifier, identifierSuffixNode.getChildren(JavaGrammar.DIM).size() + 1),
+            treeMaker.applyDim(qualifiedIdentifier, identifierSuffixNode.getChildren(JavaGrammar.DIM).size() + 1),
             treeMaker.identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)),
-            (AstNode) identifier, identifierSuffixNode);
+            (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else {
           // id[expression]
           return new ArrayAccessExpressionTreeImpl(
-            identifier, treeMaker.expression(identifierSuffixNode.getFirstChild(JavaGrammar.EXPRESSION)),
-            (AstNode) identifier, identifierSuffixNode);
+            qualifiedIdentifier, treeMaker.expression(identifierSuffixNode.getFirstChild(JavaGrammar.EXPRESSION)),
+            (AstNode) qualifiedIdentifier, identifierSuffixNode);
         }
       } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
         // id(arguments)
         return new MethodInvocationTreeImpl(
-          identifier, treeMaker.arguments(identifierSuffixNode.getFirstChild()),
-          (AstNode) identifier, identifierSuffixNode);
+          qualifiedIdentifier, treeMaker.arguments(identifierSuffixNode.getFirstChild()),
+          (AstNode) qualifiedIdentifier, identifierSuffixNode);
       } else if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.DOT)) {
         if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
           // 15.8.2. Class Literals
           // id.class
           return new MemberSelectExpressionTreeImpl(
-            identifier, treeMaker.identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)),
-            (AstNode) identifier, identifierSuffixNode);
+            qualifiedIdentifier, treeMaker.identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)),
+            (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else if (identifierSuffixNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
           // id.<...>...
           return applyExplicitGenericInvocation(
-            identifier, identifierSuffixNode.getFirstChild(JavaPunctuator.DOT), identifierSuffixNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
+            qualifiedIdentifier, identifierSuffixNode.getFirstChild(JavaPunctuator.DOT), identifierSuffixNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
         } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.THIS)) {
           // id.this
           return new MemberSelectExpressionTreeImpl(
-            identifier, treeMaker.identifier(identifierSuffixNode.getFirstChild(JavaKeyword.THIS)),
-            (AstNode) identifier, identifierSuffixNode);
+            qualifiedIdentifier, treeMaker.identifier(identifierSuffixNode.getFirstChild(JavaKeyword.THIS)),
+            (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.SUPER)) {
           // id.super(arguments)
           IdentifierTreeImpl superIdentifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierSuffixNode.getFirstChild(JavaKeyword.SUPER)));
 
           MemberSelectExpressionTreeImpl memberSelect = new MemberSelectExpressionTreeImpl(
-            identifier, superIdentifier,
-            (AstNode) identifier, identifierSuffixNode.getFirstChild(JavaPunctuator.DOT), superIdentifier);
+            qualifiedIdentifier, superIdentifier,
+            (AstNode) qualifiedIdentifier, identifierSuffixNode.getFirstChild(JavaPunctuator.DOT), superIdentifier);
 
           return new MethodInvocationTreeImpl(
             memberSelect, treeMaker.arguments(identifierSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)),
@@ -66,11 +65,11 @@
               treeMaker.classBody(classCreatorRestNode.getFirstChild(JavaGrammar.CLASS_BODY)));
           }
           return new NewClassTreeImpl(
-            identifier,
+            qualifiedIdentifier,
             treeMaker.identifier(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)),
             treeMaker.arguments(classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS)),
             classBody,
-            (AstNode) identifier, identifierSuffixNode);
+            (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else {
           throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getChild(1));
         }

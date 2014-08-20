@@ -6,79 +6,8 @@
   @VisibleForTesting
   ExpressionTree primary(AstNode astNode) {
     AstNode firstChildNode = astNode.getFirstChild();
-    if (isStronglyTyped(firstChildNode)) {
-      return (ExpressionTree) firstChildNode;
-    } else if (firstChildNode.is(JavaGrammar.QUALIFIED_IDENTIFIER_EXPRESSION)) {
-      ExpressionTree identifier = qualifiedIdentifier(firstChildNode.getFirstChild());
-      AstNode identifierSuffixNode = firstChildNode.getFirstChild(JavaGrammar.IDENTIFIER_SUFFIX);
-      if (identifierSuffixNode == null) {
-        // id
-        return identifier;
-      } else {
-        if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.LBRK)) {
-          if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
-            // 15.8.2. Class Literals
-            // id[].class
-            return new MemberSelectExpressionTreeImpl(
-              firstChildNode,
-              applyDim(identifier, identifierSuffixNode.getChildren(JavaGrammar.DIM).size() + 1),
-              identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)));
-          } else {
-            // id[expression]
-            return new ArrayAccessExpressionTreeImpl(
-              firstChildNode,
-              identifier,
-              expression(identifierSuffixNode.getFirstChild(JavaGrammar.EXPRESSION)));
-          }
-        } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
-          // id(arguments)
-          return new MethodInvocationTreeImpl(
-            firstChildNode,
-            identifier,
-            arguments(identifierSuffixNode.getFirstChild()));
-        } else if (identifierSuffixNode.getFirstChild().is(JavaPunctuator.DOT)) {
-          if (identifierSuffixNode.hasDirectChildren(JavaKeyword.CLASS)) {
-            // 15.8.2. Class Literals
-            // id.class
-            return new MemberSelectExpressionTreeImpl(
-              astNode,
-              identifier,
-              identifier(identifierSuffixNode.getFirstChild(JavaKeyword.CLASS)));
-          } else if (identifierSuffixNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
-            // id.<...>...
-            return applyExplicitGenericInvocation(identifier, identifierSuffixNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
-          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.THIS)) {
-            // id.this
-            return new MemberSelectExpressionTreeImpl(
-              astNode,
-              identifier,
-              identifier(identifierSuffixNode.getFirstChild(JavaKeyword.THIS)));
-          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.SUPER)) {
-            // id.super(arguments)
-            return new MethodInvocationTreeImpl(
-              astNode,
-              new MemberSelectExpressionTreeImpl(
-                astNode,
-                identifier,
-                identifier(identifierSuffixNode.getFirstChild(JavaKeyword.SUPER))
-              ),
-              arguments(identifierSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS)));
-          } else if (identifierSuffixNode.hasDirectChildren(JavaKeyword.NEW)) {
-            // id.new...
-            AstNode innerCreatorNode = identifierSuffixNode.getFirstChild(JavaGrammar.INNER_CREATOR);
-            return applyClassCreatorRest(
-              identifier,
-              identifier(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)),
-              innerCreatorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST));
-          } else {
-            throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getChild(1));
-          }
-        } else {
-          throw new IllegalArgumentException("Unexpected AstNodeType: " + identifierSuffixNode.getFirstChild());
-        }
-      }
-    } else {
-      throw new IllegalArgumentException("Unexpected AstNodeType: " + firstChildNode.getType());
-    }
+    Preconditions.checkArgument(isStronglyTyped(firstChildNode));
+
+    return (ExpressionTree) firstChildNode;
   }
 

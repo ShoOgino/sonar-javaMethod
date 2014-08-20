@@ -1,13 +1,19 @@
-  private ExpressionTree qualifiedIdentifier(AstNode astNode) {
-    JavaTreeMaker.checkType(astNode, JavaGrammar.QUALIFIED_IDENTIFIER);
+  public ExpressionTree qualifiedExpression(Optional<List<AstNode>> annotations, AstNode firstIdentifier, Optional<List<AstNode>> rests) {
+    List<AstNode> children = Lists.newArrayList();
+    if (annotations.isPresent()) {
+      children.addAll(annotations.get());
+    }
+    children.add(firstIdentifier);
+    if (rests.isPresent()) {
+      for (AstNode rest : rests.get()) {
+        children.addAll(rest.getChildren());
+      }
+    }
 
     JavaTree result = null;
 
-    List<AstNode> children = astNode.getChildren();
     List<AstNode> pendingChildren = Lists.newArrayList();
-    for (int i = 0; i < children.size(); i++) {
-      AstNode child = children.get(i);
-
+    for (AstNode child : children) {
       if (!child.is(JavaTokenType.IDENTIFIER)) {
         pendingChildren.add(child);
       } else {
@@ -18,6 +24,7 @@
           result = new IdentifierTreeImpl(identifierToken, pendingChildren);
         } else {
           IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+
           pendingChildren.add(0, result);
           pendingChildren.add(identifier);
 
