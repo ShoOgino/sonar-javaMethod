@@ -1,61 +1,26 @@
   public StatementTree statement(AstNode astNode) {
     checkType(astNode, JavaGrammar.STATEMENT);
+
     final AstNode statementNode = astNode.getFirstChild();
     final StatementTree result;
-    switch ((JavaGrammar) statementNode.getType()) {
-      case BLOCK:
-        result = (BlockTree) statementNode;
-        break;
-      case EMPTY_STATEMENT:
-        result = (EmptyStatementTree) statementNode;
-        break;
-      case LABELED_STATEMENT:
-        result = (LabeledStatementTree) statementNode;
-        break;
-      case EXPRESSION_STATEMENT:
-        result = (ExpressionStatementTree) statementNode;
-        break;
-      case IF_STATEMENT:
-        result = (IfStatementTree) statementNode;
-        break;
-      case ASSERT_STATEMENT:
-        result = (AssertStatementTree) statementNode;
-        break;
-      case SWITCH_STATEMENT:
-        result = (SwitchStatementTree) statementNode;
-        break;
-      case WHILE_STATEMENT:
-        result = (WhileStatementTreeImpl) statementNode;
-        break;
-      case DO_STATEMENT:
-        result = (DoWhileStatementTree) statementNode;
-        break;
-      case FOR_STATEMENT:
-        // TODO
-        result = forStatement(statementNode);
-        break;
-      case BREAK_STATEMENT:
-        result = (BreakStatementTree) statementNode;
-        break;
-      case CONTINUE_STATEMENT:
-        result = (ContinueStatementTree) statementNode;
-        break;
-      case RETURN_STATEMENT:
-        result = (ReturnStatementTree) statementNode;
-        break;
-      case THROW_STATEMENT:
-        result = (ThrowStatementTree) statementNode;
-        break;
-      case SYNCHRONIZED_STATEMENT:
-        result = (SynchronizedStatementTreeImpl) statementNode;
-        break;
-      case TRY_STATEMENT:
-        // TODO
-        result = tryStatement(statementNode);
-        break;
-      default:
-        throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
+
+    if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
+      result = (StatementTree) statementNode;
+    } else {
+      switch ((JavaGrammar) statementNode.getType()) {
+        case FOR_STATEMENT:
+          // TODO
+          result = forStatement(statementNode);
+          break;
+        case TRY_STATEMENT:
+          // TODO
+          result = tryStatement(statementNode);
+          break;
+        default:
+          throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
+      }
     }
+
     return result;
   }
 

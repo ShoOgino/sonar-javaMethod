@@ -19,18 +19,17 @@
           identifier(catchFormalParameterNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID).getFirstChild(JavaTokenType.IDENTIFIER)),
           /* initializer: */null
         ),
-        (BlockTree) catchNode.getFirstChild(JavaGrammar.BLOCK)
-        ));
+        (BlockTree) catchNode.getFirstChild(Kind.BLOCK)));
     }
     BlockTree finallyBlock = null;
     if (astNode.hasDirectChildren(JavaGrammar.FINALLY_)) {
-      finallyBlock = (BlockTree) astNode.getFirstChild(JavaGrammar.FINALLY_).getFirstChild(JavaGrammar.BLOCK);
+      finallyBlock = (BlockTree) astNode.getFirstChild(JavaGrammar.FINALLY_).getFirstChild(Kind.BLOCK);
     }
     AstNode resourceSpecificationNode = astNode.getFirstChild(JavaGrammar.RESOURCE_SPECIFICATION);
     return new TryStatementTreeImpl(
       astNode,
       resourceSpecificationNode == null ? ImmutableList.<VariableTree>of() : resourceSpecification(resourceSpecificationNode),
-      (BlockTree) astNode.getFirstChild(JavaGrammar.BLOCK),
+      (BlockTree) astNode.getFirstChild(Kind.BLOCK),
       catches.build(),
       finallyBlock);
   }
