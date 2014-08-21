@@ -3,8 +3,7 @@
    */
   @Test
   public void array_creation_expression() {
-    AstNode astNode = p.parse("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }").getFirstDescendant(JavaGrammar.PRIMARY);
-    NewArrayTree tree = (NewArrayTree) maker.primary(astNode);
+    NewArrayTree tree = (NewArrayTree) p.parse("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }").getFirstDescendant(Kind.NEW_ARRAY);
     assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
     assertThat(tree.type()).isNotNull();
     assertThat(tree.dimensions()).isEmpty();
@@ -12,8 +11,7 @@
     assertThat(((NewArrayTree) tree.initializers().get(0)).initializers()).hasSize(1);
     assertThat(((NewArrayTree) tree.initializers().get(1)).initializers()).hasSize(2);
 
-    astNode = p.parse("class T { int[] m() { return new int[2][2]; } }").getFirstDescendant(JavaGrammar.PRIMARY);
-    tree = (NewArrayTree) maker.primary(astNode);
+    tree = (NewArrayTree) p.parse("class T { int[] m() { return new int[2][2]; } }").getFirstDescendant(Kind.NEW_ARRAY);
     assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
     assertThat(tree.type()).isNotNull();
     assertThat(tree.dimensions()).hasSize(2);
