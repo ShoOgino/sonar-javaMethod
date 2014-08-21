@@ -1,0 +1,62 @@
+  private ExpressionTree applySelector(ExpressionTree expression, AstNode selectorNode) {
+    JavaTreeMaker.checkType(selectorNode, JavaGrammar.SELECTOR);
+
+    AstNodeType[] identifierTypes = new AstNodeType[] {JavaTokenType.IDENTIFIER, JavaKeyword.THIS, JavaKeyword.SUPER};
+    if (selectorNode.hasDirectChildren(identifierTypes)) {
+      InternalSyntaxToken identifierToken = InternalSyntaxToken.create(selectorNode.getFirstChild(identifierTypes));
+
+      IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+
+      ExpressionTree result = new MemberSelectExpressionTreeImpl(
+        expression, identifier,
+        (AstNode) expression, selectorNode.getFirstChild(JavaPunctuator.DOT), identifier);
+
+      if (selectorNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+        ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) selectorNode.getFirstChild(JavaGrammar.ARGUMENTS);
+        result = new MethodInvocationTreeImpl(result, arguments,
+          (AstNode) result, arguments);
+      } else if (selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
+        result = applySuperSuffix(result, selectorNode.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+      }
+
+      return result;
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.EXPLICIT_GENERIC_INVOCATION)) {
+      return applyExplicitGenericInvocation(expression, selectorNode.getFirstChild(JavaPunctuator.DOT), selectorNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION));
+    } else if (selectorNode.hasDirectChildren(JavaKeyword.NEW)) {
+      AstNode innerCreatorNode = selectorNode.getFirstChild(JavaGrammar.INNER_CREATOR);
+      IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)));
+
+      AstNode classCreatorRestNode = innerCreatorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST);
+      ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS);
+
+      ClassTree classBody = null;
+      if (classCreatorRestNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
+        classBody = new ClassTreeImpl(
+          classCreatorRestNode,
+          Tree.Kind.CLASS,
+          ModifiersTreeImpl.EMPTY,
+          treeMaker.classBody(classCreatorRestNode.getFirstChild(JavaGrammar.CLASS_BODY)));
+      }
+
+      List<AstNode> children = Lists.newArrayList();
+      children.add((AstNode) expression);
+      children.add(selectorNode.getFirstChild(JavaPunctuator.DOT));
+      children.add(selectorNode.getFirstChild(JavaKeyword.NEW));
+      if (selectorNode.hasDirectChildren(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
+        children.add(selectorNode.getFirstChild(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS));
+      }
+      children.add(identifier);
+      children.add(classCreatorRestNode);
+
+      return new NewClassTreeImpl(
+        expression, identifier, arguments, classBody,
+        children.toArray(new AstNode[children.size()]));
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.DIM_EXPR)) {
+      return new ArrayAccessExpressionTreeImpl(
+        expression, treeMaker.expression(selectorNode.getFirstChild(JavaGrammar.DIM_EXPR).getFirstChild(JavaGrammar.EXPRESSION)),
+        (AstNode) expression, selectorNode.getFirstChild(JavaGrammar.DIM_EXPR));
+    } else {
+      throw new IllegalStateException(AstXmlPrinter.print(selectorNode));
+    }
+  }
+

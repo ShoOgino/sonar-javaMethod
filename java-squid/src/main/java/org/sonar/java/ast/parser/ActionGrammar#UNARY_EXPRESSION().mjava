@@ -1,0 +1,14 @@
+  public ExpressionTree UNARY_EXPRESSION() {
+    return b.<ExpressionTree>nonterminal(JavaGrammar.UNARY_EXPRESSION)
+      .is(
+        b.firstOf(
+          f.newPrefixedExpression(
+            b.firstOf(
+              b.invokeRule(JavaPunctuator.INC),
+              b.invokeRule(JavaPunctuator.DEC),
+              b.invokeRule(JavaPunctuator.PLUS),
+              b.invokeRule(JavaPunctuator.MINUS)),
+            UNARY_EXPRESSION()),
+          UNARY_EXPRESSION_NOT_PLUS_MINUS()));
+  }
+

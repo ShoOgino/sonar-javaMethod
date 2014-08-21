@@ -1,0 +1,14 @@
+  public ExpressionTree CAST_EXPRESSION() {
+    return b.<ExpressionTree>nonterminal(JavaGrammar.CAST_EXPRESSION)
+      .is(
+        f.completeCastExpression(
+          b.invokeRule(JavaPunctuator.LPAR),
+          b.firstOf(
+            f.newBasicTypeCastExpression(BASIC_TYPE(), b.invokeRule(JavaPunctuator.RPAR), UNARY_EXPRESSION()),
+            f.newClassCastExpression(
+              b.invokeRule(JavaGrammar.TYPE),
+              b.zeroOrMore(f.newWrapperAstNode(b.invokeRule(JavaPunctuator.AND), b.invokeRule(JavaGrammar.CLASS_TYPE))),
+              b.invokeRule(JavaPunctuator.RPAR),
+              UNARY_EXPRESSION_NOT_PLUS_MINUS()))));
+  }
+

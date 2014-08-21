@@ -1,0 +1,17 @@
+  public TypeCastExpressionTreeImpl newClassCastExpression(AstNode type, Optional<List<AstNode>> classTypes, AstNode closeParenTokenAstNode, ExpressionTree expression) {
+    InternalSyntaxToken closeParenToken = InternalSyntaxToken.create(closeParenTokenAstNode);
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(type);
+    if (classTypes.isPresent()) {
+      for (AstNode classType : classTypes.get()) {
+        children.addAll(classType.getChildren());
+      }
+    }
+    children.add(closeParenToken);
+    children.add((AstNode) expression);
+
+    return new TypeCastExpressionTreeImpl(treeMaker.referenceType(type), expression, closeParenToken,
+      children);
+  }
+

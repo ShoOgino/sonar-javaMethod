@@ -3,14 +3,12 @@
    */
   @Test
   public void unary_operators() {
-    AstNode astNode = p.parse("class T { void m() { ++i; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION);
-    UnaryExpressionTree tree = (UnaryExpressionTree) maker.expression(astNode);
+    UnaryExpressionTree tree = (UnaryExpressionTree) p.parse("class T { void m() { ++i; } }").getFirstDescendant(Kind.PREFIX_INCREMENT);
     assertThat(tree.is(Tree.Kind.PREFIX_INCREMENT)).isTrue();
     assertThat(tree.operatorToken().text()).isEqualTo("++");
     assertThat(tree.expression()).isNotNull();
 
-    astNode = p.parse("class T { void m() { --i; } }").getFirstDescendant(JavaGrammar.UNARY_EXPRESSION);
-    tree = (UnaryExpressionTree) maker.expression(astNode);
+    tree = (UnaryExpressionTree) p.parse("class T { void m() { --i; } }").getFirstDescendant(Kind.PREFIX_DECREMENT);
     assertThat(tree.is(Tree.Kind.PREFIX_DECREMENT)).isTrue();
     assertThat(tree.operatorToken().text()).isEqualTo("--");
     assertThat(tree.expression()).isNotNull();
