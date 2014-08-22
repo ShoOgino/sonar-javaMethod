@@ -1,16 +1,15 @@
   /**
    * Detects commented-out code in remaining candidates.
    */
-  @Override
-  public void leaveFile(AstNode astNode) {
+  private void leaveFile() {
     List<Integer> commentedOutCodeLines = Lists.newArrayList();
-    for (Token comment : comments) {
-      String[] lines = getContext().getCommentAnalyser().getContents(comment.getOriginalValue()).split("(\r)?\n|\r", -1);
+    for (SyntaxTrivia syntaxTrivia : comments) {
+      String[] lines = syntaxTrivia.comment().split("\r\n?|\n");
       for (int i = 0; i < lines.length; i++) {
         if (codeRecognizer.isLineOfCode(lines[i])) {
           // Mark all remaining lines from this comment as a commented out lines of code
           for (int j = i; j < lines.length; j++) {
-            commentedOutCodeLines.add(comment.getLine() + j);
+            commentedOutCodeLines.add(((InternalSyntaxTrivia) syntaxTrivia).getLine() + j);
           }
           break;
         }
@@ -23,7 +22,7 @@
     for (int i = 0; i < commentedOutCodeLines.size(); i++) {
       int current = commentedOutCodeLines.get(i);
       if (prev + 1 < current) {
-        getContext().createLineViolation(this, "This block of commented-out lines of code should be removed.", current);
+        addIssue(current, "This block of commented-out lines of code should be removed.");
       }
       prev = current;
     }
