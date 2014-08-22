@@ -1,13 +1,25 @@
   public static String getApiJavadoc(Tree tree) {
-//    AstNode declaration = getDeclaration(astNode);
-//    for (Trivia trivia : declaration.getToken().getTrivia()) {
-//      if (trivia.isComment()) {
-//        String value = trivia.getToken().getOriginalValue();
-//        if (value.startsWith("/**")) {
-//          return value;
-//        }
-//      }
-//    }
+    if (tree.is(API_KINDS)) {
+      ModifiersTree modifiersTree = null;
+      if (tree.is(CLASS_KINDS)) {
+        modifiersTree = ((ClassTree) tree).modifiers();
+      } else if (tree.is(METHOD_KINDS)) {
+        modifiersTree = ((MethodTree) tree).modifiers();
+      } else if (tree.is(Tree.Kind.VARIABLE)) {
+        modifiersTree = ((VariableTree) tree).modifiers();
+      }
+
+      Tree tokenTree = tree;
+      if (modifiersTree != null && !modifiersTree.modifiers().isEmpty()) {
+        tokenTree = modifiersTree;
+      }
+        SyntaxToken syntaxToken = new InternalSyntaxToken(((JavaTree)tokenTree).getToken());
+        for (SyntaxTrivia syntaxTrivia : syntaxToken.trivias()) {
+          if (syntaxTrivia.comment().startsWith("/**")) {
+            return syntaxTrivia.comment();
+          }
+        }
+    }
     return null;
   }
 

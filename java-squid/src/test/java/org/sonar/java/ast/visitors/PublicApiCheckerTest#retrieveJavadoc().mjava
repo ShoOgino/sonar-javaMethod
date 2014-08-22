@@ -1,0 +1,28 @@
+  @Test
+  public void retrieveJavadoc() {
+    new SubscriptionVisitor() {
+
+      @Override
+      public List<Tree.Kind> nodesToVisit() {
+        return Arrays.asList(Tree.Kind.values());
+      }
+
+      @Override
+      public void visitNode(Tree tree) {
+        if (tree.is(Tree.Kind.VARIABLE)) {
+          VariableTree variableTree = (VariableTree) tree;
+          checkApi(tree, variableTree.simpleName().name());
+        } else if (tree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)) {
+          MethodTree methodTree = (MethodTree) tree;
+          checkApi(tree, methodTree.simpleName().name());
+        } else if (tree.is(Tree.Kind.CLASS, Tree.Kind.ENUM, Tree.Kind.INTERFACE, Tree.Kind.ANNOTATION_TYPE)) {
+          IdentifierTree idTree = ((ClassTree) tree).simpleName();
+          checkApi(tree, idTree==null ? "":idTree.name() );
+        }else {
+          checkApi(tree, "");
+        }
+      }
+    }.scanTree(cut);
+
+  }
+
