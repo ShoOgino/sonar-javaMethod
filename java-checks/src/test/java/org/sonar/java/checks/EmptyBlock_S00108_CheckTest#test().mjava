@@ -1,6 +1,6 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/EmptyBlock.java"), check);
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/EmptyBlock.java"), new VisitorsBridge(check));
     CheckMessagesVerifier.verify(file.getCheckMessages())
         .next().atLine(2).withMessage("Either remove or fill this block of code.")
         .next().atLine(13)
@@ -10,6 +10,7 @@
         .next().atLine(42)
         .next().atLine(43)
         .next().atLine(62)
+        .next().atLine(83)
         .noMore();
   }
 
