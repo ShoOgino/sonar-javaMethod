@@ -1,0 +1,14 @@
+  public ExpressionTree ADDITIVE_EXPRESSION() {
+    return b.<ExpressionTree>nonterminal(JavaGrammar.ADDITIVE_EXPRESSION)
+      .is(
+        // TODO SONARJAVA-610
+        f.binaryExpression2(
+          b.zeroOrMore(
+            f.newOperatorAndOperand2(
+              MULTIPLICATIVE_EXPRESSION(),
+              b.firstOf(
+                b.invokeRule(JavaPunctuator.PLUS),
+                b.invokeRule(JavaPunctuator.MINUS)))),
+          MULTIPLICATIVE_EXPRESSION()));
+  }
+
