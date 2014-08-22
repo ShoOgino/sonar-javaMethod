@@ -1,0 +1,21 @@
+  @Override
+  public void visitToken(SyntaxToken syntaxToken) {
+    int tokenLine = ((InternalSyntaxToken) syntaxToken).getLine();
+    if (tokenLine != previousTokenLine) {
+      for (SyntaxTrivia trivia : syntaxToken.trivias()) {
+        if (((InternalSyntaxTrivia)trivia).getLine() == previousTokenLine) {
+          String comment = trivia.comment();
+
+          comment = comment.startsWith("//") ? comment.substring(2) : comment.substring(2, comment.length() - 2);
+          comment = comment.trim();
+
+          if (!pattern.matcher(comment).matches() && !containsExcludedPattern(comment)) {
+            addIssue(previousTokenLine, "Move this trailing comment on the previous empty line.");
+          }
+        }
+      }
+    }
+
+    previousTokenLine = tokenLine;
+  }
+
