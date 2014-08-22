@@ -1,7 +1,7 @@
   /**
    * 9.6.1. Annotation Type Elements
    */
-  private void appendAnnotationTypeElementDeclaration(ImmutableList.Builder<Tree> members, AstNode astNode) {
+  private void appendAnnotationTypeElementDeclaration(ImmutableList.Builder<Tree> members, ModifiersTree modifiers, AstNode astNode) {
     checkType(astNode, JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST);
     AstNode declarationNode = astNode.getFirstChild(
       JavaGrammar.INTERFACE_DECLARATION,
@@ -10,7 +10,7 @@
       JavaGrammar.ANNOTATION_TYPE_DECLARATION
       );
     if (declarationNode != null) {
-      members.add(typeDeclaration(ModifiersTreeImpl.EMPTY, declarationNode));
+      members.add(typeDeclaration(modifiers, declarationNode));
       return;
     }
     AstNode typeNode = astNode.getFirstChild(TYPE_KINDS);
@@ -19,7 +19,7 @@
     if (annotationMethodRestNode != null) {
       members.add(new MethodTreeImpl(
         annotationMethodRestNode,
-        /* modifiers */ModifiersTreeImpl.EMPTY,
+        /* modifiers */modifiers,
         /* type parameters */ImmutableList.<TypeParameterTree>of(),
         /* return type */(Tree) typeNode,
         /* name */identifier(identifierNode),
@@ -30,7 +30,7 @@
         /* default value */null
         ));
     } else {
-      appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, astNode);
+      appendConstantDeclarations(modifiers, members, astNode);
     }
   }
 

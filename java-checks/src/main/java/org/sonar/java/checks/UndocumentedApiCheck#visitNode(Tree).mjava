@@ -1,0 +1,18 @@
+  private void visitNode(Tree tree) {
+    if (!isExcluded(tree)) {
+      String javadoc = publicApiChecker.getApiJavadoc(tree);
+
+      if (javadoc == null) {
+        context.addIssue(tree, ruleKey, "Document this public " + getType(tree) + ".");
+      } else {
+        List<String> undocumentedParameters = getUndocumentedParameters(javadoc, getParameters(tree));
+        if (!undocumentedParameters.isEmpty()) {
+          context.addIssue(tree, ruleKey, "Document the parameter(s): " + Joiner.on(", ").join(undocumentedParameters));
+        }
+        if (hasNonVoidReturnType(tree) && !hasReturnJavadoc(javadoc)) {
+          context.addIssue(tree, ruleKey, "Document this method return value.");
+        }
+      }
+    }
+  }
+

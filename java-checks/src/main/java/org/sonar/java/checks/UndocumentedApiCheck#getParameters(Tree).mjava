@@ -1,0 +1,16 @@
+  private List<String> getParameters(Tree tree) {
+    ImmutableList.Builder<String> builder = ImmutableList.builder();
+    if (tree.is(PublicApiChecker.METHOD_KINDS)) {
+      MethodTree methodTree = (MethodTree) tree;
+      for (VariableTree variableTree : methodTree.parameters()) {
+        builder.add(variableTree.simpleName().name());
+      }
+      //don't check type paramters documentation for methods
+    } else if (tree.is(PublicApiChecker.CLASS_KINDS)) {
+      for (TypeParameterTree typeParam : ((ClassTree) tree).typeParameters()) {
+        builder.add("<" + typeParam.identifier().name() + ">");
+      }
+    }
+    return builder.build();
+  }
+

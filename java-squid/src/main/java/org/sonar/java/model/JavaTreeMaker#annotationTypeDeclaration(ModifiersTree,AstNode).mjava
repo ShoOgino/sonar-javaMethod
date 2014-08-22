@@ -8,7 +8,11 @@
     for (AstNode annotationTypeElementDeclarationNode : astNode.getFirstChild(JavaGrammar.ANNOTATION_TYPE_BODY).getChildren(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
       AstNode annotationTypeElementRestNode = annotationTypeElementDeclarationNode.getFirstChild(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST);
       if (annotationTypeElementRestNode != null) {
-        appendAnnotationTypeElementDeclaration(members, annotationTypeElementRestNode);
+        ModifiersTree modifiersTree = (ModifiersTree) annotationTypeElementDeclarationNode.getFirstChild(JavaGrammar.MODIFIERS);
+        if(modifiersTree == null) {
+          modifiersTree = ModifiersTreeImpl.EMPTY;
+        }
+        appendAnnotationTypeElementDeclaration(members, modifiersTree, annotationTypeElementRestNode);
       }
     }
     return new ClassTreeImpl(astNode, Tree.Kind.ANNOTATION_TYPE,

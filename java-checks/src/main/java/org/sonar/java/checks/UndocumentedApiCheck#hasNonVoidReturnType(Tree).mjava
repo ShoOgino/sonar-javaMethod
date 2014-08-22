@@ -1,0 +1,9 @@
+  private boolean hasNonVoidReturnType(Tree tree) {
+    //Backward compatibility : ignore methods from annotations.
+    if (tree.is(Tree.Kind.METHOD) && !classTrees.peek().is(Tree.Kind.ANNOTATION_TYPE)) {
+      Tree returnType = ((MethodTree) tree).returnType();
+      return returnType == null || !(returnType.is(Tree.Kind.PRIMITIVE_TYPE) && "void".equals(((PrimitiveTypeTree) returnType).keyword().text()));
+    }
+    return false;
+  }
+
