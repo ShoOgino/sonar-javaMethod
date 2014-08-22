@@ -9,15 +9,6 @@
    * 15.24. Conditional-Or Operator ||
    */
   private ExpressionTree binaryExpression(AstNode astNode) {
-    if (astNode.hasDirectChildren(JavaKeyword.INSTANCEOF)) {
-      // 15.20.2. Type Comparison Operator instanceof
-      // TODO fix grammar - instanceof can't be chained
-      return new InstanceOfTreeImpl(
-        astNode,
-        expression(astNode.getFirstChild()),
-        referenceType(astNode.getFirstChild(JavaGrammar.TYPE)));
-    }
-
     ExpressionTree expression = expression(astNode.getLastChild());
     for (int i = astNode.getNumberOfChildren() - 3; i >= 0; i -= 2) {
       AstNode operatorNode = astNode.getChild(i + 1);
