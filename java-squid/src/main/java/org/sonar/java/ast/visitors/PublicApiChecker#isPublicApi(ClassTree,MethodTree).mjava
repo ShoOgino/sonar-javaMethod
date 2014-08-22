@@ -1,0 +1,10 @@
+  public boolean isPublicApi(ClassTree classTree, MethodTree methodTree) {
+    Preconditions.checkNotNull(classTree);
+    if (classTree.is(Tree.Kind.INTERFACE, Tree.Kind.ANNOTATION_TYPE)) {
+      return true;
+    } else if (isEmptyDefaultConstructor(methodTree) || hasOverrideAnnotation(methodTree)) {
+      return false;
+    }
+    return hasPublic(methodTree.modifiers());
+  }
+

@@ -1,0 +1,11 @@
+  public boolean isPublicApi(ClassTree currentClass, Tree tree) {
+    if(tree.is(Tree.Kind.CLASS, Tree.Kind.INTERFACE, Tree.Kind.ENUM, Tree.Kind.ANNOTATION_TYPE)) {
+      return isPublicApi((ClassTree)tree);
+    }else if(tree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)){
+      return isPublicApi(currentClass, (MethodTree) tree);
+    } else if(tree.is(Tree.Kind.VARIABLE)) {
+      return isPublicApi((VariableTree) tree);
+    }
+    return false;
+  }
+
