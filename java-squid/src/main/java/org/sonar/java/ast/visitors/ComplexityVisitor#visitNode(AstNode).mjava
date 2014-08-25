@@ -1,8 +1,14 @@
   @Override
   public void visitNode(AstNode astNode) {
+    if (astNode.is(Kind.CONDITIONAL_EXPRESSION) && astNode.getFirstAncestor(JavaGrammar.EXPRESSION).getParent().is(Kind.CONDITIONAL_EXPRESSION)) {
+      // Reproduce SONARJAVA-626
+      return;
+    }
+
     if (astNode.is(JavaGrammar.RETURN_STATEMENT) && isLastReturnStatement(astNode)) {
       return;
     }
+
     getContext().peekSourceCode().add(JavaMetric.COMPLEXITY, 1);
   }
 

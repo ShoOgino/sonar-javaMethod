@@ -1,6 +1,13 @@
   @Override
   public void visitNode(AstNode node) {
     if (node.getParent().is(JavaGrammar.EXPRESSION)) {
+      if (node.getParent().getParent().is(Kind.CONDITIONAL_EXPRESSION)) {
+        ConditionalExpressionTree tree = (ConditionalExpressionTree) node.getParent().getParent();
+        if (tree.falseExpression().equals(node)) {
+          return;
+        }
+      }
+
       getContext().createLineViolation(this, "Remove those useless parentheses.", node);
     }
   }
