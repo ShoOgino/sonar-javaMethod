@@ -1,8 +1,12 @@
-  public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, CodeVisitor... visitors) {
+  public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer, CodeVisitor... visitors) {
 
     astScanner = JavaAstScanner.create(conf);
 
     Iterable<CodeVisitor> visitorsToBridge = Arrays.asList(visitors);
+    if(measurer != null) {
+      Iterable<CodeVisitor> measurers = Arrays.asList((CodeVisitor)measurer);
+      visitorsToBridge =  Iterables.concat(visitorsToBridge, measurers);
+    }
     if (sonarComponents != null) {
       visitorsToBridge = Iterables.concat(
           sonarComponents.createJavaFileScanners(),

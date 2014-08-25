@@ -1,0 +1,17 @@
+  @Override
+  public void scanFile(JavaFileScannerContext context) {
+    sonarFile = File.fromIOFile(context.getFile(), project);
+    classTrees.clear();
+    methods = 0;
+    complexityInMethods = 0;
+    accessors = 0;
+    methodComplexityDistribution = new RangeDistributionBuilder(CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION, LIMITS);
+    super.scanFile(context);
+    //leave file.
+    saveMetricOnFile(CoreMetrics.FUNCTIONS, methods);
+    saveMetricOnFile(CoreMetrics.ACCESSORS, accessors);
+    saveMetricOnFile(CoreMetrics.COMPLEXITY_IN_FUNCTIONS, complexityInMethods);
+    sensorContext.saveMeasure(sonarFile, methodComplexityDistribution.build(true).setPersistenceMode(PersistenceMode.MEMORY));
+
+  }
+
