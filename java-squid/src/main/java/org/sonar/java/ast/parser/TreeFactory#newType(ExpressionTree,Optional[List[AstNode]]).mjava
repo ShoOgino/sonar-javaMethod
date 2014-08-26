@@ -1,0 +1,19 @@
+  public ExpressionTree newType(ExpressionTree basicOrClassType, Optional<List<AstNode>> dims) {
+    if (!dims.isPresent()) {
+      return basicOrClassType;
+    } else {
+      ExpressionTree result = basicOrClassType;
+
+      for (AstNode dim : dims.get()) {
+        List<AstNode> children = Lists.newArrayList();
+        children.add((AstNode) result);
+        children.addAll(dim.getChildren());
+
+        result = new ArrayTypeTreeImpl(result,
+          children);
+      }
+
+      return result;
+    }
+  }
+

@@ -1,6 +1,13 @@
   private String extractClassName(AstNode astNode) {
-    Preconditions.checkArgument(astNode.is(JavaGrammar.CLASS_TYPE));
     // TODO Godin: verify
-    return Iterables.getLast(astNode.getChildren(JavaTokenType.IDENTIFIER)).getTokenValue();
+    AstNode identifier = null;
+    for (AstNode descendant : astNode.getDescendants(JavaTokenType.IDENTIFIER)) {
+      if (!descendant.hasAncestor(JavaGrammar.TYPE_ARGUMENTS)) {
+        identifier = descendant;
+      }
+    }
+    Preconditions.checkArgument(identifier != null, "Bad identifier: " + AstXmlPrinter.print(astNode));
+
+    return identifier.getTokenValue();
   }
 

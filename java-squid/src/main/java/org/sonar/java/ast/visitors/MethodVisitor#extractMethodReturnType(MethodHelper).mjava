@@ -3,7 +3,7 @@
       return new Parameter(JvmJavaType.V, false);
     }
     AstNode returnType = methodHelper.getReturnType();
-    boolean isArray = returnType.hasDirectChildren(JavaGrammar.DIM);
+    boolean isArray = !returnType.is(JavaKeyword.VOID) && ((Tree) returnType).is(Kind.ARRAY_TYPE);
     return new Parameter(extractArgumentAndReturnType(returnType, isArray));
   }
 

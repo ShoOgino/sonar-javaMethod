@@ -1,15 +1,15 @@
-  public ClassTypeListTreeImpl newClassTypeList(AstNode classType, Optional<List<AstNode>> rests) {
+  public ClassTypeListTreeImpl newClassTypeList(ExpressionTree classType, Optional<List<AstNode>> rests) {
     ImmutableList.Builder<Tree> classTypes = ImmutableList.builder();
     List<AstNode> children = Lists.newArrayList();
 
-    classTypes.add(treeMaker.classType(classType));
-    children.add(classType);
+    classTypes.add(classType);
+    children.add((AstNode) classType);
 
     if (rests.isPresent()) {
       for (AstNode rest : rests.get()) {
         for (AstNode child : rest.getChildren()) {
           if (!child.is(JavaPunctuator.COMMA)) {
-            classTypes.add(treeMaker.classType(child));
+            classTypes.add((Tree) child);
           }
 
           children.add(child);

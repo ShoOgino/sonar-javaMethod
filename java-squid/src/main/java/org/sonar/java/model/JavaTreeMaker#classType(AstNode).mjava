@@ -1,5 +1,5 @@
   public ExpressionTree classType(AstNode astNode) {
-    checkType(astNode, JavaGrammar.CLASS_TYPE, JavaGrammar.CREATED_NAME);
+    checkType(astNode, JavaGrammar.CREATED_NAME);
     AstNode child = astNode.getFirstChild(JavaTokenType.IDENTIFIER);
     AstNode firstIdentifier = child;
     ExpressionTree result = identifier(child);
@@ -10,7 +10,7 @@
           result = new MemberSelectExpressionTreeImpl(child, result, identifier(child));
         }
       } else if (child.is(JavaGrammar.TYPE_ARGUMENTS)) {
-        result = new JavaTree.ParameterizedTypeTreeImpl(child, result, typeArguments(child));
+        result = new JavaTree.ParameterizedTypeTreeImpl(child, result, (TypeArgumentListTreeImpl) child);
       } else if (child.is(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
         result = new JavaTree.ParameterizedTypeTreeImpl(child, result, nonWildcardTypeArguments(child));
       } else if (!(child.is(JavaPunctuator.DOT) || child.is(JavaGrammar.ANNOTATION))) {

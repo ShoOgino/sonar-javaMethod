@@ -15,9 +15,14 @@
     declaration = astNode.getFirstChild(JavaGrammar.GENERIC_METHOD_OR_CONSTRUCTOR_REST);
     if (declaration != null) {
       // TODO TYPE_PARAMETERS
+      AstNode typeAstNode = declaration.getFirstChild(TYPE_KINDS);
+      if (typeAstNode == null) {
+        typeAstNode = declaration.getFirstChild(JavaKeyword.VOID);
+      }
+
       return methodDeclarator(
         modifiers,
-        /* type */declaration.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* type */typeAstNode,
         /* name */declaration.getFirstChild(JavaTokenType.IDENTIFIER),
         declaration.getFirstChild(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST));
     }
@@ -27,9 +32,14 @@
       JavaGrammar.CONSTRUCTOR_DECLARATOR_REST
       );
     if (declaration != null) {
+      AstNode typeAstNode = astNode.getFirstChild(TYPE_KINDS);
+      if (typeAstNode == null) {
+        typeAstNode = astNode.getFirstChild(JavaKeyword.VOID);
+      }
+
       return methodDeclarator(
         modifiers,
-        /* type */astNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* type */typeAstNode,
         /* name */astNode.getFirstChild(JavaTokenType.IDENTIFIER),
         declaration);
     }

@@ -5,7 +5,7 @@
     checkType(astNode, JavaGrammar.CLASS_DECLARATION);
     IdentifierTree simpleName = identifier(astNode.getFirstChild(JavaTokenType.IDENTIFIER));
     AstNode extendsNode = astNode.getFirstChild(JavaKeyword.EXTENDS);
-    Tree superClass = extendsNode != null ? classType(extendsNode.getNextSibling()) : null;
+    Tree superClass = extendsNode != null ? (Tree) extendsNode.getNextSibling() : null;
     AstNode implementsNode = astNode.getFirstChild(JavaKeyword.IMPLEMENTS);
     List<Tree> superInterfaces = implementsNode != null ? (ClassTypeListTreeImpl) implementsNode.getNextSibling() : ImmutableList.<Tree>of();
     return new ClassTreeImpl(astNode, Tree.Kind.CLASS,

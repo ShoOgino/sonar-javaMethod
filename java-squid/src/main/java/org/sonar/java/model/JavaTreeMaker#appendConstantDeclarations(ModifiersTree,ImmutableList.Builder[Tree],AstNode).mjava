@@ -1,6 +1,10 @@
   private void appendConstantDeclarations(ModifiersTree modifiers, ImmutableList.Builder<Tree> members, AstNode astNode) {
     checkType(astNode, JavaGrammar.INTERFACE_METHOD_OR_FIELD_DECL, JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST);
-    ExpressionTree type = referenceType(astNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID));
+    AstNode typeAstNode = astNode.getFirstChild(TYPE_KINDS);
+    if (typeAstNode == null) {
+      typeAstNode = astNode.getFirstChild(JavaKeyword.VOID);
+    }
+    ExpressionTree type = typeAstNode instanceof Tree ? (ExpressionTree) typeAstNode : referenceType(typeAstNode);
     for (AstNode constantDeclaratorRestNode : astNode.getDescendants(JavaGrammar.CONSTANT_DECLARATOR_REST)) {
       AstNode identifierNode = constantDeclaratorRestNode.getPreviousAstNode();
       Preconditions.checkState(identifierNode.is(JavaTokenType.IDENTIFIER));

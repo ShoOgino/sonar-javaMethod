@@ -18,9 +18,14 @@
       AstNode interfaceMethodOrFieldRestNode = declarationNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_OR_FIELD_REST);
       AstNode interfaceMethodDeclaratorRestNode = interfaceMethodOrFieldRestNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST);
       if (interfaceMethodDeclaratorRestNode != null) {
+        AstNode typeAstNode = declarationNode.getFirstChild(TYPE_KINDS);
+        if (typeAstNode == null) {
+          typeAstNode = declarationNode.getFirstChild(JavaKeyword.VOID);
+        }
+
         members.add(methodDeclarator(
           modifiers,
-          declarationNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+          typeAstNode,
           declarationNode.getFirstChild(JavaTokenType.IDENTIFIER),
           interfaceMethodDeclaratorRestNode
           ));
@@ -33,9 +38,14 @@
     declarationNode = astNode.getFirstChild(JavaGrammar.INTERFACE_GENERIC_METHOD_DECL);
     if (declarationNode != null) {
       // TODO TYPE_PARAMETERS
+      AstNode typeAstNode = declarationNode.getFirstChild(TYPE_KINDS);
+      if (typeAstNode == null) {
+        typeAstNode = declarationNode.getFirstChild(JavaKeyword.VOID);
+      }
+
       members.add(methodDeclarator(
         modifiers,
-        /* type */declarationNode.getFirstChild(JavaGrammar.TYPE, JavaKeyword.VOID),
+        /* type */typeAstNode,
         /* name */declarationNode.getFirstChild(JavaTokenType.IDENTIFIER),
         declarationNode.getFirstChild(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST)
         ));

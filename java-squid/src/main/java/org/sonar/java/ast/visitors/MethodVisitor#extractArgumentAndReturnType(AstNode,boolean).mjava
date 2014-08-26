@@ -1,15 +1,18 @@
   private Parameter extractArgumentAndReturnType(AstNode astNode, boolean isArray) {
-    Preconditions.checkArgument(astNode.is(JavaKeyword.VOID, JavaGrammar.TYPE));
+    Preconditions.checkArgument(astNode.is(JavaTreeMaker.TYPE_KINDS) || astNode.is(JavaKeyword.VOID));
+
+    while (astNode instanceof Tree && ((Tree) astNode).is(Kind.ARRAY_TYPE)) {
+      astNode = (AstNode) ((ArrayTypeTree) astNode).type();
+    }
+
     if (astNode.is(JavaKeyword.VOID)) {
       return new Parameter(JvmJavaType.V, false);
     }
-    if (astNode.getFirstChild().is(Kind.PRIMITIVE_TYPE)) {
-      PrimitiveTypeTree primitve = (PrimitiveTypeTree) astNode.getFirstChild();
+    if (astNode.is(Kind.PRIMITIVE_TYPE)) {
+      PrimitiveTypeTree primitve = (PrimitiveTypeTree) astNode;
       return new Parameter(JAVA_TYPE_MAPPING.get(((AstNode) primitve.keyword()).getType()), isArray);
-    } else if (astNode.getFirstChild().is(JavaGrammar.CLASS_TYPE)) {
-      return new Parameter(extractClassName(astNode.getFirstChild()), isArray);
     } else {
-      throw new IllegalStateException();
+      return new Parameter(extractClassName(astNode), isArray);
     }
   }
 
