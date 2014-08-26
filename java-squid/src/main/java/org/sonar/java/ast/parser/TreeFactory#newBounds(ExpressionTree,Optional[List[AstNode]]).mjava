@@ -1,0 +1,22 @@
+  public BoundListTreeImpl newBounds(ExpressionTree classType, Optional<List<AstNode>> rests) {
+    ImmutableList.Builder<Tree> classTypes = ImmutableList.builder();
+    List<AstNode> children = Lists.newArrayList();
+
+    classTypes.add(classType);
+    children.add((AstNode) classType);
+
+    if (rests.isPresent()) {
+      for (AstNode rest : rests.get()) {
+        for (AstNode child : rest.getChildren()) {
+          if (!child.is(JavaPunctuator.AND)) {
+            classTypes.add((Tree) child);
+          }
+
+          children.add(child);
+        }
+      }
+    }
+
+    return new BoundListTreeImpl(classTypes.build(), children);
+  }
+

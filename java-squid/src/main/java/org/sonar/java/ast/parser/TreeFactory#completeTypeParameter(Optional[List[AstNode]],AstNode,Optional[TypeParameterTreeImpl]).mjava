@@ -1,0 +1,11 @@
+  public TypeParameterTreeImpl completeTypeParameter(Optional<List<AstNode>> annotations, AstNode identifierAstNode, Optional<TypeParameterTreeImpl> partial) {
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+    if (annotations.isPresent()) {
+      identifier.prependChildren(annotations.get());
+    }
+
+    return partial.isPresent() ?
+      partial.get().complete(identifier) :
+      new TypeParameterTreeImpl(identifier);
+  }
+
