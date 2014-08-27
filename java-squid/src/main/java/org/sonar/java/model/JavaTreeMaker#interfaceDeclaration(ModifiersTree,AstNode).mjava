@@ -14,6 +14,13 @@
     }
     AstNode extendsNode = astNode.getFirstChild(JavaKeyword.EXTENDS);
     List<Tree> superInterfaces = extendsNode != null ? (ClassTypeListTreeImpl) extendsNode.getNextSibling() : ImmutableList.<Tree>of();
-    return new ClassTreeImpl(astNode, Tree.Kind.INTERFACE, modifiers, simpleName, null, superInterfaces, members.build());
+    return new ClassTreeImpl(
+      astNode, Tree.Kind.INTERFACE,
+      modifiers,
+      simpleName,
+      astNode.hasDirectChildren(JavaGrammar.TYPE_PARAMETERS) ?
+        (List<TypeParameterTree>) astNode.getFirstChild(JavaGrammar.TYPE_PARAMETERS) :
+        ImmutableList.<TypeParameterTree>of(),
+      null, superInterfaces, members.build());
   }
 

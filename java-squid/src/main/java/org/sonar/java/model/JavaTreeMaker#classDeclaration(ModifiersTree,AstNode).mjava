@@ -3,15 +3,18 @@
    */
   private ClassTree classDeclaration(ModifiersTree modifiers, AstNode astNode) {
     checkType(astNode, JavaGrammar.CLASS_DECLARATION);
-    // TODO TYPE_PARAMETERS
     IdentifierTree simpleName = identifier(astNode.getFirstChild(JavaTokenType.IDENTIFIER));
     AstNode extendsNode = astNode.getFirstChild(JavaKeyword.EXTENDS);
     Tree superClass = extendsNode != null ? (Tree) extendsNode.getNextSibling() : null;
     AstNode implementsNode = astNode.getFirstChild(JavaKeyword.IMPLEMENTS);
     List<Tree> superInterfaces = implementsNode != null ? (ClassTypeListTreeImpl) implementsNode.getNextSibling() : ImmutableList.<Tree>of();
-    return new ClassTreeImpl(astNode, Tree.Kind.CLASS,
+    return new ClassTreeImpl(
+      astNode, Tree.Kind.CLASS,
       modifiers,
       simpleName,
+      astNode.hasDirectChildren(JavaGrammar.TYPE_PARAMETERS) ?
+        (List<TypeParameterTree>) astNode.getFirstChild(JavaGrammar.TYPE_PARAMETERS) :
+        ImmutableList.<TypeParameterTree>of(),
       superClass,
       superInterfaces,
       classBody(astNode.getFirstChild(JavaGrammar.CLASS_BODY)));

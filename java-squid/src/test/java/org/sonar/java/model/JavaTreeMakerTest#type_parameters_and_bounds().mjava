@@ -1,0 +1,19 @@
+  @Test
+  public void type_parameters_and_bounds() {
+    TypeParameterListTreeImpl tree = (TypeParameterListTreeImpl) p.parse("class Foo<T, U extends Object & Number> {}").getFirstDescendant(JavaGrammar.TYPE_PARAMETERS);
+    assertThat(tree.openBracketToken().text()).isEqualTo("<");
+    assertThat(tree.closeBracketToken().text()).isEqualTo(">");
+
+    assertThat(tree).hasSize(2);
+
+    TypeParameterTree param = tree.get(0);
+    assertThat(param.identifier().name()).isEqualTo("T");
+    assertThat(param.bounds()).isEmpty();
+
+    param = tree.get(1);
+    assertThat(param.identifier().name()).isEqualTo("U");
+    assertThat(param.bounds()).hasSize(2);
+    assertThat(((IdentifierTree) param.bounds().get(0)).name()).isEqualTo("Object");
+    assertThat(((IdentifierTree) param.bounds().get(1)).name()).isEqualTo("Number");
+  }
+

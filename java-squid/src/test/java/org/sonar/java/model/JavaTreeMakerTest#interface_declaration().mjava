@@ -1,10 +1,11 @@
   @Test
   public void interface_declaration() {
-    AstNode astNode = p.parse("public interface T extends I1, I2 { }");
+    AstNode astNode = p.parse("public interface T<U> extends I1, I2 { }");
     ClassTree tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
     assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName().name()).isEqualTo("T");
+    assertThat(tree.typeParameters()).isNotEmpty();
     assertThat(tree.superClass()).isNull();
     assertThat(tree.superInterfaces()).hasSize(2);
 
@@ -13,6 +14,7 @@
     assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName().name()).isEqualTo("T");
+    assertThat(tree.typeParameters()).isEmpty();
     assertThat(tree.superClass()).isNull();
     assertThat(tree.superInterfaces()).isEmpty();
   }
