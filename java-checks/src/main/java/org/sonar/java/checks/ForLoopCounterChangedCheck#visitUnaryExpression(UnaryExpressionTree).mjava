@@ -1,13 +1,7 @@
   @Override
   public void visitUnaryExpression(UnaryExpressionTree tree) {
-    if(tree.is( Tree.Kind.PREFIX_INCREMENT) ||
-        tree.is(Tree.Kind.POSTFIX_INCREMENT) ||
-            tree.is(Tree.Kind.POSTFIX_DECREMENT) ||
-                tree.is(Tree.Kind.PREFIX_DECREMENT)) {
-      if(tree.expression().is(Tree.Kind.IDENTIFIER)) {
-        IdentifierTree identifierTree = (IdentifierTree) tree.expression();
-        checkIdentifier(identifierTree);
-      }
+    if ((isIncrement(tree) || isDecrement(tree)) && tree.expression().is(Tree.Kind.IDENTIFIER)) {
+      checkIdentifier((IdentifierTree) tree.expression());
     }
     super.visitUnaryExpression(tree);
   }
