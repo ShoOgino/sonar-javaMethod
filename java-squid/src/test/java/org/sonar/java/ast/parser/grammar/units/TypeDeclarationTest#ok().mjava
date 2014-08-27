@@ -1,18 +1,16 @@
   @Test
-  @Ignore("FIXME")
   public void ok() {
     LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
     b.rule(JavaGrammar.CLASS_DECLARATION).override(RuleMock.word(b, "classDeclaration"));
     b.rule(JavaGrammar.ENUM_DECLARATION).override(RuleMock.word(b, "enumDeclaration"));
     b.rule(JavaGrammar.INTERFACE_DECLARATION).override(RuleMock.word(b, "interfaceDeclaration"));
-    b.rule(JavaGrammar.ANNOTATION_TYPE_DECLARATION).override(RuleMock.word(b, "annotationTypeDeclaration"));
 
     assertThat(b, JavaGrammar.TYPE_DECLARATION)
       .matches("classDeclaration")
       .matches("enumDeclaration")
       .matches("interfaceDeclaration")
-      .matches("annotationTypeDeclaration")
+      .matches("@interface Foo {}")
       .matches("public classDeclaration")
       .matches("public private classDeclaration")
       .matches(";");
