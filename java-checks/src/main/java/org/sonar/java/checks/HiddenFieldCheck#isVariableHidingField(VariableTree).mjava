@@ -1,0 +1,14 @@
+  private void isVariableHidingField(VariableTree variableTree) {
+    for (ImmutableMap<String, VariableTree> variables : fields) {
+      if (variables.values().contains(variableTree)) {
+        return;
+      }
+      String identifier = variableTree.simpleName().name();
+      VariableTree hiddenVariable = variables.get(identifier);
+      if (!flattenExcludedVariables.contains(variableTree) && hiddenVariable != null) {
+        addIssue(variableTree, "Rename \"" + identifier + "\" which hides the field declared at line " + ((JavaTree) hiddenVariable).getLine() + ".");
+        return;
+      }
+    }
+  }
+
