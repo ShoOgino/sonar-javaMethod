@@ -1,10 +1,19 @@
   @Test
   public void measures_on_project() throws Exception {
+    ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
+    verify(context, atLeastOnce()).saveMeasure(any(org.sonar.api.resources.File.class), captor.capture());
+    Multiset<String> metrics = HashMultiset.create();
+    for (Measure measure : captor.getAllValues()) {
+      if(measure.getIntValue() != null ){
+        metrics.add(measure.getMetricKey(), measure.getIntValue());
+      }
+    }
+
     assertThat(project.getInt(JavaMetric.CLASSES)).isEqualTo(412);
     assertThat(project.getInt(JavaMetric.METHODS) + project.getInt(Metric.ACCESSORS)).isEqualTo(3805 + 69);
     assertThat(project.getInt(JavaMetric.METHODS)).isEqualTo(3805);
     assertThat(project.getInt(Metric.ACCESSORS)).isEqualTo(69);
-    assertThat(project.getInt(JavaMetric.LINES)).isEqualTo(64125);
+    assertThat(metrics.count("lines")).isEqualTo(64125);
     assertThat(project.getInt(JavaMetric.LINES_OF_CODE)).isEqualTo(26323);
     assertThat(project.getInt(JavaMetric.STATEMENTS)).isEqualTo(12047);
     assertThat(project.getInt(JavaMetric.COMPLEXITY)).isEqualTo(8475 - 80 /* SONAR-3793 */- 2 /* SONAR-3794 */);
