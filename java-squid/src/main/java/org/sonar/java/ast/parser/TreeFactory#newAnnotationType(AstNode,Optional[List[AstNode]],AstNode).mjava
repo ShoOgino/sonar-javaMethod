@@ -1,0 +1,51 @@
+  public ClassTreeImpl newAnnotationType(AstNode openBraceTokenAstNode, Optional<List<AstNode>> annotationTypeElementDeclarations, AstNode closeBraceTokenAstNode) {
+    InternalSyntaxToken openBraceToken = InternalSyntaxToken.create(openBraceTokenAstNode);
+    InternalSyntaxToken closeBraceToken = InternalSyntaxToken.create(closeBraceTokenAstNode);
+
+    // TODO
+    ModifiersTreeImpl emptyModifiers = ModifiersTreeImpl.emptyModifiers();
+
+    ImmutableList.Builder<Tree> members = ImmutableList.builder();
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(emptyModifiers);
+    children.add(openBraceToken);
+
+    if (annotationTypeElementDeclarations.isPresent()) {
+      for (AstNode annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
+        // FIXME
+        if (annotationTypeElementDeclaration.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
+          Preconditions.checkArgument(annotationTypeElementDeclaration.getNumberOfChildren() == 2);
+
+          ModifiersTreeImpl modifiers = (ModifiersTreeImpl) annotationTypeElementDeclaration.getFirstChild(JavaGrammar.MODIFIERS);
+          AstNode declaration = annotationTypeElementDeclaration.getLastChild();
+
+          if (declaration.is(Kind.METHOD)) {
+            // method
+            members.add(((MethodTreeImpl) declaration).complete(modifiers));
+            children.add(declaration);
+          } else if (declaration.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST)) {
+            // constant
+            treeMaker.appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, declaration);
+            children.add(annotationTypeElementDeclaration);
+          } else if (declaration.is(Kind.ANNOTATION_TYPE)) {
+            // TODO Complete with modifiers
+            members.add((Tree) declaration);
+            children.add(annotationTypeElementDeclaration);
+          } else {
+            // interface, class, enum
+            members.add(modifiers, treeMaker.typeDeclaration(modifiers, declaration));
+            children.add(annotationTypeElementDeclaration);
+          }
+        } else {
+          // semi
+          children.add(annotationTypeElementDeclaration);
+        }
+      }
+    }
+
+    children.add(closeBraceToken);
+
+    return new ClassTreeImpl(emptyModifiers, members.build(), children);
+  }
+

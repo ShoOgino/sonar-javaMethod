@@ -2,11 +2,12 @@
     return b.<AstNode>nonterminal(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST)
       .is(
         b.firstOf(
-          f.newAnnotationTypeElementRest1(
+          f.newAnnotationTypeMember(
             TYPE(), b.invokeRule(JavaTokenType.IDENTIFIER), ANNOTATION_METHOD_OR_CONSTANT_REST(), b.invokeRule(JavaPunctuator.SEMI)),
-          f.newAnnotationTypeElementRest2(b.invokeRule(JavaGrammar.CLASS_DECLARATION)),
-          f.newAnnotationTypeElementRest3(b.invokeRule(JavaGrammar.ENUM_DECLARATION)),
-          f.newAnnotationTypeElementRest4(b.invokeRule(JavaGrammar.INTERFACE_DECLARATION)),
-          f.newAnnotationTypeElementRest5(ANNOTATION_TYPE_DECLARATION())));
+          b.firstOf(
+            b.invokeRule(JavaGrammar.CLASS_DECLARATION),
+            b.invokeRule(JavaGrammar.ENUM_DECLARATION),
+            b.invokeRule(JavaGrammar.INTERFACE_DECLARATION)),
+          ANNOTATION_TYPE_DECLARATION()));
   }
 

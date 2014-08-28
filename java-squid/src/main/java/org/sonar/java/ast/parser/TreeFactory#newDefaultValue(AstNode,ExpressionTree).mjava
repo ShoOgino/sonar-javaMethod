@@ -1,8 +1,7 @@
-  public AstNode newDefaultValue(AstNode defaultTokenAstNode, ExpressionTree elementValue) {
-    AstNodeType type = JavaGrammar.DEFAULT_VALUE;
-    AstNode result = new AstNode(type, type.toString(), null);
-    result.addChild(defaultTokenAstNode);
-    result.addChild((AstNode) elementValue);
-    return result;
+  public ExpressionTree newDefaultValue(AstNode defaultTokenAstNode, ExpressionTree elementValue) {
+    InternalSyntaxToken defaultToken = InternalSyntaxToken.create(defaultTokenAstNode);
+
+    ((JavaTree) elementValue).prependChildren(defaultToken);
+    return elementValue;
   }
 

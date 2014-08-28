@@ -1,16 +1,12 @@
   private static boolean hasAnnotation(AstNode astNode, String expected) {
     AstNode declaration = getDeclaration(astNode);
-    for (AnnotationTree annotationTree : getModifiers(declaration).annotations()) {
-      // FIXME
-      AstNode annotation = ((JavaTree) annotationTree).getAstNode();
-      if (annotation != null) {
-        StringBuilder value = new StringBuilder();
-        for (AstNode identifier : annotation.getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS).getChildren()) {
-          value.append(identifier.getTokenValue());
-        }
-        if (value.toString().equals(expected)) {
-          return true;
-        }
+    for (AnnotationTree annotation : getModifiers(declaration).annotations()) {
+      StringBuilder value = new StringBuilder();
+      for (Token token : ((AstNode) annotation.annotationType()).getTokens()) {
+        value.append(token.getValue());
+      }
+      if (value.toString().equals(expected)) {
+        return true;
       }
     }
     return false;

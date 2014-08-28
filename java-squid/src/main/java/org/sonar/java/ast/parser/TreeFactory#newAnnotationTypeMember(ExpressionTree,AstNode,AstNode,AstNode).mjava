@@ -1,0 +1,20 @@
+  public AstNode newAnnotationTypeMember(ExpressionTree type, AstNode identifierAstNode, AstNode annotationMethodOrConstantRest, AstNode semiTokenAstNode) {
+    if (annotationMethodOrConstantRest.is(Kind.METHOD)) {
+      MethodTreeImpl partial = (MethodTreeImpl) annotationMethodOrConstantRest;
+      partial.complete(type, new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode)));
+      partial.addChild(semiTokenAstNode);
+
+      return partial;
+    }
+
+    AstNodeType type2 = JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST;
+    AstNode result = new AstNode(type2, type2.toString(), null);
+
+    result.addChild((AstNode) type);
+    result.addChild(identifierAstNode);
+    result.addChild(annotationMethodOrConstantRest);
+    result.addChild(semiTokenAstNode);
+
+    return result;
+  }
+

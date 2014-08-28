@@ -1,11 +1,17 @@
   public AstNode getName() {
     final AstNode methodNameNode;
-    if (astNode.is(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST, JavaGrammar.ANNOTATION_METHOD_REST)) {
-      methodNameNode = astNode.getPreviousAstNode();
+
+    if (astNode.is(Kind.METHOD)) {
+      methodNameNode = (AstNode) ((MethodTree) astNode).simpleName();
     } else {
-      methodNameNode = astNode.getPreviousSibling();
+      if (astNode.is(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST)) {
+        methodNameNode = astNode.getPreviousAstNode();
+      } else {
+        methodNameNode = astNode.getPreviousSibling();
+      }
+      Preconditions.checkState(methodNameNode.is(JavaTokenType.IDENTIFIER));
     }
-    Preconditions.checkState(methodNameNode.is(JavaTokenType.IDENTIFIER));
+
     return methodNameNode;
   }
 

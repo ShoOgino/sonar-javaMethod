@@ -1,16 +1,22 @@
   public boolean isPublic() {
-    final AstNode node;
-    if (astNode.is(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.VOID_METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST)) {
-      node = astNode.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
-    } else if (astNode.is(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST, JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST)) {
-      node = astNode.getFirstAncestor(JavaGrammar.INTERFACE_BODY_DECLARATION);
-    } else if (astNode.is(JavaGrammar.ANNOTATION_METHOD_REST)) {
-      node = astNode.getFirstAncestor(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION);
+    ModifiersTree modifiers;
+
+    if (astNode.is(Kind.METHOD)) {
+      modifiers = ((MethodTree) astNode).modifiers();
     } else {
-      throw new IllegalStateException();
+      final AstNode node;
+
+      if (astNode.is(JavaGrammar.METHOD_DECLARATOR_REST, JavaGrammar.VOID_METHOD_DECLARATOR_REST, JavaGrammar.CONSTRUCTOR_DECLARATOR_REST)) {
+        node = astNode.getFirstAncestor(JavaGrammar.CLASS_BODY_DECLARATION);
+      } else if (astNode.is(JavaGrammar.INTERFACE_METHOD_DECLARATOR_REST, JavaGrammar.VOID_INTERFACE_METHOD_DECLARATORS_REST)) {
+        node = astNode.getFirstAncestor(JavaGrammar.INTERFACE_BODY_DECLARATION);
+      } else {
+        throw new IllegalStateException();
+      }
+
+      modifiers = (ModifiersTree) node.getFirstChild(JavaGrammar.MODIFIERS);
     }
 
-    ModifiersTree modifiers = (ModifiersTree) node.getFirstChild(JavaGrammar.MODIFIERS);
     return modifiers.modifiers().contains(Modifier.PUBLIC);
   }
 
