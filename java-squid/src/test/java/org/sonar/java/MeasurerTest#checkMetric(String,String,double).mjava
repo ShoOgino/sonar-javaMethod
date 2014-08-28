@@ -3,11 +3,14 @@
     squid.scan(Collections.singleton(sourceFile), Collections.<InputFile>emptyList(), Collections.<File>emptyList());
     ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
     ArgumentCaptor<org.sonar.api.resources.File> sonarFilescaptor = ArgumentCaptor.forClass(org.sonar.api.resources.File.class);
-    verify(context, atMost(5)).saveMeasure(sonarFilescaptor.capture(), captor.capture());
+    verify(context, times(NB_OF_METRICS)).saveMeasure(sonarFilescaptor.capture(), captor.capture());
+    int checkedMetrics = 0;
     for (Measure measure : captor.getAllValues()) {
-      if(metric.equals(measure.getDescription())){
+      if(metric.equals(measure.getMetricKey())){
         assertThat(measure.getValue()).isEqualTo(expectedValue);
+        checkedMetrics++;
       }
     }
+    assertThat(checkedMetrics).isEqualTo(1);
   }
 

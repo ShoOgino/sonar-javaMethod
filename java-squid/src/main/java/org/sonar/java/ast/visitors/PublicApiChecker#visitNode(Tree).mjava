@@ -1,0 +1,17 @@
+  private void visitNode(Tree tree) {
+    Tree currentParent = currentParents.peek();
+    if (tree.is(PublicApiChecker.CLASS_KINDS)) {
+      classTrees.push((ClassTree) tree);
+      currentParents.push(tree);
+    } else if (tree.is(PublicApiChecker.METHOD_KINDS)) {
+      currentParents.push(tree);
+    }
+
+    if(isPublicApi(currentParent, tree)) {
+      publicApi++;
+      if(getApiJavadoc(tree) != null) {
+        documentedPublicApi++;
+      }
+    }
+  }
+

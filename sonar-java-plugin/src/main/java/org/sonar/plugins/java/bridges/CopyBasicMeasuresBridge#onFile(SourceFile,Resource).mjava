@@ -1,7 +1,6 @@
   @Override
   public void onFile(SourceFile squidFile, Resource sonarResource) {
     copy(squidFile, sonarResource, JavaMetric.LINES_OF_CODE, CoreMetrics.NCLOC);
-    //copy(squidFile, sonarResource, JavaMetric.LINES, CoreMetrics.LINES);
     copy(squidFile, sonarResource, JavaMetric.COMMENT_LINES_WITHOUT_HEADER, CoreMetrics.COMMENT_LINES);
     copy(squidFile, sonarResource, JavaMetric.STATEMENTS, CoreMetrics.STATEMENTS);
     copy(squidFile, sonarResource, JavaMetric.CLASSES, CoreMetrics.CLASSES);
@@ -12,10 +11,5 @@
       .build(true)
       .setPersistenceMode(PersistenceMode.MEMORY));
 
-    copy(squidFile, sonarResource, Metric.PUBLIC_API, CoreMetrics.PUBLIC_API);
-    double undocumentedApiDensity = ParsingUtils.scaleValue(squidFile.getDouble(Metric.PUBLIC_DOCUMENTED_API_DENSITY) * 100, 2);
-    context.saveMeasure(sonarResource, new Measure(CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, undocumentedApiDensity));
-    double undocumentedApi = squidFile.getDouble(Metric.PUBLIC_API) - squidFile.getInt(Metric.PUBLIC_DOC_API);
-    context.saveMeasure(sonarResource, new Measure(CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocumentedApi));
   }
 
