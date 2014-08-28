@@ -1,7 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.INTERFACE) || tree.is(Tree.Kind.ENUM) || tree.is(Tree.Kind.ANNOTATION_TYPE)) {
+      classes++;
       classTrees.push((ClassTree) tree);
+    }
+    if(tree.is(Tree.Kind.NEW_CLASS) && ((NewClassTree)tree).classBody() != null ) {
+      classes--;
     }
     if (tree.is(Tree.Kind.METHOD) || tree.is(Tree.Kind.CONSTRUCTOR)) {
       //don't count methods in anonymous classes.
