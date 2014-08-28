@@ -1,0 +1,21 @@
+  public ArgumentListTreeImpl newNormalAnnotation(AssignmentExpressionTreeImpl elementValuePair, Optional<List<AstNode>> rests) {
+    ImmutableList.Builder<ExpressionTree> expressions = ImmutableList.builder();
+    List<AstNode> children = Lists.newArrayList();
+
+    expressions.add(elementValuePair);
+    children.add(elementValuePair);
+
+    if (rests.isPresent()) {
+      for (AstNode rest : rests.get()) {
+        for (AstNode child : rest.getChildren()) {
+          if (!child.is(JavaPunctuator.COMMA)) {
+            expressions.add((ExpressionTree) child);
+          }
+          children.add(child);
+        }
+      }
+    }
+
+    return new ArgumentListTreeImpl(expressions.build(), children);
+  }
+
