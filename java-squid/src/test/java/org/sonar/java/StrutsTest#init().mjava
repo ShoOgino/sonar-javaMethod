@@ -5,12 +5,13 @@
     File binDir = new File(prjDir, "bin");
 
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
+    conf.setAnalyzePropertyAccessors(true);
     context = mock(SensorContext.class);
     Project sonarProject = mock(Project.class);
     ProjectFileSystem pfs = mock(ProjectFileSystem.class);
     when(pfs.getBasedir()).thenReturn(prjDir);
     when(sonarProject.getFileSystem()).thenReturn(pfs);
-    measurer = new Measurer(sonarProject, context);
+    measurer = new Measurer(sonarProject, context, true);
     squid = new JavaSquid(conf, null, measurer, new CodeVisitor[0]);
     squid.scanDirectories(Collections.singleton(srcDir), Collections.singleton(binDir));
 

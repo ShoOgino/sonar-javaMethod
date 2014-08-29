@@ -11,11 +11,11 @@
       //don't count methods in anonymous classes.
       if (classTrees.peek().simpleName() != null) {
         MethodTree methodTree = (MethodTree) tree;
-        if (accessorVisitorST.isAccessor(classTrees.peek(), methodTree)) {
+        if (analyseAccessors && accessorVisitorST.isAccessor(classTrees.peek(), methodTree)) {
           accessors++;
         } else {
           methods++;
-          int methodComplexity = complexityVisitorST.scan(classTrees.peek(), methodTree);
+          int methodComplexity = context.getMethodComplexity(classTrees.peek(), methodTree);
           methodComplexityDistribution.add(methodComplexity);
           complexityInMethods += methodComplexity;
         }
