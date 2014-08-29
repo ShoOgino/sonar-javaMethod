@@ -1,15 +1,55 @@
   @Override
   protected void scan(@Nullable Tree tree) {
     if (tree != null) {
+      Symbol sym = null;
+      try {
+        Method getSymbol = null;
+        for (Method method : tree.getClass().getMethods()) {
+          if (method.getName().equals("getSymbol")) {
+            getSymbol = tree.getClass().getMethod("getSymbol");
+          }
+        }
+        if (getSymbol != null) {
+          sym = (Symbol) getSymbol.invoke(tree);
+        }
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      }
+
       Tree.Kind kind = ((JavaTree) tree).getKind();
       String nodeName = ((JavaTree) tree).getClass().getSimpleName();
       if (kind != null) {
         nodeName = kind.getAssociatedInterface().getSimpleName();
       }
       indent().append(nodeName);
+      int line = -1;
       AstNode node = ((JavaTree) tree).getAstNode();
       if (node != null && node.hasToken()) {
-        sb.append(" ").append(node.getTokenLine());
+        line = node.getTokenLine();
+        sb.append(" ").append(line);
+      }
+      if(idents.get(tree) != null) {
+        Preconditions.checkState(sym==null);
+        sym = idents.get(tree);
+      }
+      if(tree instanceof AbstractTypedTree) {
+        sb.append(" ").append(((AbstractTypedTree) tree).getSymbolType());
+      }
+
+      if (sym != null) {
+        //No forward reference possible... Need another visitor to build this info ?
+        for (IdentifierTree identifierTree : semanticModel.getUsages(sym)) {
+          idents.put(identifierTree, sym);
+        }
+        sb.append(" ").append(sym.getName());
+        int refLine = ((JavaTree)semanticModel.getTree(sym)).getTokenLine();
+        if(refLine!=line) {
+          sb.append(" ref#").append(refLine);
+        }
       }
       sb.append("\n");
     }

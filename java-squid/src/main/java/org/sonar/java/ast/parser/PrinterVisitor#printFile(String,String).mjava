@@ -1,0 +1,7 @@
+  public static String printFile(String file, String bytecodePath) {
+    final Parser p = JavaParser.createParser(Charsets.UTF_8);
+    CompilationUnitTree cut = (CompilationUnitTree) p.parse(new File(file));
+    SemanticModel semanticModel = SemanticModel.createFor(cut, Lists.newArrayList(new File(bytecodePath)));
+    return PrinterVisitor.print(cut, semanticModel);
+  }
+
