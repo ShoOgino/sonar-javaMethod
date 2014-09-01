@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD)) {
+      isInFinalizeMethod = isFinalizeMethodMember((MethodTree) tree);
+    } else {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
+      String name = "";
+      if (methodInvocationTree.methodSelect().is(Tree.Kind.IDENTIFIER)) {
+        name = ((IdentifierTree) methodInvocationTree.methodSelect()).name();
+      } else if (methodInvocationTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        name = ((MemberSelectExpressionTree) methodInvocationTree.methodSelect()).identifier().name();
+      }
+      if (!isInFinalizeMethod && "finalize".equals(name) && methodInvocationTree.arguments().isEmpty()) {
+        addIssue(tree, "Remove this call to finalize().");
+      }
+    }
+
+  }
+
