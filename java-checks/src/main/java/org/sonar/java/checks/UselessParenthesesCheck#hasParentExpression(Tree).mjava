@@ -1,0 +1,14 @@
+  private boolean hasParentExpression(Tree tree) {
+    Tree parent = this.parent.peek();
+    //Exclude condition of conditional expression
+    if(parent.is(Kind.CONDITIONAL_EXPRESSION)) {
+      ConditionalExpressionTree conditionalExpressionTree = (ConditionalExpressionTree) parent;
+      return !(tree.equals(conditionalExpressionTree.condition()) || tree.equals(conditionalExpressionTree.falseExpression()));
+    }
+    //Exclude expression of array access expression
+    if(parent.is(Kind.ARRAY_ACCESS_EXPRESSION) && tree.equals(((ArrayAccessExpressionTree) parent).expression()) ) {
+      return false;
+    }
+    return parent.is(PARENT_EXPRESSION);
+  }
+
