@@ -1,0 +1,17 @@
+  public LambdaParameterListTreeImpl lambdaParameters(AstNode astNode) {
+    List<AstNode> children = astNode.getChildren();
+    InternalSyntaxToken openParenToken = null;
+    AstNode leftParen = astNode.getFirstChild(JavaPunctuator.LPAR);
+    if (leftParen != null) {
+      openParenToken = InternalSyntaxToken.create(leftParen);
+      children.remove(leftParen);
+    }
+    InternalSyntaxToken closeParenToken = null;
+    AstNode rightParen = astNode.getFirstChild(JavaPunctuator.RPAR);
+    if (rightParen != null) {
+      closeParenToken = InternalSyntaxToken.create(rightParen);
+      children.remove(rightParen);
+    }
+    return new LambdaParameterListTreeImpl(openParenToken, ImmutableList.<VariableTreeImpl>of(), closeParenToken, children);
+  }
+

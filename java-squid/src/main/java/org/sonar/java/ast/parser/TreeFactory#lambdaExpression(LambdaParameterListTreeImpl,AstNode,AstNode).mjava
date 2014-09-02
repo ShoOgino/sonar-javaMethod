@@ -1,4 +1,4 @@
-  public ExpressionTree lambdaExpression(AstNode parameters, AstNode arrowToken, AstNode body) {
+  public ExpressionTree lambdaExpression(LambdaParameterListTreeImpl parameters, AstNode arrowToken, AstNode body) {
     Tree bodyTree;
     if (body.hasDirectChildren(Kind.BLOCK)) {
       bodyTree = (BlockTree) body.getFirstChild(Kind.BLOCK);
@@ -8,7 +8,7 @@
     List<VariableTree> params = Lists.newArrayList();
     // FIXME(Godin): params always empty
 
-    return new LambdaExpressionTreeImpl(params, bodyTree,
+    return new LambdaExpressionTreeImpl(parameters.openParenToken(), params, parameters.closeParenToken(), bodyTree,
       parameters, arrowToken, body);
   }
 
