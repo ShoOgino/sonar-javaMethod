@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    LambdaExpressionTree let = (LambdaExpressionTree) tree;
+    if(let.openParenToken() != null && let.parameters().size() == 1) {
+      VariableTree param = let.parameters().get(0);
+      String ident = param.simpleName().name();
+      addIssue(param, "Remove the parentheses around the \"" + ident + "\" parameter");
+    }
+  }
+
