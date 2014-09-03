@@ -1,0 +1,35 @@
+  @Override
+  public void scanFile(JavaFileScannerContext context) {
+    this.context = context;
+    CompilationUnitTree cut = context.getTree();
+
+    pendingReferences.clear();
+    lineByImportReference.clear();
+    pendingImports.clear();
+    currentPackage = concatenate(cut.packageName());
+    for (ImportTree importTree : cut.imports()) {
+      if (!importTree.isStatic()) {
+        String importName = concatenate((ExpressionTree) importTree.qualifiedIdentifier());
+        if ("java.lang.*".equals(importName)) {
+          context.addIssue(importTree, ruleKey, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
+        } else if (isImportFromSamePackage(importName)) {
+          context.addIssue(importTree, ruleKey, "Remove this unnecessary import: same package classes are always implicitly imported.");
+        } else if (!isImportOnDemand(importName)) {
+          if (isJavaLangImport(importName)) {
+            context.addIssue(importTree, ruleKey, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
+          } else if (isDuplicatedImport(importName)) {
+            context.addIssue(importTree, ruleKey, "Remove this duplicated import.");
+          } else {
+            lineByImportReference.put(importName, ((JavaTree) importTree).getLine());
+            pendingImports.add(importName);
+          }
+        }
+      }
+    }
+    //check references
+    scan(cut);
+    //check references from comments.
+    new CommentVisitor().checkImportsFromComments(cut, pendingImports);
+    leaveFile();
+  }
+

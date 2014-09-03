@@ -1,6 +1,11 @@
   private boolean isImportFromSamePackage(String reference) {
+    String importName = reference;
+    if (isImportOnDemand(reference)) {
+      //strip out .* to compare lenght with current package.
+      importName = reference.substring(0, reference.length() - 2);
+    }
     return !currentPackage.isEmpty() &&
-      reference.startsWith(currentPackage) &&
-      (reference.length() == currentPackage.length() || reference.substring(reference.indexOf(currentPackage)).startsWith("."));
+        importName.startsWith(currentPackage) &&
+        (importName.length() == currentPackage.length() || reference.substring(reference.indexOf(currentPackage)).startsWith("."));
   }
 
