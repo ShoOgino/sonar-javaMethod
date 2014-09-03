@@ -1,0 +1,21 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    if (tree.is(Tree.Kind.CLASS) && tree.simpleName() != null) {
+      nesting.push(types);
+      types = Sets.newHashSet();
+    }
+    checkTypes(tree.superClass());
+    checkTypes(tree.superInterfaces());
+    super.visitClass(tree);
+    if (tree.is(Tree.Kind.CLASS) && tree.simpleName() != null) {
+      if (types.size() > max) {
+        context.addIssue(
+            tree,
+            ruleKey,
+            "Split this class into smaller and more specialized ones to reduce its dependencies on other classes from " +
+                types.size() + " to the maximum authorized " + max + " or less.");
+      }
+      types = nesting.pop();
+    }
+  }
+
