@@ -1,0 +1,21 @@
+  private String merge(ExpressionTree tree) {
+    Deque<String> pieces = new LinkedList<String>();
+    ExpressionTree expr = tree;
+    while (expr.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) expr;
+      pieces.push(mse.identifier().name());
+      pieces.push(".");
+      expr = mse.expression();
+    }
+    if (expr.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree idt = (IdentifierTree) expr;
+      pieces.push(idt.name());
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (String piece : pieces) {
+      sb.append(piece);
+    }
+    return sb.toString();
+  }
+

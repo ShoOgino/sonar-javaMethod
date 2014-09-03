@@ -1,8 +1,10 @@
   @Test
   public void check_with_exclusion() {
-    check.exclude = "com.sun.imageio,com.sun.jersey";
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SunPackagesUsedCheck.java"), check);
+    check.exclude = "com.sun.imageio,com.sun.jersey,com.sun.org.apache.xml";
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SunPackagesUsedCheck.java"), new VisitorsBridge(check));
     checkMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(10).withMessage("Replace this usage of Sun classes by ones from the Java API.");
+        .next().atLine(10).withMessage("Replace this usage of Sun classes by ones from the Java API.")
+        .next().atLine(13).withMessage("Replace this usage of Sun classes by ones from the Java API.")
+    ;
   }
 
