@@ -1,0 +1,11 @@
+  private boolean hasStringArrayParam(MethodTree methodTree) {
+    if(methodTree.parameters().size()==1){
+      Tree argType = methodTree.parameters().get(0).type();
+      if(argType.is(Tree.Kind.ARRAY_TYPE) && ((ArrayTypeTree) argType).type().is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifierTree = (IdentifierTree) ((ArrayTypeTree) argType).type();
+        return "String".equals(identifierTree.name()) || "java.lang.String".equals(identifierTree.name());
+      }
+    }
+    return false;
+  }
+
