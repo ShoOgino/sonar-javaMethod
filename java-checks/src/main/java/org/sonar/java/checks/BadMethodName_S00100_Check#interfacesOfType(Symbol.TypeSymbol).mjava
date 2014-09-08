@@ -1,0 +1,10 @@
+  private Set<Type.ClassType> interfacesOfType(Symbol.TypeSymbol typeSymbol) {
+    ImmutableSet.Builder<Type.ClassType> builder = ImmutableSet.builder();
+    for (Type type : typeSymbol.getInterfaces()) {
+      Type.ClassType classType = (Type.ClassType) type;
+      builder.add(classType);
+      builder.addAll(interfacesOfType(classType.getSymbol()));
+    }
+    return builder.build();
+  }
+
