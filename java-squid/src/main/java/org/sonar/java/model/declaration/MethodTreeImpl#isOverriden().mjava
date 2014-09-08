@@ -1,23 +1,25 @@
   /**
    * Check if a methodTree is overriden.
-   *
-   * @param methodTree the methodTree to check.
-   * @return true if overriden, null if some super types are unknown.
+   * @return true if overriden, null if it cannot be decided (method symbol not resolved or lack of bytecode for super types).
    */
-  private Boolean isOverriden(MethodTree methodTree) {
-    if (isAnnotatedOverride(methodTree)) {
+  public Boolean isOverriden() {
+    if(isStatic() || isPrivate()) {
+      return false;
+    }
+    if (isAnnotatedOverride()) {
       return true;
     }
-    Symbol.MethodSymbol methodSymbol = ((MethodTreeImpl) methodTree).getSymbol();
-
+    if(symbol == null) {
+      return null;
+    }
     Boolean result = false;
-    Symbol.TypeSymbol enclosingClass = methodSymbol.enclosingClass();
+    Symbol.TypeSymbol enclosingClass = symbol.enclosingClass();
     if (StringUtils.isEmpty(enclosingClass.getName())) {
       //FIXME : SONARJAVA-645 : exclude methods within anonymous classes
       return null;
     }
     for (Type.ClassType type : superTypes(enclosingClass)) {
-      Boolean overrideFromType = overrideMethodFromSymbol(methodSymbol, type);
+      Boolean overrideFromType = overridesFromSymbol(type);
       if (overrideFromType == null) {
         result = null;
       } else if (BooleanUtils.isTrue(overrideFromType)) {

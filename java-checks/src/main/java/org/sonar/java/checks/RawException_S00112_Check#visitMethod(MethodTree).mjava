@@ -1,6 +1,6 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    if (!isOverride(tree)) {
+    if (tree.is(Tree.Kind.CONSTRUCTOR) || isNotOverriden(tree)) {
       for (ExpressionTree throwClause : tree.throwsClauses()) {
         checkExceptionAndRaiseIssue(throwClause);
       }
