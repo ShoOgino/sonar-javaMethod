@@ -1,0 +1,20 @@
+  public FormalParametersListTreeImpl completeTypeFormalParameters(ModifiersTreeImpl modifiers, ExpressionTree type, FormalParametersListTreeImpl partial) {
+    VariableTreeImpl variable = partial.get(0);
+
+    Tree variableType = type;
+    int dims = variable.dims();
+    if (variable.isVararg()) {
+      dims = dims + 1;
+    }
+
+    while (dims > 0) {
+      variableType = new JavaTree.ArrayTypeTreeImpl(null, variableType);
+      dims--;
+    }
+
+    variable.complete(variableType);
+    partial.prependChildren(modifiers, (AstNode) type);
+
+    return partial;
+  }
+

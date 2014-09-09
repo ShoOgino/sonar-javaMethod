@@ -1,11 +1,15 @@
   private List<Parameter> extractMethodArgumentTypes(MethodHelper methodHelper) {
     List<Parameter> argumentTypes = Lists.newArrayList();
-    for (AstNode astNode : methodHelper.getParameters()) {
-      AstNode type = astNode.getFirstChild(JavaTreeMaker.TYPE_KINDS);
-      boolean isArray = ((Tree) type).is(Kind.ARRAY_TYPE)
-        || astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETERS_DECLS_REST).getFirstChild(JavaGrammar.VARIABLE_DECLARATOR_ID)
-          .hasDirectChildren(JavaGrammar.DIM);
-      argumentTypes.add(extractArgumentAndReturnType(type, isArray));
+    for (VariableTree variable : methodHelper.getParameters()) {
+      Tree type = variable.type();
+
+      if (((VariableTreeImpl) variable).isVararg()) {
+        // Emulate the SONARJAVA-655 bug
+        type = ((ArrayTypeTree) type).type();
+      }
+
+      boolean isArray = type.is(Kind.ARRAY_TYPE);
+      argumentTypes.add(extractArgumentAndReturnType((AstNode) type, isArray));
     }
     return argumentTypes;
   }

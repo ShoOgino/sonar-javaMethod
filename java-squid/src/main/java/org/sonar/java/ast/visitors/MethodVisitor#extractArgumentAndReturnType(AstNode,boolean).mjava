@@ -1,9 +1,9 @@
   private Parameter extractArgumentAndReturnType(AstNode astNode, boolean isArray) {
-    Preconditions.checkArgument(astNode.is(JavaTreeMaker.TYPE_KINDS) || astNode.is(JavaKeyword.VOID));
-
     while (astNode instanceof Tree && ((Tree) astNode).is(Kind.ARRAY_TYPE)) {
       astNode = (AstNode) ((ArrayTypeTree) astNode).type();
     }
+
+    Preconditions.checkArgument(astNode.is(JavaTreeMaker.TYPE_KINDS) || astNode.is(JavaKeyword.VOID));
 
     if (astNode.is(JavaKeyword.VOID)) {
       return new Parameter(JvmJavaType.V, false);

@@ -1,6 +1,6 @@
   @Override
   public void visitNode(AstNode node) {
-    if (node.hasDirectChildren(JavaGrammar.DIM)) {
+    if (node.hasDirectChildren(JavaGrammar.DIM) || node.is(Kind.VARIABLE) && ((VariableTreeImpl) node).dims() > 0) {
       getContext().createLineViolation(this, "Move the array designator from the variable to the type.", node);
     }
   }
