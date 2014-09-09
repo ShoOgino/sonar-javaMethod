@@ -1,0 +1,8 @@
+  @Test
+  public void symbol_not_set_should_lead_to_null_result() throws Exception {
+    AstNode astNode = p.parse("class A { String toString(){return \"\";}}");
+    CompilationUnitTree cut = maker.compilationUnit(astNode);
+    MethodTreeImpl methodTree = (MethodTreeImpl) ((ClassTree) cut.types().get(0)).members().get(0);
+    assertThat(methodTree.isOverriden()).isNull();
+  }
+

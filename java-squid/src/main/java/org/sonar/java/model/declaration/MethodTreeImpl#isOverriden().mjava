@@ -12,20 +12,6 @@
     if(symbol == null) {
       return null;
     }
-    Boolean result = false;
-    Symbol.TypeSymbol enclosingClass = symbol.enclosingClass();
-    if (StringUtils.isEmpty(enclosingClass.getName())) {
-      //FIXME : SONARJAVA-645 : exclude methods within anonymous classes
-      return null;
-    }
-    for (Type.ClassType type : superTypes(enclosingClass)) {
-      Boolean overrideFromType = overridesFromSymbol(type);
-      if (overrideFromType == null) {
-        result = null;
-      } else if (BooleanUtils.isTrue(overrideFromType)) {
-        return true;
-      }
-    }
-    return result;
+    return symbol.isOverriden();
   }
 
