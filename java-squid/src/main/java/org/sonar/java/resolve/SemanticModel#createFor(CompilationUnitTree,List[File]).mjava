@@ -2,6 +2,7 @@
     BytecodeCompleter bytecodeCompleter = new BytecodeCompleter(projectClasspath);
     Symbols symbols = new Symbols(bytecodeCompleter);
     SemanticModel semanticModel = new SemanticModel();
+    semanticModel.bytecodeCompleter = bytecodeCompleter;
     semanticModel.createParentLink((JavaTree) tree);
     try {
       Resolve resolve = new Resolve(symbols, bytecodeCompleter);
@@ -9,7 +10,6 @@
       new ExpressionVisitor(semanticModel, symbols, resolve).visitCompilationUnit(tree);
       new LabelsVisitor(semanticModel).visitCompilationUnit(tree);
     } finally {
-      bytecodeCompleter.done();
       handleMissingTypes(symbols, tree);
     }
     return semanticModel;
