@@ -1,4 +1,4 @@
-  public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer, CodeVisitor... visitors) {
+  public JavaSquid(JavaConfiguration conf, @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer, @Nullable JavaResourceLocator javaResourceLocator, CodeVisitor... visitors) {
 
     astScanner = JavaAstScanner.create(conf);
 
@@ -6,6 +6,10 @@
     if(measurer != null) {
       Iterable<CodeVisitor> measurers = Arrays.asList((CodeVisitor)measurer);
       visitorsToBridge =  Iterables.concat(visitorsToBridge, measurers);
+    }
+    if(javaResourceLocator != null) {
+      Iterable<CodeVisitor> jrl = Arrays.asList((CodeVisitor)javaResourceLocator);
+      visitorsToBridge =  Iterables.concat(visitorsToBridge, jrl);
     }
     if (sonarComponents != null) {
       visitorsToBridge = Iterables.concat(
@@ -39,9 +43,8 @@
     }
 
     astScannerForTests = new AstScanner(astScanner);
-    astScannerForTests.accept(new PackageVisitor());
-    astScannerForTests.accept(new FileVisitor());
-    astScannerForTests.accept(new TestVisitor());
-    astScannerForTests.accept(new ClassVisitor());
+    if(javaResourceLocator != null) {
+      astScannerForTests.accept(new TestFileVisitorsBridge(javaResourceLocator));
+    }
   }
 

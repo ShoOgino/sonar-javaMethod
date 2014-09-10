@@ -1,0 +1,17 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    String className = "";
+    if(tree.simpleName()!=null){
+      className = tree.simpleName().name();
+    }
+    String key = getClassKey(className);
+    currentClassKey.push(key);
+    parent.push(tree);
+    anonymousInnerClassCounter.push(0);
+    resourcesCache.put(key, currentResource);
+    super.visitClass(tree);
+    currentClassKey.pop();
+    parent.pop();
+    anonymousInnerClassCounter.pop();
+  }
+
