@@ -1,0 +1,35 @@
+  public ForStatementTreeImpl newStandardForStatement(
+    AstNode forTokenAstNode,
+    AstNode openParenTokenAstNode,
+    Optional<StatementExpressionListTreeImpl> forInit, AstNode forInitSemicolonTokenAstNode,
+    Optional<AstNode> expression, AstNode expressionSemicolonTokenAstNode,
+    Optional<StatementExpressionListTreeImpl> forUpdate, AstNode forUpdateSemicolonTokenAstNode,
+    AstNode statement) {
+
+    StatementExpressionListTreeImpl forInit2 = forInit.isPresent() ? forInit.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
+    StatementExpressionListTreeImpl forUpdate2 = forUpdate.isPresent() ? forUpdate.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
+
+    ForStatementTreeImpl result = new ForStatementTreeImpl(
+      forInit2,
+      expression.isPresent() ? treeMaker.expression(expression.get()) : null,
+      forUpdate2,
+      treeMaker.statement(statement));
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(forTokenAstNode);
+    children.add(openParenTokenAstNode);
+    children.add(forInit2);
+    children.add(forInitSemicolonTokenAstNode);
+    if (expression.isPresent()) {
+      children.add(expression.get());
+    }
+    children.add(expressionSemicolonTokenAstNode);
+    children.add(forUpdate2);
+    children.add(forUpdateSemicolonTokenAstNode);
+    children.add(statement);
+
+    result.prependChildren(children);
+
+    return result;
+  }
+
