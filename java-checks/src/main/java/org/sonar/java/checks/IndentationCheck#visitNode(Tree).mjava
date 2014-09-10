@@ -1,0 +1,35 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Kind.CLASS, Kind.ENUM, Kind.INTERFACE)) {
+      ClassTree classTree = (ClassTree) tree;
+      //Exclude anonymous classes
+        isInAnonymousClass.push(classTree.simpleName() == null);
+      if(!isInAnonymousClass.peek()){
+        checkIndentation(Lists.newArrayList(classTree));
+      }
+    }
+    expectedLevel += indentationLevel;
+    isBlockAlreadyReported = false;
+
+    if (tree.is(Kind.CASE_GROUP)) {
+      List<CaseLabelTree> labels = ((CaseGroupTree) tree).labels();
+      if (labels.size() >= 2) {
+        lastCheckedLine = ((JavaTree) labels.get(labels.size() - 2)).getAstNode().getLastToken().getLine();
+      }
+    }
+
+    if (tree.is(Kind.CLASS, Kind.ENUM, Kind.INTERFACE)) {
+      ClassTree classTree = (ClassTree) tree;
+      //Exclude anonymous classes
+      if (classTree.simpleName() != null) {
+        checkIndentation(classTree.members());
+      }
+    }
+    if (tree.is(Kind.CASE_GROUP)) {
+      checkIndentation(((CaseGroupTree) tree).body());
+    }
+    if (tree.is(Kind.BLOCK)) {
+      checkIndentation(((BlockTree) tree).body());
+    }
+  }
+
