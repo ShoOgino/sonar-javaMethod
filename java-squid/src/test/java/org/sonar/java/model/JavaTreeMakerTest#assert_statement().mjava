@@ -3,8 +3,7 @@
    */
   @Test
   public void assert_statement() {
-    AstNode astNode = p.parse("class T { void m() { assert true; } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    AssertStatementTree tree = (AssertStatementTree) maker.statement(astNode);
+    AssertStatementTree tree = (AssertStatementTree) p.parse("class T { void m() { assert true; } }").getFirstDescendant(JavaGrammar.ASSERT_STATEMENT);
     assertThat(tree.is(Tree.Kind.ASSERT_STATEMENT)).isTrue();
     assertThat(tree.assertKeyword().text()).isEqualTo("assert");
     assertThat(tree.condition()).isNotNull();
@@ -12,8 +11,7 @@
     assertThat(tree.detail()).isNull();
     assertThat(tree.semicolonToken().text()).isEqualTo(";");
 
-    astNode = p.parse("class T { void m() { assert true : \"detail\"; } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (AssertStatementTree) maker.statement(astNode);
+    tree = (AssertStatementTree) p.parse("class T { void m() { assert true : \"detail\"; } }").getFirstDescendant(JavaGrammar.ASSERT_STATEMENT);
     assertThat(tree.is(Tree.Kind.ASSERT_STATEMENT)).isTrue();
     assertThat(tree.assertKeyword().text()).isEqualTo("assert");
     assertThat(tree.condition()).isNotNull();

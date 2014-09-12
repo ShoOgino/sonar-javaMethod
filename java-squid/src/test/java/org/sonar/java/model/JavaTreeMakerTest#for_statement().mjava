@@ -3,8 +3,7 @@
    */
   @Test
   public void for_statement() {
-    AstNode astNode = p.parse("class T { void m() { for (int i = 0; i < 42; i ++) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    ForStatementTree tree = (ForStatementTree) maker.statement(astNode);
+    ForStatementTree tree = (ForStatementTree) p.parse("class T { void m() { for (int i = 0; i < 42; i ++) ; } }").getFirstDescendant(Kind.FOR_STATEMENT);
     assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.forKeyword().text()).isEqualTo("for");
     assertThat(tree.openParenToken().text()).isEqualTo("(");
@@ -17,8 +16,7 @@
     assertThat(tree.closeParenToken().text()).isEqualTo(")");
     assertThat(tree.statement()).isNotNull();
 
-    astNode = p.parse("class T { void m() { for (i = 0; i < 42; i ++) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (ForStatementTree) maker.statement(astNode);
+    tree = (ForStatementTree) p.parse("class T { void m() { for (i = 0; i < 42; i ++) ; } }").getFirstDescendant(Kind.FOR_STATEMENT);
     assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.initializer()).hasSize(1);
     assertThat(tree.initializer().get(0)).isInstanceOf(ExpressionStatementTree.class);
@@ -26,8 +24,7 @@
     assertThat(tree.update()).isNotNull();
     assertThat(tree.statement()).isNotNull();
 
-    astNode = p.parse("class T { void m() { for ( ; ; ) ; } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (ForStatementTree) maker.statement(astNode);
+    tree = (ForStatementTree) p.parse("class T { void m() { for ( ; ; ) ; } }").getFirstDescendant(Kind.FOR_STATEMENT);
     assertThat(tree.is(Tree.Kind.FOR_STATEMENT)).isTrue();
     assertThat(tree.initializer()).isEmpty();
     assertThat(tree.condition()).isNull();

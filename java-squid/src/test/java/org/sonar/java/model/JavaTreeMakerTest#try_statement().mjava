@@ -3,8 +3,7 @@
    */
   @Test
   public void try_statement() {
-    AstNode astNode = p.parse("class T { void m() { try { } finally { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    TryStatementTree tree = (TryStatementTree) maker.statement(astNode);
+    TryStatementTree tree = (TryStatementTree) p.parse("class T { void m() { try { } finally { } } }").getFirstDescendant(Kind.TRY_STATEMENT);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.resources()).isEmpty();
     assertThat(tree.block()).isNotNull();
@@ -12,8 +11,7 @@
     assertThat(tree.finallyKeyword().text()).isEqualTo("finally");
     assertThat(tree.finallyBlock()).isNotNull();
 
-    astNode = p.parse("class T { void m() { try { } catch (RuntimeException e1) { } catch (Exception e2) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (TryStatementTree) maker.statement(astNode);
+    tree = (TryStatementTree) p.parse("class T { void m() { try { } catch (RuntimeException e1) { } catch (Exception e2) { } } }").getFirstDescendant(Kind.TRY_STATEMENT);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.tryKeyword().text()).isEqualTo("try");
     assertThat(tree.openParenToken()).isNull();
@@ -38,17 +36,15 @@
     assertThat(parameterTree.simpleName().name()).isEqualTo("e2");
     assertThat(parameterTree.initializer()).isNull();
 
-    astNode = p.parse("class T { void m() { try { } catch (Exception e) { } finally { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (TryStatementTree) maker.statement(astNode);
+    tree = (TryStatementTree) p.parse("class T { void m() { try { } catch (Exception e) { } finally { } } }").getFirstDescendant(Kind.TRY_STATEMENT);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.resources()).isEmpty();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).hasSize(1);
     assertThat(tree.finallyBlock()).isNotNull();
 
-    astNode = p.parse("class T { void m() { try (Resource r1 = open(); Resource r2 = open()) { } catch (Exception e) { } finally { } } }")
-      .getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (TryStatementTree) maker.statement(astNode);
+    tree = (TryStatementTree) p.parse("class T { void m() { try (Resource r1 = open(); Resource r2 = open()) { } catch (Exception e) { } finally { } } }")
+      .getFirstDescendant(Kind.TRY_STATEMENT);
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).hasSize(1);
@@ -63,8 +59,7 @@
     assertThat(resource.simpleName().name()).isEqualTo("r2");
     assertThat(resource.initializer()).isNotNull();
 
-    astNode = p.parse("class T { void m() { try { } catch (Exception1 | Exception2 e) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (TryStatementTree) maker.statement(astNode);
+    tree = (TryStatementTree) p.parse("class T { void m() { try { } catch (Exception1 | Exception2 e) { } } }").getFirstDescendant(Kind.TRY_STATEMENT);
     parameterTree = tree.catches().get(0).parameter();
     assertThat(((UnionTypeTree) parameterTree.type()).typeAlternatives()).hasSize(2);
   }

@@ -1,13 +1,17 @@
   public List<StatementTree> blockStatement(AstNode astNode) {
     checkType(astNode, JavaGrammar.BLOCK_STATEMENT);
+
     AstNode statementNode = astNode.getFirstChild(
-      JavaGrammar.STATEMENT,
       JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
       JavaGrammar.CLASS_DECLARATION,
-      JavaGrammar.ENUM_DECLARATION
-      );
-    if (statementNode.is(JavaGrammar.STATEMENT)) {
-      return ImmutableList.of(statement(statementNode));
+      JavaGrammar.ENUM_DECLARATION);
+    if (statementNode == null && astNode.getNumberOfChildren() == 1) {
+      // Statement hack (note that they are not all yet migrated to Kinds)
+      statementNode = astNode.getFirstChild();
+    }
+
+    if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
+      return ImmutableList.of((StatementTree) statementNode);
     } else if (statementNode.is(JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
       return variableDeclarators(
         variableModifiers(statementNode.getFirstChild(JavaGrammar.VARIABLE_MODIFIERS)),

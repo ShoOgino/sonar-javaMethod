@@ -1,15 +1,8 @@
   public StatementTree statement(AstNode astNode) {
-    checkType(astNode, JavaGrammar.STATEMENT);
-
-    final AstNode statementNode = astNode.getFirstChild();
-    final StatementTree result;
-
-    if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
-      result = (StatementTree) statementNode;
+    if (astNode instanceof StatementTree && !((JavaTree) astNode).isLegacy()) {
+      return (StatementTree) astNode;
     } else {
       throw new IllegalStateException("Unexpected AstNodeType: " + astNode.getType().toString());
     }
-
-    return result;
   }
 

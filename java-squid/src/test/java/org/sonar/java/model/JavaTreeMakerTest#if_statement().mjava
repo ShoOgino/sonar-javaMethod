@@ -3,8 +3,7 @@
    */
   @Test
   public void if_statement() {
-    AstNode astNode = p.parse("class T { void m() { if (true) { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    IfStatementTree tree = (IfStatementTree) maker.statement(astNode);
+    IfStatementTree tree = (IfStatementTree) p.parse("class T { void m() { if (true) { } } }").getFirstDescendant(JavaGrammar.IF_STATEMENT);
     assertThat(tree.is(Tree.Kind.IF_STATEMENT)).isTrue();
     assertThat(tree.ifKeyword().text()).isEqualTo("if");
     assertThat(tree.openParenToken().text()).isEqualTo("(");
@@ -14,8 +13,7 @@
     assertThat(tree.elseKeyword()).isNull();
     assertThat(tree.elseStatement()).isNull();
 
-    astNode = p.parse("class T { void m() { if (true) { } else { } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (IfStatementTree) maker.statement(astNode);
+    tree = (IfStatementTree) p.parse("class T { void m() { if (true) { } else { } } }").getFirstDescendant(JavaGrammar.IF_STATEMENT);
     assertThat(tree.is(Tree.Kind.IF_STATEMENT)).isTrue();
     assertThat(tree.ifKeyword().text()).isEqualTo("if");
     assertThat(tree.openParenToken().text()).isEqualTo("(");

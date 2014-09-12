@@ -3,8 +3,8 @@
    */
   @Test
   public void switch_statement() {
-    AstNode astNode = p.parse("class T { void m() { switch (e) { case 1: case 2: ; default: ; } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    SwitchStatementTree tree = (SwitchStatementTree) maker.statement(astNode);
+    SwitchStatementTree tree = (SwitchStatementTree) p.parse("class T { void m() { switch (e) { case 1: case 2: ; default: ; } } }").getFirstDescendant(
+      JavaGrammar.SWITCH_STATEMENT);
     assertThat(tree.is(Tree.Kind.SWITCH_STATEMENT)).isTrue();
     assertThat(tree.switchKeyword().text()).isEqualTo("switch");
     assertThat(tree.openParenToken().text()).isEqualTo("(");
@@ -34,8 +34,7 @@
     assertThat(c.labels().get(0).colonToken().text()).isEqualTo(":");
     assertThat(c.body()).hasSize(1);
 
-    astNode = p.parse("class T { void m() { switch (e) { default: } } }").getFirstDescendant(JavaGrammar.STATEMENT);
-    tree = (SwitchStatementTree) maker.statement(astNode);
+    tree = (SwitchStatementTree) p.parse("class T { void m() { switch (e) { default: } } }").getFirstDescendant(JavaGrammar.SWITCH_STATEMENT);
     assertThat(tree.cases()).hasSize(1);
     assertThat(tree.cases().get(0).body()).isEmpty();
   }
