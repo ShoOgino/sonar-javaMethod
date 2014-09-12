@@ -3,8 +3,7 @@
    */
   @Test
   public void conditional_expression() {
-    AstNode astNode = p.parse("class T { boolean m() { return true ? true : false; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
-    ConditionalExpressionTree tree = (ConditionalExpressionTree) maker.expression(astNode);
+    ConditionalExpressionTree tree = (ConditionalExpressionTree) p.parse("class T { boolean m() { return true ? true : false; } }").getFirstDescendant(Kind.CONDITIONAL_EXPRESSION);
     assertThat(tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)).isTrue();
     assertThat(tree.condition()).isInstanceOf(LiteralTree.class);
     assertThat(tree.questionToken().text()).isEqualTo("?");
@@ -12,8 +11,7 @@
     assertThat(tree.colonToken().text()).isEqualTo(":");
     assertThat(tree.falseExpression()).isInstanceOf(LiteralTree.class);
 
-    astNode = p.parse("class T { boolean m() { return true ? true : false ? true : false; } }").getFirstDescendant(JavaGrammar.EXPRESSION);
-    tree = (ConditionalExpressionTree) maker.expression(astNode);
+    tree = (ConditionalExpressionTree) p.parse("class T { boolean m() { return true ? true : false ? true : false; } }").getFirstDescendant(Kind.CONDITIONAL_EXPRESSION);
     assertThat(tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)).isTrue();
     assertThat(tree.condition()).isInstanceOf(LiteralTree.class);
     assertThat(tree.trueExpression()).isInstanceOf(LiteralTree.class);

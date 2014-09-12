@@ -52,8 +52,9 @@
         expression, identifier, arguments, classBody,
         children.toArray(new AstNode[children.size()]));
     } else if (selectorNode.hasDirectChildren(JavaGrammar.DIM_EXPR)) {
+      AstNode dimExpr = selectorNode.getFirstChild(JavaGrammar.DIM_EXPR);
       return new ArrayAccessExpressionTreeImpl(
-        expression, treeMaker.expression(selectorNode.getFirstChild(JavaGrammar.DIM_EXPR).getFirstChild(JavaGrammar.EXPRESSION)),
+        expression, (ExpressionTree) dimExpr.getChild(dimExpr.getNumberOfChildren() - 2),
         (AstNode) expression, selectorNode.getFirstChild(JavaGrammar.DIM_EXPR));
     } else {
       throw new IllegalStateException(AstXmlPrinter.print(selectorNode));

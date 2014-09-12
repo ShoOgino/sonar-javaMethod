@@ -2,7 +2,7 @@
     AstNode forTokenAstNode,
     AstNode openParenTokenAstNode,
     Optional<StatementExpressionListTreeImpl> forInit, AstNode forInitSemicolonTokenAstNode,
-    Optional<AstNode> expression, AstNode expressionSemicolonTokenAstNode,
+    Optional<ExpressionTree> expression, AstNode expressionSemicolonTokenAstNode,
     Optional<StatementExpressionListTreeImpl> forUpdate, AstNode forUpdateSemicolonTokenAstNode,
     StatementTree statement) {
 
@@ -11,7 +11,7 @@
 
     ForStatementTreeImpl result = new ForStatementTreeImpl(
       forInit2,
-      expression.isPresent() ? treeMaker.expression(expression.get()) : null,
+      expression.isPresent() ? expression.get() : null,
       forUpdate2,
       statement);
 
@@ -21,7 +21,7 @@
     children.add(forInit2);
     children.add(forInitSemicolonTokenAstNode);
     if (expression.isPresent()) {
-      children.add(expression.get());
+      children.add((AstNode) expression.get());
     }
     children.add(expressionSemicolonTokenAstNode);
     children.add(forUpdate2);

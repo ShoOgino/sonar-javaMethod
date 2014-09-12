@@ -1,14 +1,14 @@
-  public ArgumentListTreeImpl newArguments(AstNode expression, Optional<List<AstNode>> rests) {
+  public ArgumentListTreeImpl newArguments(ExpressionTree expression, Optional<List<AstNode>> rests) {
     List<AstNode> children = Lists.newArrayList();
     ImmutableList.Builder<ExpressionTree> expressions = ImmutableList.builder();
 
-    children.add(expression);
-    expressions.add(treeMaker.expression(expression));
+    children.add((AstNode) expression);
+    expressions.add(expression);
 
     if (rests.isPresent()) {
       for (AstNode rest : rests.get()) {
         children.addAll(rest.getChildren());
-        expressions.add(treeMaker.expression(rest.getFirstChild(JavaGrammar.EXPRESSION)));
+        expressions.add((ExpressionTree) rest.getLastChild());
       }
     }
 
