@@ -1,7 +1,7 @@
-  private void notifyBytecodeVisitors(Collection<SourceCode> classes, AsmClassProvider classProvider) {
+  private void notifyBytecodeVisitors(Collection<String> keys, AsmClassProvider classProvider) {
     BytecodeVisitor[] visitorArray = getVisitors().toArray(new BytecodeVisitor[getVisitors().size()]);
-    for (SourceCode sourceCode : classes) {
-      AsmClass asmClass = classProvider.getClass(sourceCode.getKey(), DETAIL_LEVEL.STRUCTURE_AND_CALLS);
+    for (String key : keys) {
+      AsmClass asmClass = classProvider.getClass(key, DETAIL_LEVEL.STRUCTURE_AND_CALLS);
       BytecodeVisitorNotifier visitorNotifier = new BytecodeVisitorNotifier(asmClass, visitorArray);
       visitorNotifier.notifyVisitors(indexer, javaResourceLocator);
     }

@@ -1,7 +1,6 @@
   public BytecodeScanner scan(Collection<File> bytecodeFilesOrDirectories) {
     ClassLoader classLoader = ClassLoaderBuilder.create(bytecodeFilesOrDirectories);
-    Collection<SourceCode> classes = indexer.search(new QueryByType(SourceClass.class));
-    scanClasses(classes, new AsmClassProviderImpl(classLoader));
+    scanClasses(javaResourceLocator.classKeys(), new AsmClassProviderImpl(classLoader));
     // TODO unchecked cast
     ((SquidClassLoader) classLoader).close();
     return this;

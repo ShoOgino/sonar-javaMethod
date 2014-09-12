@@ -1,17 +1,39 @@
   @BeforeClass
   public static void setup() {
     JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
-    JavaResourceLocator javaResourceLocator = mock(JavaResourceLocator.class);
-    when(javaResourceLocator.findSourceFileKeyByClassName(anyString())).thenAnswer(new Answer<String>() {
+    JavaResourceLocator javaResourceLocator = new JavaResourceLocator() {
+      public Map<String, String> sourceFileCache = Maps.newHashMap();
+
       @Override
-      public String answer(InvocationOnMock invocation) throws Throwable {
-        String fileName = (String) invocation.getArguments()[0];
-        if(!fileName.endsWith(".java")) {
-          fileName += ".java";
-        }
-        return fileName;
+      public Resource findResourceByClassName(String className) {
+        return null;
       }
-    });
+
+      @Override
+      public String findSourceFileKeyByClassName(String className) {
+        String name = className.replace('.', '/');
+        return sourceFileCache.get(name);
+      }
+
+      @Override
+      public Collection<String> classKeys() {
+        return sourceFileCache.keySet();
+      }
+
+      @Override
+      public Collection<File> classFilesToAnalyze() {
+        return Collections.emptyList();
+      }
+
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        JavaFilesCache javaFilesCache = new JavaFilesCache();
+        javaFilesCache.scanFile(context);
+        for (String key : javaFilesCache.resourcesCache.keySet()){
+          sourceFileCache.put(key, context.getFileKey());
+        }
+      }
+    };
     JavaSquid squid = new JavaSquid(conf, javaResourceLocator);
     squid.scanDirectories(
         Collections.singleton(new File("src/test/files/bytecode/src")),

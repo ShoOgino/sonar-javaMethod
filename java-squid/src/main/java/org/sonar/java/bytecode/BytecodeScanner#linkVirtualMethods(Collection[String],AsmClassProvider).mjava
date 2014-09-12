@@ -1,0 +1,10 @@
+  private void linkVirtualMethods(Collection<String> keys, AsmClassProvider classProvider) {
+    VirtualMethodsLinker linker = new VirtualMethodsLinker();
+    for (String key : keys) {
+      AsmClass asmClass = classProvider.getClass(key, DETAIL_LEVEL.STRUCTURE_AND_CALLS);
+      for (AsmMethod method : asmClass.getMethods()) {
+        linker.process(method);
+      }
+    }
+  }
+
