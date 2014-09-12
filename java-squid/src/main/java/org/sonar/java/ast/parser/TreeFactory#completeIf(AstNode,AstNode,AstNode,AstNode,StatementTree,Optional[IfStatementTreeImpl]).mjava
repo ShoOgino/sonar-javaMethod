@@ -1,0 +1,13 @@
+  public IfStatementTreeImpl completeIf(AstNode ifToken, AstNode openParen, AstNode condition, AstNode closeParen, StatementTree statement, Optional<IfStatementTreeImpl> elseClause) {
+    InternalSyntaxToken ifKeyword = InternalSyntaxToken.create(ifToken);
+    InternalSyntaxToken openParenToken = InternalSyntaxToken.create(openParen);
+    InternalSyntaxToken closeParenToken = InternalSyntaxToken.create(closeParen);
+    if (elseClause.isPresent()) {
+      return elseClause.get().complete(ifKeyword, openParenToken, treeMaker.expression(condition), closeParenToken, statement,
+        ifKeyword, openParenToken, condition, closeParenToken, (AstNode) statement);
+    } else {
+      return new IfStatementTreeImpl(ifKeyword, openParenToken, treeMaker.expression(condition), closeParenToken, statement,
+        ifKeyword, openParenToken, condition, closeParenToken, (AstNode) statement);
+    }
+  }
+
