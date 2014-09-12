@@ -3,13 +3,13 @@
    */
   @Test
   public void continue_statement() {
-    ContinueStatementTree tree = (ContinueStatementTree) p.parse("class T { void m() { continue ; } }").getFirstDescendant(JavaGrammar.CONTINUE_STATEMENT);
+    ContinueStatementTree tree = (ContinueStatementTree) p.parse("class T { void m() { continue ; } }").getFirstDescendant(Kind.CONTINUE_STATEMENT);
     assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
     assertThat(tree.continueKeyword().text()).isEqualTo("continue");
     assertThat(tree.label()).isNull();
     assertThat(tree.semicolonToken().text()).isEqualTo(";");
 
-    tree = (ContinueStatementTree) p.parse("class T { void m() { continue label ; } }").getFirstDescendant(JavaGrammar.CONTINUE_STATEMENT);
+    tree = (ContinueStatementTree) p.parse("class T { void m() { continue label ; } }").getFirstDescendant(Kind.CONTINUE_STATEMENT);
     assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
     assertThat(tree.continueKeyword().text()).isEqualTo("continue");
     assertThat(tree.label().name()).isEqualTo("label");

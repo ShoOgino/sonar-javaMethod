@@ -3,13 +3,13 @@
    */
   @Test
   public void break_statement() {
-    BreakStatementTree tree = (BreakStatementTree) p.parse("class T { void m() { break ; } }").getFirstDescendant(JavaGrammar.BREAK_STATEMENT);
+    BreakStatementTree tree = (BreakStatementTree) p.parse("class T { void m() { break ; } }").getFirstDescendant(Kind.BREAK_STATEMENT);
     assertThat(tree.is(Tree.Kind.BREAK_STATEMENT)).isTrue();
     assertThat(tree.breakKeyword().text()).isEqualTo("break");
     assertThat(tree.label()).isNull();
     assertThat(tree.semicolonToken().text()).isEqualTo(";");
 
-    tree = (BreakStatementTree) p.parse("class T { void m() { break label ; } }").getFirstDescendant(JavaGrammar.BREAK_STATEMENT);
+    tree = (BreakStatementTree) p.parse("class T { void m() { break label ; } }").getFirstDescendant(Kind.BREAK_STATEMENT);
     assertThat(tree.is(Tree.Kind.BREAK_STATEMENT)).isTrue();
     assertThat(tree.breakKeyword().text()).isEqualTo("break");
     assertThat(tree.label().name()).isEqualTo("label");
