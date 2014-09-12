@@ -2,11 +2,9 @@
   public void ok() {
     LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    b.rule(JavaGrammar.VARIABLE_DECLARATOR).override(RuleMock.word(b, "variableDeclarator"));
-
     assertThat(b, JavaGrammar.VARIABLE_DECLARATORS)
-      .matches("variableDeclarator , variableDeclarator , variableDeclarator")
-      .matches("variableDeclarator , variableDeclarator")
-      .matches("variableDeclarator");
+      .matches("foo , foo[] , foo[] = {}, foo = 42")
+      .matches("foo[] = 42 , foo")
+      .matches("foo");
   }
 

@@ -1,0 +1,22 @@
+  public VariableTreeImpl completeVariableDeclarator(AstNode identifierAstNode, Optional<List<AstNode>> dims, Optional<VariableTreeImpl> partial) {
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+
+    List<AstNode> children = Lists.newArrayList();
+    if (dims.isPresent()) {
+      for (AstNode dim : dims.get()) {
+        children.add(dim);
+      }
+    }
+
+    if (partial.isPresent()) {
+      children.add(0, identifier);
+      partial.get().prependChildren(children);
+
+      return partial.get().completeIdentifierAndDims(identifier, dims.isPresent() ? dims.get().size() : 0);
+    } else {
+      return new VariableTreeImpl(
+        identifier, dims.isPresent() ? dims.get().size() : 0,
+        children);
+    }
+  }
+

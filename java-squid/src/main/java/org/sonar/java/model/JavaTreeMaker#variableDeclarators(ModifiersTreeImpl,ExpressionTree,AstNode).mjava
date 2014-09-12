@@ -1,0 +1,12 @@
+  public List<StatementTree> variableDeclarators(ModifiersTreeImpl modifiers, ExpressionTree type, AstNode astNode) {
+    checkType(astNode, JavaGrammar.VARIABLE_DECLARATORS);
+    ImmutableList.Builder<StatementTree> result = ImmutableList.builder();
+    for (AstNode variableAstNode : astNode.getChildren(Kind.VARIABLE)) {
+      VariableTreeImpl variable = (VariableTreeImpl) variableAstNode;
+      type = applyDim(type, variable.dims());
+      variable.completeModifiersAndType(modifiers, type);
+      result.add(variable);
+    }
+    return result.build();
+  }
+
