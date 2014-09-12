@@ -2,12 +2,10 @@
   public void ok() {
     LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    b.rule(JavaGrammar.CATCH_CLAUSE).override(RuleMock.word(b, "catchClause"));
-    b.rule(JavaGrammar.FINALLY_).override(RuleMock.word(b, "finally_"));
-
     assertThat(b, JavaGrammar.STATEMENT)
-      .matches("try {} catchClause catchClause finally_")
-      .matches("try {} catchClause finally_")
-      .matches("try {} finally_");
+      .matches("try {} catch (Exception e) {} catch (Exception e) {} finally {}")
+      .matches("try {} catch (Exception e) {} finally {}")
+      .matches("try {} catch (Exception e) {}")
+      .matches("try {} finally {}");
   }
 

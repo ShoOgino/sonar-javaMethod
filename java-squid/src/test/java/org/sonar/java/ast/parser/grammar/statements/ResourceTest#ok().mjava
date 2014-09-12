@@ -2,11 +2,9 @@
   public void ok() {
     LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    b.rule(JavaGrammar.VARIABLE_MODIFIERS).override(RuleMock.word(b, "variableModifiers"));
-    b.rule(JavaGrammar.EXPRESSION).override(RuleMock.word(b, "expression"));
-
     assertThat(b, JavaGrammar.RESOURCE)
-      .matches("variableModifiers List<Integer> foo = expression")
-      .matches("List<Integer> foo[] = expression");
+      .matches("final List<Integer> foo = 0")
+      .matches("final @Nullable List<Integer> foo = 0")
+      .matches("List<Integer> foo[] = foo");
   }
 

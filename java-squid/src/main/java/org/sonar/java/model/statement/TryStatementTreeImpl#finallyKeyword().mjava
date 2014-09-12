@@ -1,7 +1,10 @@
   @Nullable
   @Override
   public SyntaxToken finallyKeyword() {
-    AstNode node = getAstNode().getFirstChild(JavaGrammar.FINALLY_);
-    return node == null ? null : InternalSyntaxToken.createLegacy(node.getFirstChild(JavaKeyword.FINALLY));
+    if (finallyBlock == null) {
+      return null;
+    }
+
+    return InternalSyntaxToken.createLegacy(finallyBlock.getFirstChild(JavaKeyword.FINALLY));
   }
 

@@ -1,0 +1,23 @@
+  public Tree newCatchType(ExpressionTree qualifiedIdentifier, Optional<List<AstNode>> rests) {
+    if (!rests.isPresent()) {
+      return qualifiedIdentifier;
+    }
+
+    List<AstNode> children = Lists.newArrayList();
+    ImmutableList.Builder<Tree> types = ImmutableList.builder();
+
+    children.add((AstNode) qualifiedIdentifier);
+    types.add(qualifiedIdentifier);
+
+    for (AstNode rest : rests.get()) {
+      children.add(rest.getFirstChild());
+
+      ExpressionTree qualifiedIdentifier2 = (ExpressionTree) rest.getLastChild();
+      types.add(qualifiedIdentifier2);
+
+      children.add((AstNode) qualifiedIdentifier2);
+    }
+
+    return new UnionTypeTreeImpl(new TypeUnionListTreeImpl(types.build(), children));
+  }
+

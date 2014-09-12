@@ -1,0 +1,31 @@
+  public TryStatementTreeImpl(
+    InternalSyntaxToken tryToken,
+    InternalSyntaxToken openParenToken, ResourceListTreeImpl resources, InternalSyntaxToken closeParenToken,
+    BlockTreeImpl block,
+    List<CatchTreeImpl> catches, @Nullable BlockTreeImpl finallyBlock) {
+
+    super(Kind.TRY_STATEMENT);
+
+    this.tryToken = tryToken;
+    this.openParenToken = openParenToken;
+    this.resources = (List) resources;
+    this.closeParenToken = closeParenToken;
+    this.block = block;
+    this.catches = catches;
+    this.finallyBlock = finallyBlock;
+
+    addChild(tryToken);
+    addChild(openParenToken);
+    addChild(resources);
+    addChild(closeParenToken);
+    addChild(block);
+
+    for (CatchTreeImpl catch_ : catches) {
+      addChild(catch_);
+    }
+
+    if (finallyBlock != null) {
+      addChild(finallyBlock);
+    }
+  }
+
