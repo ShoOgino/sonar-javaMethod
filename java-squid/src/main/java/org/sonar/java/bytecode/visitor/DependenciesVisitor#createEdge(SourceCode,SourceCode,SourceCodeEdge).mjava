@@ -1,0 +1,17 @@
+  private SourceCodeEdge createEdge(@Nullable SourceCode from, @Nullable SourceCode to, @Nullable SourceCodeEdge rootEdge) {
+    SourceCodeEdge parentEdge = null;
+    if (canWeLinkNodes(from, to)) {
+      parentEdge = graph.getEdge(from, to);
+      if (parentEdge == null) {
+        parentEdge = new SourceCodeEdge(from, to, SourceCodeEdgeUsage.USES);
+        graph.addEdge(parentEdge);
+      }
+      if(rootEdge == null) {
+        parentEdge.addRootEdge(parentEdge);
+      } else {
+        parentEdge.addRootEdge(rootEdge);
+      }
+    }
+    return parentEdge;
+  }
+

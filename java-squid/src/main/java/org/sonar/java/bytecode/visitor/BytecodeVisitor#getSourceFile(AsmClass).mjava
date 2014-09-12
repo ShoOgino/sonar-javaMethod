@@ -1,4 +1,9 @@
+  @Nullable
   protected final SourceFile getSourceFile(AsmClass asmClass) {
-    return getSourceClass(asmClass).getParent(SourceFile.class);
+    String sourceFileKey = javaResourceLocator.findSourceFileKeyByClassName(asmClass.getInternalName());
+    if(sourceFileKey==null) {
+      return null;
+    }
+    return (SourceFile) index.search(sourceFileKey);
   }
 

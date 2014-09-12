@@ -1,5 +1,5 @@
   public static SourceFile scan(String target, CodeVisitor visitor) {
-    File baseDir = new File("src/test/java/");
+    final File baseDir = new File("src/test/java/");
     InputFile sourceFile = InputFileUtils.create(baseDir, new File(baseDir, "org/sonar/java/checks/targets/" + target + ".java"));
     File bytecodeFile = new File("target/test-classes/");
 
@@ -7,7 +7,36 @@
       throw new IllegalArgumentException("File '" + sourceFile + "' not found.");
     }
 
-    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), visitor);
+    JavaResourceLocator resourceLocatorStub = new JavaResourceLocator() {
+      public Map<String, String> sourceFileCache = Maps.newHashMap();
+
+      @Override
+      public Resource findResourceByClassName(String className) {
+        return null;
+      }
+
+      @Override
+      public String findSourceFileKeyByClassName(String className) {
+        String name = className.replace('.', '/');
+        return sourceFileCache.get(name);
+      }
+
+      @Override
+      public Collection<File> classFilesToAnalyze() {
+        return Collections.emptyList();
+      }
+
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        JavaFilesCache javaFilesCache = new JavaFilesCache();
+        javaFilesCache.scanFile(context);
+        for (String key : javaFilesCache.resourcesCache.keySet()){
+          sourceFileCache.put(key, context.getFileKey());
+        }
+      }
+    };
+
+    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), resourceLocatorStub, visitor);
     javaSquid.scan(Collections.singleton(sourceFile), Collections.<InputFile>emptyList(), Collections.singleton(bytecodeFile));
 
     Collection<SourceCode> sources = javaSquid.getIndex().search(new QueryByType(SourceFile.class));

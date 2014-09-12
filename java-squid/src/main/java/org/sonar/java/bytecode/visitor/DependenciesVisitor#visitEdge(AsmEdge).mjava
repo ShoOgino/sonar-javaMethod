@@ -1,17 +1,10 @@
   @Override
   public void visitEdge(AsmEdge edge) {
     AsmClass toAsmClass = edge.getTargetAsmClass();
-    SourceClass toSourceClass = getSourceClass(toAsmClass);
-    switch (edge.getUsage()) {
-      case EXTENDS:
-        link(fromSourceClass, toSourceClass, SourceCodeEdgeUsage.EXTENDS);
-        break;
-      case IMPLEMENTS:
-        link(fromSourceClass, toSourceClass, SourceCodeEdgeUsage.IMPLEMENTS);
-        break;
-      default:
-        link(fromSourceClass, toSourceClass, SourceCodeEdgeUsage.USES);
-        break;
+    SourceFile toSourceFile = getSourceFile(toAsmClass);
+    SourceCodeEdge fileEdge = createEdge(fromSourceFile, toSourceFile, null);
+    if(fromSourceFile != null && toSourceFile != null) {
+      createEdge(fromSourceFile.getParent(), toSourceFile.getParent(), fileEdge);
     }
   }
 

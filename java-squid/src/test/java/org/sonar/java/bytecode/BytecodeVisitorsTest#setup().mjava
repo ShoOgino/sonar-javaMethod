@@ -1,7 +1,18 @@
   @BeforeClass
   public static void setup() {
     JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
-    JavaSquid squid = new JavaSquid(conf);
+    JavaResourceLocator javaResourceLocator = mock(JavaResourceLocator.class);
+    when(javaResourceLocator.findSourceFileKeyByClassName(anyString())).thenAnswer(new Answer<String>() {
+      @Override
+      public String answer(InvocationOnMock invocation) throws Throwable {
+        String fileName = (String) invocation.getArguments()[0];
+        if(!fileName.endsWith(".java")) {
+          fileName += ".java";
+        }
+        return fileName;
+      }
+    });
+    JavaSquid squid = new JavaSquid(conf, javaResourceLocator);
     squid.scanDirectories(
         Collections.singleton(new File("src/test/files/bytecode/src")),
         Collections.singleton(new File("src/test/files/bytecode/bin")));

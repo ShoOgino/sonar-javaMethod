@@ -11,12 +11,8 @@
     ProjectFileSystem pfs = mock(ProjectFileSystem.class);
     when(pfs.getBasedir()).thenReturn(prjDir);
     when(sonarProject.getFileSystem()).thenReturn(pfs);
-    measurer = new Measurer(sonarProject, context, true);
-    squid = new JavaSquid(conf, null, measurer, null, new CodeVisitor[0]);
+    Measurer measurer = new Measurer(sonarProject, context, true);
+    JavaSquid squid = new JavaSquid(conf, null, measurer, mock(JavaResourceLocator.class), new CodeVisitor[0]);
     squid.scanDirectories(Collections.singleton(srcDir), Collections.singleton(binDir));
-
-    SourceCodeSearchEngine index = squid.getIndex();
-    project = (SourceProject) index.search(new QueryByType(SourceProject.class)).iterator().next();
-    files = index.search(new QueryByType(SourceFile.class));
   }
 

@@ -1,12 +1,14 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    JavaTree.CompilationUnitTreeImpl tree = (JavaTree.CompilationUnitTreeImpl) context.getTree();
-    currentPackage = tree.packageNameAsString().replace('.', '/');
-    currentResource = org.sonar.api.resources.File.fromIOFile(context.getFile(), project);
-    Preconditions.checkNotNull(currentResource, "resource not found : "+context.getFile().getName());
-    currentClassKey.clear();
-    parent.clear();
-    anonymousInnerClassCounter.clear();
-    scan(tree);
+    JavaFilesCache javaFilesCache = new JavaFilesCache();
+    javaFilesCache.scanFile(context);
+    for (Map.Entry<String, File> stringFileEntry : javaFilesCache.resourcesCache.entrySet()) {
+      org.sonar.api.resources.File currentResource = org.sonar.api.resources.File.fromIOFile(stringFileEntry.getValue(), project);
+      Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
+      resourcesCache.put(stringFileEntry.getKey(), currentResource);
+      if(context.getFileKey() != null) {
+        sourceFileCache.put(stringFileEntry.getKey(), context.getFileKey());
+      }
+    }
   }
 
