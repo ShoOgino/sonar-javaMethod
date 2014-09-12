@@ -1,0 +1,20 @@
+  public NewArrayTreeImpl newArrayInitializer(AstNode openBraceTokenAstNode, Optional<List<AstNode>> rests, AstNode closeBraceTokenAstNode) {
+    ImmutableList.Builder<ExpressionTree> initializers = ImmutableList.builder();
+    List<AstNode> children = Lists.newArrayList();
+
+    children.add(openBraceTokenAstNode);
+    if (rests.isPresent()) {
+      for (AstNode rest : rests.get()) {
+        initializers.add((ExpressionTree) rest.getFirstChild());
+        children.add(rest.getFirstChild());
+
+        if (rest.getNumberOfChildren() == 2) {
+          children.add(rest.getLastChild());
+        }
+      }
+    }
+    children.add(closeBraceTokenAstNode);
+
+    return new NewArrayTreeImpl(ImmutableList.<ExpressionTree>of(), initializers.build(), children);
+  }
+
