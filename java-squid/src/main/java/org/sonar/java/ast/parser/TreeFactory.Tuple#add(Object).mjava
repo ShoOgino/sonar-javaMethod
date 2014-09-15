@@ -1,0 +1,15 @@
+    private void add(Object o) {
+      if (o instanceof AstNode) {
+        addChild((AstNode) o);
+      } else if (o instanceof Optional) {
+        Optional opt = (Optional) o;
+        if (opt.isPresent()) {
+          Object o2 = opt.get();
+          Preconditions.checkArgument(o2 instanceof AstNode, "Unsupported optional type: " + o2.getClass().getSimpleName());
+          addChild((AstNode) o2);
+        }
+      } else {
+        throw new IllegalStateException("Unsupported argument type: " + o.getClass().getSimpleName());
+      }
+    }
+

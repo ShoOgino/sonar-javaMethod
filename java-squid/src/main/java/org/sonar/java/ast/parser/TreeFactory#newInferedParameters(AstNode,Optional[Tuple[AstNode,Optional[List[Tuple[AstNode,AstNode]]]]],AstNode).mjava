@@ -1,0 +1,33 @@
+  public LambdaParameterListTreeImpl newInferedParameters(
+    AstNode openParenTokenAstNode,
+    Optional<Tuple<AstNode, Optional<List<Tuple<AstNode, AstNode>>>>> identifiersOpt,
+    AstNode closeParenTokenAstNode) {
+
+    InternalSyntaxToken openParenToken = InternalSyntaxToken.create(openParenTokenAstNode);
+    InternalSyntaxToken closeParenToken = InternalSyntaxToken.create(closeParenTokenAstNode);
+
+    ImmutableList.Builder<VariableTreeImpl> params = ImmutableList.builder();
+
+    List<AstNode> children = Lists.newArrayList();
+
+    if (identifiersOpt.isPresent()) {
+      Tuple<AstNode, Optional<List<Tuple<AstNode, AstNode>>>> identifiers = identifiersOpt.get();
+
+      // TODO Non-legacy
+      params.add(new VariableTreeImpl(identifiers.first(), treeMaker.identifier(identifiers.first())));
+      children.add(identifiers.first());
+
+      if (identifiers.second().isPresent()) {
+        for (Tuple<AstNode, AstNode> identifier : identifiers.second().get()) {
+          // TODO Non-legacy
+          params.add(new VariableTreeImpl(identifier.second(), treeMaker.identifier(identifier.second())));
+
+          children.add(identifier.first());
+          children.add(identifier.second());
+        }
+      }
+    }
+
+    return new LambdaParameterListTreeImpl(openParenToken, params.build(), closeParenToken, children);
+  }
+
