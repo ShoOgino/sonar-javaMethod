@@ -1,0 +1,20 @@
+  private boolean isSuppressAllWarnings(AnnotationTree annotationTree) {
+    boolean suppressWarningsType = false;
+    Tree type = annotationTree.annotationType();
+    if (type.is(Tree.Kind.IDENTIFIER)) {
+      suppressWarningsType = ((IdentifierTree) type).name().equals("SuppressWarnings");
+    } else if (type.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) type;
+      suppressWarningsType = mset.identifier().equals("SuppressWarnings") &&
+          mset.expression().is(Tree.Kind.MEMBER_SELECT) && ((MemberSelectExpressionTree) mset.expression()).identifier().name().equals("lang");
+    }
+    if (suppressWarningsType) {
+      for (ExpressionTree expression : annotationTree.arguments()) {
+        if (expression.is(Tree.Kind.STRING_LITERAL) && "\"all\"".equals(((LiteralTree) expression).value())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

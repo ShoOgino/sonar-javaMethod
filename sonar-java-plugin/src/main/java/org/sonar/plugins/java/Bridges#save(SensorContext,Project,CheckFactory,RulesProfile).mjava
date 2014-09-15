@@ -1,4 +1,4 @@
-  public void save(SensorContext context, Project project, CheckFactory checkFactory, NoSonarFilter noSonarFilter, RulesProfile profile) {
+  public void save(SensorContext context, Project project, CheckFactory checkFactory, RulesProfile profile) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     ResourceIndex resourceIndex = new ResourceIndex(skipPackageDesignAnalysis).loadSquidResources(squid, context, project);
     List<Bridge> bridges = BridgeFactory.create(
@@ -8,7 +8,6 @@
         checkFactory,
         resourceIndex,
         squid,
-        noSonarFilter,
         profile);
     saveProject(resourceIndex, bridges);
     savePackages(resourceIndex, bridges);

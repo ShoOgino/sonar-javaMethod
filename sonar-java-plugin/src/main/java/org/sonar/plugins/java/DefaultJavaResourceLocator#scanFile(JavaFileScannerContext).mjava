@@ -2,14 +2,20 @@
   public void scanFile(JavaFileScannerContext context) {
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
+    org.sonar.api.resources.File currentResource = null;
     for (Map.Entry<String, File> stringFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      org.sonar.api.resources.File currentResource = org.sonar.api.resources.File.fromIOFile(stringFileEntry.getValue(), project);
-      Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
+      if(currentResource == null) {
+        currentResource = org.sonar.api.resources.File.fromIOFile(stringFileEntry.getValue(), project);
+        Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
+      }
       resourcesCache.put(stringFileEntry.getKey(), currentResource);
       if(context.getFileKey() != null) {
         sourceFileCache.put(stringFileEntry.getKey(), context.getFileKey());
       }
     }
+    Set<Integer> ignoredLines = Sets.newHashSet(context.getNoSonarLines());
+    ignoredLines.addAll(javaFilesCache.ignoredLines());
+    noSonarFilter.addResource(currentResource, ignoredLines);
     methodStartLines.putAll(javaFilesCache.getMethodStartLines());
   }
 
