@@ -1,17 +1,11 @@
   private MethodSignature scanTree() {
     String name = methodTree.simpleName().name();
+    Parameter returnTypeParam;
     if (methodTree.is(Tree.Kind.CONSTRUCTOR)) {
       name = "<init>";
-    }
-
-    Tree returnType = methodTree.returnType();
-    Parameter returnTypeParam;
-    if (returnType == null) {
-      //constructor
       returnTypeParam = new Parameter(JvmJavaType.V, false);
-    } else {
-      Tree type = returnType;
-      returnTypeParam = getParameter(type);
+    } else  {
+      returnTypeParam = getParameter(methodTree.returnType());
     }
 
     List<Parameter> argumentTypes = Lists.newArrayList();
