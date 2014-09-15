@@ -1,0 +1,18 @@
+  public VariableDeclaratorListTreeImpl newVariableDeclarators(VariableTreeImpl variable, Optional<List<Tuple<AstNode, VariableTreeImpl>>> rests) {
+    ImmutableList.Builder<VariableTreeImpl> variables = ImmutableList.builder();
+
+    variables.add(variable);
+    List<AstNode> children = Lists.newArrayList();
+    children.add(variable);
+
+    if (rests.isPresent()) {
+      for (Tuple<AstNode, VariableTreeImpl> rest : rests.get()) {
+        variables.add(rest.second());
+        children.add(rest.first());
+        children.add(rest.second());
+      }
+    }
+
+    return new VariableDeclaratorListTreeImpl(variables.build(), children);
+  }
+

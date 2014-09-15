@@ -2,7 +2,7 @@
     checkType(astNode, JavaGrammar.BLOCK_STATEMENT);
 
     AstNode statementNode = astNode.getFirstChild(
-      JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT,
+      JavaGrammar.VARIABLE_DECLARATORS,
       JavaGrammar.CLASS_DECLARATION,
       JavaGrammar.ENUM_DECLARATION);
     if (statementNode == null && astNode.getNumberOfChildren() == 1) {
@@ -12,11 +12,8 @@
 
     if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
       return ImmutableList.of((StatementTree) statementNode);
-    } else if (statementNode.is(JavaGrammar.LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
-      return variableDeclarators(
-        (ModifiersTreeImpl) statementNode.getFirstChild(JavaGrammar.MODIFIERS),
-        (ExpressionTree) statementNode.getFirstChild(TYPE_KINDS),
-        statementNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS));
+    } else if (statementNode.is(JavaGrammar.VARIABLE_DECLARATORS)) {
+      return (List<StatementTree>) statementNode;
     } else if (statementNode.is(JavaGrammar.CLASS_DECLARATION)) {
       return ImmutableList.<StatementTree>of(classDeclaration((ModifiersTree) astNode.getFirstChild(JavaGrammar.MODIFIERS), statementNode));
     } else if (statementNode.is(JavaGrammar.ENUM_DECLARATION)) {

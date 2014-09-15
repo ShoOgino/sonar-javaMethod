@@ -3,6 +3,14 @@
    */
   private List<StatementTree> fieldDeclaration(ModifiersTreeImpl modifiers, AstNode astNode) {
     checkType(astNode, JavaGrammar.FIELD_DECLARATION);
-    return variableDeclarators(modifiers, (ExpressionTree) astNode.getFirstChild(), astNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS));
+
+    Tree type = (Tree) astNode.getFirstChild();
+    VariableDeclaratorListTreeImpl variables = (VariableDeclaratorListTreeImpl) astNode.getFirstChild(JavaGrammar.VARIABLE_DECLARATORS);
+
+    for (VariableTreeImpl variable : variables) {
+      variable.completeModifiersAndType(modifiers, type);
+    }
+
+    return (List) variables;
   }
 

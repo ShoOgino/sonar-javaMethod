@@ -1,5 +1,9 @@
   @Override
   public void visitNode(AstNode statementNode) {
+    if (statementNode.is(JavaGrammar.VARIABLE_DECLARATORS) && !statementNode.hasParent(JavaGrammar.BLOCK_STATEMENT)) {
+      return;
+    }
+
     if (!isExcluded(statementNode)) {
       int lineStart = statementNode.getTokenLine();
       int lineEnd = statementNode.getLastToken().getLine();
