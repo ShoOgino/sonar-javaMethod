@@ -1,6 +1,8 @@
   @Override
   public void visitMethod(MethodTree tree) {
     parent.push(tree);
+    String methodKey = currentClassKey.peek() + "#" + MethodSignaturePrinter.print(MethodSignatureScanner.scan(tree));
+    methodStartLines.put(methodKey, ((JavaTree) tree.simpleName()).getLine());
     super.visitMethod(tree);
     parent.pop();
   }

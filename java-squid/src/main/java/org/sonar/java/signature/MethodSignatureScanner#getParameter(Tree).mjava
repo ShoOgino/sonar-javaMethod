@@ -1,0 +1,18 @@
+  private Parameter getParameter(Tree type) {
+    Parameter parameter;
+    boolean isArray = false;
+    if (type.is(Tree.Kind.ARRAY_TYPE)) {
+      isArray = true;
+      while (type.is(Tree.Kind.ARRAY_TYPE)) {
+        type = ((ArrayTypeTree) type).type();
+      }
+    }
+    JvmJavaType jvmType = jvmJavaTypeOf(type);
+    if (jvmType.equals(JvmJavaType.L)) {
+      parameter = new Parameter(getTypeName(type), isArray);
+    } else {
+      parameter = new Parameter(jvmType, isArray);
+    }
+    return parameter;
+  }
+
