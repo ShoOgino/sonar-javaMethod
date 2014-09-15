@@ -2,9 +2,9 @@
   public void visitMethod(AsmMethod asmMethod) {
     if (isPrivateUnused(asmMethod) && !isExcludedFromCheck(asmMethod)) {
       CheckMessage message = new CheckMessage(this, "Private method '" + asmMethod.getName() + "(...)' is never used.");
-      SourceMethod sourceMethod = getSourceMethod(asmMethod);
-      if (sourceMethod != null) {
-        message.setLine(sourceMethod.getStartAtLine());
+      int line = getMethodLineNumber(asmMethod);
+      if (line > 0) {
+        message.setLine(line);
       }
       SourceFile file = getSourceFile(asmClass);
       file.log(message);
