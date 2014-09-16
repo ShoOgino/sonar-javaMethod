@@ -1,10 +1,14 @@
   private ExpressionTree applySelector(ExpressionTree expression, AstNode selectorNode) {
     JavaTreeMaker.checkType(selectorNode, JavaGrammar.SELECTOR);
 
-    AstNodeType[] identifierTypes = new AstNodeType[] {JavaTokenType.IDENTIFIER, JavaKeyword.THIS, JavaKeyword.SUPER};
-    if (selectorNode.hasDirectChildren(identifierTypes)) {
-      InternalSyntaxToken identifierToken = InternalSyntaxToken.create(selectorNode.getFirstChild(identifierTypes));
+    AstNodeType[] identifierTypes = new AstNodeType[] {JavaTokenType.IDENTIFIER, JavaKeyword.THIS};
+    AstNode identifierAstNode = selectorNode.getFirstChild(identifierTypes);
+    if (identifierAstNode == null && selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
+      identifierAstNode = selectorNode.getFirstChild(JavaGrammar.SUPER_SUFFIX).getFirstChild(JavaKeyword.SUPER);
+    }
 
+    if (identifierAstNode != null) {
+      InternalSyntaxToken identifierToken = InternalSyntaxToken.create(identifierAstNode);
       IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
 
       ExpressionTree result = new MemberSelectExpressionTreeImpl(

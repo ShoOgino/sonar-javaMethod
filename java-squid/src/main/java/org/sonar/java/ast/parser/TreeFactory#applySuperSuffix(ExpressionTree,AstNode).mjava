@@ -2,6 +2,15 @@
     Preconditions.checkArgument(!((JavaTree) expression).isLegacy());
     JavaTreeMaker.checkType(superSuffixNode, JavaGrammar.SUPER_SUFFIX);
 
+    List<AstNode> children = Lists.newArrayList();
+    boolean first = true;
+    for (AstNode child : superSuffixNode.getChildren()) {
+      if (!first) {
+        children.add(child);
+      }
+      first = false;
+    }
+
     if (superSuffixNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
       // super(arguments)
       // super.method(arguments)
@@ -12,16 +21,20 @@
           expression, treeMaker.identifier(superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)),
           (AstNode) expression);
 
+        children.add(0, memberSelect);
+
         return new MethodInvocationTreeImpl(memberSelect, (ArgumentListTreeImpl) superSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS),
-          memberSelect, superSuffixNode);
+          children.toArray(new AstNode[0]));
       } else {
+        children.add(0, (AstNode) expression);
         return new MethodInvocationTreeImpl(expression, (ArgumentListTreeImpl) superSuffixNode.getFirstChild(JavaGrammar.ARGUMENTS),
-          (AstNode) expression, superSuffixNode);
+          children.toArray(new AstNode[0]));
       }
     } else {
       // super.field
+      children.add(0, (AstNode) expression);
       return new MemberSelectExpressionTreeImpl(expression, treeMaker.identifier(superSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)),
-        (AstNode) expression, superSuffixNode);
+        children.toArray(new AstNode[0]));
     }
   }
 

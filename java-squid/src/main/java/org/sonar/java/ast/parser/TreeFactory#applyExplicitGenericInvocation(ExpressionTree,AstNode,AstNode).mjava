@@ -6,10 +6,11 @@
 
     AstNode explicitGenericInvocationSuffixNode = astNode.getFirstChild(JavaGrammar.EXPLICIT_GENERIC_INVOCATION_SUFFIX);
     if (explicitGenericInvocationSuffixNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
-      IdentifierTreeImpl superIdentifier = new IdentifierTreeImpl(InternalSyntaxToken.create(explicitGenericInvocationSuffixNode.getFirstChild(JavaKeyword.SUPER)));
+      AstNode superSuffix = explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.SUPER_SUFFIX);
+      IdentifierTreeImpl superIdentifier = new IdentifierTreeImpl(InternalSyntaxToken.create(superSuffix.getFirstChild(JavaKeyword.SUPER)));
       expression = new MemberSelectExpressionTreeImpl(expression, superIdentifier,
         (AstNode) expression, dotToken, nonWildcardTypeArguments, superIdentifier);
-      return applySuperSuffix(expression, explicitGenericInvocationSuffixNode.getFirstChild(JavaGrammar.SUPER_SUFFIX));
+      return applySuperSuffix(expression, superSuffix);
     } else {
       IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(explicitGenericInvocationSuffixNode.getFirstChild(JavaTokenType.IDENTIFIER)));
 
