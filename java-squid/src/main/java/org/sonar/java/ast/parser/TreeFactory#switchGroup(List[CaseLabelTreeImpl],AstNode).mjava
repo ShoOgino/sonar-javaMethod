@@ -1,0 +1,11 @@
+  public CaseGroupTreeImpl switchGroup(List<CaseLabelTreeImpl> labels, AstNode blockStatementsAstNode) {
+    List<AstNode> blockStatements = blockStatementsAstNode.getChildren();
+
+    ImmutableList.Builder<StatementTree> builder = ImmutableList.builder();
+    for (AstNode blockStatement : blockStatements) {
+      builder.addAll(treeMaker.blockStatement(blockStatement));
+    }
+
+    return new CaseGroupTreeImpl(labels, builder.build(), blockStatementsAstNode);
+  }
+
