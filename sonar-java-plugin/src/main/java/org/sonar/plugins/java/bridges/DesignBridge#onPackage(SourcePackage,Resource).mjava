@@ -5,7 +5,7 @@
 
       saveFileDependencies(squidFiles);
 
-      IncrementalCyclesAndFESSolver<SourceCode> cycleDetector = new IncrementalCyclesAndFESSolver<SourceCode>(squid, squidFiles);
+      IncrementalCyclesAndFESSolver<SourceCode> cycleDetector = new IncrementalCyclesAndFESSolver<SourceCode>(graph, squidFiles);
       Set<Cycle> cycles = cycleDetector.getCycles();
 
       MinimumFeedbackEdgeSetSolver solver = new MinimumFeedbackEdgeSetSolver(cycles);
@@ -17,7 +17,7 @@
       savePositiveMeasure(sonarPackage, CoreMetrics.FILE_TANGLES, tangles);
       savePositiveMeasure(sonarPackage, CoreMetrics.FILE_EDGES_WEIGHT, getEdgesWeight(squidFiles));
 
-      String dsmJson = serializeDsm(squid, squidFiles, feedbackEdges);
+      String dsmJson = serializeDsm(graph, squidFiles, feedbackEdges);
       context.saveMeasure(sonarPackage, new Measure(CoreMetrics.DEPENDENCY_MATRIX, dsmJson));
     }
   }

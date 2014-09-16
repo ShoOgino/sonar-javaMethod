@@ -1,5 +1,6 @@
   @Override
   public void onProject(SourceProject squidProject, Project sonarProject) {
+    graph = squid.getGraph();
     Set<SourceCode> squidPackages = squidProject.getChildren();
     if (squidPackages != null) {
       squidPackages = Sets.filter(squidPackages, new Predicate<SourceCode>() {
@@ -16,7 +17,7 @@
 
       savePackageDependencies(squidPackages);
 
-      IncrementalCyclesAndFESSolver<SourceCode> cyclesAndFESSolver = new IncrementalCyclesAndFESSolver<SourceCode>(squid, squidPackages);
+      IncrementalCyclesAndFESSolver<SourceCode> cyclesAndFESSolver = new IncrementalCyclesAndFESSolver<SourceCode>(graph, squidPackages);
       LOG.debug("{} cycles", cyclesAndFESSolver.getCycles().size());
 
       Set<Edge> feedbackEdges = cyclesAndFESSolver.getFeedbackEdgeSet();
@@ -29,7 +30,7 @@
       savePositiveMeasure(sonarProject, CoreMetrics.PACKAGE_TANGLES, tangles);
       savePositiveMeasure(sonarProject, CoreMetrics.PACKAGE_EDGES_WEIGHT, getEdgesWeight(squidPackages));
 
-      String dsmJson = serializeDsm(squid, squidPackages, feedbackEdges);
+      String dsmJson = serializeDsm(graph, squidPackages, feedbackEdges);
       Measure dsmMeasure = new Measure(CoreMetrics.DEPENDENCY_MATRIX, dsmJson).setPersistenceMode(PersistenceMode.DATABASE);
       context.saveMeasure(sonarProject, dsmMeasure);
 
