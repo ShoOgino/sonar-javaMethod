@@ -14,9 +14,13 @@
             (AstNode) qualifiedIdentifier, identifierSuffixNode);
         } else {
           // id[expression]
+          // TODO Replace by DIM_EXPR aka ARRAY_ACCESS_EXPRESSION()
+          InternalSyntaxToken openBracketToken = InternalSyntaxToken.create(identifierSuffixNode.getFirstChild(JavaPunctuator.LBRK));
+          InternalSyntaxToken closeBracketToken = InternalSyntaxToken.create(identifierSuffixNode.getFirstChild(JavaPunctuator.RBRK));
+
           return new ArrayAccessExpressionTreeImpl(
-            qualifiedIdentifier, (ExpressionTree) identifierSuffixNode.getChild(identifierSuffixNode.getNumberOfChildren() - 2),
-            (AstNode) qualifiedIdentifier, identifierSuffixNode);
+            qualifiedIdentifier,
+            openBracketToken, (ExpressionTree) identifierSuffixNode.getChild(identifierSuffixNode.getNumberOfChildren() - 2), closeBracketToken);
         }
       } else if (identifierSuffixNode.getFirstChild().is(JavaGrammar.ARGUMENTS)) {
         // id(arguments)

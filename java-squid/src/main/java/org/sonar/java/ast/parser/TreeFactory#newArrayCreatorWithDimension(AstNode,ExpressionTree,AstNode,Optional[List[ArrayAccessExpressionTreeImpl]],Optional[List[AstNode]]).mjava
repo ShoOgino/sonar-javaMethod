@@ -1,12 +1,12 @@
   public NewArrayTreeImpl newArrayCreatorWithDimension(AstNode openBracketToken, ExpressionTree expression, AstNode closeBracketToken,
-    Optional<List<AstNode>> dimExpressions,
+    Optional<List<ArrayAccessExpressionTreeImpl>> arrayAccesses,
     Optional<List<AstNode>> dims) {
 
     ImmutableList.Builder<ExpressionTree> dimensions = ImmutableList.builder();
     dimensions.add(expression);
-    if (dimExpressions.isPresent()) {
-      for (AstNode dimExpr : dimExpressions.get()) {
-        dimensions.add((ExpressionTree) dimExpr.getChild(dimExpr.getNumberOfChildren() - 2));
+    if (arrayAccesses.isPresent()) {
+      for (ArrayAccessExpressionTreeImpl arrayAccess : arrayAccesses.get()) {
+        dimensions.add(arrayAccess.index());
       }
     }
 
@@ -14,8 +14,8 @@
     children.add(openBracketToken);
     children.add((AstNode) expression);
     children.add(closeBracketToken);
-    if (dimExpressions.isPresent()) {
-      children.addAll(dimExpressions.get());
+    if (arrayAccesses.isPresent()) {
+      children.addAll(arrayAccesses.get());
     }
     if (dims.isPresent()) {
       children.addAll(dims.get());
