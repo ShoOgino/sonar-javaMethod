@@ -1,0 +1,17 @@
+  public ExpressionTree newPostfixExpression(ExpressionTree primary, Optional<List<AstNode>> selectors, Optional<AstNode> postfixOperatorAstNode) {
+    ExpressionTree result = primary;
+
+    if (selectors.isPresent()) {
+      for (AstNode selector : selectors.get()) {
+        result = applySelector(result, selector);
+      }
+    }
+
+    if (postfixOperatorAstNode.isPresent()) {
+      InternalSyntaxToken postfixOperatorToken = InternalSyntaxToken.create(postfixOperatorAstNode.get());
+      result = new InternalPostfixUnaryExpression(kindMaps.getPostfixOperator((JavaPunctuator) postfixOperatorAstNode.get().getType()), result, postfixOperatorToken);
+    }
+
+    return result;
+  }
+
