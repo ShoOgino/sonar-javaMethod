@@ -1,4 +1,4 @@
-  public void save(SensorContext context, Project project, CheckFactory checkFactory, RulesProfile profile) {
+  public void save(SensorContext context, Project project, CheckFactory checkFactory, RulesProfile profile, DSMMapping DSMMapping) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     ResourceIndex resourceIndex = new ResourceIndex(skipPackageDesignAnalysis).loadSquidResources(squid, context, project);
     List<Bridge> bridges = BridgeFactory.create(
@@ -8,7 +8,8 @@
         checkFactory,
         resourceIndex,
         squid,
-        profile);
+        profile,
+        DSMMapping);
     saveProject(resourceIndex, bridges);
     savePackages(resourceIndex, bridges);
     saveFiles(resourceIndex, bridges);

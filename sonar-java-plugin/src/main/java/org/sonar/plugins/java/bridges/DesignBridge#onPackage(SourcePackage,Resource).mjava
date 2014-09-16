@@ -1,11 +1,9 @@
   @Override
   public void onPackage(SourcePackage squidPackage, Resource sonarPackage) {
-    Set<SourceCode> squidFiles = squidPackage.getChildren();
+    Collection<Resource> squidFiles = DSMMapping.files((Directory) sonarPackage);
     if (squidFiles != null && !squidFiles.isEmpty()) {
 
-      saveFileDependencies(squidFiles);
-
-      IncrementalCyclesAndFESSolver<SourceCode> cycleDetector = new IncrementalCyclesAndFESSolver<SourceCode>(graph, squidFiles);
+      IncrementalCyclesAndFESSolver<Resource> cycleDetector = new IncrementalCyclesAndFESSolver<Resource>(graph, squidFiles);
       Set<Cycle> cycles = cycleDetector.getCycles();
 
       MinimumFeedbackEdgeSetSolver solver = new MinimumFeedbackEdgeSetSolver(cycles);

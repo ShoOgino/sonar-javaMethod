@@ -1,0 +1,19 @@
+  @Test
+  public void test() throws Exception {
+    Project project = mock(Project.class);
+    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
+    File baseDir = new File("src/test/java");
+    when(project.getFileSystem()).thenReturn(pfs);
+    when(pfs.getBasedir()).thenReturn(baseDir);
+    DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(project, null, mock(NoSonarFilter.class));
+    JavaAstScanner.scanSingleFile(new File("src/test/java/org/sonar/java/DefaultJavaResourceLocatorTest.java"), new VisitorsBridge(javaResourceLocator));
+
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).hasSize(5);
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).contains("org/sonar/java/DefaultJavaResourceLocatorTest");
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).contains("org/sonar/java/DefaultJavaResourceLocatorTest$A");
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).contains("org/sonar/java/DefaultJavaResourceLocatorTest$A$I");
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).contains("org/sonar/java/DefaultJavaResourceLocatorTest$A$1B");
+    assertThat(javaResourceLocator.resourcesByClass.keySet()).contains("org/sonar/java/DefaultJavaResourceLocatorTest$A$1B$1");
+
+  }
+

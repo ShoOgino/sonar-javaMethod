@@ -3,14 +3,15 @@
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
     org.sonar.api.resources.File currentResource = null;
-    for (Map.Entry<String, File> stringFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      if(currentResource == null) {
-        currentResource = org.sonar.api.resources.File.fromIOFile(stringFileEntry.getValue(), project);
+    for (Map.Entry<String, File> classIOFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
+      if (currentResource == null) {
+        currentResource = org.sonar.api.resources.File.fromIOFile(classIOFileEntry.getValue(), project);
         Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
+        DSMMapping.addResource(currentResource);
       }
-      resourcesCache.put(stringFileEntry.getKey(), currentResource);
-      if(context.getFileKey() != null) {
-        sourceFileCache.put(stringFileEntry.getKey(), context.getFileKey());
+      resourcesByClass.put(classIOFileEntry.getKey(), currentResource);
+      if (context.getFileKey() != null) {
+        sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
       }
     }
     Set<Integer> ignoredLines = Sets.newHashSet(context.getNoSonarLines());

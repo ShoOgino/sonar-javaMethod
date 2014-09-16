@@ -1,61 +1,29 @@
   @BeforeClass
   public static void setup() {
     JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
-    JavaResourceLocator javaResourceLocator = new JavaResourceLocator() {
-      public Map<String, String> sourceFileCache = Maps.newHashMap();
-      @Override
-      public Resource findResourceByClassName(String className) {
-        return null;
-      }
-
-      @Override
-      public String findSourceFileKeyByClassName(String className) {
-        String name = className.replace('.', '/');
-        return sourceFileCache.get(name);
-      }
-
-      @Override
-      public Collection<String> classKeys() {
-        return sourceFileCache.keySet();
-      }
-
-      @Override
-      public Collection<File> classFilesToAnalyze() {
-        return Collections.emptyList();
-      }
-
-      @Override
-      public Integer getMethodStartLine(String fullyQualifiedMethodName) {
-        return null;
-      }
-
-      @Override
-      public void scanFile(JavaFileScannerContext context) {
-        JavaFilesCache javaFilesCache = new JavaFilesCache();
-        javaFilesCache.scanFile(context);
-        for (String key : javaFilesCache.getResourcesCache().keySet()){
-          sourceFileCache.put(key, context.getFileKey());
-        }
-      }
-    };
+    Project project = mock(Project.class);
+    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
+    File baseDir = new File("src/test/files/bytecode/src");
+    when(project.getFileSystem()).thenReturn(pfs);
+    when(pfs.getBasedir()).thenReturn(baseDir);
+    DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(project, null, mock(NoSonarFilter.class));
     JavaSquid squid = new JavaSquid(conf, javaResourceLocator);
     squid.scanDirectories(
         Collections.singleton(new File("src/test/files/bytecode/src")),
         Collections.singleton(new File("src/test/files/bytecode/bin")));
-    index = squid.getIndex();
     graph = squid.getGraph();
-
-    tag = index.search("tags/Tag.java");
-    tagFile = index.search("tags/Tag.java");
-    file = index.search("tags/File.java");
-    line = index.search("tags/Line.java");
-    tagName = index.search("tags/TagName.java");
-    tagException = index.search("tags/TagException.java");
-    language = index.search("tags/Language.java");
-    sourceFile = index.search("tags/SourceFile.java");
-    todo = index.search("tags/impl/Todo.java");
-    fixme = index.search("tags/impl/FixMe.java");
-    pacTag = index.search("tags");
-    pacImpl = index.search("tags/impl");
+    dsmMapping = javaResourceLocator.getDSMMapping();
+    tag = findResource("tags/Tag.java");
+    tagFile = findResource("tags/Tag.java");
+    file = findResource("tags/File.java");
+    line = findResource("tags/Line.java");
+    tagName = findResource("tags/TagName.java");
+    tagException = findResource("tags/TagException.java");
+    language = findResource("tags/Language.java");
+    sourceFile = findResource("tags/SourceFile.java");
+    todo = findResource("tags/impl/Todo.java");
+    fixme = findResource("tags/impl/FixMe.java");
+    pacTag = findResource("tags");
+    pacImpl = findResource("tags/impl");
   }
 

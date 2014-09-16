@@ -1,0 +1,19 @@
+  private Dependency createDependency(@Nullable Resource from, @Nullable Resource to, @Nullable Dependency subDependency) {
+    Dependency dependency = null;
+    if (canWeLinkNodes(from, to)) {
+      dependency = graph.getEdge(from, to);
+      if (dependency == null) {
+        dependency = new Dependency(from, to).setUsage("USES");
+        graph.addEdge(dependency);
+      }
+      if (subDependency != null) {
+        if (!dsmMapping.getSubDependencies(dependency).contains(subDependency)) {
+          dsmMapping.addSubDependency(dependency, subDependency);
+          dependency.setWeight(dependency.getWeight() + 1);
+          subDependency.setParent(dependency);
+        }
+      }
+    }
+    return dependency;
+  }
+

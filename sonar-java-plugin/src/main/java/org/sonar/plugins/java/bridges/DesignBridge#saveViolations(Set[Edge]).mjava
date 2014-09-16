@@ -5,19 +5,13 @@
       return;
     }
     for (Edge feedbackEdge : feedbackEdges) {
-      SourceCode fromPackage = (SourcePackage) feedbackEdge.getFrom();
-      SourceCode toPackage = (SourcePackage) feedbackEdge.getTo();
-      SourceCodeEdge edge = graph.getEdge(fromPackage, toPackage);
-      for (SourceCodeEdge subEdge : edge.getRootEdges()) {
-        Resource fromFile = resourceIndex.get(subEdge.getFrom());
-        Resource toFile = resourceIndex.get(subEdge.getTo());
-        // If resource cannot be obtained, then silently ignore, because anyway warning will be printed by method saveEdge
-        if ((fromFile != null) && (toFile != null)) {
-          Violation violation = Violation.create(rule, fromFile)
-              .setMessage("Remove the dependency on the source file \"" + toFile.getLongName() + "\" to break a package cycle.")
-              .setCost((double) subEdge.getWeight());
-          context.saveViolation(violation);
-        }
+      for (Dependency subDependency : DSMMapping.getSubDependencies((Dependency) feedbackEdge)) {
+        Resource fromFile = subDependency.getFrom();
+        Resource toFile = subDependency.getTo();
+        Violation violation = Violation.create(rule, fromFile)
+            .setMessage("Remove the dependency on the source file \"" + toFile.getLongName() + "\" to break a package cycle.")
+            .setCost((double) subDependency.getWeight());
+        context.saveViolation(violation);
       }
     }
   }
