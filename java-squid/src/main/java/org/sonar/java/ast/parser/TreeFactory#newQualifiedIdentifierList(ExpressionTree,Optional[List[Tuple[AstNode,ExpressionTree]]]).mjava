@@ -1,0 +1,18 @@
+  public QualifiedIdentifierListTreeImpl newQualifiedIdentifierList(ExpressionTree qualifiedIdentifier, Optional<List<Tuple<AstNode, ExpressionTree>>> rests) {
+    ImmutableList.Builder<ExpressionTree> qualifiedIdentifiers = ImmutableList.builder();
+    List<AstNode> children = Lists.newArrayList();
+
+    qualifiedIdentifiers.add(qualifiedIdentifier);
+    children.add((AstNode) qualifiedIdentifier);
+
+    if (rests.isPresent()) {
+      for (Tuple<AstNode, ExpressionTree> rest : rests.get()) {
+        qualifiedIdentifiers.add(rest.second());
+        children.add(rest.first());
+        children.add((AstNode) rest.second());
+      }
+    }
+
+    return new QualifiedIdentifierListTreeImpl(qualifiedIdentifiers.build(), children);
+  }
+

@@ -18,7 +18,7 @@
     if (astNode.hasDirectChildren(JavaGrammar.METHOD_BODY)) {
       body = (BlockTree) astNode.getFirstChild(JavaGrammar.METHOD_BODY).getFirstChild(Kind.BLOCK);
     }
-    AstNode throwsClauseNode = astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER_LIST);
+    QualifiedIdentifierListTreeImpl throwsClauseNode = (QualifiedIdentifierListTreeImpl) astNode.getFirstChild(JavaGrammar.QUALIFIED_IDENTIFIER_LIST);
     return new MethodTreeImpl(
       astNode,
       modifiers,
@@ -27,7 +27,7 @@
       identifier(name),
       (List) astNode.getFirstChild(JavaGrammar.FORMAL_PARAMETERS),
       body,
-      throwsClauseNode != null ? qualifiedIdentifierList(throwsClauseNode) : ImmutableList.<ExpressionTree>of(),
+      throwsClauseNode != null ? throwsClauseNode : ImmutableList.<ExpressionTree>of(),
       null);
   }
 
