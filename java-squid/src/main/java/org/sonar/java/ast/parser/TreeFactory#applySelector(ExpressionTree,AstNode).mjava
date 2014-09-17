@@ -3,8 +3,8 @@
 
     AstNode identifierAstNode = selectorNode.getFirstChild(JavaKeyword.THIS);
     AstNode node = selectorNode;
-    if (identifierAstNode == null && selectorNode.hasDirectChildren(JavaGrammar.METHOD_INVOCATION, JavaGrammar.MEMBER_SELECT)) {
-      node = selectorNode.getFirstChild(JavaGrammar.METHOD_INVOCATION, JavaGrammar.MEMBER_SELECT);
+    if (identifierAstNode == null && selectorNode.hasDirectChildren(JavaGrammar.MEMBER_SELECT_OR_METHOD_INVOCATION)) {
+      node = selectorNode.getFirstChild(JavaGrammar.MEMBER_SELECT_OR_METHOD_INVOCATION);
       identifierAstNode = node.getFirstChild(JavaTokenType.IDENTIFIER);
     } else if (selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
       identifierAstNode = selectorNode.getFirstChild(JavaGrammar.SUPER_SUFFIX).getFirstChild(JavaKeyword.SUPER);
@@ -25,8 +25,8 @@
       ExpressionTree result = new MemberSelectExpressionTreeImpl(expression, identifier,
         children.toArray(new AstNode[0]));
 
-      if (selectorNode.hasDirectChildren(JavaGrammar.METHOD_INVOCATION)) {
-        ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) selectorNode.getFirstChild(JavaGrammar.METHOD_INVOCATION).getFirstChild(JavaGrammar.ARGUMENTS);
+      if (node.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+        ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) node.getFirstChild(JavaGrammar.ARGUMENTS);
         result = new MethodInvocationTreeImpl(result, arguments,
           (AstNode) result, arguments);
       } else if (selectorNode.hasDirectChildren(JavaGrammar.SUPER_SUFFIX)) {
