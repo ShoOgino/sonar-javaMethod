@@ -1,6 +1,6 @@
   @Override
-  public void onProject(SourceProject squidProject, Project sonarProject) {
-    Collection<Resource> directories = DSMMapping.directories();
+  public void onProject(Project sonarProject) {
+    Collection<Resource> directories = dsmMapping.directories();
     TimeProfiler profiler = new TimeProfiler(LOG).start("Package design analysis");
     LOG.debug("{} packages to analyze", directories.size());
 
@@ -23,5 +23,9 @@
     context.saveMeasure(sonarProject, dsmMeasure);
 
     profiler.stop();
+
+    for (Resource sonarPackage : directories) {
+      onPackage(sonarPackage);
+    }
   }
 
