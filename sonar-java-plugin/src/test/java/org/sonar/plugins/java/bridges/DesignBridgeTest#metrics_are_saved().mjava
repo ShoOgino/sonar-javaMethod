@@ -1,0 +1,12 @@
+  @Test
+  public void metrics_are_saved() throws Exception {
+    SensorContext context = mock(SensorContext.class);
+    DirectedGraph<Resource, Dependency> graph = mock(DirectedGraph.class);
+    DSMMapping dsmMapping = mock(DSMMapping.class);
+    AnnotationCheckFactory checkFactory = AnnotationCheckFactory.create(RulesProfile.create(), "repo", Lists.newArrayList());
+    DesignBridge bridge = new DesignBridge(context, graph, dsmMapping, checkFactory);
+    bridge.saveDesign(mock(Project.class));
+    verify(context, times(4)).saveMeasure(any(Resource.class), any(Metric.class), anyDouble());
+
+  }
+
