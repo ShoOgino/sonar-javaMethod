@@ -69,6 +69,19 @@
         children.toArray(new AstNode[children.size()]));
     } else if (selectorNode.hasDirectChildren(Kind.ARRAY_ACCESS_EXPRESSION)) {
       return ((ArrayAccessExpressionTreeImpl) selectorNode.getFirstChild(Kind.ARRAY_ACCESS_EXPRESSION)).complete(expression);
+    } else if (selectorNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+      // id(arguments)
+      return new MethodInvocationTreeImpl(
+        expression, (ArgumentListTreeImpl) selectorNode.getFirstChild(JavaGrammar.ARGUMENTS),
+        (AstNode) expression, selectorNode);
+    } else if (selectorNode.hasDirectChildren(JavaKeyword.CLASS)) {
+      // 15.8.2. Class Literals
+      // id.class
+      // id[].class
+      return new MemberSelectExpressionTreeImpl(
+        treeMaker.applyDim(expression, selectorNode.getChildren(JavaGrammar.DIM).size()),
+        treeMaker.identifier(selectorNode.getFirstChild(JavaKeyword.CLASS)),
+        (AstNode) expression, selectorNode);
     } else {
       throw new IllegalStateException(AstXmlPrinter.print(selectorNode));
     }
