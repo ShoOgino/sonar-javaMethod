@@ -2,13 +2,10 @@
   public void scanFile(JavaFileScannerContext context) {
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
-    org.sonar.api.resources.File currentResource = null;
+    org.sonar.api.resources.File currentResource = org.sonar.api.resources.File.fromIOFile(context.getFile(), project);
+    Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
+    resourceMapping.addResource(currentResource, context.getFileKey());
     for (Map.Entry<String, File> classIOFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      if (currentResource == null) {
-        currentResource = org.sonar.api.resources.File.fromIOFile(classIOFileEntry.getValue(), project);
-        Preconditions.checkNotNull(currentResource, "resource not found : " + context.getFile().getName());
-        dsmMapping.addResource(currentResource);
-      }
       resourcesByClass.put(classIOFileEntry.getKey(), currentResource);
       if (context.getFileKey() != null) {
         sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
