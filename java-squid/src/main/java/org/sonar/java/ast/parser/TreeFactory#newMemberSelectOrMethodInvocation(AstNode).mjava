@@ -1,0 +1,22 @@
+  public ExpressionTree newMemberSelectOrMethodInvocation(AstNode astNode) {
+    Preconditions.checkArgument(astNode.is(JavaGrammar.MEMBER_SELECT_OR_METHOD_INVOCATION));
+    AstNode identifierAstNode = astNode.getFirstChild(JavaTokenType.IDENTIFIER, JavaKeyword.THIS, JavaKeyword.SUPER);
+    InternalSyntaxToken identifierToken = InternalSyntaxToken.create(identifierAstNode);
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+
+    if (astNode.hasDirectChildren(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
+      identifier.prependChildren(astNode.getFirstChild(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS));
+    }
+
+    ExpressionTree result;
+    if (astNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
+      ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) astNode.getFirstChild(JavaGrammar.ARGUMENTS);
+      result = new MethodInvocationTreeImpl(identifier, arguments,
+        identifier, arguments);
+    } else {
+      result = identifier;
+    }
+
+    return result;
+  }
+
