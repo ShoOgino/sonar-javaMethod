@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!alreadyReported.contains(tree)) {
+      alreadyReported.add(tree);
+      ModifierTree badlyOrderedModifier = getFirstBadlyOrdered((ModifiersTree) tree);
+      if (badlyOrderedModifier != null) {
+        addIssue(badlyOrderedModifier, "Reorder the modifiers to comply with the Java Language Specification.");
+      }
+    }
+  }
+
