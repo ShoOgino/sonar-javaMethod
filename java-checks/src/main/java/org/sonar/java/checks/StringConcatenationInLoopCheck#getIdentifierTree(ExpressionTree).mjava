@@ -1,0 +1,14 @@
+  private IdentifierTree getIdentifierTree(ExpressionTree tree) {
+    IdentifierTree idTree;
+    if(tree.is(Tree.Kind.MEMBER_SELECT)) {
+      idTree = getIdentifierTree(((MemberSelectExpressionTree) tree).expression());
+    } else if(tree.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)){
+      idTree = getIdentifierTree(((ArrayAccessExpressionTree)tree).expression());
+    } else if(tree.is(Tree.Kind.METHOD_INVOCATION)){
+      idTree = getIdentifierTree(((MethodInvocationTree) tree).methodSelect());
+    } else {
+      idTree = (IdentifierTree)tree;
+    }
+    return idTree;
+  }
+
