@@ -1,8 +1,8 @@
   public ModifiersTreeImpl(List<ModifierTree> javaTrees) {
-    super(JavaGrammar.MODIFIERS);
+    super(JavaGrammar.MODIFIERS, javaTrees, ImmutableList.<AstNode>of());
     ImmutableList.Builder<Modifier> modifiers = ImmutableList.builder();
     ImmutableList.Builder<AnnotationTree> annotations = ImmutableList.builder();
-    for (ModifierTree modifierTree : javaTrees) {
+    for (ModifierTree modifierTree : this) {
       if (modifierTree.is(Kind.ANNOTATION)) {
         annotations.add((AnnotationTree) modifierTree);
       } else {
@@ -12,7 +12,6 @@
       addChild((AstNode) modifierTree);
     }
     this.annotations = annotations.build();
-    this.modifierTrees = javaTrees;
     this.modifiers = modifiers.build();
   }
 
