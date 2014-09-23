@@ -23,13 +23,21 @@
 
       return result;
     } else if (selectorNode.hasDirectChildren(JavaKeyword.NEW)) {
-      AstNode innerCreatorNode = selectorNode.getFirstChild(JavaGrammar.INNER_CREATOR);
-      IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(innerCreatorNode.getFirstChild(JavaTokenType.IDENTIFIER)));
-      if (innerCreatorNode.hasDirectChildren(Kind.ANNOTATION)) {
-        identifier.prependChildren(innerCreatorNode.getChildren(Kind.ANNOTATION));
+      ExpressionTree identifier = null;
+      for (AstNode child : selectorNode.getChildren()) {
+        if (child instanceof ExpressionTree) {
+          identifier = (ExpressionTree) child;
+        }
+      }
+      Preconditions.checkState(identifier != null);
+
+      TypeArgumentListTreeImpl typeArguments = (TypeArgumentListTreeImpl) selectorNode.getFirstChild(JavaGrammar.TYPE_ARGUMENTS);
+      if (typeArguments != null) {
+        // TODO Parameterized expression
+        ((JavaTree) identifier).prependChildren(typeArguments);
       }
 
-      AstNode classCreatorRestNode = innerCreatorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST);
+      AstNode classCreatorRestNode = selectorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST);
       ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS);
 
       ClassTree classBody = null;
@@ -45,10 +53,7 @@
       children.add((AstNode) expression);
       children.add(selectorNode.getFirstChild(JavaPunctuator.DOT));
       children.add(selectorNode.getFirstChild(JavaKeyword.NEW));
-      if (selectorNode.hasDirectChildren(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS)) {
-        children.add(selectorNode.getFirstChild(JavaGrammar.NON_WILDCARD_TYPE_ARGUMENTS));
-      }
-      children.add(identifier);
+      children.add((AstNode) identifier);
       children.add(classCreatorRestNode);
 
       return new NewClassTreeImpl(

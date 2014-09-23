@@ -1,10 +1,12 @@
   public TypeArgumentListTreeImpl TYPE_ARGUMENTS() {
     return b.<TypeArgumentListTreeImpl>nonterminal(JavaGrammar.TYPE_ARGUMENTS)
       .is(
-        f.newTypeArgumentList(
-          b.invokeRule(JavaPunctuator.LPOINT),
-          TYPE_ARGUMENT(),
-          b.zeroOrMore(f.newWrapperAstNode4(b.invokeRule(JavaPunctuator.COMMA), (AstNode) TYPE_ARGUMENT())),
-          b.invokeRule(JavaPunctuator.RPOINT)));
+        b.firstOf(
+          f.newTypeArgumentList(
+            b.invokeRule(JavaPunctuator.LPOINT),
+            TYPE_ARGUMENT(),
+            b.zeroOrMore(f.newWrapperAstNode4(b.invokeRule(JavaPunctuator.COMMA), (AstNode) TYPE_ARGUMENT())),
+            b.invokeRule(JavaPunctuator.RPOINT)),
+          f.newDiamondTypeArgument(b.invokeRule(JavaPunctuator.LPOINT), b.invokeRule(JavaPunctuator.RPOINT))));
   }
 
