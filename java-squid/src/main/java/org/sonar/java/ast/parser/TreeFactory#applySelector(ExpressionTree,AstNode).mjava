@@ -24,9 +24,11 @@
       return result;
     } else if (selectorNode.hasDirectChildren(JavaKeyword.NEW)) {
       ExpressionTree identifier = null;
+
       for (AstNode child : selectorNode.getChildren()) {
         if (child instanceof ExpressionTree) {
           identifier = (ExpressionTree) child;
+          break;
         }
       }
       Preconditions.checkState(identifier != null);
@@ -37,28 +39,18 @@
         ((JavaTree) identifier).prependChildren(typeArguments);
       }
 
-      AstNode classCreatorRestNode = selectorNode.getFirstChild(JavaGrammar.CLASS_CREATOR_REST);
-      ArgumentListTreeImpl arguments = (ArgumentListTreeImpl) classCreatorRestNode.getFirstChild(JavaGrammar.ARGUMENTS);
-
-      ClassTree classBody = null;
-      if (classCreatorRestNode.hasDirectChildren(JavaGrammar.CLASS_BODY)) {
-        classBody = new ClassTreeImpl(
-          classCreatorRestNode,
-          Tree.Kind.CLASS,
-          ModifiersTreeImpl.EMPTY,
-          treeMaker.classBody(classCreatorRestNode.getFirstChild(JavaGrammar.CLASS_BODY)));
-      }
+      NewClassTreeImpl newClass = (NewClassTreeImpl) selectorNode.getFirstChild(Kind.NEW_CLASS);
 
       List<AstNode> children = Lists.newArrayList();
       children.add((AstNode) expression);
       children.add(selectorNode.getFirstChild(JavaPunctuator.DOT));
       children.add(selectorNode.getFirstChild(JavaKeyword.NEW));
       children.add((AstNode) identifier);
-      children.add(classCreatorRestNode);
 
-      return new NewClassTreeImpl(
-        expression, identifier, arguments, classBody,
-        children.toArray(new AstNode[children.size()]));
+      newClass.completeWithEnclosingExpression(expression).completeWithIdentifier(identifier);
+      newClass.prependChildren(children);
+
+      return newClass;
     } else if (selectorNode.hasDirectChildren(Kind.ARRAY_ACCESS_EXPRESSION)) {
       return ((ArrayAccessExpressionTreeImpl) selectorNode.getFirstChild(Kind.ARRAY_ACCESS_EXPRESSION)).complete(expression);
     } else if (selectorNode.hasDirectChildren(JavaGrammar.ARGUMENTS)) {
@@ -71,7 +63,7 @@
       // id.class
       // id[].class
       return new MemberSelectExpressionTreeImpl(
-        treeMaker.applyDim(expression, selectorNode.getChildren(JavaGrammar.DIM).size()),
+        treeMaker.applyDim(expression, selectorNode.getChildren(TreeFactory.WRAPPER_AST_NODE).size()),
         treeMaker.identifier(selectorNode.getFirstChild(JavaKeyword.CLASS)),
         (AstNode) expression, selectorNode);
     } else {

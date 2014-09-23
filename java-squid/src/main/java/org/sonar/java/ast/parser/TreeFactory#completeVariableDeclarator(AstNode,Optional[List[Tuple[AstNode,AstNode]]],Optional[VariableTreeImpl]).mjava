@@ -1,0 +1,23 @@
+  public VariableTreeImpl completeVariableDeclarator(AstNode identifierAstNode, Optional<List<Tuple<AstNode, AstNode>>> dimensions, Optional<VariableTreeImpl> partial) {
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+
+    List<AstNode> children = Lists.newArrayList();
+    if (dimensions.isPresent()) {
+      for (Tuple<AstNode, AstNode> dimension : dimensions.get()) {
+        children.add(dimension.first());
+        children.add(dimension.second());
+      }
+    }
+
+    if (partial.isPresent()) {
+      children.add(0, identifier);
+      partial.get().prependChildren(children);
+
+      return partial.get().completeIdentifierAndDims(identifier, dimensions.isPresent() ? dimensions.get().size() : 0);
+    } else {
+      return new VariableTreeImpl(
+        identifier, dimensions.isPresent() ? dimensions.get().size() : 0,
+        children);
+    }
+  }
+
