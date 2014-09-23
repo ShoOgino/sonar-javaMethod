@@ -5,13 +5,13 @@
     Files.copy(TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest2/org/example/App.class.toCopy"),
         new File(jacocoExecutionData.getParentFile(), "/org/example/App.class"));
 
-    JavaFile resource = new JavaFile("org.example.App");
+    org.sonar.api.resources.File resource = mock(org.sonar.api.resources.File.class);
     when(context.getResource(any(Resource.class))).thenReturn(resource);
     when(fileSystem.binaryDirs()).thenReturn(ImmutableList.of(outputDir));
     when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     MutableTestable testAbleFile = mock(MutableTestable.class);
-    when(perspectives.as(eq(MutableTestable.class), any(JavaFile.class))).thenReturn(testAbleFile);
+    when(perspectives.as(eq(MutableTestable.class), any(org.sonar.api.resources.File.class))).thenReturn(testAbleFile);
 
     MutableTestCase testCase = mock(MutableTestCase.class);
     when(testCase.name()).thenReturn("test");
