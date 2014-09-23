@@ -1,0 +1,9 @@
+  @Test
+  public void should_save_measures_when_no_reports_and_force_property() throws IOException {
+    JavaFile resource = analyseReports("ut.not.found.exec", "it.not.found.exec");
+    verifyOverallMetrics(resource);
+    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_LINES, 12.0)));
+    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_COVERAGE_LINE_HITS_DATA, "3=0;6=0;7=0;10=0;11=0;14=0;15=0;17=0;18=0;20=0;23=0;24=0")));
+    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_CONDITIONS, 2.0)));
+  }
+
