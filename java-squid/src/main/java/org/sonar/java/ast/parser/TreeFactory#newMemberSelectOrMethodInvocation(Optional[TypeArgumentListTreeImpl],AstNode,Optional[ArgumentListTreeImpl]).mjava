@@ -1,0 +1,18 @@
+  public ExpressionTree newMemberSelectOrMethodInvocation(Optional<TypeArgumentListTreeImpl> typeArguments, AstNode identifierAstNode, Optional<ArgumentListTreeImpl> arguments) {
+    InternalSyntaxToken identifierToken = InternalSyntaxToken.create(identifierAstNode);
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+
+    if (typeArguments.isPresent()) {
+      identifier.prependChildren(typeArguments.get());
+    }
+
+    ExpressionTree result = identifier;
+
+    if (arguments.isPresent()) {
+      result = new MethodInvocationTreeImpl(identifier, arguments.get(),
+        identifier, arguments.get());
+    }
+
+    return result;
+  }
+

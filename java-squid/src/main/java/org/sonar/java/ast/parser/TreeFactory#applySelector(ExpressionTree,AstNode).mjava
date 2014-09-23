@@ -1,9 +1,8 @@
   private ExpressionTree applySelector(ExpressionTree expression, AstNode selectorNode) {
     JavaTreeMaker.checkType(selectorNode, JavaGrammar.SELECTOR);
 
-    if (selectorNode.hasDirectChildren(JavaGrammar.MEMBER_SELECT_OR_METHOD_INVOCATION)) {
-      AstNode astNode = selectorNode.getFirstChild(JavaGrammar.MEMBER_SELECT_OR_METHOD_INVOCATION);
-      ExpressionTree selector = newMemberSelectOrMethodInvocation(astNode);
+    if (selectorNode.hasDirectChildren(JavaPunctuator.DOT) && !selectorNode.hasDirectChildren(JavaKeyword.NEW, JavaKeyword.CLASS)) {
+      ExpressionTree selector = (ExpressionTree) selectorNode.getLastChild();
 
       ExpressionTree result;
       if (selector.is(Kind.METHOD_INVOCATION)) {
