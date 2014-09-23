@@ -1,0 +1,19 @@
+  public ExpressionTree newDotClassSelector(Optional<List<Tuple<AstNode, AstNode>>> dimensions, AstNode dotTokenAstNode, AstNode classTokenAstNode) {
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(classTokenAstNode));
+
+    List<AstNode> children = Lists.newArrayList();
+
+    if (dimensions.isPresent()) {
+      for (Tuple<AstNode, AstNode> dimension : dimensions.get()) {
+        children.add(dimension.first());
+        children.add(dimension.second());
+      }
+    }
+
+    children.add(dotTokenAstNode);
+    children.add(identifier);
+
+    return new MemberSelectExpressionTreeImpl(dimensions.isPresent() ? dimensions.get().size() : 0, identifier,
+      children);
+  }
+
