@@ -19,14 +19,7 @@
       }
     }
 
-    boolean collectedCoveragePerTest = false;
-    if(readCoveragePerTests) {
-      for (Map.Entry<String, ExecutionDataStore> entry : executionDataVisitor.getSessions().entrySet()) {
-        if (analyzeLinesCoveredByTests(entry.getKey(), entry.getValue(), context)) {
-          collectedCoveragePerTest = true;
-        }
-      }
-    }
+    boolean collectedCoveragePerTest = readCoveragePerTests(context, executionDataVisitor);
 
     CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged());
     int analyzedResources = 0;
