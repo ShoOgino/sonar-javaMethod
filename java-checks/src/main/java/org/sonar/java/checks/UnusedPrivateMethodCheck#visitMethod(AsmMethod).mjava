@@ -6,7 +6,11 @@
         messageStr = "Private constructor '"+asmClass.getDisplayName()+"(";
         List<String> params = Lists.newArrayList();
         for (Parameter param : MethodSignatureScanner.scan(asmMethod.getSignature()).getArgumentTypes()) {
-          params.add(param.getClassName()+ (param.isArray() ? "[]":""));
+          String paramName = param.getClassName();
+          if(StringUtils.isEmpty(paramName)) {
+            paramName = MethodSignatureScanner.getReadableType(param.getJvmJavaType());
+          }
+          params.add(paramName+ (param.isArray() ? "[]":""));
         }
         messageStr+= Joiner.on(",").join(params)+")' is never used.";
       }
