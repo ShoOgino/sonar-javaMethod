@@ -1,0 +1,21 @@
+  private boolean implementsSerializable(@Nullable Type type) {
+    if (type == null || type.isTagged(Type.UNKNOWN)) {
+      return false;
+    }
+    if(type.isTagged(Type.ARRAY)) {
+      return implementsSerializable(((Type.ArrayType) type).elementType());
+    }
+    Type.ClassType classType = (Type.ClassType) type;
+    String interfaceName = classType.getSymbol().owner().getName() + "." + classType.getSymbol().getName();
+    if ("java.io.Serializable".equals(interfaceName)) {
+      return true;
+    }
+    Symbol.TypeSymbol symbol = ((Type.ClassType) type).getSymbol();
+    for (Type interfaceType : symbol.getInterfaces()) {
+      if(implementsSerializable(interfaceType)) {
+        return true;
+      }
+    }
+    return implementsSerializable(symbol.getSuperclass());
+  }
+

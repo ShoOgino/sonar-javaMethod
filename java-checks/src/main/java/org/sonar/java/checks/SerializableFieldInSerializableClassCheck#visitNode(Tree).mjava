@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (isSerializable(classTree) && !hasSpecialHandlingSerializationMethods(classTree)) {
+      for (Tree member : classTree.members()) {
+        if (member.is(Tree.Kind.VARIABLE) && !isStatic((VariableTree) member) && !isTransientOrSerializable((VariableTree) member)) {
+          addIssue(member, "Make \"" + ((VariableTree) member).simpleName().name() + "\" transient or serializable.");
+        }
+      }
+    }
+  }
+

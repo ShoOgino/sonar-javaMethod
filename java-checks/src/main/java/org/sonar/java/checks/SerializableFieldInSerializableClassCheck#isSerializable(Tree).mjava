@@ -1,0 +1,13 @@
+  private boolean isSerializable(Tree tree) {
+    if (tree.is(Tree.Kind.ENUM, Tree.Kind.PRIMITIVE_TYPE)) {
+      return true;
+    } else if (tree.is(Tree.Kind.CLASS)) {
+      Symbol.TypeSymbol symbol = ((ClassTreeImpl) tree).getSymbol();
+      if(symbol==null) {
+        return false;
+      }
+      return implementsSerializable(symbol.getType());
+    }
+    return implementsSerializable(((AbstractTypedTree) tree).getSymbolType());
+  }
+

@@ -1,0 +1,11 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SerializableFieldInSerializableClassCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(6).withMessage("Make \"address\" transient or serializable.")
+        .next().atLine(12).withMessage("Make \"address\" transient or serializable.")
+        .next().atLine(13).withMessage("Make \"addressArray\" transient or serializable.")
+        .next().atLine(24).withMessage("Make \"address\" transient or serializable.")
+        .noMore();
+  }
+
