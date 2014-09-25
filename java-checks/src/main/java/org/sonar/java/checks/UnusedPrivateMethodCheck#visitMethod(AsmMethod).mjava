@@ -1,18 +1,18 @@
   @Override
   public void visitMethod(AsmMethod asmMethod) {
     if (isPrivateUnused(asmMethod) && !isExcludedFromCheck(asmMethod)) {
-      String messageStr = "Private method '" + asmMethod.getName() + "(...)' is never used.";
-      if("<init>".equals(asmMethod.getName())) {
-        messageStr = "Private constructor '"+asmClass.getDisplayName()+"(";
+      String messageStr = "Private method '" + asmMethod.getName() + "' is never used.";
+      if ("<init>".equals(asmMethod.getName())) {
+        messageStr = "Private constructor '" + asmClass.getDisplayName()+ "(";
         List<String> params = Lists.newArrayList();
         for (Parameter param : MethodSignatureScanner.scan(asmMethod.getSignature()).getArgumentTypes()) {
           String paramName = param.getClassName();
-          if(StringUtils.isEmpty(paramName)) {
+          if (StringUtils.isEmpty(paramName)) {
             paramName = MethodSignatureScanner.getReadableType(param.getJvmJavaType());
           }
-          params.add(paramName+ (param.isArray() ? "[]":""));
+          params.add(paramName + (param.isArray() ? "[]" : ""));
         }
-        messageStr+= Joiner.on(",").join(params)+")' is never used.";
+        messageStr += Joiner.on(",").join(params) + ")' is never used.";
       }
       CheckMessage message = new CheckMessage(this, messageStr);
       int line = getMethodLineNumber(asmMethod);
