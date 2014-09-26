@@ -1,11 +1,12 @@
-  public MethodTreeImpl(@Nullable ExpressionTree defaultValue) {
+  public MethodTreeImpl(FormalParametersListTreeImpl parameters, @Nullable ExpressionTree defaultValue) {
     super(Kind.METHOD);
     this.typeParameters = ImmutableList.<TypeParameterTree>of();
-    this.parameters = ImmutableList.<VariableTree>of();
+    this.parameters = parameters;
     this.block = null;
     this.throwsClauses = ImmutableList.<ExpressionTree>of();
     this.defaultValue = defaultValue;
 
+    addChild(parameters);
     if (defaultValue != null) {
       addChild((AstNode) defaultValue);
     }
