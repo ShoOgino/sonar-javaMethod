@@ -6,6 +6,7 @@
     BlockTree block = (BlockTree) p.parse("class T { void m() { abstract class Local { } } }").getFirstDescendant(Kind.BLOCK);
     ClassTree tree = (ClassTree) block.body().get(0);
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
+    assertThat(tree.simpleName().identifierToken().text()).isEqualTo("Local");
     assertThat(tree.modifiers().modifiers()).containsOnly(Modifier.ABSTRACT);
     assertThat(tree).isNotNull();
 

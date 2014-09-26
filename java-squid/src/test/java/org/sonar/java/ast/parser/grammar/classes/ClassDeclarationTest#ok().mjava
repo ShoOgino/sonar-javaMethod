@@ -2,12 +2,10 @@
   public void ok() {
     LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
 
-    b.rule(JavaGrammar.CLASS_BODY).override(RuleMock.word(b, "classBody"));
-
     assertThat(b, JavaGrammar.CLASS_DECLARATION)
-      .matches("class identifier <T, U extends Foo & Bar> extends Foo implements Foo, Bar<Integer> classBody")
-      .matches("class identifier <T, U extends Foo & Bar> extends Foo classBody")
-      .matches("class identifier <T, U extends Foo & Bar> classBody")
-      .matches("class identifier classBody");
+      .matches("class identifier <T, U extends Foo & Bar> extends Foo implements Foo, Bar<Integer> {}")
+      .matches("class identifier <T, U extends Foo & Bar> extends Foo {}")
+      .matches("class identifier <T, U extends Foo & Bar> {}")
+      .matches("class identifier {}");
   }
 

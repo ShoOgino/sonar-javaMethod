@@ -1,0 +1,49 @@
+  private MethodTreeImpl newMethodOrConstructor(
+    Optional<ExpressionTree> type, AstNode identifierAstNode, FormalParametersListTreeImpl parameters,
+    Optional<List<Tuple<Optional<List<AnnotationTreeImpl>>, Tuple<AstNode, AstNode>>>> annotatedDimensions,
+    Optional<Tuple<AstNode, QualifiedIdentifierListTreeImpl>> throwsClause,
+    AstNode blockOrSemicolon) {
+
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+
+    ExpressionTree actualType;
+    if (type.isPresent()) {
+      actualType = treeMaker.applyDim(type.get(), annotatedDimensions.isPresent() ? annotatedDimensions.get().size() : 0);
+    } else {
+      actualType = null;
+    }
+
+    MethodTreeImpl result = new MethodTreeImpl(
+      actualType,
+      identifier,
+      (List) parameters,
+      throwsClause.isPresent() ? (List<ExpressionTree>) throwsClause.get().second() : ImmutableList.<ExpressionTree>of(),
+      blockOrSemicolon.is(Kind.BLOCK) ? (BlockTreeImpl) blockOrSemicolon : null);
+
+    List<AstNode> children = Lists.newArrayList();
+    if (type.isPresent()) {
+      children.add((AstNode) type.get());
+    }
+    children.add(identifier);
+    children.add(parameters);
+    if (annotatedDimensions.isPresent()) {
+      for (Tuple<Optional<List<AnnotationTreeImpl>>, Tuple<AstNode, AstNode>> annotatedDimension : annotatedDimensions.get()) {
+        if (annotatedDimension.first().isPresent()) {
+          for (AnnotationTreeImpl annotation : annotatedDimension.first().get()) {
+            children.add(annotation);
+          }
+        }
+        children.add(annotatedDimension.second());
+      }
+    }
+    if (throwsClause.isPresent()) {
+      children.add(throwsClause.get().first());
+      children.add(throwsClause.get().second());
+    }
+    children.add(blockOrSemicolon);
+
+    result.prependChildren(children);
+
+    return result;
+  }
+

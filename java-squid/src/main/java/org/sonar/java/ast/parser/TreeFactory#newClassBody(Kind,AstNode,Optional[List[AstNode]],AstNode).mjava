@@ -1,0 +1,23 @@
+  private ClassTreeImpl newClassBody(Kind kind, AstNode openBraceTokenAstNode, Optional<List<AstNode>> members, AstNode closeBraceTokenAstNode) {
+    List<AstNode> children = Lists.newArrayList();
+    ImmutableList.Builder<Tree> builder = ImmutableList.builder();
+
+    children.add(openBraceTokenAstNode);
+    if (members.isPresent()) {
+      for (AstNode member : members.get()) {
+        children.add(member);
+
+        if (member instanceof VariableDeclaratorListTreeImpl) {
+          for (VariableTreeImpl variable : (VariableDeclaratorListTreeImpl) member) {
+            builder.add(variable);
+          }
+        } else if (member instanceof Tree) {
+          builder.add((Tree) member);
+        }
+      }
+    }
+    children.add(closeBraceTokenAstNode);
+
+    return new ClassTreeImpl(kind, builder.build(), children);
+  }
+

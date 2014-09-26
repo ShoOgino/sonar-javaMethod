@@ -49,5 +49,11 @@
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
 
+    astNode = p.parse("class T { public int m()[] { return null; } }");
+    tree = (MethodTree) ((ClassTree) maker.compilationUnit(astNode).types().get(0)).members().get(0);
+    assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
+    assertThat(tree.parameters()).isEmpty();
+    assertThat(tree.returnType().is(Kind.ARRAY_TYPE));
+    assertThat(((ArrayTypeTree) tree.returnType()).is(Kind.PRIMITIVE_TYPE));
   }
 

@@ -1,0 +1,13 @@
+  public BlockTreeImpl newInitializerMember(Optional<AstNode> staticTokenAstNode, BlockTreeImpl block) {
+    Kind kind = staticTokenAstNode.isPresent() ? Kind.STATIC_INITIALIZER : Kind.INITIALIZER;
+
+    List<AstNode> children = Lists.newArrayList();
+    if (staticTokenAstNode.isPresent()) {
+      children.add(staticTokenAstNode.get());
+    }
+    children.addAll(block.getChildren());
+
+    return new BlockTreeImpl(kind, (InternalSyntaxToken) block.openBraceToken(), block.body(), (InternalSyntaxToken) block.closeBraceToken(),
+      children.toArray(new AstNode[0]));
+  }
+

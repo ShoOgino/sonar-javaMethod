@@ -1,23 +1,21 @@
   public List<StatementTree> blockStatement(AstNode astNode) {
     checkType(astNode, JavaGrammar.BLOCK_STATEMENT);
-
     AstNode statementNode = astNode.getFirstChild(
       JavaGrammar.VARIABLE_DECLARATORS,
-      JavaGrammar.CLASS_DECLARATION,
-      JavaGrammar.ENUM_DECLARATION);
+      Kind.CLASS,
+      Kind.ENUM);
+
     if (statementNode == null && astNode.getNumberOfChildren() == 1) {
       // Statement hack (note that they are not all yet migrated to Kinds)
       statementNode = astNode.getFirstChild();
     }
 
-    if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
-      return ImmutableList.of((StatementTree) statementNode);
-    } else if (statementNode.is(JavaGrammar.VARIABLE_DECLARATORS)) {
+    if (statementNode.is(JavaGrammar.VARIABLE_DECLARATORS)) {
       return (List<StatementTree>) statementNode;
-    } else if (statementNode.is(JavaGrammar.CLASS_DECLARATION)) {
-      return ImmutableList.<StatementTree>of(classDeclaration((ModifiersTree) astNode.getFirstChild(JavaGrammar.MODIFIERS), statementNode));
-    } else if (statementNode.is(JavaGrammar.ENUM_DECLARATION)) {
-      return ImmutableList.<StatementTree>of(enumDeclaration((ModifiersTree) astNode.getFirstChild(JavaGrammar.MODIFIERS), statementNode));
+    } else if (statementNode.is(Kind.CLASS) || statementNode.is(Kind.ENUM)) {
+      return ImmutableList.<StatementTree>of(((ClassTreeImpl) statementNode).completeModifiers((ModifiersTreeImpl) astNode.getFirstChild(JavaGrammar.MODIFIERS)));
+    } else if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
+      return ImmutableList.of((StatementTree) statementNode);
     } else {
       throw new IllegalStateException("Unexpected AstNodeType: " + statementNode.getType().toString());
     }

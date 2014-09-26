@@ -1,0 +1,35 @@
+  public EnumConstantTreeImpl newEnumConstant(
+    Optional<List<AnnotationTreeImpl>> annotations, AstNode identifierAstNode,
+    Optional<ArgumentListTreeImpl> arguments,
+    Optional<ClassTreeImpl> classBody,
+    Optional<AstNode> semicolonTokenAstNode) {
+
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+    if (annotations.isPresent()) {
+      identifier.prependChildren(annotations.get());
+    }
+
+    List<AstNode> children = Lists.newArrayList();
+    if (arguments.isPresent()) {
+      children.add(arguments.get());
+    }
+    if (classBody.isPresent()) {
+      children.add(classBody.get());
+    }
+    NewClassTreeImpl newClass = new NewClassTreeImpl(
+      arguments.isPresent() ? arguments.get() : Collections.emptyList(),
+      classBody.isPresent() ? classBody.get() : null,
+      children.toArray(new AstNode[0]));
+    newClass.completeWithIdentifier(identifier);
+
+    EnumConstantTreeImpl result = new EnumConstantTreeImpl(ModifiersTreeImpl.EMPTY, identifier, newClass);
+
+    result.addChild(identifier);
+    result.addChild(newClass);
+    if (semicolonTokenAstNode.isPresent()) {
+      result.addChild(semicolonTokenAstNode.get());
+    }
+
+    return result;
+  }
+

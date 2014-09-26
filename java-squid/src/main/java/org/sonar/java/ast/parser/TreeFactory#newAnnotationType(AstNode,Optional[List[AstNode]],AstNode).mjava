@@ -22,19 +22,19 @@
 
           if (declaration.is(Kind.METHOD)) {
             // method
-            members.add(((MethodTreeImpl) declaration).complete(modifiers));
+            members.add(((MethodTreeImpl) declaration).completeWithModifiers(modifiers));
             children.add(declaration);
           } else if (declaration.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST)) {
             // constant
-            treeMaker.appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, declaration);
+            appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, declaration);
             children.add(annotationTypeElementDeclaration);
           } else if (declaration.is(Kind.ANNOTATION_TYPE)) {
             // TODO Complete with modifiers
             members.add((Tree) declaration);
             children.add(annotationTypeElementDeclaration);
-          } else {
+          } else if (declaration.is(Kind.CLASS, Kind.INTERFACE, Kind.ENUM)) {
             // interface, class, enum
-            members.add(modifiers, treeMaker.typeDeclaration(modifiers, declaration));
+            members.add(modifiers, treeMaker.typeDeclaration(modifiers, (ClassTreeImpl) declaration));
             children.add(annotationTypeElementDeclaration);
           }
         } else {

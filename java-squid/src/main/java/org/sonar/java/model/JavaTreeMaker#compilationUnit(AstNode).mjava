@@ -20,12 +20,11 @@
     }
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
     for (AstNode typeNode : astNode.getChildren(JavaGrammar.TYPE_DECLARATION)) {
-      AstNode declarationNode = typeNode.getFirstChild(
-        JavaGrammar.CLASS_DECLARATION,
-        JavaGrammar.ENUM_DECLARATION,
-        JavaGrammar.INTERFACE_DECLARATION,
-        Kind.ANNOTATION_TYPE
-        );
+      ClassTreeImpl declarationNode = (ClassTreeImpl) typeNode.getFirstChild(
+        Kind.CLASS,
+        Kind.ENUM,
+        Kind.INTERFACE,
+        Kind.ANNOTATION_TYPE);
       if (declarationNode != null) {
         types.add(typeDeclaration((ModifiersTree) typeNode.getFirstChild(JavaGrammar.MODIFIERS), declarationNode));
       }

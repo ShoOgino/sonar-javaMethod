@@ -1,0 +1,33 @@
+  public ClassTreeImpl completeClassDeclaration(
+    AstNode classTokenAstNode,
+    AstNode identifierAstNode, Optional<TypeParameterListTreeImpl> typeParameters,
+    Optional<Tuple<AstNode, ExpressionTree>> extendsClause,
+    Optional<Tuple<AstNode, QualifiedIdentifierListTreeImpl>> implementsClause,
+    ClassTreeImpl partial) {
+
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(classTokenAstNode);
+    children.add(identifier);
+    partial.completeIdentifier(identifier);
+    if (typeParameters.isPresent()) {
+      children.add(typeParameters.get());
+      partial.completeTypeParameters(typeParameters.get());
+    }
+    if (extendsClause.isPresent()) {
+      children.add(extendsClause.get().first());
+      children.add((AstNode) extendsClause.get().second());
+      partial.completeSuperclass(extendsClause.get().second());
+    }
+    if (implementsClause.isPresent()) {
+      children.add(implementsClause.get().first());
+      children.add(implementsClause.get().second());
+      partial.completeInterfaces(implementsClause.get().second());
+    }
+
+    partial.prependChildren(children);
+
+    return partial;
+  }
+
