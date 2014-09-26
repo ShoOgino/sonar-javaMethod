@@ -1,4 +1,4 @@
-  public void save(SensorContext context, Project project, CheckFactory checkFactory, ResourceMapping resourceMapping, ResourcePerspectives resourcePerspectives) {
+  public void save(SensorContext context, Project project, CheckFactory checkFactory, ResourceMapping resourceMapping, ResourcePerspectives resourcePerspectives, NoSonarFilter noSonarFilter) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     //Design
     if (!skipPackageDesignAnalysis && squid.isBytecodeScanned()) {
@@ -7,6 +7,6 @@
     }
     //Report Issues
     ChecksBridge checksBridge = new ChecksBridge(checkFactory, resourcePerspectives);
-    reportIssues(resourceMapping, checksBridge);
+    reportIssues(resourceMapping, noSonarFilter, checksBridge);
   }
 
