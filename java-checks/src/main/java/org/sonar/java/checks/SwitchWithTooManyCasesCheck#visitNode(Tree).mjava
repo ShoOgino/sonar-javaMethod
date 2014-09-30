@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
+    int cases = 0;
+    for (CaseGroupTree caseGroupTree : switchStatementTree.cases()) {
+      cases+=caseGroupTree.labels().size();
+    }
+    if(cases > maximumCases) {
+      addIssue(switchStatementTree, "Reduce the number of switch cases from "+cases+" to at most "+maximumCases+".");
+    }
+  }
+
