@@ -1,5 +1,6 @@
-  private void reportIssues(ResourceMapping resourceMapping, NoSonarFilter noSonarFilter, ChecksBridge checksBridge) {
+  private void reportIssues(ResourceMapping resourceMapping, NoSonarFilter noSonarFilter, ChecksBridge checksBridge, Project project) {
     for (Resource directory : resourceMapping.directories()) {
+      checksBridge.reportIssueForPackageInfo((Directory) directory, project);
       for (Resource sonarFile : resourceMapping.files((Directory) directory)) {
         String key = resourceMapping.getFileKeyByResource((org.sonar.api.resources.File) sonarFile);
         //key would be null for test files as they are not in squid index.

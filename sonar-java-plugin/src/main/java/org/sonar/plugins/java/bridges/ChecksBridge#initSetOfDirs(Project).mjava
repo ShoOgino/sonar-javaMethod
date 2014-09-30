@@ -1,0 +1,11 @@
+  private void initSetOfDirs(Project project) {
+    dirsWithPackageInfo = Sets.newHashSet();
+    ActiveRule activeRule = rulesProfile.getActiveRule(CheckList.REPOSITORY_KEY, PackageInfoCheck.RULE_KEY);
+    if (activeRule != null) {
+      Set<File> dirs = ((PackageInfoCheck) checkFactory.getCheck(activeRule)).getDirectoriesWithPackageFile();
+      for (File dir : dirs) {
+        dirsWithPackageInfo.add(Directory.fromIOFile(dir, project));
+      }
+    }
+  }
+
