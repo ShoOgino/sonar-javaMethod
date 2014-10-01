@@ -3,15 +3,15 @@
    */
   @Test
   public void relational_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { boolean m() { return 1 < 2 > 3; } }").getFirstDescendant(Kind.LESS_THAN);
-    assertThat(tree.is(Tree.Kind.LESS_THAN)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("<");
-    assertThat(tree.rightOperand()).isNotNull();
-    tree = (BinaryExpressionTree) tree.rightOperand();
+    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { boolean m() { return 1 < 2 > 3; } }").getFirstDescendant(Kind.GREATER_THAN);
     assertThat(tree.is(Tree.Kind.GREATER_THAN)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo(">");
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.leftOperand();
+    assertThat(tree.is(Kind.LESS_THAN)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("<");
     assertThat(tree.rightOperand()).isNotNull();
   }
 

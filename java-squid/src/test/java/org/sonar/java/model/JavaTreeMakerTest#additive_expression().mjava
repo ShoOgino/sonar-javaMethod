@@ -3,15 +3,16 @@
    */
   @Test
   public void additive_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { int m() { return 1 + 2 - 3; } }").getFirstDescendant(Kind.PLUS);
-    assertThat(tree.is(Tree.Kind.PLUS)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("+");
-    assertThat(tree.rightOperand()).isNotNull();
-    tree = (BinaryExpressionTree) tree.rightOperand();
-    assertThat(tree.is(Tree.Kind.MINUS)).isTrue();
+    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { int m() { return 1 + 2 - 3; } }").getFirstDescendant(Kind.MINUS);
+    assertThat(tree.is(Kind.MINUS)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("-");
+    assertThat(tree.rightOperand()).isNotNull();
+    assertThat(tree.rightOperand().is(Kind.INT_LITERAL)).isTrue();
+    tree = (BinaryExpressionTree) tree.leftOperand();
+    assertThat(tree.is(Kind.PLUS)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("+");
     assertThat(tree.rightOperand()).isNotNull();
   }
 

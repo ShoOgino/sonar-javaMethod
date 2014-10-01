@@ -3,15 +3,15 @@
    */
   @Test
   public void equality_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { boolean m() { return false == false != true; } }").getFirstDescendant(Kind.EQUAL_TO);
-    assertThat(tree.is(Tree.Kind.EQUAL_TO)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("==");
-    assertThat(tree.rightOperand()).isNotNull();
-    tree = (BinaryExpressionTree) tree.rightOperand();
+    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { boolean m() { return false == false != true; } }").getFirstDescendant(Kind.NOT_EQUAL_TO);
     assertThat(tree.is(Tree.Kind.NOT_EQUAL_TO)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("!=");
+    assertThat(tree.rightOperand()).isNotNull();
+    tree = (BinaryExpressionTree) tree.leftOperand();
+    assertThat(tree.is(Tree.Kind.EQUAL_TO)).isTrue();
+    assertThat(tree.leftOperand()).isNotNull();
+    assertThat(tree.operatorToken().text()).isEqualTo("==");
     assertThat(tree.rightOperand()).isNotNull();
   }
 

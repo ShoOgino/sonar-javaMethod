@@ -3,20 +3,20 @@
    */
   @Test
   public void multiplicative_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { int m() { return 1 * 2 / 3 % 4; } }").getFirstDescendant(Kind.MULTIPLY);
-    assertThat(tree.is(Tree.Kind.MULTIPLY)).isTrue();
+    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { int m() { return 1 * 2 / 3 % 4; } }").getFirstDescendant(Kind.REMAINDER);
+    assertThat(tree.is(Kind.REMAINDER)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("*");
+    assertThat(tree.operatorToken().text()).isEqualTo("%");
     assertThat(tree.rightOperand()).isNotNull();
-    tree = (BinaryExpressionTree) tree.rightOperand();
+    tree = (BinaryExpressionTree) tree.leftOperand();
     assertThat(tree.is(Tree.Kind.DIVIDE)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("/");
     assertThat(tree.rightOperand()).isNotNull();
-    tree = (BinaryExpressionTree) tree.rightOperand();
-    assertThat(tree.is(Tree.Kind.REMAINDER)).isTrue();
+    tree = (BinaryExpressionTree) tree.leftOperand();
+    assertThat(tree.is(Kind.MULTIPLY)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("%");
+    assertThat(tree.operatorToken().text()).isEqualTo("*");
     assertThat(tree.rightOperand()).isNotNull();
   }
 

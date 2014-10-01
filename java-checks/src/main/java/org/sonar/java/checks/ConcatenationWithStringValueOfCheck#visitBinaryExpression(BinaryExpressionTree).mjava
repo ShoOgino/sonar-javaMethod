@@ -5,25 +5,27 @@
       return;
     }
 
-    // TODO This code exploits the associativity bug SONARJAVA-610
-    boolean seenStringLiteral = false;
+    Set<ExpressionTree> valueOfTrees = Sets.newHashSet();
+    boolean flagIssue = false;
     ExpressionTree current = tree;
     while (current.is(Kind.PLUS)) {
       BinaryExpressionTree binOp = (BinaryExpressionTree) current;
-      scan(binOp.leftOperand());
-
-      if (!seenStringLiteral) {
-        if (binOp.leftOperand().is(Kind.STRING_LITERAL)) {
-          seenStringLiteral = true;
-          check(binOp.rightOperand());
-        }
-      } else if (isStringValueOf(binOp.leftOperand())) {
-        check(binOp.leftOperand());
+      scan(binOp.rightOperand());
+      if (isStringValueOf(binOp.rightOperand())) {
+        valueOfTrees.add(binOp.rightOperand());
       }
-
-      current = ((BinaryExpressionTree) current).rightOperand();
+      flagIssue |= binOp.leftOperand().is(Kind.STRING_LITERAL);
+      if (!valueOfTrees.isEmpty()) {
+        flagIssue |= binOp.rightOperand().is(Kind.STRING_LITERAL);
+      }
+      current = ((BinaryExpressionTree) current).leftOperand();
     }
 
+    if (flagIssue) {
+      for (ExpressionTree valueOfTree : valueOfTrees) {
+        addIssue(valueOfTree);
+      }
+    }
     scan(current);
   }
 
