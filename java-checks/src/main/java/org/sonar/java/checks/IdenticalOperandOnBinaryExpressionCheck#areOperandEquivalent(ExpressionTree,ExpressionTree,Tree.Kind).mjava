@@ -1,0 +1,11 @@
+  public boolean areOperandEquivalent(ExpressionTree left, ExpressionTree right, Tree.Kind binaryKind) {
+    if (SyntacticEquivalence.areEquivalent(left, right)) {
+      return true;
+    }
+    if (right.is(binaryKind)) {
+      return areOperandEquivalent(left, ((BinaryExpressionTree) right).leftOperand(), binaryKind)
+          || areOperandEquivalent(left, ((BinaryExpressionTree) right).rightOperand(), binaryKind);
+    }
+    return false;
+  }
+
