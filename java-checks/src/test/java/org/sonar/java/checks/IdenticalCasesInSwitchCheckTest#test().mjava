@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/IdenticalCasesInSwitchCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(11).withMessage("Either merge this case with the identical one on line \""+4+"\" or change one of the implementations.")
+        .next().atLine(14).withMessage("Either merge this case with the identical one on line \""+4+"\" or change one of the implementations.")
+        .noMore();
+  }
+

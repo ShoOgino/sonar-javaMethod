@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
+    int index = 0;
+    List<CaseGroupTree> cases = switchStatementTree.cases();
+    Set<CaseLabelTree> reportedLabels = Sets.newHashSet();
+    for (CaseGroupTree caseGroupTree : cases) {
+      index++;
+      for (int i = index; i < cases.size(); i++) {
+        if (SyntacticEquivalence.areEquivalent(caseGroupTree.body(), cases.get(i).body())) {
+          CaseLabelTree labelToReport = getLastLabel(cases.get(i));
+          if (!reportedLabels.contains(labelToReport)) {
+            reportedLabels.add(labelToReport);
+            addIssue(labelToReport, "Either merge this case with the identical one on line \"" + ((JavaTree) getLastLabel(caseGroupTree)).getLine() + "\" or change one of the implementations.");
+          }
+        }
+      }
+    }
+  }
+
