@@ -1,7 +1,7 @@
   public List<StatementTree> blockStatement(AstNode astNode) {
-    checkType(astNode, JavaGrammar.BLOCK_STATEMENT);
+    checkType(astNode, JavaLexer.BLOCK_STATEMENT);
     AstNode statementNode = astNode.getFirstChild(
-      JavaGrammar.VARIABLE_DECLARATORS,
+      JavaLexer.VARIABLE_DECLARATORS,
       Kind.CLASS,
       Kind.ENUM);
 
@@ -10,10 +10,10 @@
       statementNode = astNode.getFirstChild();
     }
 
-    if (statementNode.is(JavaGrammar.VARIABLE_DECLARATORS)) {
+    if (statementNode.is(JavaLexer.VARIABLE_DECLARATORS)) {
       return (List<StatementTree>) statementNode;
     } else if (statementNode.is(Kind.CLASS) || statementNode.is(Kind.ENUM)) {
-      return ImmutableList.<StatementTree>of(((ClassTreeImpl) statementNode).completeModifiers((ModifiersTreeImpl) astNode.getFirstChild(JavaGrammar.MODIFIERS)));
+      return ImmutableList.<StatementTree>of(((ClassTreeImpl) statementNode).completeModifiers((ModifiersTreeImpl) astNode.getFirstChild(JavaLexer.MODIFIERS)));
     } else if (statementNode instanceof StatementTree && !((JavaTree) statementNode).isLegacy()) {
       return ImmutableList.of((StatementTree) statementNode);
     } else {

@@ -1,0 +1,11 @@
+  public ExpressionTree SELECTOR() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.SELECTOR)
+      .is(
+        b.firstOf(
+          f.completeMemberSelectOrMethodSelector(b.invokeRule(JavaPunctuator.DOT), IDENTIFIER_OR_METHOD_INVOCATION()),
+          // TODO Perhaps NEW_EXPRESSION() is not as good as before, as it allows NewArrayTree to be constructed
+          f.completeCreatorSelector(b.invokeRule(JavaPunctuator.DOT), NEW_EXPRESSION()),
+          ARRAY_ACCESS_EXPRESSION(),
+          f.newDotClassSelector(b.zeroOrMore(DIMENSION()), b.invokeRule(JavaPunctuator.DOT), b.invokeRule(JavaKeyword.CLASS))));
+  }
+

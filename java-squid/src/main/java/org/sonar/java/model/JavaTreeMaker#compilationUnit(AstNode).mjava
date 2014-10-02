@@ -1,7 +1,7 @@
   public CompilationUnitTree compilationUnit(AstNode astNode) {
-    checkType(astNode, JavaGrammar.COMPILATION_UNIT);
+    checkType(astNode, JavaLexer.COMPILATION_UNIT);
     ImmutableList.Builder<ImportTree> imports = ImmutableList.builder();
-    for (AstNode importNode : astNode.getChildren(JavaGrammar.IMPORT_DECLARATION)) {
+    for (AstNode importNode : astNode.getChildren(JavaLexer.IMPORT_DECLARATION)) {
       ExpressionTree qualifiedIdentifier = (ExpressionTree) importNode.getFirstChild(QUALIFIED_EXPRESSION_KINDS);
       AstNode astNodeQualifiedIdentifier = (AstNode) qualifiedIdentifier;
       // star import : if there is a star then add it as an identifier.
@@ -19,21 +19,21 @@
         qualifiedIdentifier));
     }
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
-    for (AstNode typeNode : astNode.getChildren(JavaGrammar.TYPE_DECLARATION)) {
+    for (AstNode typeNode : astNode.getChildren(JavaLexer.TYPE_DECLARATION)) {
       ClassTreeImpl declarationNode = (ClassTreeImpl) typeNode.getFirstChild(
         Kind.CLASS,
         Kind.ENUM,
         Kind.INTERFACE,
         Kind.ANNOTATION_TYPE);
       if (declarationNode != null) {
-        types.add(typeDeclaration((ModifiersTree) typeNode.getFirstChild(JavaGrammar.MODIFIERS), declarationNode));
+        types.add(typeDeclaration((ModifiersTree) typeNode.getFirstChild(JavaLexer.MODIFIERS), declarationNode));
       }
     }
 
     ExpressionTree packageDeclaration = null;
     ImmutableList.Builder<AnnotationTree> packageAnnotations = ImmutableList.builder();
-    if (astNode.hasDirectChildren(JavaGrammar.PACKAGE_DECLARATION)) {
-      AstNode packageDeclarationNode = astNode.getFirstChild(JavaGrammar.PACKAGE_DECLARATION);
+    if (astNode.hasDirectChildren(JavaLexer.PACKAGE_DECLARATION)) {
+      AstNode packageDeclarationNode = astNode.getFirstChild(JavaLexer.PACKAGE_DECLARATION);
       packageDeclaration = (ExpressionTree) packageDeclarationNode.getFirstChild(QUALIFIED_EXPRESSION_KINDS);
       for (AstNode annotationNode : packageDeclarationNode.getChildren(Kind.ANNOTATION)) {
         packageAnnotations.add((AnnotationTree) annotationNode);

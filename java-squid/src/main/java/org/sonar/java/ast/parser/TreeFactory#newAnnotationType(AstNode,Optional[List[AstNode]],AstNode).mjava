@@ -14,17 +14,17 @@
     if (annotationTypeElementDeclarations.isPresent()) {
       for (AstNode annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
         // FIXME
-        if (annotationTypeElementDeclaration.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
+        if (annotationTypeElementDeclaration.is(JavaLexer.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
           Preconditions.checkArgument(annotationTypeElementDeclaration.getNumberOfChildren() == 2);
 
-          ModifiersTreeImpl modifiers = (ModifiersTreeImpl) annotationTypeElementDeclaration.getFirstChild(JavaGrammar.MODIFIERS);
+          ModifiersTreeImpl modifiers = (ModifiersTreeImpl) annotationTypeElementDeclaration.getFirstChild(JavaLexer.MODIFIERS);
           AstNode declaration = annotationTypeElementDeclaration.getLastChild();
 
           if (declaration.is(Kind.METHOD)) {
             // method
             members.add(((MethodTreeImpl) declaration).completeWithModifiers(modifiers));
             children.add(declaration);
-          } else if (declaration.is(JavaGrammar.ANNOTATION_TYPE_ELEMENT_REST)) {
+          } else if (declaration.is(JavaLexer.ANNOTATION_TYPE_ELEMENT_REST)) {
             // constant
             appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, declaration);
             children.add(annotationTypeElementDeclaration);
