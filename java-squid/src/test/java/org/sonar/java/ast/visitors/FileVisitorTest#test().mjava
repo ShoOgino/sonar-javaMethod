@@ -1,0 +1,24 @@
+  @Test
+  public void test() {
+    SquidAstVisitorContextImpl context = new SquidAstVisitorContextImpl(new SourceProject(""));
+    FileVisitor visitor = new FileVisitor();
+    visitor.setContext(context);
+
+    AstNode astNode = mock(AstNode.class);
+    File file = mock(File.class);
+    when(file.getAbsolutePath()).thenReturn("/some/path");
+    when(file.getPath()).thenReturn("/some/other/path");
+    context.setFile(file, mock(MetricDef.class));
+
+    assertThat(context.peekSourceCode() instanceof SourceProject);
+
+    visitor.visitFile(astNode);
+    assertThat(context.peekSourceCode() instanceof SourceFile);
+    SourceFile sourceFile = (SourceFile) context.peekSourceCode();
+    assertThat(sourceFile.getKey()).isEqualTo("/some/path");
+    assertThat(sourceFile.getName()).isEqualTo("/some/other/path");
+
+    visitor.leaveFile(astNode);
+    assertThat(context.peekSourceCode() instanceof SourceProject);
+  }
+
