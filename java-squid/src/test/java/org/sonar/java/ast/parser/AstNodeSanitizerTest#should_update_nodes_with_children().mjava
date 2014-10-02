@@ -1,0 +1,31 @@
+  @Test
+  public void should_update_nodes_with_children() {
+    Token token1 = mock(Token.class);
+    when(token1.getType()).thenReturn(TOKEN_TYPE);
+    Token token2 = mock(Token.class);
+    when(token2.getType()).thenReturn(TOKEN_TYPE);
+
+    AstNode astNode1 = new AstNode(ASTNODE_TYPE, ASTNODE_TYPE.toString(), null);
+    astNode1.setFromIndex(0);
+    astNode1.setToIndex(1);
+
+    AstNode astNode2 = new AstNode(token1);
+    astNode2.setFromIndex(2);
+    astNode2.setToIndex(3);
+
+    AstNode astNode3 = new AstNode(token2);
+    astNode3.setFromIndex(4);
+    astNode3.setToIndex(5);
+
+    AstNode astNode = new AstNode(ASTNODE_TYPE, ASTNODE_TYPE.toString(), null);
+    astNode.addChild(astNode1);
+    astNode.addChild(astNode2);
+    astNode.addChild(astNode3);
+
+    new AstNodeSanitizer().sanitize(astNode);
+
+    assertThat(astNode.getToken()).isSameAs(token1);
+    assertThat(astNode.getFromIndex()).isEqualTo(0);
+    assertThat(astNode.getToIndex()).isEqualTo(5);
+  }
+

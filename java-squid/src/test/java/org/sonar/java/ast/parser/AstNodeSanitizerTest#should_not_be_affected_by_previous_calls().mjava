@@ -1,0 +1,20 @@
+  @Test
+  public void should_not_be_affected_by_previous_calls() {
+    Token token = mock(Token.class);
+    when(token.getType()).thenReturn(TOKEN_TYPE);
+    AstNode astNode = new AstNode(token);
+    astNode.setFromIndex(42);
+    astNode.setToIndex(84);
+
+    AstNodeSanitizer sanitizer = new AstNodeSanitizer();
+    sanitizer.sanitize(astNode);
+
+    astNode = new AstNode(ASTNODE_TYPE, ASTNODE_TYPE.toString(), null);
+
+    sanitizer.sanitize(astNode);
+
+    assertThat(astNode.hasToken()).isFalse();
+    assertThat(astNode.getFromIndex()).isEqualTo(0);
+    assertThat(astNode.getToIndex()).isEqualTo(0);
+  }
+
