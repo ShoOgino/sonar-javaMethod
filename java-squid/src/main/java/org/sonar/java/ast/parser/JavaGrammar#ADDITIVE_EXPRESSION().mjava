@@ -1,0 +1,13 @@
+  public ExpressionTree ADDITIVE_EXPRESSION() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.ADDITIVE_EXPRESSION)
+      .is(
+        f.binaryExpression2(
+          MULTIPLICATIVE_EXPRESSION(),
+          b.zeroOrMore(
+            f.newOperatorAndOperand2(
+              b.firstOf(
+                b.invokeRule(JavaPunctuator.PLUS),
+                b.invokeRule(JavaPunctuator.MINUS)),
+              MULTIPLICATIVE_EXPRESSION()))));
+  }
+

@@ -1,0 +1,12 @@
+  public ExpressionTree IDENTIFIER_OR_METHOD_INVOCATION() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.IDENTIFIER_OR_METHOD_INVOCATION)
+      .is(
+        f.newIdentifierOrMethodInvocation(
+          b.optional(TYPE_ARGUMENTS()),
+          b.firstOf(
+            b.invokeRule(JavaTokenType.IDENTIFIER),
+            b.invokeRule(JavaKeyword.THIS),
+            b.invokeRule(JavaKeyword.SUPER)),
+          b.optional(ARGUMENTS())));
+  }
+
