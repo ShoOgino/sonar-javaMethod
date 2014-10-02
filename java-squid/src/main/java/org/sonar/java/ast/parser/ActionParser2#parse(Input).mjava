@@ -1,0 +1,16 @@
+  private AstNode parse(Input input) {
+    ParsingResult result = parseRunner.parse(input.input());
+
+    if (!result.isMatched()) {
+      ParseError parseError = result.getParseError();
+      InputBuffer inputBuffer = parseError.getInputBuffer();
+      int line = inputBuffer.getPosition(parseError.getErrorIndex()).getLine();
+      String message = new ParseErrorFormatter().format(parseError);
+      throw new RecognitionException(line, message);
+    }
+
+    AstNode astNode = syntaxTreeCreator.create(result.getParseTreeRoot(), input);
+    astNodeSanitzer.sanitize(astNode);
+    return astNode;
+  }
+

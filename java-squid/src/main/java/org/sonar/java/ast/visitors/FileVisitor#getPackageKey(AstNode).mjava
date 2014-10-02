@@ -1,9 +1,10 @@
-  private String getPackageKey(AstNode astNode) {
+  // TODO Reduce visibility
+  public static String getPackageKey(AstNode astNode) {
     if (isEmptyFileOrParseError(astNode)) {
       // Cannot resolve package for empty file and parse error.
       return UNRESOLVED_PACKAGE;
-    } else if (astNode.getFirstChild().is(JavaGrammar.PACKAGE_DECLARATION)) {
-      AstNode packageNameNode = astNode.getFirstChild().getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS);
+    } else if (astNode.hasDirectChildren(JavaGrammar.PACKAGE_DECLARATION)) {
+      AstNode packageNameNode = astNode.getFirstChild(JavaGrammar.PACKAGE_DECLARATION).getFirstChild(JavaTreeMaker.QUALIFIED_EXPRESSION_KINDS);
       return getAstNodeValue(packageNameNode).replace('.', '/');
     } else {
       // unnamed package

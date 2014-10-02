@@ -1,0 +1,64 @@
+  private Object visitNonTerminal(ParseNode node) {
+    MutableParsingRule rule = (MutableParsingRule) node.getMatcher();
+    GrammarRuleKey ruleKey = rule.getRuleKey();
+
+    if (mapping.hasMethodForRuleKey(ruleKey)) {
+      // TODO Drop useless intermediate nodes
+      Preconditions.checkState(node.getChildren().size() == 1);
+      return visit(node.getChildren().get(0));
+    }
+
+    if (mapping.isOptionalRule(ruleKey)) {
+      Preconditions.checkState(node.getChildren().size() <= 1);
+      if (node.getChildren().isEmpty()) {
+        return Optional.absent();
+      } else {
+        return Optional.of(visit(node.getChildren().get(0)));
+      }
+    }
+
+    List<ParseNode> children = node.getChildren();
+    List<Object> convertedChildren = Lists.newArrayList();
+    for (ParseNode child : children) {
+      Object result = visit(child);
+      if (result != null) {
+        convertedChildren.add(result);
+      }
+    }
+
+    if (mapping.isRepeatedRule(ruleKey)) {
+      return Lists.newArrayList(convertedChildren);
+    }
+
+    Method method = mapping.actionForRuleKey(ruleKey);
+    if (method == null) {
+      Token token = null;
+
+      for (Object child : convertedChildren) {
+        if (child instanceof AstNode && ((AstNode) child).hasToken()) {
+          token = ((AstNode) child).getToken();
+          break;
+        }
+      }
+      AstNode astNode = new AstNode(rule.getRealAstNodeType(), rule.getName(), token);
+      for (Object child : convertedChildren) {
+        astNode.addChild((AstNode) child);
+      }
+
+      astNode.setFromIndex(node.getStartIndex());
+      astNode.setToIndex(node.getEndIndex());
+
+      return astNode;
+    }
+
+    try {
+      return method.invoke(treeFactory, convertedChildren.toArray(new Object[convertedChildren.size()]));
+    } catch (IllegalAccessException e) {
+      throw Throwables.propagate(e);
+    } catch (IllegalArgumentException e) {
+      throw Throwables.propagate(e);
+    } catch (InvocationTargetException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+

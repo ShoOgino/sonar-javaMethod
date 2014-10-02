@@ -1,0 +1,33 @@
+  public void sanitize(AstNode astNode) {
+    List<AstNode> children = astNode.getChildren();
+
+    if (!children.isEmpty()) {
+      // Compound nodes
+      Token token = null;
+      int fromIndex = -1;
+
+      for (AstNode child : astNode.getChildren()) {
+        sanitize(child);
+
+        if (token == null && child.hasToken()) {
+          token = child.getToken();
+        }
+
+        if (fromIndex == -1) {
+          fromIndex = child.getFromIndex();
+        }
+      }
+
+      AstNodeHacks.setToken(astNode, token);
+      astNode.setFromIndex(fromIndex);
+      astNode.setToIndex(toIndex);
+    } else if (astNode.hasToken()) {
+      // Token wrapper nodes
+      toIndex = astNode.getToIndex();
+    } else {
+      // Empty nodes
+      astNode.setFromIndex(toIndex);
+      astNode.setToIndex(toIndex);
+    }
+  }
+

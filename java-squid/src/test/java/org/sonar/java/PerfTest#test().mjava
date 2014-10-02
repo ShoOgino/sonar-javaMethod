@@ -1,0 +1,44 @@
+  @Test
+  @Ignore
+  public void test() throws Exception {
+    LexerlessGrammarBuilder b = JavaGrammar.createGrammarBuilder();
+
+    ActionParser fullParser1 = new ActionParser(
+      Charsets.UTF_8,
+      JavaGrammar.createGrammarBuilder(),
+      ActionGrammar.class,
+      new TreeFactory(),
+      JavaGrammar.COMPILATION_UNIT,
+      false);
+
+    ActionParser2 fullParser2 = new ActionParser2(
+      Charsets.UTF_8,
+      b,
+      ActionGrammar.class,
+      new TreeFactory(),
+      JavaGrammar.COMPILATION_UNIT,
+      false);
+
+    JavaTreeMaker treeMaker = new JavaTreeMaker();
+    ParseRunner rawParser = new ParseRunner(b.build().getRootRule());
+    final Parser<LexerlessGrammar> astNodeParser = new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, b.build());
+
+    System.out.println("Trash: " + fullParser1 + fullParser2 + treeMaker + rawParser + astNodeParser);
+
+    Collection<File> files = FileUtils.listFiles(
+      new File("/Users/dineshbolkensteyn/Desktop/sonarsource/it-sources/sslr/oracle-jdk-1.6.0.31"),
+      new String[] {"java"},
+      true);
+
+    Field definitions = LexerlessGrammarBuilder.class.getDeclaredField("definitions");
+    definitions.setAccessible(true);
+    System.out.println("Rules: " + ((Map) definitions.get(b)).size());
+
+    for (File file : files) {
+      AstNode astNode1 = fullParser1.parse(file);
+      AstNode astNode2 = fullParser2.parse(file);
+
+      verify(file, astNode1, astNode2);
+    }
+  }
+

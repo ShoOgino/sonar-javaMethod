@@ -1,0 +1,44 @@
+  public void verify(File file, AstNode astNode1, AstNode astNode2) {
+    try {
+      Preconditions.checkNotNull(astNode1);
+      Preconditions.checkNotNull(astNode2);
+
+      assertThat(astNode2.getName()).isEqualTo(astNode1.getName());
+      if (astNode2.getType() != SyntaxTreeCreator.UNDEFINED_TOKEN_TYPE) {
+        assertThat(astNode2.getType()).isEqualTo(astNode1.getType());
+      }
+      assertThat(astNode2.getNumberOfChildren()).isEqualTo(astNode1.getNumberOfChildren());
+      assertThat(astNode2.hasToken()).isEqualTo(astNode1.hasToken());
+      if (astNode2.hasToken()) {
+        assertThat(astNode2.getToken().getLine()).isEqualTo(astNode1.getToken().getLine());
+        assertThat(astNode2.getToken().getColumn()).isEqualTo(astNode1.getToken().getColumn());
+        assertThat(astNode2.getToken().getOriginalValue()).isEqualTo(astNode1.getToken().getOriginalValue());
+        assertThat(astNode2.getToken().getValue()).isEqualTo(astNode1.getToken().getValue());
+        assertThat(astNode2.getToken().isGeneratedCode()).isEqualTo(astNode1.getToken().isGeneratedCode());
+        assertThat(astNode2.getToken().isCopyBook()).isEqualTo(astNode1.getToken().isCopyBook());
+      }
+      if (false && astNode1.getFromIndex() != -1) {
+        assertThat(astNode2.getFromIndex())
+          .as("New: " + load(file, astNode2.getFromIndex()) + "\n"
+            + "Old: " + load(file, astNode1.getFromIndex()))
+          .isEqualTo(astNode1.getFromIndex());
+      }
+      if (false && astNode1.getToIndex() != -1) {
+        assertThat(astNode2.getToIndex())
+          .as("New: " + load(file, astNode2.getToIndex()) + "\n"
+            + "Old: " + load(file, astNode1.getToIndex()))
+          .isEqualTo(astNode1.getToIndex());
+      }
+    } catch (Throwable e) {
+      throw new RuntimeException("File: " + file.getAbsolutePath()
+        + "\nAstNode1: " + astNode1
+        + "\nAstNode2: " + astNode2
+        + "\nMessage: " + e.getMessage(),
+        e);
+    }
+
+    for (int i = 0; i < astNode1.getNumberOfChildren(); i++) {
+      verify(file, astNode1.getChildren().get(i), astNode2.getChildren().get(i));
+    }
+  }
+

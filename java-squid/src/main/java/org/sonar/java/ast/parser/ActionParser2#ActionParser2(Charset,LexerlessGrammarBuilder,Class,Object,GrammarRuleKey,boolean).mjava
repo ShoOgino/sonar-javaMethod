@@ -1,0 +1,41 @@
+  public ActionParser2(Charset charset, LexerlessGrammarBuilder b, Class grammarClass, Object treeFactory, GrammarRuleKey rootRule, boolean verifyAssertions) {
+    super(null);
+
+    this.charset = charset;
+
+    this.grammarBuilderInterceptor = new GrammarBuilderInterceptor(b);
+    Enhancer grammarEnhancer = new Enhancer();
+    grammarEnhancer.setSuperclass(grammarClass);
+    grammarEnhancer.setCallback(grammarBuilderInterceptor);
+
+    ActionMethodInterceptor actionMethodInterceptor = new ActionMethodInterceptor(grammarBuilderInterceptor);
+    Enhancer actionEnhancer = new Enhancer();
+    actionEnhancer.setSuperclass(treeFactory.getClass());
+    actionEnhancer.setCallback(actionMethodInterceptor);
+
+    Object grammar = grammarEnhancer.create(
+      new Class[] {GrammarBuilder.class, treeFactory.getClass()},
+      new Object[] {grammarBuilderInterceptor, actionEnhancer.create()});
+
+    for (Method method : grammarClass.getMethods()) {
+      if (method.getDeclaringClass().equals(Object.class)) {
+        continue;
+      }
+
+      try {
+        method.invoke(grammar);
+      } catch (InvocationTargetException e) {
+        throw Throwables.propagate(e);
+      } catch (IllegalAccessException e) {
+        throw Throwables.propagate(e);
+      }
+    }
+
+    this.syntaxTreeCreator = new SyntaxTreeCreator<AstNode>(treeFactory, grammarBuilderInterceptor);
+
+    b.setRootRule(rootRule);
+    this.rootRule = rootRule;
+    this.grammar = b.build();
+    this.parseRunner = new ParseRunner(this.grammar.getRootRule());
+  }
+
