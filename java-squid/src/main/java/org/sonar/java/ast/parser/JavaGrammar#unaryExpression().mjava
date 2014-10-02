@@ -1,0 +1,14 @@
+  public ExpressionTree unaryExpression() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.UNARY_EXPRESSION)
+      .is(
+        b.firstOf(
+          f.newPrefixedExpression(
+            b.firstOf(
+              b.invokeRule(JavaPunctuator.INC),
+              b.invokeRule(JavaPunctuator.DEC),
+              b.invokeRule(JavaPunctuator.PLUS),
+              b.invokeRule(JavaPunctuator.MINUS)),
+            unaryExpression()),
+          unaryExpressionNotPlusMinus()));
+  }
+

@@ -1,0 +1,14 @@
+  public ExpressionTree shiftExpression() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.SHIFT_EXPRESSION)
+      .is(
+        f.binaryExpression3(
+          additiveExpression(),
+          b.zeroOrMore(
+            f.newOperatorAndOperand3(
+              b.firstOf(
+                b.invokeRule(JavaPunctuator.SL),
+                b.invokeRule(JavaPunctuator.BSR),
+                b.invokeRule(JavaPunctuator.SR)),
+              additiveExpression()))));
+  }
+

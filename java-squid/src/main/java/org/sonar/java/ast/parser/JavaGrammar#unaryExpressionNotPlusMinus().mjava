@@ -1,0 +1,17 @@
+  public ExpressionTree unaryExpressionNotPlusMinus() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.UNARY_EXPRESSION_NOT_PLUS_MINUS)
+      .is(
+        b.firstOf(
+          castExpression(),
+          methodReference(),
+          // TODO Extract postfix expressions somewhere else
+          f.newPostfixExpression(
+            f.applySelectors1(primary(), b.zeroOrMore(selector())),
+            b.optional(
+              b.firstOf(
+                b.invokeRule(JavaPunctuator.INC),
+                b.invokeRule(JavaPunctuator.DEC)))),
+          f.newTildaExpression(b.invokeRule(JavaPunctuator.TILDA), unaryExpression()),
+          f.newBangExpression(b.invokeRule(JavaPunctuator.BANG), unaryExpression())));
+  }
+

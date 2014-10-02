@@ -1,0 +1,15 @@
+  public ClassTreeImpl enumDeclaration() {
+    return b.<ClassTreeImpl>nonterminal(JavaLexer.ENUM_DECLARATION)
+      .is(
+        f.newEnumDeclaration(
+          b.invokeRule(JavaKeyword.ENUM),
+          b.invokeRule(JavaTokenType.IDENTIFIER),
+          b.optional(f.newTuple12(b.invokeRule(JavaKeyword.IMPLEMENTS), qualifiedIdentifierList())),
+          b.invokeRule(JavaPunctuator.LWING),
+          b.zeroOrMore(enumConstant()),
+          // TODO Grammar has been relaxed
+          b.optional(b.invokeRule(JavaPunctuator.SEMI)),
+          b.zeroOrMore(classMember()),
+          b.invokeRule(JavaPunctuator.RWING)));
+  }
+

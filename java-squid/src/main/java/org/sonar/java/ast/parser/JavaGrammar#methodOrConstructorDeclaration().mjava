@@ -1,0 +1,24 @@
+  public MethodTreeImpl methodOrConstructorDeclaration() {
+    return b.<MethodTreeImpl>nonterminal()
+      .is(
+        b.firstOf(
+          f.completeGenericMethodOrConstructorDeclaration(typeParameters(), methodOrConstructorDeclaration()),
+          f.newMethod(
+            type(), b.invokeRule(JavaTokenType.IDENTIFIER), formalParameters(),
+            // TOOD Dedicated rule for annotated dimensions
+            b.zeroOrMore(f.newTuple9(b.zeroOrMore(annotation()), dimension())),
+            b.optional(f.newTuple10(b.invokeRule(JavaKeyword.THROWS), qualifiedIdentifierList())),
+            b.firstOf(
+              block(),
+              b.invokeRule(JavaPunctuator.SEMI))),
+          // TODO Largely duplicated with method, but there is a prefix capture on the TYPE, it can be improved
+          f.newConstructor(
+            b.invokeRule(JavaTokenType.IDENTIFIER), formalParameters(),
+            // TOOD Dedicated rule for annotated dimensions
+            b.zeroOrMore(f.newTuple15(b.zeroOrMore(annotation()), dimension())),
+            b.optional(f.newTuple16(b.invokeRule(JavaKeyword.THROWS), qualifiedIdentifierList())),
+            b.firstOf(
+              block(),
+              b.invokeRule(JavaPunctuator.SEMI)))));
+  }
+

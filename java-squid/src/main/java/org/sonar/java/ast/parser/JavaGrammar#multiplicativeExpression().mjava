@@ -1,0 +1,14 @@
+  public ExpressionTree multiplicativeExpression() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.MULTIPLICATIVE_EXPRESSION)
+      .is(
+        f.binaryExpression1(
+          unaryExpression(),
+          b.zeroOrMore(
+            f.newOperatorAndOperand1(
+              b.firstOf(
+                b.invokeRule(JavaPunctuator.STAR),
+                b.invokeRule(JavaPunctuator.DIV),
+                b.invokeRule(JavaPunctuator.MOD)),
+              unaryExpression()))));
+  }
+

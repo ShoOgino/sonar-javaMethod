@@ -1,0 +1,17 @@
+  public AstNode classMember() {
+    return b.<AstNode>nonterminal(JavaLexer.MEMBER_DECL)
+      .is(
+        b.firstOf(
+          f.completeMember(
+            modifiers(),
+            b.firstOf(
+              methodOrConstructorDeclaration(),
+              fieldDeclaration(),
+              classDeclaration(),
+              annotationTypeDeclaration(),
+              interfaceDeclaration(),
+              enumDeclaration())),
+          f.newInitializerMember(b.optional(b.invokeRule(JavaKeyword.STATIC)), block()),
+          f.newEmptyMember(b.invokeRule(JavaPunctuator.SEMI))));
+  }
+

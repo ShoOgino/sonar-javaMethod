@@ -1,0 +1,14 @@
+  public ExpressionTree castExpression() {
+    return b.<ExpressionTree>nonterminal(JavaLexer.CAST_EXPRESSION)
+      .is(
+        f.completeCastExpression(
+          b.invokeRule(JavaPunctuator.LPAR),
+          b.firstOf(
+            f.newBasicTypeCastExpression(basicType(), b.invokeRule(JavaPunctuator.RPAR), unaryExpression()),
+            f.newClassCastExpression(
+              type(),
+              b.zeroOrMore(f.newWrapperAstNode(b.invokeRule(JavaPunctuator.AND), (AstNode) qualifiedIdentifier())),
+              b.invokeRule(JavaPunctuator.RPAR),
+              unaryExpressionNotPlusMinus()))));
+  }
+
