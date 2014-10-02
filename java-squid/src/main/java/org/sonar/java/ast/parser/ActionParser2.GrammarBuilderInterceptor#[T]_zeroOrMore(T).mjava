@@ -1,7 +1,10 @@
     @Override
     public <T> Optional<List<T>> zeroOrMore(T method) {
-      oneOrMore(method);
-      optional(method);
+      ParsingExpression expression = pop();
+      GrammarRuleKey ruleKey = new DummyGrammarRuleKey("zeroOrMore", expression);
+      zeroOrMores.add(ruleKey);
+      b.rule(ruleKey).is(b.zeroOrMore(expression));
+      invokeRule(ruleKey);
       return null;
     }
 
