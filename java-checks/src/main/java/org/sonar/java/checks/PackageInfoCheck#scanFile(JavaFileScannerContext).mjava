@@ -1,7 +1,12 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
+    File parentFile = context.getFile().getParentFile();
+    if(!directoriesWithPackageFile.contains(parentFile)) {
+      directoriesWithoutPackageFile.add(parentFile);
+    }
     if ("package-info.java".equals(context.getFile().getName())) {
-      directoriesWithPackageFile.add(context.getFile().getParentFile());
+      directoriesWithoutPackageFile.remove(parentFile);
+      directoriesWithPackageFile.add(parentFile);
     }
   }
 
