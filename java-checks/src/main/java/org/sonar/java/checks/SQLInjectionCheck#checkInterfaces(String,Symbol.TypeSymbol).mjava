@@ -1,0 +1,10 @@
+  private boolean checkInterfaces(String type, Symbol.TypeSymbol symbol) {
+    for (Type interfaceType : symbol.getInterfaces()) {
+      Symbol.TypeSymbol interfaceSymbol = ((Type.ClassType) interfaceType).getSymbol();
+      if (type.equals(interfaceSymbol.owner().getName() + "." + interfaceSymbol.getName()) || checkInterfaces(type, interfaceSymbol)) {
+        return true;
+      }
+    }
+    return false;
+  }
+

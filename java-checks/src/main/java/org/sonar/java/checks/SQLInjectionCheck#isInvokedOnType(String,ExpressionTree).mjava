@@ -1,0 +1,10 @@
+  private boolean isInvokedOnType(String type, ExpressionTree expressionTree) {
+    Type selectorType = ((AbstractTypedTree) expressionTree).getSymbolType();
+    if (selectorType.isTagged(Type.CLASS)) {
+      Symbol.TypeSymbol symbol = ((Type.ClassType) selectorType).getSymbol();
+      String selector = symbol.owner().getName() + "." + symbol.getName();
+      return type.equals(selector) || checkInterfaces(type, symbol);
+    }
+    return false;
+  }
+
