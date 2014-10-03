@@ -1,0 +1,10 @@
+  @Test
+  public void test_toString() throws Exception {
+    GrammarRuleKey ruleKey = mock(GrammarRuleKey.class);
+    when(ruleKey.toString()).thenReturn("foo");
+    assertThat(new DelayedRuleInvocationExpression(mock(LexerlessGrammarBuilder.class), ruleKey).toString()).isEqualTo("foo");
+
+    Method method = DelayedRuleInvocationExpressionTest.class.getDeclaredMethod("FOO");
+    assertThat(new DelayedRuleInvocationExpression(mock(LexerlessGrammarBuilder.class), mock(GrammarBuilderInterceptor.class), method).toString()).isEqualTo("FOO()");
+  }
+

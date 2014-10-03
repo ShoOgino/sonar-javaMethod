@@ -1,0 +1,18 @@
+  @Test
+  public void should_compile_rule_keys() {
+    LexerlessGrammarBuilder b = spy(LexerlessGrammarBuilder.create());
+    GrammarRuleKey ruleKey = mock(GrammarRuleKey.class);
+
+    DelayedRuleInvocationExpression expression = new DelayedRuleInvocationExpression(b, ruleKey);
+
+    CompilationHandler compiler = mock(CompilationHandler.class);
+    expression.compile(compiler);
+
+    verify(b).rule(ruleKey);
+
+    ArgumentCaptor<ParsingExpression> ruleExpression = ArgumentCaptor.forClass(ParsingExpression.class);
+    verify(compiler).compile(ruleExpression.capture());
+    assertThat(ruleExpression.getAllValues()).hasSize(1);
+    assertThat(((MutableParsingRule) ruleExpression.getValue()).getRuleKey()).isSameAs(ruleKey);
+  }
+

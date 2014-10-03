@@ -1,0 +1,19 @@
+  @Override
+  public Instruction[] compile(CompilationHandler compiler) {
+    if (ruleKey == null) {
+      ruleKey = grammarBuilderInterceptor.ruleKeyForMethod(method);
+      if (ruleKey == null) {
+        throw new IllegalStateException("Cannot find the rule key corresponding to the invoked method: " + toString());
+      }
+    }
+
+    try {
+      b.rule(ruleKey); // Ensure the MutableParsingRule is created in the definitions
+      return compiler.compile((MutableParsingRule) ((Map) DEFINITIONS_FIELD.get(b)).get(ruleKey));
+    } catch (IllegalArgumentException e) {
+      throw Throwables.propagate(e);
+    } catch (IllegalAccessException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+
