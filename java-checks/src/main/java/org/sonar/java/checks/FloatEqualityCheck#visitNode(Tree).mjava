@@ -1,8 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
-    if(isFloat(binaryExpressionTree.leftOperand()) && isFloat(binaryExpressionTree.rightOperand()) && !isNanTest(binaryExpressionTree)) {
-      addIssue(binaryExpressionTree, "float comparison should rely on absolute value of their difference compared to an arbitrary epsilon.");
+    if((hasFloatingType(binaryExpressionTree.leftOperand()) || hasFloatingType(binaryExpressionTree.rightOperand())) && !isNanTest(binaryExpressionTree)) {
+      addIssue(binaryExpressionTree, "Equality tests should not be made with floating point values.");
     }
   }
 
