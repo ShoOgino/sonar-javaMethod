@@ -1,8 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     boolean isLocalVar = false;
-    if(tree.is(Tree.Kind.VARIABLE)) {
-      isLocalVar = currentParent.peek().is(PublicApiChecker.METHOD_KINDS);
+    if (tree.is(Tree.Kind.VARIABLE)) {
+      isLocalVar = currentParent.peek().is(METHOD_KINDS);
     } else {
       currentParent.push(tree);
     }
@@ -16,7 +16,7 @@
         addIssue(tree, "Add the missing @Deprecated annotation.");
       }
     }
-    if (tree.is(PublicApiChecker.CLASS_KINDS)) {
+    if (tree.is(CLASS_KINDS)) {
       classOrInterfaceIsDeprecated.push(hasDeprecatedAnnotation || hasJavadocDeprecatedTag);
     }
   }
