@@ -19,15 +19,11 @@
         qualifiedIdentifier));
     }
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
-    for (AstNode typeNode : astNode.getChildren(JavaLexer.TYPE_DECLARATION)) {
-      ClassTreeImpl declarationNode = (ClassTreeImpl) typeNode.getFirstChild(
-        Kind.CLASS,
-        Kind.ENUM,
-        Kind.INTERFACE,
-        Kind.ANNOTATION_TYPE);
-      if (declarationNode != null) {
-        types.add(typeDeclaration((ModifiersTree) typeNode.getFirstChild(JavaLexer.MODIFIERS), declarationNode));
-      }
+    for (AstNode typeNode : astNode.getChildren(Kind.CLASS,
+      Kind.ENUM,
+      Kind.INTERFACE,
+      Kind.ANNOTATION_TYPE)) {
+      types.add((Tree) typeNode);
     }
 
     ExpressionTree packageDeclaration = null;
