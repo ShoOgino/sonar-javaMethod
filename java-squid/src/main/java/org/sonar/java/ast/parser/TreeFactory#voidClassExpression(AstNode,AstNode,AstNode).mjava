@@ -1,6 +1,12 @@
-  public ExpressionTree voidClassExpression(AstNode voidToken, AstNode dotToken, AstNode classToken) {
+  public ExpressionTree voidClassExpression(AstNode voidTokenAstNode, AstNode dotToken, AstNode classTokenAstNode) {
     // void.class
-    return new MemberSelectExpressionTreeImpl(treeMaker.basicType(voidToken), treeMaker.identifier(classToken),
-      voidToken, dotToken, classToken);
+    InternalSyntaxToken voidToken = InternalSyntaxToken.create(voidTokenAstNode);
+    PrimitiveTypeTreeImpl voidType = new PrimitiveTypeTreeImpl(voidToken,
+      ImmutableList.<AstNode>of(voidToken));
+
+    IdentifierTreeImpl classToken = new IdentifierTreeImpl(InternalSyntaxToken.create(classTokenAstNode));
+
+    return new MemberSelectExpressionTreeImpl(voidType, classToken,
+      voidType, dotToken, classToken);
   }
 

@@ -1,0 +1,39 @@
+  @Test
+  public void literal() {
+    LiteralTree tree = (LiteralTree) p.parse("class T { int m() { return 1; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.INT_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("1");
+
+    tree = (LiteralTree) p.parse("class T { long m() { return 1L; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.LONG_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("1L");
+
+    tree = (LiteralTree) p.parse("class T { float m() { return 1F; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.FLOAT_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("1F");
+
+    tree = (LiteralTree) p.parse("class T { double m() { return 1d; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.DOUBLE_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("1d");
+
+    tree = (LiteralTree) p.parse("class T { boolean m() { return true; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.BOOLEAN_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("true");
+
+    tree = (LiteralTree) p.parse("class T { boolean m() { return false; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.BOOLEAN_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("false");
+
+    tree = (LiteralTree) p.parse("class T { char m() { return 'c'; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.CHAR_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("'c'");
+
+    tree = (LiteralTree) p.parse("class T { String m() { return \"s\"; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.STRING_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("\"s\"");
+
+    tree = (LiteralTree) p.parse("class T { Object m() { return null; } }").getFirstDescendant(getKindsAssociatedTo(LiteralTree.class));
+    assertThat(tree.is(Tree.Kind.NULL_LITERAL)).isTrue();
+    assertThat(tree.value()).isEqualTo("null");
+  }
+

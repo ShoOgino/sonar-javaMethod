@@ -1,8 +1,12 @@
-  public ContinueStatementTreeImpl continueStatement(AstNode continueToken, Optional<AstNode> identifier, AstNode semicolonToken) {
-    return identifier.isPresent() ?
-      new ContinueStatementTreeImpl(treeMaker.identifier(identifier.get()),
-        continueToken, identifier.get(), semicolonToken) :
-      new ContinueStatementTreeImpl(null,
+  public ContinueStatementTreeImpl continueStatement(AstNode continueToken, Optional<AstNode> identifierAstNode, AstNode semicolonToken) {
+    if (identifierAstNode.isPresent()) {
+      IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode.get()));
+
+      return new ContinueStatementTreeImpl(identifier,
+        continueToken, identifier, semicolonToken);
+    } else {
+      return new ContinueStatementTreeImpl(null,
         continueToken, semicolonToken);
+    }
   }
 
