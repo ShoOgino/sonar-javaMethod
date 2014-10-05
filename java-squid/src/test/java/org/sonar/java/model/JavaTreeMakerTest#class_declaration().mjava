@@ -1,7 +1,7 @@
   @Test
   public void class_declaration() {
     AstNode astNode = p.parse("public class T<U> extends C implements I1, I2 { }");
-    ClassTree tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    ClassTree tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName().name()).isEqualTo("T");
@@ -13,7 +13,7 @@
 
     astNode = p.parse("public class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.simpleName().name()).isEqualTo("T");
     assertThat(tree.typeParameters()).isEmpty();
@@ -22,7 +22,7 @@
 
     astNode = p.parse("@Deprecated class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    tree = (ClassTree) maker.compilationUnit(astNode).types().get(0);
+    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.modifiers().annotations()).hasSize(1);
   }
 

@@ -1,0 +1,45 @@
+  public CompilationUnitTreeImpl newCompilationUnit(
+    AstNode spacing,
+    Optional<ExpressionTree> packageDeclaration,
+    Optional<List<ImportTreeImpl>> importDeclarations,
+    Optional<List<AstNode>> typeDeclarations,
+    AstNode eof) {
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(spacing);
+
+    ImmutableList.Builder<AnnotationTree> packageAnnotations = ImmutableList.builder();
+    if (packageDeclaration.isPresent()) {
+      children.add((AstNode) packageDeclaration.get());
+      for (AstNode child : ((AstNode) packageDeclaration.get()).getChildren()) {
+        if (child.is(Kind.ANNOTATION)) {
+          packageAnnotations.add((AnnotationTree) child);
+        }
+      }
+    }
+
+    if (importDeclarations.isPresent()) {
+      children.addAll(importDeclarations.get());
+    }
+
+    ImmutableList.Builder<Tree> types = ImmutableList.builder();
+    if (typeDeclarations.isPresent()) {
+      children.addAll(typeDeclarations.get());
+
+      for (AstNode child : typeDeclarations.get()) {
+        if (!child.is(JavaPunctuator.SEMI)) {
+          types.add((Tree) child);
+        }
+      }
+    }
+
+    children.add(eof);
+
+    return new CompilationUnitTreeImpl(
+      packageDeclaration.orNull(),
+      (List) importDeclarations.or(ImmutableList.<ImportTreeImpl>of()),
+      types.build(),
+      packageAnnotations.build(),
+      children);
+  }
+

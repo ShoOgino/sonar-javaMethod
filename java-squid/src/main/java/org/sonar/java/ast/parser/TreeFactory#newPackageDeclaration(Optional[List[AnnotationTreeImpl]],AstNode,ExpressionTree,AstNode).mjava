@@ -1,0 +1,16 @@
+  public ExpressionTree newPackageDeclaration(Optional<List<AnnotationTreeImpl>> annotations, AstNode packageTokenAstNode, ExpressionTree qualifiedIdentifier,
+    AstNode semicolonTokenAstNode) {
+    JavaTree partial = (JavaTree) qualifiedIdentifier;
+
+    List<AstNode> children = Lists.newArrayList();
+    if (annotations.isPresent()) {
+      children.addAll(annotations.get());
+    }
+    children.add(packageTokenAstNode);
+
+    partial.prependChildren(children);
+    partial.addChild(semicolonTokenAstNode);
+
+    return (ExpressionTree) partial;
+  }
+

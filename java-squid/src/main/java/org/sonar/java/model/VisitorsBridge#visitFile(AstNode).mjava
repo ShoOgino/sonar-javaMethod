@@ -2,7 +2,7 @@
   public void visitFile(@Nullable AstNode astNode) {
     semanticModel = null;
     if (astNode != null) {
-      CompilationUnitTree tree = treeMaker.compilationUnit(astNode);
+      CompilationUnitTree tree = (CompilationUnitTree) astNode;
       if (isNotJavaLangOrSerializable()) {
         try {
           semanticModel = SemanticModel.createFor(tree, getProjectClasspath());
@@ -18,8 +18,8 @@
       for (JavaFileScanner scanner : scanners) {
         scanner.scanFile(context);
       }
-      if(semanticModel != null) {
-        //Close class loader after all the checks.
+      if (semanticModel != null) {
+        // Close class loader after all the checks.
         semanticModel.done();
       }
     }

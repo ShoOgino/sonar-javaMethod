@@ -1,14 +1,12 @@
   @Test
   public void compilation_unit() {
-    AstNode astNode = p.parse("import foo; import bar; class Foo {} class Bar {}");
-    CompilationUnitTree tree = maker.compilationUnit(astNode);
+    CompilationUnitTree tree = (CompilationUnitTree) p.parse("import foo; import bar; class Foo {} class Bar {}");
     assertThat(tree.is(Tree.Kind.COMPILATION_UNIT)).isTrue();
     assertThat(tree.packageName()).isNull();
     assertThat(tree.imports()).hasSize(2);
     assertThat(tree.types()).hasSize(2);
 
-    astNode = p.parse("package pkg; import foo; import bar; class Foo {} class Bar {}");
-    tree = maker.compilationUnit(astNode);
+    tree = (CompilationUnitTree) p.parse("package pkg; import foo; import bar; class Foo {} class Bar {}");
     assertThat(tree.is(Tree.Kind.COMPILATION_UNIT)).isTrue();
     assertThat(tree.packageName()).isNotNull();
     assertThat(tree.imports()).hasSize(2);
