@@ -1,8 +1,19 @@
-  public AstNode completeAnnotationTypeMember(ModifiersTreeImpl modifiers, AstNode annotationTypeElementRest) {
-    AstNodeType type = JavaLexer.ANNOTATION_TYPE_ELEMENT_DECLARATION;
-    AstNode result = new AstNode(type, type.toString(), null);
-    result.addChild(modifiers);
-    result.addChild(annotationTypeElementRest);
-    return result;
+  public AstNode completeAnnotationTypeMember(ModifiersTreeImpl modifiers, AstNode partialAstNode) {
+    JavaTree partial = (JavaTree) partialAstNode;
+    partial.prependChildren(modifiers);
+
+    if (partial.is(JavaLexer.VARIABLE_DECLARATORS)) {
+      for (VariableTreeImpl variable : (VariableDeclaratorListTreeImpl) partial) {
+        variable.completeModifiers(modifiers);
+      }
+    } else if (partial.is(Kind.CLASS) || partial.is(Kind.INTERFACE) || partial.is(Kind.ENUM) || partial.is(Kind.ANNOTATION_TYPE)) {
+      ((ClassTreeImpl) partial).completeModifiers(modifiers);
+    } else if (partial.is(Kind.METHOD)) {
+      ((MethodTreeImpl) partial).completeWithModifiers(modifiers);
+    } else {
+      throw new IllegalArgumentException("Unsupported type: " + partial);
+    }
+
+    return partial;
   }
 

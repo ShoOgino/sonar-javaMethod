@@ -13,33 +13,13 @@
 
     if (annotationTypeElementDeclarations.isPresent()) {
       for (AstNode annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
-        // FIXME
-        if (annotationTypeElementDeclaration.is(JavaLexer.ANNOTATION_TYPE_ELEMENT_DECLARATION)) {
-          Preconditions.checkArgument(annotationTypeElementDeclaration.getNumberOfChildren() == 2);
-
-          ModifiersTreeImpl modifiers = (ModifiersTreeImpl) annotationTypeElementDeclaration.getFirstChild(JavaLexer.MODIFIERS);
-          AstNode declaration = annotationTypeElementDeclaration.getLastChild();
-
-          if (declaration.is(Kind.METHOD)) {
-            // method
-            members.add(((MethodTreeImpl) declaration).completeWithModifiers(modifiers));
-            children.add(declaration);
-          } else if (declaration.is(JavaLexer.ANNOTATION_TYPE_ELEMENT_REST)) {
-            // constant
-            appendConstantDeclarations(ModifiersTreeImpl.EMPTY, members, declaration);
-            children.add(annotationTypeElementDeclaration);
-          } else if (declaration.is(Kind.ANNOTATION_TYPE)) {
-            // TODO Complete with modifiers
-            members.add((Tree) declaration);
-            children.add(annotationTypeElementDeclaration);
-          } else if (declaration.is(Kind.CLASS, Kind.INTERFACE, Kind.ENUM)) {
-            // interface, class, enum
-            members.add(treeMaker.typeDeclaration(modifiers, (ClassTreeImpl) declaration));
-            children.add(annotationTypeElementDeclaration);
+        children.add(annotationTypeElementDeclaration);
+        if (annotationTypeElementDeclaration.is(JavaLexer.VARIABLE_DECLARATORS)) {
+          for (VariableTreeImpl variable : (VariableDeclaratorListTreeImpl) annotationTypeElementDeclaration) {
+            members.add(variable);
           }
-        } else {
-          // semi
-          children.add(annotationTypeElementDeclaration);
+        } else if (!annotationTypeElementDeclaration.is(JavaPunctuator.SEMI)) {
+          members.add((Tree) annotationTypeElementDeclaration);
         }
       }
     }
