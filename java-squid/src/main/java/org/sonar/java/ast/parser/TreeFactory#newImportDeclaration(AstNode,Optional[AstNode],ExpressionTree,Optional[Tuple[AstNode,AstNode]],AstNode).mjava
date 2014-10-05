@@ -1,0 +1,21 @@
+  public ImportTreeImpl newImportDeclaration(AstNode importTokenAstNode, Optional<AstNode> staticTokenAstNode, ExpressionTree qualifiedIdentifier,
+    Optional<Tuple<AstNode, AstNode>> dotStar,
+    AstNode semicolonTokenAstNode) {
+
+    ExpressionTree target = qualifiedIdentifier;
+    if (dotStar.isPresent()) {
+      IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(dotStar.get().second()));
+
+      target = new MemberSelectExpressionTreeImpl(qualifiedIdentifier, identifier,
+        (AstNode) qualifiedIdentifier, dotStar.get().first(), identifier);
+    }
+
+    if (staticTokenAstNode.isPresent()) {
+      return new ImportTreeImpl(true, target,
+        importTokenAstNode, staticTokenAstNode.get(), (AstNode) target, semicolonTokenAstNode);
+    } else {
+      return new ImportTreeImpl(false, target,
+        importTokenAstNode, (AstNode) target, semicolonTokenAstNode);
+    }
+  }
+
