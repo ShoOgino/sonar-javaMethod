@@ -1,4 +1,4 @@
-  public void visitFile(File file) {
+  private void visitFile(File file) {
     List<String> lines;
     try {
       lines = Files.readLines(file, charset);
@@ -6,9 +6,11 @@
       throw new SonarException(e);
     }
     for (int i = 0; i < lines.size(); i++) {
-      String line = lines.get(i);
-      if (line.length() > maximumLineLength) {
-        addIssue(i+1, MessageFormat.format("Split this {0} characters long line (which is greater than {1} authorized).", line.length(), maximumLineLength));
+      if (!ignoredLines.contains(i + 1)) {
+        String line = lines.get(i);
+        if (line.length() > maximumLineLength) {
+          addIssue(i + 1, MessageFormat.format("Split this {0} characters long line (which is greater than {1} authorized).", line.length(), maximumLineLength));
+        }
       }
     }
   }
