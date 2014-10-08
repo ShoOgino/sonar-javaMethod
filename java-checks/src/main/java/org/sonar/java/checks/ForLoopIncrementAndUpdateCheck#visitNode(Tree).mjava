@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      ForStatementTree forStatementTree = (ForStatementTree) tree;
+      if (!forStatementTree.update().isEmpty()) {
+        Collection<Symbol> updateSymbols = getUpdatedSymbols(forStatementTree);
+        ConditionVisitor conditionVisitor = new ConditionVisitor(updateSymbols);
+        forStatementTree.accept(conditionVisitor);
+        if (conditionVisitor.shouldRaiseIssue) {
+          addIssue(tree, "This loop's stop condition tests \"" + Joiner.on(", ").join(conditionVisitor.conditionNames)
+              + "\" but the incrementer updates \"" + getSymbols(updateSymbols) + "\".");
+        }
+      }
+    }
+  }
+
