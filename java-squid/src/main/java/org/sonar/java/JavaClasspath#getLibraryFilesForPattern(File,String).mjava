@@ -1,0 +1,18 @@
+  private List<File> getLibraryFilesForPattern(File baseDir, String pathPattern) {
+    String pattern = pathPattern;
+    File dir = baseDir;
+    int wildcardIndex = pattern.indexOf('*');
+    if (wildcardIndex > 0) {
+      pattern = pattern.substring(0, wildcardIndex);
+    }
+    int lastPathSeparator = Math.max(pattern.lastIndexOf('/'), pattern.lastIndexOf('\\'));
+    File filenameDir = new File(pattern.substring(0, lastPathSeparator));
+    if (filenameDir.isAbsolute()) {
+      dir = filenameDir;
+      pattern = pathPattern.substring(dir.getAbsolutePath().length());
+    } else {
+      pattern = pathPattern;
+    }
+    return getMatchingFiles(pattern, dir);
+  }
+
