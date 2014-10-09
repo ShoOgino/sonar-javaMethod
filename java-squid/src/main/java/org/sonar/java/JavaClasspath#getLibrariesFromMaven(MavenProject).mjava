@@ -1,0 +1,20 @@
+  private List<File> getLibrariesFromMaven(MavenProject pom) {
+    try {
+      List<File> files = Lists.newArrayList();
+      if (pom.getCompileClasspathElements() != null) {
+        for (String classPathString : (List<String>) pom.getCompileClasspathElements()) {
+          files.add(new File(classPathString));
+        }
+      }
+      if (pom.getBuild().getOutputDirectory() != null) {
+        File outputDirectoryFile = new File(pom.getBuild().getOutputDirectory());
+        if (outputDirectoryFile.exists()) {
+          files.add(outputDirectoryFile);
+        }
+      }
+      return files;
+    } catch (DependencyResolutionRequiredException e) {
+      throw new SonarException("Fail to create the project classloader", e);
+    }
+  }
+

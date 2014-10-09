@@ -2,7 +2,7 @@
     List<File> result = Lists.newArrayList();
     String fileList = settings.getString(property);
     if (StringUtils.isNotEmpty(fileList)) {
-      List<String> fileNames = Lists.newArrayList(StringUtils.split(fileList, SEPARATOR));
+      Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
       for (String pathPattern : fileNames) {
         if (property.endsWith("binaries")) {
           File binaryFile = resolvePath(baseDir, pathPattern);
