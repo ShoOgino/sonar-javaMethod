@@ -1,0 +1,19 @@
+  private String getCommentFromMethod(MethodTree methodTree) {
+    if (methodTree.typeParameters().isEmpty()) {
+      Tree tokenTree = methodTree.returnType();
+      while (tokenTree != null && tokenTree.is(Kind.ARRAY_TYPE, Kind.PARAMETERIZED_TYPE, Kind.MEMBER_SELECT)) {
+        if (tokenTree.is(Kind.ARRAY_TYPE)) {
+          tokenTree = ((ArrayTypeTree) tokenTree).type();
+        } else if (tokenTree.is(Kind.MEMBER_SELECT)) {
+          tokenTree = ((MemberSelectExpressionTree) tokenTree).expression();
+        } else if (tokenTree.is(Kind.PARAMETERIZED_TYPE)) {
+          tokenTree = ((ParameterizedTypeTree) tokenTree).type();
+        }
+      }
+      return getCommentFromTree(tokenTree);
+    } else {
+      SyntaxToken syntaxToken = ((TypeParameterListTreeImpl) ((JavaTree) methodTree.typeParameters().get(0)).getAstNode().getParent()).openBracketToken();
+      return getCommentFromSyntaxToken(syntaxToken);
+    }
+  }
+
