@@ -10,12 +10,6 @@
     if ("java.io.Serializable".equals(interfaceName)) {
       return true;
     }
-    Symbol.TypeSymbol symbol = ((Type.ClassType) type).getSymbol();
-    for (Type interfaceType : symbol.getInterfaces()) {
-      if(implementsSerializable(interfaceType)) {
-        return true;
-      }
-    }
-    return implementsSerializable(symbol.getSuperclass());
+    return hasSupertypeSerializable((Type.ClassType) type);
   }
 
