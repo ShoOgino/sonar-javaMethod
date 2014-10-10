@@ -1,4 +1,4 @@
-  private boolean isIdentifierDynamicString(MethodInvocationTree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking) {
+  private boolean isIdentifierDynamicString(MethodInvocationTree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking, boolean firstLevel) {
     Symbol symbol = getSemanticModel().getReference(arg);
     if(symbol.equals(currentlyChecking) || isConstant(symbol)) {
       return false;
@@ -11,7 +11,7 @@
 
       //Check declaration
       VariableTree declaration = (VariableTree) getSemanticModel().getTree(symbol);
-      if(declaration.initializer() != null && isDynamicString(methodTree, declaration.initializer())) {
+      if(declaration.initializer() != null && isDynamicString(methodTree, declaration.initializer(), currentlyChecking)) {
         return true;
       }
       //check usages by revisiting the enclosing tree.
@@ -22,6 +22,6 @@
     }
     //arg is not a local variable nor a constant, so it is a parameter
     parameterName =  arg.name();
-    return true;
+    return !firstLevel;
   }
 
