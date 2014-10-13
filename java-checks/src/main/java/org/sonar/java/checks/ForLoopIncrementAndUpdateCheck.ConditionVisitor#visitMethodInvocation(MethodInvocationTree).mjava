@@ -1,0 +1,11 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if(tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        checkIdentifier(((MemberSelectExpressionTree) tree.methodSelect()).identifier());
+      } else {
+        scan(tree.methodSelect());
+      }
+      scan(tree.typeArguments());
+      scan(tree.arguments());
+    }
+
