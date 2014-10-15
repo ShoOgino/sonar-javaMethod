@@ -1,9 +1,13 @@
   private void notifyBytecodeVisitors(Collection<String> keys, AsmClassProvider classProvider) {
     BytecodeVisitor[] visitorArray = getVisitors().toArray(new BytecodeVisitor[getVisitors().size()]);
     for (String key : keys) {
-      AsmClass asmClass = classProvider.getClass(key, DETAIL_LEVEL.STRUCTURE_AND_CALLS);
-      BytecodeVisitorNotifier visitorNotifier = new BytecodeVisitorNotifier(asmClass, visitorArray);
-      visitorNotifier.notifyVisitors(indexer, javaResourceLocator);
+      try {
+        AsmClass asmClass = classProvider.getClass(key, DETAIL_LEVEL.STRUCTURE_AND_CALLS);
+        BytecodeVisitorNotifier visitorNotifier = new BytecodeVisitorNotifier(asmClass, visitorArray);
+        visitorNotifier.notifyVisitors(indexer, javaResourceLocator);
+      } catch (Exception exception) {
+        throw new AnalysisException("Unable to analyze .class file " + key, exception);
+      }
     }
   }
 
