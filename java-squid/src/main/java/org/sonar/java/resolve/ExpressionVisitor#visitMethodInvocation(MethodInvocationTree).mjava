@@ -1,6 +1,5 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree) {
-    super.visitMethodInvocation(tree);
     Tree methodSelect = tree.methodSelect();
     Resolve.Env env = semanticModel.getEnv(tree);
     IdentifierTree identifier;
@@ -8,6 +7,7 @@
     String name;
     if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
       MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodSelect;
+      scan(mset.expression());
       type = getType(mset.expression());
       identifier = mset.identifier();
     } else if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
@@ -16,6 +16,8 @@
     } else {
       throw new IllegalStateException("Method select in method invocation is not of the expected type " + methodSelect);
     }
+    scan(tree.typeArguments());
+    scan(tree.arguments());
     name = identifier.name();
     if (type == null) {
       type = symbols.unknownType;
