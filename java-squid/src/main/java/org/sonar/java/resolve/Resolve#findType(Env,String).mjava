@@ -27,10 +27,9 @@
     }
 
     //JLS8 6.4.1 Shadowing rules
-    //TODO check that symbol is indeed a type.
     //named imports
     for (Symbol symbol : env.namedImports().lookup(name)) {
-      if (symbol.kind < bestSoFar.kind) {
+      if (symbol.kind == Symbol.TYP) {
         return symbol;
       }
     }
@@ -41,14 +40,14 @@
     }
     //on demand imports
     for (Symbol symbol : env.starImports().lookup(name)) {
-      if (symbol.kind < bestSoFar.kind) {
+      if (symbol.kind == Symbol.TYP) {
         return symbol;
       }
     }
     //java.lang
     Symbol.PackageSymbol javaLang = bytecodeCompleter.enterPackage("java.lang");
     for (Symbol symbol : javaLang.members().lookup(name)) {
-      if (symbol.kind < bestSoFar.kind) {
+      if (symbol.kind == Symbol.TYP) {
         return symbol;
       }
     }

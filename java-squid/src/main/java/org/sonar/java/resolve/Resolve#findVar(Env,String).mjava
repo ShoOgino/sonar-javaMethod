@@ -24,19 +24,13 @@
       env1 = env1.outer();
     }
 
-    //imports
-    //TODO rules to distinguish static imports ??
-    for (Symbol symbol : env.namedImports().lookup(name)) {
-      if (symbol.kind < bestSoFar.kind) {
-        return symbol;
-      }
+    Symbol sym = findInStaticImport(env, name, Symbol.VAR);
+    if (sym.kind < Symbol.ERRONEOUS) {
+      // symbol exists
+      return sym;
+    } else if (sym.kind < bestSoFar.kind) {
+      bestSoFar = sym;
     }
-    for (Symbol symbol : env.staticStarImports().lookup(name)) {
-      if (symbol.kind < bestSoFar.kind) {
-        return symbol;
-      }
-    }
-
     return bestSoFar;
   }
 

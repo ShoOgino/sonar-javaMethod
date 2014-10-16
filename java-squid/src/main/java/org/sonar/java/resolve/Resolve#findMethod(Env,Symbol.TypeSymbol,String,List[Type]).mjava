@@ -21,7 +21,13 @@
         bestSoFar = symbol;
       }
     }
-
+    Symbol sym = findInStaticImport(env, name, Symbol.MTH);
+    if (sym.kind < Symbol.ERRONEOUS) {
+      // symbol exists
+      return sym;
+    } else if (sym.kind < bestSoFar.kind) {
+      bestSoFar = sym;
+    }
     return bestSoFar;
   }
 
