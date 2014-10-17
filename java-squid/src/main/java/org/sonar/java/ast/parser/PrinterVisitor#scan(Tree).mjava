@@ -5,19 +5,15 @@
       try {
         Method getSymbol = null;
         for (Method method : tree.getClass().getMethods()) {
-          if (method.getName().equals("getSymbol")) {
+          if ("getSymbol".equals(method.getName())) {
             getSymbol = tree.getClass().getMethod("getSymbol");
           }
         }
         if (getSymbol != null) {
           sym = (Symbol) getSymbol.invoke(tree);
         }
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
+      } catch (Exception e) {
+        LOG.error("An error occured while retrieving symbol ", e);
       }
 
       Tree.Kind kind = ((JavaTree) tree).getKind();
@@ -40,12 +36,12 @@
         sb.append(" ").append(((AbstractTypedTree) tree).getSymbolType());
       }
 
-      if (sym != null) {
+      if (sym != null && semanticModel != null) {
         //No forward reference possible... Need another visitor to build this info ?
         for (IdentifierTree identifierTree : semanticModel.getUsages(sym)) {
           idents.put(identifierTree, sym);
+          sb.append(" ").append(sym.getName());
         }
-        sb.append(" ").append(sym.getName());
         int refLine = ((JavaTree)semanticModel.getTree(sym)).getTokenLine();
         if(refLine!=line) {
           sb.append(" ref#").append(refLine);
