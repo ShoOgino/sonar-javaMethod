@@ -1,0 +1,30 @@
+  @Test
+  public void primary_qualified_identifier() {
+
+    // qualified_identifier
+    assertThat(typeOfExpression("var")).isSameAs(variableSymbol.type);
+    assertThat(typeOfExpression("var.length")).isSameAs(symbols.intType);
+    assertThat(typeOfExpression("MyClass.var")).isSameAs(variableSymbol.type);
+
+    // qualified_identifier[expression]
+    assertThat(typeOf("var[42] = 12")).isSameAs(((Type.ArrayType) variableSymbol.type).elementType);
+    assertThat(typeOfExpression("var[42]")).isSameAs(((Type.ArrayType) variableSymbol.type).elementType);
+
+    // qualified_identifier[].class
+    assertThat(typeOfExpression("id[].class")).isSameAs(symbols.classType);
+    assertThat(typeOfExpression("id[][].class")).isSameAs(symbols.classType);
+
+    // qualified_identifier(arguments)
+    assertThat(typeOf("method(arguments)")).isSameAs(symbols.intType);
+    assertThat(typeOf("var2.method()")).isSameAs(symbols.intType);
+    assertThat(typeOf("MyClass.var2.method()")).isSameAs(symbols.intType);
+
+    // qualified_identifier.class
+    assertThat(typeOfExpression("id.class")).isSameAs(symbols.classType);
+
+    // TODO id.<...>...
+    assertThat(typeOfExpression("MyClass.this")).isSameAs(classSymbol.type);
+    assertThat(typeOf("id.super(arguments)")).isSameAs(symbols.unknownType);
+    // TODO id.new...
+  }
+

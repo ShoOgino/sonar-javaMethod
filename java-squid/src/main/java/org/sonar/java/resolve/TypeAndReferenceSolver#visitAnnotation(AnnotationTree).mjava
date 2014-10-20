@@ -1,0 +1,9 @@
+  @Override
+  public void visitAnnotation(AnnotationTree tree) {
+    resolveAs(tree.annotationType(), Symbol.TYP);
+    for (ExpressionTree expressionTree : tree.arguments()) {
+      resolveAs(expressionTree, Symbol.VAR);
+    }
+    registerType(tree, getType(tree.annotationType()));
+  }
+

@@ -1,0 +1,15 @@
+  private Type typeOfExpression(String input) {
+    SemanticModel semanticModel = mock(SemanticModel.class);
+    when(semanticModel.getEnv(any(Tree.class))).thenReturn(env);
+    TypeAndReferenceSolver visitor = new TypeAndReferenceSolver(semanticModel, symbols, new Resolve(symbols, bytecodeCompleter));
+
+    String p = "class Test { void wrapperMethod() { Object o = " + input + "; } }";
+    AstNode node = JavaParser.createParser(Charsets.UTF_8).parse(p);
+    CompilationUnitTree tree = (CompilationUnitTree) node;
+    tree.accept(visitor);
+
+    TestedNodeExtractor testedNodeExtractor = new TestedNodeExtractor(true);
+    testedNodeExtractor.visitCompilationUnit(tree);
+    return visitor.getType(testedNodeExtractor.testedNode);
+  }
+

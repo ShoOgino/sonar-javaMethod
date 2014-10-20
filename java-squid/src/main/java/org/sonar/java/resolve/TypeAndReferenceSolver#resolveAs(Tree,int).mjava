@@ -1,0 +1,48 @@
+  public Symbol resolveAs(@Nullable Tree tree, int kind) {
+    if (tree == null) {
+      return null;
+    }
+    if (tree.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) tree;
+      Symbol ident = resolve.findIdent(semanticModel.getEnv(tree), identifierTree.name(), kind);
+      associateReference(identifierTree, ident);
+      registerType(identifierTree, getTypeOfSymbol(ident));
+      return ident;
+    } else if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+      if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
+        // member select ending with .class
+        registerType(tree, symbols.classType);
+        return null;
+      }
+      int expressionKind = Symbol.TYP | Symbol.VAR;
+      if ((kind & (Symbol.PCK | Symbol.TYP)) != 0) {
+        expressionKind = Symbol.PCK | Symbol.TYP | kind;
+      }
+      Symbol site = resolveAs(mse.expression(), expressionKind);
+      if (site.kind == Symbol.VAR) {
+        site = site.type.symbol;
+      }
+      Symbol ident = symbols.unknownSymbol;
+      if (site.kind == Symbol.TYP) {
+        ident = resolve.findIdentInType(semanticModel.getEnv(tree), (Symbol.TypeSymbol) site, mse.identifier().name(), kind);
+      } else if (site.kind == Symbol.PCK) {
+        //package
+        ident = resolve.findIdentInPackage(site, mse.identifier().name(), kind);
+      }
+      associateReference(mse.identifier(), ident);
+      registerType(mse.identifier(), getTypeOfSymbol(ident));
+      registerType(tree, getTypeOfSymbol(ident));
+      return ident;
+    }
+    tree.accept(this);
+    Type type = getType(tree);
+    if (tree.is(Tree.Kind.INFERED_TYPE)) {
+      return null;
+    }
+    if (type == null) {
+      throw new IllegalStateException("Type not resolved " + tree);
+    }
+    return type.symbol;
+  }
+

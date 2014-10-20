@@ -1,0 +1,12 @@
+  @Override
+  public void visitArrayAccessExpression(ArrayAccessExpressionTree tree) {
+    resolveAs(tree.expression(), Symbol.VAR);
+    resolveAs(tree.index(), Symbol.VAR);
+    Type type = getType(tree.expression());
+    if (type != null && type.tag == Type.ARRAY) {
+      registerType(tree, ((Type.ArrayType) type).elementType);
+    } else {
+      registerType(tree, symbols.unknownType);
+    }
+  }
+
