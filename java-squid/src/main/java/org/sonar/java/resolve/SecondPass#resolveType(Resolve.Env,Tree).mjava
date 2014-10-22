@@ -1,10 +1,13 @@
   private Type resolveType(Resolve.Env env, Tree tree) {
     Preconditions.checkArgument(checkTypeOfTree(tree), "Kind of tree unexpected " + ((JavaTree) tree).getKind());
-    TypeResolverVisitor typeResolverVisitor = new TypeResolverVisitor(env.dup());
-    tree.accept(typeResolverVisitor);
-    if (typeResolverVisitor.arrayType != null) {
-      return typeResolverVisitor.arrayType;
+    //FIXME(benzonico) as long as Variables share the same node type, (int i,j; or worse : int i[], j[];) check nullity to respect invariance.
+    Type type = ((AbstractTypedTree) tree).getSymbolType();
+    if(type != null) {
+      return type;
     }
-    return castToTypeIfPossible(typeResolverVisitor.site);
+    typeAndReferenceSolver.env = env;
+    typeAndReferenceSolver.resolveAs(tree, Symbol.TYP, env);
+    typeAndReferenceSolver.env = null;
+    return ((AbstractTypedTree) tree).getSymbolType();
   }
 

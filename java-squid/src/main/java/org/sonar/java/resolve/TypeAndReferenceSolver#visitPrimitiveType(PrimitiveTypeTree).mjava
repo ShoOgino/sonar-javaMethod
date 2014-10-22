@@ -1,6 +1,11 @@
   @Override
   public void visitPrimitiveType(PrimitiveTypeTree tree) {
-    Type type = resolve.findIdent(semanticModel.getEnv(tree), tree.keyword().text(), Symbol.TYP).type;
+    Type type;
+    if(env==null) {
+      type = resolve.findIdent(semanticModel.getEnv(tree), tree.keyword().text(), Symbol.TYP).type;
+    } else {
+      type = resolve.findIdent(env, tree.keyword().text(), Symbol.TYP).type;
+    }
     registerType(tree, type);
   }
 
