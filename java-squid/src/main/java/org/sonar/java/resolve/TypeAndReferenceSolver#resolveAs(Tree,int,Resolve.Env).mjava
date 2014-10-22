@@ -1,36 +1,24 @@
-  public Symbol resolveAs(Tree tree, int kind, Resolve.Env env) {
-    if (tree.is(Tree.Kind.IDENTIFIER)) {
-      IdentifierTree identifierTree = (IdentifierTree) tree;
-      Symbol ident = resolve.findIdent(env, identifierTree.name(), kind);
-      associateReference(identifierTree, ident);
-      registerType(identifierTree, getTypeOfSymbol(ident));
-      return ident;
-    } else if (tree.is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
-      if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
-        // member select ending with .class
-        registerType(tree, symbols.classType);
-        return null;
+  public Symbol resolveAs(Tree tree, int kind, Resolve.Env resolveEnv) {
+    if (tree.is(Tree.Kind.IDENTIFIER, Tree.Kind.MEMBER_SELECT)) {
+      Symbol resolvedSymbol;
+      IdentifierTree identifierTree;
+      if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+        if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
+          // member select ending with .class
+          registerType(tree, symbols.classType);
+          return null;
+        }
+        identifierTree = mse.identifier();
+        resolvedSymbol = getSymbolOfMemberSelectExpression(mse, kind, resolveEnv);
+        registerType(identifierTree, getTypeOfSymbol(resolvedSymbol));
+      } else {
+        identifierTree = (IdentifierTree) tree;
+        resolvedSymbol = resolve.findIdent(resolveEnv, identifierTree.name(), kind);
       }
-      int expressionKind = Symbol.TYP | Symbol.VAR;
-      if ((kind & (Symbol.PCK | Symbol.TYP)) != 0) {
-        expressionKind = Symbol.PCK | Symbol.TYP | kind;
-      }
-      Symbol site = resolveAs(mse.expression(), expressionKind, env);
-      if (site.kind == Symbol.VAR) {
-        site = site.type.symbol;
-      }
-      Symbol ident = symbols.unknownSymbol;
-      if (site.kind == Symbol.TYP) {
-        ident = resolve.findIdentInType(env, (Symbol.TypeSymbol) site, mse.identifier().name(), kind);
-      } else if (site.kind == Symbol.PCK) {
-        //package
-        ident = resolve.findIdentInPackage(site, mse.identifier().name(), kind);
-      }
-      associateReference(mse.identifier(), ident);
-      registerType(mse.identifier(), getTypeOfSymbol(ident));
-      registerType(tree, getTypeOfSymbol(ident));
-      return ident;
+      associateReference(identifierTree, resolvedSymbol);
+      registerType(tree, getTypeOfSymbol(resolvedSymbol));
+      return resolvedSymbol;
     }
     tree.accept(this);
     Type type = getType(tree);

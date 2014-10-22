@@ -1,0 +1,19 @@
+  private Symbol getSymbolOfMemberSelectExpression(MemberSelectExpressionTree mse, int kind, Resolve.Env resolveEnv) {
+    int expressionKind = Symbol.TYP | Symbol.VAR;
+    if ((kind & (Symbol.PCK | Symbol.TYP)) != 0) {
+      expressionKind = Symbol.PCK | Symbol.TYP | kind;
+    }
+    Symbol site = resolveAs(mse.expression(), expressionKind, resolveEnv);
+    if (site.kind == Symbol.VAR) {
+      site = site.type.symbol;
+    }
+    Symbol ident = symbols.unknownSymbol;
+    if (site.kind == Symbol.TYP) {
+      ident = resolve.findIdentInType(resolveEnv, (Symbol.TypeSymbol) site, mse.identifier().name(), kind);
+    } else if (site.kind == Symbol.PCK) {
+      //package
+      ident = resolve.findIdentInPackage(site, mse.identifier().name(), kind);
+    }
+    return ident;
+  }
+
