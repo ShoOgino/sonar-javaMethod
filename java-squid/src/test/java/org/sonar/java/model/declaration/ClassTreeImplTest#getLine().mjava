@@ -1,0 +1,12 @@
+  @Test
+  public void getLine() {
+    CompilationUnitTree tree = createTree("class A {\n" +
+        "A a = new A() {};" +
+        "\n}");
+    ClassTree classTree = (ClassTree) tree.types().get(0);
+    assertThat(((JavaTree) classTree).getLine()).isEqualTo(1);
+    //get line of anonymous class
+    NewClassTree newClassTree = (NewClassTree) ((VariableTree) classTree.members().get(0)).initializer();
+    assertThat(((JavaTree)newClassTree.classBody()).getLine()).isEqualTo(2);
+  }
+
