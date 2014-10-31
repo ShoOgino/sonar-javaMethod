@@ -1,0 +1,12 @@
+  private boolean typeInherits(Type type, Type instanceOf) {
+    if (type.isTagged(Type.ARRAY) && instanceOf.isTagged(Type.ARRAY)) {
+      //Handle covariance of arrays.
+      return typeInherits(((Type.ArrayType) type).elementType(), ((Type.ArrayType) instanceOf).elementType());
+    } else if (type.isTagged(Type.CLASS) && instanceOf.isTagged(Type.CLASS)) {
+      Type.ClassType expressionType = (Type.ClassType) type;
+      Type.ClassType instanceOfType = (Type.ClassType) instanceOf;
+      return expressionType == instanceOfType || expressionType.getSymbol().superTypes().contains(instanceOfType);
+    }
+    return false;
+  }
+

@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    InstanceOfTree instanceOfTree = (InstanceOfTree) tree;
+    Type type = ((AbstractTypedTree) instanceOfTree.expression()).getSymbolType();
+    Type instanceOf = ((AbstractTypedTree) instanceOfTree.type()).getSymbolType();
+    if (typeInherits(type, instanceOf)) {
+      addIssue(tree, "Remove this useless \"instanceof\" operator; it will always return \"true\". ");
+    }
+  }
+

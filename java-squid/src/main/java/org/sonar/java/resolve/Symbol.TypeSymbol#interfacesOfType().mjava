@@ -1,9 +1,9 @@
-    private Set<Type.ClassType> interfacesOfType(Symbol.TypeSymbol typeSymbol) {
+    private Set<Type.ClassType> interfacesOfType() {
       ImmutableSet.Builder<Type.ClassType> builder = ImmutableSet.builder();
-      for (Type interfaceType : typeSymbol.getInterfaces()) {
+      for (Type interfaceType : getInterfaces()) {
         Type.ClassType classType = (Type.ClassType) interfaceType;
         builder.add(classType);
-        builder.addAll(interfacesOfType(classType.getSymbol()));
+        builder.addAll(classType.getSymbol().interfacesOfType());
       }
       return builder.build();
     }
