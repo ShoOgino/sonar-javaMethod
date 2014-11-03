@@ -1,0 +1,10 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/RedundantTypeCastCheck.java"), new VisitorsBridge(new RedundantTypeCastCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(13).withMessage("Remove this unnecessary cast to \"String\".")
+        .next().atLine(14).withMessage("Remove this unnecessary cast to \"A\".")
+        .next().atLine(15).withMessage("Remove this unnecessary cast to \"A[][]\".")
+    ;
+  }
+
