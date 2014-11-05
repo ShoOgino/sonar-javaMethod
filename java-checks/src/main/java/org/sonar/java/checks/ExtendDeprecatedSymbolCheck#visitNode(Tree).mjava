@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (!hasDeprecatedAnnotation(tree)) {
+      checkSuperTypeDeprecation(classTree.superClass(), false);
+      for (Tree superInterface : classTree.superInterfaces()) {
+        checkSuperTypeDeprecation(superInterface, true);
+      }
+    }
+  }
+
