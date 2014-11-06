@@ -1,0 +1,12 @@
+  @Test
+  public void type_is_fully_qualified_name() {
+    Symbol.PackageSymbol packageSymbol = new Symbol.PackageSymbol("org.foo.bar", null);
+    Symbol.TypeSymbol typeSymbol = new Symbol.TypeSymbol(Flags.PUBLIC, "MyType", packageSymbol);
+    Type.ClassType classType = (Type.ClassType) typeSymbol.type;
+    classType.interfaces = Lists.newArrayList();
+
+    assertThat(new Type(Type.BYTE, null).is("org.foo.bar.MyType")).isFalse();
+    assertThat(classType.is("org.foo.bar.MyType")).isTrue();
+
+  }
+
