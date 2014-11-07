@@ -11,9 +11,18 @@
       files.addAll(Lists.newArrayList(FileUtils.listFiles(dir, (IOFileFilter) fileFilter, TrueFileFilter.TRUE)));
     }
     //find directories matching pattern.
-    files.addAll(FileUtils.listFilesAndDirs(dir, new AndFileFilter(wilcardPatternFileFilter, DirectoryFileFilter.DIRECTORY), wilcardPatternFileFilter));
+    Collection<File> dirs = FileUtils.listFilesAndDirs(dir, new AndFileFilter(wilcardPatternFileFilter, DirectoryFileFilter.DIRECTORY), wilcardPatternFileFilter);
     //remove searching dir from matching as listFilesAndDirs always includes it in the list see https://issues.apache.org/jira/browse/IO-328
-    files.remove(dir);
+    if(!pattern.isEmpty()) {
+      dirs.remove(dir);
+    }
+    if(libraryProperty) {
+      for (File directory : dirs) {
+        files.addAll(getMatchingFiles("**/*.jar", directory, true));
+        files.addAll(getMatchingFiles("**/*.zip", directory, true));
+      }
+    }
+    files.addAll(dirs);
     return files;
   }
 

@@ -4,7 +4,8 @@
     if (StringUtils.isNotEmpty(fileList)) {
       Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
       for (String pathPattern : fileNames) {
-        List<File> libraryFilesForPattern = getFilesForPattern(baseDir, pathPattern, property.endsWith("libraries"));
+        boolean isLibraryProperty = property.endsWith("libraries");
+        List<File> libraryFilesForPattern = getFilesForPattern(baseDir, pathPattern, isLibraryProperty);
         if (validateLibraries && libraryFilesForPattern.isEmpty()) {
           LOG.error("Invalid value for " + property);
           String message = "No files nor directories matching '" + pathPattern + "'";
