@@ -1,0 +1,19 @@
+  private List<File> getMatchingFiles(String pattern, File dir, boolean libraryProperty) {
+    WilcardPatternFileFilter wilcardPatternFileFilter = new WilcardPatternFileFilter(dir, pattern);
+    FileFilter fileFilter = wilcardPatternFileFilter;
+    List<File> files = Lists.newArrayList();
+    if (libraryProperty) {
+      if (pattern.endsWith("*")) {
+        fileFilter = new AndFileFilter((IOFileFilter) fileFilter,
+            new OrFileFilter(Lists.newArrayList(suffixFileFilter(".jar", IOCase.INSENSITIVE), suffixFileFilter(".zip", IOCase.INSENSITIVE))));
+      }
+      //find jar and zip files
+      files.addAll(Lists.newArrayList(FileUtils.listFiles(dir, (IOFileFilter) fileFilter, TrueFileFilter.TRUE)));
+    }
+    //find directories matching pattern.
+    files.addAll(FileUtils.listFilesAndDirs(dir, new AndFileFilter(wilcardPatternFileFilter, DirectoryFileFilter.DIRECTORY), wilcardPatternFileFilter));
+    //remove searching dir from matching as listFilesAndDirs always includes it in the list see https://issues.apache.org/jira/browse/IO-328
+    files.remove(dir);
+    return files;
+  }
+

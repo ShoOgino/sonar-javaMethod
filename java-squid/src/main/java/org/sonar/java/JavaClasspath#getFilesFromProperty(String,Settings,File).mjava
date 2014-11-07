@@ -4,18 +4,13 @@
     if (StringUtils.isNotEmpty(fileList)) {
       Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
       for (String pathPattern : fileNames) {
-        if (property.endsWith("binaries")) {
-          File binaryFile = resolvePath(baseDir, pathPattern);
-          result.add(binaryFile);
-        } else {
-          List<File> libraryFilesForPattern = getLibraryFilesForPattern(baseDir, pathPattern);
-          if (validateLibraries && libraryFilesForPattern.isEmpty()) {
-            LOG.error("Invalid value for " + property);
-            String message = "No files nor directories matching '" + pathPattern + "'";
-            throw new IllegalStateException(message);
-          }
-          result.addAll(libraryFilesForPattern);
+        List<File> libraryFilesForPattern = getFilesForPattern(baseDir, pathPattern, property.endsWith("libraries"));
+        if (validateLibraries && libraryFilesForPattern.isEmpty()) {
+          LOG.error("Invalid value for " + property);
+          String message = "No files nor directories matching '" + pathPattern + "'";
+          throw new IllegalStateException(message);
         }
+        result.addAll(libraryFilesForPattern);
       }
     }
     return result;
