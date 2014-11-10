@@ -11,8 +11,18 @@
             getCompletedClassSymbolsType(exceptions),
             classSymbol
         );
-        Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(filterBytecodeFlags(flags), name, type, classSymbol);
+        final Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(filterBytecodeFlags(flags), name, type, classSymbol);
         classSymbol.members.enter(methodSymbol);
+        if(signature != null) {
+          new SignatureReader(signature).accept(new SignatureVisitor(Opcodes.ASM5) {
+
+            @Override
+            public void visitFormalTypeParameter(String name) {
+              //TODO improve generics
+              methodSymbol.isParametrized = true;
+            }
+          });
+        }
       }
       // (Godin): can return MethodVisitor to read annotations
       return null;

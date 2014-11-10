@@ -4,8 +4,18 @@
       Preconditions.checkNotNull(desc);
       if (!isSynthetic(flags)) {
         //Flags from asm lib are defined in Opcodes class and map to flags defined in Flags class
-        Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(filterBytecodeFlags(flags), name, convertAsmType(org.objectweb.asm.Type.getType(desc)), classSymbol);
+        final Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(filterBytecodeFlags(flags), name, convertAsmType(org.objectweb.asm.Type.getType(desc)), classSymbol);
         classSymbol.members.enter(symbol);
+        if(signature != null) {
+          new SignatureReader(signature).accept(new SignatureVisitor(Opcodes.ASM5) {
+
+            @Override
+            public void visitFormalTypeParameter(String name) {
+              //TODO improve generics
+              symbol.isParametrized = true;
+            }
+          });
+        }
       }
       // (Godin): can return FieldVisitor to read annotations
       return null;
