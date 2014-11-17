@@ -15,14 +15,7 @@
         }
       }
       if (symbolReference != null && method != null && isMethodFromCollection(method)) {
-        for (ExpressionTree arg : methodInvocationTree.arguments()) {
-          if (arg.is(Tree.Kind.IDENTIFIER)) {
-            Symbol reference = getSemanticModel().getReference((IdentifierTree) arg);
-            if (reference == symbolReference) {
-              addIssue(tree, "Remove or correct this \"" + reportedName + "\" call.");
-            }
-          }
-        }
+        reportIssueForParameters(methodInvocationTree, symbolReference, reportedName);
       }
     }
   }
