@@ -1,21 +1,18 @@
   @Override
   public void visitClass(ClassTree tree) {
-    if (tree.is(Tree.Kind.CLASS)) {
-      if (tree.superClass() != null) {
-        if (tree.superClass().is(Tree.Kind.IDENTIFIER)) {
-          IdentifierTree idt = (IdentifierTree) tree.superClass();
-          if ("Error".equals(idt.name())) {
-            context.addIssue(tree, ruleKey, "Extend \"java.lang.Exception\" or one of its subclasses.");
-          }
-        } else if (tree.superClass().is(Tree.Kind.MEMBER_SELECT)) {
-          MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree.superClass();
-          if ("Error".equals(mse.identifier().name()) && isJavaLang(mse.expression())) {
-            context.addIssue(tree, ruleKey, "Extend \"java.lang.Exception\" or one of its subclasses.");
-          }
+    if (tree.is(Tree.Kind.CLASS) && tree.superClass() != null) {
+      if (tree.superClass().is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree idt = (IdentifierTree) tree.superClass();
+        if ("Error".equals(idt.name())) {
+          context.addIssue(tree, ruleKey, "Extend \"java.lang.Exception\" or one of its subclasses.");
+        }
+      } else if (tree.superClass().is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree.superClass();
+        if ("Error".equals(mse.identifier().name()) && isJavaLang(mse.expression())) {
+          context.addIssue(tree, ruleKey, "Extend \"java.lang.Exception\" or one of its subclasses.");
         }
       }
     }
-
     super.visitClass(tree);
   }
 
