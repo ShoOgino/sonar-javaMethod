@@ -1,0 +1,8 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/UnusedLabelCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(10).withMessage("Remove this unused label.")
+        .noMore();
+  }
+
