@@ -11,7 +11,8 @@
       TypeCastTree typeCastTree = (TypeCastTree) tree;
       Type cast = ((AbstractTypedTree) typeCastTree.type()).getSymbolType();
       Type expressionType = ((AbstractTypedTree) typeCastTree.expression()).getSymbolType();
-      if (!cast.isParametrized() && new Types().isSubtype(expressionType, cast)) {
+      Types types = new Types();
+      if (isRedundantNumericalCast(cast, expressionType) || isRedundantCast(cast, expressionType, types)) {
         addIssue(tree, "Remove this unnecessary cast to \"" + cast + "\".");
       }
     }
