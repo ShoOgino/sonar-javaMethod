@@ -1,0 +1,23 @@
+  @Test
+  public void detected() {
+    class Visitor extends AbstractMethodDetection {
+
+      public List<Integer> lines = Lists.newArrayList();
+
+      protected Visitor() {
+        super(MethodDefinition.create().type("A").name("method").addParameter("int"));
+      }
+
+      @Override
+      protected void onMethodFound(MethodInvocationTree tree) {
+        lines.add(((JavaTree) tree).getLine());
+      }
+
+    }
+    Visitor visitor = new Visitor();
+    JavaAstScanner.scanSingleFile(new File("src/test/files/checks/AbstractMethodDetection.java"), new VisitorsBridge(visitor));
+
+    assertThat(visitor.lines).hasSize(1);
+    assertThat(visitor.lines).containsExactly(10);
+  }
+
