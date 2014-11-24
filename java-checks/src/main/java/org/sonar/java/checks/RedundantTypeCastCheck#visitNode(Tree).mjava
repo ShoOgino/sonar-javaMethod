@@ -1,18 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-      MethodInvocationTree mit = (MethodInvocationTree) tree;
-      for (ExpressionTree arg : mit.arguments()) {
-        if (arg.is(Tree.Kind.TYPE_CAST)) {
-          excluded.add(arg);
-        }
-      }
+    if (tree.is(Tree.Kind.METHOD_INVOCATION, Tree.Kind.NEW_CLASS)) {
+      addArgsToExclusion(tree);
     } else if (!excluded.contains(tree)) {
       TypeCastTree typeCastTree = (TypeCastTree) tree;
       Type cast = ((AbstractTypedTree) typeCastTree.type()).getSymbolType();
       Type expressionType = ((AbstractTypedTree) typeCastTree.expression()).getSymbolType();
       Types types = new Types();
-      if (isRedundantNumericalCast(cast, expressionType) || isRedundantCast(cast, expressionType, types)) {
+      if (!isExcluded(cast, expressionType) && (isRedundantNumericalCast(cast, expressionType) || isRedundantCast(cast, expressionType, types))) {
         addIssue(tree, "Remove this unnecessary cast to \"" + cast + "\".");
       }
     }
