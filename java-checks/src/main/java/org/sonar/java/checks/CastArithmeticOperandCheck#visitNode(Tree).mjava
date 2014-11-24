@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Type varType;
+    ExpressionTree expr;
+    if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
+      varType = ((AbstractTypedTree) aet.variable()).getSymbolType();
+      expr = aet.expression();
+    } else {
+      VariableTree variableTree = (VariableTree) tree;
+      varType = ((AbstractTypedTree) variableTree.type()).getSymbolType();
+      expr = variableTree.initializer();
+    }
+    if (expr != null && expr.is(Tree.Kind.MULTIPLY, Tree.Kind.DIVIDE) && isVarTypeErrorProne(varType)) {
+      Type exprType = ((AbstractTypedTree) expr).getSymbolType();
+      if (exprType.isTagged(Type.INT)) {
+        addIssue(tree, "Cast one of the operands of this " + operationByKind.get(((JavaTree) expr).getKind()) + " operation to a \"" + varType.getSymbol().getName() + "\".");
+      }
+    }
+  }
+

@@ -1,0 +1,9 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CastArithmeticOperandCheck.java"), new VisitorsBridge(new CastArithmeticOperandCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3).withMessage("Cast one of the operands of this multiplication operation to a \"long\".")
+        .next().atLine(5).withMessage("Cast one of the operands of this division operation to a \"float\".")
+    .noMore();
+  }
+
