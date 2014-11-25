@@ -2,43 +2,16 @@
   public void visitMethodInvocation(MethodInvocationTree tree) {
     Tree methodSelect = tree.methodSelect();
     Resolve.Env methodEnv = semanticModel.getEnv(tree);
-    IdentifierTree identifier;
-    Type type;
-    String name;
-    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodSelect;
-      resolveAs(mset.expression(), Symbol.TYP | Symbol.VAR);
-      type = getType(mset.expression());
-      identifier = mset.identifier();
-    } else if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
-      type = methodEnv.enclosingClass.type;
-      identifier = (IdentifierTree) methodSelect;
-    } else {
-      throw new IllegalStateException("Method select in method invocation is not of the expected type " + methodSelect);
-    }
-
     scan(tree.arguments());
-    name = identifier.name();
-    if (type == null) {
-      type = symbols.unknownType;
-    }
-    ImmutableList.Builder<Type> builder = ImmutableList.builder();
-    for (ExpressionTree expressionTree : tree.arguments()) {
-      Type symbolType = ((AbstractTypedTree) expressionTree).getSymbolType();
-      if(symbolType == null) {
-        symbolType = symbols.unknownType;
-      }
-      builder.add(symbolType);
-    }
-    Symbol symbol = resolve.findMethod(methodEnv, type.symbol, name, builder.build());
-    associateReference(identifier, symbol);
-    type = getTypeOfSymbol(symbol);
+    List<Type> argTypes = getParameterTypes(tree);
+    Symbol symbol = resolveMethodSymbol(methodSelect, methodEnv, argTypes);
+    Type methodType = getTypeOfSymbol(symbol);
     //Register return type for method invocation.
     //TODO register method type for method select ?
-    if (type == null || symbol.kind >= Symbol.ERRONEOUS) {
+    if (methodType == null || symbol.kind >= Symbol.ERRONEOUS) {
       registerType(tree, symbols.unknownType);
     } else {
-      registerType(tree, ((Type.MethodType) type).resultType);
+      registerType(tree, ((Type.MethodType) methodType).resultType);
     }
   }
 

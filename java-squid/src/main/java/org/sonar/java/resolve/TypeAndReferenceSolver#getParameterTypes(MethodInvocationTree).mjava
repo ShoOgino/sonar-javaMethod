@@ -1,0 +1,12 @@
+  private List<Type> getParameterTypes(MethodInvocationTree tree) {
+    ImmutableList.Builder<Type> builder = ImmutableList.builder();
+    for (ExpressionTree expressionTree : tree.arguments()) {
+      Type symbolType = ((AbstractTypedTree) expressionTree).getSymbolType();
+      if (symbolType == null) {
+        symbolType = symbols.unknownType;
+      }
+      builder.add(symbolType);
+    }
+    return builder.build();
+  }
+
