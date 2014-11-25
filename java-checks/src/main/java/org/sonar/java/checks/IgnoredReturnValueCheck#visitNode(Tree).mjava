@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ExpressionStatementTree est = (ExpressionStatementTree) tree;
+    if (est.expression().is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) est.expression();
+      Type methodType = ((AbstractTypedTree) mit).getSymbolType();
+      if (!methodType.isTagged(Type.VOID) && !methodType.isTagged(Type.UNKNOWN)) {
+        addIssue(tree, "The return value of \"" + methodName(mit) + "\" is not used.");
+      }
+    }
+  }
+
