@@ -1,0 +1,11 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TransactionalMethodVisibilityCheck.java"),
+      new VisitorsBridge(new TransactionalMethodVisibilityCheck(), ImmutableList.of(new File("target/test-classes"))));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(9).withMessage("Make this method \"public\" or remove the \"@Transactional\" annotation")
+      .next().atLine(12)
+      .next().atLine(15)
+      .next().atLine(21);
+  }
+

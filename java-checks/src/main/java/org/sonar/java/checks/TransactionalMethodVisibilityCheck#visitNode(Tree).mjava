@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree method = (MethodTree) tree;
+    boolean isPublic = method.modifiers().modifiers().contains(Modifier.PUBLIC);
+    if (!isPublic && hasTransactionalAnnotation(method)) {
+      addIssue(method, "Make this method \"public\" or remove the \"@Transactional\" annotation");
+    }
+  }
+
