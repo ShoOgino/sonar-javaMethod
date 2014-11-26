@@ -5,9 +5,9 @@
     scan(tree.arguments());
     List<Type> argTypes = getParameterTypes(tree);
     Symbol symbol = resolveMethodSymbol(methodSelect, methodEnv, argTypes);
+    ((MethodInvocationTreeImpl) tree).setSymbol(symbol);
     Type methodType = getTypeOfSymbol(symbol);
     //Register return type for method invocation.
-    //TODO register method type for method select ?
     if (methodType == null || symbol.kind >= Symbol.ERRONEOUS) {
       registerType(tree, symbols.unknownType);
     } else {
