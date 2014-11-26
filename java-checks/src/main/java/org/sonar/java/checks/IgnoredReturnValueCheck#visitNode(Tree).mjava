@@ -4,7 +4,7 @@
     if (est.expression().is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) est.expression();
       Type methodType = ((AbstractTypedTree) mit).getSymbolType();
-      if (!methodType.isTagged(Type.VOID) && !methodType.isTagged(Type.UNKNOWN)) {
+      if (!returnsVoid(methodType) && !isFluentAPI(mit)) {
         addIssue(tree, "The return value of \"" + methodName(mit) + "\" is not used.");
       }
     }
