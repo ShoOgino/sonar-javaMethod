@@ -1,0 +1,13 @@
+  private boolean isSetSecureCall(MethodInvocationTreeImpl mit) {
+    Symbol methodSymbol = mit.getSymbol();
+    boolean hasArityOne = mit.arguments().size() == 1;
+    if (hasArityOne && isCallSiteCookie(methodSymbol)) {
+      ExpressionTree expressionTree = mit.arguments().get(0);
+      if (expressionTree.is(Tree.Kind.BOOLEAN_LITERAL) && "false".equals(((LiteralTree) expressionTree).value())) {
+        return false;
+      }
+      return "setSecure".equals(getIdentifier(mit).name());
+    }
+    return false;
+  }
+

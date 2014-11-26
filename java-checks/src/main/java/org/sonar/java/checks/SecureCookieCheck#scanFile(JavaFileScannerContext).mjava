@@ -1,0 +1,9 @@
+  @Override
+  public void scanFile(JavaFileScannerContext context) {
+    unsecuredCookies.clear();
+    super.scanFile(context);
+    for (Symbol unsecuredCookie : unsecuredCookies) {
+      addIssue(getSemanticModel().getTree(unsecuredCookie), "Add the \"secure\" attribute to this cookie");
+    }
+  }
+

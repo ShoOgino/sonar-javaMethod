@@ -1,0 +1,26 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      if (tree.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) tree;
+        Type type = ((AbstractTypedTree) variableTree.type()).getSymbolType();
+        if (type.is("javax.servlet.http.Cookie") && isConstructorInitialized(variableTree)) {
+          Symbol variableSymbol = getSemanticModel().getSymbol(variableTree);
+          //Ignore field variables
+          if (variableSymbol.owner().getType().isTagged(Type.METHOD)) {
+            unsecuredCookies.add(variableSymbol);
+          }
+        }
+      } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTreeImpl mit = (MethodInvocationTreeImpl) tree;
+        if (isSetSecureCall(mit) && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+          MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
+          if (mse.expression().is(Tree.Kind.IDENTIFIER)) {
+            Symbol reference = getSemanticModel().getReference((IdentifierTree) mse.expression());
+            unsecuredCookies.remove(reference);
+          }
+        }
+      }
+    }
+  }
+
