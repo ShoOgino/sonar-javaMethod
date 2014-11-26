@@ -1,0 +1,18 @@
+  private boolean isCompareToInvocation(ExpressionTree expression) {
+    if (!expression.is(Tree.Kind.METHOD_INVOCATION) || !hasSemantic()) {
+      return false;
+    }
+    MethodInvocationTreeImpl invocation = (MethodInvocationTreeImpl) expression;
+    Symbol method = invocation.getSymbol();
+    if ("compareTo".equals(method.getName()) && invocation.arguments().size() == 1) {
+      TypeSymbol methodOwner = method.owner().enclosingClass();
+      Set<ClassType> superTypes = methodOwner.superTypes();
+      for (ClassType classType : superTypes) {
+        if (classType.is("java.lang.Comparable")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
