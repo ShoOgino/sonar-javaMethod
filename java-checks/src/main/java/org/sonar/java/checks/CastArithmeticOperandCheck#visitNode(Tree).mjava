@@ -13,7 +13,7 @@
         varType = ((AbstractTypedTree) variableTree.type()).getSymbolType();
         expr = variableTree.initializer();
         checkExpression(varType, expr);
-      } else {
+      } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
         MethodInvocationTreeImpl mit = (MethodInvocationTreeImpl) tree;
         Symbol symbol = mit.getSymbol();
         if (symbol.isKind(Symbol.MTH)) {
@@ -25,6 +25,12 @@
               i++;
             }
           }
+        }
+      } else if (tree.is(Tree.Kind.METHOD)) {
+        MethodTreeImpl methodTree = (MethodTreeImpl) tree;
+        Type returnType = methodTree.getSymbol().getReturnType().getType();
+        if (isVarTypeErrorProne(returnType)) {
+          methodTree.accept(new ReturnStatementVisitor(returnType));
         }
       }
     }
