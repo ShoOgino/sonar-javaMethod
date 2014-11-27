@@ -1,0 +1,9 @@
+  private void checkExpression(Type varType, ExpressionTree expr) {
+    if (expr != null && expr.is(Tree.Kind.MULTIPLY, Tree.Kind.DIVIDE, Tree.Kind.PLUS, Tree.Kind.MINUS) && isVarTypeErrorProne(varType)) {
+      Type exprType = ((AbstractTypedTree) expr).getSymbolType();
+      if (exprType.isTagged(Type.INT)) {
+        addIssue(expr, "Cast one of the operands of this " + OPERATION_BY_KIND.get(((JavaTree) expr).getKind()) + " operation to a \"" + varType.getSymbol().getName() + "\".");
+      }
+    }
+  }
+
