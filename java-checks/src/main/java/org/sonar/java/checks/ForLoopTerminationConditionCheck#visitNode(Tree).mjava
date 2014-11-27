@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ForStatementTree forStatement = (ForStatementTree) tree;
+    ExpressionTree condition = forStatement.condition();
+    if (condition == null || !condition.is(Tree.Kind.NOT_EQUAL_TO)) {
+      return;
+    }
+    BinaryExpressionTree inequalityCondition = (BinaryExpressionTree) condition;
+    VariableTree loopVariable = loopVariable(forStatement);
+    if (loopVariable != null) {
+      Integer initialValue = initialValue(loopVariable);
+      IdentifierTree loopIdentifier = loopVariable.simpleName();
+      Integer terminationValue = comparisonValue(inequalityCondition, loopIdentifier);
+      if (initialValue != null && terminationValue != null) {
+        if (initialValue < terminationValue) {
+          checkLoopUpdate(forStatement, loopIdentifier, 1);
+        }
+        if (initialValue > terminationValue) {
+          checkLoopUpdate(forStatement, loopIdentifier, -1);
+        }
+      }
+    }
+  }
+
