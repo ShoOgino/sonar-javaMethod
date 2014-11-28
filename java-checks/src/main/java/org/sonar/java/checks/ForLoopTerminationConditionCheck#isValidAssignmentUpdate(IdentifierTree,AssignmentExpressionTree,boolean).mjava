@@ -1,12 +1,12 @@
-  private LoopUpdate assignmentLoopUpdate(IdentifierTree loopIdentifier, AssignmentExpressionTree assignmentExpression, int sign) {
+  private Boolean isValidAssignmentUpdate(IdentifierTree loopIdentifier, AssignmentExpressionTree assignmentExpression, boolean positiveIncrement) {
     ExpressionTree assignedValue = assignmentExpression.expression();
     if (isSameIdentifier(assignmentExpression.variable(), loopIdentifier)) {
       Integer intAssignedValue = intLiteralValue(assignedValue);
       if (intAssignedValue != null) {
-        intAssignedValue = intAssignedValue * sign;
+        return intAssignedValue == (positiveIncrement ? 1 : -1);
       }
-      return new LoopUpdate(intAssignedValue);
+      return null;
     }
-    return null;
+    return false;
   }
 

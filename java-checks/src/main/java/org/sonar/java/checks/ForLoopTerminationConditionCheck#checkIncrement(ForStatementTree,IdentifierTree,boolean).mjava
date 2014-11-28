@@ -1,0 +1,14 @@
+  private void checkIncrement(ForStatementTree forStatement, IdentifierTree loopIdentifier, boolean positiveIncrement) {
+    List<StatementTree> updates = forStatement.update();
+    if (updates.isEmpty()) {
+      addIssue(forStatement);
+    } else if (updates.size() == 1) {
+      ExpressionStatementTree statement = (ExpressionStatementTree) updates.get(0);
+      StatementTree body = forStatement.statement();
+      Boolean isIncrementByOne = isIncrementByOne(statement.expression(), loopIdentifier, positiveIncrement);
+      if (BooleanUtils.isFalse(isIncrementByOne) || forBodyUpdatesLoopIdentifier(body, loopIdentifier)) {
+        addIssue(forStatement);
+      }
+    }
+  }
+

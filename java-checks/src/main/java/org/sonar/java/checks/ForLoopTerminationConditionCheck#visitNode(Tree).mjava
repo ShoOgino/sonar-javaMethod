@@ -9,15 +9,10 @@
     IntAndIdentifierExpression loopVarAndTerminalValue = IntAndIdentifierExpression.of(inequalityCondition);
     if (loopVarAndTerminalValue != null) {
       IdentifierTree loopIdentifier = loopVarAndTerminalValue.identifier;
+      int terminationValue = loopVarAndTerminalValue.value;
       Integer initialValue = initialValue(loopIdentifier, forStatement);
-      if (initialValue != null) {
-        int terminationValue = loopVarAndTerminalValue.value;
-        if (initialValue < terminationValue) {
-          checkLoopUpdate(forStatement, loopIdentifier, 1);
-        }
-        if (initialValue > terminationValue) {
-          checkLoopUpdate(forStatement, loopIdentifier, -1);
-        }
+      if (initialValue != null && initialValue != terminationValue) {
+        checkIncrement(forStatement, loopIdentifier, initialValue < terminationValue);
       }
     }
   }
