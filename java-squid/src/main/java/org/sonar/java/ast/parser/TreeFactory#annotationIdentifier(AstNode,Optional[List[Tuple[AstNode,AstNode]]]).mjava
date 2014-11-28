@@ -1,12 +1,10 @@
-  public ExpressionTree newQualifiedIdentifier(Optional<List<AnnotationTreeImpl>> annotations, AstNode firstIdentifier, Optional<List<AstNode>> rests) {
+  public ExpressionTree annotationIdentifier(AstNode firstIdentifier, Optional<List<Tuple<AstNode, AstNode>>> rests) {
     List<AstNode> children = Lists.newArrayList();
-    if (annotations.isPresent()) {
-      children.addAll(annotations.get());
-    }
     children.add(firstIdentifier);
     if (rests.isPresent()) {
-      for (AstNode rest : rests.get()) {
-        children.addAll(rest.getChildren());
+      for (Tuple<AstNode,AstNode> rest : rests.get()) {
+        children.add(rest.first());
+        children.add(rest.second());
       }
     }
 
