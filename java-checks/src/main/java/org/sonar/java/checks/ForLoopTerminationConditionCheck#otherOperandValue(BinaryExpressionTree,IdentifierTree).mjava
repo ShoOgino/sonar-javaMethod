@@ -1,13 +1,8 @@
   private Integer otherOperandValue(BinaryExpressionTree binaryExp, IdentifierTree loopIdentifier) {
-    Integer value = null;
-    boolean foundVariable = false;
-    for (ExpressionTree expressionTree : ImmutableList.of(binaryExp.leftOperand(), binaryExp.rightOperand())) {
-      if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
-        foundVariable = ((IdentifierTree) expressionTree).name().equals(loopIdentifier.name());
-      } else {
-        value = intLiteralValue(expressionTree);
-      }
+    IntAndIdentifierExpression intAndIdentifierExpression = IntAndIdentifierExpression.of(binaryExp);
+    if (intAndIdentifierExpression != null && isSameIdentifier(intAndIdentifierExpression.identifier, loopIdentifier)) {
+      return intAndIdentifierExpression.value;
     }
-    return foundVariable ? value : null;
+    return null;
   }
 

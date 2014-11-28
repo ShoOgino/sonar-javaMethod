@@ -1,0 +1,16 @@
+    public static IntAndIdentifierExpression of(BinaryExpressionTree binaryExp) {
+      Integer value = null;
+      IdentifierTree identifier = null;
+      for (ExpressionTree expressionTree : ImmutableList.of(binaryExp.leftOperand(), binaryExp.rightOperand())) {
+        if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+          identifier = (IdentifierTree) expressionTree;
+        } else {
+          value = intLiteralValue(expressionTree);
+        }
+      }
+      if (identifier != null && value != null) {
+        return new IntAndIdentifierExpression(identifier, value);
+      }
+      return null;
+    }
+

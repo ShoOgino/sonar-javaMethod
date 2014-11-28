@@ -6,12 +6,12 @@
       return;
     }
     BinaryExpressionTree inequalityCondition = (BinaryExpressionTree) condition;
-    VariableTree loopVariable = loopVariable(forStatement);
-    if (loopVariable != null) {
-      Integer initialValue = initialValue(loopVariable);
-      IdentifierTree loopIdentifier = loopVariable.simpleName();
-      Integer terminationValue = otherOperandValue(inequalityCondition, loopIdentifier);
-      if (initialValue != null && terminationValue != null) {
+    IntAndIdentifierExpression loopVarAndTerminalValue = IntAndIdentifierExpression.of(inequalityCondition);
+    if (loopVarAndTerminalValue != null) {
+      IdentifierTree loopIdentifier = loopVarAndTerminalValue.identifier;
+      Integer initialValue = initialValue(loopIdentifier, forStatement);
+      if (initialValue != null) {
+        int terminationValue = loopVarAndTerminalValue.value;
         if (initialValue < terminationValue) {
           checkLoopUpdate(forStatement, loopIdentifier, 1);
         }
