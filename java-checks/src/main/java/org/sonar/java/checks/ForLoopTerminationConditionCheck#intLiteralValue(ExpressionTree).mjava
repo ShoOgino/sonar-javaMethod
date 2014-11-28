@@ -1,0 +1,15 @@
+  private Integer intLiteralValue(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.INT_LITERAL)) {
+      return intLiteralValue((LiteralTree) expression);
+    }
+    if (expression.is(Tree.Kind.UNARY_MINUS, Tree.Kind.UNARY_PLUS)) {
+      UnaryExpressionTree unaryExp = (UnaryExpressionTree) expression;
+      ExpressionTree subExpression = unaryExp.expression();
+      if (subExpression.is(Tree.Kind.INT_LITERAL)) {
+        Integer subExpressionValue = intLiteralValue((LiteralTree) subExpression);
+        return expression.is(Tree.Kind.UNARY_MINUS) ? subExpressionValue * -1 : subExpressionValue;
+      }
+    }
+    return null;
+  }
+

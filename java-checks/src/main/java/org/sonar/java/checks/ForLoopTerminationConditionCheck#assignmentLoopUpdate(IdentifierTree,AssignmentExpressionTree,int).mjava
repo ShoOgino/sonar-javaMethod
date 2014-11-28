@@ -1,11 +1,11 @@
   private LoopUpdate assignmentLoopUpdate(IdentifierTree loopIdentifier, AssignmentExpressionTree assignmentExpression, int sign) {
     ExpressionTree assignedValue = assignmentExpression.expression();
     if (isSameIdentifier(assignmentExpression.variable(), loopIdentifier)) {
-      if (assignedValue.is(Tree.Kind.INT_LITERAL)) {
-        return new LoopUpdate(intLiteralValue((LiteralTree) assignedValue) * sign);
-      } else {
-        return new LoopUpdate(null);
+      Integer intAssignedValue = intLiteralValue(assignedValue);
+      if (intAssignedValue != null) {
+        intAssignedValue = intAssignedValue * sign;
       }
+      return new LoopUpdate(intAssignedValue);
     }
     return null;
   }
