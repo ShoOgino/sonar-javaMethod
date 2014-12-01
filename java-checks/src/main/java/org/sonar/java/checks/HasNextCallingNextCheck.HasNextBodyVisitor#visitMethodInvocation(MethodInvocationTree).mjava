@@ -1,0 +1,10 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      MethodInvocationTreeImpl invocation = (MethodInvocationTreeImpl) tree;
+      Symbol method = invocation.getSymbol();
+      if ("next".equals(method.getName()) && invocation.arguments().isEmpty() && isIteratorMethod(method)) {
+        addIssue(tree, "Refactor the implementation of this \"Iterator.hasNext()\" method to not call \"Iterator.next()\".");
+      }
+      super.visitMethodInvocation(tree);
+    }
+
