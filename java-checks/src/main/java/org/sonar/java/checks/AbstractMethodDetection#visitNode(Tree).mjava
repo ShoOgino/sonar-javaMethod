@@ -1,17 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     MethodInvocationTree mit = (MethodInvocationTree) tree;
-    if (hasSemantic()) {
-      IdentifierTree id = getIdentifier(mit);
-      if (id != null) {
-        Symbol symbol = getSemanticModel().getReference(id);
-        if (symbol!=null && symbol.isKind(Symbol.MTH)) {
-          Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
-          if (isSearchedMethod(methodSymbol)) {
-            onMethodFound(mit);
-          }
-        }
-      }
+    if (hasSemantic() && methodDefinition.findMethod(mit, getSemanticModel())) {
+      onMethodFound(mit);
     }
   }
 

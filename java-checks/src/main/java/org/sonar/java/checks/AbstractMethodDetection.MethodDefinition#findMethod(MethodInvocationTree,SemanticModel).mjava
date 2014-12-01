@@ -1,0 +1,14 @@
+    public boolean findMethod(MethodInvocationTree mit, SemanticModel semanticModel) {
+      IdentifierTree id = getIdentifier(mit);
+      if (id != null) {
+        Symbol symbol = semanticModel.getReference(id);
+        if (symbol != null && symbol.isKind(Symbol.MTH)) {
+          Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
+          if (isSearchedMethod(methodSymbol)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
