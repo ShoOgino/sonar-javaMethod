@@ -1,0 +1,8 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ResultSetIsLastCheck.java"), new VisitorsBridge(new ResultSetIsLastCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(6).withMessage("Remove this call to \"isLast()\".")
+    .noMore();
+  }
+
