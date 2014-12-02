@@ -1,8 +1,12 @@
   @Override
   public void visitNode(Tree tree) {
-    MethodInvocationTree mit = (MethodInvocationTree) tree;
-    if (hasSemantic() && methodInvocationMatcher.matches(mit, getSemanticModel())) {
-      onMethodFound(mit);
+    if (hasSemantic()) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      for (MethodInvocationMatcher invocationMatcher : methodInvocationMatchers) {
+        if (invocationMatcher.matches(mit, getSemanticModel())) {
+          onMethodFound(mit);
+        }
+      }
     }
   }
 
