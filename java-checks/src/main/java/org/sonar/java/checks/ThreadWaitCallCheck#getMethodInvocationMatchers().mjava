@@ -1,0 +1,11 @@
+  @Override
+  protected List<MethodInvocationMatcher> getMethodInvocationMatchers() {
+    TypeCriteria subtypeOfThread = TypeCriteria.subtypeOf("java.lang.Thread");
+    return ImmutableList.<MethodInvocationMatcher>builder()
+        .add(MethodInvocationMatcher.create().callSite(subtypeOfThread).name("wait"))
+        .add(MethodInvocationMatcher.create().callSite(subtypeOfThread).name("wait").addParameter("long"))
+        .add(MethodInvocationMatcher.create().callSite(subtypeOfThread).name("wait").addParameter("long").addParameter("int"))
+        .add(MethodInvocationMatcher.create().callSite(subtypeOfThread).name("notify"))
+        .add(MethodInvocationMatcher.create().callSite(subtypeOfThread).name("notifyAll")).build();
+  }
+
