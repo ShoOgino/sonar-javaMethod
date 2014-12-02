@@ -1,0 +1,11 @@
+  @Test
+  public void detected() {
+    DisallowedMethodCheck disallowedMethodCheck = new DisallowedMethodCheck();
+    disallowedMethodCheck.setClassName("A");
+    disallowedMethodCheck.setMethodName("foo");
+    disallowedMethodCheck.setArgumentTypes("int, long, java.lang.String[]");
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/DisallowedMethodCheck.java"), new VisitorsBridge(disallowedMethodCheck));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(7).withMessage("Remove this forbidden call");
+  }
+

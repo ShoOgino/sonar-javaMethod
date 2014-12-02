@@ -1,0 +1,16 @@
+  @Override
+  protected List<MethodInvocationMatcher> getMethodInvocationMatchers() {
+    if(StringUtils.isEmpty(methodName)) {
+      return ImmutableList.of();
+    }
+    MethodInvocationMatcher invocationMatcher = MethodInvocationMatcher.create().name(methodName);
+    if(StringUtils.isNotEmpty(className)) {
+      invocationMatcher.typeDefinition(className);
+    }
+    String[] args = StringUtils.split(argumentTypes, ",");
+    for (String arg : args) {
+      invocationMatcher.addParameter(StringUtils.trim(arg));
+    }
+    return ImmutableList.of(invocationMatcher);
+  }
+
