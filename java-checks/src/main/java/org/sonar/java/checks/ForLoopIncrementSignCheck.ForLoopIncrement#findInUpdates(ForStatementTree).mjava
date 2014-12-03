@@ -1,0 +1,27 @@
+    @CheckForNull
+    public static ForLoopIncrement findInUpdates(ForStatementTree forStatement) {
+      ForLoopIncrement result = null;
+      List<StatementTree> updates = forStatement.update();
+      if (updates.size() == 1) {
+        ExpressionStatementTree statement = (ExpressionStatementTree) updates.get(0);
+        ExpressionTree expression = statement.expression();
+        if (expression.is(Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_INCREMENT)) {
+          UnaryExpressionTree unaryExp = (UnaryExpressionTree) expression;
+          result = increment(unaryExp.expression(), 1);
+        } else if (expression.is(Tree.Kind.POSTFIX_DECREMENT, Tree.Kind.PREFIX_DECREMENT)) {
+          UnaryExpressionTree unaryExp = (UnaryExpressionTree) expression;
+          result = increment(unaryExp.expression(), -1);
+        } else if (expression.is(Tree.Kind.PLUS_ASSIGNMENT)) {
+          AssignmentExpressionTree assignmentExp = (AssignmentExpressionTree) expression;
+          result = increment(assignmentExp.variable(), intLiteralValue(assignmentExp.expression()));
+        } else if (expression.is(Tree.Kind.MINUS_ASSIGNMENT)) {
+          AssignmentExpressionTree assignmentExp = (AssignmentExpressionTree) expression;
+          result = increment(assignmentExp.variable(), minus(intLiteralValue(assignmentExp.expression())));
+        } else if (expression.is(Tree.Kind.ASSIGNMENT)) {
+          AssignmentExpressionTree assignment = (AssignmentExpressionTree) expression;
+          result = assignmentIncrement(assignment);
+        }
+      }
+      return result;
+    }
+

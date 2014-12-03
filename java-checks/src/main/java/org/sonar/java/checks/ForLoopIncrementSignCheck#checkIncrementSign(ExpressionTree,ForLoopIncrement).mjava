@@ -1,0 +1,18 @@
+  private void checkIncrementSign(ExpressionTree condition, ForLoopIncrement loopIncrement) {
+    if (condition.is(Tree.Kind.GREATER_THAN, Tree.Kind.GREATER_THAN_OR_EQUAL_TO)) {
+      BinaryExpressionTree binaryExp = (BinaryExpressionTree) condition;
+      if (loopIncrement.isSameIdentifier(binaryExp.leftOperand())) {
+        checkNegativeIncrement(condition, loopIncrement);
+      } else if (loopIncrement.isSameIdentifier(binaryExp.rightOperand())) {
+        checkPositiveIncrement(condition, loopIncrement);
+      }
+    } else if (condition.is(Tree.Kind.LESS_THAN, Tree.Kind.LESS_THAN_OR_EQUAL_TO)) {
+      BinaryExpressionTree binaryExp = (BinaryExpressionTree) condition;
+      if (loopIncrement.isSameIdentifier(binaryExp.leftOperand())) {
+        checkPositiveIncrement(condition, loopIncrement);
+      } else if (loopIncrement.isSameIdentifier(binaryExp.rightOperand())) {
+        checkNegativeIncrement(condition, loopIncrement);
+      }
+    }
+  }
+
