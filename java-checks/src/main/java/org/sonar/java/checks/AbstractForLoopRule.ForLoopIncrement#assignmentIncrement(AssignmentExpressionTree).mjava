@@ -1,0 +1,17 @@
+    private static ForLoopIncrement assignmentIncrement(AssignmentExpressionTree assignmentExpression) {
+      ExpressionTree expression = assignmentExpression.expression();
+      ExpressionTree variable = assignmentExpression.variable();
+      if (variable.is(Tree.Kind.IDENTIFIER)) {
+        if (expression.is(Tree.Kind.PLUS, Tree.Kind.MINUS)) {
+          BinaryExpressionTree binaryExp = (BinaryExpressionTree) expression;
+          Integer increment = intLiteralValue(binaryExp.rightOperand());
+          if (increment != null && isSameIdentifier((IdentifierTree) variable, binaryExp.leftOperand())) {
+            increment = expression.is(Tree.Kind.MINUS) ? minus(increment) : increment;
+            return increment(variable, increment);
+          }
+          return new ForLoopIncrement((IdentifierTree) variable, null);
+        }
+      }
+      return null;
+    }
+

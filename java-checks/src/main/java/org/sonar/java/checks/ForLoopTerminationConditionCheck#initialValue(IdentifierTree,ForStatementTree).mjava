@@ -1,19 +1,8 @@
   private Integer initialValue(IdentifierTree loopIdentifier, ForStatementTree forStatement) {
     Integer value = null;
-    for (StatementTree statement : forStatement.initializer()) {
-      if (statement.is(Tree.Kind.VARIABLE)) {
-        VariableTree variable = (VariableTree) statement;
-        ExpressionTree initializer = variable.initializer();
-        if (isSameIdentifier(variable.simpleName(), loopIdentifier) && initializer != null) {
-          value = intLiteralValue(initializer);
-        }
-      }
-      if (statement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
-        ExpressionTree expression = ((ExpressionStatementTree) statement).expression();
-        AssignmentExpressionTree assignment = assignment(expression, loopIdentifier);
-        if (assignment != null) {
-          value = intLiteralValue(assignment.expression());
-        }
+    for (ForLoopInitializer initializer : ForLoopInitializer.list(forStatement)) {
+      if (initializer.hasSameIdentifier(loopIdentifier) && initializer.value() != null) {
+        value = initializer.value();
       }
     }
     return value;

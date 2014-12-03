@@ -1,15 +1,14 @@
   @Override
-  public void visitNode(Tree tree) {
-    ForStatementTree forStatement = (ForStatementTree) tree;
+  public void visitForStatement(ForStatementTree forStatement) {
     ExpressionTree condition = forStatement.condition();
     if (condition == null || !condition.is(Tree.Kind.NOT_EQUAL_TO)) {
       return;
     }
     BinaryExpressionTree inequalityCondition = (BinaryExpressionTree) condition;
-    IntAndIdentifierExpression loopVarAndTerminalValue = IntAndIdentifierExpression.of(inequalityCondition);
+    IntInequality loopVarAndTerminalValue = IntInequality.of(inequalityCondition);
     if (loopVarAndTerminalValue != null) {
       IdentifierTree loopIdentifier = loopVarAndTerminalValue.identifier;
-      int terminationValue = loopVarAndTerminalValue.value;
+      int terminationValue = loopVarAndTerminalValue.literalValue;
       Integer initialValue = initialValue(loopIdentifier, forStatement);
       if (initialValue != null && initialValue != terminationValue) {
         checkIncrement(forStatement, loopIdentifier, initialValue < terminationValue);

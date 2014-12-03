@@ -1,9 +1,8 @@
   @Override
-  public void visitNode(Tree tree) {
-    ForStatementTree forStatement = (ForStatementTree) tree;
+  public void visitForStatement(ForStatementTree forStatement) {
     ExpressionTree condition = forStatement.condition();
     ForLoopIncrement loopIncrement = ForLoopIncrement.findInUpdates(forStatement);
-    if (condition == null || loopIncrement == null || loopIncrement.value == null) {
+    if (condition == null || loopIncrement == null || loopIncrement.value() == null) {
       return;
     }
     checkIncrementSign(condition, loopIncrement);

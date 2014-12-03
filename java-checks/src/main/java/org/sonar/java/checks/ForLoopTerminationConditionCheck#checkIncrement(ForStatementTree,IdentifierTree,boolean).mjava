@@ -1,13 +1,13 @@
   private void checkIncrement(ForStatementTree forStatement, IdentifierTree loopIdentifier, boolean positiveIncrement) {
-    List<StatementTree> updates = forStatement.update();
-    if (updates.isEmpty()) {
-      addIssue(forStatement);
-    } else if (updates.size() == 1) {
-      ExpressionStatementTree statement = (ExpressionStatementTree) updates.get(0);
-      StatementTree body = forStatement.statement();
-      Boolean isIncrementByOne = isIncrementByOne(statement.expression(), loopIdentifier, positiveIncrement);
-      if (BooleanUtils.isFalse(isIncrementByOne) || forBodyUpdatesLoopIdentifier(body, loopIdentifier)) {
+    if (forStatement.update().size() <= 1) {
+      ForLoopIncrement loopIncrement = ForLoopIncrement.findInUpdates(forStatement);
+      if (loopIncrement == null || !loopIncrement.hasSameIdentifier(loopIdentifier)) {
         addIssue(forStatement);
+      } else if (loopIncrement.value() != null) {
+        int requiredIncrement = positiveIncrement ? 1 : -1;
+        if (loopIncrement.value() != requiredIncrement || forBodyUpdatesLoopIdentifier(forStatement, loopIdentifier)) {
+          addIssue(forStatement);
+        }
       }
     }
   }
