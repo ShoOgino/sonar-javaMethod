@@ -1,0 +1,13 @@
+  @CheckForNull
+  private static Integer intLiteralValue(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.INT_LITERAL)) {
+      return intLiteralValue((LiteralTree) expression);
+    }
+    if (expression.is(Tree.Kind.UNARY_MINUS, Tree.Kind.UNARY_PLUS)) {
+      UnaryExpressionTree unaryExp = (UnaryExpressionTree) expression;
+      Integer subExpressionIntValue = intLiteralValue(unaryExp.expression());
+      return expression.is(Tree.Kind.UNARY_MINUS) ? minus(subExpressionIntValue) : subExpressionIntValue;
+    }
+    return null;
+  }
+

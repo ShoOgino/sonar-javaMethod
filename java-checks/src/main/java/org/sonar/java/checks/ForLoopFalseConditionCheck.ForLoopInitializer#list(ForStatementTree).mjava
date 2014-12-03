@@ -1,0 +1,20 @@
+    public static Iterable<ForLoopInitializer> list(ForStatementTree forStatement) {
+      List<ForLoopInitializer> list = Lists.newArrayList();
+      for (StatementTree statement : forStatement.initializer()) {
+        if (statement.is(Tree.Kind.VARIABLE)) {
+          VariableTree variable = (VariableTree) statement;
+          ExpressionTree initializer = variable.initializer();
+          Integer value = initializer == null ? null : intLiteralValue(initializer);
+          list.add(new ForLoopInitializer(variable.simpleName(), value));
+        }
+        if (statement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+          ExpressionTree expression = ((ExpressionStatementTree) statement).expression();
+          ForLoopInitializer initializer = assignmentInitializer(expression);
+          if (initializer != null) {
+            list.add(initializer);
+          }
+        }
+      }
+      return list;
+    }
+

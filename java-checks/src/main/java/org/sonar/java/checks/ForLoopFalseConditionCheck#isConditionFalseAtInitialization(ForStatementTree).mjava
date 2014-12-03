@@ -1,0 +1,15 @@
+  private boolean isConditionFalseAtInitialization(ForStatementTree forStatement) {
+    Iterable<ForLoopInitializer> initializers = ForLoopInitializer.list(forStatement);
+    ExpressionTree condition = forStatement.condition();
+    if (!condition.is(Tree.Kind.GREATER_THAN, Tree.Kind.GREATER_THAN_OR_EQUAL_TO, Tree.Kind.LESS_THAN, Tree.Kind.LESS_THAN_OR_EQUAL_TO)) {
+      return false;
+    }
+    BinaryExpressionTree binaryCondition = (BinaryExpressionTree) condition;
+    Integer leftOperand = eval(binaryCondition.leftOperand(), initializers);
+    Integer rightOperand = eval(binaryCondition.rightOperand(), initializers);
+    if (leftOperand != null && rightOperand != null) {
+      return !evaluateCondition(condition, leftOperand, rightOperand);
+    }
+    return false;
+  }
+

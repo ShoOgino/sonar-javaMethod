@@ -1,0 +1,11 @@
+  private boolean isAlwaysFalseCondition(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.BOOLEAN_LITERAL)) {
+      return BooleanUtils.isFalse(booleanLiteralValue(expression));
+    }
+    if (expression.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+      ExpressionTree subExpression = ((UnaryExpressionTree) expression).expression();
+      return BooleanUtils.isTrue(booleanLiteralValue(subExpression));
+    }
+    return false;
+  }
+

@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ForStatementTree forStatement = (ForStatementTree) tree;
+    ExpressionTree condition = forStatement.condition();
+    if (condition != null && (isAlwaysFalseCondition(condition) || isConditionFalseAtInitialization(forStatement))) {
+      addIssue(condition, "This loop will never execute.");
+    }
+  }
+
