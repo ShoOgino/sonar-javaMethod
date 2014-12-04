@@ -1,0 +1,11 @@
+  @Test
+  public void withNoParameterConstraint() throws Exception {
+    Visitor visitor = new Visitor(ImmutableList.of(
+      MethodInvocationMatcher.create().typeDefinition("A").name("method").withNoParameterConstraint()
+      ));
+    JavaAstScanner.scanSingleFile(new File("src/test/files/checks/AbstractMethodDetection.java"), new VisitorsBridge(visitor));
+
+    assertThat(visitor.lines).containsExactly(13, 14, 15);
+
+  }
+
