@@ -4,7 +4,9 @@
       IP.reset(tree.value());
       if (IP.matches()) {
         String ip = IP.group(1);
-        context.addIssue(tree, ruleKey, "Make this IP \"" + ip + "\" address configurable.");
+        if (areAllBelow256(Splitter.on('.').split(ip))) {
+          context.addIssue(tree, ruleKey, "Make this IP \"" + ip + "\" address configurable.");
+        }
       }
     }
   }
