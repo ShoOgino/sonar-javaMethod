@@ -1,20 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    NewClassTree newClass = (NewClassTree) tree;
-    IdentifierTree identifier = null;
-    if (newClass.identifier().is(Tree.Kind.IDENTIFIER)) {
-      identifier = (IdentifierTree) newClass.identifier();
-    } else if (newClass.identifier().is(Tree.Kind.MEMBER_SELECT)) {
-      identifier = ((MemberSelectExpressionTree) newClass.identifier()).identifier();
-    }
-    if (identifier != null && hasSemantic()) {
-      Symbol reference = getSemanticModel().getReference(identifier);
-      if (reference != null) {
-        Type type = reference.getType();
-        if (type != null && type.is("javax.crypto.NullCipher")) {
-          addIssue(newClass, "Remove this use of the \"NullCipher\" class.");
-        }
-      }
+    if (((AbstractTypedTree) tree).getSymbolType().is("javax.crypto.NullCipher")) {
+      addIssue(tree, "Remove this use of the \"NullCipher\" class.");
     }
   }
 
