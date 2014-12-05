@@ -1,0 +1,12 @@
+  public ExpressionTree completeMethodReference(MethodReferenceTreeImpl partial, Optional<TypeArgumentListTreeImpl> typeArguments, AstNode newOrIdentifierToken) {
+    TypeArguments typeArgs = null;
+    if (typeArguments.isPresent()) {
+      typeArgs = typeArguments.get();
+      partial.addChild((AstNode) typeArgs);
+    }
+    IdentifierTree identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(newOrIdentifierToken));
+    partial.addChild(newOrIdentifierToken);
+    partial.complete(typeArgs, identifier);
+    return partial;
+  }
+
