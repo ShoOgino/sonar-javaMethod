@@ -1,7 +1,8 @@
   /**
    * Used to do scan of test files.
+   * @param files
    */
-  public void simpleScan(Collection<InputFile> files) {
+  public void simpleScan(Iterable<InputFile> files) {
     SourceProject project = (SourceProject) index.search("Java Project");
     VisitorContext context = new VisitorContext(project);
     context.setCommentAnalyser(commentAnalyser);
@@ -12,14 +13,14 @@
     }
 
     AstWalker astWalker = new AstWalker(visitors);
-
+    int size = Iterables.size(files);
     ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer", TimeUnit.SECONDS.toMillis(10));
-    progressReport.start(files.size() + " source files to be analyzed");
+    progressReport.start(size + " source files to be analyzed");
     int count = 0;
     for (InputFile inputFile : files) {
-      File file = inputFile.getFile();
+      File file = inputFile.file();
 
-      progressReport.message(count + "/" + files.size() + " files analyzed, current is " + file.getAbsolutePath());
+      progressReport.message(count + "/" + size + " files analyzed, current is " + file.getAbsolutePath());
       count++;
 
       context.setFile(file);
@@ -36,7 +37,7 @@
         throw new AnalysisException(getAnalyisExceptionMessage(file), e);
       }
     }
-    progressReport.stop(files.size() + "/" + files.size() + " source files analyzed");
+    progressReport.stop(size + "/" + size + " source files analyzed");
 
     for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
       visitor.destroy();

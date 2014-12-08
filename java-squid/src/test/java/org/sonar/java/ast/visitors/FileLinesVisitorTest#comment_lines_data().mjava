@@ -5,9 +5,7 @@
     when(sonarComponents.fileLinesContextFor(Mockito.any(File.class))).thenReturn(context);
 
     AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new FileLinesVisitor(sonarComponents, Charsets.UTF_8));
-    File baseDir = new File("src/test/files/metrics");
-    List<InputFile> inputFiles = InputFileUtils.create(baseDir, ImmutableList.of(new File("src/test/files/metrics/Comments.java")));
-    scanner.scan(inputFiles);
+    scanner.scan(mockInputFile(new File("src/test/files/metrics/Comments.java")));
 
     verify(context).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 1, 1);
     verify(context).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 2, 1);

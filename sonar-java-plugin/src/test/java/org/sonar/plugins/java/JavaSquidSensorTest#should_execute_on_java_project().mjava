@@ -1,11 +1,10 @@
   @Test
   public void should_execute_on_java_project() {
     Project project = mock(Project.class);
-
-    when(moduleFileSystem.files(any(FileQuery.class))).thenReturn(ImmutableList.<File>of());
+    fileSystem.add(new DefaultInputFile("fake.php").setLanguage("php"));
     assertThat(sensor.shouldExecuteOnProject(project)).isFalse();
 
-    when(moduleFileSystem.files(any(FileQuery.class))).thenReturn(ImmutableList.<File>of(new File("Fake.java")));
+    fileSystem.add(new DefaultInputFile("fake.java").setLanguage("java"));
     assertThat(sensor.shouldExecuteOnProject(project)).isTrue();
   }
 
