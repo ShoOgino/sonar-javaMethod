@@ -11,11 +11,13 @@
         } else {
           ruleKey = checks.ruleKey((CodeVisitor) checkMessage.getCheck());
         }
-        Issue issue = issuable.newIssueBuilder()
-            .ruleKey(ruleKey)
-            .line(checkMessage.getLine())
-            .message(checkMessage.formatDefaultMessage()).build();
-        issuable.addIssue(issue);
+        if (ruleKey != null) {
+          Issue issue = issuable.newIssueBuilder()
+              .ruleKey(ruleKey)
+              .line(checkMessage.getLine())
+              .message(checkMessage.formatDefaultMessage()).build();
+          issuable.addIssue(issue);
+        }
       }
       // Remove from memory:
       messages.clear();

@@ -2,9 +2,12 @@
     dirsWithoutPackageInfo = Sets.newHashSet();
     ActiveRule activeRule = rulesProfile.getActiveRule(CheckList.REPOSITORY_KEY, PackageInfoCheck.RULE_KEY);
     if (activeRule != null) {
-      Set<File> dirs = ((PackageInfoCheck) checks.of(activeRule.getRule().ruleKey())).getDirectoriesWithoutPackageFile();
-      for (File dir : dirs) {
-        dirsWithoutPackageInfo.add(Directory.fromIOFile(dir, project));
+      CodeVisitor check = checks.of(activeRule.getRule().ruleKey());
+      if (check != null) {
+        Set<File> dirs = ((PackageInfoCheck) check).getDirectoriesWithoutPackageFile();
+        for (File dir : dirs) {
+          dirsWithoutPackageInfo.add(Directory.fromIOFile(dir, project));
+        }
       }
     }
   }
