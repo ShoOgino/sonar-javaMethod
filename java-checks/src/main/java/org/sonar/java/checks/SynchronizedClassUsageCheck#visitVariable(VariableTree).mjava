@@ -1,15 +1,12 @@
   @Override
   public void visitVariable(VariableTree tree) {
     super.visitVariable(tree);
-    String declaredType = getTypeName(tree.type());
 
-    if (REPLACEMENTS.containsKey(declaredType)) {
-      reportIssue(tree.type(), declaredType);
-    } else {
+    boolean hasIssueOnDeclaredType = reportIssueIfDeprecatedType(tree.type());
+    if (!hasIssueOnDeclaredType) {
       ExpressionTree init = tree.initializer();
       if (init != null && init.is(Tree.Kind.NEW_CLASS)) {
-        String initType = getTypeName(((NewClassTree) tree.initializer()).identifier());
-        reportIssueIfDeprecatedType(tree.initializer(), initType);
+        reportIssueIfDeprecatedType(tree.initializer());
       }
     }
   }
