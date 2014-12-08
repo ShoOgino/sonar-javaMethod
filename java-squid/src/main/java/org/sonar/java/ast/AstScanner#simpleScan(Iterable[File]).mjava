@@ -2,7 +2,7 @@
    * Used to do scan of test files.
    * @param files
    */
-  public void simpleScan(Iterable<InputFile> files) {
+  public void simpleScan(Iterable<File> files) {
     SourceProject project = (SourceProject) index.search("Java Project");
     VisitorContext context = new VisitorContext(project);
     context.setCommentAnalyser(commentAnalyser);
@@ -17,8 +17,7 @@
     ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(size + " source files to be analyzed");
     int count = 0;
-    for (InputFile inputFile : files) {
-      File file = inputFile.file();
+    for (File file : files) {
 
       progressReport.message(count + "/" + size + " files analyzed, current is " + file.getAbsolutePath());
       count++;

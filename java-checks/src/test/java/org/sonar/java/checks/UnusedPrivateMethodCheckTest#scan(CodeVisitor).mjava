@@ -1,11 +1,9 @@
   public static SourceFile scan(CodeVisitor visitor) {
     File baseDir = new File("src/test/resources/");
-    InputFile sourceFile = mock(InputFile.class);
-    when(sourceFile.file()).thenReturn(new File(baseDir, "Lambdas.java"));
     File bytecodeFile = new File("target/test-classes/");
 
     JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), mock(JavaResourceLocator.class), visitor);
-    javaSquid.scan(Collections.singleton(sourceFile), Collections.<InputFile>emptyList(), Collections.singleton(bytecodeFile));
+    javaSquid.scan(Collections.singleton(new File(baseDir, "Lambdas.java")), Collections.<File>emptyList(), Collections.singleton(bytecodeFile));
 
     Collection<SourceCode> sources = javaSquid.getIndex().search(new QueryByType(SourceFile.class));
     if (sources.size() != 1) {

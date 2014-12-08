@@ -9,13 +9,8 @@
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(project, null);
     JavaSquid squid = new JavaSquid(conf, javaResourceLocator);
     Collection<File> files = FileUtils.listFiles(baseDir, new String[]{"java"}, true);
-    List<InputFile> sourceFiles = Lists.newArrayList();
-    PathResolver pathResolver = new PathResolver();
-    for (File file : files) {
-      sourceFiles.add(new DefaultInputFile(pathResolver.relativePath(baseDir, file)).setFile(file));
-    }
     File binDir = new File("src/test/files/bytecode/bin");
-    squid.scan(sourceFiles, Collections.<InputFile>emptyList(), Collections.singleton(binDir));
+    squid.scan(files, Collections.<File>emptyList(), Collections.singleton(binDir));
     graph = squid.getGraph();
     resourceMapping = javaResourceLocator.getResourceMapping();
     tag = findResource("tags/Tag.java");
