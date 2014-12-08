@@ -1,4 +1,4 @@
-  public void save(SensorContext context, Project project, CheckFactory checkFactory, ResourceMapping resourceMapping,
+  public void save(SensorContext context, Project project, Checks<CodeVisitor> checks, ResourceMapping resourceMapping,
                    ResourcePerspectives resourcePerspectives, NoSonarFilter noSonarFilter, RulesProfile rulesProfile) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     //Design
@@ -7,7 +7,7 @@
       designBridge.saveDesign(project);
     }
     //Report Issues
-    ChecksBridge checksBridge = new ChecksBridge(checkFactory, resourcePerspectives, rulesProfile);
+    ChecksBridge checksBridge = new ChecksBridge(checks, resourcePerspectives, rulesProfile);
     reportIssues(resourceMapping, noSonarFilter, checksBridge, project);
   }
 

@@ -9,12 +9,7 @@
           // VisitorsBridge uses RuleKey
           ruleKey = (RuleKey) check;
         } else {
-          ActiveRule rule = checkFactory.getActiveRule(checkMessage.getCheck());
-          if (rule == null) {
-            // rule not active
-            continue;
-          }
-          ruleKey = rule.getRule().ruleKey();
+          ruleKey = checks.ruleKey((CodeVisitor) checkMessage.getCheck());
         }
         Issue issue = issuable.newIssueBuilder()
             .ruleKey(ruleKey)
