@@ -1,22 +1,21 @@
   @Override
   public void leaveNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD)) {
-      MethodTree method = (MethodTree) tree;
-      if (method.modifiers().modifiers().contains(Modifier.NATIVE)) {
-        hasNativeMethod = true;
-      }
-    } else if (tree.is(Tree.Kind.CLASS)) {
-      classes.add((ClassTree) tree);
-    } else {
-      if (hasSemantic() && !hasNativeMethod) {
-        AssignmentFinder assignmentFinder = new AssignmentFinder();
-        tree.accept(assignmentFinder);
-        for (ClassTree classTree : classes) {
-          checkClassFields(classTree, assignmentFinder);
+    if (hasSemantic()) {
+      if (tree.is(Tree.Kind.METHOD)) {
+        MethodTree method = (MethodTree) tree;
+        if (method.modifiers().modifiers().contains(Modifier.NATIVE)) {
+          hasNativeMethod = true;
         }
+      } else if (tree.is(Tree.Kind.CLASS)) {
+        classes.add((ClassTree) tree);
+      } else if (tree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+        ExpressionTree expression = ((ExpressionStatementTree) tree).expression();
+        if (expression.is(ASSIGNMENT_KINDS)) {
+          addAssignment(((AssignmentExpressionTree) expression).variable());
+        }
+      } else {
+        leaveCompilationUnit();
       }
-      classes.clear();
-      hasNativeMethod = false;
     }
   }
 
