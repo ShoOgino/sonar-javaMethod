@@ -3,9 +3,11 @@
     if (tree.enclosingExpression() != null) {
       resolveAs(tree.enclosingExpression(), Symbol.VAR);
     }
-    resolveAs(tree.identifier(), Symbol.TYP);
+    Resolve.Env newClassEnv = semanticModel.getEnv(tree);
+    resolveAs(tree.identifier(), Symbol.TYP, newClassEnv, false);
     resolveAs(tree.typeArguments(), Symbol.TYP);
     resolveAs(tree.arguments(), Symbol.VAR);
+    resolveConstructorSymbol(tree.identifier(), newClassEnv, getParameterTypes(tree.arguments()));
     if (tree.classBody() != null) {
       //TODO create a new symbol and type for each anonymous class
       scan(tree.classBody());

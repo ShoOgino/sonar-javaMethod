@@ -3,9 +3,11 @@
     scan(tree.modifiers());
     NewClassTree newClassTree = (NewClassTree) tree.initializer();
     scan(newClassTree.enclosingExpression());
-    // skip identifier
+    // register identifier type
+    registerType(newClassTree.identifier(), ((VariableTreeImpl) tree).getSymbol().getType());
     scan(newClassTree.typeArguments());
     scan(newClassTree.arguments());
     scan(newClassTree.classBody());
+    resolveConstructorSymbol(tree.simpleName(), semanticModel.getEnv(tree), getParameterTypes(newClassTree.arguments()));
   }
 

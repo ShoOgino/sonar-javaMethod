@@ -1,0 +1,36 @@
+  public Symbol resolveAs(Tree tree, int kind, Resolve.Env resolveEnv, boolean associateReference) {
+    if (tree.is(Tree.Kind.IDENTIFIER, Tree.Kind.MEMBER_SELECT)) {
+      Symbol resolvedSymbol;
+      IdentifierTree identifierTree;
+      if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+        if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
+          // member select ending with .class
+          registerType(tree, symbols.classType);
+          return null;
+        }
+        identifierTree = mse.identifier();
+        resolvedSymbol = getSymbolOfMemberSelectExpression(mse, kind, resolveEnv);
+        registerType(identifierTree, getTypeOfSymbol(resolvedSymbol));
+      } else {
+        identifierTree = (IdentifierTree) tree;
+        resolvedSymbol = resolve.findIdent(resolveEnv, identifierTree.name(), kind);
+      }
+      if(associateReference) {
+        associateReference(identifierTree, resolvedSymbol);
+      }
+      registerType(tree, getTypeOfSymbol(resolvedSymbol));
+      return resolvedSymbol;
+    }
+    tree.accept(this);
+    Type type = getType(tree);
+    if (tree.is(Tree.Kind.INFERED_TYPE)) {
+      registerType(tree, symbols.unknownType);
+      return symbols.unknownSymbol;
+    }
+    if (type == null) {
+      throw new IllegalStateException("Type not resolved " + tree);
+    }
+    return type.symbol;
+  }
+
