@@ -1,7 +1,8 @@
   private void checkExpression(ExpressionTree tree) {
-    if (tree.is(Tree.Kind.IDENTIFIER)) {
+    if (hasSemanticModel() && tree.is(Tree.Kind.IDENTIFIER)) {
       IdentifierTree identifier = (IdentifierTree) tree;
-      if (variables.contains(identifier.name())) {
+      Symbol reference = semanticModel.getReference(identifier);
+      if (reference != null && reference.isKind(Symbol.VAR) && variables.contains(reference)) {
         context.addIssue(identifier, ruleKey, "Introduce a new variable instead of reusing the parameter \"" + identifier.name() + "\".");
       }
     }
