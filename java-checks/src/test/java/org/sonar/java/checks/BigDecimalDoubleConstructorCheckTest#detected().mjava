@@ -1,0 +1,12 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BigDecimalDoubleConstructorCheck.java"),
+        new VisitorsBridge(new BigDecimalDoubleConstructorCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(7).withMessage("Use \"BigDecimal.valueOf\" instead.")
+        .next().atLine(8).withMessage("Use \"BigDecimal.valueOf\" instead.")
+        .next().atLine(9).withMessage("Use \"BigDecimal.valueOf\" instead.")
+        .next().atLine(10).withMessage("Use \"BigDecimal.valueOf\" instead.")
+        .noMore();
+  }
+
