@@ -1,0 +1,13 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/WaitInSynchronizeCheck.java"), new VisitorsBridge(new WaitInSynchronizeCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(20).withMessage("Make this call to \"wait()\" only inside a synchronized block to be sure to hold the monitor on \"String\" object.")
+        .next().atLine(21).withMessage("Make this call to \"wait()\" only inside a synchronized block to be sure to hold the monitor on \"this\" object.")
+        .next().atLine(22).withMessage("Make this call to \"wait()\" only inside a synchronized block to be sure to hold the monitor on \"this\" object.")
+        .next().atLine(23).withMessage("Make this call to \"notify()\" only inside a synchronized block to be sure to hold the monitor on \"this\" object.")
+        .next().atLine(24).withMessage("Make this call to \"notifyAll()\" only inside a synchronized block to be sure to hold the monitor on \"this\" object.")
+        .next().atLine(31).withMessage("Make this call to \"wait()\" only inside a synchronized block to be sure to hold the monitor on \"this\" object.")
+    .noMore();
+  }
+

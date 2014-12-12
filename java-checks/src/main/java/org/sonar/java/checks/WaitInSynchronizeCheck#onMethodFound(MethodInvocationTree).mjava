@@ -1,0 +1,17 @@
+  @Override
+  protected void onMethodFound(MethodInvocationTree mit) {
+    if(!withinSynchronizedBlock.peek()) {
+      String methodName;
+      String lockName;
+      if(mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
+        methodName = mse.identifier().name();
+        lockName = ((AbstractTypedTree) mse.expression()).getSymbolType().getSymbol().getName();
+      } else {
+        methodName = ((IdentifierTree)mit.methodSelect()).name();
+        lockName = "this";
+      }
+      addIssue(mit, "Make this call to \"" + methodName + "()\" only inside a synchronized block to be sure to hold the monitor on \""+lockName+"\" object.");
+    }
+  }
+
