@@ -8,13 +8,6 @@
       suppressWarningsType = "SuppressWarnings".equals(mset.identifier().name()) &&
           mset.expression().is(Tree.Kind.MEMBER_SELECT) && "lang".equals(((MemberSelectExpressionTree) mset.expression()).identifier().name());
     }
-    if (suppressWarningsType) {
-      for (ExpressionTree expression : annotationTree.arguments()) {
-        if (expression.is(Tree.Kind.STRING_LITERAL) && "\"all\"".equals(((LiteralTree) expression).value())) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return suppressWarningsType;
   }
 

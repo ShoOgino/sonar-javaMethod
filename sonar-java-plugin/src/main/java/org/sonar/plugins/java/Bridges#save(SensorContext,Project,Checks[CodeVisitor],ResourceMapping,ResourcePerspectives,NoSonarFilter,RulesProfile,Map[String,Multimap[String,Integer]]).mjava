@@ -1,5 +1,5 @@
   public void save(SensorContext context, Project project, Checks<CodeVisitor> checks, ResourceMapping resourceMapping,
-                   ResourcePerspectives resourcePerspectives, NoSonarFilter noSonarFilter, RulesProfile rulesProfile) {
+                   ResourcePerspectives resourcePerspectives, NoSonarFilter noSonarFilter, RulesProfile rulesProfile, Map<String, Multimap<String, Integer>> ignoredLinesForRules) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
     //Design
     if (!skipPackageDesignAnalysis && squid.isBytecodeScanned()) {
@@ -7,7 +7,7 @@
       designBridge.saveDesign(project);
     }
     //Report Issues
-    ChecksBridge checksBridge = new ChecksBridge(checks, resourcePerspectives, rulesProfile);
+    ChecksBridge checksBridge = new ChecksBridge(checks, resourcePerspectives, rulesProfile, ignoredLinesForRules);
     reportIssues(resourceMapping, noSonarFilter, checksBridge, project);
   }
 

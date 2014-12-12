@@ -1,0 +1,23 @@
+  private void handleSuppressWarning(List<AnnotationTree> annotationTrees, int endLine) {
+    int startLine = 0;
+    List<String> ignoredKey = Lists.newArrayList();
+    for (AnnotationTree annotationTree : annotationTrees) {
+      if (isSuppressAllWarnings(annotationTree)) {
+        startLine = ((JavaTree) annotationTree).getLine();
+        ignoredKey.addAll(getSuppressWarningArgs(annotationTree));
+        break;
+      }
+    }
+
+    for (String key : ignoredKey) {
+      boolean isAll = "all".equals(key);
+      for (int i = startLine; i <= endLine; i++) {
+        if (isAll) {
+          ignoredLines.add(i);
+        } else {
+          ignoredLinesForRules.put(key, i);
+        }
+      }
+    }
+  }
+

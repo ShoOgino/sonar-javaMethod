@@ -11,7 +11,8 @@
         } else {
           ruleKey = checks.ruleKey((CodeVisitor) checkMessage.getCheck());
         }
-        if (ruleKey != null) {
+        Multimap<String, Integer> ignoreLinesForRules = ignoredLinesForRulesByFile.get(squidFile.getKey());
+        if (ruleKey != null && ignoreLinesForRules != null && !ignoreLinesForRules.get(ruleKey.toString()).contains(checkMessage.getLine())) {
           Issue issue = issuable.newIssueBuilder()
               .ruleKey(ruleKey)
               .line(checkMessage.getLine())
