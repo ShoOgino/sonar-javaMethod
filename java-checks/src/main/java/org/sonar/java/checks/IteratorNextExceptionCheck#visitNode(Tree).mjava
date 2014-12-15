@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTreeImpl methodTree = (MethodTreeImpl) tree;
+    if (hasSemantic() && isIteratorNextMethod(methodTree.getSymbol()) && methodTree.block() != null) {
+      NextMethodBodyVisitor visitor = new NextMethodBodyVisitor();
+      tree.accept(visitor);
+      if (!visitor.foundThrow) {
+        addIssue(tree, "Add a \"NoSuchElementException\" for iteration beyond the end of the collection.");
+      }
+    }
+  }
+

@@ -1,0 +1,17 @@
+    public boolean throwsNoSuchElementException(MethodInvocationTree methodInvocationTree) {
+      MethodInvocationTreeImpl methodInvocationTreeImpl = (MethodInvocationTreeImpl) methodInvocationTree;
+      Symbol symbol = methodInvocationTreeImpl.getSymbol();
+      if (!symbol.isKind(Symbol.MTH)) {
+        return false;
+      }
+      MethodSymbol methodSymbol = (MethodSymbol) symbol;
+      if (methodSymbol.getThrownTypes() != null) {
+        for (TypeSymbol thrownType : methodSymbol.getThrownTypes()) {
+          if (thrownType.getType().is("java.util.NoSuchElementException")) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
