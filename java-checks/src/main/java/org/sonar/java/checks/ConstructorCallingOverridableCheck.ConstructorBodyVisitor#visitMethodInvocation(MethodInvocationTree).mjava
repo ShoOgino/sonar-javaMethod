@@ -1,0 +1,22 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      IdentifierTree methodIdentifier = null;
+      boolean isInvocationOnSelf = false;
+      ExpressionTree methodSelect = tree.methodSelect();
+      if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
+        methodIdentifier = (IdentifierTree) methodSelect;
+        isInvocationOnSelf = true;
+      } else if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) methodSelect;
+        methodIdentifier = memberSelect.identifier();
+        isInvocationOnSelf = isThisOrSuper(memberSelect.expression());
+      }
+      if (isInvocationOnSelf) {
+        Symbol symbol = getSemanticModel().getReference(methodIdentifier);
+        if (symbol != null && isOverridableMethod(symbol) && isMethodDefinedOnConstructedType(symbol)) {
+          addIssue(tree, "Make \"" + methodIdentifier.name() + "\" a \"final\" method or remove this call to it.");
+        }
+      }
+      super.visitMethodInvocation(tree);
+    }
+
