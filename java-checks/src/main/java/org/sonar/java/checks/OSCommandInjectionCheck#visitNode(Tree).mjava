@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ExpressionTree arg = null;
+    if (hasSemantic()) {
+      if (tree.is(Tree.Kind.METHOD_INVOCATION) && RUNTIME_EXEC_MATCHER.matches((MethodInvocationTree) tree, getSemanticModel())) {
+        MethodInvocationTree mit = (MethodInvocationTree) tree;
+        arg = mit.arguments().get(0);
+      } else if (tree.is(Tree.Kind.NEW_CLASS) && ((AbstractTypedTree) tree).getSymbolType().is("java.lang.ProcessBuilder")) {
+        arg = ((NewClassTree) tree).arguments().get(0);
+      }
+      if (isDynamicArray(arg, tree)) {
+        addIssue(arg, "Make sure that all elements used in this OS command are properly sanitized.");
+      }
+    }
+  }
+

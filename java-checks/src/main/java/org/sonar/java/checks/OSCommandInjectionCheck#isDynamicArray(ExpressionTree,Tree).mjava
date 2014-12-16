@@ -1,0 +1,17 @@
+  private boolean isDynamicArray(@Nullable ExpressionTree arg, Tree mit) {
+    if (arg == null) {
+      return false;
+    }
+    if (arg.is(Tree.Kind.NEW_ARRAY)) {
+      NewArrayTree nat = (NewArrayTree) arg;
+      for (ExpressionTree expressionTree : nat.initializers()) {
+        if (isDynamicString(mit, expressionTree, null)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    boolean argIsString = ((AbstractTypedTree) arg).getSymbolType().is("java.lang.String");
+    return !argIsString || isDynamicString(mit, arg, null);
+  }
+
