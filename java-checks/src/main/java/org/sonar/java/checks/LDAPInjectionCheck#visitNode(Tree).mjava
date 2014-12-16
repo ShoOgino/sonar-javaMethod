@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    if (isDirContextSearchCall(mit)) {
+      //Check the first two arguments of search method
+      checkDirContextArg(mit.arguments().get(0), mit);
+      checkDirContextArg(mit.arguments().get(1), mit);
+    } else if (isSearchControlCall(mit)) {
+      ExpressionTree arg = mit.arguments().get(0);
+      if (isDynamicArray(arg, mit)) {
+        createIssue(arg);
+      }
+    }
+  }
+
