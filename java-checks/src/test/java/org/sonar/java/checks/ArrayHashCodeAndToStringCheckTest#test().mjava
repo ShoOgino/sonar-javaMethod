@@ -1,0 +1,10 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ArrayHashCodeAndToStringCheck.java"),
+      new VisitorsBridge(new ArrayHashCodeAndToStringCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(4).withMessage("Use \"Arrays.toString(array)\" instead.")
+      .next().atLine(5).withMessage("Use \"Arrays.hashCode(array)\" instead.");
+
+  }
+
