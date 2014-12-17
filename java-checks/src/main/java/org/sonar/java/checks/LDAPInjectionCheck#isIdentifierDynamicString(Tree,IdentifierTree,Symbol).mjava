@@ -1,17 +1,17 @@
-  private boolean isIdentifierDynamicString(MethodInvocationTree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking, boolean firstLevel) {
+  private boolean isIdentifierDynamicString(Tree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking) {
     Symbol symbol = getSemanticModel().getReference(arg);
-    if(symbol.equals(currentlyChecking) || isConstant(symbol)) {
+    if (symbol.equals(currentlyChecking) || isConstant(symbol)) {
       return false;
     }
 
     Tree enclosingBlockTree = getSemanticModel().getTree(getSemanticModel().getEnv(methodTree));
     Tree argEnclosingDeclarationTree = getSemanticModel().getTree(getSemanticModel().getEnv(symbol));
-    if(enclosingBlockTree.equals(argEnclosingDeclarationTree)) {
+    if (enclosingBlockTree.equals(argEnclosingDeclarationTree)) {
       //symbol is a local variable, check it is not a dynamic string.
 
       //Check declaration
       VariableTree declaration = (VariableTree) getSemanticModel().getTree(symbol);
-      if(declaration.initializer() != null && isDynamicString(methodTree, declaration.initializer(), currentlyChecking)) {
+      if (declaration.initializer() != null && isDynamicString(methodTree, declaration.initializer(), currentlyChecking)) {
         return true;
       }
       //check usages by revisiting the enclosing tree.
@@ -21,7 +21,6 @@
       return visitor.dynamicString;
     }
     //arg is not a local variable nor a constant, so it is a parameter or a field.
-    parameterName =  arg.name();
-    return symbol.owner().isKind(Symbol.MTH) && !firstLevel;
+    return symbol.owner().isKind(Symbol.MTH);
   }
 
