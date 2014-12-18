@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!excluded.contains(tree)) {
+      super.visitNode(tree);
+      if (tree.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) tree;
+        boolean foundIssue = checkForbiddenTypes(tree, (AbstractTypedTree) variableTree.type());
+        if (foundIssue) {
+          excluded.add(variableTree.initializer());
+        }
+      } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+        checkForbiddenTypes(tree, (MethodInvocationTreeImpl) tree);
+      }
+    }
+  }
+

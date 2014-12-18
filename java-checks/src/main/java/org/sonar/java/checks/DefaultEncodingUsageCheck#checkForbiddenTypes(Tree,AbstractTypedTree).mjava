@@ -1,0 +1,12 @@
+  private boolean checkForbiddenTypes(Tree tree, AbstractTypedTree typedTree) {
+    boolean foundIssue = false;
+    Type symbolType = typedTree.getSymbolType();
+    for (String forbiddenType : FORBIDDEN_TYPES) {
+      if (symbolType.is(forbiddenType)) {
+        addIssue(tree, "Remove this use of \"" + forbiddenType + "\"");
+        foundIssue = true;
+      }
+    }
+    return foundIssue;
+  }
+
