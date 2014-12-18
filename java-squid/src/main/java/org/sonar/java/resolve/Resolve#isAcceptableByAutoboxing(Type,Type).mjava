@@ -1,0 +1,12 @@
+  private boolean isAcceptableByAutoboxing(Type expressionType, Type formalType) {
+    if (expressionType.isPrimitive()) {
+      return types.isSubtype(symbols.boxedTypes.get(expressionType), formalType);
+    } else {
+      Type unboxedType = symbols.boxedTypes.inverse().get(expressionType);
+      if (unboxedType != null) {
+        return types.isSubtype(unboxedType, formalType);
+      }
+    }
+    return false;
+  }
+
