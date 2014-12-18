@@ -3,7 +3,8 @@
     ExpressionStatementTree expressionStatement = (ExpressionStatementTree) tree;
     ExpressionTree expression = expressionStatement.expression();
     if (expression.is(Tree.Kind.NEW_CLASS)) {
-      String className = getClassName(((NewClassTree) expression).identifier());
+      NewClassTreeImpl newClassTree = (NewClassTreeImpl) expression;
+      String className = newClassTree.getConstructorIdentifier().name();
       addIssue(tree, "Either remove this useless object instantiation of class \"" + className + "\" or use it");
     }
   }

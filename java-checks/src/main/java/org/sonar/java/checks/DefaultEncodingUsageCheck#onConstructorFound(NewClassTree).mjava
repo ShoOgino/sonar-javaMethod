@@ -1,0 +1,10 @@
+  @Override
+  protected void onConstructorFound(NewClassTree newClassTree) {
+    NewClassTreeImpl newClassTreeImpl = (NewClassTreeImpl) newClassTree;
+    IdentifierTree constructorIdentifier = newClassTreeImpl.getConstructorIdentifier();
+    MethodSymbol constructor = (MethodSymbol) getSemanticModel().getReference(constructorIdentifier);
+    List<Type> parametersTypes = constructor.getParametersTypes();
+    String signature = constructor.owner().getName() + "(" + Joiner.on(',').join(parametersTypes) + ")";
+    addIssue(newClassTree, "Remove this use of constructor \"" + signature + "\"");
+  }
+

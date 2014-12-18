@@ -1,14 +1,7 @@
   public boolean matches(MethodInvocationTree mit, SemanticModel semanticModel) {
     IdentifierTree id = getIdentifier(mit);
     if (id != null) {
-      Symbol symbol = semanticModel.getReference(id);
-      if (symbol != null && symbol.isKind(Symbol.MTH)) {
-        Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
-        Type callSiteType = getCallSiteType(mit, semanticModel);
-        if (isSearchedMethod(methodSymbol, callSiteType)) {
-          return true;
-        }
-      }
+      return matches(id, getCallSiteType(mit, semanticModel), semanticModel);
     }
     return false;
   }
