@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTreeImpl classTree = (ClassTreeImpl) tree;
+    TypeSymbol classSymbol = classTree.getSymbol();
+    if (isCloneable(classTree) && !classSymbol.isAbstract() && !declaresCloneMethod(classSymbol)) {
+      addIssue(tree, "Add a \"clone()\" method to this class.");
+    }
+  }
+
