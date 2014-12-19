@@ -13,57 +13,23 @@
     }
     if (formatStringTree.is(Tree.Kind.STRING_LITERAL)) {
       String formatString = trimQuotes(((LiteralTree) formatStringTree).value());
+      checkLineFeed(formatString, mit);
+
       List<String> params = getParameters(formatString);
-
-      if (formatString.contains("\\n")) {
-        addIssue(mit, "%n should be used in place of \\n to produce the platform-specific line separator.");
-      }
-
       if (firstArgumentIsLT(params)) {
         addIssue(mit, "The argument index '<' refers to the previous format specifier but there isn't one.");
         return;
       }
-
       if (usesMessageFormat(formatString, params)) {
         addIssue(mit, "Looks like there is a confusion with the use of java.text.MessageFormat, parameters will be simply ignored here");
         return;
       }
-
-      //Cleanup %n values
-      while(params.contains("n")) {
-        params.remove("n");
-      }
+      cleanupLineSeparator(params);
       if (params.size() > args.size()) {
         addIssue(mit, "Not enough arguments.");
         return;
       }
-
-      int index = 0;
-      List<ExpressionTree> unusedArgs = Lists.newArrayList(args);
-      for (String rawParam : params) {
-        String param = rawParam;
-        int argIndex = index;
-        if (param.contains("$")) {
-          argIndex = Integer.valueOf(param.substring(0, param.indexOf("$"))) - 1;
-          param = param.substring(param.indexOf("$") + 1);
-        } else {
-          index++;
-        }
-        ExpressionTree argExpressionTree = args.get(argIndex);
-        unusedArgs.remove(argExpressionTree);
-        Type argType = ((AbstractTypedTree) argExpressionTree).getSymbolType();
-        if (param.startsWith("d") && !isNumerical(argType)) {
-          addIssue(mit, "An 'int' is expected rather than a " + argType + ".");
-        }
-        if (param.startsWith("b") && !(argType.is("boolean") || argType.is("java.lang.Boolean"))) {
-          addIssue(mit, "Directly inject the boolean value.");
-        }
-        if((param.startsWith("t") || param.startsWith("T")) && !TIME_CONVERSIONS.contains(param.substring(1))) {
-          addIssue(mit, param.substring(1)+" is not a supported time conversion character");
-        }
-
-      }
-      reportUnusedArgs(mit, args, unusedArgs);
+      verifyParameters(mit, args, params);
     }
   }
 

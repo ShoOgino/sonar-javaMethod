@@ -1,0 +1,29 @@
+  private void verifyParameters(MethodInvocationTree mit, List<ExpressionTree> args, List<String> params) {
+    int index = 0;
+    List<ExpressionTree> unusedArgs = Lists.newArrayList(args);
+    for (String rawParam : params) {
+      String param = rawParam;
+      int argIndex = index;
+      if (param.contains("$")) {
+        argIndex = Integer.valueOf(param.substring(0, param.indexOf("$"))) - 1;
+        param = param.substring(param.indexOf("$") + 1);
+      } else {
+        index++;
+      }
+      ExpressionTree argExpressionTree = args.get(argIndex);
+      unusedArgs.remove(argExpressionTree);
+      Type argType = ((AbstractTypedTree) argExpressionTree).getSymbolType();
+      if (param.startsWith("d") && !isNumerical(argType)) {
+        addIssue(mit, "An 'int' is expected rather than a " + argType + ".");
+      }
+      if (param.startsWith("b") && !(argType.is("boolean") || argType.is("java.lang.Boolean"))) {
+        addIssue(mit, "Directly inject the boolean value.");
+      }
+      if((param.startsWith("t") || param.startsWith("T")) && !TIME_CONVERSIONS.contains(param.substring(1))) {
+        addIssue(mit, param.substring(1)+" is not a supported time conversion character");
+      }
+
+    }
+    reportUnusedArgs(mit, args, unusedArgs);
+  }
+
