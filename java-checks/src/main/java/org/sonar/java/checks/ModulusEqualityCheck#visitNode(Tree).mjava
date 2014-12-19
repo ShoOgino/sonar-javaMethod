@@ -1,7 +1,15 @@
   @Override
   public void visitNode(Tree tree) {
-    BinaryExpressionTree equality = (BinaryExpressionTree) tree;
-    checkModulusAndIntLiteral(equality.leftOperand(), equality.rightOperand());
-    checkModulusAndIntLiteral(equality.rightOperand(), equality.leftOperand());
+    if (tree.is(Tree.Kind.EQUAL_TO)) {
+      BinaryExpressionTree equality = (BinaryExpressionTree) tree;
+      checkModulusAndIntLiteral(equality.leftOperand(), equality.rightOperand());
+      checkModulusAndIntLiteral(equality.rightOperand(), equality.leftOperand());
+    } else {
+      MethodTree methodTree = (MethodTree) tree;
+      for (VariableTree variableTree : methodTree.parameters()) {
+        VariableSymbol symbol = ((VariableTreeImpl) variableTree).getSymbol();
+        methodParams.add(symbol);
+      }
+    }
   }
 

@@ -1,7 +1,9 @@
   private void checkModulusAndIntLiteral(ExpressionTree operand1, ExpressionTree operand2) {
     if (operand1.is(Tree.Kind.REMAINDER)) {
+      BinaryExpressionTree modulusExp = (BinaryExpressionTree) operand1;
       Integer intValue = LiteralUtils.intLiteralValue(operand2);
-      if (intValue != null && intValue != 0) {
+      boolean usesMethodParam = isMethodParameter(modulusExp.leftOperand()) || isMethodParameter(modulusExp.rightOperand());
+      if (intValue != null && intValue != 0 && usesMethodParam) {
         String sign = intValue > 0 ? "positive" : "negative";
         addIssue(operand1, "The results of this modulus operation may not be " + sign + ".");
       }
