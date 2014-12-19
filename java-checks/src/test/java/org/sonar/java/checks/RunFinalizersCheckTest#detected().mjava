@@ -1,0 +1,8 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/RunFinalizersCheck.java"), new VisitorsBridge(new RunFinalizersCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(3).withMessage("Remove this call to \"Runtime.runFinalizersOnExit()\".")
+        .next().atLine(4).withMessage("Remove this call to \"System.runFinalizersOnExit()\".");
+  }
+
