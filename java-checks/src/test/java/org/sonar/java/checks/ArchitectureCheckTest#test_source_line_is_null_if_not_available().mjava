@@ -1,0 +1,31 @@
+  @Test
+  public void test_source_line_is_null_if_not_available () throws Exception {
+    ArchitectureCheck archCheck = new ArchitectureCheck();
+    archCheck.setFromClasses("**");
+    archCheck.setToClasses("**");
+    JavaResourceLocator jrl = mock(JavaResourceLocator.class);
+    when(jrl.findSourceFileKeyByClassName(anyString())).thenReturn("key");
+    archCheck.setJavaResourceLocator(jrl);
+
+    SquidIndex squidIndex = mock(SquidIndex.class);
+    SourceFile sourceFile = mock(SourceFile.class);
+    when(squidIndex.search("key")).thenReturn(sourceFile);
+
+    archCheck.setSquidIndex(squidIndex);
+    AsmEdge asmEdge = Mockito.mock(AsmEdge.class);
+    when(asmEdge.getSourceLineNumber()).thenReturn(0);
+    when(asmEdge.getTargetAsmClass()).thenReturn(new AsmClass("bannedClass"));
+
+    AsmClass myClass = new AsmClass("myClass");
+    archCheck.visitClass(myClass);
+    archCheck.visitEdge(asmEdge);
+    archCheck.leaveClass(myClass);
+
+    ArgumentCaptor<CheckMessage> messageCaptor = ArgumentCaptor.forClass(CheckMessage.class);
+    verify(sourceFile, times(1)).log(messageCaptor.capture());
+
+    CheckMessage value = messageCaptor.getValue();
+    assertThat(value.getLine()).isNull();
+
+  }
+
