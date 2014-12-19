@@ -1,0 +1,11 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SynchronizationOnStringOrBoxedCheck.java"),
+      new VisitorsBridge(new SynchronizationOnStringOrBoxedCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(10).withMessage("Synchronize on a new \"Object\" instead.")
+      .next().atLine(13)
+      .next().atLine(16)
+      .next().atLine(19);
+  }
+

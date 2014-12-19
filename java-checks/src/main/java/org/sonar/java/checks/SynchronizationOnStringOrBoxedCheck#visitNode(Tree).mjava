@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SynchronizedStatementTree syncStatement = (SynchronizedStatementTree) tree;
+    AbstractTypedTree expression = (AbstractTypedTree) syncStatement.expression();
+    Type expressionType = expression.getSymbolType();
+    if (expressionType.isPrimitive() || isForbiddenType(expressionType)) {
+      addIssue(syncStatement, "Synchronize on a new \"Object\" instead.");
+    }
+  }
+
