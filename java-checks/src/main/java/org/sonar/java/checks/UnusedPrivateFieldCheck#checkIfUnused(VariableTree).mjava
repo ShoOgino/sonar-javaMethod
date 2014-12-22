@@ -2,7 +2,7 @@
     if (tree.modifiers().modifiers().contains(Modifier.PRIVATE) && !"serialVersionUID".equals(tree.simpleName().name())) {
       SemanticModel semanticModel = getSemanticModel();
       Symbol symbol = semanticModel.getSymbol(tree);
-      if (symbol != null && semanticModel.getUsages(symbol).size() == assignments.get(symbol).size()) {
+      if (symbol != null && semanticModel.getUsages(symbol).size() == assignments.get(symbol).size() && !hasExcludedAnnotation(tree)) {
         addIssue(tree, "Remove this unused \"" + tree.simpleName() + "\" private field.");
       }
     }
