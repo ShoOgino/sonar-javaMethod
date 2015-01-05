@@ -11,11 +11,7 @@
       }
       return false;
     }
-    if (arg.is(Tree.Kind.IDENTIFIER)) {
-      parameterName = ((IdentifierTree) arg).name();
-    } else if (arg.is(Tree.Kind.MEMBER_SELECT)) {
-      parameterName = ((MemberSelectExpressionTree) arg).identifier().name();
-    }
+    setParameterNameFromArgument(arg);
     boolean argIsString = ((AbstractTypedTree) arg).getSymbolType().is("java.lang.String");
     return !argIsString || isDynamicString(mit, arg, null);
   }

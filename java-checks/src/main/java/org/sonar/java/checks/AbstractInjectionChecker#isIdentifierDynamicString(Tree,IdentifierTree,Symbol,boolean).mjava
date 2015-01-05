@@ -1,4 +1,4 @@
-  private boolean isIdentifierDynamicString(Tree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking) {
+  protected boolean isIdentifierDynamicString(Tree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking, boolean firstLevel) {
     Symbol symbol = getSemanticModel().getReference(arg);
     if (symbol.equals(currentlyChecking) || isConstant(symbol)) {
       return false;
@@ -22,6 +22,6 @@
     }
     //arg is not a local variable nor a constant, so it is a parameter or a field.
     parameterName = arg.name();
-    return symbol.owner().isKind(Symbol.MTH);
+    return symbol.owner().isKind(Symbol.MTH) && !firstLevel;
   }
 
