@@ -1,0 +1,16 @@
+  private boolean hasNoArgConstructor(Type type) {
+    List<Symbol> constructors = type.getSymbol().members().lookup("<init>");
+    if (constructors.isEmpty()) {
+      return true;
+    }
+    for (Symbol member : constructors) {
+      if (member.isKind(Symbol.MTH)) {
+        MethodSymbol method = (MethodSymbol) member;
+        if (method.getParametersTypes().isEmpty()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

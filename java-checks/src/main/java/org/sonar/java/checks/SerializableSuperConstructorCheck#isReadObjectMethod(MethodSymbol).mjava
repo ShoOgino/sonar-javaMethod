@@ -1,0 +1,17 @@
+  private boolean isReadObjectMethod(MethodSymbol method) {
+    List<Type> parametersTypes = method.getParametersTypes();
+    if (parametersTypes.size() != 1 || !parametersTypes.get(0).is("java.io.ObjectInputStream")) {
+      return false;
+    }
+    boolean throwsClassNotFound = false;
+    boolean throwsIOException = false;
+    for (TypeSymbol thrownTypeSymbol : method.getThrownTypes()) {
+      if (thrownTypeSymbol.getType().is("java.io.IOException")) {
+        throwsIOException = true;
+      } else if (thrownTypeSymbol.getType().is("java.lang.ClassNotFoundException")) {
+        throwsClassNotFound = true;
+      }
+    }
+    return throwsClassNotFound && throwsIOException;
+  }
+

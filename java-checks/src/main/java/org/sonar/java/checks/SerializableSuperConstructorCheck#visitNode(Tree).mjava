@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      ClassTreeImpl classTree = (ClassTreeImpl) tree;
+      TypeSymbol classSymbol = classTree.getSymbol();
+      Type type = classSymbol.getType();
+      if (isSerializable(type) && !isSerializable(classSymbol.getSuperclass())) {
+        Type superclass = classSymbol.getSuperclass();
+        if (!hasNoArgConstructor(superclass) && !hasReadObjectMethod(type)) {
+          String superclassName = superclass.toString();
+          addIssue(tree, "Add a no-arg constructor to \"" + superclassName + "\" or implement \"writeObject()\" and \"readObject()\".");
+        }
+      }
+    }
+  }
+
