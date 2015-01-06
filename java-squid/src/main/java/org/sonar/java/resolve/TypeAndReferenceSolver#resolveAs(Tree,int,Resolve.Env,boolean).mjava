@@ -12,15 +12,17 @@
         }
         identifierTree = mse.identifier();
         resolvedSymbol = getSymbolOfMemberSelectExpression(mse, kind, resolveEnv);
-        registerType(identifierTree, getTypeOfSymbol(resolvedSymbol));
+        Type resolvedType = getTypeOfSymbol(resolvedSymbol, getType(mse.expression()));
+        registerType(identifierTree, resolvedType);
+        registerType(tree, resolvedType);
       } else {
         identifierTree = (IdentifierTree) tree;
         resolvedSymbol = resolve.findIdent(resolveEnv, identifierTree.name(), kind);
+        registerType(tree, getTypeOfSymbol(resolvedSymbol));
       }
       if(associateReference) {
         associateReference(identifierTree, resolvedSymbol);
       }
-      registerType(tree, getTypeOfSymbol(resolvedSymbol));
       return resolvedSymbol;
     }
     tree.accept(this);

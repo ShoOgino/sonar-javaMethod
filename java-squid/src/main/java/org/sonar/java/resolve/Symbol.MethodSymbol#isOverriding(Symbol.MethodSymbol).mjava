@@ -6,10 +6,11 @@
       for (int i = 0; i < getParametersTypes().size(); i++) {
         Type paramOverrider = getParametersTypes().get(i);
         if (paramOverrider.isTagged(Type.UNKNOWN)) {
-          //FIXME : complete symbol table should not have unknown types.
+          //FIXME : complete symbol table should not have unknown types and generics should be handled properly for this.
           return null;
         }
-        if (!paramOverrider.equals(overridee.getParametersTypes().get(i))) {
+        //FIXME : generics type should have same erasure see JLS8 8.4.2
+        if (!paramOverrider.erasure().equals(overridee.getParametersTypes().get(i).erasure()  )) {
           return false;
         }
       }
