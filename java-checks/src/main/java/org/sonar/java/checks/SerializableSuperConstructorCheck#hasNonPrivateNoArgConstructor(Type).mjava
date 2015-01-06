@@ -1,16 +1,13 @@
-  private boolean hasNoArgConstructor(Type type) {
+  private boolean hasNonPrivateNoArgConstructor(Type type) {
     List<Symbol> constructors = type.getSymbol().members().lookup("<init>");
-    if (constructors.isEmpty()) {
-      return true;
-    }
     for (Symbol member : constructors) {
       if (member.isKind(Symbol.MTH)) {
         MethodSymbol method = (MethodSymbol) member;
-        if (method.getParametersTypes().isEmpty()) {
+        if (method.getParametersTypes().isEmpty() && !method.isPrivate()) {
           return true;
         }
       }
     }
-    return false;
+    return constructors.isEmpty();
   }
 
