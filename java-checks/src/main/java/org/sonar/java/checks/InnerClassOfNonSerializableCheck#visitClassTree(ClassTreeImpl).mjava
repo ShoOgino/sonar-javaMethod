@@ -1,0 +1,19 @@
+  private void visitClassTree(ClassTreeImpl classTree) {
+    TypeSymbol symbol = classTree.getSymbol();
+    if (isInnerClass(symbol) && directlyImplementsSerializable(symbol)) {
+      Symbol owner = symbol.owner();
+      if (owner.isKind(Symbol.TYP)) {
+        TypeSymbol ownerType = (TypeSymbol) owner;
+        if (!isSerializable(ownerType.getType()) && !symbol.isStatic()) {
+          addIssue(classTree, "Make this inner class static");
+        }
+      } else if (owner.isKind(Symbol.MTH)) {
+        TypeSymbol methodOwner = (TypeSymbol) owner.owner();
+        if (!isSerializable(methodOwner.getType()) && !owner.isStatic()) {
+          String methodName = owner.getName();
+          addIssue(classTree, "Make \"" + methodName + "\" static");
+        }
+      }
+    }
+  }
+
