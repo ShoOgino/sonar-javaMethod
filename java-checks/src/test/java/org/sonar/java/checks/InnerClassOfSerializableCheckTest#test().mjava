@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/InnerClassOfSerializableCheck.java"),
+      new VisitorsBridge(new InnerClassOfSerializableCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(16).withMessage("Make this inner class static")
+      .next().atLine(21).withMessage("Make \"nonStaticMethod\" static");
+  }
+

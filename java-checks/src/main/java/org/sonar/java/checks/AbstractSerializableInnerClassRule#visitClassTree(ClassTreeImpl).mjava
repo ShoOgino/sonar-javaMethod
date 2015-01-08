@@ -4,12 +4,12 @@
       Symbol owner = symbol.owner();
       if (owner.isKind(Symbol.TYP)) {
         TypeSymbol ownerType = (TypeSymbol) owner;
-        if (!isSerializable(ownerType.getType()) && !symbol.isStatic()) {
+        if (isMatchingOuterClass(ownerType.getType()) && !symbol.isStatic()) {
           addIssue(classTree, "Make this inner class static");
         }
       } else if (owner.isKind(Symbol.MTH)) {
         TypeSymbol methodOwner = (TypeSymbol) owner.owner();
-        if (!isSerializable(methodOwner.getType()) && !owner.isStatic()) {
+        if (isMatchingOuterClass(methodOwner.getType()) && !owner.isStatic()) {
           String methodName = owner.getName();
           addIssue(classTree, "Make \"" + methodName + "\" static");
         }
