@@ -1,0 +1,16 @@
+  private void visitClassTree(ClassTreeImpl classTree) {
+    TypeSymbol symbol = classTree.getSymbol();
+    if (isSerializable(symbol.getType()) && !symbol.isAbstract()) {
+      VariableSymbol serialVersionUidSymbol = findSerialVersionUid(symbol);
+      if (serialVersionUidSymbol == null) {
+        addIssue(classTree, "Add a \"static final long serialVersionUID\" field to this class.");
+      } else if (!serialVersionUidSymbol.isStatic()) {
+        addModifierIssue(serialVersionUidSymbol, "static");
+      } else if (!serialVersionUidSymbol.isFinal()) {
+        addModifierIssue(serialVersionUidSymbol, "final");
+      } else if (!serialVersionUidSymbol.getType().is("long")) {
+        addModifierIssue(serialVersionUidSymbol, "long");
+      }
+    }
+  }
+
