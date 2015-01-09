@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTreeImpl classTree = (ClassTreeImpl) tree;
+    if (hasSemantic() && isNotSerializable(classTree.getSymbol())) {
+      for (Tree member : classTree.members()) {
+        if (isTransient(member)) {
+          addIssue(member, "Remove the \"transient\" modifier from this field.");
+        }
+      }
+    }
+  }
+
