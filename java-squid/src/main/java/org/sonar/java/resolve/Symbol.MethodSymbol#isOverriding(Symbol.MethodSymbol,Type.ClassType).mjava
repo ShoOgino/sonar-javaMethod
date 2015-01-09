@@ -1,4 +1,4 @@
-    private Boolean isOverriding(Symbol.MethodSymbol overridee) {
+    private Boolean isOverriding(Symbol.MethodSymbol overridee, Type.ClassType classType) {
       //same number and type of formal parameters
       if (getParametersTypes().size() != overridee.getParametersTypes().size()) {
         return false;
@@ -9,8 +9,16 @@
           //FIXME : complete symbol table should not have unknown types and generics should be handled properly for this.
           return null;
         }
-        //FIXME : generics type should have same erasure see JLS8 8.4.2
-        if (!paramOverrider.erasure().equals(overridee.getParametersTypes().get(i).erasure()  )) {
+        //Generics type should have same erasure see JLS8 8.4.2
+
+        Type overrideeType = overridee.getParametersTypes().get(i);
+        if(classType instanceof Type.InstantiatedParametrizedType) {
+          overrideeType = ((Type.InstantiatedParametrizedType) classType).typeSubstitution.get(overrideeType);
+          if(overrideeType == null) {
+            overrideeType = overridee.getParametersTypes().get(i);
+          }
+        }
+        if (!paramOverrider.erasure().equals(overrideeType.erasure())) {
           return false;
         }
       }
