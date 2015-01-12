@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTreeImpl methodTree = (MethodTreeImpl) tree;
+    MethodSymbol methodSymbol = methodTree.getSymbol();
+    if (hasSemantic() && isOwnedBySerializable(methodSymbol)) {
+      if (hasSignature(methodSymbol, "writeObject", "java.io.ObjectOutputStream")) {
+        checkPrivate(methodTree);
+        checkNotStatic(methodTree);
+      } else if (hasSignature(methodSymbol, "readObject", "java.io.ObjectInputStream")) {
+        checkPrivate(methodTree);
+        checkNotStatic(methodTree);
+      } else if (hasSignature(methodSymbol, "readObjectNoData")) {
+        checkPrivate(methodTree);
+        checkNotStatic(methodTree);
+      } else if (hasSignature(methodSymbol, "writeReplace")) {
+        checkNotStatic(methodTree);
+        checkReturnType(methodTree, "java.lang.Object");
+      } else if (hasSignature(methodSymbol, "readResolve")) {
+        checkNotStatic(methodTree);
+        checkReturnType(methodTree, "java.lang.Object");
+      }
+    }
+  }
+
