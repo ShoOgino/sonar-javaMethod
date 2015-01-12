@@ -1,26 +1,31 @@
   /**
    * Finds field with given name.
    */
-  private Symbol findField(Env env, Symbol.TypeSymbol site, String name, Symbol.TypeSymbol c) {
-    Symbol bestSoFar = symbolNotFound;
+  private Resolution findField(Env env, Symbol.TypeSymbol site, String name, Symbol.TypeSymbol c) {
+    Resolution bestSoFar = unresolved();
+    Resolution resolution = new Resolution();
     for (Symbol symbol : c.members().lookup(name)) {
       if (symbol.kind == Symbol.VAR) {
-        return isAccessible(env, site, symbol)
-            ? symbol
-            : new AccessErrorSymbol(symbol);
+        if(isAccessible(env, site, symbol)) {
+          resolution.symbol = symbol;
+          resolution.type = resolveTypeSubstitution(symbol.type, c.type);
+          return resolution;
+        } else {
+          return Resolution.resolution(new AccessErrorSymbol(symbol));
+        }
       }
     }
-    Symbol symbol;
     if (c.getSuperclass() != null) {
-      symbol = findField(env, site, name, c.getSuperclass().symbol);
-      if (symbol.kind < bestSoFar.kind) {
-        bestSoFar = symbol;
+      resolution = findField(env, site, name, c.getSuperclass().symbol);
+      if (resolution.symbol.kind < bestSoFar.symbol.kind) {
+        resolution.type = resolveTypeSubstitution(resolution.symbol.type, c.getSuperclass());
+        bestSoFar = resolution;
       }
     }
     for (Type interfaceType : c.getInterfaces()) {
-      symbol = findField(env, site, name, interfaceType.symbol);
-      if (symbol.kind < bestSoFar.kind) {
-        bestSoFar = symbol;
+      resolution = findField(env, site, name, interfaceType.symbol);
+      if (resolution.symbol.kind < bestSoFar.symbol.kind) {
+        bestSoFar = resolution;
       }
     }
     return bestSoFar;

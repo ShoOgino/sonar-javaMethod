@@ -1,0 +1,18 @@
+  private Object referenceTree(int line, int column, boolean searchSymbol) {
+    // In SSLR column starts at 0, but here we want consistency with IDE, so we start from 1:
+    column -= 1;
+    for (Symbol symbol : semanticModel.getSymbolUsed()) {
+      for (IdentifierTree usage : semanticModel.getUsages(symbol)) {
+        Token token = ((JavaTree) usage.identifierToken()).getAstNode().getToken();
+        if (token.getLine() == line && token.getColumn() == column) {
+          if(searchSymbol) {
+            return symbol;
+          } else {
+            return usage;
+          }
+        }
+      }
+    }
+    throw new IllegalArgumentException("Reference Tree not found");
+  }
+
