@@ -3,15 +3,20 @@
     Preconditions.checkState(name.endsWith(classSymbol.name), "Name : '" + name + "' should ends with " + classSymbol.name);
     Preconditions.checkState(!BytecodeCompleter.isSynthetic(flags), name + " is synthetic");
     className = name;
-    if(signature != null) {
-      new SignatureReader(signature).accept(new SignatureVisitor(Opcodes.ASM5) {
+    if (signature != null) {
+      SignatureReader signatureReader = new SignatureReader(signature);
+      ReadGenericSignature readGenericSignature = new ReadGenericSignature();
+      signatureReader.accept(readGenericSignature);
+      ((Type.ClassType) classSymbol.type).interfaces = readGenericSignature.interfaces();
+    } else {
+      if (superName == null) {
+        Preconditions.checkState("java/lang/Object".equals(className), "superName must be null only for java/lang/Object, but not for " + className);
+        // TODO(Godin): what about interfaces and annotations
+      } else {
+        ((Type.ClassType) classSymbol.type).supertype = getClassSymbol(superName).type;
+      }
+      ((Type.ClassType) classSymbol.type).interfaces = getCompletedClassSymbolsType(interfaces);
 
-        @Override
-        public void visitFormalTypeParameter(String name) {
-          //TODO improve generics
-          classSymbol.isParametrized = true;
-        }
-      });
     }
     //if class has already access flags set (inner class) then do not reset those.
     //The important access flags are the one defined in the outer class.
@@ -21,12 +26,6 @@
       classSymbol.flags |= bytecodeCompleter.filterBytecodeFlags(flags);
     }
     classSymbol.members = new Scope(classSymbol);
-    if (superName == null) {
-      Preconditions.checkState("java/lang/Object".equals(className), "superName must be null only for java/lang/Object, but not for " + className);
-      // TODO(Godin): what about interfaces and annotations
-    } else {
-      ((Type.ClassType) classSymbol.type).supertype = getClassSymbol(superName).type;
-    }
-    ((Type.ClassType) classSymbol.type).interfaces = getCompletedClassSymbolsType(interfaces);
+
   }
 

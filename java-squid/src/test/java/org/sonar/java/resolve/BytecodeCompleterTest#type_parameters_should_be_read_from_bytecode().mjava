@@ -1,0 +1,24 @@
+  @Test
+  public void type_parameters_should_be_read_from_bytecode() {
+    Symbol.TypeSymbol typeParametersSymbol = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.TypeParameters");
+    typeParametersSymbol.complete();
+    assertThat(typeParametersSymbol.typeParameters).isNotNull();
+    assertThat(typeParametersSymbol.typeParameters.scopeSymbols()).hasSize(2);
+    assertThat(typeParametersSymbol.typeVariableTypes).hasSize(2);
+
+    assertThat(typeParametersSymbol.typeVariableTypes.get(0).erasure().getSymbol().getName()).isEqualTo("Object");
+    assertThat(typeParametersSymbol.typeVariableTypes.get(1).erasure().getSymbol().getName()).isEqualTo("CharSequence");
+
+    assertThat(typeParametersSymbol.getSuperclass()).isInstanceOf(Type.ParametrizedTypeType.class);
+    assertThat(((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet()).hasSize(1);
+    Type.TypeVariableType keyTypeVariable = ((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet().iterator().next();
+    assertThat(keyTypeVariable.symbol.getName()).isEqualTo("S");
+    Type actual = ((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.get(keyTypeVariable);
+    assertThat(actual).isInstanceOf(Type.ParametrizedTypeType.class);
+    assertThat(((Type.ParametrizedTypeType) actual).typeSubstitution.keySet()).hasSize(1);
+
+    assertThat(typeParametersSymbol.getInterfaces()).hasSize(2);
+    assertThat(typeParametersSymbol.getInterfaces().get(0)).isInstanceOf(Type.ParametrizedTypeType.class);
+
+  }
+
