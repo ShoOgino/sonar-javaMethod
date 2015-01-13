@@ -1,0 +1,13 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/MathOnFloatCheck.java"),
+      new VisitorsBridge(new MathOnFloatCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(6).withMessage("Use a \"double\" or \"BigDecimal\" instead.")
+      .next().atLine(8)
+      .next().atLine(9)
+      .next().atLine(10)
+      .next().atLine(11)
+      .next().atLine(12);
+  }
+
