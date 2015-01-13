@@ -1,0 +1,14 @@
+    private PrimitiveCheck(String primitiveName, String className, int tag) {
+      this.primitiveName = primitiveName;
+      this.className = className;
+      this.tag = tag;
+      this.message = "Use \"" + parseMethodName() + "\" for this string-to-" + primitiveName + " conversion.";
+      this.unboxingInvocationMatcher = MethodInvocationMatcher.create()
+        .typeDefinition("java.lang." + className)
+        .name(primitiveName + "Value");
+      this.valueOfInvocationMatcher = MethodInvocationMatcher.create()
+        .typeDefinition("java.lang." + className)
+        .name("valueOf")
+        .addParameter("java.lang.String");
+    }
+

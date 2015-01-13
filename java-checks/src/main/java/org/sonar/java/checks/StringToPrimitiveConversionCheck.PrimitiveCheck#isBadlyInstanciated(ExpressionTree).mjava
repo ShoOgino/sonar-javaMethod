@@ -1,0 +1,17 @@
+    private boolean isBadlyInstanciated(ExpressionTree expression) {
+      boolean result = false;
+      if (expression.is(Tree.Kind.NEW_CLASS)) {
+        result = isStringBasedConstructor((NewClassTree) expression);
+      } else if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+        result = valueOfInvocationMatcher.matches((MethodInvocationTree) expression, getSemanticModel());
+      } else if (expression.is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifier = (IdentifierTree) expression;
+        Symbol reference = getSemanticModel().getReference(identifier);
+        if (reference != null && reference.isKind(Symbol.VAR) && getSemanticModel().getUsages(reference).size() == 1) {
+          VariableSymbol variableSymbol = (VariableSymbol) reference;
+          result = isBadlyInstanciatedVariable(variableSymbol);
+        }
+      }
+      return result;
+    }
+
