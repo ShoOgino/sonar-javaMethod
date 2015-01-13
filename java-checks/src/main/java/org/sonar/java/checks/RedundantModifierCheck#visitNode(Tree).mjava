@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.METHOD)) {
+        MethodTree methodTree = (MethodTree) member;
+        ModifiersTree modifiers = methodTree.modifiers();
+        if (isInterfaceOrAnnotation(tree)) {
+          checkRedundantModifier(modifiers, Modifier.ABSTRACT);
+          checkRedundantModifier(modifiers, Modifier.PUBLIC);
+        } else if (classTree.modifiers().modifiers().contains(Modifier.FINAL)) {
+          checkRedundantModifier(modifiers, Modifier.FINAL);
+        }
+      } else if (member.is(Tree.Kind.VARIABLE) && isInterfaceOrAnnotation(tree)) {
+        VariableTree variableTree = (VariableTree) member;
+        ModifiersTree modifiers = variableTree.modifiers();
+        checkRedundantModifier(modifiers, Modifier.PUBLIC);
+        checkRedundantModifier(modifiers, Modifier.STATIC);
+        checkRedundantModifier(modifiers, Modifier.FINAL);
+      }
+    }
+  }
+

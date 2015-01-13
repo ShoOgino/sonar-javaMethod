@@ -1,0 +1,14 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/RedundantModifierCheck.java"),
+      new VisitorsBridge(new RedundantModifierCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(8).withMessage("\"public\" is redundant in this context.")
+      .next().atLine(9).withMessage("\"abstract\" is redundant in this context.")
+      .next().atLine(11).withMessage("\"public\" is redundant in this context.")
+      .next().atLine(12).withMessage("\"static\" is redundant in this context.")
+      .next().atLine(13).withMessage("\"final\" is redundant in this context.")
+      .next().atLine(18).withMessage("\"public\" is redundant in this context.")
+      .next().atLine(23).withMessage("\"final\" is redundant in this context.");
+  }
+
