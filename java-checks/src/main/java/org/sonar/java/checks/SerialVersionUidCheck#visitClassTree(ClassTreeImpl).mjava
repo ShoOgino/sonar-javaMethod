@@ -1,9 +1,11 @@
   private void visitClassTree(ClassTreeImpl classTree) {
     TypeSymbol symbol = classTree.getSymbol();
-    if (isSerializable(symbol.getType()) && !symbol.isAbstract()) {
+    if (isSerializable(symbol.getType())) {
       VariableSymbol serialVersionUidSymbol = findSerialVersionUid(symbol);
       if (serialVersionUidSymbol == null) {
-        addIssue(classTree, "Add a \"static final long serialVersionUID\" field to this class.");
+        if (!isExclusion(symbol)) {
+          addIssue(classTree, "Add a \"static final long serialVersionUID\" field to this class.");
+        }
       } else if (!serialVersionUidSymbol.isStatic()) {
         addModifierIssue(serialVersionUidSymbol, "static");
       } else if (!serialVersionUidSymbol.isFinal()) {

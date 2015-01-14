@@ -1,0 +1,10 @@
+  private boolean isGuiClass(TypeSymbol symbol) {
+    for (ClassType superType : symbol.superTypes()) {
+      TypeSymbol superTypeSymbol = superType.getSymbol();
+      if (hasGuiPackage(superTypeSymbol)) {
+        return true;
+      }
+    }
+    return hasGuiPackage(symbol) || (!symbol.equals(symbol.outermostClass()) && isGuiClass(symbol.outermostClass()));
+  }
+
