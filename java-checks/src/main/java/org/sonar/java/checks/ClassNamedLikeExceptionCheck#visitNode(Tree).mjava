@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      ClassTreeImpl classTree = (ClassTreeImpl) tree;
+      TypeSymbol symbol = classTree.getSymbol();
+      String className = symbol.getName();
+      if (className.toLowerCase().endsWith("exception") && !symbol.getType().isSubtypeOf("java.lang.Exception")) {
+        String suffix = className.substring(className.length() - "exception".length());
+        addIssue(classTree, "Rename this class to remove \"" + suffix + "\" or correct its inheritance.");
+      }
+    }
+  }
+
