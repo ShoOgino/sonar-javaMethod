@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ProtectedMemberInFinalClassCheck.java"),
+      new VisitorsBridge(new ProtectedMemberInFinalClassCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(5).withMessage("Remove this \"protected\" modifier.")
+      .next().atLine(10);
+  }
+
