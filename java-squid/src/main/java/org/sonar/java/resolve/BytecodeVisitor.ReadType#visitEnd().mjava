@@ -1,7 +1,7 @@
     @Override
     public void visitEnd() {
       if (!typeArguments.isEmpty()) {
-        Symbol.TypeSymbol readSymbol = readType.symbol;
+        Symbol.TypeSymbol readSymbol = typeRead.symbol;
         readSymbol.complete();
          //Mismatch between type variable and type arguments means we are lacking some pieces of bytecode to resolve substitution properly.
         if(typeArguments.size() == readSymbol.typeVariableTypes.size()) {
@@ -11,7 +11,7 @@
             substitution.put(readSymbol.typeVariableTypes.get(i), typeArgument);
             i++;
           }
-          readType = parametrizedTypeCache.getParametrizedTypeType(readSymbol, substitution);
+          typeRead = parametrizedTypeCache.getParametrizedTypeType(readSymbol, substitution);
         }
       }
     }
