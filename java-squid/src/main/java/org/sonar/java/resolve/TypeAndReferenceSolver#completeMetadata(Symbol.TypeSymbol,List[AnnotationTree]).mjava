@@ -1,7 +1,8 @@
   //FIXME also support method symbol and field symbols
   private void completeMetadata(Symbol.TypeSymbol symbol, List<AnnotationTree> annotations) {
     for (AnnotationTree tree : annotations) {
-      AnnotationInstance annotationInstance = new AnnotationInstance(symbol);
+      AnnotationTreeImpl treeImpl = (AnnotationTreeImpl) tree;
+      AnnotationInstance annotationInstance = new AnnotationInstance(treeImpl.getSymbolType().getSymbol());
       symbol.metadata().addAnnotation(annotationInstance);
       if (tree.arguments().size() > 1 || (!tree.arguments().isEmpty() && tree.arguments().get(0).is(Tree.Kind.ASSIGNMENT))) {
         for (ExpressionTree expressionTree : tree.arguments()) {
