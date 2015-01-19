@@ -2,13 +2,13 @@
    * @param symbol    candidate
    * @param bestSoFar previously found best match
    */
-  private Symbol selectBest(Env env, Symbol.TypeSymbol site, List<Type> argTypes, Symbol symbol, Symbol bestSoFar) {
+  private Symbol selectBest(Env env, Symbol.TypeSymbol site, List<Type> argTypes, Symbol symbol, Symbol bestSoFar, boolean autoboxing) {
     // TODO get rid of null check
     if (symbol.kind >= Symbol.ERRONEOUS || !isInheritedIn(symbol, site) || symbol.type == null) {
       return bestSoFar;
     }
     boolean isVarArgs = ((Symbol.MethodSymbol) symbol).isVarArgs();
-    if (!isArgumentsAcceptable(argTypes, ((Type.MethodType) symbol.type).argTypes, isVarArgs)) {
+    if (!isArgumentsAcceptable(argTypes, ((Type.MethodType) symbol.type).argTypes, isVarArgs, autoboxing)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...

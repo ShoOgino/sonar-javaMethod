@@ -1,0 +1,22 @@
+  public Symbol findMethod(Env env, Symbol.TypeSymbol site, String name, List<Type> argTypes, boolean autoboxing) {
+    Symbol bestSoFar = symbolNotFound;
+    for (Symbol symbol : site.members().lookup(name)) {
+      if (symbol.kind == Symbol.MTH) {
+        bestSoFar = selectBest(env, site, argTypes, symbol, bestSoFar, autoboxing);
+      }
+    }
+    //look in supertypes for more specialized method (overloading).
+    if (site.getSuperclass() != null) {
+      Symbol method = findMethod(env, site.getSuperclass().symbol, name, argTypes);
+      bestSoFar = selectBest(env, site, argTypes, method, bestSoFar, autoboxing);
+    }
+    for (Type interfaceType : site.getInterfaces()) {
+      Symbol method = findMethod(env, interfaceType.symbol, name, argTypes);
+      bestSoFar = selectBest(env, site, argTypes, method, bestSoFar, autoboxing);
+    }
+    if(bestSoFar.kind >= Symbol.ERRONEOUS && !autoboxing) {
+      bestSoFar = findMethod(env, site, name, argTypes, true);
+    }
+    return bestSoFar;
+  }
+
