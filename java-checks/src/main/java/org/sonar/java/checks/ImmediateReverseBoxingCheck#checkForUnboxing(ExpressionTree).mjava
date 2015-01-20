@@ -1,0 +1,19 @@
+  private void checkForUnboxing(ExpressionTree expressionTree) {
+    if (!expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+      return;
+    }
+    MethodInvocationTreeImpl methodInvocationTree = (MethodInvocationTreeImpl) expressionTree;
+    if (isUnboxingMethodInvocation(methodInvocationTree)) {
+      ExpressionTree methodSelect = methodInvocationTree.methodSelect();
+      if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) methodSelect;
+        AbstractTypedTree unboxedExpression = (AbstractTypedTree) memberSelectExpressionTree.expression();
+        Type unboxedExpressionType = unboxedExpression.getSymbolType();
+        String unboxingResultTypeName = methodInvocationTree.getSymbolType().getSymbol().getFullyQualifiedName();
+        if (unboxingResultTypeName.equals(PRIMITIVE_TYPES_BY_WRAPPER.get(unboxedExpressionType.getSymbol().getFullyQualifiedName()))) {
+          addUnboxingIssue(expressionTree, unboxedExpression);
+        }
+      }
+    }
+  }
+

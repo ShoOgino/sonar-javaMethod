@@ -1,0 +1,19 @@
+  private void checkForBoxing(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTreeImpl newClassTree = (NewClassTreeImpl) expression;
+      TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);
+      if (classSymbol != null) {
+        AbstractTypedTree boxingArg = (AbstractTypedTree) newClassTree.arguments().get(0);
+        if (boxingArg.getSymbolType().isPrimitive()) {
+          addBoxingIssue(newClassTree, classSymbol, boxingArg);
+        }
+      }
+    } else if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTreeImpl methodInvocationTree = (MethodInvocationTreeImpl) expression;
+      if (isValueOfInvocation(methodInvocationTree)) {
+        ExpressionTree boxingArg = methodInvocationTree.arguments().get(0);
+        addBoxingIssue(expression, methodInvocationTree.getSymbol().owner(), boxingArg);
+      }
+    }
+  }
+

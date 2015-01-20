@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+        visitMethodInvocationTree((MethodInvocationTreeImpl) tree);
+      } else if (tree.is(Tree.Kind.VARIABLE)) {
+        VariableTreeImpl variableTree = (VariableTreeImpl) tree;
+        ExpressionTree initializer = variableTree.initializer();
+        if (initializer != null) {
+          checkExpression(initializer, variableTree.getSymbol().getType());
+        }
+      } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
+        AssignmentExpressionTreeImpl assignmentTree = (AssignmentExpressionTreeImpl) tree;
+        checkExpression(assignmentTree.expression(), assignmentTree.getSymbolType());
+      } else {
+        NewClassTreeImpl newClassTree = (NewClassTreeImpl) tree;
+        TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);
+        if (classSymbol != null) {
+          checkForUnboxing(newClassTree.arguments().get(0));
+        }
+      }
+    }
+  }
+

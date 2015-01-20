@@ -1,0 +1,11 @@
+  private List<MethodInvocationMatcher> unboxingInvocationMatchers() {
+    List<MethodInvocationMatcher> matchers = Lists.newArrayList();
+    for (String primitiveType : PRIMITIVE_TYPES_BY_WRAPPER.values()) {
+      matchers.add(
+        MethodInvocationMatcher.create()
+          .callSite("boolean".equals(primitiveType) ? TypeCriteria.is("java.lang.Boolean") : TypeCriteria.subtypeOf("java.lang.Number"))
+          .name(primitiveType + "Value"));
+    }
+    return matchers;
+  }
+
