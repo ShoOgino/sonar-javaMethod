@@ -1,11 +1,10 @@
     @Override
-    public SignatureVisitor visitTypeArgument(char wildcard) {
-      //TODO wildcard
+    public SignatureVisitor visitParameterType() {
       return new ReadType(methodSymbol) {
         @Override
         public void visitEnd() {
           super.visitEnd();
-          ReadType.this.typeArguments.add(this.typeRead);
+          ((Type.MethodType)methodSymbol.type).argTypes.add(typeRead);
         }
       };
     }

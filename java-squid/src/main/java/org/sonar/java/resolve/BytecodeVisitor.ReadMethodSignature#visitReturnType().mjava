@@ -1,0 +1,12 @@
+    @Override
+    public SignatureVisitor visitReturnType() {
+      return new ReadType(methodSymbol) {
+        @Override
+        public void visitEnd() {
+          super.visitEnd();
+          ((Type.MethodType)methodSymbol.type).resultType = typeRead;
+          methodSymbol.returnType = typeRead.symbol;
+        }
+      };
+    }
+

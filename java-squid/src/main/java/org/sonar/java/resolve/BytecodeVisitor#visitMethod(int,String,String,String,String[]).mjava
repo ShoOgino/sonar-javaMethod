@@ -14,14 +14,7 @@
       final Symbol.MethodSymbol methodSymbol = new Symbol.MethodSymbol(bytecodeCompleter.filterBytecodeFlags(flags), name, type, classSymbol);
       classSymbol.members.enter(methodSymbol);
       if (signature != null) {
-        new SignatureReader(signature).accept(new SignatureVisitor(Opcodes.ASM5) {
-
-          @Override
-          public void visitFormalTypeParameter(String name) {
-            //TODO improve generics
-            methodSymbol.isParametrized = true;
-          }
-        });
+        new SignatureReader(signature).accept(new ReadMethodSignature(methodSymbol));
       }
     }
     // (Godin): can return MethodVisitor to read annotations

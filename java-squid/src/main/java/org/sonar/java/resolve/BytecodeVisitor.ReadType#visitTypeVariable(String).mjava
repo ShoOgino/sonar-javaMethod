@@ -1,6 +1,13 @@
     @Override
     public void visitTypeVariable(String name) {
-      List<Symbol> lookup = classSymbol.typeParameters().lookup(name);
+      List<Symbol> lookup = Lists.newArrayList();
+      if(methodSymbol != null) {
+        lookup = methodSymbol.typeParameters().lookup(name);
+      }
+      if(lookup.isEmpty()) {
+        lookup = classSymbol.typeParameters().lookup(name);
+      }
+      Preconditions.checkState(lookup.size() != 0, "Could not resolve type parameter: "+name+" in class "+classSymbol.getName());
       Preconditions.checkState(lookup.size() == 1, "More than one type parameter with the same name");
       typeRead = lookup.get(0).type;
       visitEnd();
