@@ -1,0 +1,11 @@
+  @Test
+  public void two_warnings_from_different_lines_are_not_allowed() throws Exception {
+    SuppressWarningsCheck check = new SuppressWarningsCheck();
+    check.warningsCommaSeparated = "unused, cast";
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SuppressWarningsCheck.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(1).withMessage("Suppressing the 'unused' warning is not allowed")
+      .next().atLine(10).withMessage("Suppressing the 'cast' warning is not allowed")
+      .noMore();
+  }
+
