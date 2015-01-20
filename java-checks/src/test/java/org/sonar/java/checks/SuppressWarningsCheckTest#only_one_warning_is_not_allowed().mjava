@@ -1,9 +1,6 @@
   @Test
   public void only_one_warning_is_not_allowed() throws Exception {
-    SuppressWarningsCheck check = new SuppressWarningsCheck();
-    check.warningsCommaSeparated = "all";
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SuppressWarningsCheck.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
+    CheckMessagesVerifier.verify(getTestFile("all").getCheckMessages())
       .next().atLine(6).withMessage("Suppressing the 'all' warning is not allowed")
       .next().atLine(18).withMessage("Suppressing the 'all' warning is not allowed")
       .noMore();

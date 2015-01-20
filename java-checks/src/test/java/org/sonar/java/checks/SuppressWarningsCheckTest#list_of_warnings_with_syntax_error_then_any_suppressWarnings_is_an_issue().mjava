@@ -1,10 +1,6 @@
   @Test
   public void list_of_warnings_with_syntax_error_then_any_suppressWarnings_is_an_issue() throws Exception {
-    SuppressWarningsCheck check = new SuppressWarningsCheck();
-    check.warningsCommaSeparated = "   ,   , ,,";
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SuppressWarningsCheck.java"), new
-      VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
+    CheckMessagesVerifier.verify(getTestFile("   ,   , ,,").getCheckMessages())
       .next().atLine(1).withMessage("Suppressing the warnings is not allowed")
       .next().atLine(6)
       .next().atLine(10)

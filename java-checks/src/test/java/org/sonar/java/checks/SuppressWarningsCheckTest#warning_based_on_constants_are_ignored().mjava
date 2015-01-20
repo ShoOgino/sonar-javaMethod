@@ -1,9 +1,6 @@
   @Test
   public void warning_based_on_constants_are_ignored() throws Exception {
-    SuppressWarningsCheck check = new SuppressWarningsCheck();
-    check.warningsCommaSeparated = "boxing";
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SuppressWarningsCheck.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
+    CheckMessagesVerifier.verify(getTestFile("boxing").getCheckMessages())
       .next().atLine(22).withMessage("Suppressing the 'boxing' warning is not allowed")
       .noMore();
   }

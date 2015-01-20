@@ -1,15 +1,15 @@
   @Override
   public void visitNode(Tree tree) {
-    AnnotationTree at = (AnnotationTree) tree;
+    AnnotationTree annotationTree = (AnnotationTree) tree;
     List<String> ruleWarnings = getRuleWarnings();
 
-    if (isSuppressWarningsNode(at)) {
+    if (isJavaLangSuppressWarnings(annotationTree)) {
       if (ruleWarnings.isEmpty()) {
-        addIssue(at, "Suppressing the warnings is not allowed");
+        addIssue(annotationTree, "Suppressing the warnings is not allowed");
       } else {
-        List<String> annotationWarnings = getAnnotationArguments(at.arguments().get(0));
+        List<String> suppressedWarnings = getSuppressedWarnings(annotationTree.arguments().get(0));
         List<String> issues = Lists.newArrayList();
-        for (String currentWarning : annotationWarnings) {
+        for (String currentWarning : suppressedWarnings) {
           if (ruleWarnings.contains(currentWarning)) {
             issues.add(new StringBuilder().append("'").append(currentWarning).append("'").toString());
           }
@@ -17,7 +17,7 @@
         if (!issues.isEmpty()) {
           StringBuilder sb = new StringBuilder("Suppressing the ").append(Joiner.on(", ").join(issues))
             .append(" warning").append(issues.size() > 1 ? "s" : "").append(" is not allowed");
-          addIssue(at, sb.toString());
+          addIssue(annotationTree, sb.toString());
         }
       }
     }
