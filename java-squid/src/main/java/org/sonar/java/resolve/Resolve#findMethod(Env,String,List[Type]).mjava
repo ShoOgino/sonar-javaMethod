@@ -1,25 +1,25 @@
   /**
    * Finds method matching given name and types of arguments.
    */
-  public Symbol findMethod(Env env, String name, List<Type> argTypes) {
-    Symbol bestSoFar = symbolNotFound;
+  public Resolution findMethod(Env env, String name, List<Type> argTypes) {
+    Resolution bestSoFar = unresolved();
     Env env1 = env;
     while (env1.outer() != null) {
-      Symbol sym = findMethod(env1, env1.enclosingClass(), name, argTypes);
-      if (sym.kind < Symbol.ERRONEOUS) {
+      Resolution res = findMethod(env1, env1.enclosingClass().getType(), name, argTypes);
+      if (res.symbol.kind < Symbol.ERRONEOUS) {
         // symbol exists
-        return sym;
-      } else if (sym.kind < bestSoFar.kind) {
-        bestSoFar = sym;
+        return res;
+      } else if (res.symbol.kind < bestSoFar.symbol.kind) {
+        bestSoFar = res;
       }
       env1 = env1.outer;
     }
     Symbol sym = findInStaticImport(env, name, Symbol.MTH);
     if (sym.kind < Symbol.ERRONEOUS) {
       // symbol exists
-      return sym;
-    } else if (sym.kind < bestSoFar.kind) {
-      bestSoFar = sym;
+      return Resolution.resolution(sym);
+    } else if (sym.kind < bestSoFar.symbol.kind) {
+      bestSoFar = Resolution.resolution(sym);
     }
     return bestSoFar;
   }

@@ -1,0 +1,34 @@
+  private Resolution findMethod(Env env, Type site, String name, List<Type> argTypes, boolean autoboxing) {
+    Resolution bestSoFar = unresolved();
+    for (Symbol symbol : site.getSymbol().members().lookup(name)) {
+      if (symbol.kind == Symbol.MTH) {
+        Symbol best = selectBest(env, site.getSymbol(), argTypes, symbol, bestSoFar.symbol, autoboxing);
+        if(best == symbol) {
+          bestSoFar = Resolution.resolution(best);
+          if(best.isKind(Symbol.MTH)) {
+            bestSoFar.type = resolveTypeSubstitution(((Type.MethodType) best.type).resultType, site);
+          }
+        }
+      }
+    }
+    //look in supertypes for more specialized method (overloading).
+    if (site.getSymbol().getSuperclass() != null) {
+      Resolution method = findMethod(env, site.getSymbol().getSuperclass(), name, argTypes);
+      Symbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      if(best == method.symbol) {
+        bestSoFar = method;
+      }
+    }
+    for (Type interfaceType : site.getSymbol().getInterfaces()) {
+      Resolution method = findMethod(env, interfaceType, name, argTypes);
+      Symbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      if(best == method.symbol) {
+        bestSoFar = method;
+      }
+    }
+    if(bestSoFar.symbol.kind >= Symbol.ERRONEOUS && !autoboxing) {
+      bestSoFar = findMethod(env, site, name, argTypes, true);
+    }
+    return bestSoFar;
+  }
+
