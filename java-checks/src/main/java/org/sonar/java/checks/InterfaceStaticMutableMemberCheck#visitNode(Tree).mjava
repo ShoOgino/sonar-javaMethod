@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    for (Tree member : ((ClassTree) tree).members()) {
+      if (member.is(Kind.VARIABLE)) {
+        VariableTreeImpl variableTree = (VariableTreeImpl) member;
+        if (isStaticMember(variableTree) && isMutableMember(variableTree)) {
+          addIssue(variableTree, MessageFormat.format("Move \"{0}\" to a class and lower its visibility", variableTree.simpleName().name()));
+        }
+      }
+    }
+  }
+
