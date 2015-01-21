@@ -1,0 +1,10 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/UnusedTypeParameterCheck.java"), new VisitorsBridge(new UnusedTypeParameterCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(1).withMessage("S is not used in the class.")
+        .next().atLine(3).withMessage("W is not used in the method.")
+        .next().atLine(5).withMessage("V is not used in the interface.")
+    ;
+  }
+
