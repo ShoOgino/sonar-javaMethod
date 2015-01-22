@@ -1,0 +1,17 @@
+  private String getMessage(long numberBits, long reducedNumberBits, int base, String identifier) {
+    if (reducedNumberBits == 0L) {
+      return MessageFormat.format("Remove this useless shift (multiple of {0})", base);
+    } else if (tooManyBits(numberBits, base)) {
+      if (base == 32) {
+        return MessageFormat.format(
+          identifier == null ?
+            "Either use a \"long\" or correct this shift to {0}" :
+            "Either make \"{1}\" a \"long\" or correct this shift to {0}",
+          reducedNumberBits, identifier);
+      } else {
+        return MessageFormat.format("Correct this shift to {0}", reducedNumberBits);
+      }
+    }
+    return null;
+  }
+
