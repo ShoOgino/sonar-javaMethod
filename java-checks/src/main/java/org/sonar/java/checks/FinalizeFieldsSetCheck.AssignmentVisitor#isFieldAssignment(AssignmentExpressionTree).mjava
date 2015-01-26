@@ -1,0 +1,16 @@
+    private boolean isFieldAssignment(AssignmentExpressionTree tree) {
+      ExpressionTree variable = tree.variable();
+      if (variable.is(Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) variable;
+        if (!isThis(memberSelectExpressionTree.expression())) {
+          return false;
+        }
+        variable = memberSelectExpressionTree.identifier();
+      }
+      if (variable.is(Kind.IDENTIFIER)) {
+        Symbol variableSymbol = getSemanticModel().getReference((IdentifierTree) variable);
+        return variableSymbol != null && variableSymbol.owner().isKind(Symbol.TYP);
+      }
+      return false;
+    }
+

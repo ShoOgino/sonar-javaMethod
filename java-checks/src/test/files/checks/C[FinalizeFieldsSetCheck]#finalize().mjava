@@ -1,0 +1,19 @@
+  @Override
+  protected void finalize() {
+    myString = null; // Noncompliant
+    myInteger = null; // Noncompliant
+
+    myArrayOfStrings[0] = null; // Compliant
+    myArrayOfStrings = null; // Noncompliant
+
+    class MyInnerClass {
+      private Object myObject;
+      public void finalize() {
+        myString = null; // Noncompliant
+        myObject = null; // Noncompliant
+        myInteger = null; // Noncompliant
+        myArrayOfStrings = null; // Noncompliant
+      }
+    }
+  }
+
