@@ -1,0 +1,20 @@
+  @Test
+  public void should_ignore_issue_if_out_of_scope() {
+    Issue issue = mock(Issue.class);
+    when(issue.componentKey()).thenReturn(COMPONENT_KEY);
+    when(issue.ruleKey()).thenReturn(RuleKey.of("squid", "firstIssue"));
+
+    Multimap<Integer, String> suppressWarningLines = HashMultimap.create();
+    addWarning(suppressWarningLines, "squid:secondIssue", 12, 16);
+
+    filter.addComponent(COMPONENT_KEY, suppressWarningLines);
+
+    // issue on file
+    when(issue.line()).thenReturn(null);
+    assertTrue(filter.accept(issue, chain));
+
+    // issue on not flagged line
+    when(issue.line()).thenReturn(21);
+    assertTrue(filter.accept(issue, chain));
+  }
+

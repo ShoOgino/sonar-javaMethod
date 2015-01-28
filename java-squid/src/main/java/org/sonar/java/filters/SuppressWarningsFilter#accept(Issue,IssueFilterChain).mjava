@@ -1,0 +1,10 @@
+  @Override
+  public boolean accept(Issue issue, IssueFilterChain chain) {
+    for (String warning : getWarningsByLine(issue)) {
+      if (issueShouldNotBeReported(warning, issue)) {
+        return false;
+      }
+    }
+    return chain.accept(issue);
+  }
+

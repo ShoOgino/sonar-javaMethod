@@ -1,0 +1,16 @@
+  @Test
+  public void should_accept_issue_if_different_rule_explicitly_mentioned_as_warning_parameter() {
+    Issue issue = mock(Issue.class);
+    when(issue.componentKey()).thenReturn(COMPONENT_KEY);
+    when(issue.ruleKey()).thenReturn(RuleKey.of("pmd", "CloseResource"));
+
+    Multimap<Integer, String> suppressWarningLines = HashMultimap.create();
+    addWarning(suppressWarningLines, "pmd:OtherIssue", 12, 16);
+
+    filter.addComponent(COMPONENT_KEY, suppressWarningLines);
+
+    // issue on line covered by @SuppressWarnings, but different from the one explicitly mentioned
+    when(issue.line()).thenReturn(15);
+    assertTrue(filter.accept(issue, chain));
+  }
+

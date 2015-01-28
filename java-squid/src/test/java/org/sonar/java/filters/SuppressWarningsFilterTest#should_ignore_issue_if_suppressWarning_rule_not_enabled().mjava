@@ -1,0 +1,15 @@
+  @Test
+  public void should_ignore_issue_if_suppressWarning_rule_not_enabled() {
+    Issue issue = mock(Issue.class);
+    when(issue.componentKey()).thenReturn(COMPONENT_KEY);
+    when(issue.ruleKey()).thenReturn(RuleKey.of("squid", "firstIssue"));
+
+    Multimap<Integer, String> suppressWarningLines = HashMultimap.create();
+    addWarning(suppressWarningLines, "all", 12, 16);
+
+    filter.addComponent(COMPONENT_KEY, suppressWarningLines);
+
+    when(issue.line()).thenReturn(12);
+    assertFalse(filter.accept(issue, chain));
+  }
+

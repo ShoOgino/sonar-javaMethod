@@ -1,5 +1,6 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
+    Preconditions.checkNotNull(sensorContext);
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
     org.sonar.api.resources.File currentResource = org.sonar.api.resources.File.fromIOFile(context.getFile(), project);
@@ -13,8 +14,9 @@
         sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
       }
     }
-    context.addNoSonarLines(javaFilesCache.ignoredLines());
-    ignoredLinesForRules.put(context.getFileKey(), javaFilesCache.ignoredLinesForRules());
     methodStartLines.putAll(javaFilesCache.getMethodStartLines());
+    if (javaFilesCache.hasSuppressWarningLines()) {
+      suppressWarningsFilter.addComponent(sensorContext.getResource(currentResource).getEffectiveKey(), javaFilesCache.getSuppressWarningLines());
+    }
   }
 

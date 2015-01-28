@@ -1,0 +1,18 @@
+  @Test
+  public void should_ignore_issue_if_same_rule_explicitly_mentioned_as_warning_parameter() {
+    Issue issue = mock(Issue.class);
+    when(issue.componentKey()).thenReturn(COMPONENT_KEY);
+    when(issue.ruleKey()).thenReturn(RuleKey.of("pmd", "CloseResource"));
+
+    Multimap<Integer, String> suppressWarningLines = HashMultimap.create();
+    addWarning(suppressWarningLines, "pmd:CloseResource", 12, 16);
+
+    filter.addComponent(COMPONENT_KEY, suppressWarningLines);
+
+    // issue on every line covered by @SuppressWarnings, but same as explicitly mentioned
+    for (int i = 12; i <= 16; i++) {
+      when(issue.line()).thenReturn(i);
+      assertFalse(filter.accept(issue, chain));
+    }
+  }
+

@@ -1,4 +1,4 @@
-  private boolean isSuppressAllWarnings(AnnotationTree annotationTree) {
+  private boolean isSuppressWarningsAnnotation(AnnotationTree annotationTree) {
     boolean suppressWarningsType = false;
     Tree type = annotationTree.annotationType();
     if (type.is(Tree.Kind.IDENTIFIER)) {
@@ -6,7 +6,7 @@
     } else if (type.is(Tree.Kind.MEMBER_SELECT)) {
       MemberSelectExpressionTree mset = (MemberSelectExpressionTree) type;
       suppressWarningsType = "SuppressWarnings".equals(mset.identifier().name()) &&
-          mset.expression().is(Tree.Kind.MEMBER_SELECT) && "lang".equals(((MemberSelectExpressionTree) mset.expression()).identifier().name());
+        mset.expression().is(Tree.Kind.MEMBER_SELECT) && "lang".equals(((MemberSelectExpressionTree) mset.expression()).identifier().name());
     }
     return suppressWarningsType;
   }
