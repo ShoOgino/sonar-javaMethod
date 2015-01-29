@@ -1,4 +1,4 @@
-  private Resolution findMethod(Env env, Type site, String name, List<Type> argTypes, boolean autoboxing) {
+  private Resolution findMethod(Env env, Type site, String name, List<Type> argTypes, List<Type> typeParams, boolean autoboxing) {
     Resolution bestSoFar = unresolved();
     for (Symbol symbol : site.getSymbol().members().lookup(name)) {
       if (symbol.kind == Symbol.MTH) {
@@ -7,27 +7,37 @@
           bestSoFar = Resolution.resolution(best);
           if(best.isKind(Symbol.MTH)) {
             bestSoFar.type = resolveTypeSubstitution(((Type.MethodType) best.type).resultType, site);
+            Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) best;
+            if(!typeParams.isEmpty() && methodSymbol.typeVariableTypes.size()==typeParams.size()) {
+              Map<Type.TypeVariableType, Type> substitution = Maps.newHashMap();
+              int i = 0;
+              for (Type.TypeVariableType typeVariableType : methodSymbol.typeVariableTypes) {
+                substitution.put(typeVariableType, typeParams.get(i));
+                i++;
+              }
+              bestSoFar.type = substituteTypeParameter(bestSoFar.type, substitution);
+            }
           }
         }
       }
     }
     //look in supertypes for more specialized method (overloading).
     if (site.getSymbol().getSuperclass() != null) {
-      Resolution method = findMethod(env, site.getSymbol().getSuperclass(), name, argTypes);
+      Resolution method = findMethod(env, site.getSymbol().getSuperclass(), name, argTypes, typeParams);
       Symbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }
     }
     for (Type interfaceType : site.getSymbol().getInterfaces()) {
-      Resolution method = findMethod(env, interfaceType, name, argTypes);
+      Resolution method = findMethod(env, interfaceType, name, argTypes, typeParams);
       Symbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }
     }
     if(bestSoFar.symbol.kind >= Symbol.ERRONEOUS && !autoboxing) {
-      bestSoFar = findMethod(env, site, name, argTypes, true);
+      bestSoFar = findMethod(env, site, name, argTypes, typeParams, true);
     }
     return bestSoFar;
   }

@@ -1,0 +1,9 @@
+  @Test
+  public void recursive_type_substitution() {
+    Result result = Result.createFor("Generics");
+    MethodTree ddt_method = (MethodTree) result.getTree(result.symbol("ddt_method"));
+    VariableTree variable = (VariableTree) ddt_method.block().body().get(0);
+    Type symbolType = ((AbstractTypedTree) variable.initializer()).getSymbolType();
+    assertThat(symbolType.getSymbol().getName()).isEqualTo("String");
+  }
+
