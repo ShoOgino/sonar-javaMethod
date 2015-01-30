@@ -1,8 +1,10 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    inReturnStatement = true;
-    scan(tree.returnType());
-    inReturnStatement = false;
+    if (!isOverriding(tree)) {
+      checkingReturnType = true;
+      scan(tree.returnType());
+      checkingReturnType = false;
+    }
     super.visitMethod(tree);
   }
 
