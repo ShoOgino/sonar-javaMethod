@@ -2,7 +2,7 @@
   public void visitAnnotation(AnnotationTree annotationTree) {
     if (isArrayInitialized(annotationTree)) {
       NewArrayTree arrayTree = (NewArrayTree) annotationTree.arguments().get(0);
-      if (isAllSameAnnotation(arrayTree.initializers())) {
+      if (isAllSameAnnotation(arrayTree.initializers()) && isAnnotationRepeatable(arrayTree.initializers().get(0))) {
         context.addIssue(annotationTree, ruleKey, "Remove the '" + getAnnotationName(annotationTree) + "' wrapper from this annotation group");
       }
     }
