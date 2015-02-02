@@ -1,5 +1,8 @@
   public JavaClasspath(Project project, Settings settings, FileSystem fileSystem, @Nullable MavenProject pom) {
     validateLibraries = project.getModules().isEmpty();
+    FilePredicates predicates = fileSystem.predicates();
+    //FIXME: call to filesystem before sensor should be removed.
+    hasJavaSources = fileSystem.hasFiles(predicates.and(predicates.hasLanguage("java"), predicates.hasType(InputFile.Type.MAIN)));
     binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES, settings, fileSystem.baseDir());
     List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES, settings, fileSystem.baseDir());
     boolean useDeprecatedProperties = binaries.isEmpty() && libraries.isEmpty();
