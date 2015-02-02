@@ -1,6 +1,5 @@
-  @Test
-  public void isPublicApi() {
-    new SubscriptionVisitor() {
+  private SubscriptionVisitor getPublicApiVisitor(final PublicApiChecker publicApiChecker, final boolean separateAccessorsFromMethods) {
+    return new SubscriptionVisitor() {
 
       private final Deque<ClassTree> classTrees = Lists.newLinkedList();
       private final Deque<MethodTree> methodTrees = Lists.newLinkedList();
@@ -24,7 +23,12 @@
           MethodTree methodTree = (MethodTree) tree;
           methodTrees.push(methodTree);
           String name = methodTree.simpleName().name();
-          assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).as(name).isEqualTo(name.endsWith("Public"));
+          if (separateAccessorsFromMethods) {
+            assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).as(name).isEqualTo(name.endsWith("Public"));
+          } else {
+            // getters and setters are included in the public API only if checker does not ignore accessors
+            assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).as(name).isEqualTo(name.endsWith("Public") || name.contains("GetSet"));
+          }
         } else if (tree.is(PublicApiChecker.classKinds())) {
           IdentifierTree className = ((ClassTree) tree).simpleName();
           if(className==null) {
@@ -46,6 +50,6 @@
           methodTrees.pop();
         }
       }
-    }.scanTree(cut);
+    };
   }
 
