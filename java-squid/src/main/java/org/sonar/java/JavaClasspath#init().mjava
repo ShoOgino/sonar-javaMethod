@@ -1,0 +1,27 @@
+  private void init() {
+    if (!initalized) {
+      initalized = true;
+      validateLibraries = project.getModules().isEmpty();
+      FilePredicates predicates = fs.predicates();
+      hasJavaSources = fs.hasFiles(predicates.and(predicates.hasLanguage("java"), predicates.hasType(InputFile.Type.MAIN)));
+      File baseDir = fs.baseDir();
+      binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES, settings, baseDir);
+      List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES, settings, baseDir);
+      boolean useDeprecatedProperties = binaries.isEmpty() && libraries.isEmpty();
+      if (useDeprecatedProperties) {
+        binaries = getFilesFromProperty("sonar.binaries", settings, baseDir);
+        libraries = getFilesFromProperty("sonar.libraries", settings, baseDir);
+      }
+      if (pom != null && libraries.isEmpty()) {
+        //check mojo
+        elements = getLibrariesFromMaven(pom);
+      } else {
+        elements = Lists.newArrayList(binaries);
+        elements.addAll(libraries);
+        if (useDeprecatedProperties && !elements.isEmpty()) {
+          LOG.warn("sonar.binaries and sonar.libraries are deprecated since version 2.5 of sonar-java-plugin, please use sonar.java.binaries and sonar.java.libraries instead");
+        }
+      }
+    }
+  }
+
