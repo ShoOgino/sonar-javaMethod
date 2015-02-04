@@ -1,0 +1,16 @@
+  @Test
+  public void test() {
+    JavaRulesDefinition definition = new JavaRulesDefinition();
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    definition.define(context);
+    RulesDefinition.Repository repository = context.repository("squid");
+
+    assertThat(repository.name()).isEqualTo("SonarQube");
+    assertThat(repository.language()).isEqualTo("java");
+    assertThat(repository.rules()).hasSize(CheckList.getChecks().size());
+
+    RulesDefinition.Rule unusedLabelRule = repository.rule("S1065");
+    assertThat(unusedLabelRule).isNotNull();
+    assertThat(unusedLabelRule.name()).isEqualTo("Unused labels should be removed");
+  }
+
