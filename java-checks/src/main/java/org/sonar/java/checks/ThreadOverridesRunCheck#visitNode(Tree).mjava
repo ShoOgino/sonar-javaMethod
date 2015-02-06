@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTreeImpl classTree = (ClassTreeImpl) tree;
+    Symbol.TypeSymbol classSymbol = classTree.getSymbol();
+    if (classSymbol != null && classSymbol.getSuperclass().is("java.lang.Thread") && !overridesRunMethod(classSymbol)) {
+      addIssue(tree, "Stop extending the Thread class as the \"run\" method is not overridden");
+    }
+  }
+

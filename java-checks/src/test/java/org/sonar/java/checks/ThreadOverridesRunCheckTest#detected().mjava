@@ -1,0 +1,8 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ThreadOverridesRunCheck.java"), new VisitorsBridge(new ThreadOverridesRunCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(1).withMessage("Stop extending the Thread class as the \"run\" method is not overridden")
+        .next().atLine(16).withMessage("Stop extending the Thread class as the \"run\" method is not overridden");
+  }
+
