@@ -1,0 +1,19 @@
+  private void checkArgument(ExpressionTree arg, String name, String message) {
+    LiteralTree literal = null;
+    int sign = 1;
+    if (arg.is(Tree.Kind.INT_LITERAL)) {
+      literal = (LiteralTree) arg;
+    } else if (arg.is(Tree.Kind.UNARY_MINUS, Tree.Kind.UNARY_PLUS) && ((UnaryExpressionTree) arg).expression().is(Tree.Kind.INT_LITERAL)) {
+      if(arg.is(Tree.Kind.UNARY_MINUS)) {
+        sign = -1;
+      }
+      literal = (LiteralTree) ((UnaryExpressionTree) arg).expression();
+    }
+    if (literal != null) {
+      int argValue = Integer.parseInt(literal.value()) * sign;
+      if (argValue > Threshold.getThreshold(name) || argValue < 0) {
+        addIssue(arg, MessageFormat.format(message, argValue, name));
+      }
+    }
+  }
+

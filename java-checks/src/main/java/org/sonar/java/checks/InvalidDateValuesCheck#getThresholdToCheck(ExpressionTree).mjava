@@ -1,0 +1,26 @@
+  @Nullable
+  private String getThresholdToCheck(ExpressionTree tree) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      String name = getMethodName(mit);
+      for (MethodInvocationMatcher methodInvocationMatcher : DATE_METHODS_COMPARISON) {
+        if (methodInvocationMatcher.matches(mit, getSemanticModel())) {
+          if (name.equals("get")) {
+            // Calendar
+            ExpressionTree arg0 = mit.arguments().get(0);
+            if (arg0.is(Tree.Kind.MEMBER_SELECT)) {
+              MemberSelectExpressionTree mse = (MemberSelectExpressionTree) arg0;
+              Symbol reference = getSemanticModel().getReference(mse.identifier());
+              if (reference.owner().getType().is("java.util.Calendar") && Threshold.getThreshold(reference.getName()) != null) {
+                return reference.getName();
+              }
+            }
+          } else {
+            return name;
+          }
+        }
+      }
+    }
+    return null;
+  }
+

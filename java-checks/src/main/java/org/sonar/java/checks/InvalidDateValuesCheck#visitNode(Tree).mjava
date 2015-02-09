@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    super.visitNode(tree);
+    if (hasSemantic() && tree.is(Tree.Kind.EQUAL_TO, Tree.Kind.NOT_EQUAL_TO)) {
+      BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
+      String name = getThresholdToCheck(binaryExpressionTree.leftOperand());
+      ExpressionTree argToCheck = null;
+      if (name == null) {
+        name = getThresholdToCheck(binaryExpressionTree.rightOperand());
+        if (name != null) {
+          argToCheck = binaryExpressionTree.leftOperand();
+        }
+      } else {
+        argToCheck = binaryExpressionTree.rightOperand();
+      }
+      if (argToCheck != null) {
+        checkArgument(argToCheck, name, "\"{0}\" is not a valid value for \"{1}\".");
+      }
+    }
+  }
+
