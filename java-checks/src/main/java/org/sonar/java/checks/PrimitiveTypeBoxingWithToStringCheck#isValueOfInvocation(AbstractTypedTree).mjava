@@ -1,0 +1,12 @@
+  private boolean isValueOfInvocation(AbstractTypedTree abstractTypedTree) {
+    if (!abstractTypedTree.is(Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+    Type type = abstractTypedTree.getSymbolType();
+    MethodInvocationMatcher valueOfMatcher = MethodInvocationMatcher.create()
+      .typeDefinition(type.getSymbol().getFullyQualifiedName())
+      .name("valueOf")
+      .addParameter(type.primitiveType().getSymbol().getFullyQualifiedName());
+    return valueOfMatcher.matches((MethodInvocationTree) abstractTypedTree, getSemanticModel());
+  }
+
