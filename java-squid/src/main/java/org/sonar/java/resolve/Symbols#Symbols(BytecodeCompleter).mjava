@@ -39,7 +39,7 @@
 
     // predefined types for java lang
     Symbol.PackageSymbol javalang = bytecodeCompleter.enterPackage("java.lang");
-    //define a star import scope to let resolve types to java.lang when needed.
+    // define a star import scope to let resolve types to java.lang when needed.
     javalang.members = new Scope.StarImportScope(javalang, bytecodeCompleter);
     javalang.members.enter(javalang);
 
@@ -51,7 +51,7 @@
     annotationType = bytecodeCompleter.loadClass("java.lang.annotation.Annotation").type;
     enumType = bytecodeCompleter.loadClass("java.lang.Enum").type;
 
-    //Associate boxed types
+    // Associate boxed types
     boxedTypes = HashBiMap.create();
     boxedTypes.put(byteType, bytecodeCompleter.loadClass("java.lang.Byte").type);
     boxedTypes.put(charType, bytecodeCompleter.loadClass("java.lang.Character").type);
@@ -61,6 +61,11 @@
     boxedTypes.put(floatType, bytecodeCompleter.loadClass("java.lang.Float").type);
     boxedTypes.put(doubleType, bytecodeCompleter.loadClass("java.lang.Double").type);
     boxedTypes.put(booleanType, bytecodeCompleter.loadClass("java.lang.Boolean").type);
+
+    for (Type boxedType : boxedTypes.keySet()) {
+      boxedType.primitiveWrapperType = boxedTypes.get(boxedType);
+      boxedTypes.get(boxedType).primitiveType = boxedType;
+    }
 
     // TODO comment me
     arrayClass = new Symbol.TypeSymbol(Flags.PUBLIC, "Array", noSymbol);
