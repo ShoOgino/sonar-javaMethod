@@ -1,16 +1,13 @@
   @Override
   protected void onMethodFound(MethodInvocationTree mit) {
     String name = getMethodName(mit);
-    if (name.equals("set")) {
+    if ("set".equals(name)) {
       // Calendar method
       ExpressionTree arg0 = mit.arguments().get(0);
       ExpressionTree arg1 = mit.arguments().get(1);
-      if (arg0.is(Tree.Kind.MEMBER_SELECT)) {
-        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) arg0;
-        Symbol reference = getSemanticModel().getReference(mse.identifier());
-        if (reference.owner().getType().is("java.util.Calendar") && Threshold.getThreshold(reference.getName()) != null) {
-          checkArgument(arg1, reference.getName(), "\"{0}\" is not a valid value for setting \"{1}\".");
-        }
+      String referenceName = getReferencedCalendarName(arg0);
+      if(referenceName != null) {
+        checkArgument(arg1, referenceName, "\"{0}\" is not a valid value for setting \"{1}\".");
       }
     } else {
       ExpressionTree arg = mit.arguments().get(0);
