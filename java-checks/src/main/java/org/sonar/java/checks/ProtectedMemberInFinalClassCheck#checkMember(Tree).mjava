@@ -1,0 +1,12 @@
+  private void checkMember(Tree member) {
+    if (member.is(Kind.VARIABLE)) {
+      VariableTree variableTree = (VariableTree) member;
+      checkMemberModifier(variableTree.modifiers(), variableTree);
+    } else if (member.is(Kind.METHOD)) {
+      MethodTreeImpl methodTree = (MethodTreeImpl) member;
+      if (BooleanUtils.isFalse(methodTree.isOverriding())) {
+        checkMemberModifier(methodTree.modifiers(), methodTree.simpleName());
+      }
+    }
+  }
+
