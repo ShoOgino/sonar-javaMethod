@@ -1,0 +1,14 @@
+  private boolean hasOnlyStaticMethod(TypeSymbol typeSymbol) {
+    Collection<Symbol> members = typeSymbol.members().scopeSymbols();
+    boolean hasStaticMethod = false;
+    for (Symbol symbol : members) {
+      if (!isThisOrSuper(symbol)) {
+        if (!isStaticMethod(symbol)) {
+          return false;
+        }
+        hasStaticMethod = true;
+      }
+    }
+    return hasStaticMethod;
+  }
+

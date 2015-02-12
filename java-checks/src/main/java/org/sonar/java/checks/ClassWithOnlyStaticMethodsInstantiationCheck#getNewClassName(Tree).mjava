@@ -1,0 +1,12 @@
+  @Nullable
+  private String getNewClassName(Tree tree) {
+    if (tree.is(Kind.IDENTIFIER)) {
+      return ((IdentifierTree) tree).name();
+    } else if (tree.is(Kind.MEMBER_SELECT)) {
+      return ((MemberSelectExpressionTree) tree).identifier().name();
+    } else if (tree.is(Kind.PARAMETERIZED_TYPE)) {
+      return getNewClassName(((ParameterizedTypeTree) tree).type());
+    }
+    return null;
+  }
+

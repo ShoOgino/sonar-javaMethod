@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Tree identifier = ((NewClassTree) tree).identifier();
+    if (hasOnlyStaticMethod(((AbstractTypedTree) identifier).getSymbolType().getSymbol())) {
+      String message = "Remove this instantiation.";
+      String name = getNewClassName(identifier);
+      if (name != null) {
+        message = "Remove this instantiation of \"{0}\".";
+      }
+      addIssue(tree, MessageFormat.format(message, name));
+    }
+  }
+
