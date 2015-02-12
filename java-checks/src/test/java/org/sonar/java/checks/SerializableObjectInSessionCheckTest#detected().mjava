@@ -1,0 +1,9 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SerializableObjectInSessionCheck.java"),
+        new VisitorsBridge(new SerializableObjectInSessionCheck(), ImmutableList.of(new File("target/test-classes"))));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(6).withMessage("Make \"Address\" serializable or don't store it in the session.")
+        .next().atLine(7).withMessage("Make \"Person\" serializable or don't store it in the session.");
+  }
+

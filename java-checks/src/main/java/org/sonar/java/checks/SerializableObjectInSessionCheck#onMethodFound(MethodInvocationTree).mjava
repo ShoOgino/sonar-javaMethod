@@ -1,0 +1,9 @@
+  @Override
+  protected void onMethodFound(MethodInvocationTree mit) {
+    ExpressionTree argument = mit.arguments().get(1);
+    Type type = ((AbstractTypedTree) argument).getSymbolType();
+    if(!type.isSubtypeOf("java.io.Serializable")) {
+      addIssue(argument, "Make \""+type+"\" serializable or don't store it in the session.");
+    }
+  }
+
