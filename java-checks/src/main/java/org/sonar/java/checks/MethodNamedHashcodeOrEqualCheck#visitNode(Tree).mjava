@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    IdentifierTree methodIdentifier = ((MethodTree) tree).simpleName();
+    String methodName = methodIdentifier.name();
+    if ("hashcode".equals(methodName) || "equal".equals(methodName)) {
+      String substitute = "hashCode()";
+      if ("equal".equals(methodName)) {
+        substitute = "equals(Object obj)";
+      }
+      addIssue(methodIdentifier, "Either override Object." + substitute + ", or totally rename the method to prevent any confusion.");
+    }
+  }
+
