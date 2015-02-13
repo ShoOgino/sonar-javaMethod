@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic() && tree.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
+      if (aet.variable().is(Tree.Kind.IDENTIFIER) && !isInSyncBlock()) {
+        IdentifierTree variable = (IdentifierTree) aet.variable();
+        if (isStaticNotVolatile(variable)) {
+          addIssue(variable, "Synchronize this lazy initialization of '" + variable.name() + "'");
+        }
+      }
+    }
+    super.visitNode(tree);
+  }
+
