@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ConditionalExpressionTree cet = (ConditionalExpressionTree) tree;
+    Type trueExpressionType = ((AbstractTypedTree) cet.trueExpression()).getSymbolType();
+    Type falseExpressionType = ((AbstractTypedTree) cet.falseExpression()).getSymbolType();
+    if (dissimilarPrimitiveTypeWrappers(trueExpressionType, falseExpressionType)) {
+      addIssue(tree, "Add an explicit cast to match types of operands.");
+    }
+  }
+
