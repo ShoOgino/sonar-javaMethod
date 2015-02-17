@@ -2,8 +2,11 @@
     if (operand1.is(Tree.Kind.REMAINDER)) {
       BinaryExpressionTree modulusExp = (BinaryExpressionTree) operand1;
       Integer intValue = LiteralUtils.intLiteralValue(operand2);
-      boolean usesMethodParam = isMethodParameter(modulusExp.leftOperand()) || isMethodParameter(modulusExp.rightOperand());
-      if (intValue != null && intValue != 0 && usesMethodParam) {
+      ExpressionTree leftOperand = modulusExp.leftOperand();
+      ExpressionTree rightOperand = modulusExp.rightOperand();
+      boolean usesMethodParam = isMethodParameter(leftOperand) || isMethodParameter(rightOperand);
+      boolean usesSize = isSizeAccessor(leftOperand) || isSizeAccessor(rightOperand);
+      if (intValue != null && intValue != 0 && usesMethodParam && !usesSize) {
         String sign = intValue > 0 ? "positive" : "negative";
         addIssue(operand1, "The results of this modulus operation may not be " + sign + ".");
       }

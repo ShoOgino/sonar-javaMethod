@@ -1,0 +1,13 @@
+  private boolean isSizeAccessor(ExpressionTree expressionTree) {
+    if (expressionTree.is(Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) expressionTree;
+      Type type = ((AbstractTypedTree) memberSelectExpressionTree.expression()).getSymbolType();
+      String memberName = memberSelectExpressionTree.identifier().name();
+      return isCollectionSize(type, memberName) || isStringLength(type, memberName) || isArrayLength(type, memberName);
+    } else if (expressionTree.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) expressionTree;
+      return isSizeAccessor(methodInvocationTree.methodSelect());
+    }
+    return false;
+  }
+
