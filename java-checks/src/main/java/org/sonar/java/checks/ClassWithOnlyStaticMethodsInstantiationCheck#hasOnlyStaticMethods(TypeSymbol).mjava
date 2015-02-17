@@ -1,0 +1,13 @@
+  private boolean hasOnlyStaticMethods(TypeSymbol newClassTypeSymbol) {
+    Collection<MethodSymbol> methods = filterMethods(newClassTypeSymbol.members().scopeSymbols());
+    if (methods.isEmpty()) {
+      return false;
+    }
+    for (MethodSymbol method : methods) {
+      if (!method.isStatic()) {
+        return false;
+      }
+    }
+    return superClassHasOnlyStaticMethods(newClassTypeSymbol);
+  }
+
