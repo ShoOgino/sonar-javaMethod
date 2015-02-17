@@ -1,0 +1,8 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Type syncArgumentType = ((AbstractTypedTree) ((SynchronizedStatementTree) tree).expression()).getSymbolType();
+    if (syncArgumentType.isSubtypeOf("java.util.concurrent.locks.Lock")) {
+      addIssue(tree, "Synchronize on this \"Lock\" object using \"acquire/release\".");
+    }
+  }
+
