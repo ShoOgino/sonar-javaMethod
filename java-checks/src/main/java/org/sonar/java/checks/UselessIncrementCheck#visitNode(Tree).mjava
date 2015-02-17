@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.RETURN_STATEMENT)) {
+      ExpressionTree returnExpression = ((ReturnStatementTree) tree).expression();
+      if (returnExpression != null && isPostfix(returnExpression)) {
+        addIssue(returnExpression);
+      }
+    } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
+      if (isPostfix(aet.expression())) {
+        UnaryExpressionTree postfix = (UnaryExpressionTree) aet.expression();
+        if (SyntacticEquivalence.areEquivalent(aet.variable(), postfix.expression())) {
+          addIssue(postfix);
+        }
+      }
+    }
+  }
+
