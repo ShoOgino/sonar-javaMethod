@@ -1,0 +1,22 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    List<ExpressionTree> arguments;
+    Symbol methodSymbol;
+    if (tree.is(Kind.NEW_CLASS)) {
+      NewClassTreeImpl nct = (NewClassTreeImpl) tree;
+      methodSymbol = getSemanticModel().getReference(nct.getConstructorIdentifier());
+      arguments = nct.arguments();
+    } else {
+      MethodInvocationTreeImpl mit = (MethodInvocationTreeImpl) tree;
+      methodSymbol = mit.getSymbol();
+      arguments = mit.arguments();
+    }
+    // FIXME SONARJAVA-919
+    if (!arguments.isEmpty() && methodSymbol != null && methodSymbol.isKind(Symbol.MTH)) {
+      checkArgumentsTypes(arguments, (MethodSymbol) methodSymbol);
+    }
+  }
+

@@ -5,6 +5,7 @@
     Symbol.TypeVariableSymbol typeVariableSymbol = new Symbol.TypeVariableSymbol("T", typeSymbol);
     Type.ClassType classType = (Type.ClassType) typeSymbol.type;
     Type.TypeVariableType typeVariableType = (Type.TypeVariableType) typeVariableSymbol.type;
+    Type.ArrayType arrayType = new Type.ArrayType(typeSymbol.type, symbols.arrayClass);
     typeVariableType.bounds = Lists.newArrayList(symbols.objectType);
 
     classType.supertype = symbols.objectType;
@@ -14,6 +15,11 @@
     assertThat(classType.isSubtypeOf("java.lang.CharSequence")).isFalse();
     assertThat(classType.isSubtypeOf("java.lang.Cloneable")).isTrue();
     assertThat(new Type(Type.BYTE, null).isSubtypeOf("java.lang.Object")).isFalse();
+
+    assertThat(arrayType.isSubtypeOf("org.foo.bar.MyType[]")).isTrue();
+    assertThat(arrayType.isSubtypeOf("org.foo.bar.MyType")).isFalse();
+    assertThat(arrayType.isSubtypeOf("java.lang.Object[]")).isTrue();
+    assertThat(arrayType.isSubtypeOf("org.foo.bar.SomeClass[]")).isFalse();
 
     assertThat(typeVariableType.isSubtypeOf("java.lang.Object")).isTrue();
     assertThat(typeVariableType.is("java.lang.Object")).isFalse();

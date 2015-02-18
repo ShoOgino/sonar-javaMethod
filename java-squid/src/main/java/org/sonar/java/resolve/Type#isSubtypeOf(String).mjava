@@ -8,8 +8,9 @@
           return true;
         }
       }
-    }
-    if(isTagged(TYPEVAR)) {
+    } else if (isTagged(ARRAY)) {
+      return fullyQualifiedName.endsWith("[]") && ((ArrayType) this).elementType.isSubtypeOf(fullyQualifiedName.substring(0, fullyQualifiedName.length() - 2));
+    } else if (isTagged(TYPEVAR)) {
       return erasure().isSubtypeOf(fullyQualifiedName);
     }
     return false;

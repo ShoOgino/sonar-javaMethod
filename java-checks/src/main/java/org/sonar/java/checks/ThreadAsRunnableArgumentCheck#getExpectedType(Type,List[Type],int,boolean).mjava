@@ -1,0 +1,10 @@
+  private Type getExpectedType(Type providedType, List<Type> parametersTypes, int index, boolean varargs) {
+    int lastParameterIndex = parametersTypes.size() - 1;
+    Type lastParameterType = parametersTypes.get(lastParameterIndex);
+    Type lastExpectedType = varargs ? ((ArrayType) lastParameterType).elementType() : lastParameterType;
+    if (index > lastParameterIndex || (index == lastParameterIndex && varargs && !providedType.isTagged(Type.ARRAY))) {
+      return lastExpectedType;
+    }
+    return parametersTypes.get(index);
+  }
+
