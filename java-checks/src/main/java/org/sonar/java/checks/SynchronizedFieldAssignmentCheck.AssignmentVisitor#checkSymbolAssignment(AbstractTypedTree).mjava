@@ -1,0 +1,12 @@
+    private void checkSymbolAssignment(AbstractTypedTree variable) {
+      if (variable.is(Kind.IDENTIFIER)) {
+        Symbol variableSymbol = getSemanticModel().getReference((IdentifierTree) variable);
+        if (field.equals(variableSymbol)) {
+          addIssue(synchronizedStatement, getMessage(variable));
+        }
+      } else if (variable.is(Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) variable;
+        checkSymbolAssignment((AbstractTypedTree) mse.identifier());
+      }
+    }
+

@@ -1,0 +1,16 @@
+  private boolean isField(ExpressionTree tree) {
+    if (tree.is(Kind.IDENTIFIER)) {
+      Symbol reference = getSemanticModel().getReference((IdentifierTree) tree);
+      return reference != null && reference.owner().isKind(Symbol.TYP);
+    } else if (tree.is(Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+      ExpressionTree mseExpression = mse.expression();
+      if (isThis(mseExpression)) {
+        return isField(mse.identifier());
+      } else {
+        return isField(mseExpression);
+      }
+    }
+    return false;
+  }
+
