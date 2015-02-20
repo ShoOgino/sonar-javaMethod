@@ -6,11 +6,11 @@
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
     conf.setSeparateAccessorsFromMethods(separateAccessorsFromMethods);
     context = mock(SensorContext.class);
-    DefaultFileSystem fs = new DefaultFileSystem();
-    fs.setBaseDir(prjDir);
-    Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
-    setupFileSystem(fs, files);
-    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods);
+    Project sonarProject = mock(Project.class);
+    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
+    when(pfs.getBasedir()).thenReturn(prjDir);
+    when(sonarProject.getFileSystem()).thenReturn(pfs);
+    Measurer measurer = new Measurer(sonarProject, context, separateAccessorsFromMethods);
     JavaResourceLocator javaResourceLocator = new JavaResourceLocator() {
       public Map<String, String> sourceFileCache = Maps.newHashMap();
 
@@ -60,6 +60,7 @@
       }
     };
     squid = new JavaSquid(conf, null, measurer, javaResourceLocator, new CodeVisitor[0]);
+    Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
     squid.scan(files, Collections.<File>emptyList(), Collections.singleton(binDir));
   }
 

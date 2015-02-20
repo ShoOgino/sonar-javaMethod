@@ -6,12 +6,13 @@
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
     conf.setSeparateAccessorsFromMethods(separateAccessorsFromMethods);
     context = mock(SensorContext.class);
-    DefaultFileSystem fs = new DefaultFileSystem();
-    fs.setBaseDir(prjDir);
-    Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
-    setupFileSystem(fs, files);
-    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods);
+    Project sonarProject = mock(Project.class);
+    ProjectFileSystem pfs = mock(ProjectFileSystem.class);
+    when(pfs.getBasedir()).thenReturn(prjDir);
+    when(sonarProject.getFileSystem()).thenReturn(pfs);
+    Measurer measurer = new Measurer(sonarProject, context, separateAccessorsFromMethods);
     JavaSquid squid = new JavaSquid(conf, null, measurer, mock(JavaResourceLocator.class), new CodeVisitor[0]);
+    Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
     squid.scan(files, Collections.<File>emptyList(), Collections.singleton(binDir));
   }
 
