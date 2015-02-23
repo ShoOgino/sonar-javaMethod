@@ -2,18 +2,13 @@
     if (type == null || type.isTagged(Type.UNKNOWN)) {
       return false;
     }
+    if (type.isPrimitive()) {
+      return true;
+    }
     if (type.isTagged(Type.ARRAY)) {
       return implementsSerializable(((Type.ArrayType) type).elementType());
     }
-    if (type.isTagged(Type.CLASS)) {
-      Type.ClassType classType = (Type.ClassType) type;
-      String interfaceName = classType.getSymbol().owner().getName() + "." + classType.getSymbol().getName();
-      if ("java.io.Serializable".equals(interfaceName)) {
-        return true;
-      }
-      return hasSupertypeSerializable((Type.ClassType) type);
-    }
-    if(type.isTagged(Type.TYPEVAR)) {
+    if (type.isTagged(Type.CLASS) || type.isTagged(Type.TYPEVAR)) {
       return type.erasure().isSubtypeOf("java.io.Serializable");
     }
     return false;
