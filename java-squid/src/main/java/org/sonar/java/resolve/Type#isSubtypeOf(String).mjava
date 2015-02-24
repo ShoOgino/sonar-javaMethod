@@ -1,12 +1,7 @@
   public boolean isSubtypeOf(String fullyQualifiedName) {
     if (isTagged(CLASS)) {
-      if (is(fullyQualifiedName)) {
+      if (is(fullyQualifiedName) || superTypeContains(fullyQualifiedName)) {
         return true;
-      }
-      for (ClassType classType : symbol.superTypes()) {
-        if (classType.is(fullyQualifiedName)) {
-          return true;
-        }
       }
     } else if (isTagged(ARRAY)) {
       return fullyQualifiedName.endsWith("[]") && ((ArrayType) this).elementType.isSubtypeOf(fullyQualifiedName.substring(0, fullyQualifiedName.length() - 2));
