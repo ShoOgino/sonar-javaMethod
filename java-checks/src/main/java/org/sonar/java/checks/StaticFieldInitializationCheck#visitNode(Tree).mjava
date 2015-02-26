@@ -2,12 +2,15 @@
   public void visitNode(Tree tree) {
     if (hasSemantic() && tree.is(Tree.Kind.ASSIGNMENT)) {
       AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
-      if (aet.variable().is(Tree.Kind.IDENTIFIER) && !isInSyncBlock()) {
+      if (aet.variable().is(Tree.Kind.IDENTIFIER) && !isInSyncBlock() && !withinStaticInitializer.peek()) {
         IdentifierTree variable = (IdentifierTree) aet.variable();
         if (isStaticNotVolatileObject(variable)) {
           addIssue(variable, "Synchronize this lazy initialization of '" + variable.name() + "'");
         }
       }
+    }
+    if (tree.is(Tree.Kind.STATIC_INITIALIZER)) {
+      withinStaticInitializer.push(true);
     }
     super.visitNode(tree);
   }
