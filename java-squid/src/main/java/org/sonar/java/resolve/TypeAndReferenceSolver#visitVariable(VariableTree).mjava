@@ -1,6 +1,7 @@
   @Override
   public void visitVariable(VariableTree tree) {
     scan(tree.modifiers());
+    completeMetadata(((VariableTreeImpl) tree).getSymbol(), tree.modifiers().annotations());
     //skip type, it has been resolved in second pass
     if (tree.initializer() != null) {
       resolveAs(tree.initializer(), Symbol.VAR);
