@@ -1,0 +1,23 @@
+  public void testCheckNotNull(@CheckForNull Object parameter) {
+    int i;
+    Object o;
+
+    Object[] array1 = checkForNullField;
+    i = array1.length; // False negative
+    o = array1[0]; // False negative
+    array1.hashCode(); // False negative
+
+    i = checkForNullField.length; // False negative
+    o = checkForNullField[0]; // False negative
+    checkForNullField.hashCode(); // False negative
+
+    Object[] array2 = checkForNullMethod();
+    i = array2.length; // False negative
+    o = array2[0]; // False negative
+    array2.hashCode(); // False negative
+
+    i = checkForNullMethod().length; // Noncompliant
+    o = checkForNullMethod()[0]; // Noncompliant
+    checkForNullMethod().hashCode(); // Noncompliant
+  }
+

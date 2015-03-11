@@ -1,0 +1,13 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NullPointerCheck.java"),
+      new VisitorsBridge(new NullPointerCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(76).withMessage("Value returned by method 'checkForNullMethod' can be null.")
+      .next().atLine(77).withMessage("Value returned by method 'checkForNullMethod' can be null.")
+      .next().atLine(78).withMessage("Value returned by method 'checkForNullMethod' can be null.")
+      .next().atLine(99).withMessage("Value returned by method 'nullableMethod' can be null.")
+      .next().atLine(100).withMessage("Value returned by method 'nullableMethod' can be null.")
+      .next().atLine(101).withMessage("Value returned by method 'nullableMethod' can be null.");
+  }
+

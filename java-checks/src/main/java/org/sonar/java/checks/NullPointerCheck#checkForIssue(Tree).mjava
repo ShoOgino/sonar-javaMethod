@@ -1,0 +1,10 @@
+  // raises an issue if the passed tree is a method invocation that can return null.
+  private void checkForIssue(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      Symbol symbol = ((MethodInvocationTreeImpl) tree).getSymbol();
+      if (canBeNull(symbol)) {
+        context.addIssue(tree, RULE_KEY, String.format("Value returned by method '%s' can be null.", symbol.getName()));
+      }
+    }
+  }
+
