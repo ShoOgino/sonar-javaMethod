@@ -1,0 +1,23 @@
+  public TypeTree newCatchType(TypeTree qualifiedIdentifier, Optional<List<AstNode>> rests) {
+    if (!rests.isPresent()) {
+      return qualifiedIdentifier;
+    }
+
+    List<AstNode> children = Lists.newArrayList();
+    ImmutableList.Builder<TypeTree> types = ImmutableList.builder();
+
+    children.add((AstNode) qualifiedIdentifier);
+    types.add(qualifiedIdentifier);
+
+    for (AstNode rest : rests.get()) {
+      children.add(rest.getFirstChild());
+
+      TypeTree qualifiedIdentifier2 = (TypeTree) rest.getLastChild();
+      types.add(qualifiedIdentifier2);
+
+      children.add((AstNode) qualifiedIdentifier2);
+    }
+
+    return new UnionTypeTreeImpl(new TypeUnionListTreeImpl(types.build(), children));
+  }
+

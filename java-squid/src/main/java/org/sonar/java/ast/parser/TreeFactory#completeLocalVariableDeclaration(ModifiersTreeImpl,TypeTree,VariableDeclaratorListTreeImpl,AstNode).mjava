@@ -1,0 +1,16 @@
+  public VariableDeclaratorListTreeImpl completeLocalVariableDeclaration(
+    ModifiersTreeImpl modifiers,
+    TypeTree type,
+    VariableDeclaratorListTreeImpl variables,
+    AstNode semicolonTokenAstNode) {
+
+    variables.prependChildren(modifiers, (AstNode) type);
+    variables.addChild(semicolonTokenAstNode);
+
+    for (VariableTreeImpl variable : variables) {
+      variable.completeModifiersAndType(modifiers, type);
+    }
+
+    return variables;
+  }
+
