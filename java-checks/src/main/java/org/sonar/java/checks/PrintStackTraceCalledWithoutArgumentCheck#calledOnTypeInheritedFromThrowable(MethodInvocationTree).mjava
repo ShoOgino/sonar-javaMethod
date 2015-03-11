@@ -1,9 +1,4 @@
   private boolean calledOnTypeInheritedFromThrowable(MethodInvocationTree tree) {
-    // TODO this is painful way to access caller site of a method.
-    Type type = ((AbstractTypedTree) ((MemberSelectExpressionTree) tree.methodSelect()).expression()).getSymbolType();
-    if (type.isTagged(Type.CLASS)) {
-      return extendsThrowable((Type.ClassType) type);
-    }
-    return false;
+    return ((MemberSelectExpressionTree) tree.methodSelect()).expression().symbolType().isSubtypeOf("java.lang.Throwable");
   }
 
