@@ -8,7 +8,10 @@
     }
 
     if (expression.is(Kind.INT_LITERAL, Kind.LONG_LITERAL)) {
-      return sign * Long.decode(LiteralUtils.trimLongSuffix(((LiteralTree) expression).value()));
+      String value = LiteralUtils.trimLongSuffix(((LiteralTree) expression).value()).toLowerCase();
+      if (!UNEVALUABLE_LONGS.contains(value)) {
+        return sign * Long.decode(value);
+      }
     }
     return null;
   }
