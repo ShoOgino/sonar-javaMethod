@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    // use AbstractInSynchronizeChecker logic to check synchronized blocks
+    super.visitNode(tree);
+
+    if (tree.is(Kind.METHOD)) {
+      withinStaticMethod.push(isMethodStatic((MethodTree) tree));
+    } else if (tree.is(Kind.STATIC_INITIALIZER)) {
+      withinStaticMethod.push(true);
+    } else if (hasSemantic() && isInInstanceMethod() && !hasAnyParentStatic() && !hasAnyParentSync()) {
+      if (tree.is(ASSIGNMENT_EXPRESSIONS)) {
+        checkVariableModification(((AssignmentExpressionTree) tree).variable());
+      } else if (tree.is(UNARY_EXPRESSIONS)) {
+        checkVariableModification(((UnaryExpressionTree) tree).expression());
+      }
+    }
+  }
+

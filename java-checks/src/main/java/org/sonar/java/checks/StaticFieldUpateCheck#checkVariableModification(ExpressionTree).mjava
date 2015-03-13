@@ -1,0 +1,10 @@
+  private void checkVariableModification(ExpressionTree expression) {
+    if (expression.is(Kind.IDENTIFIER)) {
+      checkFieldModification((IdentifierTree) expression);
+    } else if (expression.is(Kind.MEMBER_SELECT)) {
+      checkFieldModification(((MemberSelectExpressionTree) expression).identifier());
+    } else if (expression.is(Kind.ARRAY_ACCESS_EXPRESSION)) {
+      checkVariableModification(((ArrayAccessExpressionTree) expression).expression());
+    }
+  }
+
