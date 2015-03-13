@@ -16,8 +16,13 @@
       if (signature != null) {
         new SignatureReader(signature).accept(new ReadMethodSignature(methodSymbol));
       }
+      methodSymbol.parameters = new OrderedScope(methodSymbol);
+      for (int i = 0; i < type.argTypes.size(); i += 1) {
+        methodSymbol.parameters.enter(new Symbol.VariableSymbol(0, "arg" + i, methodSymbol));
+      }
+      // checks for annotations on the method and its parameters
+      return new BytecodeMethodVisitor(methodSymbol, this);
     }
-    // (Godin): can return MethodVisitor to read annotations
     return null;
   }
 

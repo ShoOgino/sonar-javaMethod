@@ -1,0 +1,8 @@
+  @Override
+  public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+    Type annotationType = bytecodeVisitor.convertAsmType(org.objectweb.asm.Type.getType(desc));
+    AnnotationInstance annotationInstance = new AnnotationInstance(annotationType.getSymbol());
+    methodSymbol.getParameters().scopeSymbols().get(parameter).metadata().addAnnotation(annotationInstance);
+    return new BytecodeAnnotationVisitor(annotationInstance, bytecodeVisitor);
+  }
+
