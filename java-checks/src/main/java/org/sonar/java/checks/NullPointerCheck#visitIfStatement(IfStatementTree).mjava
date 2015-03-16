@@ -1,0 +1,14 @@
+  @Override
+  public void visitIfStatement(IfStatementTree tree) {
+    State trueState = new State(currentState);
+    State falseState = tree.elseStatement() != null ? new State(currentState) : null;
+    conditionVisitor.visitCondition(tree.condition(), trueState, falseState);
+    currentState = trueState;
+    tree.thenStatement().accept(this);
+    if (tree.elseStatement() != null) {
+      currentState = falseState;
+      tree.elseStatement().accept(this);
+    }
+    currentState = currentState.parentState;
+  }
+
