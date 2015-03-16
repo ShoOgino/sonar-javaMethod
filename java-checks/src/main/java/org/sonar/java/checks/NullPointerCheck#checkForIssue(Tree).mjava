@@ -2,9 +2,11 @@
   private void checkForIssue(Tree tree) {
     if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       Symbol symbol = ((MethodInvocationTreeImpl) tree).getSymbol();
-      if (canBeNull(symbol)) {
+      if (isNullReturnValue(symbol)) {
         context.addIssue(tree, RULE_KEY, String.format("Value returned by method '%s' can be null.", symbol.getName()));
       }
+    } else if (tree.is(Tree.Kind.NULL_LITERAL)) {
+      context.addIssue(tree, RULE_KEY, "null is dereferenced or passed as argument.");
     }
   }
 
