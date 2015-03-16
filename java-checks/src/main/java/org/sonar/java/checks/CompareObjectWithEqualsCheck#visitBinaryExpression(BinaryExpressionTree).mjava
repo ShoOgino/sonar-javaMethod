@@ -2,8 +2,8 @@
   public void visitBinaryExpression(BinaryExpressionTree tree) {
     super.visitBinaryExpression(tree);
     if (tree.is(Tree.Kind.EQUAL_TO, Tree.Kind.NOT_EQUAL_TO)) {
-      Type leftOpType = ((AbstractTypedTree) tree.leftOperand()).getSymbolType();
-      Type rightOpType = ((AbstractTypedTree) tree.rightOperand()).getSymbolType();
+      Type leftOpType = (Type) tree.leftOperand().symbolType();
+      Type rightOpType = (Type) tree.rightOperand().symbolType();
       if (!isExcluded(leftOpType, rightOpType) && hasObjectOperand(leftOpType, rightOpType)) {
         context.addIssue(tree, ruleKey, "Change this comparison to use the equals method.");
       }

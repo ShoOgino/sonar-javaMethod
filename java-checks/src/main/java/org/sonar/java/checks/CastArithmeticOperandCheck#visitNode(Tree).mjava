@@ -5,20 +5,20 @@
       ExpressionTree expr;
       if (tree.is(Tree.Kind.ASSIGNMENT)) {
         AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
-        varType = ((AbstractTypedTree) aet.variable()).getSymbolType();
+        varType = aet.symbolType();
         expr = aet.expression();
         checkExpression(varType, expr);
       } else if (tree.is(Tree.Kind.VARIABLE)) {
         VariableTree variableTree = (VariableTree) tree;
-        varType = ((AbstractTypedTree) variableTree.type()).getSymbolType();
+        varType = variableTree.type().symbolType();
         expr = variableTree.initializer();
         checkExpression(varType, expr);
       } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
         checkMethodInvocationArgument((MethodInvocationTreeImpl) tree);
       } else if (tree.is(Tree.Kind.METHOD)) {
         MethodTreeImpl methodTree = (MethodTreeImpl) tree;
-        Type returnType = methodTree.getSymbol().getReturnType().getType();
-        if (isVarTypeErrorProne(returnType)) {
+        Type returnType = methodTree.returnType()!=null ? methodTree.returnType().symbolType() : null;
+        if (returnType != null && isVarTypeErrorProne(returnType)) {
           methodTree.accept(new ReturnStatementVisitor(returnType));
         }
       }
