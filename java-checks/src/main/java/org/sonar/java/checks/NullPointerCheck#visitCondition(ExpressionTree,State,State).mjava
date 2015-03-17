@@ -9,6 +9,7 @@
       } else if (binaryTree.leftOperand().is(Tree.Kind.IDENTIFIER) && binaryTree.rightOperand().is(Tree.Kind.NULL_LITERAL)) {
         identifierSymbol = (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) binaryTree.leftOperand());
       } else {
+        super.visitBinaryExpression(binaryTree);
         return;
       }
       if (binaryTree.is(Tree.Kind.EQUAL_TO)) {
@@ -24,5 +25,6 @@
         }
       }
     }
+    scan(tree);
   }
 

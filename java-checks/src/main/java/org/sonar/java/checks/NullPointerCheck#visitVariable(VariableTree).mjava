@@ -1,6 +1,9 @@
   @Override
   public void visitVariable(VariableTree tree) {
     // skips modifiers (annotations) and type.
-    scan(tree.initializer());
+    if (tree.initializer() != null) {
+      currentState.setVariableValue((VariableSymbol) tree.symbol(), checkNullity(tree.initializer()));
+      scan(tree.initializer());
+    }
   }
 
