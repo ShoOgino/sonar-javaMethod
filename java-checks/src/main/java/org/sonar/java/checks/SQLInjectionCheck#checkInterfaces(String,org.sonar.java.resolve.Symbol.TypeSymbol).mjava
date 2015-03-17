@@ -1,0 +1,10 @@
+  private boolean checkInterfaces(String type, org.sonar.java.resolve.Symbol.TypeSymbol symbol) {
+    for (Type interfaceType : symbol.getInterfaces()) {
+      Symbol interfaceSymbol = interfaceType.getSymbol();
+      if (type.equals(interfaceSymbol.type().fullyQualifiedName()) || checkInterfaces(type, (org.sonar.java.resolve.Symbol.TypeSymbol) interfaceSymbol)) {
+        return true;
+      }
+    }
+    return false;
+  }
+

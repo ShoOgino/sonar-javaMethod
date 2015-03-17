@@ -1,8 +1,8 @@
   @Override
   public void visitClass(ClassTree tree) {
     if (tree.simpleName() != null) {
-      Symbol.TypeSymbol classSymbol = ((ClassTreeImpl) tree).getSymbol();
-      Collection<Symbol> members = classSymbol.members().scopeSymbols();
+      org.sonar.java.resolve.Symbol.TypeSymbol classSymbol = ((ClassTreeImpl) tree).getSymbol();
+      Collection<? extends Symbol> members = classSymbol.members().scopeSymbols();
       for (Symbol sym : members) {
         if (sym.isVariableSymbol() && !staticFieldSameType(classSymbol, sym)) {
           //Exclude static fields of the same type.

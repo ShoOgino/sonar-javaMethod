@@ -1,9 +1,7 @@
   private boolean isInvokedOnType(String type, ExpressionTree expressionTree) {
-    Type selectorType = ((AbstractTypedTree) expressionTree).getSymbolType();
-    if (selectorType.isTagged(Type.CLASS)) {
-      Symbol.TypeSymbol symbol = selectorType.getSymbol();
-      String selector = symbol.owner().getName() + "." + symbol.getName();
-      return type.equals(selector) || checkInterfaces(type, symbol);
+    org.sonar.plugins.java.api.semantic.Type selectorType = expressionTree.symbolType();
+    if (selectorType.isClass()) {
+      return type.equals(selectorType.fullyQualifiedName()) || checkInterfaces(type, ((Type) selectorType).getSymbol());
     }
     return false;
   }

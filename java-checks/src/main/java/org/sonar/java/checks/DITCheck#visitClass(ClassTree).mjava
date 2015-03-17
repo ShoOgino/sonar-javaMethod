@@ -1,10 +1,10 @@
   @Override
   public void visitClass(ClassTree tree) {
-    Symbol.TypeSymbol typeSymbol = ((ClassTreeImpl) tree).getSymbol();
+    org.sonar.java.resolve.Symbol.TypeSymbol typeSymbol = ((ClassTreeImpl) tree).getSymbol();
     int dit = 0;
     while(typeSymbol.getSuperclass() != null ){
       dit++;
-      typeSymbol = ((Type.ClassType) typeSymbol.getSuperclass()).getSymbol();
+      typeSymbol = typeSymbol.getSuperclass().getSymbol();
     }
     if(dit > max) {
       context.addIssue(tree, ruleKey, "This class has "+dit+" parents which is greater than "+max+" authorized.");
