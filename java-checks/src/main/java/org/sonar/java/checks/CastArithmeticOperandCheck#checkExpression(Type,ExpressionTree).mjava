@@ -1,8 +1,6 @@
-  private void checkExpression(Type varType, ExpressionTree expr) {
-    if (expr != null && expr.is(Tree.Kind.MULTIPLY, Tree.Kind.DIVIDE, Tree.Kind.PLUS, Tree.Kind.MINUS) && isVarTypeErrorProne(varType)) {
-      if(expr.symbolType().isPrimitive(org.sonar.plugins.java.api.semantic.Type.Primitives.INT)) {
-        addIssue(expr, "Cast one of the operands of this " + OPERATION_BY_KIND.get(((JavaTree) expr).getKind()) + " operation to a \"" + varType.name() + "\".");
-      }
+  private void checkExpression(Type varType, @Nullable ExpressionTree expr) {
+    if (isVarTypeErrorProne(varType) && expressionIsOperationToInt(expr)) {
+      addIssue(expr, "Cast one of the operands of this " + OPERATION_BY_KIND.get(((JavaTree) expr).getKind()) + " operation to a \"" + varType.name() + "\".");
     }
   }
 
