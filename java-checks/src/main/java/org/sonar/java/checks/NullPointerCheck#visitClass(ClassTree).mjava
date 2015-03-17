@@ -2,8 +2,9 @@
   public void visitClass(ClassTree tree) {
     // state required for assignments in class body (e.g. static initializers, and int a, b, c = b = 0;)
     State oldState = currentState;
-    currentState = new State(null);
-    super.visitClass(tree);
+    currentState = new State();
+    // skips modifiers, type parameters, super class and interfaces
+    scan(tree.members());
     currentState = oldState;
   }
 

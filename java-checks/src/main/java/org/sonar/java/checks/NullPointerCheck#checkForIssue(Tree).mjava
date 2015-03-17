@@ -2,12 +2,12 @@
   private void checkForIssue(Tree tree) {
     if (tree.is(Tree.Kind.IDENTIFIER)) {
       Symbol symbol = semanticModel.getReference((IdentifierTreeImpl) tree);
-      if (currentState != null && currentState.getVariableValue(symbol) == AbstractValue.NULL) {
+      if (symbol != null && symbol.isVariableSymbol() && currentState.getVariableValue((VariableSymbol) symbol) == AbstractValue.NULL) {
         context.addIssue(tree, RULE_KEY, String.format("%s can be null.", symbol.getName()));
       }
     } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       Symbol symbol = ((MethodInvocationTreeImpl) tree).getSymbol();
-      if (isNullReturnValue(symbol)) {
+      if (symbol.isMethodSymbol() && isNullReturnValue((MethodSymbol) symbol)) {
         context.addIssue(tree, RULE_KEY, String.format("Value returned by method '%s' can be null.", symbol.getName()));
       }
     } else if (tree.is(Tree.Kind.NULL_LITERAL)) {

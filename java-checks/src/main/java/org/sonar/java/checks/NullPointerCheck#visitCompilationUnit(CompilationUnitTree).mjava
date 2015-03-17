@@ -1,9 +1,6 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
-    // state required for annotations (e.g. @Annotation(name = value))
-    State oldState = currentState;
-    currentState = new State(null);
-    super.visitCompilationUnit(tree);
-    currentState = oldState;
+    // skips package name, imports, and annotations.
+    scan(tree.types());
   }
 

@@ -1,10 +1,12 @@
     @Override
     public void visitBinaryExpression(BinaryExpressionTree tree) {
-      Symbol identifierSymbol;
+      VariableSymbol identifierSymbol;
+      // currently only ident == null, ident != null, null == ident and null != ident are covered.
+      // logical and/or operators are not supported.
       if (tree.leftOperand().is(Tree.Kind.NULL_LITERAL) && tree.rightOperand().is(Tree.Kind.IDENTIFIER)) {
-        identifierSymbol = semanticModel.getReference((IdentifierTreeImpl) tree.rightOperand());
+        identifierSymbol = (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.rightOperand());
       } else if (tree.leftOperand().is(Tree.Kind.IDENTIFIER) && tree.rightOperand().is(Tree.Kind.NULL_LITERAL)) {
-        identifierSymbol = semanticModel.getReference((IdentifierTreeImpl) tree.leftOperand());
+        identifierSymbol = (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.leftOperand());
       } else {
         return;
       }
