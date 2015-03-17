@@ -1,0 +1,25 @@
+  @Test
+  public void test_state_merge() {
+    // variable defined in parentState only should not change
+    assertThat(testMerge(AbstractValue.NOTNULL, null, null)).isSameAs(AbstractValue.NOTNULL);
+    // variable defined in parentState and trueState, must match
+    assertThat(testMerge(AbstractValue.NOTNULL, AbstractValue.NOTNULL, null)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(testMerge(AbstractValue.NULL, AbstractValue.NULL, null)).isSameAs(AbstractValue.NULL);
+    assertThat(testMerge(AbstractValue.NOTNULL, AbstractValue.NULL, null)).isSameAs(AbstractValue.UNKNOWN);
+    // variable defined in parentState and falseState, must match
+    assertThat(testMerge(AbstractValue.NOTNULL, null, AbstractValue.NOTNULL)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(testMerge(AbstractValue.NULL, null, AbstractValue.NULL)).isSameAs(AbstractValue.NULL);
+    assertThat(testMerge(AbstractValue.NOTNULL, null, AbstractValue.NULL)).isSameAs(AbstractValue.UNKNOWN);
+    // variable defined in trueState and falseState, must match
+    assertThat(testMerge(null, AbstractValue.NOTNULL, AbstractValue.NOTNULL)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(testMerge(null, AbstractValue.NULL, AbstractValue.NULL)).isSameAs(AbstractValue.NULL);
+    assertThat(testMerge(null, AbstractValue.NOTNULL, AbstractValue.NULL)).isSameAs(AbstractValue.UNKNOWN);
+    // variable defined in parentState, trueState and falseState, trueState and falseState must match
+    assertThat(testMerge(AbstractValue.NOTNULL, AbstractValue.NOTNULL, AbstractValue.NOTNULL)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(testMerge(AbstractValue.NOTNULL, AbstractValue.NULL, AbstractValue.NULL)).isSameAs(AbstractValue.NULL);
+    assertThat(testMerge(AbstractValue.NOTNULL, AbstractValue.NOTNULL, AbstractValue.NULL)).isSameAs(AbstractValue.UNKNOWN);
+    assertThat(testMerge(AbstractValue.NULL, AbstractValue.NOTNULL, AbstractValue.NOTNULL)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(testMerge(AbstractValue.NULL, AbstractValue.NULL, AbstractValue.NULL)).isSameAs(AbstractValue.NULL);
+    assertThat(testMerge(AbstractValue.NULL, AbstractValue.NOTNULL, AbstractValue.NULL)).isSameAs(AbstractValue.UNKNOWN);
+  }
+

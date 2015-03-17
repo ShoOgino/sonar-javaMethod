@@ -1,0 +1,18 @@
+  private AbstractValue testMerge(AbstractValue parentValue, AbstractValue trueValue, AbstractValue falseValue) {
+    VariableSymbol variable = mock(VariableSymbol.class);
+    State parentState = new State();
+    if (parentValue != null) {
+      parentState.setVariableValue(variable, parentValue);
+    }
+    State trueState = new State(parentState);
+    if (trueValue != null) {
+      trueState.setVariableValue(variable, trueValue);
+    }
+    if (falseValue == null) {
+      return parentState.merge(trueState, null).getVariableValue(variable);
+    }
+    State falseState = new State(parentState);
+    falseState.setVariableValue(variable, falseValue);
+    return parentState.merge(trueState, falseState).getVariableValue(variable);
+  }
+

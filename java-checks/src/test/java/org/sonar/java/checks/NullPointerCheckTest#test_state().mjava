@@ -1,0 +1,23 @@
+  @Test
+  public void test_state() {
+    VariableSymbol variable = mock(VariableSymbol.class);
+
+    State parentState = new State();
+    State currentState = new State(parentState);
+
+    assertThat(currentState.parentState).isSameAs(parentState);
+
+    // undefined variable must be unknown
+    assertThat(parentState.getVariableValue(variable)).isSameAs(AbstractValue.UNKNOWN);
+
+    // variable defined in parent must be visible in current.
+    parentState.setVariableValue(variable, AbstractValue.NOTNULL);
+    assertThat(parentState.getVariableValue(variable)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(currentState.getVariableValue(variable)).isSameAs(AbstractValue.NOTNULL);
+
+    // variable redefined in current must not affect value in parent.
+    currentState.setVariableValue(variable, AbstractValue.NULL);
+    assertThat(parentState.getVariableValue(variable)).isSameAs(AbstractValue.NOTNULL);
+    assertThat(currentState.getVariableValue(variable)).isSameAs(AbstractValue.NULL);
+  }
+
