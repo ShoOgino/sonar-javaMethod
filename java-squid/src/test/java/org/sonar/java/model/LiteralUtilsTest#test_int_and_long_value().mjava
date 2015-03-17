@@ -1,0 +1,21 @@
+  @Test
+  public void test_int_and_long_value() throws Exception {
+    Integer[] expectedIntegerValues = {42, -7, 3, null, null, null, null};
+    Long[] expectedLongValues = {42L, 42L, -7L, -7L, +3L, +3L, null, null, 255L, null, null, null, Long.MAX_VALUE, Long.MAX_VALUE, null};
+    File file = new File("src/test/java/org/sonar/java/model/LiteralUtilsTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser(Charsets.UTF_8).parse(file);
+    ClassTree classTree = (ClassTree) tree.types().get(0);
+    int i = 0;
+    int j = 0;
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) member;
+        if (variableTree.simpleName().name().startsWith("x")) {
+          assertThat(LiteralUtils.intLiteralValue(variableTree.initializer())).isEqualTo(expectedIntegerValues[i++]);
+        } else {
+          assertThat(LiteralUtils.longLiteralValue(variableTree.initializer())).isEqualTo(expectedLongValues[j++]);
+        }
+      }
+    }
+  }
+
