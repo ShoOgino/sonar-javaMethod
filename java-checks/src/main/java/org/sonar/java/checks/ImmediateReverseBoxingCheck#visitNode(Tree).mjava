@@ -7,11 +7,11 @@
         VariableTreeImpl variableTree = (VariableTreeImpl) tree;
         ExpressionTree initializer = variableTree.initializer();
         if (initializer != null) {
-          checkExpression(initializer, variableTree.getSymbol().getType());
+          checkExpression(initializer, variableTree.type().symbolType());
         }
       } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
-        AssignmentExpressionTreeImpl assignmentTree = (AssignmentExpressionTreeImpl) tree;
-        checkExpression(assignmentTree.expression(), assignmentTree.getSymbolType());
+        AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) tree;
+        checkExpression(assignmentTree.expression(), assignmentTree.symbolType());
       } else {
         NewClassTreeImpl newClassTree = (NewClassTreeImpl) tree;
         TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);

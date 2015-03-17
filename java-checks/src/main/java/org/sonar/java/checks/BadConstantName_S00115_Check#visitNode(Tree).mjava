@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.VARIABLE) && hasSemantic()) {
+        VariableTree variableTree = (VariableTree) member;
+        Type symbolType = variableTree.type().symbolType();
+        if (isConstantType(symbolType) && (classTree.is(Tree.Kind.INTERFACE, Tree.Kind.ANNOTATION_TYPE) || isStaticFinal(variableTree))) {
+          checkName(variableTree);
+        }
+      } else if (member.is(Tree.Kind.ENUM_CONSTANT)) {
+        checkName((VariableTree) member);
+      }
+    }
+  }
+

@@ -4,14 +4,14 @@
       return;
     }
     MethodTree methodTree = (MethodTree) tree;
-    List<VariableSymbol> booleanParameterSymbols = getBooleanParametersAsSymbol(methodTree.parameters());
+    List<Symbol> booleanParameterSymbols = getBooleanParametersAsSymbol(methodTree.parameters());
     BlockTree blockTree = methodTree.block();
 
     if (isPublic(methodTree) && blockTree != null && !booleanParameterSymbols.isEmpty()) {
-      for (VariableSymbol variable : booleanParameterSymbols) {
-        Collection<IdentifierTree> usages = getSemanticModel().getUsages(variable);
+      for (Symbol variable : booleanParameterSymbols) {
+        Collection<IdentifierTree> usages = getSemanticModel().getUsages((org.sonar.java.resolve.Symbol) variable);
         if (usages.size() == 1) {
-          blockTree.accept(new ConditionalStatementVisitor(variable.getName(), Iterables.get(usages, 0), tree));
+          blockTree.accept(new ConditionalStatementVisitor(variable.name(), Iterables.get(usages, 0), tree));
         }
       }
     }
