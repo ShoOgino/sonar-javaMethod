@@ -1,0 +1,10 @@
+  @Override
+  public void visitWhileStatement(WhileStatementTree tree) {
+    ConditionalState conditionalState = visitCondition(tree.condition());
+    currentState = conditionalState.trueState;
+    scan(tree.statement());
+    // restores the parent state and discards the constraints found in the condition.
+    // e.g. if a == null before the loop, and a != null in the condition, then the merge will set a to UNKNOWN after the loop.
+    currentState = currentState.parentState.mergeValues(conditionalState.trueState, conditionalState.falseState);
+  }
+

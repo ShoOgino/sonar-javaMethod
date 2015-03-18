@@ -1,14 +1,12 @@
   @Override
   public void visitIfStatement(IfStatementTree tree) {
-    State trueState = new State(currentState);
-    State falseState = tree.elseStatement() != null ? new State(currentState) : null;
-    visitCondition(tree.condition(), trueState, falseState);
-    currentState = trueState;
+    ConditionalState conditionalState = visitCondition(tree.condition());
+    currentState = conditionalState.trueState;
     tree.thenStatement().accept(this);
     if (tree.elseStatement() != null) {
-      currentState = falseState;
+      currentState = conditionalState.falseState;
       tree.elseStatement().accept(this);
     }
-    currentState = currentState.parentState.merge(trueState, falseState);
+    currentState = currentState.parentState.mergeValues(conditionalState.trueState, conditionalState.falseState);
   }
 

@@ -1,0 +1,36 @@
+  @Test
+  public void test_state_merge_conditional_and() {
+    VariableSymbol variable1 = mock(VariableSymbol.class);
+    VariableSymbol variable2 = mock(VariableSymbol.class);
+    VariableSymbol variable3 = mock(VariableSymbol.class);
+
+    // initial state with variables set to null.
+    State currentState = new State();
+    currentState.setVariableValue(variable1, NULL);
+    currentState.setVariableValue(variable2, NULL);
+    currentState.setVariableValue(variable3, NULL);
+
+    State conditionState = new State(currentState);
+    ConditionalState conditionalState = new ConditionalState(conditionState);
+
+    // simulates variable1 != null && variable2 != null
+    ConditionalState leftConditionalState = new ConditionalState(conditionState);
+    leftConditionalState.trueState.setVariableValue(variable1, NOTNULL);
+    leftConditionalState.falseState.setVariableValue(variable1, NULL);
+    ConditionalState rightConditionalState = new ConditionalState(leftConditionalState.trueState);
+    rightConditionalState.trueState.setVariableValue(variable2, NOTNULL);
+    rightConditionalState.falseState.setVariableValue(variable2, NULL);
+    conditionalState.mergeConditionalAnd(leftConditionalState, rightConditionalState);
+
+    // in the resulting trueState both conditions are true
+    assertThat(conditionalState.trueState.getVariableValue(variable1)).isSameAs(NOTNULL);
+    assertThat(conditionalState.trueState.getVariableValue(variable2)).isSameAs(NOTNULL);
+    // in the resulting falesState variable1 is unknown, since its condition was both true and false,
+    // and variable2 is unknown, since its condition was either false or not tested.
+    assertThat(conditionalState.falseState.getVariableValue(variable1)).isSameAs(UNKNOWN);
+    assertThat(conditionalState.falseState.getVariableValue(variable2)).isSameAs(UNKNOWN);
+    // variables not checked in conditions must remain unchanged.
+    assertThat(conditionalState.trueState.getVariableValue(variable3)).isSameAs(NULL);
+    assertThat(conditionalState.falseState.getVariableValue(variable3)).isSameAs(NULL);
+  }
+

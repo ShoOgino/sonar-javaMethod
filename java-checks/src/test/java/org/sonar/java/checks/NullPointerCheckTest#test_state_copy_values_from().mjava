@@ -1,0 +1,19 @@
+  @Test
+  public void test_state_copy_values_from() {
+    VariableSymbol parentVariable = mock(VariableSymbol.class);
+    VariableSymbol childVariable = mock(VariableSymbol.class);
+    VariableSymbol bothVariable = mock(VariableSymbol.class);
+    State parentState = new State();
+    parentState.setVariableValue(parentVariable, NULL);
+    parentState.setVariableValue(bothVariable, NULL);
+    State childState = new State(parentState);
+    childState.setVariableValue(childVariable, NOTNULL);
+    childState.setVariableValue(bothVariable, NOTNULL);
+
+    parentState.copyValuesFrom(childState);
+
+    assertThat(parentState.getVariableValue(parentVariable)).isSameAs(NULL);
+    assertThat(parentState.getVariableValue(childVariable)).isSameAs(NOTNULL);
+    assertThat(parentState.getVariableValue(bothVariable)).isSameAs(NOTNULL);
+  }
+

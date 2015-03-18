@@ -1,12 +1,10 @@
   @Override
   public void visitConditionalExpression(ConditionalExpressionTree tree) {
-    State trueState = new State(currentState);
-    State falseState = new State(currentState);
-    visitCondition(tree.condition(), trueState, falseState);
-    currentState = trueState;
+    ConditionalState conditionalState = visitCondition(tree.condition());
+    currentState = conditionalState.trueState;
     tree.trueExpression().accept(this);
-    currentState = falseState;
+    currentState = conditionalState.falseState;
     tree.falseExpression().accept(this);
-    currentState = currentState.parentState.merge(trueState, falseState);
+    currentState = currentState.parentState.mergeValues(conditionalState.trueState, conditionalState.falseState);
   }
 

@@ -1,0 +1,15 @@
+  @Test
+  public void test_state_invalidate_values() {
+    State parentState = new State();
+    State currentState = new State(parentState);
+    VariableSymbol parentVariable = mock(VariableSymbol.class);
+    VariableSymbol childVariable = mock(VariableSymbol.class);
+    parentState.setVariableValue(parentVariable, NULL);
+    currentState.setVariableValue(childVariable, NULL);
+
+    assertThat(currentState.invalidateValues()).isSameAs(currentState);
+
+    assertThat(currentState.getVariableValue(childVariable)).isSameAs(UNKNOWN);
+    assertThat(currentState.getVariableValue(parentVariable)).isSameAs(NULL);
+  }
+

@@ -1,0 +1,12 @@
+  // extracts the symbol in case of ident <op> null, or null <op> ident.
+  @Nullable
+  private VariableSymbol extractRelationalSymbol(BinaryExpressionTree tree) {
+    if (tree.leftOperand().is(Tree.Kind.NULL_LITERAL) && tree.rightOperand().is(Tree.Kind.IDENTIFIER)) {
+      return (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.rightOperand());
+    } else if (tree.leftOperand().is(Tree.Kind.IDENTIFIER) && tree.rightOperand().is(Tree.Kind.NULL_LITERAL)) {
+      return (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.leftOperand());
+    } else {
+      return null;
+    }
+  }
+
