@@ -1,0 +1,19 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    scan(tree.resources());
+    State blockState = new State(currentState);
+    currentState = blockState;
+    scan(tree.block());
+    for (CatchTree catchTree : tree.catches()) {
+      currentState = new State(blockState.parentState);
+      scan(catchTree);
+      blockState.merge(currentState, null);
+    }
+    if (tree.finallyBlock() != null) {
+      currentState = new State(blockState.parentState);
+      scan(tree.finallyBlock());
+      blockState.merge(currentState, null);
+    }
+    currentState = blockState.parentState.merge(blockState, null);
+  }
+
