@@ -3,8 +3,8 @@
     CompilationUnitTree compilationUnit = treeOf("@interface MyAnnotation { } @MyAnnotation class Class { }");
     ClassTreeImpl annotation = (ClassTreeImpl) compilationUnit.types().get(0);
     ClassTreeImpl clazz = (ClassTreeImpl) compilationUnit.types().get(1);
-    List<AnnotationInstance> annotations = clazz.getSymbol().metadata().annotations();
+    List<AnnotationInstance> annotations = ((Symbol.TypeSymbol) clazz.symbol()).metadata().annotations();
     assertThat(annotations.size()).isEqualTo(1);
-    assertThat(annotations.get(0).isTyped(annotation.getSymbol().getName())).isTrue();
+    assertThat(annotations.get(0).isTyped(annotation.symbol().name())).isTrue();
   }
 
