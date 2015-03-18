@@ -1,10 +1,9 @@
   private boolean hasOneAbstractMethod(ClassTree classTree) {
-
-    org.sonar.java.resolve.Symbol.TypeSymbol symbol = ((ClassTreeImpl) classTree).getSymbol();
+    TypeSymbolSemantic symbol = classTree.symbol();
     if (symbol != null) {
-      List<Type> types = symbol.getInterfaces();
+      List<Type> types = symbol.interfaces();
       for (Type type : types) {
-        if (!type.getSymbol().members().scopeSymbols().isEmpty()) {
+        if (!type.symbol().memberSymbols().isEmpty()) {
           return false;
         }
       }

@@ -1,7 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    Tree identifier = ((NewClassTree) tree).identifier();
-    TypeSymbol newClassTypeSymbol = ((AbstractTypedTree) identifier).getSymbolType().getSymbol();
+    TypeTree identifier = ((NewClassTree) tree).identifier();
+    Symbol.TypeSymbolSemantic newClassTypeSymbol = identifier.symbolType().symbol();
     if (!newClassTypeSymbol.isEnum() && hasOnlyStaticMethods(newClassTypeSymbol) && !instantiateOwnClass(identifier, newClassTypeSymbol)) {
       String message = "Remove this instantiation.";
       String name = getNewClassName(identifier);
