@@ -1,0 +1,36 @@
+  public void foo() throws Exception {
+    FileInputStream is = new FileInputStream("");
+    byte[] buffer = new byte[1000];
+    long skipValue = 12L;
+
+    is.read(buffer); // Noncompliant
+    is.skip(skipValue); // Noncompliant
+    getInputStream().read(buffer); // Noncompliant
+    getInputStream().skip(skipValue); // Noncompliant
+
+    // return values are used
+    int i;
+    int l;
+    i= is.read(buffer); // Compliant
+    l = is.skip(skipValue); // Compliant
+
+    // methods not overriding the skip/read from InputStream
+    MyInputStream mis = new MyInputStream();
+    mis.skip(); // compliant
+    mis.skip(true); // compliant
+    mis.skip('c'); // compliant
+    mis.skip(0L, 0L); // Compliant
+    mis.read(0L); // Compliant
+    mis.read(buffer, null); // Compliant
+    mis.read(buffer, 0, 0); // Compliant
+
+    // same signature but no subtype of InputStream
+    MyClass mc = new MyClass();
+    mc.read(buffer); // Compliant 
+    mc.skip(skipValue); // Complian
+    read(buffer); // compliant
+    skip(skipValue); // compliant
+    
+    MyUnknownClass.unknownMethod(); // Compliant
+  }
+
