@@ -32,8 +32,15 @@
         Preconditions.checkState(sym == null);
         sym = idents.get(tree);
       }
-      if (tree instanceof AbstractTypedTree) {
-        sb.append(" ").append(((AbstractTypedTree) tree).getSymbolType());
+      Type type = null;
+      if (tree instanceof ExpressionTree) {
+        type = ((ExpressionTree) tree).symbolType();
+
+      } else if (tree instanceof TypeTree) {
+        type = ((TypeTree) tree).symbolType();
+      }
+      if(type != null) {
+        sb.append(" ").append(type.fullyQualifiedName());
       }
 
       if (sym != null && semanticModel != null) {
