@@ -1,10 +1,9 @@
   @Override
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
-      ClassTreeImpl classTree = (ClassTreeImpl) tree;
-      TypeSymbol classSymbol = classTree.getSymbol();
-      if (isSerializable(classSymbol.getType()) && !isSerializable(classSymbol.getSuperclass())) {
-        Type superclass = classSymbol.getSuperclass();
+      Symbol.TypeSymbolSemantic classSymbol = ((ClassTree) tree).symbol();
+      if (isSerializable(classSymbol.type()) && !isSerializable(classSymbol.superClass())) {
+        Type superclass = classSymbol.superClass();
         if (!hasNonPrivateNoArgConstructor(superclass)) {
           addIssue(tree, "Add a no-arg constructor to \"" + superclass + "\".");
         }

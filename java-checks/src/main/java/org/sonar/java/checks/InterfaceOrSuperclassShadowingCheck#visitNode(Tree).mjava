@@ -1,10 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
-    ClassTreeImpl classTree = (ClassTreeImpl) tree;
+    ClassTree classTree = (ClassTree) tree;
     if (hasSemantic()) {
-      TypeSymbol classSymbol = classTree.getSymbol();
-      checkSuperType(classTree, classSymbol.getSuperclass());
-      for (Type interfaceType : classSymbol.getInterfaces()) {
+      Symbol.TypeSymbolSemantic classSymbol = classTree.symbol();
+      checkSuperType(classTree, classSymbol.superClass());
+      for (Type interfaceType : classSymbol.interfaces()) {
         checkSuperType(classTree, interfaceType);
       }
     }

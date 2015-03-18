@@ -1,14 +1,15 @@
-  private boolean implementsSerializable(@Nullable Type type) {
-    if (type == null || type.isTagged(Type.UNKNOWN)) {
+  private boolean implementsSerializable(@Nullable Type semanticType) {
+    org.sonar.java.resolve.Type type = (org.sonar.java.resolve.Type) semanticType;
+    if (type == null || type.isTagged(org.sonar.java.resolve.Type.UNKNOWN)) {
       return false;
     }
     if (type.isPrimitive()) {
       return true;
     }
-    if (type.isTagged(Type.ARRAY)) {
-      return implementsSerializable(((Type.ArrayType) type).elementType());
+    if (type.isArray()) {
+      return implementsSerializable(((org.sonar.java.resolve.Type.ArrayType) type).elementType());
     }
-    if (type.isTagged(Type.CLASS) || type.isTagged(Type.TYPEVAR)) {
+    if (type.isClass() || type.isTagged(org.sonar.java.resolve.Type.TYPEVAR)) {
       return type.erasure().isSubtypeOf("java.io.Serializable");
     }
     return false;

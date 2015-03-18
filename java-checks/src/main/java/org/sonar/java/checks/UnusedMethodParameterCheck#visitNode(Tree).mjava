@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    if (hasSemantic() && methodTree.block() != null && !isExcluded(methodTree)) {
+      List<String> unused = Lists.newArrayList();
+      for (VariableTree var : methodTree.parameters()) {
+        Symbol sym = getSemanticModel().getSymbol(var);
+        if (sym != null && getSemanticModel().getUsages(sym).isEmpty()) {
+          unused.add(var.simpleName().name());
+        }
+      }
+      if (!unused.isEmpty()) {
+        addIssue(methodTree, "Remove the unused method parameter(s) \"" + Joiner.on(",").join(unused) + "\".");
+      }
+    }
+  }
+

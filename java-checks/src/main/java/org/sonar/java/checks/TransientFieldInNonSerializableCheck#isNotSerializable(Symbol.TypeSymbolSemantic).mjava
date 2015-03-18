@@ -1,0 +1,9 @@
+  private boolean isNotSerializable(Symbol.TypeSymbolSemantic symbol) {
+    for (ClassType superType : ((TypeSymbol) symbol).superTypes()) {
+      if (superType.isTagged(Type.UNKNOWN)) {
+        return false;
+      }
+    }
+    return !symbol.type().isSubtypeOf("java.io.Serializable");
+  }
+

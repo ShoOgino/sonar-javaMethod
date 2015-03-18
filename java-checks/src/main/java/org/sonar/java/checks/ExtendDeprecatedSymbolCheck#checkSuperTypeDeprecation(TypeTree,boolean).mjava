@@ -1,0 +1,10 @@
+  private void checkSuperTypeDeprecation(@Nullable TypeTree superTypeTree, boolean isInterface) {
+    if (superTypeTree != null) {
+      Type symbolType = superTypeTree.symbolType();
+      if (symbolType.isClass() && symbolType.symbol().isDeprecated()) {
+        addIssue(superTypeTree, "\"" + symbolType.symbol().name() + "\"" + " is deprecated, "
+          + (isInterface ? "implement" : "extend") + " the suggested replacement instead.");
+      }
+    }
+  }
+

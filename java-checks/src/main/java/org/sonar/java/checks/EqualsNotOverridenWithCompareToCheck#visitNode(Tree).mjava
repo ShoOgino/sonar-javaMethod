@@ -1,10 +1,11 @@
   @Override
-  public void visitClass(ClassTree tree) {
-    if ((tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM)) && isComparable(tree)) {
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (isComparable(classTree)) {
       boolean hasEquals = false;
       Tree compare = null;
 
-      for (Tree member : tree.members()) {
+      for (Tree member : classTree.members()) {
         if (member.is(Tree.Kind.METHOD)) {
           MethodTree method = (MethodTree) member;
 
@@ -17,9 +18,8 @@
       }
 
       if (compare != null && !hasEquals) {
-        context.addIssue(compare, ruleKey, "Override \"equals(Object obj)\" to comply with the contract of the \"compareTo(T o)\" method.");
+        addIssue(compare, "Override \"equals(Object obj)\" to comply with the contract of the \"compareTo(T o)\" method.");
       }
     }
-    super.visitClass(tree);
   }
 
