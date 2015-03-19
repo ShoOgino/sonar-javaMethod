@@ -2,9 +2,9 @@
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
       if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-        visitMethodInvocationTree((MethodInvocationTreeImpl) tree);
+        visitMethodInvocationTree((MethodInvocationTree) tree);
       } else if (tree.is(Tree.Kind.VARIABLE)) {
-        VariableTreeImpl variableTree = (VariableTreeImpl) tree;
+        VariableTree variableTree = (VariableTree) tree;
         ExpressionTree initializer = variableTree.initializer();
         if (initializer != null) {
           checkExpression(initializer, variableTree.type().symbolType());
@@ -13,8 +13,8 @@
         AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) tree;
         checkExpression(assignmentTree.expression(), assignmentTree.symbolType());
       } else {
-        NewClassTreeImpl newClassTree = (NewClassTreeImpl) tree;
-        TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);
+        NewClassTree newClassTree = (NewClassTree) tree;
+        Symbol.TypeSymbolSemantic classSymbol = wrapperClassSymbol(newClassTree);
         if (classSymbol != null) {
           checkForUnboxing(newClassTree.arguments().get(0));
         }
