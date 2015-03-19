@@ -1,14 +1,14 @@
   private boolean parentClassImplementsEquals(ClassTree tree) {
-    Tree superClass = tree.superClass();
+    TypeTree superClass = tree.superClass();
     if (superClass != null) {
-      Type superClassType = ((AbstractTypedTree) superClass).getSymbolType();
+      Type superClassType = superClass.symbolType();
       // FIXME Workaround until SONARJAVA-901 is resolved
-      while (!superClassType.getSymbol().getType().isTagged(Type.UNKNOWN) && !superClassType.is("java.lang.Object")) {
-        TypeSymbol superClassSymbol = superClassType.getSymbol();
+      while (superClassType.symbol().type().isClass() && !superClassType.is("java.lang.Object")) {
+        Symbol.TypeSymbolSemantic superClassSymbol = superClassType.symbol();
         if (hasNotFinalEqualsMethod(superClassSymbol)) {
           return true;
         }
-        superClassType = superClassSymbol.getSuperclass();
+        superClassType = superClassSymbol.superClass();
       }
     }
     return false;
