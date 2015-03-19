@@ -1,6 +1,8 @@
   @Test
   public void varargs_flag() {
-    assertThat((getUniqueMethod("class A { public static void main(String[] args){} }").getSymbol().flags() & Flags.VARARGS) != 0).isFalse();
-    assertThat((getUniqueMethod("class A { public static void main(String... args){} }").getSymbol().flags() & Flags.VARARGS) != 0).isTrue();
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) getUniqueMethod("class A { public static void main(String[] args){} }").symbol();
+    assertThat((methodSymbol.flags() & Flags.VARARGS) != 0).isFalse();
+    methodSymbol = (Symbol.MethodSymbol) getUniqueMethod("class A { public static void main(String... args){} }").symbol();
+    assertThat((methodSymbol.flags() & Flags.VARARGS) != 0).isTrue();
   }
 

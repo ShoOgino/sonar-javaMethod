@@ -1,11 +1,5 @@
   private boolean isIteratorMethod(Symbol method) {
-    TypeSymbol methodOwner = (TypeSymbol) method.owner().enclosingClass();
-    Set<ClassType> superTypes = methodOwner.superTypes();
-    for (ClassType classType : superTypes) {
-      if (classType.is("java.util.Iterator")) {
-        return true;
-      }
-    }
-    return false;
+    Type type = method.owner().enclosingClass().type();
+    return !type.is("java.util.Iterator") && type.isSubtypeOf("java.util.Iterator");
   }
 
