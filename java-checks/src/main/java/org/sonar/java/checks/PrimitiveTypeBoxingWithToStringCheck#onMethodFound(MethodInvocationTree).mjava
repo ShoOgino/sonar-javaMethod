@@ -1,8 +1,8 @@
   @Override
   protected void onMethodFound(MethodInvocationTree mit) {
-    AbstractTypedTree abstractTypedTree = (AbstractTypedTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression();
+    ExpressionTree abstractTypedTree = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
     if (abstractTypedTree.is(Kind.NEW_CLASS) || isValueOfInvocation(abstractTypedTree)) {
-      String typeName = abstractTypedTree.getSymbolType().toString();
+      String typeName = abstractTypedTree.symbolType().toString();
       addIssue(mit, "Use \"" + typeName + ".toString\" instead.");
     }
   }

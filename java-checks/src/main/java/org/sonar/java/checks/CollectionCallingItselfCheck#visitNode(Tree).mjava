@@ -3,13 +3,13 @@
     if (hasSemantic()) {
       MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
       Symbol symbolReference = null;
-      org.sonar.java.resolve.Symbol.MethodSymbol method = null;
+      Symbol.MethodSymbolSemantic method = null;
       String reportedName = "";
       if (methodInvocationTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mse = (MemberSelectExpressionTree) methodInvocationTree.methodSelect();
         IdentifierTree identifier = mse.identifier();
         reportedName = identifier.name();
-        method = (org.sonar.java.resolve.Symbol.MethodSymbol) getSemanticModel().getReference(identifier);
+        method = (Symbol.MethodSymbolSemantic) getSemanticModel().getReference(identifier);
         if (mse.expression().is(Tree.Kind.IDENTIFIER)) {
           symbolReference = getSemanticModel().getReference((IdentifierTree) mse.expression());
         }

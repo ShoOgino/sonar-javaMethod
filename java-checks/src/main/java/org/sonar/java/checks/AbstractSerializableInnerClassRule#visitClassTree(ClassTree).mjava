@@ -3,13 +3,13 @@
     if (isInnerClass(symbol) && directlyImplementsSerializable(symbol)) {
       Symbol owner = symbol.owner();
       if (owner.isTypeSymbol()) {
-        TypeSymbol ownerType = (TypeSymbol) owner;
-        if (isMatchingOuterClass(ownerType.getType()) && !symbol.isStatic()) {
+        Symbol.TypeSymbolSemantic ownerType = (Symbol.TypeSymbolSemantic) owner;
+        if (isMatchingOuterClass(ownerType.type()) && !symbol.isStatic()) {
           addIssue(classTree, "Make this inner class static");
         }
       } else if (owner.isMethodSymbol()) {
-        TypeSymbol methodOwner = (TypeSymbol) owner.owner();
-        if (isMatchingOuterClass(methodOwner.getType()) && !owner.isStatic()) {
+        Symbol.TypeSymbolSemantic methodOwner = (Symbol.TypeSymbolSemantic) owner.owner();
+        if (isMatchingOuterClass(methodOwner.type()) && !owner.isStatic()) {
           String methodName = owner.name();
           addIssue(classTree, "Make \"" + methodName + "\" static");
         }
