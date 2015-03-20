@@ -4,8 +4,8 @@
       addArgsToExclusion(tree);
     } else if (!excluded.contains(tree)) {
       TypeCastTree typeCastTree = (TypeCastTree) tree;
-      Type cast = ((AbstractTypedTree) typeCastTree.type()).getSymbolType();
-      Type expressionType = ((AbstractTypedTree) typeCastTree.expression()).getSymbolType();
+      Type cast = (Type) typeCastTree.type().symbolType();
+      Type expressionType = (Type) typeCastTree.expression().symbolType();
       Types types = new Types();
       if (!isExcluded(cast, expressionType) && (isRedundantNumericalCast(cast, expressionType) || isRedundantCast(cast, expressionType, types))) {
         addIssue(tree, "Remove this unnecessary cast to \"" + cast + "\".");
