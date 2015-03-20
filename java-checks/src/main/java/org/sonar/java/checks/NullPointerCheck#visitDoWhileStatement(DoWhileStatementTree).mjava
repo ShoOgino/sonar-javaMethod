@@ -1,0 +1,9 @@
+  @Override
+  public void visitDoWhileStatement(DoWhileStatementTree tree) {
+    currentState.invalidateValuesOfHierarchy();
+    currentState = new State(currentState);
+    scan(tree.statement());
+    visitCondition(tree.condition());
+    restorePreviousState();
+  }
+
