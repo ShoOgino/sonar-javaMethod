@@ -1,12 +1,15 @@
   @Test
   public void detected() {
-    SourceFile file = BytecodeFixture.scan("ThreadRunCheck", check);
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ThreadRunCheck.java"), new VisitorsBridge(check));
     checkMessagesVerifier
       .verify(file.getCheckMessages())
-      .next().atLine(29).withMessage("Call the method Thread.start() to execute the content of the run() method in a dedicated thread.")
-      .next().atLine(39)
-      .next().atLine(42)
-      .next().atLine(45)
-      .next().atLine(53);
+      .next().atLine(8).withMessage("Call the method Thread.start() to execute the content of the run() method in a dedicated thread.")
+      .next().atLine(18)
+      .next().atLine(21)
+      .next().atLine(24)
+      .next().atLine(32)
+      .next().atLine(53)
+      .next().atLine(54)
+      .noMore();
   }
 
