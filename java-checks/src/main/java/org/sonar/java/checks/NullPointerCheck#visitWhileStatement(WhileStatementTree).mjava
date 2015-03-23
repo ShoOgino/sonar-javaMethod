@@ -1,9 +1,11 @@
   @Override
   public void visitWhileStatement(WhileStatementTree tree) {
     ConditionalState conditionalState = visitCondition(tree.condition());
-    currentState.invalidateValuesOfHierarchy();
+    Set<VariableSymbol> assignedVariables = new AssignmentVisitor().findAssignedVariables(tree.statement());
     currentState = conditionalState.trueState;
+    currentState.invalidateVariables(assignedVariables);
     scan(tree.statement());
     restorePreviousState();
+    currentState.invalidateVariables(assignedVariables);
   }
 

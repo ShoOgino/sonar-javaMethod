@@ -1,7 +1,5 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
-    // currently we only handle assignment of the form: identifier =
-    // TODO(merciesa): array[expr] = and mse.identifier = requires advanced tracking and are left outside of the scope
     if (tree.variable().is(Tree.Kind.IDENTIFIER)) {
       VariableSymbol identifierSymbol = (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.variable());
       currentState.setVariableValue(identifierSymbol, checkNullity(tree.expression()));

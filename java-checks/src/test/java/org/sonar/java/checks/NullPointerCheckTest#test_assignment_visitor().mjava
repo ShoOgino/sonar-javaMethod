@@ -1,0 +1,17 @@
+  @Test
+  public void test_assignment_visitor() {
+    AssignmentVisitor visitor = new NullPointerCheck().new AssignmentVisitor();
+    visitor.registerAssignedSymbol(null);
+    assertThat(visitor.assignedSymbols).isEmpty();
+
+    Symbol methodSymbol = mock(Symbol.class);
+    when(methodSymbol.isVariableSymbol()).thenReturn(false);
+    visitor.registerAssignedSymbol(methodSymbol);
+    assertThat(visitor.assignedSymbols).isEmpty();
+
+    VariableSymbol variableSymbol = mock(VariableSymbol.class);
+    when(variableSymbol.isVariableSymbol()).thenReturn(true);
+    visitor.registerAssignedSymbol(variableSymbol);
+    assertThat(visitor.assignedSymbols.size()).isEqualTo(1);
+  }
+
