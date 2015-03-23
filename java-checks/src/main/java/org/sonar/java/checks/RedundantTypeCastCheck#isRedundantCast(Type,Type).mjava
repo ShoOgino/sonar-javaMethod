@@ -1,0 +1,8 @@
+  private boolean isRedundantCast(Type cast, Type expressionType) {
+    Type erasedExpressionType = expressionType;
+    if(erasedExpressionType.isTagged(Type.TYPEVAR)) {
+      erasedExpressionType = erasedExpressionType.erasure();
+    }
+    return erasedExpressionType.equals(cast) || (!(cast instanceof Type.ParametrizedTypeType) && !cast.isNumerical() && erasedExpressionType.isSubtypeOf(cast));
+  }
+

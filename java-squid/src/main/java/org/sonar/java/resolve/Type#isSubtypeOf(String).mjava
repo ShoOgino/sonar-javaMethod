@@ -5,9 +5,12 @@
         return true;
       }
     } else if (isTagged(ARRAY)) {
-      return fullyQualifiedName.endsWith("[]") && ((ArrayType) this).elementType.isSubtypeOf(fullyQualifiedName.substring(0, fullyQualifiedName.length() - 2));
+      return fullyQualifiedName.equals("java.lang.Object") ||
+          (fullyQualifiedName.endsWith("[]") && ((ArrayType) this).elementType.isSubtypeOf(fullyQualifiedName.substring(0, fullyQualifiedName.length() - 2)));
     } else if (isTagged(TYPEVAR)) {
       return erasure().isSubtypeOf(fullyQualifiedName);
+    } else if (isTagged(BOT)) {
+      return true;
     }
     return false;
   }
