@@ -1,13 +1,6 @@
   public AbstractValue checkNullity(Tree tree) {
     if (tree.is(Tree.Kind.IDENTIFIER)) {
-      Symbol symbol = semanticModel.getReference((IdentifierTreeImpl) tree);
-      if (isSymbolLocalVariableOrMethodParameter(symbol)) {
-        AbstractValue value = currentState.getVariableValue((VariableSymbol) symbol);
-        if (value != AbstractValue.UNSET) {
-          return value;
-        }
-        return checkNullity(symbol);
-      }
+      return checkNullity((IdentifierTree)tree);
     } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       Symbol symbol = ((MethodInvocationTree) tree).symbol();
       if (symbol.isMethodSymbol()) {
@@ -16,7 +9,6 @@
     } else if (tree.is(Tree.Kind.NULL_LITERAL)) {
       return AbstractValue.NULL;
     }
-    // FIXME(merciesa): should use annotation on package and class
     return AbstractValue.UNKNOWN;
   }
 

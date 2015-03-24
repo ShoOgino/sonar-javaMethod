@@ -1,0 +1,12 @@
+  public AbstractValue checkNullity(IdentifierTree tree) {
+    Symbol symbol = semanticModel.getReference((IdentifierTreeImpl) tree);
+    if (isSymbolLocalVariableOrMethodParameter(symbol)) {
+      AbstractValue value = currentState.getVariableValue((VariableSymbol) symbol);
+      if (value != AbstractValue.UNSET) {
+        return value;
+      }
+      return checkNullity(symbol);
+    }
+    return AbstractValue.UNKNOWN;
+  }
+
