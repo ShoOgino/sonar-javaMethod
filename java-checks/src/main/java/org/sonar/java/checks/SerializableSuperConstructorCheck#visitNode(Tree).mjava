@@ -2,11 +2,9 @@
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
       Symbol.TypeSymbol classSymbol = ((ClassTree) tree).symbol();
-      if (isSerializable(classSymbol.type()) && !isSerializable(classSymbol.superClass())) {
-        Type superclass = classSymbol.superClass();
-        if (!hasNonPrivateNoArgConstructor(superclass)) {
+      Type superclass = classSymbol.superClass();
+      if (isSerializable(classSymbol.type()) && isNotSerializableMissingNoArgConstructor(superclass)) {
           addIssue(tree, "Add a no-arg constructor to \"" + superclass + "\".");
-        }
       }
     }
   }

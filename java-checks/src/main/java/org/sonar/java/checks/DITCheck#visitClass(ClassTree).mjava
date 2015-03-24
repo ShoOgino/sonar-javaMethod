@@ -1,10 +1,10 @@
   @Override
   public void visitClass(ClassTree tree) {
-    Symbol.TypeSymbol typeSymbol = tree.symbol();
+    Type superClass = tree.symbol().superClass();
     int dit = 0;
-    while(typeSymbol.superClass() != null ){
+    while(superClass != null ){
       dit++;
-      typeSymbol = typeSymbol.superClass().symbol();
+      superClass = superClass.symbol().superClass();
     }
     if(dit > max) {
       context.addIssue(tree, ruleKey, "This class has "+dit+" parents which is greater than "+max+" authorized.");
