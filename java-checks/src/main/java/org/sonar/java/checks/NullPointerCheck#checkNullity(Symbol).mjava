@@ -1,11 +1,8 @@
   private AbstractValue checkNullity(Symbol symbol) {
-    for (AnnotationInstance annotation : ((org.sonar.java.resolve.Symbol) symbol).metadata().annotations()) {
-      if (annotation.isTyped("javax.annotation.Nonnull")) {
-        return AbstractValue.NOTNULL;
-      }
-      if (annotation.isTyped("javax.annotation.CheckForNull") || annotation.isTyped("javax.annotation.Nullable")) {
-        return AbstractValue.NULL;
-      }
+    if (symbol.metadata().isAnnotatedWith("javax.annotation.Nonnull")) {
+      return AbstractValue.NOTNULL;
+    } else if (symbol.metadata().isAnnotatedWith("javax.annotation.CheckForNull") || symbol.metadata().isAnnotatedWith("javax.annotation.Nullable")) {
+      return AbstractValue.NULL;
     }
     // FIXME(merciesa): should use annotation on package and class
     return AbstractValue.UNKNOWN;
