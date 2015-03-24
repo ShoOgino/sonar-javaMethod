@@ -1,9 +1,9 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+    super.visitAssignmentExpression(tree);
     if (tree.variable().is(Tree.Kind.IDENTIFIER)) {
       VariableSymbol identifierSymbol = (VariableSymbol) semanticModel.getReference((IdentifierTreeImpl) tree.variable());
       currentState.setVariableValue(identifierSymbol, checkNullity(tree.expression()));
     }
-    super.visitAssignmentExpression(tree);
   }
 
