@@ -1,0 +1,13 @@
+  @CheckForNull
+  private Tree getPreparedStatementReference(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (expression.is(Kind.IDENTIFIER)) {
+        Symbol referenceSymbol = getSemanticModel().getReference((IdentifierTree) expression);
+        return getSemanticModel().getTree(referenceSymbol);
+      }
+    }
+    return null;
+  }
+

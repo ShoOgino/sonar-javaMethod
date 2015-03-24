@@ -1,0 +1,14 @@
+  @CheckForNull
+  private Integer getNumberParametersFromPreparedStatement(Tree tree) {
+    if (tree != null && tree.is(Kind.VARIABLE)) {
+      ExpressionTree initializer = ((VariableTree) tree).initializer();
+      if (initializer != null && initializer.is(Kind.METHOD_INVOCATION)) {
+        List<ExpressionTree> arguments = ((MethodInvocationTree) initializer).arguments();
+        if (!arguments.isEmpty() && arguments.get(0).is(Tree.Kind.STRING_LITERAL)) {
+          return StringUtils.countMatches(((LiteralTree) arguments.get(0)).value(), "?");
+        }
+      }
+    }
+    return null;
+  }
+
