@@ -1,13 +1,13 @@
-  private boolean parametersAcceptable(Symbol.MethodSymbol methodSymbol) {
+  private boolean parametersAcceptable(MethodSymbol methodSymbol) {
     if (parameterTypes == null) {
       return true;
     }
     List<Type> parametersTypes = methodSymbol.parameterTypes();
-    List<String> arguments = parameterTypes;
+    List<TypeCriteria> arguments = parameterTypes;
     if (parametersTypes.size() == arguments.size()) {
       int i = 0;
       for (Type parameterType : parametersTypes) {
-        if (!parameterType.is(arguments.get(i))) {
+        if (!arguments.get(i).matches(parameterType)) {
           return false;
         }
         i++;
