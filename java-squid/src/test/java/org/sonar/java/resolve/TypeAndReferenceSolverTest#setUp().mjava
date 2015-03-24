@@ -3,39 +3,39 @@
    */
   @Before
   public void setUp() {
-    Symbol.PackageSymbol p = symbols.defaultPackage;
+    JavaSymbol.PackageJavaSymbol p = symbols.defaultPackage;
     p.members = new Scope(p);
     // class MyClass
-    classSymbol = new Symbol.TypeSymbol(0, "MyClass", p);
-    classType = (Type.ClassType) classSymbol.type;
+    classSymbol = new JavaSymbol.TypeJavaSymbol(0, "MyClass", p);
+    classType = (JavaType.ClassJavaType) classSymbol.type;
     classType.supertype = symbols.unknownType; // TODO extend some superclass
     classType.interfaces = ImmutableList.of();
     classSymbol.members = new Scope(classSymbol);
     p.members.enter(classSymbol);
     // int[][] var;
-    variableSymbol = new Symbol.VariableSymbol(0, "var", classSymbol);
-    variableSymbol.type = new Type.ArrayType(new Type.ArrayType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
+    variableSymbol = new JavaSymbol.VariableJavaSymbol(0, "var", classSymbol);
+    variableSymbol.type = new JavaType.ArrayJavaType(new JavaType.ArrayJavaType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
     classSymbol.members.enter(variableSymbol);
 
     // MyClass var2;
-    classSymbol.members.enter(new Symbol.VariableSymbol(0, "var2", classType, classSymbol));
+    classSymbol.members.enter(new JavaSymbol.VariableJavaSymbol(0, "var2", classType, classSymbol));
 
     // int method()
-    methodSymbol = new Symbol.MethodSymbol(0, "method", classSymbol);
-    ((Symbol.MethodSymbol)methodSymbol).setMethodType(new Type.MethodType(ImmutableList.<Type>of(), symbols.intType, ImmutableList.<Type>of(), classSymbol));
+    methodSymbol = new JavaSymbol.MethodJavaSymbol(0, "method", classSymbol);
+    ((JavaSymbol.MethodJavaSymbol)methodSymbol).setMethodType(new JavaType.MethodJavaType(ImmutableList.<JavaType>of(), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
     classSymbol.members.enter(methodSymbol);
 
     // int method()
-    argMethodSymbol = new Symbol.MethodSymbol(0, "argMethod", classSymbol);
-    ((Symbol.MethodSymbol)argMethodSymbol).setMethodType(new Type.MethodType(ImmutableList.of(symbols.intType), symbols.intType, ImmutableList.<Type>of(), classSymbol));
+    argMethodSymbol = new JavaSymbol.MethodJavaSymbol(0, "argMethod", classSymbol);
+    ((JavaSymbol.MethodJavaSymbol)argMethodSymbol).setMethodType(new JavaType.MethodJavaType(ImmutableList.of(symbols.intType), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
     classSymbol.members.enter(argMethodSymbol);
 
-    classSymbol.members.enter(new Symbol.VariableSymbol(0, "this", classType, classSymbol));
-    classSymbol.members.enter(new Symbol.VariableSymbol(0, "super", classType.supertype, classSymbol));
+    classSymbol.members.enter(new JavaSymbol.VariableJavaSymbol(0, "this", classType, classSymbol));
+    classSymbol.members.enter(new JavaSymbol.VariableJavaSymbol(0, "super", classType.supertype, classSymbol));
 
     // FIXME figure out why top is mandatory
     Resolve.Env top = new Resolve.Env();
-    top.scope = new Scope((Symbol) null);
+    top.scope = new Scope((JavaSymbol) null);
 
     Resolve.Env compilationUnitEnv = new Resolve.Env();
     compilationUnitEnv.outer = top;

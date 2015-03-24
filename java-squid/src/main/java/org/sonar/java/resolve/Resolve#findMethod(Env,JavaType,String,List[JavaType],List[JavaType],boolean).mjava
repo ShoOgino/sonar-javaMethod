@@ -1,0 +1,34 @@
+  private Resolution findMethod(Env env, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams, boolean autoboxing) {
+    Resolution bestSoFar = unresolved();
+    for (JavaSymbol symbol : site.getSymbol().members().lookup(name)) {
+      if (symbol.kind == JavaSymbol.MTH) {
+        JavaSymbol best = selectBest(env, site.getSymbol(), argTypes, symbol, bestSoFar.symbol, autoboxing);
+        if(best == symbol) {
+          bestSoFar = Resolution.resolution(best);
+          bestSoFar.type = resolveTypeSubstitution(((JavaType.MethodJavaType) best.type).resultType, site);
+          JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) best;
+          bestSoFar.type = handleTypeArguments(typeParams, bestSoFar.type, methodSymbol);
+        }
+      }
+    }
+    //look in supertypes for more specialized method (overloading).
+    if (site.getSymbol().getSuperclass() != null) {
+      Resolution method = findMethod(env, site.getSymbol().getSuperclass(), name, argTypes, typeParams);
+      JavaSymbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      if(best == method.symbol) {
+        bestSoFar = method;
+      }
+    }
+    for (JavaType interfaceType : site.getSymbol().getInterfaces()) {
+      Resolution method = findMethod(env, interfaceType, name, argTypes, typeParams);
+      JavaSymbol best = selectBest(env, site.getSymbol(), argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      if(best == method.symbol) {
+        bestSoFar = method;
+      }
+    }
+    if(bestSoFar.symbol.kind >= JavaSymbol.ERRONEOUS && !autoboxing) {
+      bestSoFar = findMethod(env, site, name, argTypes, typeParams, true);
+    }
+    return bestSoFar;
+  }
+

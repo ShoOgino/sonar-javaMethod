@@ -1,0 +1,19 @@
+  private void checkArgumentsTypes(List<ExpressionTree> arguments, MethodJavaSymbol methodSymbol) {
+    List<Type> parametersTypes = methodSymbol.parameterTypes();
+    // FIXME static imports.
+    // FIXME As arguments are not handled for method resolution using static imports, the provided methodSymbol may not match.
+    if (!parametersTypes.isEmpty()) {
+      for (int index = 0; index < arguments.size(); index++) {
+        ExpressionTree argument = arguments.get(index);
+        if (!argument.is(Kind.NULL_LITERAL)) {
+          Type providedType = argument.symbolType();
+          Type expectedType = getExpectedType(providedType, parametersTypes, index, methodSymbol.isVarArgs());
+          if (expectedType.is("java.lang.Runnable") && providedType.isSubtypeOf("java.lang.Thread")
+            || (expectedType.is("java.lang.Runnable[]") && (providedType.isSubtypeOf("java.lang.Thread[]")))) {
+            addIssue(argument, getMessage(argument, providedType, index));
+          }
+        }
+      }
+    }
+  }
+

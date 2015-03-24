@@ -1,20 +1,20 @@
-  private Symbol getSymbolOfMemberSelectExpression(MemberSelectExpressionTree mse, int kind, Resolve.Env resolveEnv) {
-    int expressionKind = Symbol.TYP;
-    if ((kind & Symbol.VAR) != 0) {
-      expressionKind |= Symbol.VAR;
+  private JavaSymbol getSymbolOfMemberSelectExpression(MemberSelectExpressionTree mse, int kind, Resolve.Env resolveEnv) {
+    int expressionKind = JavaSymbol.TYP;
+    if ((kind & JavaSymbol.VAR) != 0) {
+      expressionKind |= JavaSymbol.VAR;
     }
-    if ((kind & Symbol.TYP) != 0) {
-      expressionKind |= Symbol.PCK;
+    if ((kind & JavaSymbol.TYP) != 0) {
+      expressionKind |= JavaSymbol.PCK;
     }
 
-    Symbol site = resolveAs(mse.expression(), expressionKind, resolveEnv);
-    if (site.kind == Symbol.VAR) {
-      return resolve.findIdentInType(resolveEnv, getType(mse.expression()).symbol, mse.identifier().name(), Symbol.VAR);
+    JavaSymbol site = resolveAs(mse.expression(), expressionKind, resolveEnv);
+    if (site.kind == JavaSymbol.VAR) {
+      return resolve.findIdentInType(resolveEnv, getType(mse.expression()).symbol, mse.identifier().name(), JavaSymbol.VAR);
     }
-    if (site.kind == Symbol.TYP) {
-      return resolve.findIdentInType(resolveEnv, (Symbol.TypeSymbol) site, mse.identifier().name(), kind);
+    if (site.kind == JavaSymbol.TYP) {
+      return resolve.findIdentInType(resolveEnv, (JavaSymbol.TypeJavaSymbol) site, mse.identifier().name(), kind);
     }
-    if (site.kind == Symbol.PCK) {
+    if (site.kind == JavaSymbol.PCK) {
       return resolve.findIdentInPackage(site, mse.identifier().name(), kind);
     }
     return symbols.unknownSymbol;

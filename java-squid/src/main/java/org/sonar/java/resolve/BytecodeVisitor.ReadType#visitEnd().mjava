@@ -1,13 +1,13 @@
     @Override
     public void visitEnd() {
       if (!typeArguments.isEmpty()) {
-        Symbol.TypeSymbol readSymbol = typeRead.symbol;
+        JavaSymbol.TypeJavaSymbol readSymbol = typeRead.symbol;
         readSymbol.complete();
          //Mismatch between type variable and type arguments means we are lacking some pieces of bytecode to resolve substitution properly.
         if(typeArguments.size() == readSymbol.typeVariableTypes.size()) {
-          Map<Type.TypeVariableType, Type> substitution = Maps.newHashMap();
+          Map<JavaType.TypeVariableJavaType, JavaType> substitution = Maps.newHashMap();
           int i = 0;
-          for (Type typeArgument : typeArguments) {
+          for (JavaType typeArgument : typeArguments) {
             substitution.put(readSymbol.typeVariableTypes.get(i), typeArgument);
             i++;
           }

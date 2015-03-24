@@ -2,7 +2,7 @@
   public void InterfaceDeclaration() {
     Result result = Result.createFor("declarations/InterfaceDeclaration");
 
-    Symbol.TypeSymbol interfaceSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
+    JavaSymbol.TypeJavaSymbol interfaceSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Declaration");
     assertThat(interfaceSymbol.owner()).isSameAs(result.symbol("InterfaceDeclaration"));
     assertThat(interfaceSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.INTERFACE);
     assertThat(interfaceSymbol.getSuperclass().getSymbol().getName()).isEqualTo("Object");
@@ -11,27 +11,27 @@
         result.symbol("SecondInterface").type);
     assertThat(interfaceSymbol.members.lookup("this")).isEmpty();
 
-    Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) result.symbol("FIRST_CONSTANT");
+    JavaSymbol.VariableJavaSymbol variableSymbol = (JavaSymbol.VariableJavaSymbol) result.symbol("FIRST_CONSTANT");
     assertThat(variableSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    variableSymbol = (Symbol.VariableSymbol) result.symbol("SECOND_CONSTANT");
+    variableSymbol = (JavaSymbol.VariableJavaSymbol) result.symbol("SECOND_CONSTANT");
     assertThat(variableSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) result.symbol("method");
+    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) result.symbol("method");
     assertThat(methodSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(methodSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedClass");
+    JavaSymbol.TypeJavaSymbol typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedClass");
     assertThat(typeSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedInterface");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedInterface");
     assertThat(typeSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedEnum");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedEnum");
     assertThat(typeSymbol.owner()).isSameAs(interfaceSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.ENUM);
   }

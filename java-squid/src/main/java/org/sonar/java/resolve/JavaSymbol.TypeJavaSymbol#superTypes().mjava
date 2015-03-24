@@ -1,0 +1,17 @@
+    /**
+     * Includes superclass and super interface hierarchy.
+     * @return list of classTypes.
+     */
+    public Set<JavaType.ClassJavaType> superTypes() {
+      ImmutableSet.Builder<JavaType.ClassJavaType> types = ImmutableSet.builder();
+      JavaType.ClassJavaType superClassType = (JavaType.ClassJavaType) this.getSuperclass();
+      types.addAll(this.interfacesOfType());
+      while (superClassType != null) {
+        types.add(superClassType);
+        TypeJavaSymbol superClassSymbol = superClassType.getSymbol();
+        types.addAll(superClassSymbol.interfacesOfType());
+        superClassType = (JavaType.ClassJavaType) superClassSymbol.getSuperclass();
+      }
+      return types.build();
+    }
+

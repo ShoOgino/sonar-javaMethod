@@ -1,37 +1,37 @@
   @Test
   public void type_parameters_should_be_read_from_bytecode() {
-    Symbol.TypeSymbol typeParametersSymbol = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.TypeParameters");
+    JavaSymbol.TypeJavaSymbol typeParametersSymbol = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.TypeParameters");
     typeParametersSymbol.complete();
     assertThat(typeParametersSymbol.typeParameters).isNotNull();
     assertThat(typeParametersSymbol.typeParameters.scopeSymbols()).hasSize(2);
     assertThat(typeParametersSymbol.typeVariableTypes).hasSize(2);
 
-    Type.TypeVariableType TtypeVariableType = typeParametersSymbol.typeVariableTypes.get(0);
+    JavaType.TypeVariableJavaType TtypeVariableType = typeParametersSymbol.typeVariableTypes.get(0);
     assertThat(TtypeVariableType.erasure().getSymbol().getName()).isEqualTo("Object");
     assertThat(typeParametersSymbol.typeVariableTypes.get(1).erasure().getSymbol().getName()).isEqualTo("CharSequence");
 
-    assertThat(typeParametersSymbol.getSuperclass()).isInstanceOf(Type.ParametrizedTypeType.class);
-    assertThat(((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet()).hasSize(1);
-    Type.TypeVariableType keyTypeVariable = ((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet().iterator().next();
+    assertThat(typeParametersSymbol.getSuperclass()).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    assertThat(((JavaType.ParametrizedTypeJavaType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet()).hasSize(1);
+    JavaType.TypeVariableJavaType keyTypeVariable = ((JavaType.ParametrizedTypeJavaType) typeParametersSymbol.getSuperclass()).typeSubstitution.keySet().iterator().next();
     assertThat(keyTypeVariable.symbol.getName()).isEqualTo("S");
-    Type actual = ((Type.ParametrizedTypeType) typeParametersSymbol.getSuperclass()).typeSubstitution.get(keyTypeVariable);
-    assertThat(actual).isInstanceOf(Type.ParametrizedTypeType.class);
-    assertThat(((Type.ParametrizedTypeType) actual).typeSubstitution.keySet()).hasSize(1);
+    JavaType actual = ((JavaType.ParametrizedTypeJavaType) typeParametersSymbol.getSuperclass()).typeSubstitution.get(keyTypeVariable);
+    assertThat(actual).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    assertThat(((JavaType.ParametrizedTypeJavaType) actual).typeSubstitution.keySet()).hasSize(1);
 
     assertThat(typeParametersSymbol.getInterfaces()).hasSize(2);
-    assertThat(typeParametersSymbol.getInterfaces().get(0)).isInstanceOf(Type.ParametrizedTypeType.class);
+    assertThat(typeParametersSymbol.getInterfaces().get(0)).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
 
-    Symbol.MethodSymbol funMethod = (Symbol.MethodSymbol) typeParametersSymbol.members().lookup("fun").get(0);
+    JavaSymbol.MethodJavaSymbol funMethod = (JavaSymbol.MethodJavaSymbol) typeParametersSymbol.members().lookup("fun").get(0);
     assertThat(funMethod.getReturnType().type).isSameAs(TtypeVariableType);
     assertThat(funMethod.parameterTypes().get(0)).isSameAs(TtypeVariableType);
 
-    Symbol.MethodSymbol fooMethod = (Symbol.MethodSymbol) typeParametersSymbol.members().lookup("foo").get(0);
-    Type.TypeVariableType WtypeVariableType = fooMethod.typeVariableTypes.get(0);
+    JavaSymbol.MethodJavaSymbol fooMethod = (JavaSymbol.MethodJavaSymbol) typeParametersSymbol.members().lookup("foo").get(0);
+    JavaType.TypeVariableJavaType WtypeVariableType = fooMethod.typeVariableTypes.get(0);
     assertThat(fooMethod.parameterTypes().get(0).isArray()).isTrue();
-    assertThat(((Type.ArrayType)fooMethod.parameterTypes().get(0)).elementType()).isSameAs(WtypeVariableType);
-    Type resultType = ((Type.MethodType) fooMethod.type).resultType;
-    assertThat(resultType).isInstanceOf(Type.ParametrizedTypeType.class);
-    Type.ParametrizedTypeType actualResultType = (Type.ParametrizedTypeType) resultType;
+    assertThat(((JavaType.ArrayJavaType)fooMethod.parameterTypes().get(0)).elementType()).isSameAs(WtypeVariableType);
+    JavaType resultType = ((JavaType.MethodJavaType) fooMethod.type).resultType;
+    assertThat(resultType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    JavaType.ParametrizedTypeJavaType actualResultType = (JavaType.ParametrizedTypeJavaType) resultType;
     assertThat(actualResultType.typeSubstitution.keySet()).hasSize(1);
     assertThat(actualResultType.typeSubstitution.values().iterator().next()).isSameAs(WtypeVariableType);
 
@@ -40,8 +40,8 @@
     assertThat(fooMethod.parameterTypes().get(2).isPrimitive(org.sonar.plugins.java.api.semantic.Type.Primitives.LONG)).isTrue();
 
     //read field.
-    Symbol.VariableSymbol field = (Symbol.VariableSymbol) typeParametersSymbol.members().lookup("field").get(0);
-    assertThat(field.type).isInstanceOf(Type.TypeVariableType.class);
+    JavaSymbol.VariableJavaSymbol field = (JavaSymbol.VariableJavaSymbol) typeParametersSymbol.members().lookup("field").get(0);
+    assertThat(field.type).isInstanceOf(JavaType.TypeVariableJavaType.class);
     assertThat(field.type).isSameAs(TtypeVariableType);
   }
 

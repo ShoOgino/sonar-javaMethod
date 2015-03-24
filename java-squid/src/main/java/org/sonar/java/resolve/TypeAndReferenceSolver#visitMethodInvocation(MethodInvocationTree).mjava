@@ -4,13 +4,13 @@
     Resolve.Env methodEnv = semanticModel.getEnv(tree);
     scan(tree.arguments());
     scan(tree.typeArguments());
-    List<Type> argTypes = getParameterTypes(tree.arguments());
-    List<Type> typeParamTypes = Lists.newArrayList();
+    List<JavaType> argTypes = getParameterTypes(tree.arguments());
+    List<JavaType> typeParamTypes = Lists.newArrayList();
     if(tree.typeArguments() != null ) {
       typeParamTypes = getParameterTypes(tree.typeArguments());
     }
     Resolve.Resolution resolution = resolveMethodSymbol(methodSelect, methodEnv, argTypes, typeParamTypes);
-    Symbol symbol = resolution.symbol();
+    JavaSymbol symbol = resolution.symbol();
     ((MethodInvocationTreeImpl) tree).setSymbol(symbol);
     registerType(tree, resolution.type());
   }

@@ -1,16 +1,16 @@
   // FIXME(Godin): or parameter must be renamed, or should not receive flat name, in a former case - first transformation in this method seems useless
-  Symbol.TypeSymbol getClassSymbol(String bytecodeName, int flags) {
+  JavaSymbol.TypeJavaSymbol getClassSymbol(String bytecodeName, int flags) {
     String flatName = Convert.flatName(bytecodeName);
-    Symbol.TypeSymbol symbol = classes.get(flatName);
+    JavaSymbol.TypeJavaSymbol symbol = classes.get(flatName);
     if (symbol == null) {
       String shortName = Convert.shortName(flatName);
       String packageName = Convert.packagePart(flatName);
       String enclosingClassName = Convert.enclosingClassName(shortName);
       if (StringUtils.isNotEmpty(enclosingClassName)) {
         //handle innerClasses
-        symbol = new Symbol.TypeSymbol(filterBytecodeFlags(flags), Convert.innerClassName(shortName), getClassSymbol(Convert.fullName(packageName, enclosingClassName)));
+        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), Convert.innerClassName(shortName), getClassSymbol(Convert.fullName(packageName, enclosingClassName)));
       } else {
-        symbol = new Symbol.TypeSymbol(filterBytecodeFlags(flags), shortName, enterPackage(packageName));
+        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), shortName, enterPackage(packageName));
       }
       symbol.members = new Scope(symbol);
       symbol.typeParameters = new Scope(symbol);
@@ -21,7 +21,7 @@
       } else {
         LOG.error("Class not found: " + bytecodeName);
         // TODO(Godin): why only interfaces, but not supertype for example?
-        ((Type.ClassType) symbol.type).interfaces = ImmutableList.of();
+        ((JavaType.ClassJavaType) symbol.type).interfaces = ImmutableList.of();
       }
 
       classes.put(flatName, symbol);

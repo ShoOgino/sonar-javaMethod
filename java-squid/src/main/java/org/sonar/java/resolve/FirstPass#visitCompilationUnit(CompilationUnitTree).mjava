@@ -1,12 +1,12 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
-    Symbol.PackageSymbol compilationUnitPackage = symbols.defaultPackage;
+    JavaSymbol.PackageJavaSymbol compilationUnitPackage = symbols.defaultPackage;
 
     ExpressionTree packageName = tree.packageName();
     if (packageName != null) {
       PackageResolverVisitor packageResolver = new PackageResolverVisitor();
       packageName.accept(packageResolver);
-      compilationUnitPackage = (Symbol.PackageSymbol) resolve.findIdentInPackage(compilationUnitPackage, packageResolver.packageName, Symbol.PCK);
+      compilationUnitPackage = (JavaSymbol.PackageJavaSymbol) resolve.findIdentInPackage(compilationUnitPackage, packageResolver.packageName, JavaSymbol.PCK);
       semanticModel.associateSymbol(packageName, compilationUnitPackage);
     }
     compilationUnitPackage.members = new Scope(compilationUnitPackage);

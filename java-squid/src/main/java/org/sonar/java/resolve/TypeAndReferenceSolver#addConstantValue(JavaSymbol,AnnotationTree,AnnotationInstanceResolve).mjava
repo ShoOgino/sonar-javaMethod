@@ -1,0 +1,14 @@
+  private void addConstantValue(JavaSymbol symbol, AnnotationTree tree, AnnotationInstanceResolve annotationInstance) {
+    Collection<JavaSymbol> scopeSymbols = ((AbstractTypedTree) tree.annotationType()).getSymbolType().getSymbol().members().scopeSymbols();
+    for (ExpressionTree expressionTree : tree.arguments()) {
+      String name = "";
+      for (JavaSymbol scopeSymbol : scopeSymbols) {
+        if(scopeSymbol.isKind(JavaSymbol.MTH)) {
+          name = scopeSymbol.getName();
+          break;
+        }
+      }
+      annotationInstance.addValue(new AnnotationValueResolve(name, expressionTree));
+    }
+  }
+

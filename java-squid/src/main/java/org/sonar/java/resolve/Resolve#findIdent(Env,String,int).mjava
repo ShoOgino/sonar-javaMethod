@@ -1,31 +1,31 @@
   /**
-   * @param kind subset of {@link org.sonar.java.resolve.Symbol#VAR}, {@link org.sonar.java.resolve.Symbol#TYP}, {@link org.sonar.java.resolve.Symbol#PCK}
+   * @param kind subset of {@link JavaSymbol#VAR}, {@link JavaSymbol#TYP}, {@link JavaSymbol#PCK}
    */
   public Resolution findIdent(Env env, String name, int kind) {
     Resolution bestSoFar = unresolved();
-    if ((kind & Symbol.VAR) != 0) {
+    if ((kind & JavaSymbol.VAR) != 0) {
       Resolution res = findVar(env, name);
-      if (res.symbol.kind < Symbol.ERRONEOUS) {
+      if (res.symbol.kind < JavaSymbol.ERRONEOUS) {
         // symbol exists
         return res;
       } else if (res.symbol.kind < bestSoFar.symbol.kind) {
         bestSoFar = res;
       }
     }
-    if ((kind & Symbol.TYP) != 0) {
+    if ((kind & JavaSymbol.TYP) != 0) {
       Resolution res = new Resolution();
       res.symbol = findType(env, name);
-      if (res.symbol.kind < Symbol.ERRONEOUS) {
+      if (res.symbol.kind < JavaSymbol.ERRONEOUS) {
         // symbol exists
         return res;
       } else if (res.symbol.kind < bestSoFar.symbol.kind) {
         bestSoFar = res;
       }
     }
-    if ((kind & Symbol.PCK) != 0) {
+    if ((kind & JavaSymbol.PCK) != 0) {
       Resolution res = new Resolution();
-      res.symbol = findIdentInPackage(symbols.defaultPackage, name, Symbol.PCK);
-      if (res.symbol.kind < Symbol.ERRONEOUS) {
+      res.symbol = findIdentInPackage(symbols.defaultPackage, name, JavaSymbol.PCK);
+      if (res.symbol.kind < JavaSymbol.ERRONEOUS) {
         // symbol exists
         return res;
       } else if (res.symbol.kind < bestSoFar.symbol.kind) {

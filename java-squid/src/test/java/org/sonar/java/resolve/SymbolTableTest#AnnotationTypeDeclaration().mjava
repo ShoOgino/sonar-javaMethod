@@ -2,43 +2,43 @@
   public void AnnotationTypeDeclaration() {
     Result result = Result.createFor("declarations/AnnotationTypeDeclaration");
 
-    Symbol.TypeSymbol annotationSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
+    JavaSymbol.TypeJavaSymbol annotationSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Declaration");
     assertThat(annotationSymbol.owner()).isSameAs(result.symbol("AnnotationTypeDeclaration"));
     assertThat(annotationSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.INTERFACE | Flags.ANNOTATION);
     assertThat(annotationSymbol.getSuperclass()).isNull(); // TODO should it be java.lang.Object?
 
-    Symbol superinterface = Iterables.getOnlyElement(annotationSymbol.getInterfaces()).symbol;
+    JavaSymbol superinterface = Iterables.getOnlyElement(annotationSymbol.getInterfaces()).symbol;
     assertThat(superinterface.getName()).isEqualTo("Annotation");
-    assertThat(superinterface.owner).isInstanceOf(Symbol.PackageSymbol.class);
+    assertThat(superinterface.owner).isInstanceOf(JavaSymbol.PackageJavaSymbol.class);
     assertThat(superinterface.owner.getName()).isEqualTo("java.lang.annotation");
 
     assertThat(annotationSymbol.members.lookup("this")).isEmpty();
 
-    Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) result.symbol("FIRST_CONSTANT");
+    JavaSymbol.VariableJavaSymbol variableSymbol = (JavaSymbol.VariableJavaSymbol) result.symbol("FIRST_CONSTANT");
     assertThat(variableSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    variableSymbol = (Symbol.VariableSymbol) result.symbol("SECOND_CONSTANT");
+    variableSymbol = (JavaSymbol.VariableJavaSymbol) result.symbol("SECOND_CONSTANT");
     assertThat(variableSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(variableSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) result.symbol("value");
+    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) result.symbol("value");
     assertThat(methodSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(methodSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedClass");
+    JavaSymbol.TypeJavaSymbol typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedClass");
     assertThat(typeSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedInterface");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedInterface");
     assertThat(typeSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedEnum");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedEnum");
     assertThat(typeSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.ENUM);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("NestedAnnotationType");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("NestedAnnotationType");
     assertThat(typeSymbol.owner()).isSameAs(annotationSymbol);
     assertThat(typeSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.INTERFACE | Flags.ANNOTATION);
   }

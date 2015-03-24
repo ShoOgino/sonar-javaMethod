@@ -1,57 +1,57 @@
   @Test
   public void test_isSubClass() {
-    Symbol.TypeSymbol base = new Symbol.TypeSymbol(0, "class", null);
+    JavaSymbol.TypeJavaSymbol base = new JavaSymbol.TypeJavaSymbol(0, "class", null);
 
     // same class
-    Symbol.TypeSymbol c = base;
+    JavaSymbol.TypeJavaSymbol c = base;
     assertThat(resolve.isSubClass(c, base)).isTrue();
 
     // base not extended by class
-    c = new Symbol.TypeSymbol(0, "class", null);
+    c = new JavaSymbol.TypeJavaSymbol(0, "class", null);
 
     // class extends base
     assertThat(resolve.isSubClass(c, base)).isFalse();
-    ((Type.ClassType) c.type).supertype = base.type;
+    ((JavaType.ClassJavaType) c.type).supertype = base.type;
     assertThat(resolve.isSubClass(c, base)).isTrue();
 
     // class extends superclass
-    ((Type.ClassType) c.type).supertype = new Symbol.TypeSymbol(0, "superclass", null).type;
+    ((JavaType.ClassJavaType) c.type).supertype = new JavaSymbol.TypeJavaSymbol(0, "superclass", null).type;
     assertThat(resolve.isSubClass(c, base)).isFalse();
 
     // class extends superclass, which extends base
-    ((Type.ClassType) ((Type.ClassType) c.type).supertype).supertype = base.type;
+    ((JavaType.ClassJavaType) ((JavaType.ClassJavaType) c.type).supertype).supertype = base.type;
     assertThat(resolve.isSubClass(c, base)).isTrue();
 
     // base - is an interface
-    base = new Symbol.TypeSymbol(Flags.INTERFACE, "class", null);
-    c = new Symbol.TypeSymbol(0, "class", null);
+    base = new JavaSymbol.TypeJavaSymbol(Flags.INTERFACE, "class", null);
+    c = new JavaSymbol.TypeJavaSymbol(0, "class", null);
 
     // base not implemented by class
-    ((Type.ClassType) c.type).interfaces = ImmutableList.of();
+    ((JavaType.ClassJavaType) c.type).interfaces = ImmutableList.of();
     assertThat(resolve.isSubClass(c, base)).isFalse();
 
     // class implements base interface
-    ((Type.ClassType) c.type).interfaces = ImmutableList.of(base.type);
+    ((JavaType.ClassJavaType) c.type).interfaces = ImmutableList.of(base.type);
     assertThat(resolve.isSubClass(c, base)).isTrue();
 
     // class implements interface, but not base interface
-    Symbol.TypeSymbol i = new Symbol.TypeSymbol(Flags.INTERFACE, "class", null);
-    ((Type.ClassType) i.type).interfaces = ImmutableList.of();
-    ((Type.ClassType) c.type).interfaces = ImmutableList.of(i.type);
+    JavaSymbol.TypeJavaSymbol i = new JavaSymbol.TypeJavaSymbol(Flags.INTERFACE, "class", null);
+    ((JavaType.ClassJavaType) i.type).interfaces = ImmutableList.of();
+    ((JavaType.ClassJavaType) c.type).interfaces = ImmutableList.of(i.type);
     assertThat(resolve.isSubClass(c, base)).isFalse();
 
     // class implements interface, which implements base
-    ((Type.ClassType) c.type).interfaces = ImmutableList.of(base.type);
+    ((JavaType.ClassJavaType) c.type).interfaces = ImmutableList.of(base.type);
     assertThat(resolve.isSubClass(c, base)).isTrue();
 
     // class extends superclass
-    ((Type.ClassType) c.type).interfaces = ImmutableList.of();
-    ((Type.ClassType) c.type).supertype = new Symbol.TypeSymbol(0, "superclass", null).type;
-    ((Type.ClassType) ((Type.ClassType) c.type).supertype).interfaces = ImmutableList.of();
+    ((JavaType.ClassJavaType) c.type).interfaces = ImmutableList.of();
+    ((JavaType.ClassJavaType) c.type).supertype = new JavaSymbol.TypeJavaSymbol(0, "superclass", null).type;
+    ((JavaType.ClassJavaType) ((JavaType.ClassJavaType) c.type).supertype).interfaces = ImmutableList.of();
     assertThat(resolve.isSubClass(c, base)).isFalse();
 
     // class extends superclass, which implements base
-    ((Type.ClassType) ((Type.ClassType) c.type).supertype).interfaces = ImmutableList.of(base.type);
+    ((JavaType.ClassJavaType) ((JavaType.ClassJavaType) c.type).supertype).interfaces = ImmutableList.of(base.type);
     assertThat(resolve.isSubClass(c, base)).isTrue();
   }
 

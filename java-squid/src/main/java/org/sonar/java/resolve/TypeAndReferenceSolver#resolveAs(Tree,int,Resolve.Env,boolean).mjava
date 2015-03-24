@@ -1,11 +1,11 @@
-  public Symbol resolveAs(Tree tree, int kind, Resolve.Env resolveEnv, boolean associateReference) {
+  public JavaSymbol resolveAs(Tree tree, int kind, Resolve.Env resolveEnv, boolean associateReference) {
     if (tree.is(Tree.Kind.IDENTIFIER, Tree.Kind.MEMBER_SELECT)) {
-      Symbol resolvedSymbol;
+      JavaSymbol resolvedSymbol;
       IdentifierTree identifierTree;
       if (tree.is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
         if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
-          resolveAs(mse.expression(), Symbol.TYP, resolveEnv);
+          resolveAs(mse.expression(), JavaSymbol.TYP, resolveEnv);
           // member select ending with .class
           registerType(tree, symbols.classType);
           return null;
@@ -13,7 +13,7 @@
 
         identifierTree = mse.identifier();
         resolvedSymbol = getSymbolOfMemberSelectExpression(mse, kind, resolveEnv);
-        Type resolvedType = getTypeOfSymbol(resolvedSymbol, getType(mse.expression()));
+        JavaType resolvedType = getTypeOfSymbol(resolvedSymbol, getType(mse.expression()));
         registerType(identifierTree, resolvedType);
         registerType(tree, resolvedType);
       } else {
@@ -28,7 +28,7 @@
       return resolvedSymbol;
     }
     tree.accept(this);
-    Type type = getType(tree);
+    JavaType type = getType(tree);
     if (tree.is(Tree.Kind.INFERED_TYPE)) {
       type = symbols.unknownType;
       registerType(tree, type);

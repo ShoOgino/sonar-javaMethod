@@ -1,16 +1,16 @@
   /**
-   * @param kind subset of {@link org.sonar.java.resolve.Symbol#VAR}, {@link org.sonar.java.resolve.Symbol#MTH}
+   * @param kind subset of {@link JavaSymbol#VAR}, {@link JavaSymbol#MTH}
    */
-  private Symbol findInStaticImport(Env env, String name, int kind) {
-    Symbol bestSoFar = symbolNotFound;
+  private JavaSymbol findInStaticImport(Env env, String name, int kind) {
+    JavaSymbol bestSoFar = symbolNotFound;
     //imports
     //Ok because clash of name between type and var/method result in compile error: JLS8 7.5.3
-    for (Symbol symbol : env.namedImports().lookup(name)) {
+    for (JavaSymbol symbol : env.namedImports().lookup(name)) {
       if ((kind & symbol.kind) != 0) {
         return symbol;
       }
     }
-    for (Symbol symbol : env.staticStarImports().lookup(name)) {
+    for (JavaSymbol symbol : env.staticStarImports().lookup(name)) {
       if ((kind & symbol.kind) != 0) {
         return symbol;
       }

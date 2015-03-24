@@ -1,0 +1,13 @@
+  private JavaType handleTypeArguments(List<JavaType> typeParams, JavaType type, JavaSymbol.MethodJavaSymbol methodSymbol) {
+    if(!typeParams.isEmpty() && methodSymbol.typeVariableTypes.size()==typeParams.size()) {
+      Map<JavaType.TypeVariableJavaType, JavaType> substitution = Maps.newHashMap();
+      int i = 0;
+      for (JavaType.TypeVariableJavaType typeVariableType : methodSymbol.typeVariableTypes) {
+        substitution.put(typeVariableType, typeParams.get(i));
+        i++;
+      }
+      return substituteTypeParameter(type, substitution);
+    }
+    return type;
+  }
+

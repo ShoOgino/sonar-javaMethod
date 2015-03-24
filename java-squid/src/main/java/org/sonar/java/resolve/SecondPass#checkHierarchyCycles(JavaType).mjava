@@ -1,0 +1,11 @@
+  private void checkHierarchyCycles(JavaType baseType) {
+    Set<JavaType.ClassJavaType> types = Sets.newHashSet();
+    JavaType.ClassJavaType type = (JavaType.ClassJavaType) baseType;
+    while (type != null) {
+      if (!types.add(type)) {
+        throw new IllegalStateException("Cycling class hierarchy detected with symbol : " + baseType.symbol.name + ".");
+      }
+      type = (JavaType.ClassJavaType) type.symbol.getSuperclass();
+    }
+  }
+

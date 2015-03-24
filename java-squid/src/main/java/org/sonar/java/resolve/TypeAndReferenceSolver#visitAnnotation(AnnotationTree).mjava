@@ -1,23 +1,23 @@
   @Override
   public void visitAnnotation(AnnotationTree tree) {
-    resolveAs(tree.annotationType(), Symbol.TYP);
+    resolveAs(tree.annotationType(), JavaSymbol.TYP);
     if(tree.arguments().size()>1 || (!tree.arguments().isEmpty() && tree.arguments().get(0).is(Tree.Kind.ASSIGNMENT))) {
       //resolve by identifying correct identifier in assignment.
       for (ExpressionTree expressionTree : tree.arguments()) {
         AssignmentExpressionTree aet = (AssignmentExpressionTree) expressionTree;
         IdentifierTree variable = (IdentifierTree) aet.variable();
-        Symbol identInType = resolve.findMethod(semanticModel.getEnv(tree), getType(tree.annotationType()), variable.name(), ImmutableList.<Type>of()).symbol();
+        JavaSymbol identInType = resolve.findMethod(semanticModel.getEnv(tree), getType(tree.annotationType()), variable.name(), ImmutableList.<JavaType>of()).symbol();
         associateReference(variable, identInType);
-        Type type = identInType.type;
+        JavaType type = identInType.type;
         if(type == null) {
           type = symbols.unknownType;
         }
         registerType(variable, type);
-        resolveAs(aet.expression(), Symbol.VAR);
+        resolveAs(aet.expression(), JavaSymbol.VAR);
       }
     } else {
       for (ExpressionTree expressionTree : tree.arguments()) {
-        resolveAs(expressionTree, Symbol.VAR);
+        resolveAs(expressionTree, JavaSymbol.VAR);
       }
     }
     registerType(tree, getType(tree.annotationType()));

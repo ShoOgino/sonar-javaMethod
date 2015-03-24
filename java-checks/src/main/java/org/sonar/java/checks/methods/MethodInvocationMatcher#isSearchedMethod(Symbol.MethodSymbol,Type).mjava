@@ -1,0 +1,11 @@
+  private boolean isSearchedMethod(Symbol.MethodSymbol symbol, Type callSiteType) {
+    boolean result = symbol.name().equals(methodName) && parametersAcceptable(symbol);
+    if (typeDefinition != null) {
+      result &= typeDefinition.matches(symbol.owner().type());
+    }
+    if (callSite != null) {
+      result &= callSiteType != null && callSite.matches(callSiteType);
+    }
+    return result;
+  }
+

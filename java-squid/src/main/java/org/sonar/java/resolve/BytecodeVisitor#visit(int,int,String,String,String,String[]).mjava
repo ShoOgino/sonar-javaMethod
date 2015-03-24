@@ -7,15 +7,15 @@
       SignatureReader signatureReader = new SignatureReader(signature);
       ReadGenericSignature readGenericSignature = new ReadGenericSignature();
       signatureReader.accept(readGenericSignature);
-      ((Type.ClassType) classSymbol.type).interfaces = readGenericSignature.interfaces();
+      ((JavaType.ClassJavaType) classSymbol.type).interfaces = readGenericSignature.interfaces();
     } else {
       if (superName == null) {
         Preconditions.checkState("java/lang/Object".equals(className), "superName must be null only for java/lang/Object, but not for " + className);
         // TODO(Godin): what about interfaces and annotations
       } else {
-        ((Type.ClassType) classSymbol.type).supertype = getClassSymbol(superName).type;
+        ((JavaType.ClassJavaType) classSymbol.type).supertype = getClassSymbol(superName).type;
       }
-      ((Type.ClassType) classSymbol.type).interfaces = getCompletedClassSymbolsType(interfaces);
+      ((JavaType.ClassJavaType) classSymbol.type).interfaces = getCompletedClassSymbolsType(interfaces);
 
     }
     //if class has already access flags set (inner class) then do not reset those.

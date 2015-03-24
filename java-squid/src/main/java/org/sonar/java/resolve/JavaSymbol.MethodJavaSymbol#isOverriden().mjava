@@ -1,0 +1,14 @@
+    public Boolean isOverriden() {
+      Boolean result = false;
+      TypeJavaSymbol enclosingClass = enclosingClass();
+      for (JavaType.ClassJavaType superType : enclosingClass.superTypes()) {
+        Boolean overrideFromType = overridesFromSymbol(superType);
+        if (overrideFromType == null) {
+          result = null;
+        } else if (BooleanUtils.isTrue(overrideFromType)) {
+          return true;
+        }
+      }
+      return result;
+    }
+

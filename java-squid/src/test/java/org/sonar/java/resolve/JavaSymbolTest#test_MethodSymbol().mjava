@@ -1,0 +1,16 @@
+  @Test
+  public void test_MethodSymbol() {
+    JavaSymbol.PackageJavaSymbol packageSymbol = new JavaSymbol.PackageJavaSymbol("p", null);
+    JavaSymbol.TypeJavaSymbol outermostClass = new JavaSymbol.TypeJavaSymbol(42, "name", packageSymbol);
+    JavaSymbol.TypeJavaSymbol typeSymbol = new JavaSymbol.TypeJavaSymbol(42, "t", outermostClass);
+    JavaSymbol.MethodJavaSymbol methodSymbol = new JavaSymbol.MethodJavaSymbol(42, "name", typeSymbol);
+
+    assertThat(methodSymbol.kind).isEqualTo(JavaSymbol.MTH);
+    assertThat(methodSymbol.flags()).isEqualTo(42);
+    assertThat(methodSymbol.owner()).isSameAs(typeSymbol);
+
+    assertThat(methodSymbol.packge()).isSameAs(packageSymbol);
+    assertThat(methodSymbol.outermostClass()).isSameAs(outermostClass);
+    assertThat(methodSymbol.enclosingClass()).isSameAs(typeSymbol);
+  }
+

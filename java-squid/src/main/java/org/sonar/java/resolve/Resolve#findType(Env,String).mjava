@@ -1,17 +1,17 @@
   /**
    * Finds type with given name.
    */
-  private Symbol findType(Env env, String name) {
-    Symbol bestSoFar = symbolNotFound;
+  private JavaSymbol findType(Env env, String name) {
+    JavaSymbol bestSoFar = symbolNotFound;
     for (Env env1 = env; env1 != null; env1 = env1.outer()) {
-      for (Symbol symbol : env1.scope().lookup(name)) {
-        if (symbol.kind == Symbol.TYP) {
+      for (JavaSymbol symbol : env1.scope().lookup(name)) {
+        if (symbol.kind == JavaSymbol.TYP) {
           return symbol;
         }
       }
       if (env1.outer != null) {
-        Symbol symbol = findMemberType(env1, env1.enclosingClass(), name, env1.enclosingClass());
-        if (symbol.kind < Symbol.ERRONEOUS) {
+        JavaSymbol symbol = findMemberType(env1, env1.enclosingClass(), name, env1.enclosingClass());
+        if (symbol.kind < JavaSymbol.ERRONEOUS) {
           // symbol exists
           return symbol;
         } else if (symbol.kind < bestSoFar.kind) {
@@ -21,33 +21,33 @@
     }
 
     //checks predefined types
-    Symbol predefinedSymbol = findMemberType(env, symbols.predefClass, name, symbols.predefClass);
+    JavaSymbol predefinedSymbol = findMemberType(env, symbols.predefClass, name, symbols.predefClass);
     if (predefinedSymbol.kind < bestSoFar.kind) {
       return predefinedSymbol;
     }
 
     //JLS8 6.4.1 Shadowing rules
     //named imports
-    for (Symbol symbol : env.namedImports().lookup(name)) {
-      if (symbol.kind == Symbol.TYP) {
+    for (JavaSymbol symbol : env.namedImports().lookup(name)) {
+      if (symbol.kind == JavaSymbol.TYP) {
         return symbol;
       }
     }
     //package types
-    Symbol sym = findIdentInPackage(env.packge(), name, Symbol.TYP);
+    JavaSymbol sym = findIdentInPackage(env.packge(), name, JavaSymbol.TYP);
     if (sym.kind < bestSoFar.kind) {
       return sym;
     }
     //on demand imports
-    for (Symbol symbol : env.starImports().lookup(name)) {
-      if (symbol.kind == Symbol.TYP) {
+    for (JavaSymbol symbol : env.starImports().lookup(name)) {
+      if (symbol.kind == JavaSymbol.TYP) {
         return symbol;
       }
     }
     //java.lang
-    Symbol.PackageSymbol javaLang = bytecodeCompleter.enterPackage("java.lang");
-    for (Symbol symbol : javaLang.members().lookup(name)) {
-      if (symbol.kind == Symbol.TYP) {
+    JavaSymbol.PackageJavaSymbol javaLang = bytecodeCompleter.enterPackage("java.lang");
+    for (JavaSymbol symbol : javaLang.members().lookup(name)) {
+      if (symbol.kind == JavaSymbol.TYP) {
         return symbol;
       }
     }

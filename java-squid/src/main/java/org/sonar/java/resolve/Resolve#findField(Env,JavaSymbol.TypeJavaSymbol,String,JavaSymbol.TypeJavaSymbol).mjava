@@ -1,0 +1,33 @@
+  /**
+   * Finds field with given name.
+   */
+  private Resolution findField(Env env, JavaSymbol.TypeJavaSymbol site, String name, JavaSymbol.TypeJavaSymbol c) {
+    Resolution bestSoFar = unresolved();
+    Resolution resolution = new Resolution();
+    for (JavaSymbol symbol : c.members().lookup(name)) {
+      if (symbol.kind == JavaSymbol.VAR) {
+        if(isAccessible(env, site, symbol)) {
+          resolution.symbol = symbol;
+          resolution.type = resolveTypeSubstitution(symbol.type, c.type);
+          return resolution;
+        } else {
+          return Resolution.resolution(new AccessErrorJavaSymbol(symbol, symbols.unknownType));
+        }
+      }
+    }
+    if (c.getSuperclass() != null) {
+      resolution = findField(env, site, name, c.getSuperclass().symbol);
+      if (resolution.symbol.kind < bestSoFar.symbol.kind) {
+        resolution.type = resolveTypeSubstitution(resolution.symbol.type, c.getSuperclass());
+        bestSoFar = resolution;
+      }
+    }
+    for (JavaType interfaceType : c.getInterfaces()) {
+      resolution = findField(env, site, name, interfaceType.symbol);
+      if (resolution.symbol.kind < bestSoFar.symbol.kind) {
+        bestSoFar = resolution;
+      }
+    }
+    return bestSoFar;
+  }
+

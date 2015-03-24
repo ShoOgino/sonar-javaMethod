@@ -1,0 +1,24 @@
+  private JavaSymbol findMemberType(Env env, JavaSymbol.TypeJavaSymbol site, String name, JavaSymbol.TypeJavaSymbol c) {
+    JavaSymbol bestSoFar = symbolNotFound;
+    for (JavaSymbol symbol : c.members().lookup(name)) {
+      if (symbol.kind == JavaSymbol.TYP) {
+        return isAccessible(env, site, symbol)
+            ? symbol
+            : new AccessErrorJavaSymbol(symbol, symbols.unknownType);
+      }
+    }
+    if (c.getSuperclass() != null) {
+      JavaSymbol symbol = findMemberType(env, site, name, c.getSuperclass().symbol);
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    for (JavaType interfaceType : c.getInterfaces()) {
+      JavaSymbol symbol = findMemberType(env, site, name, interfaceType.symbol);
+      if (symbol.kind < bestSoFar.kind) {
+        bestSoFar = symbol;
+      }
+    }
+    return bestSoFar;
+  }
+

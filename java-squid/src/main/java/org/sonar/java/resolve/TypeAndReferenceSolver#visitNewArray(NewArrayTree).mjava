@@ -1,14 +1,14 @@
   @Override
   public void visitNewArray(NewArrayTree tree) {
-    resolveAs(tree.type(), Symbol.TYP);
-    resolveAs(tree.dimensions(), Symbol.VAR);
-    resolveAs(tree.initializers(), Symbol.VAR);
-    Type type = getType(tree.type());
+    resolveAs(tree.type(), JavaSymbol.TYP);
+    resolveAs(tree.dimensions(), JavaSymbol.VAR);
+    resolveAs(tree.initializers(), JavaSymbol.VAR);
+    JavaType type = getType(tree.type());
     int dimensions = tree.dimensions().size();
     // TODO why?
-    type = new Type.ArrayType(type, symbols.arrayClass);
+    type = new JavaType.ArrayJavaType(type, symbols.arrayClass);
     for (int i = 1; i < dimensions; i++) {
-      type = new Type.ArrayType(type, symbols.arrayClass);
+      type = new JavaType.ArrayJavaType(type, symbols.arrayClass);
     }
     registerType(tree, type);
   }

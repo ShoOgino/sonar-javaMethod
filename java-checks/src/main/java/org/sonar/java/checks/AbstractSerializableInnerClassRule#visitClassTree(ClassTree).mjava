@@ -1,14 +1,14 @@
   private void visitClassTree(ClassTree classTree) {
-    Symbol.TypeSymbolSemantic symbol = classTree.symbol();
+    Symbol.TypeSymbol symbol = classTree.symbol();
     if (isInnerClass(symbol) && directlyImplementsSerializable(symbol)) {
       Symbol owner = symbol.owner();
       if (owner.isTypeSymbol()) {
-        Symbol.TypeSymbolSemantic ownerType = (Symbol.TypeSymbolSemantic) owner;
+        Symbol.TypeSymbol ownerType = (Symbol.TypeSymbol) owner;
         if (isMatchingOuterClass(ownerType.type()) && !symbol.isStatic()) {
           addIssue(classTree, "Make this inner class static");
         }
       } else if (owner.isMethodSymbol()) {
-        Symbol.TypeSymbolSemantic methodOwner = (Symbol.TypeSymbolSemantic) owner.owner();
+        Symbol.TypeSymbol methodOwner = (Symbol.TypeSymbol) owner.owner();
         if (isMatchingOuterClass(methodOwner.type()) && !owner.isStatic()) {
           String methodName = owner.name();
           addIssue(classTree, "Make \"" + methodName + "\" static");

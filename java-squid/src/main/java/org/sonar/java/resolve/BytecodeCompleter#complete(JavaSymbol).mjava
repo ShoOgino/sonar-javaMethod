@@ -1,0 +1,28 @@
+  @Override
+  public void complete(JavaSymbol symbol) {
+    LOG.debug("Completing symbol : " + symbol.name);
+    //complete outer class to set flags for inner class properly.
+    if (symbol.owner.isKind(JavaSymbol.TYP)) {
+      symbol.owner.complete();
+    }
+    String bytecodeName = formFullName(symbol);
+    JavaSymbol.TypeJavaSymbol classSymbol = getClassSymbol(bytecodeName);
+    Preconditions.checkState(classSymbol == symbol);
+
+    InputStream inputStream = null;
+    ClassReader classReader = null;
+    try {
+      inputStream = inputStreamFor(bytecodeName);
+      classReader = new ClassReader(inputStream);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    } finally {
+      Closeables.closeQuietly(inputStream);
+    }
+    if (classReader != null) {
+      classReader.accept(
+          new BytecodeVisitor(this, symbols, (JavaSymbol.TypeJavaSymbol) symbol, parametrizedTypeCache),
+          ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
+    }
+  }
+

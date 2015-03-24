@@ -1,7 +1,7 @@
   @Override
   public void visitMethod(MethodTree tree) {
     String name = tree.returnType() == null ? "<init>" : tree.simpleName().name();
-    Symbol.MethodSymbol symbol = new Symbol.MethodSymbol(computeFlags(tree.modifiers()), name, env.scope.owner);
+    JavaSymbol.MethodJavaSymbol symbol = new JavaSymbol.MethodJavaSymbol(computeFlags(tree.modifiers()), name, env.scope.owner);
     if((env.scope.owner.flags & Flags.ENUM) !=0 && tree.returnType()==null ) {
       //enum constructors are private.
       symbol.flags |= Flags.PRIVATE;
@@ -14,8 +14,8 @@
     ((MethodTreeImpl) tree).setSymbol(symbol);
     createNewEnvironment(tree.typeParameters());
     for (TypeParameterTree typeParameterTree : tree.typeParameters()) {
-      Symbol.TypeVariableSymbol typeVariableSymbol = new Symbol.TypeVariableSymbol(typeParameterTree.identifier().name(), symbol);
-      symbol.addTypeParameter((Type.TypeVariableType) typeVariableSymbol.type);
+      JavaSymbol.TypeVariableJavaSymbol typeVariableSymbol = new JavaSymbol.TypeVariableJavaSymbol(typeParameterTree.identifier().name(), symbol);
+      symbol.addTypeParameter((JavaType.TypeVariableJavaType) typeVariableSymbol.type);
       enterSymbol(typeParameterTree, typeVariableSymbol);
     }
     // Save current environment to be able to complete method later

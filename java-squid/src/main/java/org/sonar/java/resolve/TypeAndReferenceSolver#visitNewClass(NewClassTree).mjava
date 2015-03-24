@@ -1,20 +1,20 @@
   @Override
   public void visitNewClass(NewClassTree tree) {
     if (tree.enclosingExpression() != null) {
-      resolveAs(tree.enclosingExpression(), Symbol.VAR);
+      resolveAs(tree.enclosingExpression(), JavaSymbol.VAR);
     }
     Resolve.Env newClassEnv = semanticModel.getEnv(tree);
-    resolveAs(tree.identifier(), Symbol.TYP, newClassEnv, false);
-    resolveAs(tree.typeArguments(), Symbol.TYP);
-    resolveAs(tree.arguments(), Symbol.VAR);
+    resolveAs(tree.identifier(), JavaSymbol.TYP, newClassEnv, false);
+    resolveAs(tree.typeArguments(), JavaSymbol.TYP);
+    resolveAs(tree.arguments(), JavaSymbol.VAR);
     NewClassTreeImpl newClassTreeImpl = (NewClassTreeImpl) tree;
     resolveConstructorSymbol(newClassTreeImpl.getConstructorIdentifier(), newClassEnv, getParameterTypes(tree.arguments()));
     if (tree.classBody() != null) {
-      Type.ClassType anonymousClassType = symbols.unknownType;
-      Type type = ((AbstractTypedTree) tree.identifier()).getSymbolType();
-      Symbol.TypeSymbol symbol = (Symbol.TypeSymbol) tree.classBody().symbol();
+      JavaType.ClassJavaType anonymousClassType = symbols.unknownType;
+      JavaType type = ((AbstractTypedTree) tree.identifier()).getSymbolType();
+      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) tree.classBody().symbol();
       if (symbol != null) {
-        anonymousClassType = (Type.ClassType) symbol.type;
+        anonymousClassType = (JavaType.ClassJavaType) symbol.type;
         if (type.getSymbol().isFlag(Flags.INTERFACE)) {
           anonymousClassType.interfaces = ImmutableList.of(type);
           anonymousClassType.supertype = symbols.objectType;

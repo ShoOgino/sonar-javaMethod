@@ -7,13 +7,13 @@
       name = tree.simpleName().name();
       flag = computeClassFlags(tree);
     }
-    Symbol.TypeSymbol symbol = new Symbol.TypeSymbol(flag, name, env.scope.owner);
+    JavaSymbol.TypeJavaSymbol symbol = new JavaSymbol.TypeJavaSymbol(flag, name, env.scope.owner);
 
     ((ClassTreeImpl) tree).setSymbol(symbol);
     //Only register classes that can be accessible, so classes owned by a method are not registered.
     //TODO : register also based on flags ?
     if (!anonymousClass) {
-      if (env.scope.owner.kind == Symbol.TYP || env.scope.owner.kind == Symbol.PCK) {
+      if (env.scope.owner.kind == JavaSymbol.TYP || env.scope.owner.kind == JavaSymbol.PCK) {
         resolve.registerClass(symbol);
       }
       enterSymbol(tree, symbol);
@@ -27,8 +27,8 @@
     // Save current environment to be able to complete class later
     semanticModel.saveEnv(symbol, env);
     for (TypeParameterTree typeParameterTree : tree.typeParameters()) {
-      Symbol.TypeVariableSymbol typeVariableSymbol = new Symbol.TypeVariableSymbol(typeParameterTree.identifier().name(), symbol);
-      symbol.addTypeParameter((Type.TypeVariableType) typeVariableSymbol.type);
+      JavaSymbol.TypeVariableJavaSymbol typeVariableSymbol = new JavaSymbol.TypeVariableJavaSymbol(typeParameterTree.identifier().name(), symbol);
+      symbol.addTypeParameter((JavaType.TypeVariableJavaType) typeVariableSymbol.type);
       enterSymbol(typeParameterTree, typeVariableSymbol);
     }
     symbol.typeParameters = env.scope;

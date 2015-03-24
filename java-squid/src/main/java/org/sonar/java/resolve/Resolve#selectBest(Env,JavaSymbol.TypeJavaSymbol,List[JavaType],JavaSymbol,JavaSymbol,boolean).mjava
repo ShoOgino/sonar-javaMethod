@@ -1,0 +1,25 @@
+  /**
+   * @param symbol    candidate
+   * @param bestSoFar previously found best match
+   */
+  private JavaSymbol selectBest(Env env, JavaSymbol.TypeJavaSymbol site, List<JavaType> argTypes, JavaSymbol symbol, JavaSymbol bestSoFar, boolean autoboxing) {
+    // TODO get rid of null check
+    if (symbol.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(symbol, site) || symbol.type == null) {
+      return bestSoFar;
+    }
+    boolean isVarArgs = ((JavaSymbol.MethodJavaSymbol) symbol).isVarArgs();
+    if (!isArgumentsAcceptable(argTypes, ((JavaType.MethodJavaType) symbol.type).argTypes, isVarArgs, autoboxing)) {
+      return bestSoFar;
+    }
+    // TODO ambiguity, errors, ...
+    if (!isAccessible(env, site, symbol)) {
+      return new AccessErrorJavaSymbol(symbol, symbols.unknownType);
+    }
+    JavaSymbol mostSpecific = selectMostSpecific(symbol, bestSoFar, argTypes);
+    if (mostSpecific.isKind(JavaSymbol.AMBIGUOUS)) {
+      //same signature, we keep the first symbol found (overrides the other one).
+      mostSpecific = bestSoFar;
+    }
+    return mostSpecific;
+  }
+

@@ -1,9 +1,9 @@
   @Test
   public void ClassDeclaration() {
     Result result = Result.createFor("declarations/ClassDeclaration");
-    Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) result.symbol("Declaration");
-    Symbol classDeclaration = result.symbol("ClassDeclaration");
-    List<Symbol> parameters = classDeclaration.type.symbol.typeParameters.lookup("T");
+    JavaSymbol.TypeJavaSymbol typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Declaration");
+    JavaSymbol classDeclaration = result.symbol("ClassDeclaration");
+    List<JavaSymbol> parameters = classDeclaration.type.symbol.typeParameters.lookup("T");
     assertThat(parameters).hasSize(1);
     assertThat(parameters.get(0).getName()).isEqualTo("T");
     parameters = classDeclaration.type.symbol.typeParameters.lookup("S");
@@ -17,19 +17,19 @@
         result.symbol("SecondInterface").type);
     assertThat(typeSymbol.members.lookup("this")).isNotEmpty();
     assertThat(typeSymbol.members.lookup("super")).hasSize(1);
-    Symbol superSymbol = typeSymbol.members.lookup("super").get(0);
+    JavaSymbol superSymbol = typeSymbol.members.lookup("super").get(0);
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("Superclass");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Superclass");
     assertThat(superSymbol.type.symbol).isSameAs(typeSymbol);
 
-    Symbol superclass = typeSymbol.getSuperclass().symbol;
+    JavaSymbol superclass = typeSymbol.getSuperclass().symbol;
     assertThat(superclass.getName()).isEqualTo("Object");
-    assertThat(superclass.owner).isInstanceOf(Symbol.PackageSymbol.class);
+    assertThat(superclass.owner).isInstanceOf(JavaSymbol.PackageJavaSymbol.class);
     assertThat(superclass.owner.getName()).isEqualTo("java.lang");
 
     assertThat(typeSymbol.getInterfaces()).isEmpty();
 
-    typeSymbol = (Symbol.TypeSymbol) result.symbol("Foo");
+    typeSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Foo");
     assertThat(typeSymbol.getSuperclass()).isSameAs(result.symbol("Baz").type);
 
     assertThat(result.reference(25,21)).isSameAs(result.symbol("method"));

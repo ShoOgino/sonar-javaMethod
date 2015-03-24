@@ -3,11 +3,11 @@
    * This method performs check of class name within file in order to avoid such situation.
    * This is definitely not the best solution in terms of performance, but acceptable for now.
    *
-   * @return symbol for requested class, if corresponding class file exists, and {@link Resolve.SymbolNotFound} otherwise
+   * @return symbol for requested class, if corresponding class file exists, and {@link org.sonar.java.resolve.Resolve.JavaSymbolNotFound} otherwise
    */
   // TODO(Godin): Method name is misleading because of lazy loading.
-  public Symbol loadClass(String fullname) {
-    Symbol.TypeSymbol symbol = classes.get(fullname);
+  public JavaSymbol loadClass(String fullname) {
+    JavaSymbol.TypeJavaSymbol symbol = classes.get(fullname);
     if (symbol != null) {
       return symbol;
     }
@@ -17,14 +17,14 @@
     String bytecodeName = Convert.bytecodeName(fullname);
 
     if (inputStream == null) {
-      return new Resolve.SymbolNotFound();
+      return new Resolve.JavaSymbolNotFound();
     }
 
     try {
       ClassReader classReader = new ClassReader(inputStream);
       String className = classReader.getClassName();
       if (!className.equals(bytecodeName)) {
-        return new Resolve.SymbolNotFound();
+        return new Resolve.JavaSymbolNotFound();
       }
     } catch (IOException e) {
       throw Throwables.propagate(e);

@@ -1,44 +1,44 @@
   public Symbols(BytecodeCompleter bytecodeCompleter) {
-    rootPackage = new Symbol.PackageSymbol("", null);
-    defaultPackage = new Symbol.PackageSymbol("", rootPackage);
+    rootPackage = new JavaSymbol.PackageJavaSymbol("", null);
+    defaultPackage = new JavaSymbol.PackageJavaSymbol("", rootPackage);
 
-    predefClass = new Symbol.TypeSymbol(Flags.PUBLIC, "", rootPackage);
+    predefClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "", rootPackage);
     predefClass.members = new Scope(predefClass);
-    ((Type.ClassType) predefClass.type).interfaces = ImmutableList.of();
+    ((JavaType.ClassJavaType) predefClass.type).interfaces = ImmutableList.of();
 
-    unknownSymbol = new Symbol.TypeSymbol(Flags.PUBLIC, /* TODO name */"", rootPackage);
+    unknownSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, /* TODO name */"", rootPackage);
     unknownSymbol.members = new Scope(unknownSymbol);
-    unknownType = new Type.ClassType(unknownSymbol) {
+    unknownType = new JavaType.ClassJavaType(unknownSymbol) {
       @Override
       public String toString() {
         return "!unknown!";
       }
     };
-    unknownType.tag = Type.UNKNOWN;
+    unknownType.tag = JavaType.UNKNOWN;
     unknownType.interfaces = ImmutableList.of();
     unknownSymbol.type = unknownType;
 
     // TODO should have type "noType":
-    noSymbol = new Symbol.TypeSymbol(0, "", rootPackage);
+    noSymbol = new JavaSymbol.TypeJavaSymbol(0, "", rootPackage);
 
-    methodClass = new Symbol.TypeSymbol(Flags.PUBLIC, "", noSymbol);
+    methodClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "", noSymbol);
 
     // builtin types
-    byteType = initType(Type.BYTE, "byte");
-    charType = initType(Type.CHAR, "char");
-    shortType = initType(Type.SHORT, "short");
-    intType = initType(Type.INT, "int");
-    longType = initType(Type.LONG, "long");
-    floatType = initType(Type.FLOAT, "float");
-    doubleType = initType(Type.DOUBLE, "double");
-    booleanType = initType(Type.BOOLEAN, "boolean");
-    nullType = initType(Type.BOT, "<nulltype>");
-    voidType = initType(Type.VOID, "void");
+    byteType = initType(JavaType.BYTE, "byte");
+    charType = initType(JavaType.CHAR, "char");
+    shortType = initType(JavaType.SHORT, "short");
+    intType = initType(JavaType.INT, "int");
+    longType = initType(JavaType.LONG, "long");
+    floatType = initType(JavaType.FLOAT, "float");
+    doubleType = initType(JavaType.DOUBLE, "double");
+    booleanType = initType(JavaType.BOOLEAN, "boolean");
+    nullType = initType(JavaType.BOT, "<nulltype>");
+    voidType = initType(JavaType.VOID, "void");
 
     bytecodeCompleter.init(this);
 
     // predefined types for java lang
-    Symbol.PackageSymbol javalang = bytecodeCompleter.enterPackage("java.lang");
+    JavaSymbol.PackageJavaSymbol javalang = bytecodeCompleter.enterPackage("java.lang");
     // define a star import scope to let resolve types to java.lang when needed.
     javalang.members = new Scope.StarImportScope(javalang, bytecodeCompleter);
     javalang.members.enter(javalang);
@@ -62,18 +62,18 @@
     boxedTypes.put(doubleType, bytecodeCompleter.loadClass("java.lang.Double").type);
     boxedTypes.put(booleanType, bytecodeCompleter.loadClass("java.lang.Boolean").type);
 
-    for (Type boxedType : boxedTypes.keySet()) {
+    for (JavaType boxedType : boxedTypes.keySet()) {
       boxedType.primitiveWrapperType = boxedTypes.get(boxedType);
       boxedTypes.get(boxedType).primitiveType = boxedType;
     }
 
     // TODO comment me
-    arrayClass = new Symbol.TypeSymbol(Flags.PUBLIC, "Array", noSymbol);
-    Type.ClassType arrayClassType = (Type.ClassType) arrayClass.type;
+    arrayClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "Array", noSymbol);
+    JavaType.ClassJavaType arrayClassType = (JavaType.ClassJavaType) arrayClass.type;
     arrayClassType.supertype = objectType;
     arrayClassType.interfaces = ImmutableList.of(cloneableType, serializableType);
     arrayClass.members = new Scope(arrayClass);
-    arrayClass.members().enter(new Symbol.VariableSymbol(Flags.PUBLIC | Flags.FINAL, "length", intType, arrayClass));
+    arrayClass.members().enter(new JavaSymbol.VariableJavaSymbol(Flags.PUBLIC | Flags.FINAL, "length", intType, arrayClass));
     // TODO arrayClass implements clone() method
 
     enterOperators();

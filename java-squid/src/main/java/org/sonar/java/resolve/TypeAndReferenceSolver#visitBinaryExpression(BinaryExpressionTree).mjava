@@ -1,20 +1,20 @@
   @Override
   public void visitBinaryExpression(BinaryExpressionTree tree) {
-    resolveAs(tree.leftOperand(), Symbol.VAR);
-    resolveAs(tree.rightOperand(), Symbol.VAR);
-    Type left = getType(tree.leftOperand());
-    Type right = getType(tree.rightOperand());
+    resolveAs(tree.leftOperand(), JavaSymbol.VAR);
+    resolveAs(tree.rightOperand(), JavaSymbol.VAR);
+    JavaType left = getType(tree.leftOperand());
+    JavaType right = getType(tree.rightOperand());
     // TODO avoid nulls
     if (left == null || right == null) {
       registerType(tree, symbols.unknownType);
       return;
     }
-    Symbol symbol = resolve.findMethod(semanticModel.getEnv(tree), symbols.predefClass.type, tree.operatorToken().text(), ImmutableList.of(left, right)).symbol();
-    if (symbol.kind != Symbol.MTH) {
+    JavaSymbol symbol = resolve.findMethod(semanticModel.getEnv(tree), symbols.predefClass.type, tree.operatorToken().text(), ImmutableList.of(left, right)).symbol();
+    if (symbol.kind != JavaSymbol.MTH) {
       // not found
       registerType(tree, symbols.unknownType);
       return;
     }
-    registerType(tree, ((Type.MethodType) symbol.type).resultType);
+    registerType(tree, ((JavaType.MethodJavaType) symbol.type).resultType);
   }
 
