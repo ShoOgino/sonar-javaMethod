@@ -1,22 +1,9 @@
   public Symbols(BytecodeCompleter bytecodeCompleter) {
-    rootPackage = new JavaSymbol.PackageJavaSymbol("", null);
     defaultPackage = new JavaSymbol.PackageJavaSymbol("", rootPackage);
 
     predefClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "", rootPackage);
     predefClass.members = new Scope(predefClass);
     ((JavaType.ClassJavaType) predefClass.type).interfaces = ImmutableList.of();
-
-    unknownSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, /* TODO name */"", rootPackage);
-    unknownSymbol.members = new Scope(unknownSymbol);
-    unknownType = new JavaType.ClassJavaType(unknownSymbol) {
-      @Override
-      public String toString() {
-        return "!unknown!";
-      }
-    };
-    unknownType.tag = JavaType.UNKNOWN;
-    unknownType.interfaces = ImmutableList.of();
-    unknownSymbol.type = unknownType;
 
     // TODO should have type "noType":
     noSymbol = new JavaSymbol.TypeJavaSymbol(0, "", rootPackage);
