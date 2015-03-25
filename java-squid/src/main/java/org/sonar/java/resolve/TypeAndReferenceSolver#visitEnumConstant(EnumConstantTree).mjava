@@ -7,12 +7,10 @@
     registerType(newClassTree.identifier(), ((VariableTreeImpl) tree).getSymbol().getType());
     scan(newClassTree.typeArguments());
     scan(newClassTree.arguments());
-    if(newClassTree.classBody() != null) {
-      scan(newClassTree.classBody());
-      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) newClassTree.classBody().symbol();
-      if(symbol != null) {
-        ((JavaType.ClassJavaType) symbol.type).supertype = getType(newClassTree.identifier());
-      }
+    ClassTree classBody = newClassTree.classBody();
+    if(classBody != null) {
+      scan(classBody);
+      ((JavaType.ClassJavaType) classBody.symbol().type()).supertype = getType(newClassTree.identifier());
     }
     resolveConstructorSymbol(tree.simpleName(), semanticModel.getEnv(tree), getParameterTypes(newClassTree.arguments()));
   }

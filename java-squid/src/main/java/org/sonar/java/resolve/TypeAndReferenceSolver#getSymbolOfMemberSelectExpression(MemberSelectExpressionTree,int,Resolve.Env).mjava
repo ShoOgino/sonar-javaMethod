@@ -6,7 +6,7 @@
     if ((kind & JavaSymbol.TYP) != 0) {
       expressionKind |= JavaSymbol.PCK;
     }
-
+    //TODO: resolveAs result is only used here, should probably be refactored
     JavaSymbol site = resolveAs(mse.expression(), expressionKind, resolveEnv);
     if (site.kind == JavaSymbol.VAR) {
       return resolve.findIdentInType(resolveEnv, getType(mse.expression()).symbol, mse.identifier().name(), JavaSymbol.VAR);
@@ -17,6 +17,6 @@
     if (site.kind == JavaSymbol.PCK) {
       return resolve.findIdentInPackage(site, mse.identifier().name(), kind);
     }
-    return symbols.unknownSymbol;
+    return Symbols.unknownSymbol;
   }
 

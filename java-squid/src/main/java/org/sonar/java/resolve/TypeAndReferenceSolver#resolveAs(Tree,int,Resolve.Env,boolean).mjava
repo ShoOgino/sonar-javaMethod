@@ -8,7 +8,7 @@
           resolveAs(mse.expression(), JavaSymbol.TYP, resolveEnv);
           // member select ending with .class
           registerType(tree, symbols.classType);
-          return null;
+          return symbols.classType.symbol;
         }
 
         identifierTree = mse.identifier();
@@ -30,7 +30,7 @@
     tree.accept(this);
     JavaType type = getType(tree);
     if (tree.is(Tree.Kind.INFERED_TYPE)) {
-      type = symbols.unknownType;
+      type = Symbols.unknownType;
       registerType(tree, type);
     }
     if (type == null) {

@@ -9,21 +9,18 @@
     resolveAs(tree.arguments(), JavaSymbol.VAR);
     NewClassTreeImpl newClassTreeImpl = (NewClassTreeImpl) tree;
     resolveConstructorSymbol(newClassTreeImpl.getConstructorIdentifier(), newClassEnv, getParameterTypes(tree.arguments()));
-    if (tree.classBody() != null) {
-      JavaType.ClassJavaType anonymousClassType = symbols.unknownType;
-      JavaType type = ((AbstractTypedTree) tree.identifier()).getSymbolType();
-      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) tree.classBody().symbol();
-      if (symbol != null) {
-        anonymousClassType = (JavaType.ClassJavaType) symbol.type;
-        if (type.getSymbol().isFlag(Flags.INTERFACE)) {
-          anonymousClassType.interfaces = ImmutableList.of(type);
-          anonymousClassType.supertype = symbols.objectType;
-        } else {
-          anonymousClassType.supertype = type;
-          anonymousClassType.interfaces = ImmutableList.of();
-        }
+    ClassTree classBody = tree.classBody();
+    if (classBody != null) {
+      JavaType type = (JavaType) tree.identifier().symbolType();
+      JavaType.ClassJavaType anonymousClassType = (JavaType.ClassJavaType) classBody.symbol().type();
+      if (type.getSymbol().isFlag(Flags.INTERFACE)) {
+        anonymousClassType.interfaces = ImmutableList.of(type);
+        anonymousClassType.supertype = symbols.objectType;
+      } else {
+        anonymousClassType.supertype = type;
+        anonymousClassType.interfaces = ImmutableList.of();
       }
-      scan(tree.classBody());
+      scan(classBody);
       registerType(tree, anonymousClassType);
     } else {
       registerType(tree, getType(tree.identifier()));
