@@ -1,0 +1,10 @@
+  private void checkExtending(ClassTree classTree, Type currentInterfaceType, String currentInterfaceName) {
+    for (TypeTree superInterface : classTree.superInterfaces()) {
+      if (!currentInterfaceType.equals(superInterface.symbolType()) && currentInterfaceType.isSubtypeOf(superInterface.symbolType())) {
+        String interfaceName = superInterface.symbolType().fullyQualifiedName();
+        super.addIssue(superInterface, String.format("\"%s\" is an \"%s\" so \"%s\" can be removed from the extension list.",
+          currentInterfaceName, interfaceName, interfaceName));
+      }
+    }
+  }
+

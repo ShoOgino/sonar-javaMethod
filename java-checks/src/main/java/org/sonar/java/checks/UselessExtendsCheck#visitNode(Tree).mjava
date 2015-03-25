@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    TypeTree superClass = classTree.superClass();
+    if (superClass != null && superClass.symbolType().is("java.lang.Object")) {
+      super.addIssue(superClass, "\"Object\" should not be explicitly extended.");
+    }
+    Set<Type> interfaces = new HashSet<>();
+    for (TypeTree superInterface : classTree.superInterfaces()) {
+      Type interfaceType = superInterface.symbolType();
+      String interfaceName = interfaceType.fullyQualifiedName();
+      if (interfaces.contains(interfaceType)) {
+        super.addIssue(superInterface, String.format("\"%s\" is listed multiple times.", interfaceName));
+      } else {
+        checkExtending(classTree, interfaceType, interfaceName);
+      }
+      interfaces.add(interfaceType);
+    }
+  }
+
