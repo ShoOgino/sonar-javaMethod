@@ -3,18 +3,18 @@
     if (hasSemantic()) {
       MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
       Symbol symbolReference = null;
-      Symbol.MethodSymbol method = null;
+      Symbol method = null;
       String reportedName = "";
       if (methodInvocationTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mse = (MemberSelectExpressionTree) methodInvocationTree.methodSelect();
         IdentifierTree identifier = mse.identifier();
         reportedName = identifier.name();
-        method = (Symbol.MethodSymbol) getSemanticModel().getReference(identifier);
+        method = identifier.symbol();
         if (mse.expression().is(Tree.Kind.IDENTIFIER)) {
-          symbolReference = getSemanticModel().getReference((IdentifierTree) mse.expression());
+          symbolReference = ((IdentifierTree) mse.expression()).symbol();
         }
       }
-      if (symbolReference != null && method != null && isMethodFromCollection(method)) {
+      if (symbolReference != null && isMethodFromCollection(method)) {
         reportIssueForParameters(methodInvocationTree, symbolReference, reportedName);
       }
     }

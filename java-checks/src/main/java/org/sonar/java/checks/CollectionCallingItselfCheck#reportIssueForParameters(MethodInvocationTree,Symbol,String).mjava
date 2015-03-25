@@ -1,7 +1,7 @@
   private void reportIssueForParameters(MethodInvocationTree methodInvocationTree, Symbol symbolReference, String reportedName) {
     for (ExpressionTree arg : methodInvocationTree.arguments()) {
       if (arg.is(Tree.Kind.IDENTIFIER)) {
-        Symbol reference = getSemanticModel().getReference((IdentifierTree) arg);
+        Symbol reference = ((IdentifierTree) arg).symbol();
         if (reference == symbolReference) {
           addIssue(methodInvocationTree, "Remove or correct this \"" + reportedName + "\" call.");
         }

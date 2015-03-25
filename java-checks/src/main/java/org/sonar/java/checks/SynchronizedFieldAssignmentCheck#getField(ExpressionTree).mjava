@@ -1,8 +1,8 @@
   @CheckForNull
   private Symbol getField(ExpressionTree tree) {
     if (tree.is(Kind.IDENTIFIER)) {
-      Symbol reference = getSemanticModel().getReference((IdentifierTree) tree);
-      if (reference != null && reference.owner().isTypeSymbol()) {
+      Symbol reference = ((IdentifierTree) tree).symbol();
+      if (!reference.isUnknown() && reference.owner().isTypeSymbol()) {
         return reference;
       }
     } else if (tree.is(Kind.MEMBER_SELECT)) {

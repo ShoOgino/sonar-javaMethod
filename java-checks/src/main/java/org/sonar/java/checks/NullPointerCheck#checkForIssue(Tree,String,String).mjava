@@ -7,7 +7,7 @@
    */
   private void checkForIssue(Tree tree, String nullableMessage, String nullMessage) {
     if (tree.is(Tree.Kind.IDENTIFIER)) {
-      Symbol symbol = semanticModel.getReference((IdentifierTreeImpl) tree);
+      Symbol symbol = ((IdentifierTree) tree).symbol();
       if (isSymbolLocalVariableOrMethodParameter(symbol) && isVariableNull((VariableSymbol) symbol)) {
         context.addIssue(tree, RULE_KEY, String.format(nullableMessage, symbol.name()));
       }
