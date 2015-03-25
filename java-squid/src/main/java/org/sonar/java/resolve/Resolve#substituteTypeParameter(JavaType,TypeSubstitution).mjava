@@ -1,0 +1,16 @@
+  private JavaType substituteTypeParameter(JavaType type, TypeSubstitution substitution) {
+    JavaType substitutedType = substitution.substitutedType(type);
+    if (substitutedType != null) {
+      return substitutedType;
+    }
+    if(type instanceof JavaType.ParametrizedTypeJavaType) {
+      JavaType.ParametrizedTypeJavaType ptt = (JavaType.ParametrizedTypeJavaType) type;
+      TypeSubstitution newSubstitution = new TypeSubstitution();
+      for (Map.Entry<JavaType.TypeVariableJavaType, JavaType> entry : ptt.typeSubstitution.substitutionEntries()) {
+        newSubstitution.add(entry.getKey(), substituteTypeParameter(entry.getValue(), substitution));
+      }
+      return parametrizedTypeCache.getParametrizedTypeType(ptt.rawType.getSymbol(), newSubstitution);
+    }
+    return type;
+  }
+

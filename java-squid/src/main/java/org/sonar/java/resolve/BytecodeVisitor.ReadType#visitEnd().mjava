@@ -4,11 +4,11 @@
         JavaSymbol.TypeJavaSymbol readSymbol = typeRead.symbol;
         readSymbol.complete();
          //Mismatch between type variable and type arguments means we are lacking some pieces of bytecode to resolve substitution properly.
-        if(typeArguments.size() == readSymbol.typeVariableTypes.size()) {
-          Map<JavaType.TypeVariableJavaType, JavaType> substitution = Maps.newHashMap();
+        if (typeArguments.size() == readSymbol.typeVariableTypes.size()) {
+          TypeSubstitution substitution = new TypeSubstitution();
           int i = 0;
           for (JavaType typeArgument : typeArguments) {
-            substitution.put(readSymbol.typeVariableTypes.get(i), typeArgument);
+            substitution.add(readSymbol.typeVariableTypes.get(i), typeArgument);
             i++;
           }
           typeRead = parametrizedTypeCache.getParametrizedTypeType(readSymbol, substitution);
