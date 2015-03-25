@@ -3,11 +3,11 @@
     Result result = Result.createFor("Generics");
     MethodTree method3 = (MethodTree) result.getTree(result.symbol("method3"));
     VariableTree variable = (VariableTree) method3.block().body().get(0);
-    assertThat(((AbstractTypedTree)variable.initializer()).getSymbolType().getSymbol().getName()).isEqualTo("String");
+    assertThat(variable.initializer().symbolType().symbol().name()).isEqualTo("String");
 
     MethodTree method4 = (MethodTree) result.getTree(result.symbol("method4"));
     variable = (VariableTree) method4.block().body().get(0);
-    JavaType symbolType = ((AbstractTypedTree) variable.initializer()).getSymbolType();
+    Type symbolType = variable.initializer().symbolType();
     assertThat(symbolType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
     JavaType.ParametrizedTypeJavaType ptt = (JavaType.ParametrizedTypeJavaType) symbolType;
     assertThat(ptt.typeSubstitution.values().iterator().next().getSymbol().getName()).isEqualTo("String");

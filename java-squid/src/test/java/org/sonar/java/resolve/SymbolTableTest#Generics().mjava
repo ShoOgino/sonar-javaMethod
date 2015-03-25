@@ -21,7 +21,7 @@
     assertThat(((JavaType.ArrayJavaType)arrayErasure.erasure()).elementType().symbol.getName()).isEqualTo("CharSequence");
 
     IdentifierTree tree = result.referenceTree(20, 7);
-    JavaType symbolType = ((AbstractTypedTree) tree).getSymbolType();
+    JavaType symbolType = (JavaType) tree.symbolType();
     assertThat(symbolType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
     JavaType.ParametrizedTypeJavaType ptt = (JavaType.ParametrizedTypeJavaType) symbolType;
     assertThat(ptt.symbol.getName()).isEqualTo("C");
@@ -44,7 +44,7 @@
     //Unknown parametrized type should be tagged as unknown
     MethodTree methodTree = (MethodTree) result.getTree(result.symbol("unknownSymbol"));
     VariableTree variableTree = (VariableTree) methodTree.block().body().get(0);
-    assertThat(((AbstractTypedTree) variableTree.type()).getSymbolType().isTagged(JavaType.UNKNOWN)).isTrue();
+    assertThat(variableTree.type().symbolType().isUnknown()).isTrue();
 
   }
 
