@@ -4,7 +4,10 @@
     }
     LabeledStatementTree labelTree = labelTrees.get(label.name());
     if (labelTree != null) {
-      semanticModel.associateReference(label, semanticModel.getSymbol(labelTree));
+      JavaSymbol symbol = (JavaSymbol) semanticModel.getSymbol(labelTree);
+      semanticModel.associateReference(label, symbol);
+      ((IdentifierTreeImpl) label).setSymbol(symbol);
+      symbol.addUsage(label);
     }
   }
 
