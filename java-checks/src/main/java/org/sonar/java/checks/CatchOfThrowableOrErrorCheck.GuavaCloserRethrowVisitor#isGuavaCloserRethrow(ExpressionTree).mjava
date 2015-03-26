@@ -1,0 +1,11 @@
+    private boolean isGuavaCloserRethrow(ExpressionTree expression) {
+      if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTree mit = (MethodInvocationTree) expression;
+        if (MATCHERS.anyMatch(mit)) {
+          ExpressionTree firstArgument = mit.arguments().get(0);
+          return firstArgument.is(Tree.Kind.IDENTIFIER) && exceptionSymbol.equals(((IdentifierTree) firstArgument).symbol());
+        }
+      }
+      return false;
+    }
+

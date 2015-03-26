@@ -1,0 +1,13 @@
+  private void checkType(TypeTree typeTree, CatchTree catchTree) {
+    Type type = typeTree.symbolType();
+    if (type.is("java.lang.Error")) {
+      insertIssue(typeTree, type);
+    } else if (type.is("java.lang.Throwable")) {
+      GuavaCloserRethrowVisitor visitor = new GuavaCloserRethrowVisitor(catchTree.parameter().symbol());
+      catchTree.block().accept(visitor);
+      if (!visitor.foundRethrow) {
+        insertIssue(typeTree, type);
+      }
+    }
+  }
+
