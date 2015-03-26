@@ -1,5 +1,12 @@
+  @CheckForNull
   private ExpressionTree getInitializer(IdentifierTree tree) {
     Symbol symbol = tree.symbol();
-    return ((VariableTree) getSemanticModel().getTree(symbol)).initializer();
+    if(symbol.isVariableSymbol()) {
+      VariableTree declaration = ((Symbol.VariableSymbol) symbol).declaration();
+      if(declaration != null) {
+        return declaration.initializer();
+      }
+    }
+    return null;
   }
 

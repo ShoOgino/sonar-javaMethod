@@ -7,8 +7,8 @@
         if (type.is("javax.servlet.http.Cookie") && isConstructorInitialized(variableTree)) {
           Symbol variableSymbol = variableTree.symbol();
           //Ignore field variables
-          if (variableSymbol.owner().isMethodSymbol()) {
-            unsecuredCookies.add(variableSymbol);
+          if (variableSymbol.isVariableSymbol() && variableSymbol.owner().isMethodSymbol()) {
+            unsecuredCookies.add((Symbol.VariableSymbol) variableSymbol);
           }
         }
       } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
