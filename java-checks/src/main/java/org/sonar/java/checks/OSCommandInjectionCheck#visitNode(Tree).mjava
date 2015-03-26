@@ -1,7 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
-      if (tree.is(Tree.Kind.METHOD_INVOCATION) && RUNTIME_EXEC_MATCHER.matches((MethodInvocationTree) tree, getSemanticModel())) {
+      if (tree.is(Tree.Kind.METHOD_INVOCATION) && RUNTIME_EXEC_MATCHER.matches((MethodInvocationTree) tree)) {
         MethodInvocationTree mit = (MethodInvocationTree) tree;
         checkForIssue(tree, mit.arguments().get(0));
       } else if (tree.is(Tree.Kind.NEW_CLASS) && ((NewClassTree) tree).symbolType().is("java.lang.ProcessBuilder")) {
