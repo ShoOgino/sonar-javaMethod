@@ -2,7 +2,11 @@
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.METHOD)) {
       MethodTree methodTree = (MethodTree) tree;
-      returnType.push(Returns.getReturnType(methodTree.returnType()));
+      if (isAllowingNull(methodTree)) {
+        returnType.push(Returns.OTHERS);
+      } else {
+        returnType.push(Returns.getReturnType(methodTree.returnType()));
+      }
     } else if (tree.is(Tree.Kind.CONSTRUCTOR)) {
       returnType.push(Returns.OTHERS);
     } else {
