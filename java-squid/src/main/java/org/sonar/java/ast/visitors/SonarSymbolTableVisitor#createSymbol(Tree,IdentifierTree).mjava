@@ -1,10 +1,8 @@
   private void createSymbol(Tree tree, IdentifierTree identifier) {
-    Symbol symbol = symbolTableBuilder.newSymbol(startOffsetFor(identifier), endOffsetFor(identifier));
     org.sonar.plugins.java.api.semantic.Symbol semanticSymbol = semanticModel.getSymbol(tree);
-    if (semanticSymbol != null) {
-      for (IdentifierTree usage : semanticSymbol.usages()) {
-        symbolTableBuilder.newReference(symbol, startOffsetFor(usage));
-      }
+    if (semanticSymbol == null) {
+      semanticSymbol = Symbols.unknownSymbol;
     }
+    createSymbol(semanticSymbol, identifier);
   }
 
