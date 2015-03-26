@@ -1,6 +1,6 @@
   protected boolean isIdentifierDynamicString(Tree methodTree, IdentifierTree arg, @Nullable Symbol currentlyChecking, boolean firstLevel) {
     Symbol symbol = arg.symbol();
-    if (!symbol.isVariableSymbol() || symbol.equals(currentlyChecking) || isConstant(symbol)) {
+    if (isExcluded(currentlyChecking, symbol)) {
       return false;
     }
 
@@ -11,7 +11,8 @@
 
       //Check declaration
       VariableTree declaration = ((Symbol.VariableSymbol) symbol).declaration();
-      if (declaration.initializer() != null && isDynamicString(methodTree, declaration.initializer(), currentlyChecking)) {
+      ExpressionTree initializer = declaration.initializer();
+      if (initializer != null && isDynamicString(methodTree, initializer, currentlyChecking)) {
         return true;
       }
       //check usages by revisiting the enclosing tree.

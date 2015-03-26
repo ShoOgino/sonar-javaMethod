@@ -1,16 +1,10 @@
   @Override
   public boolean isSubtypeOf(String fullyQualifiedName) {
-    if (isTagged(CLASS)) {
-      if (is(fullyQualifiedName) || superTypeContains(fullyQualifiedName)) {
-        return true;
-      }
-    } else if (isTagged(ARRAY)) {
+    if (isTagged(ARRAY)) {
       return "java.lang.Object".equals(fullyQualifiedName) ||
           (fullyQualifiedName.endsWith("[]") && ((ArrayJavaType) this).elementType.isSubtypeOf(fullyQualifiedName.substring(0, fullyQualifiedName.length() - 2)));
     } else if (isTagged(TYPEVAR)) {
       return erasure().isSubtypeOf(fullyQualifiedName);
-    } else if (isTagged(BOT)) {
-      return true;
     }
     return false;
   }

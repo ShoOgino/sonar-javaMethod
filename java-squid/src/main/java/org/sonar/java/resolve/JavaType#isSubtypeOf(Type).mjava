@@ -1,0 +1,16 @@
+  @Override
+  public boolean isSubtypeOf(Type superType) {
+    JavaType supType = (JavaType) superType;
+    if (isTagged(ARRAY)) {
+      //Handle covariance of arrays.
+      if(supType.isTagged(ARRAY)) {
+        return ((ArrayType) this).elementType().isSubtypeOf(((ArrayType) supType).elementType());
+      }
+      //Only possibility to be supertype of array without being an array is to be Object.
+      return "java.lang.Object".equals(supType.fullyQualifiedName());
+    } else if(isTagged(TYPEVAR)) {
+      return this.equals(superType) || erasure().isSubtypeOf(superType.erasure());
+    }
+    return false;
+  }
+
