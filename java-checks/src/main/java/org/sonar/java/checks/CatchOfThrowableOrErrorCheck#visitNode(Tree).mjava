@@ -1,12 +1,10 @@
   @Override
-  public void visitCatch(CatchTree tree) {
-    super.visitCatch(tree);
-
-    Tree typeTree = tree.parameter().type();
+  public void visitNode(Tree tree) {
+    TypeTree typeTree = ((CatchTree) tree).parameter().type();
 
     if (typeTree.is(Kind.UNION_TYPE)) {
       UnionTypeTree unionTypeTree = (UnionTypeTree) typeTree;
-      for (Tree typeAlternativeTree : unionTypeTree.typeAlternatives()) {
+      for (TypeTree typeAlternativeTree : unionTypeTree.typeAlternatives()) {
         checkType(typeAlternativeTree);
       }
     } else {
