@@ -1,10 +1,11 @@
   @Override
   public void visitClass(ClassTree tree) {
-    if (tree.simpleName() != null) {
-      createSymbol(tree, tree.simpleName());
+    IdentifierTree simpleName = tree.simpleName();
+    if (simpleName != null) {
+      createSymbol(simpleName, tree.symbol().usages());
     }
     for (TypeParameterTree typeParameterTree : tree.typeParameters()) {
-      createSymbol(typeParameterTree, typeParameterTree.identifier());
+      createSymbol(typeParameterTree.identifier(), typeParameterTree);
     }
     super.visitClass(tree);
   }
