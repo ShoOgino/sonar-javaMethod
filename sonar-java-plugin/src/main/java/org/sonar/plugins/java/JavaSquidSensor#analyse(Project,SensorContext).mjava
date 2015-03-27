@@ -1,13 +1,11 @@
   @Override
   public void analyse(Project project, SensorContext context) {
     javaResourceLocator.setSensorContext(context);
-    Checks<JavaCheck> checks = checkFactory.<JavaCheck>create(CheckList.REPOSITORY_KEY).addAnnotatedChecks(CheckList.getChecks());
-    Collection<JavaCheck> checkList = checks.all();
+    sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getChecks());
     JavaConfiguration configuration = createConfiguration();
     Measurer measurer = new Measurer(project, context, configuration.separatesAccessorsFromMethods());
-    JavaSquid squid = new JavaSquid(configuration, sonarComponents, measurer, javaResourceLocator, checkList.toArray(new CodeVisitor[checkList.size()]));
+    JavaSquid squid = new JavaSquid(configuration, sonarComponents, measurer, javaResourceLocator, sonarComponents.checkClasses());
     squid.scan(getSourceFiles(), getTestFiles(), getBytecodeFiles());
-    new Bridges(squid, settings).save(context, project, checks, javaResourceLocator.getResourceMapping(),
-      sonarComponents.getResourcePerspectives(), noSonarFilter, profile);
+    new Bridges(squid, settings).save(context, project, sonarComponents, javaResourceLocator.getResourceMapping(), noSonarFilter, profile);
   }
 

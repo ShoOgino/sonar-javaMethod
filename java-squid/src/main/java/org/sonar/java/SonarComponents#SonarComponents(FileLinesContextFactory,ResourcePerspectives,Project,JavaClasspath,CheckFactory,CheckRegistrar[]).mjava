@@ -1,0 +1,19 @@
+  public SonarComponents(FileLinesContextFactory fileLinesContextFactory, ResourcePerspectives resourcePerspectives, Project project,
+                         JavaClasspath javaClasspath, CheckFactory checkFactory,
+                         @Nullable CheckRegistrar[] checkRegistrars) {
+    this.fileLinesContextFactory = fileLinesContextFactory;
+    this.resourcePerspectives = resourcePerspectives;
+    this.project = project;
+    this.javaClasspath = javaClasspath;
+    this.checkFactory = checkFactory;
+    checks = Lists.newArrayList();
+
+    if(checkRegistrars != null) {
+      CheckRegistrar.RegistrarContext registrarContext = new CheckRegistrar.RegistrarContext();
+      for (CheckRegistrar checkClassesRegister : checkRegistrars) {
+        checkClassesRegister.register(registrarContext);
+        registerCheckClasses(registrarContext.repositoryKey(), Lists.newArrayList(registrarContext.checkClasses()));
+      }
+    }
+  }
+
