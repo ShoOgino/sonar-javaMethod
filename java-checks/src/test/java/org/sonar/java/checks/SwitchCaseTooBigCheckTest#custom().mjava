@@ -3,8 +3,9 @@
     SwitchCaseTooBigCheck check = new SwitchCaseTooBigCheck();
     check.max = 6;
 
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SwitchCaseTooBigCheck.java"), check);
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SwitchCaseTooBigCheck.java"), new VisitorsBridge(check));
     checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(21).withMessage("Reduce this switch case number of lines from 7 to at most 6, for example by extracting code into methods.");
+      .next().atLine(10).withMessage("Reduce this switch case number of lines from 7 to at most 6, for example by extracting code into methods.")
+      .noMore();
   }
 
