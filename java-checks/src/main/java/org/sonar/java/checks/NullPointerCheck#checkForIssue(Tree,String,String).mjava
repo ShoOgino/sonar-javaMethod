@@ -11,15 +11,15 @@
       if (checkNullity(tree) == AbstractValue.NULL) {
         // prevents reporting issue multiple times
         currentState.setVariableValue((VariableSymbol) symbol, AbstractValue.UNKNOWN);
-        context.addIssue(tree, RULE_KEY, String.format(nullableMessage, symbol.name()));
+        context.addIssue(tree, this, String.format(nullableMessage, symbol.name()));
       }
     } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       Symbol symbol = ((MethodInvocationTree) tree).symbol();
       if (checkNullity(symbol) == AbstractValue.NULL) {
-        context.addIssue(tree, RULE_KEY, String.format(nullableMessage, symbol.name()));
+        context.addIssue(tree, this, String.format(nullableMessage, symbol.name()));
       }
     } else if (tree.is(Tree.Kind.NULL_LITERAL)) {
-      context.addIssue(tree, RULE_KEY, nullMessage);
+      context.addIssue(tree, this, nullMessage);
     }
   }
 

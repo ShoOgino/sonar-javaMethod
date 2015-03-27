@@ -11,14 +11,14 @@
       if (!importTree.isStatic()) {
         String importName = concatenate((ExpressionTree) importTree.qualifiedIdentifier());
         if ("java.lang.*".equals(importName)) {
-          context.addIssue(importTree, ruleKey, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
+          context.addIssue(importTree, this, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
         } else if (isImportFromSamePackage(importName)) {
-          context.addIssue(importTree, ruleKey, "Remove this unnecessary import: same package classes are always implicitly imported.");
+          context.addIssue(importTree, this, "Remove this unnecessary import: same package classes are always implicitly imported.");
         } else if (!isImportOnDemand(importName)) {
           if (isJavaLangImport(importName)) {
-            context.addIssue(importTree, ruleKey, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
+            context.addIssue(importTree, this, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
           } else if (isDuplicatedImport(importName)) {
-            context.addIssue(importTree, ruleKey, "Remove this duplicated import.");
+            context.addIssue(importTree, this, "Remove this duplicated import.");
           } else {
             lineByImportReference.put(importName, ((JavaTree) importTree).getLine());
             pendingImports.add(importName);
