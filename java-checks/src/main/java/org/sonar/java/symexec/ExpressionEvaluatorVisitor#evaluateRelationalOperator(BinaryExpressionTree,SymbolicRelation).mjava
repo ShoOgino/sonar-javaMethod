@@ -1,0 +1,12 @@
+  private void evaluateRelationalOperator(BinaryExpressionTree tree, SymbolicRelation operator) {
+    Symbol.VariableSymbol leftSymbol = extractLocalVariableSymbol(tree.leftOperand());
+    Symbol.VariableSymbol rightSymbol = extractLocalVariableSymbol(tree.rightOperand());
+    if (leftSymbol != null && rightSymbol != null) {
+      result = currentState.evaluateRelation(leftSymbol, operator, rightSymbol);
+      if (isUnknown(result)) {
+        currentConditionalState.trueState.setRelation(leftSymbol, operator, rightSymbol);
+        currentConditionalState.falseState.setRelation(leftSymbol, operator.negate(), rightSymbol);
+      }
+    }
+  }
+

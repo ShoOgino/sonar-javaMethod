@@ -1,0 +1,35 @@
+  @Test
+  public void test_relational() {
+    ExecutionState state = new ExecutionState();
+
+    ConditionalState greaterThanConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, greaterThanConditionalState, Tree.Kind.GREATER_THAN, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(greaterThanConditionalState.falseState, SymbolicRelation.LESS_EQUAL, SymbolicRelation.GREATER_EQUAL);
+    validateState(greaterThanConditionalState.trueState, SymbolicRelation.GREATER_THAN, SymbolicRelation.LESS_THAN);
+
+    ConditionalState greaterEqualConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, greaterEqualConditionalState, Tree.Kind.GREATER_THAN_OR_EQUAL_TO, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(greaterEqualConditionalState.falseState, SymbolicRelation.LESS_THAN, SymbolicRelation.GREATER_THAN);
+    validateState(greaterEqualConditionalState.trueState, SymbolicRelation.GREATER_EQUAL, SymbolicRelation.LESS_EQUAL);
+
+    ConditionalState equalToConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, equalToConditionalState, Tree.Kind.EQUAL_TO, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(equalToConditionalState.falseState, SymbolicRelation.NOT_EQUAL, SymbolicRelation.NOT_EQUAL);
+    validateState(equalToConditionalState.trueState, SymbolicRelation.EQUAL_TO, SymbolicRelation.EQUAL_TO);
+
+    ConditionalState lessThanConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, lessThanConditionalState, Tree.Kind.LESS_THAN, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(lessThanConditionalState.falseState, SymbolicRelation.GREATER_EQUAL, SymbolicRelation.LESS_EQUAL);
+    validateState(lessThanConditionalState.trueState, SymbolicRelation.LESS_THAN, SymbolicRelation.GREATER_THAN);
+
+    ConditionalState lessEqualConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, lessEqualConditionalState, Tree.Kind.LESS_THAN_OR_EQUAL_TO, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(lessEqualConditionalState.falseState, SymbolicRelation.GREATER_THAN, SymbolicRelation.LESS_THAN);
+    validateState(lessEqualConditionalState.trueState, SymbolicRelation.LESS_EQUAL, SymbolicRelation.GREATER_EQUAL);
+
+    ConditionalState notEqualConditionalState = new ConditionalState(state);
+    assertThat(evaluateBinaryOperator(state, notEqualConditionalState, Tree.Kind.NOT_EQUAL_TO, VARIABLE1, VARIABLE2)).isSameAs(UNKNOWN);
+    validateState(notEqualConditionalState.falseState, SymbolicRelation.EQUAL_TO, SymbolicRelation.EQUAL_TO);
+    validateState(notEqualConditionalState.trueState, SymbolicRelation.NOT_EQUAL, SymbolicRelation.NOT_EQUAL);
+  }
+

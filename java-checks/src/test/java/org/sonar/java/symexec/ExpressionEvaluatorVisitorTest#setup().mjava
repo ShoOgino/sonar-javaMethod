@@ -1,0 +1,36 @@
+  @BeforeClass
+  public static void setup() {
+    InternalSyntaxToken tokenNull = mock(InternalSyntaxToken.class);
+    when(tokenNull.text()).thenReturn("null");
+    EXPRESSION_UNKNOWN = new LiteralTreeImpl(Tree.Kind.BOOLEAN_LITERAL, tokenNull);
+
+    InternalSyntaxToken tokenFalse = mock(InternalSyntaxToken.class);
+    when(tokenFalse.text()).thenReturn("false");
+    LITERAL_FALSE = new LiteralTreeImpl(Tree.Kind.BOOLEAN_LITERAL, tokenFalse);
+
+    InternalSyntaxToken tokenTrue = mock(InternalSyntaxToken.class);
+    when(tokenTrue.text()).thenReturn("true");
+    LITERAL_TRUE = new LiteralTreeImpl(Tree.Kind.BOOLEAN_LITERAL, tokenTrue);
+
+    Symbol ownerSymbol = Mockito.mock(Symbol.class);
+    when(ownerSymbol.isMethodSymbol()).thenReturn(true);
+
+    InternalSyntaxToken tokenVariable1 = mock(InternalSyntaxToken.class);
+    when(tokenVariable1.text()).thenReturn("variable1");
+    SYMBOL1 = Mockito.mock(Symbol.VariableSymbol.class);
+    when(SYMBOL1.isVariableSymbol()).thenReturn(true);
+    when(SYMBOL1.owner()).thenReturn(ownerSymbol);
+
+    VARIABLE1 = new IdentifierTreeImpl(mock(InternalSyntaxToken.class));
+    VARIABLE1.setSymbol(SYMBOL1);
+
+    InternalSyntaxToken tokenVariable2 = mock(InternalSyntaxToken.class);
+    when(tokenVariable2.text()).thenReturn("variable2");
+    SYMBOL2 = Mockito.mock(Symbol.VariableSymbol.class);
+    when(SYMBOL2.isVariableSymbol()).thenReturn(true);
+    when(SYMBOL2.owner()).thenReturn(ownerSymbol);
+
+    VARIABLE2 = new IdentifierTreeImpl(mock(InternalSyntaxToken.class));
+    VARIABLE2.setSymbol(SYMBOL2);
+  }
+
