@@ -1,0 +1,12 @@
+  @Override
+  public void visitIdentifier(IdentifierTree tree) {
+    Symbol.VariableSymbol symbol = extractLocalVariableSymbol(tree);
+    if (symbol != null) {
+      result = currentState.getBooleanConstraint(symbol);
+      if (result == SymbolicBooleanConstraint.UNKNOWN) {
+        currentConditionalState.trueState.setBooleanConstraint(symbol, SymbolicBooleanConstraint.TRUE);
+        currentConditionalState.falseState.setBooleanConstraint(symbol, SymbolicBooleanConstraint.FALSE);
+      }
+    }
+  }
+
