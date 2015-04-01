@@ -1,14 +1,12 @@
   @Override
   public void visitUnaryExpression(UnaryExpressionTree tree) {
-    if (tree.is(Tree.Kind.LOGICAL_COMPLEMENT) && tree.expression().is(Tree.Kind.IDENTIFIER)) {
-      Symbol.VariableSymbol symbol = extractLocalVariableSymbol(((IdentifierTree) tree.expression()));
-      if (symbol != null) {
-        result = currentState.getBooleanConstraint(symbol).negate();
-        if (result == SymbolicBooleanConstraint.UNKNOWN) {
-          currentConditionalState.trueState.setBooleanConstraint(symbol, SymbolicBooleanConstraint.FALSE);
-          currentConditionalState.falseState.setBooleanConstraint(symbol, SymbolicBooleanConstraint.TRUE);
-        }
-      }
+    if (tree.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+      ExpressionEvaluatorVisitor currentResults = new ExpressionEvaluatorVisitor(currentState, tree.expression());
+      falseStates.addAll(currentResults.trueStates);
+      trueStates.addAll(currentResults.falseStates);
+    } else {
+      falseStates.add(currentState);
+      trueStates.add(currentState);
     }
   }
 

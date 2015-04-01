@@ -1,5 +1,6 @@
   private void evaluateConditionalAnd(BinaryExpressionTree tree) {
-    currentConditionalState = new ConditionalState(currentState);
-    evaluateConditionalOperator(tree, SymbolicBooleanConstraint.FALSE, currentConditionalState.trueState);
+    ExpressionEvaluatorVisitor leftResults = new ExpressionEvaluatorVisitor(currentState, tree.leftOperand());
+    falseStates.addAll(leftResults.falseStates);
+    evaluateConditionalOperator(tree, leftResults.trueStates);
   }
 

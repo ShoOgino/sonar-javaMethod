@@ -1,8 +1,18 @@
   @BeforeClass
   public static void setup() {
+    Symbol classSymbol = Mockito.mock(Symbol.class);
+    when(classSymbol.isMethodSymbol()).thenReturn(false);
+
+    Symbol.VariableSymbol fieldSymbol = Mockito.mock(Symbol.VariableSymbol.class);
+    when(fieldSymbol.isVariableSymbol()).thenReturn(true);
+    when(fieldSymbol.owner()).thenReturn(classSymbol);
+
+    FIELD = new IdentifierTreeImpl(mock(InternalSyntaxToken.class));
+    FIELD.setSymbol(fieldSymbol);
+
     InternalSyntaxToken tokenNull = mock(InternalSyntaxToken.class);
     when(tokenNull.text()).thenReturn("null");
-    EXPRESSION_UNKNOWN = new LiteralTreeImpl(Tree.Kind.BOOLEAN_LITERAL, tokenNull);
+    LITERAL_NULL = new LiteralTreeImpl(Tree.Kind.NULL_LITERAL, tokenNull);
 
     InternalSyntaxToken tokenFalse = mock(InternalSyntaxToken.class);
     when(tokenFalse.text()).thenReturn("false");
@@ -30,7 +40,7 @@
     when(SYMBOL2.isVariableSymbol()).thenReturn(true);
     when(SYMBOL2.owner()).thenReturn(ownerSymbol);
 
-    VARIABLE2 = new IdentifierTreeImpl(mock(InternalSyntaxToken.class));
+    VARIABLE2 = new IdentifierTreeImpl(TOKEN);
     VARIABLE2.setSymbol(SYMBOL2);
   }
 

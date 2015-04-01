@@ -2,11 +2,20 @@
     Symbol.VariableSymbol leftSymbol = extractLocalVariableSymbol(tree.leftOperand());
     Symbol.VariableSymbol rightSymbol = extractLocalVariableSymbol(tree.rightOperand());
     if (leftSymbol != null && rightSymbol != null) {
-      result = currentState.evaluateRelation(leftSymbol, operator, rightSymbol);
-      if (isUnknown(result)) {
-        currentConditionalState.trueState.setRelation(leftSymbol, operator, rightSymbol);
-        currentConditionalState.falseState.setRelation(leftSymbol, operator.negate(), rightSymbol);
+      switch (currentState.evaluateRelation(leftSymbol, operator, rightSymbol)) {
+        case FALSE:
+          falseStates.add(currentState);
+          break;
+        case TRUE:
+          trueStates.add(currentState);
+          break;
+        case UNKNOWN:
+          falseStates.add(new ExecutionState(currentState).setRelation(leftSymbol, operator.negate(), rightSymbol));
+          trueStates.add(new ExecutionState(currentState).setRelation(leftSymbol, operator, rightSymbol));
       }
+    } else {
+      falseStates.add(currentState);
+      trueStates.add(currentState);
     }
   }
 

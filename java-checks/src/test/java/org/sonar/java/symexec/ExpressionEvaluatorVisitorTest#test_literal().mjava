@@ -1,0 +1,16 @@
+  @Test
+  public void test_literal() {
+    ExpressionEvaluatorVisitor falseVisitor = new ExpressionEvaluatorVisitor(new ExecutionState(), LITERAL_FALSE);
+    assertThat(falseVisitor.falseStates.size()).isEqualTo(1);
+    assertThat(falseVisitor.falseStates.get(0).constraints).isEmpty();
+    assertThat(falseVisitor.trueStates).isEmpty();
+
+    validateUnknownResult(LITERAL_NULL);
+
+    ExpressionEvaluatorVisitor trueVisitor = new ExpressionEvaluatorVisitor(new ExecutionState(), LITERAL_TRUE);
+    assertThat(trueVisitor.falseStates).isEmpty();
+    assertThat(trueVisitor.trueStates.size()).isEqualTo(1);
+    assertThat(trueVisitor.trueStates.get(0).constraints).isEmpty();
+    assertThat(trueVisitor.trueStates.get(0).relations.isEmpty()).isEqualTo(true);
+  }
+

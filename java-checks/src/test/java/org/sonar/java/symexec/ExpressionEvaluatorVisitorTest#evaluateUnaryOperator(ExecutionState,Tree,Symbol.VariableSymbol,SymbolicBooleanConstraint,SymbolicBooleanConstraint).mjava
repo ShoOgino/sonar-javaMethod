@@ -1,0 +1,19 @@
+  public void evaluateUnaryOperator(ExecutionState state, Tree tree, Symbol.VariableSymbol symbol,
+    @Nullable SymbolicBooleanConstraint trueValue, @Nullable SymbolicBooleanConstraint falseValue) {
+    ExpressionEvaluatorVisitor defaultVisitor = new ExpressionEvaluatorVisitor(state, tree);
+    if (trueValue != null) {
+      assertThat(defaultVisitor.trueStates.size()).isEqualTo(1);
+      assertThat(defaultVisitor.trueStates.get(0).constraints.size()).isEqualTo(1);
+      assertThat(defaultVisitor.trueStates.get(0).getBooleanConstraint(symbol)).isSameAs(trueValue);
+    } else {
+      assertThat(defaultVisitor.trueStates).isEmpty();
+    }
+    if (falseValue != null) {
+      assertThat(defaultVisitor.falseStates.size()).isEqualTo(1);
+      assertThat(defaultVisitor.falseStates.get(0).constraints.size()).isEqualTo(1);
+      assertThat(defaultVisitor.falseStates.get(0).getBooleanConstraint(symbol)).isSameAs(falseValue);
+    } else {
+      assertThat(defaultVisitor.falseStates).isEmpty();
+    }
+  }
+
