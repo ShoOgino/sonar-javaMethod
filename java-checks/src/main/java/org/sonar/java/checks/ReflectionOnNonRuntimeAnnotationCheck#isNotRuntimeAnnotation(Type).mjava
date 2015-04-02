@@ -1,6 +1,10 @@
   private boolean isNotRuntimeAnnotation(Type symbolType) {
     List<SymbolMetadata.AnnotationValue> valuesFor = symbolType.symbol().metadata().valuesForAnnotation("java.lang.annotation.Retention");
-    //default policy is CLASS
-    return valuesFor == null || !"RUNTIME".equals(((Symbol) valuesFor.get(0).value()).name());
+    // default policy is CLASS
+    if (valuesFor == null) {
+      return true;
+    }
+    String retentionValue = getRetentionValue(valuesFor.get(0).value());
+    return !"RUNTIME".equals(retentionValue);
   }
 
