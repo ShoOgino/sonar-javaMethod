@@ -1,46 +1,23 @@
   @Test
   public void test_identifier() {
-    Symbol.VariableSymbol ownerSymbol = mock(Symbol.VariableSymbol.class);
-    when(ownerSymbol.isMethodSymbol()).thenReturn(true);
-    Symbol.VariableSymbol identifierSymbol = mock(Symbol.VariableSymbol.class);
-    when(identifierSymbol.isVariableSymbol()).thenReturn(true);
-    when(identifierSymbol.owner()).thenReturn(ownerSymbol);
-    IdentifierTreeImpl identifierTree = new IdentifierTreeImpl(TOKEN);
-    identifierTree.setSymbol(identifierSymbol);
-
     ExecutionState state = new ExecutionState();
+    ExpressionTree identifierTree = analyze("local1");
 
-    ExpressionEvaluatorVisitor defaultVisitor = new ExpressionEvaluatorVisitor(state, identifierTree);
-    assertThat(defaultVisitor.falseStates.size()).isEqualTo(1);
-    assertThat(defaultVisitor.falseStates.get(0).constraints.size()).isEqualTo(1);
-    assertThat(defaultVisitor.falseStates.get(0).getBooleanConstraint(identifierSymbol)).isSameAs(FALSE);
-    assertThat(defaultVisitor.trueStates.size()).isEqualTo(1);
-    assertThat(defaultVisitor.trueStates.get(0).constraints.size()).isEqualTo(1);
-    assertThat(defaultVisitor.trueStates.get(0).getBooleanConstraint(identifierSymbol)).isSameAs(TRUE);
+    // no constraint. must spawn a true state and false state with constraints
+    validateEvaluationUnknownWithConstraints(state, identifierTree, local1Symbol());
 
-    state.setBooleanConstraint(identifierSymbol, FALSE);
-    ExpressionEvaluatorVisitor falseVisitor = new ExpressionEvaluatorVisitor(state, identifierTree);
-    assertThat(falseVisitor.falseStates.size()).isEqualTo(1);
-    assertThat(falseVisitor.falseStates.get(0).constraints.size()).isEqualTo(1);
-    assertThat(falseVisitor.trueStates).isEmpty();
+    // unconditionally evaluates to false if there is already a false constraint
+    state.setBooleanConstraint(local1Symbol(), FALSE);
+    validateEvaluationFalseWithoutConstraints(state, identifierTree);
 
-    state.setBooleanConstraint(identifierSymbol, TRUE);
-    ExpressionEvaluatorVisitor trueVisitor = new ExpressionEvaluatorVisitor(state, identifierTree);
-    assertThat(trueVisitor.falseStates).isEmpty();
-    assertThat(trueVisitor.trueStates.size()).isEqualTo(1);
-    assertThat(trueVisitor.trueStates.get(0).constraints.size()).isEqualTo(1);
+    // unconditionally evaluates to true if there is already a true constraint
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    validateEvaluationTrueWithoutConstraints(state, identifierTree);
 
-    state.setBooleanConstraint(identifierSymbol, UNKNOWN);
+    // unknown constraint. must spawn a true state and false state with constraints
+    state.setBooleanConstraint(local1Symbol(), UNKNOWN);
+    validateEvaluationUnknownWithConstraints(state, identifierTree, local1Symbol());
 
-    ExpressionEvaluatorVisitor unknownVisitor = new ExpressionEvaluatorVisitor(state, identifierTree);
-    assertThat(unknownVisitor.falseStates.size()).isEqualTo(1);
-    assertThat(unknownVisitor.falseStates.get(0).constraints.size()).isEqualTo(1);
-    assertThat(unknownVisitor.falseStates.get(0).getBooleanConstraint(identifierSymbol)).isSameAs(FALSE);
-    assertThat(unknownVisitor.trueStates.size()).isEqualTo(1);
-    assertThat(unknownVisitor.trueStates.get(0).constraints.size()).isEqualTo(1);
-    assertThat(unknownVisitor.trueStates.get(0).getBooleanConstraint(identifierSymbol)).isSameAs(TRUE);
-
-    when(ownerSymbol.isMethodSymbol()).thenReturn(false);
-    validateUnknownResult(identifierTree);
+    validateEvaluationUnknownWithoutConstraints(new ExecutionState(), analyze("field1"));
   }
 

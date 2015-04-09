@@ -1,0 +1,20 @@
+  private ExpressionEvaluatorVisitor evaluateRelationalOperator(ExecutionState state, Tree tree, @Nullable SymbolicRelation trueRelation,
+    @Nullable SymbolicRelation falseRelation) {
+    ExpressionEvaluatorVisitor result = new ExpressionEvaluatorVisitor(state, tree);
+    if (falseRelation != null) {
+      assertThat(result.falseStates.size()).isEqualTo(1);
+      assertThat(result.falseStates.get(0).relations.get(local1Symbol(), local2Symbol())).isSameAs(falseRelation);
+      assertThat(result.falseStates.get(0).relations.get(local2Symbol(), local1Symbol())).isSameAs(falseRelation.swap());
+    } else {
+      assertThat(result.falseStates.size()).isEqualTo(0);
+    }
+    if (trueRelation != null) {
+      assertThat(result.trueStates.size()).isEqualTo(1);
+      assertThat(result.trueStates.get(0).relations.get(local1Symbol(), local2Symbol())).isSameAs(trueRelation);
+      assertThat(result.trueStates.get(0).relations.get(local2Symbol(), local1Symbol())).isSameAs(trueRelation.swap());
+    } else {
+      assertThat(result.trueStates.size()).isEqualTo(0);
+    }
+    return result;
+  }
+

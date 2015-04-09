@@ -1,13 +1,5 @@
   @Test
   public void test_unary() {
-    Symbol.VariableSymbol ownerSymbol = mock(Symbol.VariableSymbol.class);
-    when(ownerSymbol.isMethodSymbol()).thenReturn(true);
-    Symbol.VariableSymbol identifierSymbol = mock(Symbol.VariableSymbol.class);
-    when(identifierSymbol.isVariableSymbol()).thenReturn(true);
-    when(identifierSymbol.owner()).thenReturn(ownerSymbol);
-    IdentifierTreeImpl identifierTree = new IdentifierTreeImpl(TOKEN);
-    identifierTree.setSymbol(identifierSymbol);
-    InternalPrefixUnaryExpression tree = new InternalPrefixUnaryExpression(Tree.Kind.UNARY_PLUS, TOKEN, identifierTree);
-    validateUnknownResult(tree);
+    validateEvaluationUnknownWithoutConstraints(new ExecutionState(), parse("+local"));
   }
 

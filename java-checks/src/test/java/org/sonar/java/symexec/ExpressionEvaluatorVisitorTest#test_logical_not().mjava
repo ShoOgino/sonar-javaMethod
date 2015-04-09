@@ -1,25 +1,19 @@
   @Test
   public void test_logical_not() {
-    Symbol.VariableSymbol ownerSymbol = mock(Symbol.VariableSymbol.class);
-    when(ownerSymbol.isMethodSymbol()).thenReturn(true);
-    Symbol.VariableSymbol identifierSymbol = mock(Symbol.VariableSymbol.class);
-    when(identifierSymbol.isVariableSymbol()).thenReturn(true);
-    when(identifierSymbol.owner()).thenReturn(ownerSymbol);
-    IdentifierTreeImpl identifierTree = new IdentifierTreeImpl(TOKEN);
-    identifierTree.setSymbol(identifierSymbol);
-    InternalPrefixUnaryExpression logicalNotTree = new InternalPrefixUnaryExpression(Tree.Kind.LOGICAL_COMPLEMENT, TOKEN, identifierTree);
-
+    ExpressionTree logicalNotTree = analyze("!local1");
     ExecutionState state = new ExecutionState();
 
-    evaluateUnaryOperator(state, logicalNotTree, identifierSymbol, FALSE, TRUE);
+    // result is unknown without constraint.
+    validateEvaluationUnknownWithConstraints(state, logicalNotTree, local1Symbol(), FALSE);
 
-    state.setBooleanConstraint(identifierSymbol, FALSE);
-    evaluateUnaryOperator(state, logicalNotTree, identifierSymbol, FALSE, null);
+    state.setBooleanConstraint(local1Symbol(), FALSE);
+    validateEvaluationTrueWithoutConstraints(state, logicalNotTree);
 
-    state.setBooleanConstraint(identifierSymbol, TRUE);
-    evaluateUnaryOperator(state, logicalNotTree, identifierSymbol, null, TRUE);
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    validateEvaluationFalseWithoutConstraints(state, logicalNotTree);
 
-    state.setBooleanConstraint(identifierSymbol, UNKNOWN);
-    evaluateUnaryOperator(state, logicalNotTree, identifierSymbol, FALSE, TRUE);
+    // result is unknown with unknown constraint.
+    state.setBooleanConstraint(local1Symbol(), UNKNOWN);
+    validateEvaluationUnknownWithConstraints(state, logicalNotTree, local1Symbol(), FALSE);
   }
 

@@ -1,15 +1,25 @@
   @Test
   public void test_conditional_and() {
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_FALSE, LITERAL_TRUE, 0, 1);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_FALSE, LITERAL_TRUE, 0, 1);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_FALSE, VARIABLE2, 0, 1);
+    // evaluation
+    validateLogicalOperator("false && false", FALSE);
+    validateLogicalOperator("false && true", FALSE);
+    validateLogicalOperator("false && local2", FALSE);
+    validateLogicalOperator("true && false", FALSE);
+    validateLogicalOperator("true && true", TRUE);
+    validateLogicalOperator("true && local2", UNKNOWN);
+    validateLogicalOperator("local1 && false", FALSE);
+    validateLogicalOperator("local1 && true", UNKNOWN);
+    validateLogicalOperator("local1 && local", UNKNOWN);
 
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_TRUE, LITERAL_FALSE, 0, 1);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_TRUE, LITERAL_TRUE, 1, 0);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, LITERAL_TRUE, VARIABLE2, 1, 1);
-
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, VARIABLE1, LITERAL_FALSE, 0, 2);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, VARIABLE1, LITERAL_TRUE, 1, 1);
-    validateLogicalOperator(Tree.Kind.CONDITIONAL_AND, VARIABLE1, VARIABLE2, 1, 2);
+    // number of spawned states
+    validateLogicalOperator("false && false", 0, 1);
+    validateLogicalOperator("false && true", 0, 1);
+    validateLogicalOperator("false && local2", 0, 1);
+    validateLogicalOperator("true && false", 0, 1);
+    validateLogicalOperator("true && true", 1, 0);
+    validateLogicalOperator("true && local2", 1, 1);
+    validateLogicalOperator("local1 && false", 0, 2);
+    validateLogicalOperator("local1 && true", 1, 1);
+    validateLogicalOperator("local1 && local2", 1, 2);
   }
 
