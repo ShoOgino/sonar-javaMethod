@@ -1,0 +1,22 @@
+  @Test
+  public void test_expression_assign() {
+    // must evaluate to FALSE and set local1 to FALSE
+    ExpressionTree tree = analyze("local1 = false;");
+    ExecutionState state = new ExecutionState();
+    assertThat(evaluateExpression(state, tree)).isSameAs(FALSE);
+    assertThat(state.getBooleanConstraint(local1Symbol())).isSameAs(FALSE);
+
+    // must evaluate to FALSE and set local2 to FALSE when local1 = false;
+    ExpressionTree transitiveTree = analyze("local2 = local1;");
+    ExecutionState transitiveState = new ExecutionState();
+    transitiveState.setBooleanConstraint(local1Symbol(), FALSE);
+    assertThat(evaluateExpression(transitiveState, transitiveTree)).isSameAs(FALSE);
+    assertThat(transitiveState.getBooleanConstraint(local2Symbol())).isSameAs(FALSE);
+
+    // must evaluate to UNKNOWN and set local1 to FALSE
+    ExpressionTree nestedTree = analyze("array[(local1 = true) ? 1 : 0] = null;");
+    ExecutionState nestedState = new ExecutionState();
+    assertThat(evaluateExpression(nestedState, nestedTree)).isSameAs(UNKNOWN);
+    assertThat(nestedState.getBooleanConstraint(local1Symbol())).isSameAs(TRUE);
+  }
+

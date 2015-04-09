@@ -1,0 +1,10 @@
+    @Override
+    public void visitForEachStatement(ForEachStatement tree) {
+      for (ExecutionState state : currentStates) {
+        evaluateExpression(state, tree.expression());
+      }
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+      currentStates = evaluateStatement(currentStates, tree.statement());
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+    }
+

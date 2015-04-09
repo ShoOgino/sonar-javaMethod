@@ -1,0 +1,16 @@
+    @Override
+    public void visitForStatement(ForStatementTree tree) {
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+      if (tree.condition() != null) {
+        PackedStates conditionStates = new PackedStates();
+        for (ExecutionState state : currentStates) {
+          conditionStates.add(evaluateCondition(state, tree.condition()));
+        }
+        currentStates = evaluateStatement(conditionStates.trueStates, tree.statement());
+        currentStates = conditionStates.falseStates;
+      } else {
+        currentStates = evaluateStatement(currentStates, tree.statement());
+        currentStates = new ArrayList<>();
+      }
+    }
+

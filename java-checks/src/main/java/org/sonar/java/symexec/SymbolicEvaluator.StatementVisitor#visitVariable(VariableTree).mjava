@@ -1,0 +1,9 @@
+    @Override
+    public void visitVariable(VariableTree tree) {
+      if (tree.initializer() != null) {
+        for (ExecutionState state : currentStates) {
+          state.setBooleanConstraint((Symbol.VariableSymbol) tree.symbol(), evaluateExpression(state, tree.initializer()));
+        }
+      }
+    }
+

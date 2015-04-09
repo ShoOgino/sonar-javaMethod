@@ -1,0 +1,10 @@
+  private Set<Symbol.VariableSymbol> findCommonBooleanSymbols(Iterable<ExecutionState> states) {
+    Set<Symbol.VariableSymbol> result = new HashSet<>();
+    for (ExecutionState state : states) {
+      for (ExecutionState current = state; current != this; current = current.parentState) {
+        result.addAll(state.constraints.keySet());
+      }
+    }
+    return result;
+  }
+

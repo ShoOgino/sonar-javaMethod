@@ -1,0 +1,16 @@
+    @Override
+    void evaluateConditionalAnd(BinaryExpressionTree tree) {
+      PackedStates leftStates = evaluateCondition(currentState, tree.leftOperand());
+      currentResult = leftStates.getBooleanConstraint();
+      if (currentResult != SymbolicBooleanConstraint.FALSE) {
+        currentResult = null;
+        for (ExecutionState state : leftStates.trueStates) {
+          currentResult = evaluateExpression(state, tree.rightOperand()).union(currentResult);
+        }
+        if (currentResult != SymbolicBooleanConstraint.FALSE) {
+          currentResult = leftStates.getBooleanConstraint().union(currentResult);
+        }
+      }
+      currentState.mergeConstraintsAndRelations(Iterables.concat(leftStates.falseStates, leftStates.trueStates));
+    }
+

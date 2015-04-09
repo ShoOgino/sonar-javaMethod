@@ -1,0 +1,10 @@
+    @Override
+    void evaluateConditionalAnd(BinaryExpressionTree tree) {
+      PackedStates leftResult = evaluateCondition(currentState, tree.leftOperand());
+      currentResult.falseStates.addAll(leftResult.falseStates);
+      for (ExecutionState state : leftResult.trueStates) {
+        PackedStates rightResult = evaluateCondition(state, tree.rightOperand());
+        currentResult.add(rightResult);
+      }
+    }
+

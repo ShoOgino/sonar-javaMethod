@@ -1,0 +1,34 @@
+  @Test
+  public void test_expression_relational() {
+    ExecutionState state = new ExecutionState();
+    ExpressionTree notEqualTree = analyze("local1 != local2");
+
+    // unknown without relations and constraints.
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(UNKNOWN);
+
+    // unknown for now with relations. should be false
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    state.setBooleanConstraint(local2Symbol(), TRUE);
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(UNKNOWN);
+
+    // unknown for now with relations. should be true
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    state.setBooleanConstraint(local2Symbol(), FALSE);
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(UNKNOWN);
+
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    state.setBooleanConstraint(local2Symbol(), UNKNOWN);
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(UNKNOWN);
+
+    // true with not equal relation
+    state.setRelation(local1Symbol(), SymbolicRelation.NOT_EQUAL, local2Symbol());
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(TRUE);
+
+    // false with equal to relation
+    state.setRelation(local1Symbol(), SymbolicRelation.EQUAL_TO, local2Symbol());
+    assertThat(evaluateExpression(state, notEqualTree)).isSameAs(FALSE);
+
+    // comparison must not fail if either or both operands are not identifiers.
+    assertThat(evaluateExpression(state, parse("null == null"))).isSameAs(UNKNOWN);
+  }
+

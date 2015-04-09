@@ -1,0 +1,24 @@
+  @Test
+  public void test_condition_identifier() {
+    ExecutionState state = new ExecutionState();
+    ExpressionTree identifierTree = analyze("local1");
+
+    // no constraint. must spawn a true state and false state with constraints
+    validateEvaluationUnknownWithConstraints(state, evaluateCondition(state, identifierTree), local1Symbol());
+
+    // unconditionally evaluates to false if there is already a false constraint
+    state.setBooleanConstraint(local1Symbol(), FALSE);
+    validateEvaluationFalse(state, evaluateCondition(state, identifierTree));
+
+    // unconditionally evaluates to true if there is already a true constraint
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    validateEvaluationTrue(state, evaluateCondition(state, identifierTree));
+
+    // unknown constraint. must spawn a true state and false state with constraints
+    state.setBooleanConstraint(local1Symbol(), UNKNOWN);
+    validateEvaluationUnknownWithConstraints(state, evaluateCondition(state, identifierTree), local1Symbol());
+
+    state = new ExecutionState();
+    validateEvaluationUnknownWithoutConstraints(state, evaluateCondition(analyze("field1")));
+  }
+

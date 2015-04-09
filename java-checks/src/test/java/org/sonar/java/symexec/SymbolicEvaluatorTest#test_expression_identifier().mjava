@@ -1,0 +1,24 @@
+  @Test
+  public void test_expression_identifier() {
+    ExpressionTree identifierTree = analyze("local1");
+
+    // no constraint. must propagate as unknown state
+    assertThat(evaluateExpression(identifierTree)).isSameAs(UNKNOWN);
+
+    ExecutionState state = new ExecutionState();
+
+    // unconditionally evaluates to false if there is already a false constraint
+    state.setBooleanConstraint(local1Symbol(), FALSE);
+    assertThat(evaluateExpression(state, identifierTree)).isSameAs(FALSE);
+
+    // unconditionally evaluates to true if there is already a true constraint
+    state.setBooleanConstraint(local1Symbol(), TRUE);
+    assertThat(evaluateExpression(state, identifierTree)).isSameAs(TRUE);
+
+    // unknown constraint. must spawn a true state and false state with constraints
+    state.setBooleanConstraint(local1Symbol(), UNKNOWN);
+    assertThat(evaluateExpression(state, identifierTree)).isSameAs(UNKNOWN);
+
+    assertThat(evaluateExpression(analyze("field1"))).isSameAs(UNKNOWN);
+  }
+

@@ -1,0 +1,9 @@
+    @Override
+    public final void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      evaluateExpression(currentState, tree.variable());
+      evaluateExpression(currentState, tree.expression());
+      PackedStates result = new PackedStates(currentState);
+      result.setBooleanConstraintOnSymbol(extractLocalVariableSymbol(tree.variable()));
+      currentResult.add(result);
+    }
+

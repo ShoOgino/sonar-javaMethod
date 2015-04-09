@@ -1,0 +1,12 @@
+    @Override
+    public void visitDoWhileStatement(DoWhileStatementTree tree) {
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+      currentStates = evaluateStatement(currentStates, tree.statement());
+      List<ExecutionState> newStates = new ArrayList<>();
+      for (ExecutionState state : currentStates) {
+        newStates.addAll(evaluateCondition(state, tree.condition()).falseStates);
+      }
+      currentStates = newStates;
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+    }
+

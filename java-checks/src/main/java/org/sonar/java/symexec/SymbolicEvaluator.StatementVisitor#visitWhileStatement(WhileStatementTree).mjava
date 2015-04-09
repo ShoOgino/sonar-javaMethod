@@ -1,0 +1,12 @@
+    @Override
+    public void visitWhileStatement(WhileStatementTree tree) {
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+      PackedStates conditionStates = new PackedStates();
+      for (ExecutionState state : currentStates) {
+        conditionStates.add(evaluateCondition(state, tree.condition()));
+      }
+      evaluateStatement(conditionStates.trueStates, tree.statement());
+      currentStates = conditionStates.falseStates;
+      invalidateAssignedVariables(extractor.findAssignedVariables(tree));
+    }
+
