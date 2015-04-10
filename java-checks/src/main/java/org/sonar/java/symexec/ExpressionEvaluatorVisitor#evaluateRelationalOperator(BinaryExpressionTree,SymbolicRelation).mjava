@@ -2,7 +2,8 @@
     Symbol.VariableSymbol leftSymbol = extractLocalVariableSymbol(tree.leftOperand());
     Symbol.VariableSymbol rightSymbol = extractLocalVariableSymbol(tree.rightOperand());
     if (leftSymbol != null && rightSymbol != null) {
-      switch (currentState.evaluateRelation(leftSymbol, operator, rightSymbol)) {
+      SymbolicBooleanConstraint constraint = currentState.evaluateRelation(leftSymbol, operator, rightSymbol);
+      switch (constraint) {
         case FALSE:
           falseStates.add(currentState);
           break;
@@ -12,6 +13,9 @@
         case UNKNOWN:
           falseStates.add(new ExecutionState(currentState).setRelation(leftSymbol, operator.negate(), rightSymbol));
           trueStates.add(new ExecutionState(currentState).setRelation(leftSymbol, operator, rightSymbol));
+          break;
+        default:
+          throw new IllegalStateException("illegal value " + constraint);
       }
     } else {
       falseStates.add(currentState);
