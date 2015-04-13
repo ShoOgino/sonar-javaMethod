@@ -1,0 +1,12 @@
+    public ExecutionState overrideBy(ExecutionState currentES) {
+      for (Entry<Symbol, CloseableOccurence> entry : currentES.closeableOccurenceBySymbol.entrySet()) {
+        Symbol symbol = entry.getKey();
+        CloseableOccurence occurence = entry.getValue();
+        markAs(symbol, occurence.state);
+        if (!closeableOccurenceBySymbol.containsKey(symbol)) {
+          closeableOccurenceBySymbol.put(symbol, occurence);
+        }
+      }
+      return this;
+    }
+

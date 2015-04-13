@@ -1,0 +1,15 @@
+    private void addCloseable(Symbol symbol, Tree lastAssignmentTree, @Nullable ExpressionTree assignmentExpression) {
+      CloseableOccurence newOccurence = new CloseableOccurence(lastAssignmentTree, getCloseableStateFromExpression(symbol, assignmentExpression));
+      CloseableOccurence currentOccurence = getCloseableOccurence(symbol);
+      if (currentOccurence != null) {
+        if (currentOccurence.state.isOpen()) {
+          insertIssue(currentOccurence.lastAssignment);
+        }
+        if (!currentOccurence.state.isIgnored()) {
+          closeableOccurenceBySymbol.put(symbol, newOccurence);
+        }
+      } else {
+        closeableOccurenceBySymbol.put(symbol, newOccurence);
+      }
+    }
+

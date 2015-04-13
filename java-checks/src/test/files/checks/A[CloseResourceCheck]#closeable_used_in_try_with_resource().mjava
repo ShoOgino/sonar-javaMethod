@@ -1,0 +1,75 @@
+  void closeable_used_in_try_with_resource() throws Exception {
+    InputStream is = new FileInputStream(""); // Noncompliant {{Close this "InputStream"}}
+    try {
+      is.close();
+    } catch (IOException e) {
+
+    } catch (Exception e) {
+      is.close();
+    }
+    
+    Reader reader; // Compliant
+    try {
+      reader = new FileReader("");
+    } catch (Exception e) {
+      reader = new FileReader("");
+    }
+    reader.close();
+
+    Writer writer; // Compliant
+    try {
+      writer = new FileWriter(""); 
+    } catch (Exception e) {
+
+    } finally {
+      writer = new FileWriter("");
+    }
+    writer.close();
+    
+    FileWriter fileWriter = new FileWriter(""); // Compliant
+    try {
+      fileWriter.flush();
+    } catch (Exception e) {
+
+    } finally {
+      fileWriter.close();
+    }
+    
+    try (BufferedReader br = new BufferedReader(new FileReader(""))) { // Compliant
+      // ...
+    } catch (Exception e) {
+      // ...
+    }
+    
+    try {
+      FileInputStream fis = new FileInputStream(""); // Compliant
+      try {
+      } finally {
+        fis.close();
+      }
+    } catch (Exception e) {
+    }
+    
+    InputStream is2 = new FileInputStream("");
+    try {
+      is2.close();
+    } catch (Exception e) {
+      is2.close();
+    } finally {
+      InputStream is2 = new FileInputStream(""); // Noncompliant {{Close this "InputStream"}}
+      is2.read();
+    }
+    is2.close();
+    
+    try {
+      InputStream is3 = new FileInputStream("");
+      try {
+        myMethod(is3);
+      } finally {
+        is3.read();
+      }
+    } catch (Exception e) {
+      
+    }
+  }
+

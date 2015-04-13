@@ -1,0 +1,23 @@
+  Closeable closeable_never_closed_but_state_is_lost(Closeable closeable) throws Exception {
+    Formatter formatter = new Formatter(); // Compliant - (unknown) as Closeable instance is later used as method parameter
+    myMethod(formatter);
+
+    FileInputStream fis = getFileInputStream(); // Compliant - Closeable is retrieved from unknown location
+    fis.available();
+
+    br = new BufferedReader(new FileReader("")); // Compliant - only look at local variables
+
+    BufferedWriter bw = new BufferedWriter(new FileWriter("")); // Compliant - closeable state is lost
+    Object o = getObject(bw);
+
+    closeable = new FileReader(""); // Compliant - responsability of closing the variable is not in the method
+    
+    OutputStream ubaos = new UnsyncByteArrayOutputStream(); // Compliant - UnsyncByteArrayOutputStream does not implements close()
+    ubaos.write(0);
+    
+    Reader reader = new BufferedReader(br); // Compliant - uses a field
+
+    RandomAccessFile raf = new RandomAccessFile("", "r"); // Compliant - Closeable is returned so its state is unknown
+    return (Closeable) raf;
+  }
+

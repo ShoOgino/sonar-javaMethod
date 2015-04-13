@@ -1,0 +1,26 @@
+  void closeable_not_closed_in_every_paths_when_using_switch(MyEnum enumValue) throws Exception {
+
+    Formatter formatter = new Formatter(); // False negative - Noncompliant {{Close this "Formatter"}}
+    switch (enumValue) {
+      case A:
+        formatter.close();
+        break;
+      case B:
+        formatter.flush();
+        break;
+      default:
+        formatter.close();
+        break;
+    }
+
+    OutputStream os = new FileOutputStream(""); // Compliant - (unknown) as Closeable instance is later used as method parameter
+    switch (enumValue) {
+      case A:
+        myMethod(os);
+        break;
+      default:
+        os.close();
+        break;
+    }
+  }
+

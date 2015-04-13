@@ -1,0 +1,18 @@
+    private State getCloseableStateFromExpression(Symbol symbol, @Nullable ExpressionTree expression) {
+      if (isIgnoredCloseableSubtype(symbol.type())
+        || isSubclassOfInputStreamOrOutputStreamWithoutClose(symbol.type())
+        || (expression != null && isSubclassOfInputStreamOrOutputStreamWithoutClose(expression.symbolType()))) {
+        return State.IGNORED;
+      } else if (expression == null
+        || expression.is(Tree.Kind.NULL_LITERAL)) {
+        return State.NULL;
+      } else if (expression.is(Tree.Kind.NEW_CLASS)) {
+        if (usesIgnoredCloseable(((NewClassTree) expression).arguments())) {
+          return State.IGNORED;
+        }
+        return State.OPEN;
+      }
+      // FIXME Engine ignore closeable which are retrieved from method calls. Handle them as OPEN ?
+      return State.IGNORED;
+    }
+

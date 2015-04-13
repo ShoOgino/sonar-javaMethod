@@ -1,0 +1,9 @@
+    private boolean isIgnoredCloseable(Symbol symbol) {
+      if (isCloseableOrAutoCloseableSubtype(symbol.type()) && !symbol.owner().isMethodSymbol()) {
+        return true;
+      } else {
+        CloseableOccurence currentOccurence = getCloseableOccurence(symbol);
+        return currentOccurence != null && currentOccurence.state.isIgnored();
+      }
+    }
+

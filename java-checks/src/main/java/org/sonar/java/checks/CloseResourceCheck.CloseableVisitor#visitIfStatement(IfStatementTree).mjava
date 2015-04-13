@@ -1,0 +1,17 @@
+    @Override
+    public void visitIfStatement(IfStatementTree tree) {
+      scan(tree.condition());
+      ExecutionState thenES = new ExecutionState(executionState);
+      executionState = thenES;
+      scan(tree.thenStatement());
+
+      if (tree.elseStatement() == null) {
+        executionState = thenES.parent.merge(thenES);
+      } else {
+        ExecutionState elseES = new ExecutionState(thenES.parent);
+        executionState = elseES;
+        scan(tree.elseStatement());
+        executionState = thenES.parent.overrideBy(thenES.merge(elseES));
+      }
+    }
+

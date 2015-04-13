@@ -1,0 +1,81 @@
+  void closeable_not_closed_in_every_paths_when_using_if(boolean test, int x) throws Exception {
+    Reader reader = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+    if (test) {
+      reader.close();
+    }
+
+    Reader reader2 = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+    if (test) {
+    } else {
+      reader2.close();
+    }
+
+    // Noncompliant@+1 {{Close this "Writer"}}
+    Writer writer = new FileWriter(""); // One branch is missing
+    if (test) {
+      writer.close();
+    } else {
+      if (x > 0) {
+        // Noncompliant@+1 {{Close this "Formatter"}}
+        Formatter formatter = new Formatter(); // Only used in the local then clause and not closed
+        formatter.out();
+        writer.close();
+      }
+    }
+
+    BufferedWriter bw; // Noncompliant {{Close this "BufferedWriter"}}
+    if (test) {
+      bw = new BufferedWriter(new FileWriter(""));
+    } else {
+      bw = new BufferedWriter(new FileWriter(""));
+    }
+
+    // Noncompliant@+1 {{Close this "FileInputStream"}}
+    FileInputStream fis; // Not closed in else branch
+    if (test) {
+      fis = new FileInputStream("");
+      fis.close();
+    } else {
+      fis = new FileInputStream("");
+    }
+
+    FileInputStream fis1; // Compliant - has an unknown status
+    if (test) {
+      fis1 = new FileInputStream("");
+    } else {
+      fis1 = getFileInputStream();
+    }
+
+    FileInputStream fis2; // Compliant - has an unknown status
+    if (test) {
+      fis2 = getFileInputStream();
+    } else {
+      fis2 = new FileInputStream("");
+    }
+
+    // Noncompliant@+1 {{Close this "FileInputStream"}}
+    FileInputStream fis3; // Not closed after the if
+    if (test) {
+      fis3 = new FileInputStream("");
+    } else {
+    }
+
+    // Noncompliant@+1 {{Close this "FileInputStream"}}
+    FileInputStream fis4; // Not closed after the if
+    if (test) {
+    } else {
+      fis4 = new FileInputStream("");
+    }
+
+    InputStream is = new FileInputStream(""); // Compliant
+    if (test) {
+      is.close();
+    } else {
+      is.close();
+      if (x > 0) {
+        Formatter formatter = new Formatter(); // Compliant
+        formatter.close();
+      }
+    }
+  }
+

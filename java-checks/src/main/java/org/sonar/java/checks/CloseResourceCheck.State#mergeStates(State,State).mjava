@@ -1,0 +1,25 @@
+    public static State mergeStates(State state1, State state2) {
+
+      // * | C | O | I | N |
+      // --+---+---+---+---|
+      // C | C | O | I | C | <- CLOSED
+      // --+---+---+---+---|
+      // O | O | O | I | O | <- OPEN
+      // --+---+---+---+---|
+      // I | I | I | I | I | <- IGNORED
+      // --+---+---+---+---|
+      // N | C | O | I | N | <- NULL
+      // ------------------+
+
+      if (state1.equals(state2)) {
+        return state1;
+      } else if ((State.CLOSED.equals(state1) && State.OPEN.equals(state2)) || (State.OPEN.equals(state1) && State.CLOSED.equals(state2))) {
+        return State.OPEN;
+      } else if (State.NULL.equals(state1)) {
+        return state2;
+      } else if (State.NULL.equals(state2)) {
+        return state1;
+      }
+      return State.IGNORED;
+    }
+

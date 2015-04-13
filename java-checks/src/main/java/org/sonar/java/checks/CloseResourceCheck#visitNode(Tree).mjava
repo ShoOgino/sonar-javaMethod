@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    MethodTree methodTree = (MethodTree) tree;
+    BlockTree block = methodTree.block();
+    if (block != null) {
+      CloseableVisitor visitor = new CloseableVisitor(methodTree.parameters(), this);
+      block.accept(visitor);
+      visitor.executionState.insertIssues();
+    }
+  }
+
