@@ -1,0 +1,13 @@
+  protected void init() {
+    if (!initalized) {
+      initalized = true;
+      validateLibraries = project.getModules().isEmpty();
+      FilePredicates predicates = fs.predicates();
+      hasJavaSources = fs.hasFiles(predicates.and(predicates.hasLanguage("java"), predicates.hasType(InputFile.Type.TEST)));
+      binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_TEST_BINARIES);
+      List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_TEST_LIBRARIES);
+      elements = Lists.newArrayList(binaries);
+      elements.addAll(libraries);
+    }
+  }
+

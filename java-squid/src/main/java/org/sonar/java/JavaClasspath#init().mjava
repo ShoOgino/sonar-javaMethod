@@ -1,16 +1,15 @@
-  private void init() {
+  protected void init() {
     if (!initalized) {
       initalized = true;
       validateLibraries = project.getModules().isEmpty();
       FilePredicates predicates = fs.predicates();
       hasJavaSources = fs.hasFiles(predicates.and(predicates.hasLanguage("java"), predicates.hasType(InputFile.Type.MAIN)));
-      File baseDir = fs.baseDir();
-      binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES, settings, baseDir);
-      List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES, settings, baseDir);
+      binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES);
+      List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES);
       boolean useDeprecatedProperties = binaries.isEmpty() && libraries.isEmpty();
       if (useDeprecatedProperties) {
-        binaries = getFilesFromProperty("sonar.binaries", settings, baseDir);
-        libraries = getFilesFromProperty("sonar.libraries", settings, baseDir);
+        binaries = getFilesFromProperty("sonar.binaries");
+        libraries = getFilesFromProperty("sonar.libraries");
       }
       if (pom != null && libraries.isEmpty()) {
         //check mojo

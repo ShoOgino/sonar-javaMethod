@@ -1,11 +1,11 @@
-  private List<File> getFilesFromProperty(String property, Settings settings, File baseDir) {
+  protected List<File> getFilesFromProperty(String property) {
     List<File> result = Lists.newArrayList();
     String fileList = settings.getString(property);
     if (StringUtils.isNotEmpty(fileList)) {
       Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
       for (String pathPattern : fileNames) {
         boolean isLibraryProperty = property.endsWith("libraries");
-        List<File> libraryFilesForPattern = getFilesForPattern(baseDir, pathPattern, isLibraryProperty);
+        List<File> libraryFilesForPattern = getFilesForPattern(fs.baseDir(), pathPattern, isLibraryProperty);
         if (validateLibraries && libraryFilesForPattern.isEmpty() && hasJavaSources) {
           LOG.error("Invalid value for " + property);
           String message = "No files nor directories matching '" + pathPattern + "'";
