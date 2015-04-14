@@ -9,8 +9,11 @@
       Iterable<CodeVisitor> measurers = Arrays.asList((CodeVisitor)measurer);
       visitorsToBridge =  Iterables.concat(visitorsToBridge, measurers);
     }
-
-    VisitorsBridge visitorsBridge = new VisitorsBridge(visitorsToBridge, sonarComponents);
+    List<File> classpath = Lists.newArrayList();
+    if(sonarComponents != null) {
+      classpath = sonarComponents.getJavaClasspath();
+    }
+    VisitorsBridge visitorsBridge = new VisitorsBridge(visitorsToBridge, classpath, sonarComponents);
     visitorsBridge.setCharset(conf.getCharset());
     visitorsBridge.setAnalyseAccessors(conf.separatesAccessorsFromMethods());
     astScanner.accept(visitorsBridge);
