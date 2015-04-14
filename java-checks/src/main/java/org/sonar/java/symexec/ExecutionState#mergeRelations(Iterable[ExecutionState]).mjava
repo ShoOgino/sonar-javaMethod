@@ -4,6 +4,9 @@
       for (ExecutionState state : states) {
         relation = state.getRelation(cell.getRowKey(), cell.getColumnKey()).union(relation);
       }
+      if (relation == null) {
+        relation = SymbolicRelation.UNKNOWN;
+      }
       if (getRelation(cell.getRowKey(), cell.getColumnKey()) != relation) {
         relations.put(cell.getRowKey(), cell.getColumnKey(), relation);
         relations.put(cell.getColumnKey(), cell.getRowKey(), relation.swap());

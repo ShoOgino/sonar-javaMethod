@@ -1,10 +1,10 @@
     @Override
     public final void visitUnaryExpression(UnaryExpressionTree tree) {
       if (tree.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
-        PackedStates result = evaluateCondition(currentState, tree.expression());
-        currentResult.falseStates.addAll(result.trueStates);
-        currentResult.trueStates.addAll(result.falseStates);
-        currentResult.unknownStates.addAll(result.unknownStates);
+        PackedStates unaryResult = evaluateCondition(currentState, tree.expression());
+        currentResult.falseStates.addAll(unaryResult.trueStates);
+        currentResult.trueStates.addAll(unaryResult.falseStates);
+        currentResult.unknownStates.addAll(unaryResult.unknownStates);
       } else {
         currentResult.unknownStates.add(currentState);
       }

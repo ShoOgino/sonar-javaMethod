@@ -2,8 +2,10 @@
     public final void visitAssignmentExpression(AssignmentExpressionTree tree) {
       evaluateExpression(currentState, tree.variable());
       evaluateExpression(currentState, tree.expression());
-      PackedStates result = new PackedStates(currentState);
-      result.setBooleanConstraintOnSymbol(extractLocalVariableSymbol(tree.variable()));
-      currentResult.add(result);
+      Symbol.VariableSymbol symbol = extractLocalVariableSymbol(tree.variable());
+      if (symbol != null) {
+        currentState.setBooleanConstraint(symbol, SymbolicBooleanConstraint.UNKNOWN);
+      }
+      currentResult.unknownStates.add(currentState);
     }
 
