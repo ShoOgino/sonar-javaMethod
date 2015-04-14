@@ -1,0 +1,10 @@
+  void invalidateRelationsOnSymbol(Symbol.VariableSymbol symbol) {
+    Multimap<Symbol.VariableSymbol, Symbol.VariableSymbol> pairs = HashMultimap.create();
+    for (ExecutionState current = this; current != null; current = current.parentState) {
+      pairs.putAll(current.findRelationPairs(symbol));
+    }
+    for (Map.Entry<Symbol.VariableSymbol, Symbol.VariableSymbol> cell : pairs.entries()) {
+      setRelation(cell.getKey(), SymbolicRelation.UNKNOWN, cell.getValue());
+    }
+  }
+
