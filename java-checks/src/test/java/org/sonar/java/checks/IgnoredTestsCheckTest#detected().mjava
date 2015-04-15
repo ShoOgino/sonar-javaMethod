@@ -1,0 +1,9 @@
+  @Test
+  public void detected() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/IgnoredTestsCheck.java"), new VisitorsBridge(new IgnoredTestsCheck(), Lists.newArrayList(new File("target/test-classes"))));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+        .next().atLine(6).withMessage("Fix or remove this skipped unit test")
+        .next().atLine(9).withMessage("Fix or remove this skipped unit test")
+    ;
+  }
+
