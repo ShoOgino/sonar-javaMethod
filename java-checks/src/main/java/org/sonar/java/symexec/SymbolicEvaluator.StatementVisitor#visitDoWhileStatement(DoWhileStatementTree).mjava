@@ -3,10 +3,10 @@
       Set<Symbol.VariableSymbol> assignedSymbols = extractor.findAssignedVariables(tree);
       invalidateAssignedVariables(assignedSymbols);
       currentStates = evaluateStatement(currentStates, tree.statement());
-      List<ExecutionState> nextStates = new ArrayList<>();
+      PackedStatementStates nextStates = PackedStatementStates.instantiate();
       for (ExecutionState state : currentStates) {
         if (evaluateExpression(state, tree.condition()) != SymbolicBooleanConstraint.TRUE) {
-          nextStates.add(state);
+          nextStates.addState(state);
         }
       }
       currentStates = nextStates;

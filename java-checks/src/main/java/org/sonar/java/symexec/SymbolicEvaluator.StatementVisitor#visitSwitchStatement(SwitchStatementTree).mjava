@@ -1,9 +1,22 @@
     @Override
     public void visitSwitchStatement(SwitchStatementTree tree) {
+      PackedStatementStates nextStates = PackedStatementStates.instantiate();
       for (ExecutionState state : currentStates) {
         evaluateExpression(state, tree.expression());
+        List<ExecutionState> endStates = new ArrayList<>();
+        for (int i = 0; i < tree.cases().size(); i += 1) {
+          PackedStatementStates caseStates = processCase(tree, i, new ExecutionState(state));
+          endStates.addAll(caseStates.states);
+          endStates.addAll(caseStates.breakStates);
+        }
+        if (!switchContainsDefault(tree)) {
+          endStates.add(state);
+        }
+        if (!endStates.isEmpty()) {
+          state.mergeConstraintsAndRelations(endStates);
+          nextStates.addState(state);
+        }
       }
-      // TODO: stop evaluation for now
-      currentStates = new ArrayList<>();
+      currentStates = nextStates;
     }
 

@@ -2,13 +2,13 @@
     public void visitWhileStatement(WhileStatementTree tree) {
       Set<Symbol.VariableSymbol> assignedSymbols = extractor.findAssignedVariables(tree);
       invalidateAssignedVariables(assignedSymbols);
-      List<ExecutionState> nextStates = new ArrayList<>();
+      PackedStatementStates nextStates = PackedStatementStates.instantiate();
       for (ExecutionState state : currentStates) {
         PackedStates conditionStates = evaluateCondition(state, tree.condition());
-        List<ExecutionState> loopStates = evaluateStatement(conditionStates.trueStates, tree.statement());
+        PackedStatementStates loopStates = evaluateStatement(conditionStates.trueStates, tree.statement());
         if (!conditionStates.falseStates.isEmpty() || !loopStates.isEmpty()) {
           state.mergeConstraintsAndRelations(Iterables.concat(conditionStates.falseStates, loopStates));
-          nextStates.add(state);
+          nextStates.addState(state);
         }
       }
       currentStates = nextStates;
