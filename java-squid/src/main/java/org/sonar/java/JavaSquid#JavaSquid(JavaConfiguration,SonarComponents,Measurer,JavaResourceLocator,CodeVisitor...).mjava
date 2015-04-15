@@ -39,6 +39,13 @@
     }
 
     astScannerForTests = new AstScanner(astScanner);
-    astScannerForTests.accept(new TestFileVisitorsBridge(javaResourceLocator));
+    List<File> testClasspath = Lists.newArrayList();
+    astScannerForTests.accept(new FileVisitor());
+    if(sonarComponents != null) {
+      testClasspath = sonarComponents.getJavaTestClasspath();
+      astScannerForTests.accept(new FileLinesVisitor(sonarComponents, conf.getCharset()));
+      astScannerForTests.accept(new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset()));
+    }
+    astScannerForTests.accept(new VisitorsBridge(Lists.<JavaCheck>newArrayList(), testClasspath, sonarComponents));
   }
 
