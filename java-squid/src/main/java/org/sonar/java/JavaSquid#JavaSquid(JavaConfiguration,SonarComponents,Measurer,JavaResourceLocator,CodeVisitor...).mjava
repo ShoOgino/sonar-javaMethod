@@ -10,19 +10,14 @@
       visitorsToBridge =  Iterables.concat(visitorsToBridge, measurers);
     }
     List<File> classpath = Lists.newArrayList();
+    List<File> testClasspath = Lists.newArrayList();
+    Collection<CodeVisitor> testCheckClasses = Lists.<CodeVisitor>newArrayList(javaResourceLocator);
     if(sonarComponents != null) {
       classpath = sonarComponents.getJavaClasspath();
+      testClasspath = sonarComponents.getJavaTestClasspath();
+      testCheckClasses.addAll(sonarComponents.testCheckClasses());
     }
-    VisitorsBridge visitorsBridge = new VisitorsBridge(visitorsToBridge, classpath, sonarComponents);
-    visitorsBridge.setCharset(conf.getCharset());
-    visitorsBridge.setAnalyseAccessors(conf.separatesAccessorsFromMethods());
-    astScanner.accept(visitorsBridge);
-
-    if (sonarComponents != null) {
-      astScanner.accept(new FileLinesVisitor(sonarComponents, conf.getCharset()));
-      astScanner.accept(new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset()));
-    }
-
+    setupAstScanner(astScanner, visitorsToBridge, classpath, conf, sonarComponents);
     // TODO unchecked cast
     squidIndex = (SquidIndex) astScanner.getIndex();
 
@@ -39,15 +34,7 @@
     }
 
     astScannerForTests = new AstScanner(astScanner);
-    List<File> testClasspath = Lists.newArrayList();
     astScannerForTests.accept(new FileVisitor());
-    Collection<JavaCheck> testCheckClasses = Lists.newArrayList();
-    if(sonarComponents != null) {
-      testClasspath = sonarComponents.getJavaTestClasspath();
-      astScannerForTests.accept(new FileLinesVisitor(sonarComponents, conf.getCharset()));
-      astScannerForTests.accept(new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset()));
-      testCheckClasses = sonarComponents.testCheckClasses();
-    }
-    astScannerForTests.accept(new VisitorsBridge(testCheckClasses, testClasspath, sonarComponents));
+    setupAstScanner(astScannerForTests, testCheckClasses, testClasspath, conf, sonarComponents);
   }
 
