@@ -1,0 +1,10 @@
+  void invalidateRelationsOnValue(SymbolicValue value) {
+    Multimap<SymbolicValue, SymbolicValue> pairs = HashMultimap.create();
+    for (ExecutionState current = this; current != null; current = current.parentState) {
+      pairs.putAll(value, current.findRelatedValues(value));
+    }
+    for (Map.Entry<SymbolicValue, SymbolicValue> entry : pairs.entries()) {
+      setRelation(entry.getKey(), SymbolicRelation.UNKNOWN, entry.getValue());
+    }
+  }
+

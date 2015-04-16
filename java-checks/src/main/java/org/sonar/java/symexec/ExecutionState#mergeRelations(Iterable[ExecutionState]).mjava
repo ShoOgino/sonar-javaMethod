@@ -1,15 +1,15 @@
   private void mergeRelations(Iterable<ExecutionState> states) {
-    for (Table.Cell<Symbol.VariableSymbol, Symbol.VariableSymbol, SymbolicRelation> cell : findCommonRelationSymbols(states).cellSet()) {
+    for (Map.Entry<SymbolicValue, SymbolicValue> entry : findRelatedValues(states).entries()) {
       SymbolicRelation relation = null;
       for (ExecutionState state : states) {
-        relation = state.getRelation(cell.getRowKey(), cell.getColumnKey()).union(relation);
+        relation = state.getRelation(entry.getKey(), entry.getValue()).union(relation);
       }
       if (relation == null) {
         relation = SymbolicRelation.UNKNOWN;
       }
-      if (getRelation(cell.getRowKey(), cell.getColumnKey()) != relation) {
-        relations.put(cell.getRowKey(), cell.getColumnKey(), relation);
-        relations.put(cell.getColumnKey(), cell.getRowKey(), relation.swap());
+      if (getRelation(entry.getKey(), entry.getValue()) != relation) {
+        relations.put(entry.getKey(), entry.getValue(), relation);
+        relations.put(entry.getValue(), entry.getKey(), relation.swap());
       }
     }
   }

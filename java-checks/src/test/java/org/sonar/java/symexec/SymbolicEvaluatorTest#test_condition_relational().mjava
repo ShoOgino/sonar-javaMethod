@@ -18,11 +18,11 @@
     ExpressionTree notEqualTree = analyze("local1 != local2");
 
     // under constraint local1 != local2 evaluation or local1 != local2 must return unconditionally true
-    state.setRelation(local1Symbol(), SymbolicRelation.NOT_EQUAL, local2Symbol());
+    state.setRelation(new SymbolicValue.SymbolicVariableValue(local1Symbol()), SymbolicRelation.NOT_EQUAL, new SymbolicValue.SymbolicVariableValue(local2Symbol()));
     validateEvaluationTrue(state, evaluateCondition(state, notEqualTree));
 
     // under constraint local1 == local2 evaluation or local1 == local2 must return unconditionally false
-    state.setRelation(local1Symbol(), SymbolicRelation.EQUAL_TO, local2Symbol());
+    state.setRelation(new SymbolicValue.SymbolicVariableValue(local1Symbol()), SymbolicRelation.EQUAL_TO, new SymbolicValue.SymbolicVariableValue(local2Symbol()));
     validateEvaluationFalse(state, evaluateCondition(state, notEqualTree));
 
     // comparison must not fail if either or both operands are not identifiers.

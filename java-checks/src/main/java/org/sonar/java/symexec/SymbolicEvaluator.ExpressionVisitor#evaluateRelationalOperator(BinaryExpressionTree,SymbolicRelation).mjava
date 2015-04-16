@@ -1,9 +1,9 @@
     @Override
     void evaluateRelationalOperator(BinaryExpressionTree tree, SymbolicRelation operator) {
-      Symbol.VariableSymbol leftSymbol = extractVariableSymbol(tree.leftOperand());
-      Symbol.VariableSymbol rightSymbol = extractVariableSymbol(tree.rightOperand());
-      if (leftSymbol != null && rightSymbol != null) {
-        currentResult = currentState.evaluateRelation(leftSymbol, operator, rightSymbol);
+      SymbolicValue leftValue = retrieveSymbolicValue(tree.leftOperand());
+      SymbolicValue rightValue = retrieveSymbolicValue(tree.rightOperand());
+      if (leftValue != null && rightValue != null) {
+        currentResult = currentState.evaluateRelation(leftValue, operator, rightValue);
       } else {
         currentResult = SymbolicBooleanConstraint.UNKNOWN;
       }

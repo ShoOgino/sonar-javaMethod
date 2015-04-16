@@ -1,0 +1,16 @@
+    @CheckForNull
+    final SymbolicValue retrieveSymbolicValue(ExpressionTree tree) {
+      Tree currentTree = tree;
+      if (isSuperOrThisMemberSelect(tree)) {
+        currentTree = ((MemberSelectExpressionTree) currentTree).identifier();
+      }
+      if (currentTree.is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifierTree = (IdentifierTree) currentTree;
+        Symbol symbol = identifierTree.symbol();
+        if (symbol.isVariableSymbol()) {
+          return new SymbolicValue.SymbolicVariableValue((Symbol.VariableSymbol) symbol);
+        }
+      }
+      return null;
+    }
+

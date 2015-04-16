@@ -1,17 +1,19 @@
   private SymbolicEvaluator.PackedStates evaluateRelationalOperator(ExpressionTree tree, @Nullable SymbolicRelation trueRelation,
     @Nullable SymbolicRelation falseRelation, Symbol.VariableSymbol symbol1, Symbol.VariableSymbol symbol2) {
+    SymbolicValue value1 = new SymbolicValue.SymbolicVariableValue(symbol1);
+    SymbolicValue value2 = new SymbolicValue.SymbolicVariableValue(symbol2);
     SymbolicEvaluator.PackedStates result = new SymbolicEvaluator().evaluateCondition(new ExecutionState(), tree);
     if (falseRelation != null) {
       assertThat(result.falseStates).hasSize(1);
-      assertThat(result.falseStates.get(0).relations.get(symbol1, symbol2)).isSameAs(falseRelation);
-      assertThat(result.falseStates.get(0).relations.get(symbol2, symbol1)).isSameAs(falseRelation.swap());
+      assertThat(result.falseStates.get(0).relations.get(value1, value2)).isSameAs(falseRelation);
+      assertThat(result.falseStates.get(0).relations.get(value2, value1)).isSameAs(falseRelation.swap());
     } else {
       assertThat(result.falseStates).isEmpty();
     }
     if (trueRelation != null) {
       assertThat(result.trueStates).hasSize(1);
-      assertThat(result.trueStates.get(0).relations.get(symbol1, symbol2)).isSameAs(trueRelation);
-      assertThat(result.trueStates.get(0).relations.get(symbol2, symbol1)).isSameAs(trueRelation.swap());
+      assertThat(result.trueStates.get(0).relations.get(value1, value2)).isSameAs(trueRelation);
+      assertThat(result.trueStates.get(0).relations.get(value2, value1)).isSameAs(trueRelation.swap());
     } else {
       assertThat(result.trueStates).isEmpty();
     }

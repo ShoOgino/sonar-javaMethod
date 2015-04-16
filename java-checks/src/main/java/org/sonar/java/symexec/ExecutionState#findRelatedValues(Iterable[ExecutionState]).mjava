@@ -1,0 +1,12 @@
+  private Multimap<SymbolicValue, SymbolicValue> findRelatedValues(Iterable<ExecutionState> states) {
+    Multimap<SymbolicValue, SymbolicValue> result = HashMultimap.create();
+    for (ExecutionState state : states) {
+      for (ExecutionState current = state; !current.equals(this); current = current.parentState) {
+        for (Map.Entry<SymbolicValue, Map<SymbolicValue, SymbolicRelation>> leftEntry : current.relations.rowMap().entrySet()) {
+          result.putAll(leftEntry.getKey(), leftEntry.getValue().keySet());
+        }
+      }
+    }
+    return result;
+  }
+
