@@ -3,8 +3,9 @@
       super.visitAssignmentExpression(tree);
       Symbol.VariableSymbol symbol = extractVariableSymbol(tree.variable());
       if (symbol != null) {
-        currentState.invalidateRelationsOnValue(new SymbolicValue.SymbolicVariableValue(symbol));
-        currentState.setBooleanConstraint(symbol, currentResult);
+        SymbolicValue.SymbolicVariableValue variable = new SymbolicValue.SymbolicVariableValue(symbol);
+        currentState.invalidateRelationsOnValue(variable);
+        currentState.setBooleanConstraint(variable, currentResult);
       }
     }
 

@@ -2,7 +2,8 @@
     public void visitIdentifier(IdentifierTree tree) {
       Symbol.VariableSymbol symbol = extractVariableSymbol(tree);
       if (symbol != null) {
-        switch (currentState.getBooleanConstraint(symbol)) {
+        SymbolicValue.SymbolicVariableValue value = new SymbolicValue.SymbolicVariableValue(symbol);
+        switch (currentState.getBooleanConstraint(value)) {
           case FALSE:
             currentResult.falseStates.add(currentState);
             return;
@@ -10,8 +11,8 @@
             currentResult.trueStates.add(currentState);
             return;
           default:
-            currentResult.falseStates.add(new ExecutionState(currentState).setBooleanConstraint(symbol, SymbolicBooleanConstraint.FALSE));
-            currentResult.trueStates.add(new ExecutionState(currentState).setBooleanConstraint(symbol, SymbolicBooleanConstraint.TRUE));
+            currentResult.falseStates.add(new ExecutionState(currentState).setBooleanConstraint(value, SymbolicBooleanConstraint.FALSE));
+            currentResult.trueStates.add(new ExecutionState(currentState).setBooleanConstraint(value, SymbolicBooleanConstraint.TRUE));
             return;
         }
       }

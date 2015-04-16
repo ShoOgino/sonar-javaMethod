@@ -1,10 +1,5 @@
   void invalidateFields() {
     for (ExecutionState state = this; state != null; state = state.parentState) {
-      for (Symbol.VariableSymbol symbol : state.constraints.keySet()) {
-        if (symbol.owner().isTypeSymbol()) {
-          setBooleanConstraint(symbol, SymbolicBooleanConstraint.UNKNOWN);
-        }
-      }
       for (Map.Entry<SymbolicValue, Map<SymbolicValue, SymbolicRelation>> entry : state.relations.rowMap().entrySet()) {
         if (isField(entry.getKey())) {
           for (SymbolicValue other : entry.getValue().keySet()) {
