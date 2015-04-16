@@ -49,9 +49,9 @@
     boxedTypes.put(doubleType, bytecodeCompleter.loadClass("java.lang.Double").type);
     boxedTypes.put(booleanType, bytecodeCompleter.loadClass("java.lang.Boolean").type);
 
-    for (JavaType boxedType : boxedTypes.keySet()) {
-      boxedType.primitiveWrapperType = boxedTypes.get(boxedType);
-      boxedTypes.get(boxedType).primitiveType = boxedType;
+    for (Entry<JavaType, JavaType> entry : boxedTypes.entrySet()) {
+      entry.getKey().primitiveWrapperType = entry.getValue();
+      entry.getValue().primitiveType = entry.getKey();
     }
 
     // TODO comment me
