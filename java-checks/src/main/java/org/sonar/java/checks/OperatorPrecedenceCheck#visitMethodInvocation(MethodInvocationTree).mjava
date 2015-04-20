@@ -1,0 +1,11 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    scan(tree.methodSelect());
+    scan(tree.typeArguments());
+    for (ExpressionTree argument : tree.arguments()) {
+      stack.push(null);
+      scan(argument);
+      stack.pop();
+    }
+  }
+
