@@ -1,0 +1,8 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ChildClassShadowField.java"), new VisitorsBridge(new ChildClassShadowFieldCheck()));
+    checkMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(12).withMessage("\"baseField\" is the name of a field in \"Base\".")
+      .next().atLine(27).withMessage("\"baseField\" is the name of a field in \"Base\".");
+  }
+
