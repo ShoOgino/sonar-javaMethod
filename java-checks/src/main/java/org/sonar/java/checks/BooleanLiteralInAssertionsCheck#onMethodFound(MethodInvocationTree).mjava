@@ -1,0 +1,11 @@
+  @Override
+  protected void onMethodFound(MethodInvocationTree mit) {
+    int arity = mit.arguments().size();
+    if (arity == 1 || arity == 2) {
+      ExpressionTree booleanArg = mit.arguments().get(arity - 1);
+      if (booleanArg.is(Tree.Kind.BOOLEAN_LITERAL)) {
+        raiseIssue(booleanArg);
+      }
+    }
+  }
+
