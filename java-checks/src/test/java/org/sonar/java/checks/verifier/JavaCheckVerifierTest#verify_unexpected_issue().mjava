@@ -1,0 +1,25 @@
+  @Test
+  public void verify_unexpected_issue() {
+    IssuableSubscriptionVisitor visitor = new IssuableSubscriptionVisitor() {
+      @Override
+      public List<Tree.Kind> nodesToVisit() {
+        return ImmutableList.of();
+      }
+
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        super.scanFile(context);
+        addIssue(1, "message");
+        addIssue(3, "message1");
+        addIssue(4, "message1");
+      }
+    };
+
+    try {
+      JavaCheckVerifier.verify(FILENAME, visitor);
+      Fail.fail();
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("Unexpected at 4");
+    }
+  }
+

@@ -1,0 +1,16 @@
+  @Test
+  public void verify_no_issue_fail_if_noncompliant() {
+    IssuableSubscriptionVisitor visitor = new IssuableSubscriptionVisitor() {
+      @Override
+      public List<Tree.Kind> nodesToVisit() {
+        return ImmutableList.of();
+      }
+    };
+    try {
+      JavaCheckVerifier.verifyNoIssue(FILENAME, visitor);
+      Fail.fail();
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("The file should not declare noncompliants when no issues are expected");
+    }
+  }
+

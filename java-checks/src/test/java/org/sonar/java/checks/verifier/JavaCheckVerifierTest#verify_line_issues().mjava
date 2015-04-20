@@ -1,0 +1,19 @@
+  @Test
+  public void verify_line_issues() {
+    IssuableSubscriptionVisitor visitor = new IssuableSubscriptionVisitor() {
+      @Override
+      public List<Tree.Kind> nodesToVisit() {
+        return ImmutableList.of();
+      }
+
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        super.scanFile(context);
+        addIssue(1, "message");
+        addIssue(3, "message1");
+      }
+    };
+
+    JavaCheckVerifier.verify("src/test/files/JavaCheckVerifier.java", visitor);
+  }
+

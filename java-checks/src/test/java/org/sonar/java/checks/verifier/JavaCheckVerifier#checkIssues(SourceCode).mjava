@@ -1,0 +1,25 @@
+  private void checkIssues(SourceCode sourceCode) {
+    if (expectNoIssues) {
+      assertNoIssues(sourceCode);
+    } else if (StringUtils.isNotEmpty(expectFileIssue)) {
+      assertSingleIssue(sourceCode);
+    } else {
+      Preconditions.checkState(sourceCode.hasCheckMessages(), "At least one issue expected");
+      for (CheckMessage checkMessage : sourceCode.getCheckMessages()) {
+        int line = checkMessage.getLine();
+        if (!expected.containsKey(line)) {
+          throw Fail.fail("Unexpected at " + line);
+        }
+        List<String> list = expected.get(line);
+        String expectedMessage = list.remove(list.size() - 1);
+        if (expectedMessage != null) {
+          assertThat(checkMessage.getText(Locale.US)).isEqualTo(expectedMessage);
+        }
+      }
+      if (!expected.isEmpty()) {
+        throw Fail.fail("Expected " + expected);
+      }
+    }
+
+  }
+
