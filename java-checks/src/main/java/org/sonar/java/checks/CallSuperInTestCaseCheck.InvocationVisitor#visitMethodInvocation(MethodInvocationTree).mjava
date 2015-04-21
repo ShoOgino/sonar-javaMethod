@@ -1,8 +1,8 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      if(tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      if (tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree.methodSelect();
-        if(mse.expression().is(Tree.Kind.IDENTIFIER) && ((IdentifierTree) mse.expression()).name().equals("super") && mse.identifier().name().equals(methodName)) {
+        if (mse.expression().is(Tree.Kind.IDENTIFIER) && "super".equals(((IdentifierTree) mse.expression()).name()) && mse.identifier().name().equals(methodName)) {
           superCallOnOverride |= !((IdentifierTree) mse.expression()).symbol().type().is(JUNIT_FRAMEWORK_TEST_CASE);
         }
       }
