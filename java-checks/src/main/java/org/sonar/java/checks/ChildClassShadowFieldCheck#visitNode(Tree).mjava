@@ -1,14 +1,16 @@
   @Override
   public void visitNode(Tree tree) {
-    ClassTree classTree = ((ClassTree) tree);
+    ClassTree classTree = (ClassTree) tree;
     if (classTree.superClass() != null) {
       Symbol.TypeSymbol superclassSymbol = classTree.superClass().symbolType().symbol();
       for (Tree member : classTree.members()) {
         if (member.is(Tree.Kind.VARIABLE)) {
           String fieldName = ((VariableTree) member).simpleName().name();
-          Symbol.TypeSymbol definingClass = getDefiningClassInHierarchyForField(superclassSymbol, fieldName);
-          if (definingClass != null) {
-            addIssue(member, String.format("\"%s\" is the name of a field in \"%s\".", fieldName, definingClass.name()));
+          if (!IGNORED_FIELDS.contains(fieldName)) {
+            Symbol.TypeSymbol definingClass = getDefiningClassInHierarchyForField(superclassSymbol, fieldName);
+            if (definingClass != null) {
+              addIssue(member, String.format("\"%s\" is the name of a field in \"%s\".", fieldName, definingClass.name()));
+            }
           }
         }
       }
