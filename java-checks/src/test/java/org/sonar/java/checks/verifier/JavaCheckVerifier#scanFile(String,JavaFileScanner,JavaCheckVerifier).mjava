@@ -1,4 +1,6 @@
   private static void scanFile(String filename, JavaFileScanner check, JavaCheckVerifier javaCheckVerifier) {
-    JavaAstScanner.scanSingleFile(new File(filename), new VisitorsBridge(Lists.newArrayList(check, javaCheckVerifier), Lists.newArrayList(new File("target/test-classes")), null));
+    Collection<File> classpath = FileUtils.listFiles(new File("target/test-jars"), new String[]{"jar", "zip"}, true);
+    classpath.add(new File("target/test-classes"));
+    JavaAstScanner.scanSingleFile(new File(filename), new VisitorsBridge(Lists.newArrayList(check, javaCheckVerifier), Lists.newArrayList(classpath), null));
   }
 
