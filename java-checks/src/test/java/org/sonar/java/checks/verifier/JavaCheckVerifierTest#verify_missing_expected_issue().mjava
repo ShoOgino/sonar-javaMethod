@@ -1,5 +1,5 @@
   @Test
-  public void verify_line_issues() {
+  public void verify_missing_expected_issue() {
     IssuableSubscriptionVisitor visitor = new IssuableSubscriptionVisitor() {
       @Override
       public List<Tree.Kind> nodesToVisit() {
@@ -9,7 +9,6 @@
       @Override
       public void scanFile(JavaFileScannerContext context) {
         super.scanFile(context);
-        addIssue(1, "message");
         addIssue(3, "message1");
         addIssue(7, "message2");
         addIssue(8, "message3");
@@ -20,6 +19,11 @@
       }
     };
 
-    JavaCheckVerifier.verify("src/test/files/JavaCheckVerifier.java", visitor);
+    try {
+      JavaCheckVerifier.verify(FILENAME, visitor);
+      Fail.fail();
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("Expected {1=[message]}");
+    }
   }
 
