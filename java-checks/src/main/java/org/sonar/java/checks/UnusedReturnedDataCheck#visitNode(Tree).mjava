@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      for (MethodInvocationMatcher matcher : CHECKED_METHODS) {
+        Symbol symbol = isTreeMethodInvocation(((ExpressionStatementTree) tree).expression(), matcher);
+        if (symbol != null) {
+          raiseIssue(tree, symbol.name());
+        }
+      }
+    } else {
+      BinaryExpressionTree expressionTree = (BinaryExpressionTree) tree;
+      for (MethodInvocationMatcher matcher : CHECKED_METHODS) {
+        Symbol leftSymbol = isTreeMethodInvocation(expressionTree.leftOperand(), matcher);
+        if (leftSymbol != null && isTreeLiteralNull(expressionTree.rightOperand())) {
+          raiseIssue(tree, leftSymbol.name());
+        }
+        Symbol rightSymbol = isTreeMethodInvocation(expressionTree.rightOperand(), matcher);
+        if (rightSymbol != null && isTreeLiteralNull(expressionTree.leftOperand())) {
+          raiseIssue(tree, rightSymbol.name());
+        }
+      }
+    }
+  }
+
