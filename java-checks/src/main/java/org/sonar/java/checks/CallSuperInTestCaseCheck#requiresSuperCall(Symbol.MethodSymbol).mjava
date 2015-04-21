@@ -1,0 +1,10 @@
+  private boolean requiresSuperCall(Symbol.MethodSymbol methodSymbol) {
+    Type superType = methodSymbol.owner().type().symbol().superClass();
+    Collection<Symbol> symbols = Lists.newArrayList();
+    while(!superType.is(JUNIT_FRAMEWORK_TEST_CASE) && symbols.isEmpty()) {
+     symbols = superType.symbol().lookupSymbols(methodSymbol.name());
+     superType = superType.symbol().superClass();
+    }
+    return !symbols.isEmpty() && !symbols.iterator().next().owner().type().is(JUNIT_FRAMEWORK_TEST_CASE);
+  }
+
