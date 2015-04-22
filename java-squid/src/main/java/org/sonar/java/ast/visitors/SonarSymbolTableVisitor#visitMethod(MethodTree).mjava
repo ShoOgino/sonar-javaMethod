@@ -1,6 +1,11 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    createSymbol(tree.simpleName(), tree.symbol().usages());
+    //as long as SONAR-5894 is not fixed, do not provide references to enum constructors
+    if(tree.symbol().returnType() == null && tree.symbol().owner().isEnum()) {
+      createSymbol(tree.simpleName(), Lists.<IdentifierTree>newArrayList());
+    } else {
+      createSymbol(tree.simpleName(), tree.symbol().usages());
+    }
     super.visitMethod(tree);
   }
 
