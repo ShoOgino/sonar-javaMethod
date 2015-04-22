@@ -2,8 +2,8 @@
   public void visitBinaryExpression(BinaryExpressionTree tree) {
     Tree.Kind kind = getKind(tree);
     Tree.Kind peek = stack.peek();
-    if (peek != null && (inCondition || peek != Tree.Kind.ASSIGNMENT) && !isRelationalNestedInLogical(peek, kind) && peek != kind) {
-      hasIssue = true;
+    if (peek != null && peek != kind && !isRelationalNestedInLogical(peek, kind) && !isNestedInRelational(peek, kind) && !isArithmeticException(peek, kind)) {
+      raiseIssue(tree);
     }
     stack.push(kind);
     super.visitBinaryExpression(tree);

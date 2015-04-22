@@ -1,0 +1,13 @@
+  @Override
+  public void visitAnnotation(AnnotationTree tree) {
+    stack.push(null);
+    for (ExpressionTree argument : tree.arguments()) {
+      if (argument.is(Tree.Kind.ASSIGNMENT)) {
+        scan(((AssignmentExpressionTree) argument).expression());
+      } else {
+        scan(argument);
+      }
+    }
+    stack.pop();
+  }
+

@@ -1,0 +1,14 @@
+  private boolean isArithmeticException(Tree.Kind base, Tree.Kind nested) {
+    // exception: a + b - c
+    if (base == Tree.Kind.MINUS && nested == Tree.Kind.PLUS) {
+      return true;
+    }
+    // exception: a * b / c
+    // exception: a * b - c
+    // exception: a * b + c
+    if ((base == Tree.Kind.DIVIDE || base == Tree.Kind.MINUS || base == Tree.Kind.PLUS) && nested == Tree.Kind.MULTIPLY) {
+      return true;
+    }
+    return false;
+  }
+

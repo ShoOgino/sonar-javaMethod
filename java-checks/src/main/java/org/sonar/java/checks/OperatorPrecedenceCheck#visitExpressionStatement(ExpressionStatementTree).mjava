@@ -1,8 +1,13 @@
   @Override
   public void visitExpressionStatement(ExpressionStatementTree tree) {
-    super.visitExpressionStatement(tree);
-    if (hasIssue) {
-      raiseIssue(tree.expression());
+    if (ASSIGNMENT_OPERATORS.contains(getKind(tree.expression()))) {
+      AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) tree.expression();
+      if (ASSIGNMENT_OPERATORS.contains(getKind(assignmentTree.expression()))) {
+        raiseIssue(assignmentTree);
+      }
+      super.visitAssignmentExpression(assignmentTree);
+    } else {
+      scan(tree.expression());
     }
   }
 
