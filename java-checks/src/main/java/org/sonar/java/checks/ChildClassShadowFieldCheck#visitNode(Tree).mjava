@@ -7,10 +7,7 @@
         if (member.is(Tree.Kind.VARIABLE)) {
           String fieldName = ((VariableTree) member).simpleName().name();
           if (!IGNORED_FIELDS.contains(fieldName)) {
-            Symbol.TypeSymbol definingClass = getDefiningClassInHierarchyForField(superclassSymbol, fieldName);
-            if (definingClass != null) {
-              addIssue(member, String.format("\"%s\" is the name of a field in \"%s\".", fieldName, definingClass.name()));
-            }
+            checkForIssue(superclassSymbol, member, fieldName);
           }
         }
       }
