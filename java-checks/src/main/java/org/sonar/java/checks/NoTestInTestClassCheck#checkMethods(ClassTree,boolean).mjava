@@ -1,0 +1,13 @@
+  private void checkMethods(ClassTree classTree, boolean forJunit4) {
+    boolean hasNoTest = true;
+    for (Tree member : classTree.members()) {
+      if (member.is(Kind.METHOD) && isTestMethod(forJunit4, (MethodTree) member)) {
+        hasNoTest = false;
+        break;
+      }
+    }
+    if (hasNoTest) {
+      addIssue(classTree, "Add some tests to this class.");
+    }
+  }
+
