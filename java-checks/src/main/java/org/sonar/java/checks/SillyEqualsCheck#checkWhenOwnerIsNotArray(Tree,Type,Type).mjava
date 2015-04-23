@@ -1,0 +1,9 @@
+  private void checkWhenOwnerIsNotArray(Tree tree, Type ownerType, Type argumentType) {
+    if (argumentType.isArray() && !ownerType.is(JAVA_LANG_OBJECT)) {
+      addIssue(tree, "Remove this call to \"equals\"; comparisons between a type and an array always return false.");
+    } else if (argumentType.isClass() && areNotRelated(ownerType, argumentType)
+      && (areTypesFinalClassAndInterface(ownerType, argumentType) || areNeitherInterfaces(ownerType, argumentType))) {
+      addIssue(tree, MESSAGE);
+    }
+  }
+
