@@ -9,6 +9,13 @@
     } else {
       reader2.close();
     }
+    
+    Reader reader3 = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+    if (test) {
+      reader3 = new FileReader(""); // TODO SONARJAVA-1031 : False-negative  : NonCompliant {{Close this "Reader"}}
+    } else {
+      reader3 = new FileReader(""); // TODO SONARJAVA-1031 : False-negative : NonCompliant {{Close this "Reader"}}
+    }
 
     // Noncompliant@+1 {{Close this "Writer"}}
     Writer writer = new FileWriter(""); // One branch is missing
@@ -41,16 +48,18 @@
 
     FileInputStream fis1; // Compliant - has an unknown status
     if (test) {
-      fis1 = new FileInputStream("");
+      fis1 = new FileInputStream(""); // OPEN
+      myMethod(fis1);                 // UNKNOWN
     } else {
-      fis1 = getFileInputStream();
+      fis1 = getFileInputStream();    // UNKNOWN
     }
 
     FileInputStream fis2; // Compliant - has an unknown status
     if (test) {
-      fis2 = getFileInputStream();
+      fis2 = getFileInputStream(); // UNKNOWN
+      myMethod(fis2);
     } else {
-      fis2 = new FileInputStream("");
+      fis2 = new FileInputStream("");  // OPEN
     }
 
     // Noncompliant@+1 {{Close this "FileInputStream"}}

@@ -1,6 +1,34 @@
   void closeable_not_closed_in_every_paths_when_using_switch(MyEnum enumValue) throws Exception {
+    FileWriter fw = new FileWriter(""); // False-negative : NonCompliant {{Close this "FileWriter"}}
+    switch (enumValue) {
+      case A:
+        // known engine limitation: break statements are ignored when within other statements
+        if ("UTF-8".equals(fw.getEncoding())) {
+          fw.close();
+          break; // exit switch case with fw = CLOSED
+        } else{
+          fw.write("");
+          break;  // exit switch case with fw = OPEN --> should be non compliant
+        }
+      default:
+        fw.close();
+        break;
+    }
+    
+    Reader reader = new FileReader(""); // Compliant
+    switch (enumValue) {
+      case A:
+        reader.close();
+        break;
+      case B:
+        reader.close();
+        break;
+      default:
+        reader.close();
+        break;
+    }
 
-    Formatter formatter = new Formatter(); // False negative - Noncompliant {{Close this "Formatter"}}
+    Formatter formatter = new Formatter(); // Noncompliant {{Close this "Formatter"}}
     switch (enumValue) {
       case A:
         formatter.close();
@@ -21,6 +49,83 @@
       default:
         os.close();
         break;
+    }
+
+    Writer w1 = new FileWriter(""); // Compliant
+    switch (enumValue) {
+      case A:
+        w1.write("A");
+      default:
+        w1.close();
+        break;
+    }
+
+    Writer w2 = new FileWriter(""); // Compliant
+    switch (enumValue) {
+      case A:
+        w2.write("A");
+        break;
+      default:
+        w2.flush();
+        break;
+    }
+    w2.close();
+
+    Writer w3 = new FileWriter(""); // Noncompliant {{Close this "Writer"}}
+    switch (enumValue) {
+    // as there is no "default", we can not guarantee that the closeable is closed
+      case A:
+        w3.close();
+        break;
+    }
+
+    Writer w4 = new FileWriter(""); // Compliant
+    switch (enumValue) {
+      case A:
+        w4.write("A");
+      default:
+        w4.close();
+        break;
+    }
+
+    Writer w5;
+    switch (enumValue) {
+      case A:
+        w5 = new FileWriter(""); // Noncompliant {{Close this "Writer"}}
+      default:
+        w5 = new FileWriter("");
+        break;
+    }
+    w5.close();
+
+    Writer w6; // Compliant
+    switch (enumValue) {
+      case A:
+        w6 = new FileWriter("");
+        break;
+      default:
+        w6 = new FileWriter("");
+        break;
+    }
+    w6.close();
+
+    Writer w7; // Compliant (last statement does not contain a break)
+    switch (enumValue) {
+      case A:
+        w7 = new FileWriter("");
+        break;
+      default:
+        w7 = new FileWriter("");
+    }
+    w7.close();
+    
+    Writer w8; // Compliant (empty switch)
+    switch (enumValue) {
+    }
+    
+    Writer w9; // Compliant (no statements)
+    switch (enumValue) {
+      case A:
     }
   }
 
