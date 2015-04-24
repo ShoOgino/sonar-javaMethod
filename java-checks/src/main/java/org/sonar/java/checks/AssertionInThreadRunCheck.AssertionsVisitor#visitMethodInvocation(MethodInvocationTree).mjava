@@ -1,7 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       Type type = tree.symbol().owner().type();
-      if (type.is("org.junit.Assert") || type.is("junit.framework.Assert") || type.is("org.fest.assertions.Assertions")) {
+      if (isCheckedType(type)) {
         addIssue(tree, "Remove this assertion.");
       }
       super.visitMethodInvocation(tree);
