@@ -2,9 +2,11 @@
   public void shouldGetReportsFromProperty() {
     Settings settings = mock(Settings.class);
     when(settings.getString("sonar.junit.reportsPath")).thenReturn("target/surefire");
-
+    DefaultFileSystem fs = new DefaultFileSystem();
     Project project = MavenTestUtils.loadProjectFromPom(getClass(), "shouldGetReportsFromProperty/pom.xml");
-    assertThat(SurefireUtils.getReportsDirectory(settings, project).exists()).isTrue();
-    assertThat(SurefireUtils.getReportsDirectory(settings, project).isDirectory()).isTrue();
+    fs.setBaseDir(project.getFileSystem().getBasedir());
+    PathResolver pathResolver = new PathResolver();
+    assertThat(SurefireUtils.getReportsDirectory(settings, fs, pathResolver).exists()).isTrue();
+    assertThat(SurefireUtils.getReportsDirectory(settings, fs, pathResolver).isDirectory()).isTrue();
   }
 
