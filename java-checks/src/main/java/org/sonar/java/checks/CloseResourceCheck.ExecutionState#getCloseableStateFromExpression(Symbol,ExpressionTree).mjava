@@ -1,7 +1,7 @@
     private State getCloseableStateFromExpression(Symbol symbol, @Nullable ExpressionTree expression) {
-      if (shouldBeIgnored(symbol) || shouldBeIgnored(expression)) {
+      if (shouldBeIgnored(symbol, expression)) {
         return State.IGNORED;
-      } else if (expression == null || expression.is(Tree.Kind.NULL_LITERAL)) {
+      } else if (isNull(expression)) {
         return State.NULL;
       } else if (expression.is(Tree.Kind.NEW_CLASS)) {
         if (usesIgnoredCloseableAsArgument(((NewClassTree) expression).arguments())) {
