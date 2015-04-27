@@ -1,8 +1,8 @@
   @Override
   public void visitBinaryExpression(BinaryExpressionTree tree) {
-    Tree.Kind kind = getKind(tree);
     Tree.Kind peek = stack.peek();
-    if (peek != null && peek != kind && !isException(peek, kind)) {
+    Tree.Kind kind = getKind(tree);
+    if (requiresParenthesis(peek, kind)) {
       raiseIssue(tree);
     }
     stack.push(kind);
