@@ -1,0 +1,11 @@
+  @Test
+  public void Enum() {
+    Result result = Result.createFor("Enum");
+    JavaSymbol.TypeJavaSymbol enumSymbol = (JavaSymbol.TypeJavaSymbol) result.symbol("Foo");
+    assertThat(enumSymbol.flags()).isEqualTo(Flags.PUBLIC | Flags.ENUM);
+
+    JavaType.ParametrizedTypeJavaType superType = (JavaType.ParametrizedTypeJavaType) enumSymbol.getSuperclass();
+    JavaSymbol.TypeJavaSymbol superclass = superType.symbol;
+    assertThat(superclass.getName()).isEqualTo("Enum");
+  }
+
