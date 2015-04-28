@@ -1,0 +1,15 @@
+  @CheckForNull
+  private Symbol getOwnerSymbol(MethodInvocationTree tree) {
+    ExpressionTree expressionTree = tree.methodSelect();
+    // direct invocation: symbol is implicitly this
+    if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+      return tree.symbol().owner();
+    }
+    expressionTree = ((MemberSelectExpressionTree) expressionTree).expression();
+    if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+      return ((IdentifierTree) expressionTree).symbol();
+    } else {
+      return getFieldAccessedUsingSuperOrThis(expressionTree);
+    }
+  }
+

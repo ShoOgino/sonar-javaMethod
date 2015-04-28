@@ -1,0 +1,14 @@
+  @CheckForNull
+  private Symbol getFieldAccessedUsingSuperOrThis(ExpressionTree expressionTree) {
+    if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelectTree = (MemberSelectExpressionTree) expressionTree;
+      if (memberSelectTree.expression().is(Tree.Kind.IDENTIFIER)) {
+        String identifierText = ((IdentifierTree) memberSelectTree.expression()).identifierToken().text();
+        if ("super".equals(identifierText) || "this".equals(identifierText)) {
+          return memberSelectTree.identifier().symbol();
+        }
+      }
+    }
+    return null;
+  }
+
