@@ -1,7 +1,13 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       if(tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-        checkIdentifier(((MemberSelectExpressionTree) tree.methodSelect()).identifier());
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) tree.methodSelect();
+        ExpressionTree expression = mset.expression();
+        if (expression.is(Tree.Kind.IDENTIFIER)) {
+          checkIdentifier((IdentifierTree) expression);
+        } else {
+          checkIdentifier(mset.identifier());
+        }
       } else {
         scan(tree.methodSelect());
       }
