@@ -1,20 +1,20 @@
   void closeable_not_closed_in_every_paths_when_using_switch(MyEnum enumValue) throws Exception {
-    FileWriter fw = new FileWriter(""); // False-negative : NonCompliant {{Close this "FileWriter"}}
+    FileWriter fw = new FileWriter(""); // False-negative : NonCompliant
     switch (enumValue) {
       case A:
         // known engine limitation: break statements are ignored when within other statements
         if ("UTF-8".equals(fw.getEncoding())) {
           fw.close();
           break; // exit switch case with fw = CLOSED
-        } else{
+        } else {
           fw.write("");
-          break;  // exit switch case with fw = OPEN --> should be non compliant
+          break; // exit switch case with fw = OPEN --> should be non compliant
         }
       default:
         fw.close();
         break;
     }
-    
+
     Reader reader = new FileReader(""); // Compliant
     switch (enumValue) {
       case A:
@@ -28,7 +28,7 @@
         break;
     }
 
-    Formatter formatter = new Formatter(); // Noncompliant {{Close this "Formatter"}}
+    Formatter formatter = new Formatter(); // Noncompliant {{Close this "Formatter".}}
     switch (enumValue) {
       case A:
         formatter.close();
@@ -71,7 +71,7 @@
     }
     w2.close();
 
-    Writer w3 = new FileWriter(""); // Noncompliant {{Close this "Writer"}}
+    Writer w3 = new FileWriter(""); // Noncompliant {{Close this "FileWriter".}}
     switch (enumValue) {
     // as there is no "default", we can not guarantee that the closeable is closed
       case A:
@@ -91,7 +91,7 @@
     Writer w5;
     switch (enumValue) {
       case A:
-        w5 = new FileWriter(""); // Noncompliant {{Close this "Writer"}}
+        w5 = new FileWriter(""); // Noncompliant {{Close this "FileWriter".}}
       default:
         w5 = new FileWriter("");
         break;
@@ -118,11 +118,11 @@
         w7 = new FileWriter("");
     }
     w7.close();
-    
+
     Writer w8; // Compliant (empty switch)
     switch (enumValue) {
     }
-    
+
     Writer w9; // Compliant (no statements)
     switch (enumValue) {
       case A:

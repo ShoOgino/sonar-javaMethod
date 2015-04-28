@@ -7,9 +7,19 @@
     MethodTree methodTree = (MethodTree) tree;
     BlockTree block = methodTree.block();
     if (block != null) {
-      CloseableVisitor visitor = new CloseableVisitor(methodTree.parameters(), this);
+      CloseableVisitor visitor = new CloseableVisitor(methodTree.parameters());
       block.accept(visitor);
-      visitor.executionState.insertIssues();
+      for (Tree issueTree : visitor.getIssueTrees()) {
+        Type reportedType = null;
+        if(issueTree.is(Tree.Kind.ASSIGNMENT)) {
+          reportedType = ((AssignmentExpressionTree) issueTree).expression().symbolType();
+        } else if(issueTree.is(Tree.Kind.VARIABLE)) {
+          reportedType = ((VariableTree) issueTree).initializer().symbolType();
+        } else if(issueTree.is(Tree.Kind.NEW_CLASS)) {
+          reportedType = ((NewClassTree) issueTree).symbolType();
+        }
+        addIssue(issueTree, String.format("Close this \"%s\".", reportedType.name()));
+      }
     }
   }
 

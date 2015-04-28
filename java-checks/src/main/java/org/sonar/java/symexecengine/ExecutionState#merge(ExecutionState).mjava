@@ -1,0 +1,33 @@
+  public ExecutionState merge(ExecutionState executionState) {
+    for (Symbol symbol : executionState.reachableValues.keys()) {
+      if (!executionState.definedInState.contains(symbol)) {
+        this.reachableValues.putAll(symbol, executionState.reachableValues.get(symbol));
+      }
+    }
+    for (Symbol symbol : executionState.unreachableValues.keys()) {
+      if (!executionState.definedInState.contains(symbol)) {
+        this.unreachableValues.putAll(symbol, executionState.unreachableValues.get(symbol));
+      }
+    }
+
+    for (Symbol symbol : unreachableValues.keys()) {
+      // cleanup after merge of reachable/unreachable values
+      for (Value value : unreachableValues.get(symbol)) {
+        reachableValues.remove(symbol, value);
+      }
+    }
+    // Merge states of values
+    for (Map.Entry<Value, State> valueStateEntry : executionState.stateOfValue.entrySet()) {
+      Value value = valueStateEntry.getKey();
+      State state = valueStateEntry.getValue();
+      State valueState = getStateOfValue(value);
+      if (valueState == null) {
+        valueState = state;
+      } else {
+        valueState = valueState.merge(state);
+      }
+      this.stateOfValue.put(value, valueState);
+    }
+    return this;
+  }
+

@@ -1,0 +1,23 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    ExecutionState blockES = new ExecutionState(executionState);
+    executionState = blockES;
+    scan(tree.block());
+    scan(tree.resources());
+    handleResources(tree.resources());
+    for (CatchTree catchTree : tree.catches()) {
+      executionState = new ExecutionState(blockES.parent);
+      scan(catchTree.block());
+      blockES.merge(executionState);
+    }
+
+    if (tree.finallyBlock() != null) {
+      executionState = new ExecutionState(blockES.parent);
+      scan(tree.finallyBlock());
+      executionState.reportIssues();
+      executionState = blockES.parent.overrideBy(blockES.overrideBy(executionState));
+    } else {
+      executionState = blockES.restoreParent();
+    }
+  }
+

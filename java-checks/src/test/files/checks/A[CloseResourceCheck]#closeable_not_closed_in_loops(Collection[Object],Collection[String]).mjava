@@ -1,31 +1,31 @@
   void closeable_not_closed_in_loops(Collection<Object> objects, Collection<String> propertyList) throws Exception {
     Reader reader = null;
     for (int i = 0; i < MAX_LOOP; i++) {
-      reader = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+      reader = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
     }
     reader.close();
-    
+
     Reader reader2 = null;
     for (int i = 0; i < MAX_LOOP; i++) {
       reader2 = new FileReader(""); // Compliant
       reader2.close();
     }
-    
+
     Reader reader3 = null;
     for (;;) {
       reader3 = new FileReader(""); // Compliant
       reader3.close();
     }
-    
+
     int j = 0;
 
     InputStream is = null;
     while (j < MAX_LOOP) {
-      is = new FileInputStream(""); // Noncompliant {{Close this "InputStream"}}
+      is = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
       j++;
     }
     is.close();
-    
+
     j = 0;
     InputStream is2 = null;
     while (j < MAX_LOOP) {
@@ -33,27 +33,27 @@
       is2.close();
       j++;
     }
-    
+
     Writer writer = null;
     for (Object object : objects) {
-      writer = new FileWriter(""); // Noncompliant {{Close this "Writer"}}
+      writer = new FileWriter(""); // Noncompliant {{Close this "FileWriter".}}
     }
     writer.close();
-    
+
     Writer writer2 = null;
     for (Object object : objects) {
       writer2 = new FileWriter(""); // Compliant
       writer2.close();
     }
-    
+
     j = 0;
     FileInputStream fis = null;
     do {
-      fis = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream"}}
+      fis = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
       j++;
     } while (j < MAX_LOOP);
     fis.close();
-    
+
     j = 0;
     FileInputStream fis2 = null;
     do {
@@ -61,29 +61,29 @@
       fis2.close();
       j++;
     } while (j < MAX_LOOP);
-    
+
     OutputStream stream = null;
-    try{
+    try {
       for (String property : propertyList) {
-        stream = new FileOutputStream("myfile.txt");  // Noncompliant {{Close this "OutputStream"}}
+        stream = new FileOutputStream("myfile.txt"); // Noncompliant {{Close this "FileOutputStream".}}
         // ...
       }
-    }catch(Exception e){
+    } catch (Exception e) {
       // ...
-    }finally{
-      stream.close();  // Multiple stream were opened. Only the last is closed.
+    } finally {
+      stream.close(); // Multiple stream were opened. Only the last is closed.
     }
-    
+
     OutputStream stream2 = null;
-    try{
-      stream2 = new FileOutputStream("myfile.txt");  // Compliant
+    try {
+      stream2 = new FileOutputStream("myfile.txt"); // Compliant
       for (String property : propertyList) {
         // ...
       }
-    }catch(Exception e){
+    } catch (Exception e) {
       // ...
-    }finally{
-      stream2.close();  // Multiple stream were opened. Only the last is closed.
+    } finally {
+      stream2.close();
     }
   }
 

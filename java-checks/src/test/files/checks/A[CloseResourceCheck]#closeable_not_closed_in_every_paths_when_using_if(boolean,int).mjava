@@ -1,57 +1,55 @@
   void closeable_not_closed_in_every_paths_when_using_if(boolean test, int x) throws Exception {
-    Reader reader = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+    Reader reader = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
     if (test) {
       reader.close();
     }
 
-    Reader reader2 = new FileReader(""); // Noncompliant {{Close this "Reader"}}
+    Reader reader2 = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
     if (test) {
     } else {
       reader2.close();
     }
-    
-    Reader reader3 = new FileReader(""); // Noncompliant {{Close this "Reader"}}
-    if (test) {
-      reader3 = new FileReader(""); // TODO SONARJAVA-1031 : False-negative  : NonCompliant {{Close this "Reader"}}
-    } else {
-      reader3 = new FileReader(""); // TODO SONARJAVA-1031 : False-negative : NonCompliant {{Close this "Reader"}}
-    }
 
-    // Noncompliant@+1 {{Close this "Writer"}}
+    Reader reader3 = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
+    if (test) {
+      reader3 = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
+    } else {
+      reader3 = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
+    }
+    // Noncompliant@+1
     Writer writer = new FileWriter(""); // One branch is missing
     if (test) {
       writer.close();
     } else {
       if (x > 0) {
-        // Noncompliant@+1 {{Close this "Formatter"}}
+        // Noncompliant@+1
         Formatter formatter = new Formatter(); // Only used in the local then clause and not closed
         formatter.out();
         writer.close();
       }
     }
 
-    BufferedWriter bw; // Noncompliant {{Close this "BufferedWriter"}}
+    BufferedWriter bw;
     if (test) {
-      bw = new BufferedWriter(new FileWriter(""));
+      bw = new BufferedWriter(new FileWriter("")); // Noncompliant {{Close this "BufferedWriter".}}
     } else {
-      bw = new BufferedWriter(new FileWriter(""));
+      bw = new BufferedWriter(new FileWriter(""));// Noncompliant {{Close this "BufferedWriter".}}
     }
 
-    // Noncompliant@+1 {{Close this "FileInputStream"}}
     FileInputStream fis; // Not closed in else branch
     if (test) {
       fis = new FileInputStream("");
       fis.close();
     } else {
-      fis = new FileInputStream("");
+      fis = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
     }
 
     FileInputStream fis1; // Compliant - has an unknown status
     if (test) {
       fis1 = new FileInputStream(""); // OPEN
-      myMethod(fis1);                 // UNKNOWN
+      myMethod(fis1); // UNKNOWN
     } else {
-      fis1 = getFileInputStream();    // UNKNOWN
+      fis1 = getFileInputStream(); // UNKNOWN
     }
 
     FileInputStream fis2; // Compliant - has an unknown status
@@ -59,21 +57,19 @@
       fis2 = getFileInputStream(); // UNKNOWN
       myMethod(fis2);
     } else {
-      fis2 = new FileInputStream("");  // OPEN
+      fis2 = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
     }
 
-    // Noncompliant@+1 {{Close this "FileInputStream"}}
     FileInputStream fis3; // Not closed after the if
     if (test) {
-      fis3 = new FileInputStream("");
+      fis3 = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
     } else {
     }
 
-    // Noncompliant@+1 {{Close this "FileInputStream"}}
     FileInputStream fis4; // Not closed after the if
     if (test) {
     } else {
-      fis4 = new FileInputStream("");
+      fis4 = new FileInputStream(""); // Noncompliant {{Close this "FileInputStream".}}
     }
 
     InputStream is = new FileInputStream(""); // Compliant

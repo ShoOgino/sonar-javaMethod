@@ -1,5 +1,5 @@
   void closeable_used_in_try_with_resource() throws Exception {
-    InputStream is = new FileInputStream(""); // Noncompliant {{Close this "InputStream"}}
+    InputStream is = new FileInputStream(""); // Noncompliant
     try {
       is.close();
     } catch (IOException e) {
@@ -7,7 +7,7 @@
     } catch (Exception e) {
       is.close();
     }
-    
+
     Reader reader; // Compliant
     try {
       reader = new FileReader("");
@@ -25,7 +25,7 @@
       writer = new FileWriter("");
     }
     writer.close();
-    
+
     FileWriter fileWriter = new FileWriter(""); // Compliant
     try {
       fileWriter.flush();
@@ -34,19 +34,19 @@
     } finally {
       fileWriter.close();
     }
-    
+
     try (BufferedReader br = new BufferedReader(new FileReader(""))) { // Compliant - JLS8 - 14.20.3 : try-with-resources
       // ...
     } catch (Exception e) {
       // ...
     }
-    
+
     try (FileWriter fw = new FileWriter("")) { // Compliant - JLS8 - 14.20.3 : try-with-resources
       fw.write("hello");
     } catch (Exception e) {
       // ...
     }
-    
+
     try {
       FileInputStream fis = new FileInputStream(""); // Compliant
       try {
@@ -55,18 +55,18 @@
       }
     } catch (Exception e) {
     }
-    
+
     InputStream is2 = new FileInputStream("");
     try {
       is2.close();
     } catch (Exception e) {
       is2.close();
     } finally {
-      InputStream is2 = new FileInputStream(""); // Noncompliant {{Close this "InputStream"}}
+      InputStream is2 = new FileInputStream(""); // Noncompliant
       is2.read();
     }
     is2.close();
-    
+
     try {
       InputStream is3 = new FileInputStream("");
       try {
@@ -75,7 +75,7 @@
         is3.read();
       }
     } catch (Exception e) {
-      
+
     }
   }
 
