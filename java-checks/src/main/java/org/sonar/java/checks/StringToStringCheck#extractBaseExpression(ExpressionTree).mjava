@@ -1,0 +1,15 @@
+  private ExpressionTree extractBaseExpression(ExpressionTree tree) {
+    ExpressionTree expressionTree = tree;
+    while (true) {
+      if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
+        expressionTree = ((MemberSelectExpressionTree) expressionTree).identifier();
+      } else if (expressionTree.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+        expressionTree = ((ParenthesizedTree) expressionTree).expression();
+      } else if (expressionTree.is(Tree.Kind.TYPE_CAST)) {
+        expressionTree = ((TypeCastTree) expressionTree).expression();
+      } else {
+        return expressionTree;
+      }
+    }
+  }
+
