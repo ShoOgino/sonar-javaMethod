@@ -1,0 +1,16 @@
+  @CheckForNull
+  private MethodInvocationTree extractMethodInvocation(ExpressionTree tree) {
+    ExpressionTree result = tree;
+    while (true) {
+      if (result.is(Tree.Kind.TYPE_CAST)) {
+        result = ((TypeCastTree) result).expression();
+      } else if (result.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+        result = ((ParenthesizedTree) result).expression();
+      } else if (result.is(Tree.Kind.METHOD_INVOCATION)) {
+        return (MethodInvocationTree) result;
+      } else {
+        return null;
+      }
+    }
+  }
+

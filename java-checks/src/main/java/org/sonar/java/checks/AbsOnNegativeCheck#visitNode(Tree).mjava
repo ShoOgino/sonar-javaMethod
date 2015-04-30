@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree methodTree = (MethodInvocationTree) tree;
+      if (MATH_ABS_METHODS.anyMatch(methodTree)) {
+        ExpressionTree firstArgument = methodTree.arguments().get(0);
+        checkForIssue(firstArgument);
+      }
+    } else {
+      ExpressionTree operand = ((UnaryExpressionTree) tree).expression();
+      checkForIssue(operand);
+    }
+  }
+
