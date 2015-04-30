@@ -1,23 +1,36 @@
   @Test
   public void import_declaration() {
-    AstNode astNode = p.parse("import foo.Bar;");
-    ImportTree tree = ((CompilationUnitTree) astNode).imports().get(0);
-    assertThat(tree.isStatic()).isFalse();
-    assertThat(tree.qualifiedIdentifier()).isNotNull();
+    AstNode astNode = p.parse(";");
+    ImportClauseTree tree = ((CompilationUnitTree) astNode).imports().get(0);
+    assertThat(tree.is(Kind.EMPTY_STATEMENT)).isTrue();
+    assertThat(tree.is(Kind.IMPORT)).isFalse();
+
+    astNode = p.parse("import foo.Bar;");
+    tree = ((CompilationUnitTree) astNode).imports().get(0);
+    assertThat(tree.is(Kind.IMPORT)).isTrue();
+    ImportTree importTree = (ImportTree) tree;
+    assertThat(importTree.isStatic()).isFalse();
+    assertThat(importTree.qualifiedIdentifier()).isNotNull();
 
     astNode = p.parse("import foo.bar.*;");
     tree = ((CompilationUnitTree) astNode).imports().get(0);
-    assertThat(tree.isStatic()).isFalse();
-    assertThat(tree.qualifiedIdentifier()).isNotNull();
+    assertThat(tree.is(Kind.IMPORT)).isTrue();
+    importTree = (ImportTree) tree;
+    assertThat(importTree.isStatic()).isFalse();
+    assertThat(importTree.qualifiedIdentifier()).isNotNull();
 
     astNode = p.parse("import static foo.Bar.method;");
     tree = ((CompilationUnitTree) astNode).imports().get(0);
-    assertThat(tree.isStatic()).isTrue();
-    assertThat(tree.qualifiedIdentifier()).isNotNull();
+    assertThat(tree.is(Kind.IMPORT)).isTrue();
+    importTree = (ImportTree) tree;
+    assertThat(importTree.isStatic()).isTrue();
+    assertThat(importTree.qualifiedIdentifier()).isNotNull();
 
     astNode = p.parse("import static foo.Bar.*;");
     tree = ((CompilationUnitTree) astNode).imports().get(0);
-    assertThat(tree.isStatic()).isTrue();
-    assertThat(tree.qualifiedIdentifier()).isNotNull();
+    assertThat(tree.is(Kind.IMPORT)).isTrue();
+    importTree = (ImportTree) tree;
+    assertThat(importTree.isStatic()).isTrue();
+    assertThat(importTree.qualifiedIdentifier()).isNotNull();
   }
 
