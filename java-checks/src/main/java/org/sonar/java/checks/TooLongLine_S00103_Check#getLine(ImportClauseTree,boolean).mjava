@@ -1,0 +1,11 @@
+  private int getLine(ImportClauseTree importClauseTree, boolean fromStart) {
+    if (importClauseTree.is(Tree.Kind.IMPORT)) {
+      if (fromStart) {
+        return getLine(((ImportTree) importClauseTree).importKeyword());
+      } else {
+        return getLine(((ImportTree) importClauseTree).semicolonToken());
+      }
+    }
+    return getLine(((EmptyStatementTree) importClauseTree).semicolonToken());
+  }
+
