@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    VariableTree variableTree = (VariableTree) tree;
+    if (variableTree.modifiers().modifiers().contains(Modifier.STATIC) && isForbiddenType(variableTree.type().symbolType())) {
+      IdentifierTree identifierTree = variableTree.simpleName();
+      addIssue(identifierTree, String.format("Make \"%s\" an instance variable.", identifierTree.name()));
+    }
+  }
+
