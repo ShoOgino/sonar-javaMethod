@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (!classTree.modifiers().modifiers().contains(Modifier.ABSTRACT)) {
+      for (Tree member : classTree.members()) {
+        if (member.is(Kind.METHOD)) {
+          checkMethod((MethodTree) member);
+        }
+      }
+    }
+  }
+
