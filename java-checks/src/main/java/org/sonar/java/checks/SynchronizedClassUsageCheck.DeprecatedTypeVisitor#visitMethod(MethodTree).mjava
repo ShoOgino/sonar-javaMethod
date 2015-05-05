@@ -1,0 +1,12 @@
+    @Override
+    public void visitMethod(MethodTree tree) {
+      TypeTree returnTypeTree = tree.returnType();
+      if (!isOverriding(tree) || returnTypeTree == null) {
+        if (returnTypeTree != null) {
+          reportIssueOnDeprecatedType(returnTypeTree, returnTypeTree.symbolType());
+        }
+        scan(tree.parameters());
+      }
+      scan(tree.block());
+    }
+
