@@ -7,10 +7,14 @@
     if (methodTree.block() != null && "equals".equals(methodTree.symbol().name()) && methodTree.parameters().size() == 1) {
       Symbol parameterSymbol = methodTree.parameters().get(0).symbol();
       if (parameterSymbol.type().is("java.lang.Object")) {
-        ExpressionVisitor visitor = new ExpressionVisitor(parameterSymbol);
-        methodTree.accept(visitor);
-        if (!visitor.typeChecked) {
-          addIssue(tree, "Add a type test to this method.");
+        CastVisitor castVisitor = new CastVisitor(parameterSymbol);
+        methodTree.accept(castVisitor);
+        if (castVisitor.hasCast) {
+          ExpressionVisitor expressionVisitor = new ExpressionVisitor(parameterSymbol);
+          methodTree.accept(expressionVisitor);
+          if (!expressionVisitor.typeChecked) {
+            addIssue(tree, "Add a type test to this method.");
+          }
         }
       }
     }
