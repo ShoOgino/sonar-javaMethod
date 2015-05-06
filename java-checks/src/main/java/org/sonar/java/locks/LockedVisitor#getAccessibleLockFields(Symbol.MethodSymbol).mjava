@@ -1,0 +1,15 @@
+  private List<Symbol> getAccessibleLockFields(Symbol.MethodSymbol symbol) {
+    List<Symbol> symbols = Lists.newArrayList();
+    Symbol owner =  symbol.owner();
+    while (owner.isTypeSymbol()) {
+      Symbol.TypeSymbol typeSymbol = (Symbol.TypeSymbol) owner;
+      for (Symbol member : typeSymbol.memberSymbols()) {
+        if(member.isVariableSymbol() && member.type().isSubtypeOf(JAVA_LOCK)) {
+          symbols.add(member);
+        }
+      }
+      owner = owner.owner();
+    }
+    return symbols;
+  }
+
