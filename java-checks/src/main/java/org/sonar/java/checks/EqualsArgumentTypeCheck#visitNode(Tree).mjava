@@ -9,12 +9,8 @@
       if (parameterSymbol.type().is("java.lang.Object")) {
         CastVisitor castVisitor = new CastVisitor(parameterSymbol);
         methodTree.accept(castVisitor);
-        if (castVisitor.hasCast) {
-          ExpressionVisitor expressionVisitor = new ExpressionVisitor(parameterSymbol);
-          methodTree.accept(expressionVisitor);
-          if (!expressionVisitor.typeChecked) {
-            addIssue(tree, "Add a type test to this method.");
-          }
+        if (castVisitor.hasUncheckedCast) {
+          addIssue(tree, "Add a type test to this method.");
         }
       }
     }

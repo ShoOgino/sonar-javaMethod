@@ -1,0 +1,12 @@
+    @Override
+    public void visitConditionalExpression(ConditionalExpressionTree tree) {
+      ExpressionVisitor expressionVisitor = new ExpressionVisitor(parameterSymbol);
+      tree.condition().accept(expressionVisitor);
+      if (expressionVisitor.typeChecked) {
+        typeChecked = true;
+        return;
+      }
+      scan(tree.trueExpression());
+      scan(tree.falseExpression());
+    }
+

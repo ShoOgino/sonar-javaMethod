@@ -1,11 +1,11 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      if (EQUALS_MATCHER.matches(tree)) {
-        if (isInvocationOnArgument(tree)) {
+      for (ExpressionTree argument : tree.arguments()) {
+        if (isArgument(argument, parameterSymbol)) {
           typeChecked = true;
-        } else if (isArgument(tree.arguments().get(0), parameterSymbol)) {
-          typeChecked = true;
+          return;
         }
       }
+      super.visitMethodInvocation(tree);
     }
 

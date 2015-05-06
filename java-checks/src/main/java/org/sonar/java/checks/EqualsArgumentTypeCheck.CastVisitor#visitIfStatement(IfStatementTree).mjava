@@ -1,0 +1,12 @@
+    @Override
+    public void visitIfStatement(IfStatementTree tree) {
+      ExpressionVisitor expressionVisitor = new ExpressionVisitor(parameterSymbol);
+      tree.condition().accept(expressionVisitor);
+      if (expressionVisitor.typeChecked) {
+        typeChecked = true;
+        return;
+      }
+      scan(tree.thenStatement());
+      scan(tree.elseStatement());
+    }
+
