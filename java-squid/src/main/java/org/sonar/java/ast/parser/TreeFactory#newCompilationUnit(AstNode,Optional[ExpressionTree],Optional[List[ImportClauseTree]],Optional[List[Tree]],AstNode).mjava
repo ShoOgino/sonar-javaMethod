@@ -2,7 +2,7 @@
     AstNode spacing,
     Optional<ExpressionTree> packageDeclaration,
     Optional<List<ImportClauseTree>> importDeclarations,
-    Optional<List<AstNode>> typeDeclarations,
+    Optional<List<Tree>> typeDeclarations,
     AstNode eof) {
 
     List<AstNode> children = Lists.newArrayList();
@@ -33,12 +33,9 @@
 
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
     if (typeDeclarations.isPresent()) {
-      children.addAll(typeDeclarations.get());
-
-      for (AstNode child : typeDeclarations.get()) {
-        if (!child.is(JavaPunctuator.SEMI)) {
-          types.add((Tree) child);
-        }
+      for (Tree child : typeDeclarations.get()) {
+        children.add((AstNode) child);
+        types.add(child);
       }
     }
 
