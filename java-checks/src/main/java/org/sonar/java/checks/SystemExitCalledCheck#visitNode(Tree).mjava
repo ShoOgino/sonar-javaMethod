@@ -1,9 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    idName = "";
-    MethodInvocationTree mit = (MethodInvocationTree)tree;
-    if (isCallToExitMethod(mit)) {
-      addIssue(tree, "Remove this call to \""+idName+"\" or ensure it is really required.");
+    if (!((MethodTreeImpl) tree).isMainMethod()) {
+      tree.accept(new InvocationVisitor());
     }
   }
 
