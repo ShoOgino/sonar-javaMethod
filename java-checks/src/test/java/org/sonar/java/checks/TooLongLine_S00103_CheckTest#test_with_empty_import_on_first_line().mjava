@@ -1,0 +1,10 @@
+  @Test
+  public void test_with_empty_import_on_first_line() {
+    check.maximumLineLength = 20;
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/TooLongLine_S00103_Check/LineLengthEmptyStatementInImport.java"), new VisitorsBridge(check));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(7).withMessage("Split this 28 characters long line (which is greater than 20 authorized).")
+      .next().atLine(8)
+      .noMore();
+  }
+
