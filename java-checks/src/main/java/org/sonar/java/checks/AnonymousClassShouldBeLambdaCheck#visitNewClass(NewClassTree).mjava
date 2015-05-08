@@ -1,10 +1,11 @@
   @Override
   public void visitNewClass(NewClassTree tree) {
     super.visitNewClass(tree);
-    if (tree.classBody() != null) {
-      List<Tree> members = tree.classBody().members();
-      if (!useThisIdentifier(tree.classBody()) && !enumConstants.contains(tree.identifier()) && members.size() == 1 && members.get(0).is(Tree.Kind.METHOD)) {
-        context.addIssue(tree.identifier(), this, "Make this anonymous inner class a lambda");
+    ClassTree classBody = tree.classBody();
+    if (classBody != null) {
+      TypeTree identifier = tree.identifier();
+      if (!useThisIdentifier(classBody) && !enumConstants.contains(identifier) && hasOnlyOneMethod(classBody.members())) {
+        context.addIssue(identifier, this, "Make this anonymous inner class a lambda");
       }
     }
   }
