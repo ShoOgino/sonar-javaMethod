@@ -1,5 +1,13 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (EQUALS_MATCHER.matches(tree)) {
+        ExpressionTree methodSelect = tree.methodSelect();
+        if ((methodSelect.is(Tree.Kind.MEMBER_SELECT) && isGetClassOnArgument(((MemberSelectExpressionTree) methodSelect).expression()))
+          || isGetClassOnArgument(tree.arguments().get(0))) {
+          typeChecked = true;
+          return;
+        }
+      }
       for (ExpressionTree argument : tree.arguments()) {
         if (isArgument(argument, parameterSymbol)) {
           typeChecked = true;
