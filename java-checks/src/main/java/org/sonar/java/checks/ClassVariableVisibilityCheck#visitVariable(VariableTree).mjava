@@ -1,13 +1,11 @@
   @Override
   public void visitVariable(VariableTree tree) {
-
     List<Modifier> modifiers = tree.modifiers().modifiers();
     List<AnnotationTree> annotations = tree.modifiers().annotations();
 
-    if (isClass() && isPublic(modifiers) && !(isConstant(modifiers) || !annotations.isEmpty())) {
+    if (isClass() && isPublic(modifiers) && !(isFinal(modifiers) || !annotations.isEmpty())) {
       context.addIssue(tree, this, "Make " + tree.simpleName() + " a static final constant or non-public and provide accessors if needed.");
     }
-
     super.visitVariable(tree);
   }
 
