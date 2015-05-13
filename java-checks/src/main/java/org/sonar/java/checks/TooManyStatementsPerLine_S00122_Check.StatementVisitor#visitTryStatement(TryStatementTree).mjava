@@ -1,0 +1,16 @@
+    @Override
+    public void visitTryStatement(TryStatementTree tree) {
+      // do not scan resources
+      if (tree.resources().isEmpty()) {
+        addLine(tree.tryKeyword());
+      } else {
+        addLines(tree.tryKeyword(), tree.closeParenToken());
+      }
+      scan(tree.block());
+      scan(tree.catches());
+      if (tree.finallyKeyword() != null) {
+        addLine(tree.finallyKeyword());
+      }
+      scan(tree.finallyBlock());
+    }
+

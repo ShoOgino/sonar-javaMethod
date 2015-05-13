@@ -1,0 +1,10 @@
+    @Override
+    public void visitDoWhileStatement(DoWhileStatementTree tree) {
+      // do not scan the condition
+      addLine(tree.doKeyword());
+      if (tree.doKeyword().line() != tree.whileKeyword().line()) {
+        addLines(tree.whileKeyword(), tree.semicolonToken());
+      }
+      scan(tree.statement());
+    }
+

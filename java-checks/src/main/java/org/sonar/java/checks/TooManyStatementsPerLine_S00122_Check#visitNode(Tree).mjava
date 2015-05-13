@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    BlockTree block;
+    if (tree.is(Tree.Kind.STATIC_INITIALIZER)) {
+      block = (BlockTree) tree;
+    } else {
+      block = ((MethodTree) tree).block();
+    }
+    if (block != null) {
+      StatementVisitor visitor = new StatementVisitor();
+      block.accept(visitor);
+      for (Entry<Integer> entry : visitor.statementsPerLine.entrySet()) {
+        int count = entry.getCount();
+        if (count > 1) {
+          addIssue(entry.getElement(), "At most one statement is allowed per line, but " + count + " statements were found on this line.");
+        }
+      }
+    }
+  }
+

@@ -1,0 +1,14 @@
+    @Override
+    public void visitIfStatement(IfStatementTree tree) {
+      addLine(tree.ifKeyword());
+      StatementTree thenStatement = tree.thenStatement();
+      StatementTree elseStatement = tree.elseStatement();
+      scan(thenStatement);
+      scan(elseStatement);
+      if (elseStatement == null) {
+        addLineOfCloseBrace(tree.ifKeyword(), thenStatement);
+      } else {
+        addLineOfCloseBrace(tree.ifKeyword(), elseStatement);
+      }
+    }
+
