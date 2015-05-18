@@ -1,4 +1,4 @@
-  private JavaSymbol getSymbolOfMemberSelectExpression(MemberSelectExpressionTree mse, int kind, Resolve.Env resolveEnv) {
+  private Resolve.Resolution getSymbolOfMemberSelectExpression(MemberSelectExpressionTree mse, int kind, Resolve.Env resolveEnv) {
     int expressionKind = JavaSymbol.TYP;
     if ((kind & JavaSymbol.VAR) != 0) {
       expressionKind |= JavaSymbol.VAR;
@@ -15,8 +15,8 @@
       return resolve.findIdentInType(resolveEnv, (JavaSymbol.TypeJavaSymbol) site, mse.identifier().name(), kind);
     }
     if (site.kind == JavaSymbol.PCK) {
-      return resolve.findIdentInPackage(site, mse.identifier().name(), kind);
+      return Resolve.Resolution.resolution(resolve.findIdentInPackage(site, mse.identifier().name(), kind));
     }
-    return Symbols.unknownSymbol;
+    return resolve.unresolved();
   }
 
