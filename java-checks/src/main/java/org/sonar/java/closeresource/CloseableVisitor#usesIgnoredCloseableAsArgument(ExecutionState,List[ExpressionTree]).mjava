@@ -1,0 +1,13 @@
+  private boolean usesIgnoredCloseableAsArgument(ExecutionState executionState, List<ExpressionTree> arguments) {
+    for (ExpressionTree argument : arguments) {
+      if (isNewClassWithIgnoredArguments(executionState, argument)) {
+        return true;
+      } else if (isMethodInvocationWithIgnoredArguments(executionState, argument)) {
+        return true;
+      } else if (useIgnoredCloseable(executionState, argument) || isSubclassOfInputStreamOrOutputStreamWithoutClose(argument.symbolType())) {
+        return true;
+      }
+    }
+    return false;
+  }
+

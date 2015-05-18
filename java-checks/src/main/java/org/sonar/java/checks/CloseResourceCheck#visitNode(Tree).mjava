@@ -7,14 +7,14 @@
     MethodTree methodTree = (MethodTree) tree;
     BlockTree block = methodTree.block();
     if (block != null) {
-      CloseableVisitor visitor = new CloseableVisitor(methodTree);
+      DataFlowVisitor visitor = new DataFlowVisitor(methodTree, new CloseableVisitor());
       block.accept(visitor);
       for (Tree issueTree : visitor.getIssueTrees()) {
         Type reportedType = null;
-        if(issueTree.is(Tree.Kind.NEW_CLASS)) {
+        if (issueTree.is(Tree.Kind.NEW_CLASS)) {
           reportedType = ((NewClassTree) issueTree).symbolType();
         }
-        if(reportedType != null) {
+        if (reportedType != null) {
           addIssue(issueTree, String.format("Close this \"%s\".", reportedType.name()));
         }
       }

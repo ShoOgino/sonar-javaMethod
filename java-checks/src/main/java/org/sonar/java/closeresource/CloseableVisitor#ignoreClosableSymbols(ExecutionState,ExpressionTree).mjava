@@ -1,15 +1,15 @@
-  private void ignoreClosableSymbols(@Nullable ExpressionTree expression) {
+  private void ignoreClosableSymbols(ExecutionState executionState, @Nullable ExpressionTree expression) {
     if (expression != null) {
       if (expression.is(Tree.Kind.IDENTIFIER) && CloseableVisitor.isCloseableOrAutoCloseableSubtype(expression.symbolType())) {
         executionState.markValueAs(((IdentifierTree) expression).symbol(), new CloseableState.Ignored(expression));
       } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
-        ignoreClosableSymbols(((MemberSelectExpressionTree) expression).identifier());
+        ignoreClosableSymbols(executionState, ((MemberSelectExpressionTree) expression).identifier());
       } else if (expression.is(Tree.Kind.TYPE_CAST)) {
-        ignoreClosableSymbols(((TypeCastTree) expression).expression());
+        ignoreClosableSymbols(executionState, ((TypeCastTree) expression).expression());
       } else if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
-        ignoreClosableSymbols(((MethodInvocationTree) expression).arguments());
+        ignoreClosableSymbols(executionState, ((MethodInvocationTree) expression).arguments());
       } else if (expression.is(Tree.Kind.NEW_CLASS)) {
-        ignoreClosableSymbols(((NewClassTree) expression).arguments());
+        ignoreClosableSymbols(executionState, ((NewClassTree) expression).arguments());
       }
     }
   }

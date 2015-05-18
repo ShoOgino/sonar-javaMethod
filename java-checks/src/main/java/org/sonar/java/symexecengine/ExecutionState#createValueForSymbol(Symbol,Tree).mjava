@@ -1,10 +1,11 @@
-  public void createValueForSymbol(Symbol symbol, Tree tree) {
+  public SymbolicValue createValueForSymbol(Symbol symbol, Tree tree) {
     // When creating a new value, all reachable values are now unreachable.
-    Set<Value> values = this.reachableValues.get(symbol);
+    Set<SymbolicValue> values = this.reachableValues.get(symbol);
     unreachableValues.putAll(symbol, values);
     values.clear();
-    Value value = new Value(tree);
+    SymbolicValue value = new SymbolicValue(tree);
     reachableValues.put(symbol, value);
     stateOfValue.put(value, State.UNSET);
+    return value;
   }
 
