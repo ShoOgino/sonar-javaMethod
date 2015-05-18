@@ -14,7 +14,9 @@
       final JavaSymbol.MethodJavaSymbol methodSymbol = new JavaSymbol.MethodJavaSymbol(bytecodeCompleter.filterBytecodeFlags(flags), name, type, classSymbol);
       classSymbol.members.enter(methodSymbol);
       if (signature != null) {
-        new SignatureReader(signature).accept(new ReadMethodSignature(methodSymbol));
+        SignatureReader signatureReader = new SignatureReader(signature);
+        signatureReader.accept(new TypeParameterDeclaration(methodSymbol));
+        signatureReader.accept(new ReadMethodSignature(methodSymbol));
       }
       methodSymbol.parameters = new OrderedScope(methodSymbol);
       for (int i = 0; i < type.argTypes.size(); i += 1) {
