@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ExpressionTree leftOperand = removeParenthesis(((BinaryExpressionTree) tree).leftOperand());
+    ExpressionTree rightOperand = removeParenthesis(((BinaryExpressionTree) tree).rightOperand());
+    if (leftOperand.is(Tree.Kind.METHOD_INVOCATION)) {
+      checkIndexOfInvocation((MethodInvocationTree) leftOperand, rightOperand);
+    } else if (rightOperand.is(Tree.Kind.METHOD_INVOCATION)) {
+      checkIndexOfInvocation((MethodInvocationTree) rightOperand, leftOperand);
+    }
+  }
+
