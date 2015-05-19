@@ -1,10 +1,10 @@
-  private Set<Tree> getIssuableTreesOfCurrentState() {
-    Set<Tree> results = Sets.newHashSet();
+  Set<State> getStatesOfCurrentExecutionState() {
+    Set<State> results = Sets.newHashSet();
     for (Symbol symbol : definedInState) {
       for (SymbolicValue value : Iterables.concat(reachableValues.get(symbol), unreachableValues.get(symbol))) {
         State state = stateOfValue.get(value);
-        if (state.shouldRaiseIssue()) {
-          results.addAll(state.reportingTrees());
+        if (state != null) {
+          results.add(state);
         }
       }
     }

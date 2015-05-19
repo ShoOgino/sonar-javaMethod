@@ -1,0 +1,17 @@
+  public static void analyze(MethodTree method, SymbolicExecutionCheck check) {
+    BlockTree block = method.block();
+    if (block != null) {
+      ExecutionState executionState = new ExecutionState();
+      List<SymbolicValue> arguments = new ArrayList<>();
+      for (VariableTree methodParameter : method.parameters()) {
+        executionState.defineSymbol(methodParameter.symbol());
+        arguments.add(executionState.createValueForSymbol(methodParameter.symbol(), methodParameter));
+      }
+      check.initialize(executionState, method, arguments);
+      block.accept(new DataFlowVisitor(executionState, method, check));
+      for (State state : executionState.getStatesOfCurrentExecutionState()) {
+        check.onValueUnreachable(executionState, state);
+      }
+    }
+  }
+

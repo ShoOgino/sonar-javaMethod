@@ -3,20 +3,15 @@
     if (!hasSemantic()) {
       return;
     }
-
-    MethodTree methodTree = (MethodTree) tree;
-    BlockTree block = methodTree.block();
-    if (block != null) {
-      DataFlowVisitor visitor = new DataFlowVisitor(methodTree, new CloseableVisitor());
-      block.accept(visitor);
-      for (Tree issueTree : visitor.getIssueTrees()) {
-        Type reportedType = null;
-        if (issueTree.is(Tree.Kind.NEW_CLASS)) {
-          reportedType = ((NewClassTree) issueTree).symbolType();
-        }
-        if (reportedType != null) {
-          addIssue(issueTree, String.format("Close this \"%s\".", reportedType.name()));
-        }
+    CloseableVisitor visitor = new CloseableVisitor();
+    DataFlowVisitor.analyze((MethodTree) tree, visitor);
+    for (Tree issueTree : visitor.getIssueTrees()) {
+      Type reportedType = null;
+      if (issueTree.is(Tree.Kind.NEW_CLASS)) {
+        reportedType = ((NewClassTree) issueTree).symbolType();
+      }
+      if (reportedType != null) {
+        addIssue(issueTree, String.format("Close this \"%s\".", reportedType.name()));
       }
     }
   }

@@ -18,9 +18,10 @@
     if (tree.finallyBlock() != null) {
       executionState = new ExecutionState(blockES.parent);
       scan(tree.finallyBlock());
-      executionState.reportIssues();
+      reportUnreachable(executionState.getStatesOfCurrentExecutionState());
       executionState = blockES.parent.overrideBy(blockES.overrideBy(executionState));
     } else {
+      reportUnreachable(blockES.getStatesOfCurrentExecutionState());
       executionState = blockES.restoreParent();
     }
   }

@@ -1,12 +1,10 @@
   @Override
   public void visitVariable(VariableTree tree) {
     super.visitVariable(tree);
-    if (isSymbolRelevant(tree.symbol())) {
-      executionState.defineSymbol(tree.symbol());
-      executionState.createValueForSymbol(tree.symbol(), tree);
-      if (tree.initializer() != null) {
-        check.onAssignment(executionState, tree, tree.symbol(), tree.initializer());
-      }
+    executionState.defineSymbol(tree.symbol());
+    executionState.createValueForSymbol(tree.symbol(), tree);
+    if (tree.initializer() != null) {
+      check.onAssignment(executionState, tree, tree.symbol(), tree.initializer());
     }
   }
 
