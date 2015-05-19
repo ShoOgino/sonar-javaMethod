@@ -1,15 +1,8 @@
   @Override
   public void visitVariable(VariableTree tree) {
     super.visitVariable(tree);
-
-    String collectionImplementation = getTypeIdentifierOrNull(tree.type());
-    String collectionInterface = MAPPING.get(collectionImplementation);
-
-    if (collectionInterface != null) {
-      context.addIssue(
-        tree.type(),
-          this,
-        "The type of the \"" + tree.simpleName() + "\" object " + messageRemainder(collectionImplementation, collectionInterface));
+    if (isPublic(tree.modifiers().modifiers())) {
+      checkIfAllowed(tree.type(), "The type of the \"" + tree.simpleName() + "\" object ");
     }
   }
 

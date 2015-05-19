@@ -1,15 +1,11 @@
   @Override
   public void visitMethod(MethodTree tree) {
     super.visitMethod(tree);
-
-    String collectionImplementation = getTypeIdentifierOrNull(tree.returnType());
-    String collectionInterface = MAPPING.get(collectionImplementation);
-
-    if (collectionInterface != null) {
-      context.addIssue(
-        tree.returnType(),
-        this,
-        "The return type of this method " + messageRemainder(collectionImplementation, collectionInterface));
+    if (isPublic(tree.modifiers().modifiers())) {
+      checkIfAllowed(tree.returnType(), "The return type of this method ");
+      for (VariableTree variableTree : tree.parameters()) {
+        checkIfAllowed(variableTree.type(), "The type of the \"" + variableTree.simpleName() + "\" object ");
+      }
     }
   }
 

@@ -1,0 +1,15 @@
+  private void checkIfAllowed(@Nullable TypeTree tree, String messagePrefix) {
+    if (tree == null) {
+      return;
+    }
+    String collectionImplementation = getTypeIdentifier(tree);
+    String collectionInterface = MAPPING.get(collectionImplementation);
+
+    if (collectionInterface != null) {
+      context.addIssue(
+        tree,
+        this,
+        messagePrefix + messageRemainder(collectionImplementation, collectionInterface));
+    }
+  }
+
