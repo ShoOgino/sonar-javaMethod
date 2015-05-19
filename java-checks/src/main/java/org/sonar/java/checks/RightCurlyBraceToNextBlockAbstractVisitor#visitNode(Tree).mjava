@@ -4,18 +4,18 @@
       IfStatementTree ifStatementTree = (IfStatementTree) tree;
       StatementTree thenStatement = ifStatementTree.thenStatement();
       if (ifStatementTree.elseKeyword() != null && thenStatement.is(Tree.Kind.BLOCK)) {
-        checkBlock(ifStatementTree.elseKeyword(), (BlockTree) thenStatement);
+        checkTokenPosition(ifStatementTree.elseKeyword(), (BlockTree) thenStatement);
       }
     } else {
       TryStatementTree tryStatementTree = (TryStatementTree) tree;
       BlockTree block = tryStatementTree.block();
       for (CatchTree catchTree : tryStatementTree.catches()) {
-        checkBlock(catchTree.catchKeyword(), block);
+        checkTokenPosition(catchTree.catchKeyword(), block);
         block = catchTree.block();
       }
       SyntaxToken finallyKeyword = tryStatementTree.finallyKeyword();
       if (finallyKeyword != null) {
-        checkBlock(finallyKeyword, block);
+        checkTokenPosition(finallyKeyword, block);
       }
     }
   }
