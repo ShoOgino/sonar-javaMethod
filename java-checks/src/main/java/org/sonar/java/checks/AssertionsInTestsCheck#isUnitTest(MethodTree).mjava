@@ -1,0 +1,8 @@
+  private boolean isUnitTest(MethodTree methodTree) {
+    if (methodTree.symbol().metadata().isAnnotatedWith("org.junit.Test")) {
+      return true;
+    }
+    Symbol.TypeSymbol enclosingClass = methodTree.symbol().enclosingClass();
+    return enclosingClass != null && enclosingClass.type().isSubtypeOf("junit.framework.TestCase") && methodTree.simpleName().name().startsWith("test");
+  }
+
