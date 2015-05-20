@@ -5,7 +5,8 @@
     methodContainsAssertion.push(false);
     super.visitMethod(methodTree);
     inUnitTest.pop();
-    if (isUnitTest && !methodContainsAssertion.pop()) {
+    Boolean methodContainsAssertion = this.methodContainsAssertion.pop();
+    if (isUnitTest && !methodContainsAssertion) {
       context.addIssue(methodTree, this, "Add at least one assertion to this test case.");
     }
   }
