@@ -3,7 +3,8 @@
       IdentifierTree simpleName,
       FormalParametersListTreeImpl parameters,
       List<TypeTree> throwsClauses,
-      @Nullable BlockTree block) {
+      @Nullable BlockTree block,
+      @Nullable SyntaxToken semicolonToken) {
 
     super(returnType == null ? Kind.CONSTRUCTOR : Kind.METHOD);
 
@@ -12,7 +13,10 @@
     this.returnType = returnType;
     this.simpleName = Preconditions.checkNotNull(simpleName);
     this.parameters = Preconditions.checkNotNull(parameters);
+    this.openParenToken = parameters.openParenToken();
+    this.closeParenToken = parameters.closeParenToken();
     this.block = block;
+    this.semicolonToken = semicolonToken;
     this.throwsClauses = Preconditions.checkNotNull(throwsClauses);
     this.defaultToken = null;
     this.defaultValue = null;

@@ -12,13 +12,21 @@
     } else {
       actualType = null;
     }
+    BlockTreeImpl block = null;
+    SyntaxToken semicolonToken = null;
+    if (blockOrSemicolon.is(Tree.Kind.BLOCK)) {
+      block = (BlockTreeImpl) blockOrSemicolon;
+    } else {
+      semicolonToken = InternalSyntaxToken.create(blockOrSemicolon);
+    }
 
     MethodTreeImpl result = new MethodTreeImpl(
       actualType,
       identifier,
       parameters,
       throwsClause.isPresent() ? (List<TypeTree>) throwsClause.get().second() : ImmutableList.<TypeTree>of(),
-      blockOrSemicolon.is(Kind.BLOCK) ? (BlockTreeImpl) blockOrSemicolon : null);
+      block,
+      semicolonToken);
 
     List<AstNode> children = Lists.newArrayList();
     if (type.isPresent()) {
