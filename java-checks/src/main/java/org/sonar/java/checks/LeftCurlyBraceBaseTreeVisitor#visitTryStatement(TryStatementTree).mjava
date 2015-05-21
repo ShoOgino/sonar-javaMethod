@@ -1,0 +1,15 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    SyntaxToken closeParenToken = tree.closeParenToken();
+    if (closeParenToken != null) {
+      checkBlock(closeParenToken, tree.block());
+    } else {
+      checkBlock(tree.tryKeyword(), tree.block());
+    }
+    SyntaxToken finallyKeyword = tree.finallyKeyword();
+    if (finallyKeyword != null) {
+      checkBlock(finallyKeyword, tree.finallyBlock());
+    }
+    super.visitTryStatement(tree);
+  }
+

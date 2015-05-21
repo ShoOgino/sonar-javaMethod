@@ -1,0 +1,22 @@
+  @CheckForNull
+  private SyntaxToken getLastTokenFromSignature(ClassTree classTree) {
+    List<TypeTree> superInterfaces = classTree.superInterfaces();
+    if (!superInterfaces.isEmpty()) {
+      return getIdentifierToken(Iterables.getLast(superInterfaces));
+    }
+    TypeTree superClass = classTree.superClass();
+    if (superClass != null) {
+      return getIdentifierToken(superClass);
+    }
+    TypeParameters typeParameters = classTree.typeParameters();
+    if (!typeParameters.isEmpty()) {
+      return typeParameters.closeBracketToken();
+    }
+    IdentifierTree simpleName = classTree.simpleName();
+    if (simpleName != null) {
+      return simpleName.identifierToken();
+    }
+    // enum constants and new class trees are handled separately
+    return null;
+  }
+

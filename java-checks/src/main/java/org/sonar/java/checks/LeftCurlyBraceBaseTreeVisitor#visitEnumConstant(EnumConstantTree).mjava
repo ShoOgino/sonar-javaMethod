@@ -1,0 +1,16 @@
+  @Override
+  public void visitEnumConstant(EnumConstantTree tree) {
+    NewClassTree initializer = (NewClassTree) tree.initializer();
+    ClassTree classBody = initializer.classBody();
+    if (classBody != null) {
+      SyntaxToken closeParenToken = initializer.closeParenToken();
+      SyntaxToken openBraceToken = classBody.openBraceToken();
+      if (closeParenToken != null) {
+        checkTokens(closeParenToken, openBraceToken);
+      } else {
+        checkTokens(tree.simpleName().identifierToken(), openBraceToken);
+      }
+    }
+    super.visitEnumConstant(tree);
+  }
+
