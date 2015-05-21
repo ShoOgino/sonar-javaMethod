@@ -1,0 +1,24 @@
+  @Test
+  public void test() {
+    StringBuilder expectedIssuesOutput = new StringBuilder();
+    StringBuilder raisedIssuesOutput = new StringBuilder();
+    File file = new File("src/test/files/symexecengine/DataFlowVisitor.java");
+    CompilationUnitTree compilationUnit = (CompilationUnitTree) JavaParser.createParser(Charsets.UTF_8).parse(file);
+    SemanticModel.createFor(compilationUnit, ImmutableList.<File>of());
+    ClassTree classTree = (ClassTree) compilationUnit.types().get(0);
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.METHOD)) {
+        MethodTree method = (MethodTree) member;
+        Check check = new Check();
+        DataFlowVisitor.analyze(method, check);
+        Set<Integer> expectedIssues = getExpectedIssues(method);
+        if (!check.raisedIssues.equals(expectedIssues)) {
+          String methodName = method.simpleName().identifierToken().text();
+          expectedIssuesOutput.append("in method ").append(methodName).append(" ").append(expectedIssues).append("\n");
+          raisedIssuesOutput.append("in method ").append(methodName).append(" ").append(check.raisedIssues).append("\n");
+        }
+      }
+    }
+    Assertions.assertThat(raisedIssuesOutput.toString()).isEqualTo(expectedIssuesOutput.toString());
+  }
+

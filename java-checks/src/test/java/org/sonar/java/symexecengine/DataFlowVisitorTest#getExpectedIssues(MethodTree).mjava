@@ -1,0 +1,12 @@
+  private Set<Integer> getExpectedIssues(MethodTree tree) {
+    Set<Integer> result = new HashSet<>();
+    SymbolMetadata methodMetadata = tree.symbol().metadata();
+    if (methodMetadata.isAnnotatedWith("ExpectedIssues")) {
+      AnnotationValue annotation = methodMetadata.valuesForAnnotation("ExpectedIssues").get(0);
+      for (ExpressionTree expressionTree : ((NewArrayTree) annotation.value()).initializers()) {
+        result.add(Integer.parseInt(((LiteralTree) expressionTree).value()));
+      }
+    }
+    return result;
+  }
+
