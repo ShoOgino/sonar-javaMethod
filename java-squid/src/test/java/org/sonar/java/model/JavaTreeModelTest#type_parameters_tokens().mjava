@@ -1,0 +1,19 @@
+  @Test
+  public void type_parameters_tokens() {
+    ParameterizedTypeTree tree = (ParameterizedTypeTree) p.parse("class Foo<E> extends List<E> {}").getFirstDescendant(getKindsAssociatedTo(ParameterizedTypeTree.class));
+    assertThat(tree).isNotNull();
+    TypeArguments typeArguments = tree.typeArguments();
+    assertThat(typeArguments).isNotNull();
+    assertThat(typeArguments).hasSize(1);
+    assertThat(typeArguments.openBracketToken()).isNotNull();
+    assertThat(typeArguments.closeBracketToken()).isNotNull();
+
+    tree = (ParameterizedTypeTree) p.parse("class Mop<K,V> implements Map<K,V> {}").getFirstDescendant(getKindsAssociatedTo(ParameterizedTypeTree.class));
+    assertThat(tree).isNotNull();
+    typeArguments = tree.typeArguments();
+    assertThat(typeArguments).isNotNull();
+    assertThat(typeArguments).hasSize(2);
+    assertThat(typeArguments.openBracketToken()).isNotNull();
+    assertThat(typeArguments.closeBracketToken()).isNotNull();
+  }
+
