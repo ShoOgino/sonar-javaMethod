@@ -2,6 +2,7 @@
     List<AstNode> children = Lists.newArrayList();
     ImmutableList.Builder<Tree> builder = ImmutableList.builder();
 
+    InternalSyntaxToken openBraceSyntaxToken = InternalSyntaxToken.create(openBraceTokenAstNode);
     children.add(openBraceTokenAstNode);
     if (members.isPresent()) {
       for (AstNode member : members.get()) {
@@ -16,8 +17,9 @@
         }
       }
     }
+    InternalSyntaxToken closeBraceTokenSyntaxToken = InternalSyntaxToken.create(closeBraceTokenAstNode);
     children.add(closeBraceTokenAstNode);
 
-    return new ClassTreeImpl(kind, builder.build(), children);
+    return new ClassTreeImpl(kind, openBraceSyntaxToken, builder.build(), closeBraceTokenSyntaxToken, children);
   }
 
