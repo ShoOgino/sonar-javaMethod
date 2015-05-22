@@ -7,10 +7,7 @@
     chainedTo.push(ChainedMethods.NONE);
     super.visitMethodInvocation(mit);
     ChainedMethods chainedToResult = chainedTo.pop();
-    // ignore assertThat chained with bad resolution method invocations
-    boolean isChainedToAssertThatWithBadResolution = ChainedMethods.ASSERT_THAT.equals(chainedToResult) && mit.symbol().isUnknown();
-    boolean isChainedToVerify = ChainedMethods.MOCKITO_VERIFY.equals(chainedToResult);
-    if (isChainedToVerify || isChainedToAssertThatWithBadResolution || isAssertion(mit)) {
+    if (containsAssertion(mit, chainedToResult)) {
       methodContainsAssertion.pop();
       methodContainsAssertion.push(Boolean.TRUE);
     }
