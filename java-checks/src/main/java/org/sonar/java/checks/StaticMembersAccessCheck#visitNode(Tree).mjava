@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) tree;
+    if (memberSelect.identifier().symbol().isStatic()) {
+      ExpressionTree memberSelectExpression = memberSelect.expression();
+      if (memberSelectExpression.is(Tree.Kind.MEMBER_SELECT)) {
+        memberSelectExpression = ((MemberSelectExpressionTree) memberSelectExpression).identifier();
+      }
+      if (!memberSelectExpression.is(Tree.Kind.IDENTIFIER) || ((IdentifierTree) memberSelectExpression).symbol().isVariableSymbol()) {
+        context.addIssue(tree, this, "Change this instance-reference to a static reference.");
+      }
+    }
+  }
+
