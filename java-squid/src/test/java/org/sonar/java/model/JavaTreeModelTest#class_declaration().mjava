@@ -10,6 +10,7 @@
     assertThat(tree.superClass()).isNotNull();
     assertThat(tree.superInterfaces()).hasSize(2);
     assertThat(tree.closeBraceToken().text()).isEqualTo("}");
+    assertThat(tree.declarationKeyword().text()).isEqualTo("class");
 
     astNode = p.parse("public class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
@@ -19,10 +20,12 @@
     assertThat(tree.typeParameters()).isEmpty();
     assertThat(tree.superClass()).isNull();
     assertThat(tree.superInterfaces()).isEmpty();
+    assertThat(tree.declarationKeyword().text()).isEqualTo("class");
 
     astNode = p.parse("@Deprecated class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
     tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.modifiers().annotations()).hasSize(1);
+    assertThat(tree.declarationKeyword().text()).isEqualTo("class");
   }
 
