@@ -1,0 +1,8 @@
+  private boolean incompleteAssertion(MethodInvocationTree mit) {
+    if (((FEST_ASSERT_THAT.anyMatch(mit) && (mit.arguments().size() == 1)) || MOCKITO_VERIFY.matches(mit)) && !Boolean.TRUE.equals(chainedToAnyMethodButFestExclusions)) {
+      context.addIssue(mit, this, "Complete the assertion.");
+      return true;
+    }
+    return false;
+  }
+

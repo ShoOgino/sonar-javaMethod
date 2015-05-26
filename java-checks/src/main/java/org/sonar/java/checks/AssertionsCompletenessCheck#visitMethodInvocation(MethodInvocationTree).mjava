@@ -1,0 +1,12 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree mit) {
+    if (incompleteAssertion(mit)) {
+      return;
+    }
+    Boolean previous = chainedToAnyMethodButFestExclusions;
+    chainedToAnyMethodButFestExclusions = !FEST_EXCLUSIONS.anyMatch(mit);
+    scan(mit.methodSelect());
+    // skip arguments
+    chainedToAnyMethodButFestExclusions = previous;
+  }
+
