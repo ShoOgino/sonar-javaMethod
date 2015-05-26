@@ -1,0 +1,20 @@
+  @Override
+  public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+    super.visitAssignmentExpression(tree);
+    if (!isMutableType(tree.expression().symbolType())) {
+      return;
+    }
+    ExpressionTree variable = tree.variable();
+    Symbol leftSymbol = null;
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) variable;
+      leftSymbol = identifierTree.symbol();
+    } else if(variable.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mit = (MemberSelectExpressionTree) variable;
+      leftSymbol = mit.identifier().symbol();
+    }
+    if (leftSymbol != null && leftSymbol.isPrivate()) {
+      checkStore(tree.expression());
+    }
+  }
+

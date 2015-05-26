@@ -1,0 +1,15 @@
+  @Override
+  public void visitReturnStatement(ReturnStatementTree tree) {
+    super.visitReturnStatement(tree);
+    ExpressionTree expressionTree = tree.expression();
+    if (expressionTree == null || !isMutableType(expressionTree.symbolType())) {
+      return;
+    }
+    if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) expressionTree;
+      if (identifierTree.symbol().isPrivate()) {
+        context.addIssue(expressionTree, this, "Return a copy of \"" + identifierTree.name() + "\".");
+      }
+    }
+  }
+

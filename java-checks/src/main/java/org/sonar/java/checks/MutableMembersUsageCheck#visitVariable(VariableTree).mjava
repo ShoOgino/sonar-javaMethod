@@ -1,0 +1,10 @@
+  @Override
+  public void visitVariable(VariableTree tree) {
+    super.visitVariable(tree);
+    ExpressionTree initializer = tree.initializer();
+    if (initializer == null || !isMutableType(initializer.symbolType())) {
+      return;
+    }
+    checkStore(initializer);
+  }
+
