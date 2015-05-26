@@ -3,7 +3,7 @@
     for (Tree member : tree.members()) {
       if ((tree.is(Tree.Kind.CLASS) || tree.is(Tree.Kind.ENUM)) && member.is(Tree.Kind.VARIABLE)) {
         VariableTree field = (VariableTree) member;
-        if (isNotStatic(field) && !pattern.matcher(field.simpleName().name()).matches()) {
+        if (!ModifiersUtils.hasModifier(field.modifiers(), Modifier.STATIC) && !pattern.matcher(field.simpleName().name()).matches()) {
           context.addIssue(field, this, "Rename this field name to match the regular expression '" + format + "'.");
         }
       }
