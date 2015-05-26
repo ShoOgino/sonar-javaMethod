@@ -3,7 +3,10 @@
     AstNode astNode = p.parse("public class T<U> extends C implements I1, I2 { }");
     ClassTree tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    assertThat(tree.modifiers().modifiers()).hasSize(1);
+    List<ModifierKeywordTree> modifiers = tree.modifiers().modifiers();
+    assertThat(modifiers).hasSize(1);
+    assertThat(modifiers.get(0).modifier()).isEqualTo(Modifier.PUBLIC);
+    assertThat(modifiers.get(0).keyword().text()).isEqualTo("public");
     assertThat(tree.simpleName().name()).isEqualTo("T");
     assertThat(tree.typeParameters()).isNotEmpty();
     assertThat(tree.openBraceToken().text()).isEqualTo("{");
@@ -15,7 +18,10 @@
     astNode = p.parse("public class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
     tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
-    assertThat(tree.modifiers().modifiers()).hasSize(1);
+    modifiers = tree.modifiers().modifiers();
+    assertThat(modifiers).hasSize(1);
+    assertThat(modifiers.get(0).modifier()).isEqualTo(Modifier.PUBLIC);
+    assertThat(modifiers.get(0).keyword().text()).isEqualTo("public");
     assertThat(tree.simpleName().name()).isEqualTo("T");
     assertThat(tree.typeParameters()).isEmpty();
     assertThat(tree.superClass()).isNull();
