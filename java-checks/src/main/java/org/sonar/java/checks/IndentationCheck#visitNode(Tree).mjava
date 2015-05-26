@@ -2,7 +2,7 @@
   public void visitNode(Tree tree) {
     if (isClassTree(tree)) {
       ClassTree classTree = (ClassTree) tree;
-      //Exclude anonymous classes
+      // Exclude anonymous classes
       isInAnonymousClass.push(classTree.simpleName() == null);
       if (!isInAnonymousClass.peek()) {
         checkIndentation(Lists.newArrayList(classTree));
@@ -14,13 +14,14 @@
     if (tree.is(Kind.CASE_GROUP)) {
       List<CaseLabelTree> labels = ((CaseGroupTree) tree).labels();
       if (labels.size() >= 2) {
-        lastCheckedLine = ((JavaTree) labels.get(labels.size() - 2)).getAstNode().getLastToken().getLine();
+        CaseLabelTree previousCaseLabelTree = labels.get(labels.size() - 2);
+        lastCheckedLine = LastSyntaxTokenFinder.lastSyntaxToken(previousCaseLabelTree).line();
       }
     }
 
     if (isClassTree(tree)) {
       ClassTree classTree = (ClassTree) tree;
-      //Exclude anonymous classes
+      // Exclude anonymous classes
       if (classTree.simpleName() != null) {
         checkIndentation(classTree.members());
       }

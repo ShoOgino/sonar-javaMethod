@@ -1,0 +1,21 @@
+  @Test
+  public void try_catch_first() {
+    CompilationUnitTree compilationUnit = getCompilationUnit(
+      "class Foo {"
+        + "  void foo() {"
+        + "    try { }"
+        + "    catch(Exception e) { }"
+        + "  }"
+        + "}");
+    MethodTree methodTree = getFirstMethod(compilationUnit);
+    SyntaxToken firstToken = getFirstSyntaxToken(methodTree.block());
+    assertThat(firstToken.text()).isEqualTo("{");
+
+    TryStatementTree tryStatementTree = (TryStatementTree) methodTree.block().body().get(0);
+    firstToken = getFirstSyntaxToken(tryStatementTree);
+    assertThat(firstToken.text()).isEqualTo("try");
+
+    firstToken = getFirstSyntaxToken(tryStatementTree.catches().get(0));
+    assertThat(firstToken.text()).isEqualTo("catch");
+  }
+

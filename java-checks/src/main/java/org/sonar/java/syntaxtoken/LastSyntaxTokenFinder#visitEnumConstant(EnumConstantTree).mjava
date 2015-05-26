@@ -1,0 +1,11 @@
+  @Override
+  public void visitEnumConstant(EnumConstantTree tree) {
+    SyntaxToken identifierToken = tree.simpleName().identifierToken();
+    ClassTree enumConstantBody = ((NewClassTree) tree.initializer()).classBody();
+    if (enumConstantBody != null) {
+      scan(enumConstantBody);
+    } else {
+      lastSyntaxToken = identifierToken;
+    }
+  }
+

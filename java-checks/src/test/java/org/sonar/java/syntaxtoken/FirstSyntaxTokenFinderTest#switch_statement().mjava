@@ -1,0 +1,17 @@
+  @Test
+  public void switch_statement() {
+    String p =
+      "class Foo {"
+        + "  void foo(MyEnum myEnum) {"
+        + "    switch(myEnum) {"
+        + "      case A:"
+        + "    }"
+        + "  }"
+        + "}";
+    assertFirstStatementFirstTokenValue(p, "switch");
+
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) getFirstStatement(p);
+    SyntaxToken firstToken = getFirstSyntaxToken(switchStatementTree.cases().get(0));
+    assertThat(firstToken.text()).isEqualTo("case");
+  }
+

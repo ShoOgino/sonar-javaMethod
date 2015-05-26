@@ -1,0 +1,17 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    BlockTree finallyBlock = tree.finallyBlock();
+    if (finallyBlock != null) {
+      scan(finallyBlock);
+    } else {
+      List<CatchTree> catches = tree.catches();
+      if (catches.isEmpty()) {
+        // with try-with-resources, catches and block are optional (JLS8 14.20.3.1)
+        scan(tree.block());
+      } else {
+        // scan only the last catch
+        scan(catches.get(catches.size() - 1));
+      }
+    }
+  }
+
