@@ -1,0 +1,17 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    Symbol.TypeSymbol symbol = tree.symbol();
+    if (!tree.is(Tree.Kind.CLASS)) {
+      return;
+    }
+    outerClasses.push(symbol);
+    atLeastOneReference.push(Boolean.FALSE);
+    super.visitClass(tree);
+    Boolean oneReference = atLeastOneReference.pop();
+    outerClasses.pop();
+    if (!symbol.isStatic() && !oneReference && isFirstParentStatic(outerClasses)) {
+      String named = symbol.name().isEmpty() ? "named " : "";
+      context.addIssue(tree, this, "Make this a " + named + "\"static\" inner class.");
+    }
+  }
+
