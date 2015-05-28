@@ -1,0 +1,27 @@
+  /**
+   * Merge all reports in reportOverall.
+   * @param reportOverall destination file of merge.
+   * @param reports files to be merged.
+   */
+  public static void mergeReports(File reportOverall, File... reports) {
+    SessionInfoStore infoStore = new SessionInfoStore();
+    ExecutionDataStore dataStore = new ExecutionDataStore();
+    boolean isCurrentVersionFormat = loadSourceFiles(infoStore, dataStore, reports);
+    BufferedOutputStream outputStream = null;
+    try {
+      outputStream = new BufferedOutputStream(new FileOutputStream(reportOverall));
+      Object visitor;
+      if (isCurrentVersionFormat) {
+        visitor = new ExecutionDataWriter(outputStream);
+      } else {
+        visitor = new org.jacoco.previous.core.data.ExecutionDataWriter(outputStream);
+      }
+      infoStore.accept((ISessionInfoVisitor) visitor);
+      dataStore.accept((IExecutionDataVisitor) visitor);
+    } catch (IOException e) {
+      throw new SonarException(String.format("Unable to write overall coverage report %s", reportOverall.getAbsolutePath()), e);
+    } finally {
+      Closeables.closeQuietly(outputStream);
+    }
+  }
+

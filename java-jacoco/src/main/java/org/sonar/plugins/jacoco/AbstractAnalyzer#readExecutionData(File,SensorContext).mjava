@@ -1,27 +1,20 @@
-  public final void readExecutionData(File jacocoExecutionData, SensorContext context) throws IOException {
+  private void readExecutionData(File jacocoExecutionData, SensorContext context) {
     ExecutionDataVisitor executionDataVisitor = new ExecutionDataVisitor();
-
+    boolean useCurrentFormat = false;
     if (jacocoExecutionData == null || !jacocoExecutionData.isFile()) {
       JaCoCoExtensions.LOG.info("Project coverage is set to 0% as no JaCoCo execution data has been dumped: {}", jacocoExecutionData);
       jacocoExecutionData = null;
     } else {
-      JaCoCoExtensions.LOG.info("Analysing {}", jacocoExecutionData);
-
-      InputStream inputStream = null;
       try {
-        inputStream = new BufferedInputStream(new FileInputStream(jacocoExecutionData));
-        ExecutionDataReader reader = new ExecutionDataReader(inputStream);
-        reader.setSessionInfoVisitor(executionDataVisitor);
-        reader.setExecutionDataVisitor(executionDataVisitor);
-        reader.read();
-      } finally {
-        Closeables.closeQuietly(inputStream);
+        useCurrentFormat = readJacocoReport(jacocoExecutionData, executionDataVisitor);
+      } catch (IOException e) {
+        throw new SonarException(e);
       }
     }
 
     boolean collectedCoveragePerTest = readCoveragePerTests(context, executionDataVisitor);
 
-    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged());
+    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged(), !useCurrentFormat);
     int analyzedResources = 0;
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       Resource resource = getResource(coverage, context);

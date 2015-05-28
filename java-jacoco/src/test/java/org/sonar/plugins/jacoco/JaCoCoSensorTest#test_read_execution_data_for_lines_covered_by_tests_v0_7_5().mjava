@@ -1,9 +1,7 @@
   @Test
-  public void test_read_execution_data_for_lines_covered_by_tests() throws IOException {
-    outputDir = TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest2/");
+  public void test_read_execution_data_for_lines_covered_by_tests_v0_7_5() throws IOException {
+    outputDir = TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCov0_7_5_coverage_per_test/");
     jacocoExecutionData = new File(outputDir, "jacoco.exec");
-    Files.copy(TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest2/org/example/App.class.toCopy"),
-        new File(jacocoExecutionData.getParentFile(), "/org/example/App.class"));
 
     org.sonar.api.resources.File resource = mock(org.sonar.api.resources.File.class);
     when(context.getResource(any(Resource.class))).thenReturn(resource);
@@ -16,12 +14,13 @@
     MutableTestCase testCase = mock(MutableTestCase.class);
     when(testCase.name()).thenReturn("test");
     MutableTestPlan testPlan = mock(MutableTestPlan.class);
-    when(testPlan.testCasesByName("test")).thenReturn(newArrayList(testCase));
+    when(testPlan.testCasesByName("testBoth")).thenReturn(newArrayList(testCase));
+    when(testPlan.testCasesByName("testFoo")).thenReturn(newArrayList(testCase));
 
     when(perspectives.as(eq(MutableTestPlan.class), any(Resource.class))).thenReturn(testPlan);
 
     sensor.analyse(project, context);
 
-    verify(testCase).setCoverageBlock(testAbleFile, newArrayList(3, 6));
+    verify(testCase).setCoverageBlock(testAbleFile, newArrayList(3, 4, 5, 8, 12));
   }
 

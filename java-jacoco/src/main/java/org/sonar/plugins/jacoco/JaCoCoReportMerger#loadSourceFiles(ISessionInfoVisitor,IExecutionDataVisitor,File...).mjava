@@ -1,0 +1,14 @@
+  private static boolean loadSourceFiles(ISessionInfoVisitor infoStore, IExecutionDataVisitor dataStore, File... reports) {
+    boolean isCurrentVersionFormat = true;
+    for (File report : reports) {
+      if (report.isFile()) {
+        try {
+          isCurrentVersionFormat = AbstractAnalyzer.readJacocoReport(report, dataStore, infoStore);
+        } catch (IOException e) {
+          throw new SonarException(String.format("Unable to read %s", report.getAbsolutePath()), e);
+        }
+      }
+    }
+    return isCurrentVersionFormat;
+  }
+

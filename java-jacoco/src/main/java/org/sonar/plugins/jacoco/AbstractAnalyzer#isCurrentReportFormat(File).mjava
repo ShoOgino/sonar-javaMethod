@@ -1,0 +1,16 @@
+  public static boolean isCurrentReportFormat(File jacocoExecutionData) throws IOException {
+    DataInputStream dis = null;
+    try {
+      dis = new DataInputStream(new FileInputStream(jacocoExecutionData));
+      byte firstByte = dis.readByte();
+      Preconditions.checkState(firstByte == ExecutionDataWriter.BLOCK_HEADER);
+      Preconditions.checkState(dis.readChar() == ExecutionDataWriter.MAGIC_NUMBER);
+      char version = dis.readChar();
+      return version == ExecutionDataWriter.FORMAT_VERSION;
+    } finally {
+      if (dis != null) {
+        dis.close();
+      }
+    }
+  }
+

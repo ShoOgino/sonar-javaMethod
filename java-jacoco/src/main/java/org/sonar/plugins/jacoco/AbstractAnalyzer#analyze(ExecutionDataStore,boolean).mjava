@@ -1,0 +1,16 @@
+  private CoverageBuilder analyze(ExecutionDataStore executionDataStore, boolean previousReport) {
+    CoverageBuilder coverageBuilder = new CoverageBuilder();
+    if (previousReport) {
+      org.jacoco.previous.core.analysis.Analyzer analyzer = new org.jacoco.previous.core.analysis.Analyzer(executionDataStore, coverageBuilder);
+      for (File classFile : classFilesCache.values()) {
+        analyzeClassFile(analyzer, classFile);
+      }
+    } else {
+      Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
+      for (File classFile : classFilesCache.values()) {
+        analyzeClassFile(analyzer, classFile);
+      }
+    }
+    return coverageBuilder;
+  }
+
