@@ -6,13 +6,13 @@
     JavaType right = getType(tree.rightOperand());
     // TODO avoid nulls
     if (left == null || right == null) {
-      registerType(tree, symbols.unknownType);
+      registerType(tree, Symbols.unknownType);
       return;
     }
     JavaSymbol symbol = resolve.findMethod(semanticModel.getEnv(tree), symbols.predefClass.type, tree.operatorToken().text(), ImmutableList.of(left, right)).symbol();
     if (symbol.kind != JavaSymbol.MTH) {
       // not found
-      registerType(tree, symbols.unknownType);
+      registerType(tree, Symbols.unknownType);
       return;
     }
     registerType(tree, ((JavaType.MethodJavaType) symbol.type).resultType);
