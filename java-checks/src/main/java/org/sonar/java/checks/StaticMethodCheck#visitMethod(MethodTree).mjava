@@ -1,0 +1,17 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    if (tree.is(Tree.Kind.CONSTRUCTOR)) {
+      return;
+    }
+    Symbol.MethodSymbol symbol = tree.symbol();
+    if (symbol == null || (outerClasses.size() > 1 && !outerClasses.peek().isStatic())) {
+      return;
+    }
+    atLeastOneReference.push(Boolean.FALSE);
+    scan(tree.block());
+    Boolean oneReference = atLeastOneReference.pop();
+    if (symbol.isPrivate() && !symbol.isStatic() && !oneReference) {
+      context.addIssue(tree, this, "Make \"" + symbol.name() + "\" a \"static\" method.");
+    }
+  }
+
