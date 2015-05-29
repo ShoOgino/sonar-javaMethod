@@ -1,17 +1,17 @@
   /**
    * Read JaCoCo report determining the format to be used.
-   * @param jacocoExecutionData binary report file.
    * @param executionDataVisitor visitor to store execution data.
    * @param sessionInfoStore visitor to store info session.
    * @return true if binary format is the latest one.
    * @throws IOException in case of error or binary format not supported.
    */
-  public static boolean readJacocoReport(File jacocoExecutionData, IExecutionDataVisitor executionDataVisitor, ISessionInfoVisitor sessionInfoStore) throws IOException {
+  public JacocoReportReader readJacocoReport(IExecutionDataVisitor executionDataVisitor, ISessionInfoVisitor sessionInfoStore) throws IOException {
+    if(jacocoExecutionData == null) {
+      return this;
+    }
     JaCoCoExtensions.LOG.info("Analysing {}", jacocoExecutionData);
-    boolean currentReportFormat;
     try (InputStream inputStream = new BufferedInputStream(new FileInputStream(jacocoExecutionData))) {
-      currentReportFormat = isCurrentReportFormat(jacocoExecutionData);
-      if (currentReportFormat) {
+      if (useCurrentBinaryFormat) {
         ExecutionDataReader reader = new ExecutionDataReader(inputStream);
         reader.setSessionInfoVisitor(sessionInfoStore);
         reader.setExecutionDataVisitor(executionDataVisitor);
@@ -23,6 +23,6 @@
         reader.read();
       }
     }
-    return currentReportFormat;
+    return this;
   }
 

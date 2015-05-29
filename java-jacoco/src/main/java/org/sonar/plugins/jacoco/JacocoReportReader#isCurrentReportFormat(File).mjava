@@ -1,4 +1,7 @@
-  private static boolean isCurrentReportFormat(File jacocoExecutionData) throws IOException {
+  private static boolean isCurrentReportFormat(@Nullable File jacocoExecutionData) throws IOException {
+    if(jacocoExecutionData == null) {
+      return true;
+    }
     try (DataInputStream dis = new DataInputStream(new FileInputStream(jacocoExecutionData))) {
       byte firstByte = dis.readByte();
       Preconditions.checkState(firstByte == ExecutionDataWriter.BLOCK_HEADER);
