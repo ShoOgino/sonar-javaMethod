@@ -1,4 +1,4 @@
-  private boolean analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore, SensorContext context) {
+  private boolean analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore, SensorContext context, boolean previousReportFormat) {
     int i = sessionId.indexOf(' ');
     if (i < 0) {
       return false;
@@ -12,7 +12,7 @@
     }
 
     boolean result = false;
-    CoverageBuilder coverageBuilder = analyze2(executionDataStore);
+    CoverageBuilder coverageBuilder = JacocoBinaryReader.analyzeFiles(executionDataStore, classFilesOfStore(executionDataStore), previousReportFormat);
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       Resource resource = getResource(coverage, context);
       if (resource != null) {

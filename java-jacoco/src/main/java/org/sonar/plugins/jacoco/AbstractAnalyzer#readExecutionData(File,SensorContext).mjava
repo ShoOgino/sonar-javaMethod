@@ -6,15 +6,16 @@
       jacocoExecutionData = null;
     } else {
       try {
-        useCurrentFormat = readJacocoReport(jacocoExecutionData, executionDataVisitor);
+        useCurrentFormat = JacocoBinaryReader.readJacocoReport(jacocoExecutionData, executionDataVisitor, executionDataVisitor);
       } catch (IOException e) {
         throw new SonarException(e);
       }
     }
 
-    boolean collectedCoveragePerTest = readCoveragePerTests(context, executionDataVisitor);
+    boolean collectedCoveragePerTest = readCoveragePerTests(context, executionDataVisitor, !useCurrentFormat);
 
-    CoverageBuilder coverageBuilder = analyze(executionDataVisitor.getMerged(), !useCurrentFormat);
+    boolean previousReportFormat = !useCurrentFormat;
+    CoverageBuilder coverageBuilder = JacocoBinaryReader.analyzeFiles(executionDataVisitor.getMerged(), classFilesCache.values(), previousReportFormat);
     int analyzedResources = 0;
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       Resource resource = getResource(coverage, context);

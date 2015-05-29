@@ -1,13 +1,16 @@
-  private CoverageBuilder analyze(ExecutionDataStore executionDataStore, boolean previousReport) {
+  /**
+   * Caller must guarantee that {@code classFiles} are actually class file.
+   */
+  public static CoverageBuilder analyzeFiles(ExecutionDataStore executionDataStore, Collection<File> classFiles, boolean previousReportFormat) {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
-    if (previousReport) {
+    if (previousReportFormat) {
       org.jacoco.previous.core.analysis.Analyzer analyzer = new org.jacoco.previous.core.analysis.Analyzer(executionDataStore, coverageBuilder);
-      for (File classFile : classFilesCache.values()) {
+      for (File classFile : classFiles) {
         analyzeClassFile(analyzer, classFile);
       }
     } else {
       Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
-      for (File classFile : classFilesCache.values()) {
+      for (File classFile : classFiles) {
         analyzeClassFile(analyzer, classFile);
       }
     }
