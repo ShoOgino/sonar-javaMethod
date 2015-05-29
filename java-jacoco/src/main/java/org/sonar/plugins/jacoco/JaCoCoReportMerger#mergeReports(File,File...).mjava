@@ -7,9 +7,8 @@
     SessionInfoStore infoStore = new SessionInfoStore();
     ExecutionDataStore dataStore = new ExecutionDataStore();
     boolean isCurrentVersionFormat = loadSourceFiles(infoStore, dataStore, reports);
-    BufferedOutputStream outputStream = null;
-    try {
-      outputStream = new BufferedOutputStream(new FileOutputStream(reportOverall));
+
+    try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(reportOverall))) {
       Object visitor;
       if (isCurrentVersionFormat) {
         visitor = new ExecutionDataWriter(outputStream);
@@ -20,8 +19,6 @@
       dataStore.accept((IExecutionDataVisitor) visitor);
     } catch (IOException e) {
       throw new SonarException(String.format("Unable to write overall coverage report %s", reportOverall.getAbsolutePath()), e);
-    } finally {
-      Closeables.closeQuietly(outputStream);
     }
   }
 
