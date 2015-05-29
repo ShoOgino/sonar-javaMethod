@@ -1,0 +1,10 @@
+  private static StatementTree getIfStatementLastBlock(StatementTree statementTree) {
+    StatementTree block = statementTree;
+    while (block.is(Tree.Kind.IF_STATEMENT)) {
+      IfStatementTree ifStatementTree = (IfStatementTree) block;
+      StatementTree elseStatement = ifStatementTree.elseStatement();
+      block = elseStatement == null ? ifStatementTree.thenStatement() : elseStatement;
+    }
+    return block;
+  }
+

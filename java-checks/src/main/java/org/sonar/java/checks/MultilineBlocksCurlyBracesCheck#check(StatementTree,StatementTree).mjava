@@ -1,0 +1,22 @@
+  private void check(StatementTree current, StatementTree previous) {
+    StatementTree block = null;
+    boolean condition = false;
+    if (previous.is(Tree.Kind.FOR_EACH_STATEMENT)) {
+      block = ((ForEachStatement) previous).statement();
+    } else if (previous.is(Tree.Kind.FOR_STATEMENT)) {
+      block = ((ForStatementTree) previous).statement();
+    } else if (previous.is(Tree.Kind.WHILE_STATEMENT)) {
+      block = ((WhileStatementTree) previous).statement();
+    } else if (previous.is(Tree.Kind.IF_STATEMENT)) {
+      block = getIfStatementLastBlock(previous);
+      condition = true;
+    }
+    if (block != null && !block.is(Tree.Kind.BLOCK)) {
+      int previousColumn = FirstSyntaxTokenFinder.firstSyntaxToken(block).column();
+      int currentColumn = FirstSyntaxTokenFinder.firstSyntaxToken(current).column();
+      if (previousColumn == currentColumn) {
+        context.addIssue(current, this, condition ? IF_MESSAGE : LOOP_MESSAGE);
+      }
+    }
+  }
+
