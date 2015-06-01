@@ -1,0 +1,12 @@
+  @Test
+  public void wildcard() {
+    String p =
+      "class Foo {"
+        + "  void foo(Collection<?> c) {"
+        + "  }"
+        + "}";
+    MethodTree m = getFirstMethod(getCompilationUnit(p));
+    SyntaxToken firstToken = getFirstSyntaxToken(((ParameterizedTypeTree) m.parameters().get(0).type()).typeArguments().get(0));
+    assertThat(firstToken.text()).isEqualTo("?");
+  }
+

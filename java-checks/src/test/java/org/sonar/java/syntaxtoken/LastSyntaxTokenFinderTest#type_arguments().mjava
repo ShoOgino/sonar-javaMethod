@@ -1,0 +1,11 @@
+  @Test
+  public void type_arguments() {
+    String p = "class Foo {"
+      + "  void foo(Collection<Foo> c) {"
+      + "  }"
+      + "}";
+    MethodTree m = getFirstMethod(getCompilationUnit(p));
+    SyntaxToken lastToken = getLastSyntaxToken(((ParameterizedTypeTree) m.parameters().get(0).type()).typeArguments());
+    assertThat(lastToken.text()).isEqualTo(">");
+  }
+

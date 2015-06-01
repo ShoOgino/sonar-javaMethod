@@ -1,5 +1,5 @@
   @Test
-  public void class_first() {
+  public void classes() {
     CompilationUnitTree compilationUnit = getCompilationUnit("class Test {}");
     SyntaxToken firstToken = getFirstSyntaxToken(getFirstClass(compilationUnit));
     assertThat(firstToken.text()).isEqualTo("class");
@@ -17,7 +17,8 @@
     assertThat(firstToken.text()).isEqualTo("public");
 
     compilationUnit = getCompilationUnit("@Deprecated public abstract class Test {}");
-    firstToken = getFirstSyntaxToken(getFirstClass(compilationUnit));
+    ClassTree firstClass = getFirstClass(compilationUnit);
+    firstToken = getFirstSyntaxToken(firstClass.modifiers().get(0));
     assertThat(firstToken.text()).isEqualTo("@");
   }
 

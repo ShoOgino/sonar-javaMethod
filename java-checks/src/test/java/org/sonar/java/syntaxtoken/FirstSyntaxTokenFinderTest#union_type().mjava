@@ -1,0 +1,15 @@
+  @Test
+  public void union_type() {
+    String p =
+      "class Foo {"
+        + "  void foo() {"
+        + "    try {"
+        + "    } catch (IOException | SQLException ex) {"
+        + "    }"
+        + "  }"
+        + "}";
+    TryStatementTree t = (TryStatementTree) getFirstStatement(p);
+    SyntaxToken firstToken = getFirstSyntaxToken(t.catches().get(0).parameter());
+    assertThat(firstToken.text()).isEqualTo("IOException");
+  }
+

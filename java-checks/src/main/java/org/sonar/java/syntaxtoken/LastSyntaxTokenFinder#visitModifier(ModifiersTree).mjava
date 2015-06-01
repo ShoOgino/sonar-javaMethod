@@ -1,0 +1,13 @@
+  @Override
+  public void visitModifier(ModifiersTree modifiersTree) {
+    // if no modifier, firstSyntaxToken will be null
+    if (!modifiersTree.isEmpty()) {
+      ModifierTree lastModifier = Iterables.getLast(modifiersTree);
+      if (lastModifier.is(Tree.Kind.ANNOTATION)) {
+        scan(lastModifier);
+      } else {
+        lastSyntaxToken = ((ModifierKeywordTree) lastModifier).keyword();
+      }
+    }
+  }
+

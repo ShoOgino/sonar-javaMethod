@@ -1,0 +1,13 @@
+  @Override
+  public void visitCompilationUnit(CompilationUnitTree tree) {
+    if (tree.packageName() != null) {
+      // TODO(SONARJAVA-547) Should be the package token
+      scan(tree.packageName());
+    } else if (!tree.imports().isEmpty()) {
+      scan(tree.imports().get(0));
+    } else if (!tree.types().isEmpty()) {
+      scan(tree.types().get(0));
+    }
+    // with empty files firstSyntaxToken will be null
+  }
+

@@ -1,0 +1,18 @@
+  @Test
+  public void modifiers() {
+    String p = "class Foo {}";
+    ClassTree c = getFirstClass(getCompilationUnit(p));
+    SyntaxToken firstToken = getFirstSyntaxToken(c.modifiers());
+    assertThat(firstToken).isNull();
+
+    p = "public @Deprecated class Foo {}";
+    c = getFirstClass(getCompilationUnit(p));
+    firstToken = getFirstSyntaxToken(c.modifiers());
+    assertThat(firstToken.text()).isEqualTo("public");
+
+    p = "@Deprecated public class Foo {}";
+    c = getFirstClass(getCompilationUnit(p));
+    firstToken = getFirstSyntaxToken(c.modifiers());
+    assertThat(firstToken.text()).isEqualTo("@");
+  }
+

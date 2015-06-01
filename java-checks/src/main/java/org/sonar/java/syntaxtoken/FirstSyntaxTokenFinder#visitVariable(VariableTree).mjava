@@ -3,8 +3,10 @@
     SyntaxToken firstModifierToken = getFirstModifierToken(tree.modifiers());
     if (firstModifierToken != null) {
       firstSyntaxToken = firstModifierToken;
-    } else {
+    } else if (!tree.type().is(Tree.Kind.INFERED_TYPE)) {
       scan(tree.type());
+    } else {
+      scan(tree.simpleName());
     }
   }
 

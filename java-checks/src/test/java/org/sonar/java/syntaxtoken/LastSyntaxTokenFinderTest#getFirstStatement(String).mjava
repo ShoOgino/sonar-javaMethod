@@ -1,0 +1,9 @@
+  private Tree getFirstStatement(String p) {
+    CompilationUnitTree compilationUnit = getCompilationUnit(p);
+    StatementTree statementTree = getFirstMethod(getFirstClass(compilationUnit)).block().body().get(0);
+    if (statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      return ((ExpressionStatementTree) statementTree).expression();
+    }
+    return statementTree;
+  }
+

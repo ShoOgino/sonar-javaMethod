@@ -1,0 +1,23 @@
+  @Test
+  public void modifiers() {
+    String p = "class Foo {}";
+    ClassTree c = getFirstClass(getCompilationUnit(p));
+    SyntaxToken lastToken = getLastSyntaxToken(c.modifiers());
+    assertThat(lastToken).isNull();
+
+    p = "public @Deprecated class Foo {}";
+    c = getFirstClass(getCompilationUnit(p));
+    lastToken = getLastSyntaxToken(c.modifiers());
+    assertThat(lastToken.text()).isEqualTo("Deprecated");
+
+    p = "public @MyAnnotation(42) class Foo {}";
+    c = getFirstClass(getCompilationUnit(p));
+    lastToken = getLastSyntaxToken(c.modifiers());
+    assertThat(lastToken.text()).isEqualTo("42");
+
+    p = "@Deprecated public class Foo {}";
+    c = getFirstClass(getCompilationUnit(p));
+    lastToken = getLastSyntaxToken(c.modifiers());
+    assertThat(lastToken.text()).isEqualTo("public");
+  }
+

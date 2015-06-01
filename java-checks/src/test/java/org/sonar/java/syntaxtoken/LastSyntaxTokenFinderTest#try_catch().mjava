@@ -1,0 +1,42 @@
+  @Test
+  public void try_catch() {
+    String p =
+      "class Foo {"
+        + "  void foo() {"
+        + "    try { }"
+        + "    catch(Exception e) { }"
+        + "  }"
+        + "}";
+
+    CompilationUnitTree compilationUnit = getCompilationUnit(p);
+    TryStatementTree tryStatementTree = (TryStatementTree) getFirstMethod(compilationUnit).block().body().get(0);
+    SyntaxToken lastToken = getLastSyntaxToken(tryStatementTree);
+    assertThat(lastToken.text()).isEqualTo("}");
+
+    lastToken = getLastSyntaxToken(tryStatementTree.catches().get(0));
+    assertThat(lastToken.text()).isEqualTo("}");
+
+    p =
+      "class Foo {"
+        + "  void foo() {"
+        + "    try { }"
+        + "    finally { }"
+        + "  }"
+        + "}";
+    compilationUnit = getCompilationUnit(p);
+    tryStatementTree = (TryStatementTree) getFirstMethod(compilationUnit).block().body().get(0);
+    lastToken = getLastSyntaxToken(tryStatementTree);
+    assertThat(lastToken.text()).isEqualTo("}");
+
+    p =
+      "class Foo {"
+        + "  void foo() {"
+        + "    try (Closeable c = new Closeable()) { }"
+        + "  }"
+        + "}";
+    compilationUnit = getCompilationUnit(p);
+    tryStatementTree = (TryStatementTree) getFirstMethod(compilationUnit).block().body().get(0);
+    lastToken = getLastSyntaxToken(tryStatementTree);
+    assertThat(lastToken.text()).isEqualTo("}");
+  }
+

@@ -1,0 +1,39 @@
+  @Test
+  public void switch_statement() {
+    String p =
+      "class Foo {"
+        + "  void foo(MyEnum myEnum) {"
+        + "    switch(myEnum) {"
+        + "      case A:"
+        + "        bar();"
+        + "    }"
+        + "  }"
+        + "}";
+    assertFirstStatementlastTokenValue(p, "}");
+
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) getFirstStatement(p);
+    CaseGroupTree firstCaseGroup = switchStatementTree.cases().get(0);
+    SyntaxToken lastToken = getLastSyntaxToken(firstCaseGroup);
+    assertThat(lastToken.text()).isEqualTo(";");
+
+    lastToken = getLastSyntaxToken(firstCaseGroup.labels().get(0));
+    assertThat(lastToken.text()).isEqualTo(":");
+
+    p =
+      "class Foo {"
+        + "  void foo(MyEnum myEnum) {"
+        + "    switch(myEnum) {"
+        + "      case A:"
+        + "        bar();"
+        + "      default:"
+        + "    }"
+        + "  }"
+        + "}";
+    assertFirstStatementlastTokenValue(p, "}");
+
+    switchStatementTree = (SwitchStatementTree) getFirstStatement(p);
+    CaseGroupTree lastCaseGroup = switchStatementTree.cases().get(1);
+    lastToken = getLastSyntaxToken(lastCaseGroup);
+    assertThat(lastToken.text()).isEqualTo(":");
+  }
+

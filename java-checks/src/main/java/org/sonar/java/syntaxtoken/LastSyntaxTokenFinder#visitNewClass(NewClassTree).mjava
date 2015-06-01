@@ -1,0 +1,11 @@
+  @Override
+  public void visitNewClass(NewClassTree tree) {
+    if (tree.classBody() != null) {
+      scan(tree.classBody());
+    } else if (tree.closeParenToken() != null) {
+      lastSyntaxToken = tree.closeParenToken();
+    } else {
+      scan(tree.identifier());
+    }
+  }
+

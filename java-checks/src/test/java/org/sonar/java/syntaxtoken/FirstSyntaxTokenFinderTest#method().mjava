@@ -1,5 +1,5 @@
   @Test
-  public void method_first() {
+  public void method() {
     CompilationUnitTree compilationUnit = getCompilationUnit("class Test { void foo() {} }");
     SyntaxToken firstToken = getFirstSyntaxToken(getFirstMethod(compilationUnit));
     assertThat(firstToken.text()).isEqualTo("void");
@@ -19,5 +19,9 @@
     compilationUnit = getCompilationUnit("class Test<T> { T Test() {} }");
     firstToken = getFirstSyntaxToken(getFirstMethod(compilationUnit));
     assertThat(firstToken.text()).isEqualTo("T");
+
+    compilationUnit = getCompilationUnit("class Test<T> { T Test() {} }");
+    firstToken = getFirstSyntaxToken(getFirstMethod(compilationUnit).block());
+    assertThat(firstToken.text()).isEqualTo("{");
   }
 

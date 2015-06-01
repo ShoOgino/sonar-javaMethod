@@ -1,0 +1,15 @@
+  @Test
+  public void method() {
+    CompilationUnitTree compilationUnit = getCompilationUnit("class Test { void foo() {} }");
+    SyntaxToken lastToken = getLastSyntaxToken(getFirstMethod(compilationUnit));
+    assertThat(lastToken.text()).isEqualTo("}");
+
+    compilationUnit = getCompilationUnit("class Test { abstract void foo(); }");
+    lastToken = getLastSyntaxToken(getFirstMethod(compilationUnit));
+    assertThat(lastToken.text()).isEqualTo(";");
+
+    compilationUnit = getCompilationUnit("class Test { abstract int foo(); }");
+    lastToken = getLastSyntaxToken(getFirstMethod(compilationUnit).returnType());
+    assertThat(lastToken.text()).isEqualTo("int");
+  }
+
