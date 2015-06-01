@@ -1,0 +1,11 @@
+  @Override
+  public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+    super.visitAssignmentExpression(tree);
+    if (isFileCreateTempFile(tree.expression())) {
+      ExpressionTree variable = tree.variable();
+      if (variable.is(Tree.Kind.IDENTIFIER) && !symbolStack.isEmpty()) {
+        symbolStack.peek().put(((IdentifierTree) variable).symbol(), State.CREATE_TMP_FILE);
+      }
+    }
+  }
+

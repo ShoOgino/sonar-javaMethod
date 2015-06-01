@@ -1,0 +1,17 @@
+  @Nullable
+  private State checkAndAdvanceState(MethodInvocationTree mit, State requiredState, State nextState) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expressionTree = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) expressionTree).symbol();
+        Map<Symbol, State> symbolStateMap = symbolStack.peek();
+        if (symbolStateMap != null && symbolStateMap.containsKey(symbol) && requiredState.equals(symbolStateMap.get(symbol))) {
+          symbolStateMap.put(symbol, nextState);
+          return nextState;
+        }
+      }
+    }
+    return null;
+  }
+

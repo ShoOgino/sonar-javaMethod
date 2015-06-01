@@ -1,0 +1,12 @@
+  @Override
+  public void visitVariable(VariableTree tree) {
+    super.visitVariable(tree);
+    ExpressionTree initializer = tree.initializer();
+    if (initializer != null && isFileCreateTempFile(initializer)) {
+      Symbol symbol = tree.symbol();
+      if (!symbolStack.isEmpty()) {
+        symbolStack.peek().put(symbol, State.CREATE_TMP_FILE);
+      }
+    }
+  }
+
