@@ -12,10 +12,14 @@
       condition = true;
     }
     if (block != null && !block.is(Tree.Kind.BLOCK)) {
-      int previousColumn = FirstSyntaxTokenFinder.firstSyntaxToken(block).column();
-      int currentColumn = FirstSyntaxTokenFinder.firstSyntaxToken(current).column();
+      SyntaxToken previousToken = FirstSyntaxTokenFinder.firstSyntaxToken(block);
+      int previousColumn = previousToken.column();
+      int previousLine = previousToken.line();
+      SyntaxToken currentToken = FirstSyntaxTokenFinder.firstSyntaxToken(current);
+      int currentColumn = currentToken.column();
+      int currentLine = currentToken.line();
       if (previousColumn == currentColumn) {
-        context.addIssue(current, this, condition ? IF_MESSAGE : LOOP_MESSAGE);
+        context.addIssue(current, this, String.format(Locale.US, condition ? IF_MESSAGE : LOOP_MESSAGE, 1 + currentLine - previousLine));
       }
     }
   }
