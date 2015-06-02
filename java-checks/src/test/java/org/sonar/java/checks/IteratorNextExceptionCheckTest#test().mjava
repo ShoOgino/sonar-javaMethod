@@ -1,11 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/IteratorNextExceptionCheck.java"),
-      new VisitorsBridge(new IteratorNextExceptionCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(6).withMessage("Add a \"NoSuchElementException\" for iteration beyond the end of the collection.")
-      .next().atLine(17)
-      .next().atLine(47)
-      .next().atLine(97);
+    JavaCheckVerifier.verify("src/test/files/checks/IteratorNextExceptionCheck.java", new IteratorNextExceptionCheck());
   }
 
