@@ -1,13 +1,22 @@
   public void visitFile(File file) {
-    List<String> lines;
-    try {
-      lines = Files.readLines(file, charset);
-    } catch (IOException e) {
-      throw new SonarException(e);
-    }
-
-    if (!matches(expectedLines, lines)) {
-      addIssueOnFile("Add or update the header of this file.");
+    if (isRegularExpression) {
+      String fileContent;
+      try {
+        fileContent = Files.toString(file, charset);
+      } catch (IOException e) {
+        throw new AnalysisException(e);
+      }
+      checkRegularExpression(fileContent);
+    } else {
+      List<String> lines;
+      try {
+        lines = Files.readLines(file, charset);
+      } catch (IOException e) {
+        throw new AnalysisException(e);
+      }
+      if (!matches(expectedLines, lines)) {
+        addIssueOnFile(MESSAGE);
+      }
     }
   }
 
