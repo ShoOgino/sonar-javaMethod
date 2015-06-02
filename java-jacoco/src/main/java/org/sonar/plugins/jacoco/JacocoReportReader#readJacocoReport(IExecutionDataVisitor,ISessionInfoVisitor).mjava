@@ -5,10 +5,11 @@
    * @return true if binary format is the latest one.
    * @throws IOException in case of error or binary format not supported.
    */
-  public JacocoReportReader readJacocoReport(IExecutionDataVisitor executionDataVisitor, ISessionInfoVisitor sessionInfoStore) throws IOException {
-    if(jacocoExecutionData == null) {
+  public JacocoReportReader readJacocoReport(IExecutionDataVisitor executionDataVisitor, ISessionInfoVisitor sessionInfoStore) {
+    if (jacocoExecutionData == null) {
       return this;
     }
+
     JaCoCoExtensions.LOG.info("Analysing {}", jacocoExecutionData);
     try (InputStream inputStream = new BufferedInputStream(new FileInputStream(jacocoExecutionData))) {
       if (useCurrentBinaryFormat) {
@@ -22,6 +23,8 @@
         reader.setExecutionDataVisitor(executionDataVisitor);
         reader.read();
       }
+    } catch (IOException e) {
+      throw new SonarException(String.format("Unable to read %s", jacocoExecutionData.getAbsolutePath()), e);
     }
     return this;
   }
