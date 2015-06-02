@@ -4,8 +4,10 @@
     for (Tree typeTree : cut.types()) {
       if (typeTree.is(Kind.CLASS)) {
         ClassTree classTree = (ClassTree) typeTree;
-        checkJunit3TestClass(classTree);
-        checkJunit4TestClass(classTree);
+        if (!ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.ABSTRACT)) {
+          checkJunit3TestClass(classTree);
+          checkJunit4TestClass(classTree);
+        }
       }
     }
   }
