@@ -1,10 +1,18 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    int count = tree.parameters().size();
-    if (count > maximum) {
-      context.addIssue(tree, this, "Method has " + count + " parameters, which is greater than " + maximum + " authorized.");
+    int max;
+    String partialMessage;
+    if (tree.is(Tree.Kind.CONSTRUCTOR)) {
+      max = constructorMax;
+      partialMessage = "Constructor";
+    } else {
+      max = maximum;
+      partialMessage = "Method";
     }
-
+    int size = tree.parameters().size();
+    if (size > max) {
+      context.addIssue(tree, this, partialMessage + " has " + size + " parameters, which is greater than " + max + " authorized.");
+    }
     super.visitMethod(tree);
   }
 
