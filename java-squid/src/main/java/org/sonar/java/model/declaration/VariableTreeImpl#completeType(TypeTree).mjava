@@ -1,9 +1,9 @@
   public VariableTreeImpl completeType(TypeTree type) {
     TypeTree actualType = type;
 
-    // TODO Remove logic?
-    for (int i = isVararg() ? (1 + dims()) : dims(); i > 0; i--) {
-      actualType = new ArrayTypeTreeImpl(null, actualType);
+    if (nestedDimensions != null) {
+      nestedDimensions.setLastChildType(type);
+      actualType = nestedDimensions;
     }
 
     this.type = actualType;

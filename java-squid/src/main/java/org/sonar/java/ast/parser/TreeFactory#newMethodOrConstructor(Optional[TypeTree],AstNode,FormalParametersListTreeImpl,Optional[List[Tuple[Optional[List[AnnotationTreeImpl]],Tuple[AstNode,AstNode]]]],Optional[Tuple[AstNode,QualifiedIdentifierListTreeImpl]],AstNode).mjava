@@ -6,9 +6,10 @@
 
     IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(identifierAstNode));
 
+    ArrayTypeTreeImpl nestedDimensions = newArrayTypeTreeWithAnnotations(annotatedDimensions);
     TypeTree actualType;
     if (type.isPresent()) {
-      actualType = applyDim(type.get(), annotatedDimensions.isPresent() ? annotatedDimensions.get().size() : 0);
+      actualType = applyDim(type.get(), nestedDimensions);
     } else {
       actualType = null;
     }
@@ -34,15 +35,8 @@
     }
     children.add(identifier);
     children.add(parameters);
-    if (annotatedDimensions.isPresent()) {
-      for (Tuple<Optional<List<AnnotationTreeImpl>>, Tuple<AstNode, AstNode>> annotatedDimension : annotatedDimensions.get()) {
-        if (annotatedDimension.first().isPresent()) {
-          for (AnnotationTreeImpl annotation : annotatedDimension.first().get()) {
-            children.add(annotation);
-          }
-        }
-        children.add(annotatedDimension.second());
-      }
+    if (nestedDimensions != null) {
+      children.add(nestedDimensions);
     }
     if (throwsClause.isPresent()) {
       children.add(throwsClause.get().first());

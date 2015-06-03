@@ -1,0 +1,87 @@
+  @Test
+  public void array_formal_parameter() {
+    MethodTree method;
+    VariableTree variable;
+    ArrayTypeTree arrayTypeTree, childArrayTypeTree;
+
+    method = (MethodTree) firstMember("interface T { void m(int[] a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThatArrayTypeHasBrackets(arrayTypeTree);
+
+    method = (MethodTree) firstMember("interface T { void m(int... a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThatArrayTypeHasEllipsis(arrayTypeTree);
+
+    method = (MethodTree) firstMember("interface T { void m(int @Foo ... a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThatArrayTypeHasEllipsisAndAnnotations(arrayTypeTree, 1);
+
+    method = (MethodTree) firstMember("interface T { void m(int @Foo ... a[]); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThatArrayTypeHasBrackets(arrayTypeTree);
+    childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+    assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
+    assertThatArrayTypeHasEllipsisAndAnnotations(childArrayTypeTree, 1);
+    assertThat(childArrayTypeTree.ellipsisToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+
+    method = (MethodTree) firstMember("interface T { void m(int @Foo [] a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+
+    method = (MethodTree) firstMember("interface T { void m(int @Foo @bar [] a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+    assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 2);
+
+    method = (MethodTree) firstMember("interface T { void m(int[] @Foo [] a); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+    assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
+    assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+
+    method = (MethodTree) firstMember("interface T { void m(int[] a[]); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThatArrayTypeHasBrackets(arrayTypeTree);
+    childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+    assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
+    assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+
+    method = (MethodTree) firstMember("interface T { void m(int[] a @Foo []); }");
+    variable = method.parameters().get(0);
+    assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
+    arrayTypeTree = (ArrayTypeTree) variable.type();
+    assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);
+    assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+    assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
+    assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
+  }
+

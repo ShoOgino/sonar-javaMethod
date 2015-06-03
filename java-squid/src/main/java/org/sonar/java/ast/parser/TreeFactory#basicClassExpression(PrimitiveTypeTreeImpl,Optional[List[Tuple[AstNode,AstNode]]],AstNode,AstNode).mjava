@@ -4,19 +4,17 @@
     // int[].class
 
     IdentifierTreeImpl classToken = new IdentifierTreeImpl(InternalSyntaxToken.create(classTokenAstNode));
+    ArrayTypeTreeImpl nestedDimensions = newArrayTypeTree(dimensions);
 
     List<AstNode> children = Lists.newArrayList();
     children.add(basicType);
-    if (dimensions.isPresent()) {
-      for (Tuple<AstNode, AstNode> dimension : dimensions.get()) {
-        children.add(dimension.first());
-        children.add(dimension.second());
-      }
+    if (nestedDimensions != null) {
+      children.add(nestedDimensions);
     }
     children.add(dotToken);
     children.add(classToken);
 
-    TypeTree typeTree = applyDim(basicType, dimensions.isPresent() ? dimensions.get().size() : 0);
+    TypeTree typeTree = applyDim(basicType, nestedDimensions);
     return new MemberSelectExpressionTreeImpl((ExpressionTree) typeTree, classToken, children.toArray(new AstNode[children.size()]));
   }
 
