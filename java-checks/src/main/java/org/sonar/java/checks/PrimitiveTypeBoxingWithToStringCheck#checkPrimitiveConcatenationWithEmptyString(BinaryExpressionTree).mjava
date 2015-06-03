@@ -1,0 +1,13 @@
+  @CheckForNull
+  private void checkPrimitiveConcatenationWithEmptyString(BinaryExpressionTree concatenation) {
+    Type wrapper = null;
+    if (isEmptyString(concatenation.leftOperand())) {
+      wrapper = ((JavaType) concatenation.rightOperand().symbolType()).primitiveWrapperType();
+    } else if (isEmptyString(concatenation.rightOperand())) {
+      wrapper = ((JavaType) concatenation.leftOperand().symbolType()).primitiveWrapperType();
+    }
+    if (wrapper != null) {
+      addIssue(concatenation, "Use \"" + wrapper.name() + ".toString\" instead.");
+    }
+  }
+
