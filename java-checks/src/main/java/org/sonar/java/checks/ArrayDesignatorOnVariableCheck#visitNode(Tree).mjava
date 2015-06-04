@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    VariableTree variableTree = (VariableTree) tree;
+    TypeTree type = variableTree.type();
+    SyntaxToken identifierToken = variableTree.simpleName().identifierToken();
+    while (type.is(Tree.Kind.ARRAY_TYPE)) {
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) type;
+      SyntaxToken arrayDesignatorToken = arrayTypeTree.ellipsisToken();
+      if (arrayDesignatorToken == null) {
+        arrayDesignatorToken = arrayTypeTree.openBracketToken();
+      }
+      if (isInvalidPosition(arrayDesignatorToken, identifierToken)) {
+        addIssue(arrayDesignatorToken, "Move the array designator from the variable to the type.");
+        break;
+      }
+      type = arrayTypeTree.type();
+    }
+  }
+
