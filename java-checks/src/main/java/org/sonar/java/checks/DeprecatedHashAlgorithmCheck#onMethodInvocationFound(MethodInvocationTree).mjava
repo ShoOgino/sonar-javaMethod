@@ -1,0 +1,13 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    String methodName = methodName(mit);
+    String algorithm = ALGORITHM_BY_METHOD_NAME.get(methodName);
+    if (algorithm == null) {
+      List<ExpressionTree> arguments = mit.arguments();
+      algorithm = algorithm(arguments.get(0));
+    }
+    if (MD5.equals(algorithm) || SHA1.equals(algorithm)) {
+      addIssue(mit, "Use a stronger encryption algorithm than " + algorithm + ".");
+    }
+  }
+

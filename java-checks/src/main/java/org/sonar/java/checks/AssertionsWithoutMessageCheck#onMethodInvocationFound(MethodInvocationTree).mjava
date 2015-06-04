@@ -1,0 +1,15 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if(mit.symbol().owner().type().isSubtypeOf(GENERIC_ASSERT) && !FEST_AS_METHOD.matches(mit)) {
+      FestVisitor visitor = new FestVisitor();
+      mit.methodSelect().accept(visitor);
+      if(!visitor.useDescription) {
+        addIssue(mit, "Add a message to this assertion.");
+      }
+    } else {
+      if(mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
+        addIssue(mit, "Add a message to this assertion.");
+      }
+    }
+  }
+

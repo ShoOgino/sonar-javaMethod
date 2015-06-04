@@ -1,0 +1,37 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree formatStringTree;
+    List<ExpressionTree> args;
+    //Check type of first argument:
+    if (mit.arguments().get(0).symbolType().is("java.lang.String")) {
+      formatStringTree = mit.arguments().get(0);
+      args = mit.arguments().subList(1, mit.arguments().size());
+    } else {
+      //format method with "Locale" first argument, skip that one.
+      formatStringTree = mit.arguments().get(1);
+      args = mit.arguments().subList(2, mit.arguments().size());
+    }
+    if (formatStringTree.is(Tree.Kind.STRING_LITERAL)) {
+      String formatString = trimQuotes(((LiteralTree) formatStringTree).value());
+      checkLineFeed(formatString, mit);
+
+      List<String> params = getParameters(formatString, mit);
+      if (usesMessageFormat(formatString, params)) {
+        addIssue(mit, "Looks like there is a confusion with the use of java.text.MessageFormat, parameters will be simply ignored here");
+        return;
+      }
+      if (params.isEmpty()) {
+        addIssue(mit, "String contains no format specifiers.");
+        return;
+      }
+      cleanupLineSeparator(params);
+      if (params.size() > args.size()) {
+        addIssue(mit, "Not enough arguments.");
+        return;
+      }
+      verifyParameters(mit, args, params);
+    } else if (formatStringTree.is(Tree.Kind.PLUS)) {
+      addIssue(mit, "Format specifiers should be used instead of string concatenation.");
+    }
+  }
+

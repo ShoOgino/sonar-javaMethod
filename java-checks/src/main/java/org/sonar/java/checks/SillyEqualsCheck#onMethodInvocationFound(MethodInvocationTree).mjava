@@ -1,0 +1,17 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree tree) {
+    ExpressionTree firstArgument = Iterables.getOnlyElement(tree.arguments());
+    Type argumentType = firstArgument.symbolType().erasure();
+    if (argumentType.isPrimitive()) {
+      argumentType = ((JavaType) argumentType).primitiveWrapperType();
+    }
+    Type ownerType = getMethodOwnerType(tree).erasure();
+    if (isLiteralNull(firstArgument)) {
+      addIssue(tree, "Remove this call to \"equals\"; comparisons against null always return false; consider using '== null' to check for nullity.");
+    } else if (ownerType.isArray()) {
+      checkWhenOwnerIsArray(tree, (Type.ArrayType) ownerType, argumentType);
+    } else {
+      checkWhenOwnerIsNotArray(tree, ownerType, argumentType);
+    }
+  }
+

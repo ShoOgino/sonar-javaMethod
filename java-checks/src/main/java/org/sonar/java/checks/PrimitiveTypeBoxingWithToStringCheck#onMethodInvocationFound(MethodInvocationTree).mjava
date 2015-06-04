@@ -1,0 +1,9 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree abstractTypedTree = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
+    if (abstractTypedTree.is(Kind.NEW_CLASS) || isValueOfInvocation(abstractTypedTree)) {
+      String typeName = abstractTypedTree.symbolType().toString();
+      addIssue(mit, "Use \"" + typeName + ".toString\" instead.");
+    }
+  }
+

@@ -1,22 +1,22 @@
   @Override
-  protected List<MethodInvocationMatcher> getMethodInvocationMatchers() {
-    Builder<MethodInvocationMatcher> builder = ImmutableList.<MethodInvocationMatcher>builder()
-      .add(MethodInvocationMatcher.create()
+  protected List<MethodMatcher> getMethodInvocationMatchers() {
+    Builder<MethodMatcher> builder = ImmutableList.<MethodMatcher>builder()
+      .add(MethodMatcher.create()
         .typeDefinition("java.security.MessageDigest")
         .name("getInstance")
         .addParameter("java.lang.String"))
-      .add(MethodInvocationMatcher.create()
+      .add(MethodMatcher.create()
         .typeDefinition("org.apache.commons.codec.digest.DigestUtils")
         .name("getDigest")
         .addParameter("java.lang.String"));
     for (String methodName : ALGORITHM_BY_METHOD_NAME.keySet()) {
-      builder.add(MethodInvocationMatcher.create()
+      builder.add(MethodMatcher.create()
         .typeDefinition("org.apache.commons.codec.digest.DigestUtils")
         .name(methodName)
         .withNoParameterConstraint());
     }
     for (String methodName : ImmutableList.of("md5", "sha1")) {
-      builder.add(MethodInvocationMatcher.create()
+      builder.add(MethodMatcher.create()
         .typeDefinition("com.google.common.hash.Hashing")
         .name(methodName));
     }
