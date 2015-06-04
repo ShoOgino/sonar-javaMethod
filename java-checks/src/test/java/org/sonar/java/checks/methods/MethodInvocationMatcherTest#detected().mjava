@@ -1,0 +1,15 @@
+  @Test
+  public void detected() {
+    MethodInvocationMatcher objectToString = MethodInvocationMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.lang.Object")).name("toString");
+    MethodInvocationMatcher integerToString = MethodInvocationMatcher.create().typeDefinition("java.lang.Integer").name("toString");
+
+    Map<MethodInvocationMatcher, List<Integer>> matches = new HashMap<>();
+    matches.put(objectToString, new ArrayList<Integer>());
+    matches.put(integerToString, new ArrayList<Integer>());
+
+    JavaAstScanner.scanSingleFile(new File("src/test/files/checks/methodMatcher/Test.java"), new VisitorsBridge(new Visitor(matches)));
+
+    assertThat(matches.get(objectToString)).containsExactly(6, 14);
+    assertThat(matches.get(integerToString)).containsExactly(14);
+  }
+
