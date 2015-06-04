@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    TypeTree returnType = methodTree.returnType();
+    SyntaxToken identifierToken = methodTree.simpleName().identifierToken();
+    while (returnType.is(Tree.Kind.ARRAY_TYPE)) {
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) returnType;
+      SyntaxToken openBracketToken = arrayTypeTree.openBracketToken();
+      if (isInvalidPosition(openBracketToken, identifierToken)) {
+        addIssue(openBracketToken, "Move the array designators \"[]\" to the end of the return type.");
+        break;
+      }
+      returnType = arrayTypeTree.type();
+    }
+  }
+
