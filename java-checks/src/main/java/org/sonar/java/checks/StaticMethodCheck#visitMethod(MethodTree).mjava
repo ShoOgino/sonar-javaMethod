@@ -1,10 +1,10 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    if (tree.is(Tree.Kind.CONSTRUCTOR)) {
+    if (isExcluded(tree)) {
       return;
     }
     Symbol.MethodSymbol symbol = tree.symbol();
-    if (symbol == null || (outerClasses.size() > 1 && !outerClasses.peek().isStatic())) {
+    if (outerClasses.size() > 1 && !outerClasses.peek().isStatic()) {
       return;
     }
     atLeastOneReference.push(Boolean.FALSE);
