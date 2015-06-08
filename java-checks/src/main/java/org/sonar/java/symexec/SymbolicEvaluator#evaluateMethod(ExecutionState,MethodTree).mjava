@@ -1,7 +1,12 @@
   public Map<Tree, SymbolicBooleanConstraint> evaluateMethod(ExecutionState state, MethodTree tree) {
     result.clear();
     if (tree.block() != null) {
-      evaluateStatement(ImmutableList.of(state), tree.block());
+      try {
+        evaluateStatement(ImmutableList.of(state), tree.block());
+      } catch (SymbolicExecutionException e) {
+        LOGGER.info("analysis of " + tree + " failed: " + e.getMessage(), e);
+        result.clear();
+      }
     }
     return result;
   }

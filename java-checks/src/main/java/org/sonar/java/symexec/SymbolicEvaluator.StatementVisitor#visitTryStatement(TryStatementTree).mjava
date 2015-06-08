@@ -5,7 +5,7 @@
       for (ExecutionState state : currentStates) {
         List<ExecutionState> catchStates = new ArrayList<>();
         for (CatchTree catchTree : tree.catches()) {
-          catchStates.addAll(evaluateStatement(new ExecutionState(state), catchTree.block()).states);
+          catchStates.addAll(evaluateStatement(instantiateExecutionState(state), catchTree.block()).states);
         }
         catchStates.add(state);
         state.mergeRelations(catchStates);
