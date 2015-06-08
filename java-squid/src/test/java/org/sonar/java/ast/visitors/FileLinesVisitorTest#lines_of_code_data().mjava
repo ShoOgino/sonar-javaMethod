@@ -1,11 +1,7 @@
   @Test
   public void lines_of_code_data() {
-    SonarComponents sonarComponents = mock(SonarComponents.class);
     FileLinesContext context = mock(FileLinesContext.class);
-    when(sonarComponents.fileLinesContextFor(Mockito.any(File.class))).thenReturn(context);
-
-    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new FileLinesVisitor(sonarComponents, Charsets.UTF_8));
-    scanner.scan(ImmutableList.of(new File("src/test/files/metrics/LinesOfCode.java")));
+    checkLines("LinesOfCode.java", context);
 
     verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 1, 0);
     verify(context).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 2, 0);

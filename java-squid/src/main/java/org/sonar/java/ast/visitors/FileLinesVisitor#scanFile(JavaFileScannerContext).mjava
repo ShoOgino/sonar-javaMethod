@@ -1,11 +1,12 @@
   @Override
-  public void leaveFile(AstNode astNode) {
-    FileLinesContext fileLinesContext = sonarComponents.fileLinesContextFor(getContext().getFile());
+  public void scanFile(JavaFileScannerContext context) {
+    super.scanFile(context);
 
+    FileLinesContext fileLinesContext = sonarComponents.fileLinesContextFor(context.getFile());
     // TODO minimize access to files, another one in LinesVisitor
     int fileLength;
     try {
-      fileLength = Files.readLines(getContext().getFile(), charset).size();
+      fileLength = Files.readLines(context.getFile(), charset).size();
     } catch (IOException e) {
       throw Throwables.propagate(e);
     }

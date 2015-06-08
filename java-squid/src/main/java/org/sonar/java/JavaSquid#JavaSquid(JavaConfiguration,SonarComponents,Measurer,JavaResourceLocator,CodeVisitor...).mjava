@@ -13,6 +13,9 @@
     List<File> testClasspath = Lists.newArrayList();
     Collection<CodeVisitor> testCheckClasses = Lists.<CodeVisitor>newArrayList(javaResourceLocator);
     if(sonarComponents != null) {
+      visitorsToBridge = Iterables.concat(
+        visitorsToBridge, 
+        Arrays.asList(new FileLinesVisitor(sonarComponents, conf.getCharset())));
       classpath = sonarComponents.getJavaClasspath();
       testClasspath = sonarComponents.getJavaTestClasspath();
       testCheckClasses.addAll(sonarComponents.testCheckClasses());

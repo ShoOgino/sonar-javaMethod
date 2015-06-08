@@ -1,11 +1,7 @@
   @Test
   public void comment_lines_data() {
-    SonarComponents sonarComponents = mock(SonarComponents.class);
     FileLinesContext context = mock(FileLinesContext.class);
-    when(sonarComponents.fileLinesContextFor(Mockito.any(File.class))).thenReturn(context);
-
-    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new FileLinesVisitor(sonarComponents, Charsets.UTF_8));
-    scanner.scan(ImmutableList.of(new File("src/test/files/metrics/Comments.java")));
+    checkLines("Comments.java", context);
 
     verify(context).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 1, 1);
     verify(context).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 2, 1);
