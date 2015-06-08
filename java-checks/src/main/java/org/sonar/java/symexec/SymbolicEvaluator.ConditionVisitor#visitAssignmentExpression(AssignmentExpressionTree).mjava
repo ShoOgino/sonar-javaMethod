@@ -1,11 +1,17 @@
     @Override
     public final void visitAssignmentExpression(AssignmentExpressionTree tree) {
       evaluateExpression(currentState, tree.variable());
-      evaluateExpression(currentState, tree.expression());
+      SymbolicBooleanConstraint assignedValue = evaluateExpression(currentState, tree.expression());
       Symbol.VariableSymbol symbol = extractVariableSymbol(tree.variable());
       if (symbol != null) {
-        currentState.setBooleanConstraint(new SymbolicValue.SymbolicVariableValue(symbol), SymbolicBooleanConstraint.UNKNOWN);
+        currentState.setBooleanConstraint(new SymbolicValue.SymbolicVariableValue(symbol), assignedValue);
       }
-      currentResult.unknownStates.add(currentState);
+      if (assignedValue == SymbolicBooleanConstraint.FALSE) {
+        currentResult.falseStates.add(currentState);
+      } else if (assignedValue == SymbolicBooleanConstraint.TRUE) {
+        currentResult.trueStates.add(currentState);
+      } else {
+        currentResult.unknownStates.add(currentState);
+      }
     }
 
