@@ -1,0 +1,15 @@
+  @Test
+  public void exhausted_detected_comments() {
+    File commentsFile = new File("src/test/files/metrics/CommentsFull.java");
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    CommentsVerifier context = new CommentsVerifier();
+    when(sonarComponents.fileLinesContextFor(Mockito.any(File.class))).thenReturn(context);
+
+    AstScanner scanner = JavaAstScanner.create(new JavaConfiguration(Charsets.UTF_8), new FileLinesVisitor(sonarComponents, Charsets.UTF_8));
+    scanner.scan(ImmutableList.of(commentsFile));
+
+    List<Integer> reportedCommentLines = context.commentedLine;
+    List<Integer> expectedCommentLines = getCommentLine(commentsFile);
+    assertThat(reportedCommentLines).containsExactly(Lists.newArrayList(expectedCommentLines).toArray());
+  }
+
