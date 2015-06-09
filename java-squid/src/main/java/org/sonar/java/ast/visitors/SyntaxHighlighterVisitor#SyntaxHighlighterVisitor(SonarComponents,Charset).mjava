@@ -2,17 +2,18 @@
     this.sonarComponents = sonarComponents;
     this.charset = charset;
 
-    ImmutableMap.Builder<AstNodeType, String> typesBuilder = ImmutableMap.builder();
-    for (AstNodeType type : JavaKeyword.values()) {
-      typesBuilder.put(type, "k");
-    }
-    typesBuilder.put(Kind.STRING_LITERAL, "s");
-    typesBuilder.put(Kind.CHAR_LITERAL, "s");
-    typesBuilder.put(Kind.FLOAT_LITERAL, "c");
-    typesBuilder.put(Kind.DOUBLE_LITERAL, "c");
-    typesBuilder.put(Kind.LONG_LITERAL, "c");
-    typesBuilder.put(Kind.INT_LITERAL, "c");
-    typesBuilder.put(Kind.ANNOTATION, "a");
-    types = typesBuilder.build();
+    ImmutableSet.Builder<String> keywordsBuilder = ImmutableSet.builder();
+    keywordsBuilder.add(JavaKeyword.keywordValues());
+    keywords = keywordsBuilder.build();
+
+    ImmutableMap.Builder<Tree.Kind, String> typesByKindBuilder = ImmutableMap.builder();
+    typesByKindBuilder.put(Tree.Kind.STRING_LITERAL, "s");
+    typesByKindBuilder.put(Tree.Kind.CHAR_LITERAL, "s");
+    typesByKindBuilder.put(Tree.Kind.FLOAT_LITERAL, "c");
+    typesByKindBuilder.put(Tree.Kind.DOUBLE_LITERAL, "c");
+    typesByKindBuilder.put(Tree.Kind.LONG_LITERAL, "c");
+    typesByKindBuilder.put(Tree.Kind.INT_LITERAL, "c");
+    typesByKindBuilder.put(Tree.Kind.ANNOTATION, "a");
+    typesByKind = typesByKindBuilder.build();
   }
 

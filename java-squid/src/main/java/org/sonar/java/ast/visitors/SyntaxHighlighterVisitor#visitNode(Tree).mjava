@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.ANNOTATION)) {
+      AnnotationTree annotationTree = (AnnotationTree) tree;
+      highlighting.highlight(start(annotationTree), end(annotationTree), typesByKind.get(Tree.Kind.ANNOTATION));
+    } else {
+      Tree.Kind kind = ((JavaTree) tree).getKind();
+      if (typesByKind.containsKey(kind)) {
+        SyntaxToken token = ((LiteralTree) tree).token();
+        highlighting.highlight(start(token), end(token), typesByKind.get(kind));
+      }
+    }
+  }
+

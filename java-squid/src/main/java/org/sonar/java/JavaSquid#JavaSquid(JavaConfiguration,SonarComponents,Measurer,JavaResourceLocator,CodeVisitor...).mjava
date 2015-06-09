@@ -14,8 +14,12 @@
     Collection<CodeVisitor> testCheckClasses = Lists.<CodeVisitor>newArrayList(javaResourceLocator);
     if(sonarComponents != null) {
       visitorsToBridge = Iterables.concat(
-        visitorsToBridge, 
-        Arrays.asList(new FileLinesVisitor(sonarComponents, conf.getCharset())));
+        visitorsToBridge,
+        Arrays.asList(
+          new FileLinesVisitor(sonarComponents, conf.getCharset()),
+          new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset())
+          )
+        );
       classpath = sonarComponents.getJavaClasspath();
       testClasspath = sonarComponents.getJavaTestClasspath();
       testCheckClasses.addAll(sonarComponents.testCheckClasses());

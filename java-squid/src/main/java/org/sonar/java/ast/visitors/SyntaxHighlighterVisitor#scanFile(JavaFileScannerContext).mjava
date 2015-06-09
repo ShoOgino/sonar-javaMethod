@@ -1,0 +1,12 @@
+  @Override
+  public void scanFile(JavaFileScannerContext context) {
+    File file = context.getFile();
+    highlighting = sonarComponents.highlightableFor(file).newHighlighting();
+    lineStart = startLines(file, this.charset);
+
+    super.scanFile(context);
+
+    highlighting.done();
+    lineStart.clear();
+  }
+
