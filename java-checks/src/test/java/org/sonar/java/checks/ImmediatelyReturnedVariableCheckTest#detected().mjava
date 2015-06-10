@@ -1,9 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner
-      .scanSingleFile(new File("src/test/files/checks/ImmediatelyReturnedVariableCheck.java"), new VisitorsBridge(new ImmediatelyReturnedVariableCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(4).withMessage("Immediately return this expression instead of assigning it to the temporary variable \"duration\".")
-      .next().atLine(9).withMessage("Immediately throw this expression instead of assigning it to the temporary variable \"myException\".");
+    JavaCheckVerifier.verify("src/test/files/checks/ImmediatelyReturnedVariableCheck.java", new ImmediatelyReturnedVariableCheck());
   }
 

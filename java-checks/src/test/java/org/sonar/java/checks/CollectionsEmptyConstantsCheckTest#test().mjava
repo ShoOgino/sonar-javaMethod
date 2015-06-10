@@ -1,10 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/CollectionsEmptyConstants.java"), new VisitorsBridge(new CollectionsEmptyConstantsCheck()));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(6).withMessage("Replace \"Collections.EMPTY_LIST\" by \"Collections.emptyList()\".")
-      .next().atLine(7).withMessage("Replace \"Collections.EMPTY_MAP\" by \"Collections.emptyMap()\".")
-      .next().atLine(8).withMessage("Replace \"Collections.EMPTY_SET\" by \"Collections.emptySet()\".")
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/CollectionsEmptyConstants.java", new CollectionsEmptyConstantsCheck());
   }
 

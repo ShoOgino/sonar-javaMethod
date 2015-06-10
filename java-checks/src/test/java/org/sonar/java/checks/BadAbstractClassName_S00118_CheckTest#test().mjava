@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadAbstractClassName.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(4).withMessage("Make this class abstract or rename it, since it matches the regular expression '^Abstract[A-Z][a-zA-Z0-9]*$'.")
-        .next().atLine(7).withMessage("Rename this abstract class name to match the regular expression '^Abstract[A-Z][a-zA-Z0-9]*$'.")
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/BadAbstractClassName.java", new BadAbstractClassName_S00118_Check());
   }
 
