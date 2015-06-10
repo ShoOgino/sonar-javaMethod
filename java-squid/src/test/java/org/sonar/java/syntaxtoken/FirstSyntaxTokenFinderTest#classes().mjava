@@ -20,5 +20,10 @@
     ClassTree firstClass = getFirstClass(compilationUnit);
     firstToken = getFirstSyntaxToken(firstClass.modifiers().get(0));
     assertThat(firstToken.text()).isEqualTo("@");
+
+    compilationUnit = getCompilationUnit("class A { A a = new A(){}; }");
+    NewClassTree newClassTree = (NewClassTree) getFirstVariable(getFirstClass(compilationUnit)).initializer();
+    firstToken = getFirstSyntaxToken(newClassTree.classBody());
+    assertThat(firstToken.text()).isEqualTo("{");
   }
 
