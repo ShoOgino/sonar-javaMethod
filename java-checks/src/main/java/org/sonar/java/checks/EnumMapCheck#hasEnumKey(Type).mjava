@@ -1,0 +1,11 @@
+  private static boolean hasEnumKey(Type type) {
+    if (type instanceof ParametrizedTypeJavaType) {
+      ParametrizedTypeJavaType parametrizedTypeJavaType = (ParametrizedTypeJavaType) type;
+      List<TypeVariableJavaType> typeParameters = parametrizedTypeJavaType.typeParameters();
+      if (!typeParameters.isEmpty()) {
+        return parametrizedTypeJavaType.substitution(typeParameters.get(0)).symbol().isEnum();
+      }
+    }
+    return false;
+  }
+

@@ -1,7 +1,10 @@
   @Override
   public void visitVariable(VariableTree tree) {
     if (tree.type().symbolType().isSubtypeOf("java.util.Map")) {
-      checkMap(tree);
+      ExpressionTree initializer = tree.initializer();
+      if (initializer != null) {
+        checkNewMap(tree, removeParenthesis(initializer), hasEnumKey(tree.type().symbolType()));
+      }
     } else {
       super.visitVariable(tree);
     }

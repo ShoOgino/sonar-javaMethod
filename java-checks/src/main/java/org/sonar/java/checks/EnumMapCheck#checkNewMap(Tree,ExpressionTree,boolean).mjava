@@ -1,0 +1,9 @@
+  private void checkNewMap(Tree tree, ExpressionTree expression, boolean useEnumKey) {
+    if (expression.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree newClassTree = (NewClassTree) expression;
+      if (newClassTree.symbolType().isSubtypeOf("java.util.HashMap") && (useEnumKey || hasEnumKey(newClassTree.identifier().symbolType()))) {
+        addIssue(tree);
+      }
+    }
+  }
+
