@@ -1,11 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/FieldModifier.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(2).withMessage("Explicitly declare the visibility for \"member\".")
-        .next().atLine(8).withMessage("Explicitly declare the visibility for \"varEnum\".")
-        .next().atLine(9).withMessage("Explicitly declare the visibility for \"varEnum2\".")
-        .next().atLine(10).withMessage("Explicitly declare the visibility for \"varEnum3\".")
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/FieldModifier.java", new FieldModifierCheck());
   }
 
