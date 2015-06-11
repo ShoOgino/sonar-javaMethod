@@ -1,10 +1,21 @@
   private void visit(Tree tree) {
     boolean isSubscribed = isSubscribed(tree);
-    if(isSubscribed) {
+    boolean isSyntaxToken = tree.is(Tree.Kind.TOKEN);
+    if (isSyntaxToken) {
+      SyntaxToken syntaxToken = (SyntaxToken) tree;
+      if (visitToken) {
+        visitToken(syntaxToken);
+      }
+      if (visitTrivia) {
+        for (SyntaxTrivia syntaxTrivia : syntaxToken.trivias()) {
+          visitTrivia(syntaxTrivia);
+        }
+      }
+    } else if (isSubscribed) {
       visitNode(tree);
     }
     visitChildren(tree);
-    if(isSubscribed) {
+    if (!isSyntaxToken && isSubscribed) {
       leaveNode(tree);
     }
   }
