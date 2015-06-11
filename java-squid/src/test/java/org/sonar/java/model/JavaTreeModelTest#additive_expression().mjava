@@ -3,16 +3,19 @@
    */
   @Test
   public void additive_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { int m() { return 1 + 2 - 3; } }").getFirstDescendant(Kind.MINUS);
+    String code = "class T { int m() { return 1 + 2 - 3; } }";
+    BinaryExpressionTree tree = (BinaryExpressionTree) expressionOfReturnStatement(code);
     assertThat(tree.is(Kind.MINUS)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("-");
     assertThat(tree.rightOperand()).isNotNull();
     assertThat(tree.rightOperand().is(Kind.INT_LITERAL)).isTrue();
+    assertThatChildrenIteratorHasSize(tree, 3);
     tree = (BinaryExpressionTree) tree.leftOperand();
     assertThat(tree.is(Kind.PLUS)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("+");
     assertThat(tree.rightOperand()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 3);
   }
 

@@ -3,15 +3,18 @@
    */
   @Test
   public void equality_expression() {
-    BinaryExpressionTree tree = (BinaryExpressionTree) p.parse("class T { boolean m() { return false == false != true; } }").getFirstDescendant(Kind.NOT_EQUAL_TO);
+    String code = "class T { boolean m() { return false == false != true; } }";
+    BinaryExpressionTree tree = (BinaryExpressionTree) (BinaryExpressionTree) expressionOfReturnStatement(code);
     assertThat(tree.is(Tree.Kind.NOT_EQUAL_TO)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("!=");
     assertThat(tree.rightOperand()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 3);
     tree = (BinaryExpressionTree) tree.leftOperand();
     assertThat(tree.is(Tree.Kind.EQUAL_TO)).isTrue();
     assertThat(tree.leftOperand()).isNotNull();
     assertThat(tree.operatorToken().text()).isEqualTo("==");
     assertThat(tree.rightOperand()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 3);
   }
 
