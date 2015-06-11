@@ -1,7 +1,6 @@
   @Test
   public void annotations() {
-    AstNode astNode = p.parse("@SuppressWarnings(\"unchecked\") class T { }");
-    ClassTree tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    ClassTree tree = firstType("@SuppressWarnings(\"unchecked\") class T { }");
     List<AnnotationTree> annotations = tree.modifiers().annotations();
     assertThat(annotations).hasSize(1);
     AnnotationTree annotation = annotations.get(0);
@@ -11,9 +10,9 @@
     assertThat(annotation.arguments().get(0).is(Tree.Kind.STRING_LITERAL)).isTrue();
     assertThat(annotation.closeParenToken()).isNotNull();
     assertThat(annotation.atToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(annotation, 5);
 
-    astNode = p.parse("@Target( ) class U {}");
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("@Target( ) class U {}");
     annotations = tree.modifiers().annotations();
     assertThat(annotations).hasSize(1);
     annotation = annotations.get(0);
@@ -21,9 +20,9 @@
     assertThat(annotation.arguments()).hasSize(0);
     assertThat(annotation.closeParenToken()).isNotNull();
     assertThat(annotation.atToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(annotation, 4);
 
-    astNode = p.parse("@Target({ElementType.METHOD}) class U {}");
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("@Target({ElementType.METHOD}) class U {}");
     annotations = tree.modifiers().annotations();
     assertThat(annotations).hasSize(1);
     annotation = annotations.get(0);
@@ -32,9 +31,9 @@
     assertThat(annotation.arguments().get(0).is(Tree.Kind.NEW_ARRAY)).isTrue();
     assertThat(annotation.closeParenToken()).isNotNull();
     assertThat(annotation.atToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(annotation, 5);
 
-    astNode = p.parse("@Target(value={ElementType.METHOD}, value2=\"toto\") class T { }");
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("@Target(value={ElementType.METHOD}, value2=\"toto\") class T { }");
     annotations = tree.modifiers().annotations();
     assertThat(annotations).hasSize(1);
     annotation = annotations.get(0);
@@ -44,9 +43,9 @@
     assertThat(annotation.arguments().get(0).is(Tree.Kind.ASSIGNMENT)).isTrue();
     assertThat(annotation.closeParenToken()).isNotNull();
     assertThat(annotation.atToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(annotation, 6);
 
-    astNode = p.parse("class T { private void meth() { @NonNullable String str;}}");
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("class T { private void meth() { @NonNullable String str;}}");
     VariableTree variable = (VariableTree) ((MethodTree) tree.members().get(0)).block().body().get(0);
     annotations = variable.modifiers().annotations();
     assertThat(annotations).hasSize(1);
@@ -55,12 +54,13 @@
     assertThat(annotation.atToken()).isNotNull();
     assertThat(annotation.openParenToken()).isNull();
     assertThat(annotation.closeParenToken()).isNull();
+    assertThatChildrenIteratorHasSize(annotation, 2);
 
-    astNode = p.parse("@PackageLevelAnnotation package blammy;");
-    annotations = ((CompilationUnitTree) astNode).packageAnnotations();
+    annotations = ((CompilationUnitTree) p.parse("@PackageLevelAnnotation package blammy;")).packageAnnotations();
     assertThat(annotations).hasSize(1);
     assertThat(annotations.get(0).atToken()).isNotNull();
     assertThat(annotation.openParenToken()).isNull();
     assertThat(annotation.closeParenToken()).isNull();
+    assertThatChildrenIteratorHasSize(annotation, 2);
   }
 

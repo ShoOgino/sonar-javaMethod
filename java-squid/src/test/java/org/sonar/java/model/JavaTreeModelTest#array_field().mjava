@@ -3,13 +3,13 @@
     VariableTree field;
     ArrayTypeTree arrayTypeTree, childArrayTypeTree;
 
-    field = (VariableTree) firstMember("class T { int[] a; }");
+    field = (VariableTree) firstTypeMember("class T { int[] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    field = (VariableTree) firstMember("class T { int[][] a; }");
+    field = (VariableTree) firstTypeMember("class T { int[][] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
@@ -19,19 +19,19 @@
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    field = (VariableTree) firstMember("class T { int @Foo [] a; }");
+    field = (VariableTree) firstTypeMember("class T { int @Foo [] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
 
-    field = (VariableTree) firstMember("class T { int @Foo @bar [] a; }");
+    field = (VariableTree) firstTypeMember("class T { int @Foo @bar [] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 2);
 
-    field = (VariableTree) firstMember("class T { int[] @Foo [] a; }");
+    field = (VariableTree) firstTypeMember("class T { int[] @Foo [] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
@@ -41,7 +41,7 @@
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    field = (VariableTree) firstMember("class T { int[] a[]; }");
+    field = (VariableTree) firstTypeMember("class T { int[] a[]; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
@@ -51,7 +51,7 @@
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    field = (VariableTree) firstMember("class T { int[] a @Foo []; }");
+    field = (VariableTree) firstTypeMember("class T { int[] a @Foo []; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);

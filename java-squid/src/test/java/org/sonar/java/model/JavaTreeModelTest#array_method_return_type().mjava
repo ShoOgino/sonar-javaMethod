@@ -3,25 +3,25 @@
     MethodTree method;
     ArrayTypeTree arrayTypeTree, childArrayTypeTree;
 
-    method = (MethodTree) firstMember("class T { int[] m(); }");
+    method = (MethodTree) firstTypeMember("class T { int[] m(); }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBrackets(arrayTypeTree);
 
-    method = (MethodTree) firstMember("class T { int @Foo [] m(); }");
+    method = (MethodTree) firstTypeMember("class T { int @Foo [] m(); }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
 
-    method = (MethodTree) firstMember("class T { int @Foo @bar [] m(); }");
+    method = (MethodTree) firstTypeMember("class T { int @Foo @bar [] m(); }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 2);
 
-    method = (MethodTree) firstMember("class T { int[] @Foo [] m(); }");
+    method = (MethodTree) firstTypeMember("class T { int[] @Foo [] m(); }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
@@ -31,7 +31,7 @@
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    method = (MethodTree) firstMember("class T { int[] m()[]; }");
+    method = (MethodTree) firstTypeMember("class T { int[] m()[]; }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
@@ -41,7 +41,7 @@
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
-    method = (MethodTree) firstMember("class T { int[] m() @Foo []; }");
+    method = (MethodTree) firstTypeMember("class T { int[] m() @Foo []; }");
     assertThat(method.returnType()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) method.returnType();
     assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);
