@@ -6,7 +6,8 @@
       String identifier = variableTree.simpleName().name();
       VariableTree hiddenVariable = variables.get(identifier);
       if (!flattenExcludedVariables.contains(variableTree) && hiddenVariable != null) {
-        addIssue(variableTree, "Rename \"" + identifier + "\" which hides the field declared at line " + ((JavaTree) hiddenVariable).getLine() + ".");
+        int line = FirstSyntaxTokenFinder.firstSyntaxToken(hiddenVariable).line();
+        addIssue(variableTree, "Rename \"" + identifier + "\" which hides the field declared at line " + line + ".");
         return;
       }
     }
