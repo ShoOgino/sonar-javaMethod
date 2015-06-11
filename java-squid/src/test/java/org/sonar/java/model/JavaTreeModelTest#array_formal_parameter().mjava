@@ -10,6 +10,7 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int... a); }");
     variable = method.parameters().get(0);
@@ -17,6 +18,7 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasEllipsis(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 2);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo ... a); }");
     variable = method.parameters().get(0);
@@ -24,15 +26,18 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasEllipsisAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo ... a[]); }");
     variable = method.parameters().get(0);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasEllipsisAndAnnotations(childArrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.ellipsisToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -42,6 +47,7 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo @bar [] a); }");
     variable = method.parameters().get(0);
@@ -49,15 +55,18 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 2);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 5);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int[] @Foo [] a); }");
     variable = method.parameters().get(0);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -66,9 +75,11 @@
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -78,9 +89,11 @@
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
   }

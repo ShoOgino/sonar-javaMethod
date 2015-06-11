@@ -7,15 +7,18 @@
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
     field = (VariableTree) firstTypeMember("class T { int[][] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     assertThat(arrayTypeTree.type()).isInstanceOf(ArrayTypeTree.class);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -24,20 +27,24 @@
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
 
     field = (VariableTree) firstTypeMember("class T { int @Foo @bar [] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 2);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 5);
 
     field = (VariableTree) firstTypeMember("class T { int[] @Foo [] a; }");
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -45,9 +52,11 @@
     assertThat(field.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 3);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
@@ -56,9 +65,11 @@
     arrayTypeTree = (ArrayTypeTree) field.type();
     assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
+    assertThatChildrenIteratorHasSize(arrayTypeTree, 4);
     childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
     assertThat(childArrayTypeTree).isInstanceOf(ArrayTypeTree.class);
     assertThatArrayTypeHasBrackets(childArrayTypeTree);
+    assertThatChildrenIteratorHasSize(childArrayTypeTree, 3);
     assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
   }
