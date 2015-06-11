@@ -3,9 +3,11 @@
    */
   @Test
   public void array_access_expression() {
-    ArrayAccessExpressionTree tree = (ArrayAccessExpressionTree) p.parse("class T { T() { return a[42]; } }").getFirstDescendant(Kind.ARRAY_ACCESS_EXPRESSION);
+    String code = "class T { T() { return a[42]; } }";
+    ArrayAccessExpressionTree tree = (ArrayAccessExpressionTree) ((ReturnStatementTree) firstMethodFirstStatement(code)).expression();
     assertThat(tree.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.index()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 4);
   }
 
