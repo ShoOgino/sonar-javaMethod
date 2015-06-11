@@ -3,7 +3,7 @@
    */
   @Test
   public void local_variable_declaration() {
-    BlockTree block = (BlockTree) p.parse("class T { void m() { int a = 42, b[]; final @Nullable int c = 42; } }").getFirstDescendant(Kind.BLOCK);
+    BlockTree block = ((MethodTree) firstTypeMember("class T { void m() { int a = 42, b[]; final @Nullable int c = 42; } }")).block();
     List<StatementTree> declarations = block.body();
     assertThat(declarations).hasSize(3);
     // FIXME will be removed when children are removed. Use to verify that endToken are not added multiple times
