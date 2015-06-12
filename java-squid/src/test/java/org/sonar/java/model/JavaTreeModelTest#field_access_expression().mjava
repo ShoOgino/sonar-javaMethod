@@ -11,16 +11,18 @@
     // assertThat(tree.expression()).isNotNull();
     // assertThat(tree.identifier()).isNotNull();
 
-    tree = (MemberSelectExpressionTree) p.parse("class T { int m() { return super.identifier; } }").getFirstDescendant(Kind.MEMBER_SELECT);
+    tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { int m() { return super.identifier; } }");
     assertThat(tree.is(Tree.Kind.MEMBER_SELECT)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.identifier()).isNotNull();
     assertThat(tree.operatorToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 3);
 
-    tree = (MemberSelectExpressionTree) p.parse("class T { int m() { return ClassName.super.identifier; } }").getFirstDescendant(Kind.MEMBER_SELECT);
+    tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { int m() { return ClassName.super.identifier; } }");
     assertThat(tree.is(Tree.Kind.MEMBER_SELECT)).isTrue();
     assertThat(tree.expression()).isNotNull();
     assertThat(tree.identifier()).isNotNull();
     assertThat(tree.operatorToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 3);
   }
 
