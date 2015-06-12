@@ -2,7 +2,7 @@
     List<AstNode> children = Lists.newArrayList();
     children.add(firstIdentifier);
     if (rests.isPresent()) {
-      for (Tuple<AstNode,AstNode> rest : rests.get()) {
+      for (Tuple<AstNode, AstNode> rest : rests.get()) {
         children.add(rest.first());
         children.add(rest.second());
       }
@@ -11,8 +11,10 @@
     JavaTree result = null;
 
     List<AstNode> pendingChildren = Lists.newArrayList();
+    InternalSyntaxToken dotToken = null;
     for (AstNode child : children) {
       if (!child.is(JavaTokenType.IDENTIFIER)) {
+        dotToken = InternalSyntaxToken.create(child);
         pendingChildren.add(child);
       } else {
         InternalSyntaxToken identifierToken = InternalSyntaxToken.create(child);
@@ -26,7 +28,7 @@
           pendingChildren.add(0, result);
           pendingChildren.add(identifier);
 
-          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, identifier,
+          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, dotToken, identifier,
             pendingChildren.toArray(new AstNode[pendingChildren.size()]));
         }
 

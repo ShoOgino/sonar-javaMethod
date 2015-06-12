@@ -1,14 +1,15 @@
   public ExpressionTree newDotClassSelector(Optional<List<Tuple<AstNode, AstNode>>> dimensions, AstNode dotTokenAstNode, AstNode classTokenAstNode) {
     IdentifierTreeImpl identifier = new IdentifierTreeImpl(InternalSyntaxToken.create(classTokenAstNode));
+    InternalSyntaxToken dotToken = InternalSyntaxToken.create(dotTokenAstNode);
 
-    ArrayTypeTreeImpl nestedAnnotations = newArrayTypeTree(dimensions);
+    ArrayTypeTreeImpl nestedDimensions = newArrayTypeTree(dimensions);
     List<AstNode> children = Lists.newArrayList();
-    if (nestedAnnotations != null) {
-      children.add(nestedAnnotations);
+    if (nestedDimensions != null) {
+      children.add(nestedDimensions);
     }
     children.add(dotTokenAstNode);
     children.add(identifier);
 
-    return new MemberSelectExpressionTreeImpl(nestedAnnotations, identifier, children);
+    return new MemberSelectExpressionTreeImpl(nestedDimensions, dotToken, identifier, children);
   }
 
