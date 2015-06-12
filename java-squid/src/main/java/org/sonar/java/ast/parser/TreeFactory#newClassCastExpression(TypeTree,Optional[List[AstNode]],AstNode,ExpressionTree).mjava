@@ -3,6 +3,7 @@
 
     List<AstNode> children = Lists.newArrayList();
     children.add((AstNode) type);
+    // TODO SONARJAVA-1139 bound should be present in castTree
     if (classTypes.isPresent()) {
       for (AstNode classType : classTypes.get()) {
         children.addAll(classType.getChildren());
@@ -11,7 +12,6 @@
     children.add(closeParenToken);
     children.add((AstNode) expression);
 
-    return new TypeCastExpressionTreeImpl(type, expression, closeParenToken,
-      children);
+    return new TypeCastExpressionTreeImpl(type, closeParenToken, expression, children);
   }
 
