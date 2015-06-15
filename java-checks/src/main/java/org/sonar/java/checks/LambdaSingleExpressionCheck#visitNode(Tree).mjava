@@ -1,12 +1,12 @@
   @Override
-  public void visitLambdaExpression(LambdaExpressionTree lambdaExpressionTree) {
+  public void visitNode(Tree tree) {
+    LambdaExpressionTree lambdaExpressionTree = (LambdaExpressionTree) tree;
     if (isBlockWithOneStatement(lambdaExpressionTree.body())) {
       String message = "Remove useless curly braces around statement";
       if (singleStatementIsReturn(lambdaExpressionTree)) {
         message += " and then remove useless return keyword";
       }
-      context.addIssue(lambdaExpressionTree.body(), this, message);
+      addIssue(lambdaExpressionTree.body(), message);
     }
-    super.visitLambdaExpression(lambdaExpressionTree);
   }
 
