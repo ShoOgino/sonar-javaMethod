@@ -3,9 +3,9 @@
     List<AstNode> children = Lists.newArrayList();
 
     if (staticTokenAstNode.isPresent()) {
-      children.add(staticTokenAstNode.get());
-      children.addAll(block.getChildren());
       InternalSyntaxToken staticKeyword = InternalSyntaxToken.create(staticTokenAstNode.get());
+      children.add(staticKeyword);
+      children.addAll(block.getChildren());
       blockTree = new StaticInitializerTreeImpl(staticKeyword, (InternalSyntaxToken) block.openBraceToken(), block.body(), (InternalSyntaxToken) block.closeBraceToken(),
         children.toArray(new AstNode[0]));
     } else {

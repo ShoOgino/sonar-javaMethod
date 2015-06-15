@@ -1,13 +1,13 @@
   public FormalParametersListTreeImpl prependNewFormalParameter(VariableTreeImpl variable, Optional<AstNode> rest) {
     if (rest.isPresent()) {
-      AstNode comma = rest.get().getFirstChild(JavaPunctuator.COMMA);
+      InternalSyntaxToken comma = InternalSyntaxToken.create(rest.get().getFirstChild(JavaPunctuator.COMMA));
       FormalParametersListTreeImpl partial = (FormalParametersListTreeImpl) rest.get().getLastChild();
 
       partial.add(0, variable);
       partial.prependChildren(variable, comma);
 
       // store the comma as endToken for the variable
-      variable.setEndToken(InternalSyntaxToken.create(comma));
+      variable.setEndToken(comma);
 
       return partial;
     } else {

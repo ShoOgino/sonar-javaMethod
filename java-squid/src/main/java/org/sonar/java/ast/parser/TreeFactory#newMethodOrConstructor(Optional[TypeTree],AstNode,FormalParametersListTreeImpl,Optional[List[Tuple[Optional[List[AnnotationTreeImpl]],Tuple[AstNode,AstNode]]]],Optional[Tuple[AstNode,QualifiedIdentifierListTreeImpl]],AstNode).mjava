@@ -14,7 +14,7 @@
       actualType = null;
     }
     BlockTreeImpl block = null;
-    SyntaxToken semicolonToken = null;
+    InternalSyntaxToken semicolonToken = null;
     if (blockOrSemicolon.is(Tree.Kind.BLOCK)) {
       block = (BlockTreeImpl) blockOrSemicolon;
     } else {
@@ -42,7 +42,11 @@
       children.add(throwsClause.get().first());
       children.add(throwsClause.get().second());
     }
-    children.add(blockOrSemicolon);
+    if (block != null) {
+      children.add(block);
+    } else {
+      children.add(semicolonToken);
+    }
 
     result.prependChildren(children);
 

@@ -3,16 +3,17 @@
     TypeTree type,
     VariableDeclaratorListTreeImpl variables,
     AstNode semicolonTokenAstNode) {
+    InternalSyntaxToken semicolonSyntaxToken = InternalSyntaxToken.create(semicolonTokenAstNode);
 
     variables.prependChildren(modifiers, (AstNode) type);
-    variables.addChild(semicolonTokenAstNode);
+    variables.addChild(semicolonSyntaxToken);
 
     for (VariableTreeImpl variable : variables) {
       variable.completeModifiersAndType(modifiers, type);
     }
 
     // store the semicolon as endToken for the last variable
-    variables.get(variables.size() - 1).setEndToken(InternalSyntaxToken.create(semicolonTokenAstNode));
+    variables.get(variables.size() - 1).setEndToken(semicolonSyntaxToken);
 
     return variables;
   }
