@@ -1,0 +1,15 @@
+  public TryStatementTreeImpl completeTryWithResources(InternalSyntaxToken tryToken, InternalSyntaxToken openParenToken, ResourceListTreeImpl resources,
+    InternalSyntaxToken closeParenToken, BlockTreeImpl block, List<CatchTreeImpl> catches) {
+    this.tryToken = tryToken;
+    this.openParenToken = openParenToken;
+    this.resources = getResources(resources);
+    this.closeParenToken = closeParenToken;
+    this.block = block;
+    this.catches = getCatches(catches);
+
+    prependChildren(catches);
+    prependChildren(tryToken, openParenToken, resources, closeParenToken, block);
+
+    return this;
+  }
+

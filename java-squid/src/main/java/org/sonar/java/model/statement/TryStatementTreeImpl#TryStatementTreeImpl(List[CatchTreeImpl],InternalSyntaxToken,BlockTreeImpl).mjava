@@ -1,11 +1,12 @@
-  public TryStatementTreeImpl(List<CatchTreeImpl> catches, @Nullable BlockTreeImpl finallyBlock) {
+  public TryStatementTreeImpl(List<CatchTreeImpl> catches, @Nullable InternalSyntaxToken finallyKeyword, @Nullable BlockTreeImpl finallyBlock) {
     super(Kind.TRY_STATEMENT);
 
     this.openParenToken = null;
     this.resources = ImmutableList.of();
     this.closeParenToken = null;
 
-    this.catches = catches;
+    this.catches = getCatches(catches);
+    this.finallyKeyword = finallyKeyword;
     this.finallyBlock = finallyBlock;
 
     for (CatchTreeImpl catchTree : catches) {
@@ -13,6 +14,7 @@
     }
 
     if (finallyBlock != null) {
+      addChild(finallyKeyword);
       addChild(finallyBlock);
     }
   }
