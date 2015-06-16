@@ -1,0 +1,23 @@
+  public MethodInvocationTreeImpl(ExpressionTree methodSelect, @Nullable TypeArguments typeArguments, ArgumentListTreeImpl arguments) {
+    super(Kind.METHOD_INVOCATION);
+    this.methodSelect = Preconditions.checkNotNull(methodSelect);
+    this.typeArguments = typeArguments;
+    this.openParenToken = arguments.openParenToken();
+    this.arguments = Preconditions.checkNotNull(arguments);
+    this.closeParenToken = arguments.closeParenToken();
+
+    addChild((AstNode) methodSelect);
+    if (typeArguments != null) {
+      addChild((AstNode) typeArguments.openBracketToken());
+      for (Tree typeArgument : typeArguments) {
+        addChild((AstNode) typeArgument);
+      }
+      addChild((AstNode) typeArguments.closeBracketToken());
+    }
+    addChild((AstNode) openParenToken);
+    for (ExpressionTree argument : arguments) {
+      addChild((AstNode) argument);
+    }
+    addChild((AstNode) closeParenToken);
+  }
+
