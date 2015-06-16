@@ -1,0 +1,16 @@
+  private static boolean doesOverrideFinalize(Symbol classSymbol) {
+    if (classSymbol.isTypeSymbol()) {
+      Type superClassType = ((Symbol.TypeSymbol) classSymbol).superClass();
+      while (superClassType != null && !superClassType.is("java.lang.Object")) {
+        Symbol.TypeSymbol currentClass = superClassType.symbol();
+        for (Symbol symbol : currentClass.lookupSymbols(FINALIZE)) {
+          if (isFinalize(symbol)) {
+            return true;
+          }
+        }
+        superClassType = currentClass.superClass();
+      }
+    }
+    return false;
+  }
+

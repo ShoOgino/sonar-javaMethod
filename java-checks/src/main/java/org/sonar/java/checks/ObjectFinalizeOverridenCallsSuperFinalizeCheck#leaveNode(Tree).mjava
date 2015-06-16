@@ -1,11 +1,13 @@
   @Override
   public void leaveNode(Tree tree) {
-    if (tree.is(Kind.METHOD) && isFinalize((MethodTree) tree)) {
+    if (hasSemantic() && tree.is(Kind.METHOD)) {
       MethodTree methodTree = (MethodTree) tree;
-      if (lastStatementTree == null) {
-        addIssue(methodTree.simpleName(), "Add a call to super.finalize() at the end of this Object.finalize() implementation.");
-      } else if (!isLastStatement(methodTree, lastStatementTree)) {
-        addIssue(lastStatementTree, "Move this super.finalize() call to the end of this Object.finalize() implementation.");
+      if (isFinalize(methodTree.symbol()) && doesOverrideFinalize(methodTree.symbol().owner())) {
+        if (lastStatementTree == null) {
+          addIssue(methodTree.simpleName(), "Add a call to super.finalize() at the end of this Object.finalize() implementation.");
+        } else if (!isLastStatement(methodTree, lastStatementTree)) {
+          addIssue(lastStatementTree, "Move this super.finalize() call to the end of this Object.finalize() implementation.");
+        }
       }
     }
   }
