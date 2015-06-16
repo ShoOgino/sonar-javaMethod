@@ -1,11 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/SystemOutOrErrUsageCheck.java"), new VisitorsBridge(new SystemOutOrErrUsageCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(4).withMessage("Replace this usage of System.out or System.err by a logger.")
-        .next().atLine(5)
-        .next().atLine(7)
-        .next().atLine(10)
-    ;
+    JavaCheckVerifier.verify("src/test/files/checks/SystemOutOrErrUsageCheck.java", new SystemOutOrErrUsageCheck());
   }
 
