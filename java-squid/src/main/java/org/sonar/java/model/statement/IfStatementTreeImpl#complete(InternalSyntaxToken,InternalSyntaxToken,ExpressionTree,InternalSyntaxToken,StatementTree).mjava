@@ -1,5 +1,5 @@
   public IfStatementTreeImpl complete(InternalSyntaxToken ifKeyword, InternalSyntaxToken openParenToken, ExpressionTree condition, InternalSyntaxToken closeParenToken,
-    StatementTree thenStatement, AstNode... children) {
+    StatementTree thenStatement) {
     Preconditions.checkState(this.condition == null, "Already completed");
     this.ifKeyword = ifKeyword;
     this.openParenToken = openParenToken;
@@ -7,7 +7,7 @@
     this.closeParenToken = closeParenToken;
     this.thenStatement = Preconditions.checkNotNull(thenStatement);
 
-    prependChildren(children);
+    prependChildren(ifKeyword, openParenToken, (AstNode) condition, closeParenToken, (AstNode) thenStatement);
 
     return this;
   }

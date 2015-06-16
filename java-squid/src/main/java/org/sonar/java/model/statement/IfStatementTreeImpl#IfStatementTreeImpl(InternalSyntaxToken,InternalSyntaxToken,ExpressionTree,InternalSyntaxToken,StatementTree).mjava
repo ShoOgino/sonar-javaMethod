@@ -1,5 +1,5 @@
   public IfStatementTreeImpl(InternalSyntaxToken ifKeyword, InternalSyntaxToken openParenToken, ExpressionTree condition, InternalSyntaxToken closeParenToken,
-    StatementTree thenStatement, AstNode... children) {
+    StatementTree thenStatement) {
 
     super(Kind.IF_STATEMENT);
     this.ifKeyword = ifKeyword;
@@ -10,8 +10,10 @@
     this.elseStatement = null;
     this.elseKeyword = null;
 
-    for (AstNode child : children) {
-      addChild(child);
-    }
+    addChild(ifKeyword);
+    addChild(openParenToken);
+    addChild((AstNode) condition);
+    addChild(closeParenToken);
+    addChild((AstNode) thenStatement);
   }
 
