@@ -8,8 +8,10 @@
       return;
     }
     atLeastOneReference.push(Boolean.FALSE);
+    currentMethod.push(symbol);
     scan(tree.block());
     Boolean oneReference = atLeastOneReference.pop();
+    currentMethod.pop();
     if (symbol.isPrivate() && !symbol.isStatic() && !oneReference) {
       context.addIssue(tree, this, "Make \"" + symbol.name() + "\" a \"static\" method.");
     }

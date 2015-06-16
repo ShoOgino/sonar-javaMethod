@@ -1,7 +1,8 @@
   @Override
   public void visitIdentifier(IdentifierTree tree) {
     super.visitIdentifier(tree);
-    if (!atLeastOneReference.isEmpty() && !atLeastOneReference.peek() && referenceInstance(tree.symbol())) {
+    Symbol symbol = tree.symbol();
+    if (!atLeastOneReference.isEmpty() && !atLeastOneReference.peek() && !currentMethod.peek().equals(symbol)  && referenceInstance(symbol)) {
       atLeastOneReference.pop();
       atLeastOneReference.push(Boolean.TRUE);
     }
