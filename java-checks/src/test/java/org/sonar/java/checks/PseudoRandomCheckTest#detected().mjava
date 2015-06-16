@@ -1,9 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/PseudoRandomCheck.java"), new VisitorsBridge(new PseudoRandomCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(5).withMessage("Use a cryptographically strong random number generator (RNG) like \"java.security.SecureRandom\" in place of this PRNG")
-        .next().atLine(8).withMessage("Use a cryptographically strong random number generator (RNG) like \"java.security.SecureRandom\" in place of this PRNG")
-    .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/PseudoRandomCheck.java", new PseudoRandomCheck());
   }
 
