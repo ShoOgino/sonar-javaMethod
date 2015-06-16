@@ -1,0 +1,31 @@
+    /**
+     * Create default factory .
+     * Create InstancesMapper for specified Locale.
+     * If creation failes, use default mapper and log error message.
+     * @param servletContext Current servlet context. Used to open file.
+     * @return Created default definition factory.
+     * @throws DefinitionsFactoryException If an error occur while creating factory.
+     * @throws FileNotFoundException if factory can't be loaded from filenames.
+     */
+    protected DefinitionsFactory createDefaultFactory(ServletContext servletContext)
+        throws DefinitionsFactoryException, FileNotFoundException {
+
+        XmlDefinitionsSet rootXmlConfig = parseXmlFiles(servletContext, "", null);
+        if (rootXmlConfig == null) {
+            throw new FileNotFoundException();
+        }
+
+        rootXmlConfig.resolveInheritances();
+
+        if (log.isDebugEnabled()) {
+            log.debug(rootXmlConfig);
+        }
+
+        DefinitionsFactory factory = new DefinitionsFactory(rootXmlConfig);
+        if (log.isDebugEnabled()) {
+            log.debug("factory loaded : " + factory);
+        }
+
+        return factory;
+    }
+

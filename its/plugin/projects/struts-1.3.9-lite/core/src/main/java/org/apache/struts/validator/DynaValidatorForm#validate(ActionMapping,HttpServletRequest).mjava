@@ -1,0 +1,34 @@
+    /**
+     * Validate the properties that have been set from this HTTP request, and
+     * return an <code>ActionErrors</code> object that encapsulates any
+     * validation errors that have been found.  If no errors are found, return
+     * <code>null</code> or an <code>ActionErrors</code> object with no
+     * recorded error messages.
+     *
+     * @param mapping The mapping used to select this instance.
+     * @param request The servlet request we are processing.
+     * @return <code>ActionErrors</code> object that encapsulates any
+     *         validation errors.
+     */
+    public ActionErrors validate(ActionMapping mapping,
+        HttpServletRequest request) {
+        this.setPageFromDynaProperty();
+
+        ServletContext application = getServlet().getServletContext();
+        ActionErrors errors = new ActionErrors();
+
+        String validationKey = getValidationKey(mapping, request);
+
+        Validator validator =
+            Resources.initValidator(validationKey, this, application, request,
+                errors, page);
+
+        try {
+            validatorResults = validator.validate();
+        } catch (ValidatorException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return errors;
+    }
+

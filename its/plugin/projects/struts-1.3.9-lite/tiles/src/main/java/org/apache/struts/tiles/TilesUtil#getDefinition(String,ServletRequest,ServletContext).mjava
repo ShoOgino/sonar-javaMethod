@@ -1,0 +1,28 @@
+    /**
+     * Get a definition by its name.
+     * First, retrieve definition factory and then get requested definition.
+     * Throw appropriate exception if definition or definition factory is not found.
+     * @param definitionName Name of requested definition.
+     * @param request Current servelet request.
+     * @param servletContext current servlet context.
+     * @throws FactoryNotFoundException Can't find definition factory.
+     * @throws DefinitionsFactoryException General error in factory while getting definition.
+     * @throws NoSuchDefinitionException No definition found for specified name
+     */
+    public static ComponentDefinition getDefinition(
+        String definitionName,
+        ServletRequest request,
+        ServletContext servletContext)
+        throws FactoryNotFoundException, DefinitionsFactoryException {
+
+        try {
+            return getDefinitionsFactory(request, servletContext).getDefinition(
+                definitionName,
+                (HttpServletRequest) request,
+                servletContext);
+
+        } catch (NullPointerException ex) { // Factory not found in context
+            throw new FactoryNotFoundException("Can't get definitions factory from context.");
+        }
+    }
+

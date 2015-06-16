@@ -1,0 +1,30 @@
+    /**
+     * <p>Return the value of an indexed property with the specified name.
+     * </p>
+     *
+     * @param name  Name of the property whose value is to be retrieved
+     * @param index Index of the value to be retrieved
+     * @return The value of an indexed property with the specified name.
+     * @throws IllegalArgumentException if there is no property of the
+     *                                  specified name
+     * @throws IllegalArgumentException if the specified property exists, but
+     *                                  is not indexed
+     * @throws NullPointerException     if no array or List has been
+     *                                  initialized for this property
+     */
+    public Object get(String name, int index) {
+        Object value = dynaValues.get(name);
+
+        if (value == null) {
+            throw new NullPointerException("No indexed value for '" + name
+                + "[" + index + "]'");
+        } else if (value.getClass().isArray()) {
+            return (Array.get(value, index));
+        } else if (value instanceof List) {
+            return ((List) value).get(index);
+        } else {
+            throw new IllegalArgumentException("Non-indexed property for '"
+                + name + "[" + index + "]'");
+        }
+    }
+

@@ -1,0 +1,44 @@
+    /**
+     * <p>Forms the string containing the parameters passed onto this object
+     * thru calls to addParameter().</p>
+     *
+     * @return a string which can be appended to the URLs.  The return string
+     *         does not include a leading question mark (?).
+     */
+    public String getParameterString() {
+        StringBuffer strParam = new StringBuffer(DEFAULT_BUFFER_SIZE);
+
+        // loop through all parameters
+        Iterator iterator = parameterValues.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            // get the parameter name
+            String paramName = (String) iterator.next();
+
+            // get the value for this parameter
+            Object value = parameterValues.get(paramName);
+
+            if (value instanceof String) {
+                // just one value for this param
+                strParam.append(paramName).append("=").append(value);
+            } else if (value instanceof String[]) {
+                // loop through all values for this param
+                String[] values = (String[]) value;
+
+                for (int i = 0; i < values.length; i++) {
+                    strParam.append(paramName).append("=").append(values[i]);
+
+                    if (i < (values.length - 1)) {
+                        strParam.append("&");
+                    }
+                }
+            }
+
+            if (iterator.hasNext()) {
+                strParam.append("&");
+            }
+        }
+
+        return strParam.toString();
+    }
+

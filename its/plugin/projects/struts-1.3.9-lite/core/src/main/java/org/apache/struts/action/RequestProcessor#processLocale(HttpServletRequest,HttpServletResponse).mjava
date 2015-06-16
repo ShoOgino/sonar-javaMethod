@@ -1,0 +1,35 @@
+    /**
+     * <p>Automatically select a <code>Locale</code> for the current user, if
+     * requested. <strong>NOTE</strong> - configuring Locale selection will
+     * trigger the creation of a new <code>HttpSession</code> if
+     * necessary.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     */
+    protected void processLocale(HttpServletRequest request,
+        HttpServletResponse response) {
+        // Are we configured to select the Locale automatically?
+        if (!moduleConfig.getControllerConfig().getLocale()) {
+            return;
+        }
+
+        // Has a Locale already been selected?
+        HttpSession session = request.getSession();
+
+        if (session.getAttribute(Globals.LOCALE_KEY) != null) {
+            return;
+        }
+
+        // Use the Locale returned by the servlet container (if any)
+        Locale locale = request.getLocale();
+
+        if (locale != null) {
+            if (log.isDebugEnabled()) {
+                log.debug(" Setting user locale '" + locale + "'");
+            }
+
+            session.setAttribute(Globals.LOCALE_KEY, locale);
+        }
+    }
+

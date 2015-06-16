@@ -1,0 +1,29 @@
+    /**
+     * Get or create controller.
+     * Get controller, create it if necessary.
+     * @return controller if controller or controllerType is set, null otherwise.
+     * @throws InstantiationException if an error occur while instanciating Controller :
+     * (classname can't be instanciated, Illegal access with instanciated class,
+     * Error while instanciating class, classname can't be instanciated.
+     */
+    public Controller getOrCreateController() throws InstantiationException {
+
+        if (controllerInstance != null) {
+            return controllerInstance;
+        }
+
+        // Do we define a controller ?
+        if (controller == null && controllerType == null) {
+            return null;
+        }
+
+        // check parameters
+        if (controllerType != null && controller == null) {
+            throw new InstantiationException("Controller name should be defined if controllerType is set");
+        }
+
+        controllerInstance = createController(controller, controllerType);
+
+        return controllerInstance;
+    }
+

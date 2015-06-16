@@ -1,0 +1,23 @@
+    /**
+     * Process the end of this tag. <p> Support for Indexed property since
+     * Struts 1.1
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doEndTag() throws JspException {
+        // Generate an HTML element
+        StringBuffer results = new StringBuffer();
+
+        results.append(getElementOpen());
+        prepareAttribute(results, "name", prepareName());
+        prepareButtonAttributes(results);
+        results.append(prepareEventHandlers());
+        results.append(prepareStyles());
+        prepareOtherAttributes(results);
+        results.append(getElementClose());
+
+        TagUtils.getInstance().write(pageContext, results.toString());
+
+        return (EVAL_PAGE);
+    }
+

@@ -1,0 +1,60 @@
+    /**
+     * <p>Inherit values that have not been overridden from the provided
+     * config object.  Subclasses overriding this method should verify that
+     * the given parameter is of a class that contains a property it is trying
+     * to inherit:</p>
+     *
+     * <pre>
+     * if (config instanceof MyCustomConfig) {
+     *     MyCustomConfig myConfig =
+     *         (MyCustomConfig) config;
+     *
+     *     if (getMyCustomProp() == null) {
+     *         setMyCustomProp(myConfig.getMyCustomProp());
+     *     }
+     * }
+     * </pre>
+     *
+     * <p>If the given <code>config</code> is extending another object, those
+     * extensions should be resolved before it's used as a parameter to this
+     * method.</p>
+     *
+     * @param config The object that this instance will be inheriting its
+     *               values from.
+     * @see #processExtends(ModuleConfig, ActionConfig)
+     */
+    public void inheritFrom(ForwardConfig config)
+        throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        if (configured) {
+            throw new IllegalStateException("Configuration is frozen");
+        }
+
+        // Inherit values that have not been overridden
+        if (getCatalog() == null) {
+            setCatalog(config.getCatalog());
+        }
+
+        if (getCommand() == null) {
+            setCommand(config.getCommand());
+        }
+
+        if (getModule() == null) {
+            setModule(config.getModule());
+        }
+
+        if (getName() == null) {
+            setName(config.getName());
+        }
+
+        if (getPath() == null) {
+            setPath(config.getPath());
+        }
+
+        if (!getRedirect()) {
+            setRedirect(config.getRedirect());
+        }
+
+        inheritProperties(config);
+    }
+

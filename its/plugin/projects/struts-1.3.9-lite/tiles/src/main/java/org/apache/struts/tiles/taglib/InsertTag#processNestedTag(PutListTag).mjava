@@ -1,0 +1,25 @@
+    /**
+     * Process nested &lg;putList&gt; tag.
+     * Method calls by nested &lg;putList&gt; tags.
+     * Nested list is added to sub-component attributes
+     * If role is defined, it is checked immediately.
+     */
+    public void processNestedTag(PutListTag nestedTag) throws JspException {
+        // Check role
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+        String role = nestedTag.getRole();
+        if (role != null && !request.isUserInRole(role)) {
+            // not allowed : skip attribute
+            return;
+        }
+
+        // Check if a name is defined
+        if (nestedTag.getName() == null) {
+            throw new JspException("Error - PutList : attribute name is not defined. It is mandatory as the list is added as attribute of 'insert'.");
+        }
+
+        // now add attribute to enclosing parent (i.e. : this object).
+        putAttribute(nestedTag.getName(), nestedTag.getList());
+    }
+

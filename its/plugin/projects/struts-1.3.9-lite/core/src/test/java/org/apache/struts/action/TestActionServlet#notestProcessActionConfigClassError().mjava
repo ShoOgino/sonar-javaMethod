@@ -1,0 +1,26 @@
+    /**
+     * Make sure the code throws the correct exception when it can't create an
+     * instance of the base config's custom class.
+     */
+    public void notestProcessActionConfigClassError()
+        throws Exception {
+        ActionConfig customBase = new CustomActionConfigArg("/index");
+
+        moduleConfig.addActionConfig(customBase);
+
+        ActionConfig customSub = new ActionMapping();
+
+        customSub.setPath("/sub");
+        customSub.setExtends("/index");
+        moduleConfig.addActionConfig(customSub);
+
+        try {
+            actionServlet.processActionConfigClass(customSub, moduleConfig);
+            fail("Exception should be thrown");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unexpected exception thrown.");
+        }
+    }
+

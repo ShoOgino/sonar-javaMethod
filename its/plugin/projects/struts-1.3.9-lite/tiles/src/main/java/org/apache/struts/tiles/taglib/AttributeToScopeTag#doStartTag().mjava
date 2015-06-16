@@ -1,0 +1,31 @@
+        /**
+          *  Expose  the  requested  property  from  component  context.
+          *
+          *  @exception  JspException  if  a  JSP  exception  has  occurred
+          */
+    public  int  doStartTag()  throws  JspException
+        {
+        if(  id==null  )
+            id=property;
+
+        ComponentContext  compContext  =  (ComponentContext)pageContext.getAttribute(  ComponentConstants.COMPONENT_CONTEXT,  PageContext.REQUEST_SCOPE);
+
+        if(  compContext  ==  null  )
+            throw  new  JspException  (  "Error  -  tag.useProperty  :  component  context  is  not  defined.  Check  tag  syntax"  );
+
+        Object  value  =  compContext.getAttribute(property);
+        if(  value  ==  null  )
+            throw  new  JspException  (  "Error  -  tag.useProperty  :  property  '"+  property  +  "'  not  found  in  context.  Check  tag  syntax"  );
+
+        if(  scopeName  !=  null  )
+            {
+            scope  =  TagUtils.getScope(  scopeName,  PageContext.PAGE_SCOPE  );
+            pageContext.setAttribute(id,  value,  scope);
+            }
+          else
+            pageContext.setAttribute(id,  value);
+
+          //  Continue  processing  this  page
+        return  SKIP_BODY;
+        }
+

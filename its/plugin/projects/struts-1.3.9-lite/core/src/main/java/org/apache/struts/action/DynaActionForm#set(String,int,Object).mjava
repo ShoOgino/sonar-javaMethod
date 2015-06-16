@@ -1,0 +1,36 @@
+    /**
+     * <p>Set the value of an indexed property with the specified name.</p>
+     *
+     * @param name  Name of the property whose value is to be set
+     * @param index Index of the property to be set
+     * @param value Value to which this property is to be set
+     * @throws ConversionException       if the specified value cannot be
+     *                                   converted to the type required for
+     *                                   this property
+     * @throws NullPointerException      if there is no property of the
+     *                                   specified name
+     * @throws IllegalArgumentException  if the specified property exists, but
+     *                                   is not indexed
+     * @throws IndexOutOfBoundsException if the specified index is outside the
+     *                                   range of the underlying property
+     */
+    public void set(String name, int index, Object value) {
+        Object prop = dynaValues.get(name);
+
+        if (prop == null) {
+            throw new NullPointerException("No indexed value for '" + name
+                + "[" + index + "]'");
+        } else if (prop.getClass().isArray()) {
+            Array.set(prop, index, value);
+        } else if (prop instanceof List) {
+            try {
+                ((List) prop).set(index, value);
+            } catch (ClassCastException e) {
+                throw new ConversionException(e.getMessage());
+            }
+        } else {
+            throw new IllegalArgumentException("Non-indexed property for '"
+                + name + "[" + index + "]'");
+        }
+    }
+

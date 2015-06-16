@@ -1,0 +1,27 @@
+    /**
+     * <p> Adds a file parameter to the set of file parameters for this
+     * request and also to the list of all parameters. </p>
+     *
+     * @param item The file item for the parameter to add.
+     */
+    protected void addFileParameter(FileItem item) {
+        FormFile formFile = new CommonsFormFile(item);
+
+        String name = item.getFieldName();
+        if (elementsFile.containsKey(name)) {
+            Object o = elementsFile.get(name);
+            if (o instanceof List) {
+                ((List)o).add(formFile);
+            } else {
+                List list = new ArrayList();
+                list.add((FormFile)o);
+                list.add(formFile);
+                elementsFile.put(name, list);
+                elementsAll.put(name, list);
+            }
+        } else {
+            elementsFile.put(name, formFile);
+            elementsAll.put(name, formFile);
+        }
+    }
+

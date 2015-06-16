@@ -1,0 +1,23 @@
+    /**
+     * Helper method that verifies the supplied specifiers.
+     *
+     * @param forward    The forward specified
+     * @param href       The href specified
+     * @param pageString The pageString specified
+     * @param action     The action specified
+     */
+    private void verifyBadSetOfSpecifiers(String forward, String href,
+        String pageString, String action) {
+        String url = null;
+
+        try {
+            url = tagutils.computeURLWithCharEncoding(pageContext, forward,
+                    href, pageString, action, null, null, null, false, true,
+                    false);
+        } catch (MalformedURLException e) {
+            assertNull("url should be null", url);
+        } catch (UnsupportedOperationException e) {
+            fail("MalformedURLException not thrown");
+        }
+    }
+

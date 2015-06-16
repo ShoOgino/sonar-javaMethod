@@ -1,0 +1,22 @@
+    /**
+    * Create Definition factory.
+    * Convenience method. ServletConfig is wrapped into a Map allowing retrieval
+    * of init parameters. Factory classname is also retrieved, as well as debug level.
+    * Finally, approriate createDefinitionsFactory() is called.
+    * @param servletContext Servlet Context passed to newly created factory.
+    * @param properties Map containing all properties.
+    */
+    public ComponentDefinitionsFactory createFactory(
+        ServletContext servletContext,
+        Map properties)
+        throws DefinitionsFactoryException {
+
+        String classname = (String) properties.get(DEFINITIONS_FACTORY_CLASSNAME);
+
+        if (classname != null) {
+            return createFactoryFromClassname(servletContext, properties, classname);
+        }
+
+        return new I18nFactorySet(servletContext, properties);
+    }
+

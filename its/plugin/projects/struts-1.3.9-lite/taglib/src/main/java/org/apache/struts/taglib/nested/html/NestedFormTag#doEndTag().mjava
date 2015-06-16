@@ -1,0 +1,25 @@
+    /**
+     * This is only overriden to clean up the include reference
+     *
+     * @return int JSP continuation directive.
+     */
+    public int doEndTag() throws JspException {
+        // super result
+        int temp = super.doEndTag();
+
+        // all done. clean up
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        // reset the original nesting values
+        if (originalNesting == null) {
+            NestedPropertyHelper.deleteReference(request);
+        } else {
+            NestedPropertyHelper.setProperty(request, originalNesting);
+            NestedPropertyHelper.setName(request, originalNestingName);
+        }
+
+        // return the super result
+        return temp;
+    }
+

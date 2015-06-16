@@ -1,0 +1,33 @@
+    /**
+     * <p>Process an <code>HttpServletRequest</code> and create the
+     * corresponding <code>HttpServletResponse</code>.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a processing exception occurs
+     */
+    public void process(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
+        // Wrap the request in the case of a multipart request
+        request = processMultipart(request);
+
+        // Create and populate a Context for this request
+        ActionContext context = contextInstance(request, response);
+
+        // Create and execute the command.
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using processing chain for this request");
+            }
+
+            command.execute(context);
+        } catch (Exception e) {
+            // Execute the exception processing chain??
+            throw new ServletException(e);
+        }
+
+        // Release the context.
+        context.release();
+    }
+

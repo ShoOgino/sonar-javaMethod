@@ -1,0 +1,56 @@
+    /**
+     * <p>Validate the properties of the form bean for this request.  If there
+     * are any validation errors, execute the child commands in our chain;
+     * otherwise, proceed normally.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues, if there are
+     *         no validation errors; otherwise <code>true</code>
+     * @throws Exception if thrown by the Action class
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Set form valid until found otherwise
+        actionCtx.setFormValid(Boolean.TRUE);
+
+        // Is there a form bean for this request?
+        ActionForm actionForm = actionCtx.getActionForm();
+
+        if (actionForm == null) {
+            return false;
+        }
+
+        // Is validation disabled on this request?
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+
+        if (!actionConfig.getValidate()) {
+            return false;
+        }
+
+        // Was this request cancelled?
+        if (isCancelled(actionCtx, actionConfig)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(" Cancelled transaction, skipping validation");
+            }
+
+            return false;
+        }
+
+        // Call the validate() method of this form bean
+        ActionErrors errors = validate(actionCtx, actionConfig, actionForm);
+
+        // If there were no errors, proceed normally
+        if ((errors == null) || (errors.isEmpty())) {
+            return false;
+        }
+
+        // Flag the validation failure and proceed
+        /* NOTE: Is there any concern that there might have already
+         * been errors, or that other errors might be coming?
+         */
+        actionCtx.saveErrors(errors);
+        actionCtx.setFormValid(Boolean.FALSE);
+
+        return false;
+    }
+

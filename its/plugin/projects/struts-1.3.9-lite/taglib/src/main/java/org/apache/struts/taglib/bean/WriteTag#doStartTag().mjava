@@ -1,0 +1,37 @@
+    /**
+     * Process the start tag.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Look up the requested bean (if necessary)
+        if (ignore) {
+            if (TagUtils.getInstance().lookup(pageContext, name, scope)
+                == null) {
+                return (SKIP_BODY); // Nothing to output
+            }
+        }
+
+        // Look up the requested property value
+        Object value =
+            TagUtils.getInstance().lookup(pageContext, name, property, scope);
+
+        if (value == null) {
+            return (SKIP_BODY); // Nothing to output
+        }
+
+        // Convert value to the String with some formatting
+        String output = formatValue(value);
+
+        // Print this property value to our output writer, suitably filtered
+        if (filter) {
+            TagUtils.getInstance().write(pageContext,
+                TagUtils.getInstance().filter(output));
+        } else {
+            TagUtils.getInstance().write(pageContext, output);
+        }
+
+        // Continue processing this page
+        return (SKIP_BODY);
+    }
+

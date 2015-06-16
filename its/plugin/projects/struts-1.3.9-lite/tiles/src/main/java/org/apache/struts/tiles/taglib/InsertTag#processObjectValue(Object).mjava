@@ -1,0 +1,22 @@
+    /**
+     * Process an object retrieved as a bean or attribute.
+     * Object can be a typed attribute, a String, or anything else.
+     * If typed attribute, use associated type.
+     * Otherwise, apply toString() on object, and use returned string as a name.
+     * @throws JspException - Throws by underlying nested call to
+     * processDefinitionName()
+     */
+    public TagHandler processObjectValue(Object value) throws JspException {
+        // First, check if value is one of the Typed Attribute
+        if (value instanceof AttributeDefinition) {
+            // We have a type => return appropriate IncludeType
+            return processTypedAttribute((AttributeDefinition) value);
+
+        } else if (value instanceof ComponentDefinition) {
+            return processDefinition((ComponentDefinition) value);
+        }
+
+        // Value must denote a valid String
+        return processAsDefinitionOrURL(value.toString());
+    }
+

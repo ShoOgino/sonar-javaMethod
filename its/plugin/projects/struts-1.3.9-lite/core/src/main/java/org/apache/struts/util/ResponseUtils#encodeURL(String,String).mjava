@@ -1,0 +1,31 @@
+    /**
+     * Use the new URLEncoder.encode() method from Java 1.4 if available, else
+     * use the old deprecated version.  This method uses reflection to find
+     * the appropriate method; if the reflection operations throw exceptions,
+     * this will return the url encoded with the old URLEncoder.encode()
+     * method.
+     *
+     * @param enc The character encoding the urlencode is performed on.
+     * @return String The encoded url.
+     */
+    public static String encodeURL(String url, String enc) {
+        try {
+            if ((enc == null) || (enc.length() == 0)) {
+                enc = "UTF-8";
+            }
+
+            // encode url with new 1.4 method and UTF-8 encoding
+            if (encode != null) {
+                return (String) encode.invoke(null, new Object[] { url, enc });
+            }
+        } catch (IllegalAccessException e) {
+            log.debug("Could not find Java 1.4 encode method.  Using deprecated version.",
+                e);
+        } catch (InvocationTargetException e) {
+            log.debug("Could not find Java 1.4 encode method. Using deprecated version.",
+                e);
+        }
+
+        return URLEncoder.encode(url);
+    }
+

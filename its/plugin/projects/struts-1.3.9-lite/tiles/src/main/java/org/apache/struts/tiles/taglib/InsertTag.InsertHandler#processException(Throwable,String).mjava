@@ -1,0 +1,34 @@
+        /**
+         * Process an exception.
+         * Depending of debug attribute, print full exception trace or only
+         * its message in output page.
+         * @param ex Exception
+         * @param msg An additional message to show in console and to propagate if we can't output exception.
+         * @deprecated This method will be removed in a release after Struts 1.2.
+         */
+        protected void processException(Throwable ex, String msg)
+            throws JspException {
+
+            try {
+                if (msg == null) {
+                    msg = ex.getMessage();
+                }
+
+                if (log.isDebugEnabled()) { // show full trace
+                    log.debug(msg, ex);
+                    pageContext.getOut().println(msg);
+                    ex.printStackTrace(
+                        new PrintWriter(pageContext.getOut(), true));
+                } else { // show only message
+                    pageContext.getOut().println(msg);
+                }
+
+            } catch (IOException ioex) { // problems. Propagate original exception
+                pageContext.setAttribute(
+                    ComponentConstants.EXCEPTION_KEY,
+                    ex,
+                    PageContext.REQUEST_SCOPE);
+                throw new JspException(msg,ioex);
+            }
+        }
+

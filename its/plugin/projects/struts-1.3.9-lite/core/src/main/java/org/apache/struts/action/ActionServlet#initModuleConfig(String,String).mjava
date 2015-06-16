@@ -1,0 +1,40 @@
+    /**
+     * <p>Initialize the module configuration information for the specified
+     * module.</p>
+     *
+     * @param prefix Module prefix for this module
+     * @param paths  Comma-separated list of context-relative resource path(s)
+     *               for this modules's configuration resource(s)
+     * @return The new module configuration instance.
+     * @throws ServletException if initialization cannot be performed
+     * @since Struts 1.1
+     */
+    protected ModuleConfig initModuleConfig(String prefix, String paths)
+        throws ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing module path '" + prefix
+                + "' configuration from '" + paths + "'");
+        }
+
+        // Parse the configuration for this module
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+        ModuleConfig config = factoryObject.createModuleConfig(prefix);
+
+        // Configure the Digester instance we will use
+        Digester digester = initConfigDigester();
+
+        List urls = splitAndResolvePaths(paths);
+        URL url;
+
+        for (Iterator i = urls.iterator(); i.hasNext();) {
+            url = (URL) i.next();
+            digester.push(config);
+            this.parseModuleConfigFile(digester, url);
+        }
+
+        getServletContext().setAttribute(Globals.MODULE_KEY
+            + config.getPrefix(), config);
+
+        return config;
+    }
+

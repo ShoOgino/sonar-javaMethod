@@ -1,0 +1,19 @@
+    /**
+     * Clean up after processing this enumeration.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doEndTag() throws JspException {
+        if (processed && (footer != null) && (footer.length() > 0)) {
+            String footerMessage =
+                TagUtils.getInstance().message(pageContext, bundle, locale,
+                    footer);
+
+            if (footerMessage != null) {
+                TagUtils.getInstance().write(pageContext, footerMessage);
+            }
+        }
+
+        return EVAL_PAGE;
+    }
+

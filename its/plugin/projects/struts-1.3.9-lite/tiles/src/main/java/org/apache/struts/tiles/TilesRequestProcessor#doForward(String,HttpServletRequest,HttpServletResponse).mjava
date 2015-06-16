@@ -1,0 +1,22 @@
+    /**
+     * Do a forward using request dispatcher.
+     * Uri is a valid uri. If response has already been commited, do an include
+     * instead.
+     * @param uri Uri or Definition name to forward.
+     * @param request Current page request.
+     * @param response Current page response.
+     */
+    protected void doForward(
+        String uri,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws IOException, ServletException {
+
+        if (response.isCommitted()) {
+            this.doInclude(uri, request, response);
+
+        } else {
+            super.doForward(uri, request, response);
+        }
+    }
+

@@ -1,0 +1,19 @@
+    /**
+     * Make sure that correct exception is thrown if a base action can't be
+     * found.
+     */
+    public void testProcessExtendsMissingAction()
+        throws Exception {
+        baseConfig.setExtends("/someMissingAction");
+
+        try {
+            baseConfig.processExtends(config);
+            fail(
+                "An exception should be thrown if a super form can't be found.");
+        } catch (NullPointerException e) {
+            // succeed
+        } catch (InstantiationException e) {
+            fail("Unrecognized exception thrown.");
+        }
+    }
+

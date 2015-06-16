@@ -1,0 +1,44 @@
+    /**
+     * <p>Extend the action's configuration as necessary.</p>
+     *
+     * @param actionConfig the configuration to process.
+     * @param moduleConfig the module configuration for this module.
+     * @throws ServletException if initialization cannot be performed.
+     */
+    protected void processActionConfigExtension(ActionConfig actionConfig,
+        ModuleConfig moduleConfig)
+        throws ServletException {
+        try {
+            if (!actionConfig.isExtensionProcessed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing extensions for '"
+                        + actionConfig.getPath() + "'");
+                }
+
+                actionConfig =
+                    processActionConfigClass(actionConfig, moduleConfig);
+
+                actionConfig.processExtends(moduleConfig);
+            }
+
+            // Process forwards extensions.
+            ForwardConfig[] forwards = actionConfig.findForwardConfigs();
+            for (int i = 0; i < forwards.length; i++) {
+                ForwardConfig forward = forwards[i];
+                processForwardExtension(forward, moduleConfig, actionConfig);
+            }
+
+            // Process exception extensions.
+            ExceptionConfig[] exceptions = actionConfig.findExceptionConfigs();
+            for (int i = 0; i < exceptions.length; i++) {
+                ExceptionConfig exception = exceptions[i];
+                processExceptionExtension(exception, moduleConfig,
+                    actionConfig);
+            }
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            handleGeneralExtensionException("Action", actionConfig.getPath(), e);
+        }
+    }
+

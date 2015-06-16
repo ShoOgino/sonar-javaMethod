@@ -1,0 +1,22 @@
+    /**
+     * Process tag attribute and create corresponding tag handler.
+     */
+    public TagHandler createTagHandler() throws JspException {
+        // Check each tag attribute.
+        // page Url attribute must be the last checked  because it can appears concurrently
+        // with others attributes.
+        if (definitionName != null) {
+            return processDefinitionName(definitionName);
+        } else if (attribute != null) {
+            return processAttribute(attribute);
+        } else if (beanName != null) {
+            return processBean(beanName, beanProperty, beanScope);
+        } else if (name != null) {
+            return processName(name);
+        } else if (page != null) {
+            return processUrl(page);
+        } else {
+            throw new JspException("Error - Tag Insert : At least one of the following attribute must be defined : template|page|attribute|definition|name|beanName. Check tag syntax");
+        }
+    }
+

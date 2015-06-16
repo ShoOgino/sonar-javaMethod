@@ -1,0 +1,31 @@
+    /**
+     * Complete the processing of the tag. The nested tags here will restore
+     * all the original value for the tag itself and the nesting context.
+     *
+     * @return int to describe the next step for the JSP processor
+     * @throws JspException for the bad things JSP's do
+     */
+    public int doEndTag() throws JspException {
+        // the super's thing
+        int i = super.doEndTag();
+
+        // request
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        // reset the original tag values
+        super.setName(originalName);
+        super.setProperty(originalProperty);
+
+        // reset the original nesting values
+        if (originalNesting == null) {
+            NestedPropertyHelper.deleteReference(request);
+        } else {
+            NestedPropertyHelper.setProperty(request, originalNesting);
+            NestedPropertyHelper.setName(request, originalNestingName);
+        }
+
+        // job done
+        return i;
+    }
+

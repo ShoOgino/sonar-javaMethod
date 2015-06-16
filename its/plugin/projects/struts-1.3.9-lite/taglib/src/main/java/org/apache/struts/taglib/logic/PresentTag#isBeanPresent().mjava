@@ -1,0 +1,24 @@
+    /**
+     * Returns true if the bean given in the <code>name</code> attribute is
+     * found.
+     *
+     * @since Struts 1.2
+     */
+    protected boolean isBeanPresent() {
+        Object value = null;
+
+        try {
+            if (this.property != null) {
+                value =
+                    TagUtils.getInstance().lookup(pageContext, name,
+                        this.property, scope);
+            } else {
+                value = TagUtils.getInstance().lookup(pageContext, name, scope);
+            }
+        } catch (JspException e) {
+            value = null;
+        }
+
+        return (value != null);
+    }
+

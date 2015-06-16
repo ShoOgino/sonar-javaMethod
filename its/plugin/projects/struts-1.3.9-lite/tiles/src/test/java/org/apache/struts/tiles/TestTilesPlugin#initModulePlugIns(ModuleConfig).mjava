@@ -1,0 +1,31 @@
+    /**
+     * Fake call to init module plugins
+     * @param moduleConfig
+     */
+  public void initModulePlugIns( ModuleConfig moduleConfig)
+  {
+  PlugInConfig plugInConfigs[] = moduleConfig.findPlugInConfigs();
+  PlugIn plugIns[] = new PlugIn[plugInConfigs.length];
+
+  context.setAttribute(Globals.PLUG_INS_KEY + moduleConfig.getPrefix(), plugIns);
+  for (int i = 0; i < plugIns.length; i++) {
+      try {
+          plugIns[i] =
+              (PlugIn) RequestUtils.applicationInstance(plugInConfigs[i].getClassName());
+          BeanUtils.populate(plugIns[i], plugInConfigs[i].getProperties());
+            // Pass the current plugIn config object to the PlugIn.
+            // The property is set only if the plugin declares it.
+            // This plugin config object is needed by Tiles
+          BeanUtils.copyProperty( plugIns[i], "currentPlugInConfigObject", plugInConfigs[i]);
+          plugIns[i].init(actionServlet, moduleConfig);
+      } catch (ServletException e) {
+          // Lets propagate
+          e.printStackTrace();
+          //throw e;
+      } catch (Exception e) {
+          e.printStackTrace();
+          //throw e;
+      }
+  }
+  }
+

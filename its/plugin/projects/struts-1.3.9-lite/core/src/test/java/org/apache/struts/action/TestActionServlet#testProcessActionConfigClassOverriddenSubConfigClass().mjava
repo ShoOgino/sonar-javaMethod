@@ -1,0 +1,21 @@
+    /**
+     * Test the case where the subconfig has already specified its own config
+     * class.  If the code still attempts to create a new instance, an error
+     * will be thrown.
+     */
+    public void testProcessActionConfigClassOverriddenSubConfigClass()
+        throws Exception {
+        moduleConfig.addActionConfig(baseAction);
+
+        ActionConfig customSub = new CustomActionConfigArg("/sub");
+
+        customSub.setExtends("/index");
+        moduleConfig.addActionConfig(customSub);
+
+        try {
+            actionServlet.processActionConfigClass(customSub, moduleConfig);
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
+    }
+

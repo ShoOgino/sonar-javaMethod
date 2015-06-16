@@ -1,0 +1,19 @@
+    /**
+     * Test that initModuleFormBeans throws an exception when a form whose
+     * prop type is null is present.
+     */
+    public void testInitModuleFormBeansNullPropType()
+        throws ServletException {
+        moduleConfig.addFormBeanConfig(baseFormBean);
+        baseFormBean.findFormPropertyConfig("name").setType(null);
+
+        try {
+            actionServlet.initModuleFormBeans(moduleConfig);
+            fail("An exception should've been thrown here.");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unrecognized exception thrown: " + e);
+        }
+    }
+

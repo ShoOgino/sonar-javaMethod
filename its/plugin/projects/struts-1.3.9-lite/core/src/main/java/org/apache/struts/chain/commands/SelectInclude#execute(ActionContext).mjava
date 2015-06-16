@@ -1,0 +1,27 @@
+    /**
+     * <p>Select and cache the include uri for this <code>ActionConfig</code>
+     * if specified.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception on any error
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Acquire configuration objects that we need
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+
+        // Cache an include uri if found
+        String include = actionConfig.getInclude();
+
+        if (include != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Including " + include);
+            }
+
+            actionCtx.setInclude(include);
+        }
+
+        return (false);
+    }
+

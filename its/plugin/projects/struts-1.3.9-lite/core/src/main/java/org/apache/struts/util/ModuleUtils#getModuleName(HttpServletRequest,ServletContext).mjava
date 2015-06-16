@@ -1,0 +1,20 @@
+    /**
+     * Get the module name to which the specified request belong.
+     *
+     * @param request The servlet request we are processing
+     * @param context The ServletContext for this web application
+     * @return The module prefix or ""
+     */
+    public String getModuleName(HttpServletRequest request,
+        ServletContext context) {
+        // Acquire the path used to compute the module
+        String matchPath =
+            (String) request.getAttribute(RequestProcessor.INCLUDE_SERVLET_PATH);
+
+        if (matchPath == null) {
+            matchPath = request.getServletPath();
+        }
+
+        return this.getModuleName(matchPath, context);
+    }
+

@@ -1,0 +1,37 @@
+    /**
+     * Render the end of the hyperlink.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doEndTag() throws JspException {
+        // Generate the opening anchor element
+        StringBuffer results = new StringBuffer("<a");
+
+        // Special case for name anchors
+        prepareAttribute(results, "name", getLinkName());
+
+        // * @since Struts 1.1
+        if ((getLinkName() == null) || (getForward() != null)
+            || (getHref() != null) || (getPage() != null)
+            || (getAction() != null)) {
+            prepareAttribute(results, "href", calculateURL());
+        }
+
+        prepareAttribute(results, "target", getTarget());
+        prepareAttribute(results, "accesskey", getAccesskey());
+        prepareAttribute(results, "tabindex", getTabindex());
+        results.append(prepareStyles());
+        results.append(prepareEventHandlers());
+        prepareOtherAttributes(results);
+        results.append(">");
+
+        // Prepare the textual content and ending element of this hyperlink
+        if (text != null) {
+            results.append(text);
+        }
+        results.append("</a>");
+        TagUtils.getInstance().write(pageContext, results.toString());
+
+        return (EVAL_PAGE);
+    }
+

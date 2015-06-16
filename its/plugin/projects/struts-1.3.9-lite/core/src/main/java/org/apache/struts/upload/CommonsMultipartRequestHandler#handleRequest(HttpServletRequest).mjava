@@ -1,0 +1,66 @@
+    /**
+     * <p> Parses the input stream and partitions the parsed items into a set
+     * of form fields and a set of file items. In the process, the parsed
+     * items are translated from Commons FileUpload <code>FileItem</code>
+     * instances to Struts <code>FormFile</code> instances. </p>
+     *
+     * @param request The multipart request to be processed.
+     * @throws ServletException if an unrecoverable error occurs.
+     */
+    public void handleRequest(HttpServletRequest request)
+        throws ServletException {
+        // Get the app config for the current request.
+        ModuleConfig ac =
+            (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
+
+        // Create and configure a DIskFileUpload instance.
+        DiskFileUpload upload = new DiskFileUpload();
+
+        // The following line is to support an "EncodingFilter"
+        // see http://issues.apache.org/bugzilla/show_bug.cgi?id=23255
+        upload.setHeaderEncoding(request.getCharacterEncoding());
+
+        // Set the maximum size before a FileUploadException will be thrown.
+        upload.setSizeMax(getSizeMax(ac));
+
+        // Set the maximum size that will be stored in memory.
+        upload.setSizeThreshold((int) getSizeThreshold(ac));
+
+        // Set the the location for saving data on disk.
+        upload.setRepositoryPath(getRepositoryPath(ac));
+
+        // Create the hash tables to be populated.
+        elementsText = new Hashtable();
+        elementsFile = new Hashtable();
+        elementsAll = new Hashtable();
+
+        // Parse the request into file items.
+        List items = null;
+
+        try {
+            items = upload.parseRequest(request);
+        } catch (DiskFileUpload.SizeLimitExceededException e) {
+            // Special handling for uploads that are too big.
+            request.setAttribute(MultipartRequestHandler.ATTRIBUTE_MAX_LENGTH_EXCEEDED,
+                Boolean.TRUE);
+
+            return;
+        } catch (FileUploadException e) {
+            log.error("Failed to parse multipart request", e);
+            throw new ServletException(e);
+        }
+
+        // Partition the items into form fields and files.
+        Iterator iter = items.iterator();
+
+        while (iter.hasNext()) {
+            FileItem item = (FileItem) iter.next();
+
+            if (item.isFormField()) {
+                addTextParameter(request, item);
+            } else {
+                addFileParameter(item);
+            }
+        }
+    }
+

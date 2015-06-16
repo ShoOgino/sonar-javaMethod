@@ -1,0 +1,26 @@
+    /**
+     * <p>Traces the hierarchy of this object to check if any of the ancestors
+     * is extending this instance.</p>
+     *
+     * @param moduleConfig The configuration for the module being configured.
+     * @return true if circular inheritance was detected.
+     */
+    protected boolean checkCircularInheritance(ModuleConfig moduleConfig) {
+        String ancestorName = getExtends();
+
+        while (ancestorName != null) {
+            // check if we have the same name as an ancestor
+            if (getName().equals(ancestorName)) {
+                return true;
+            }
+
+            // get our ancestor's ancestor
+            FormBeanConfig ancestor =
+                moduleConfig.findFormBeanConfig(ancestorName);
+
+            ancestorName = ancestor.getExtends();
+        }
+
+        return false;
+    }
+

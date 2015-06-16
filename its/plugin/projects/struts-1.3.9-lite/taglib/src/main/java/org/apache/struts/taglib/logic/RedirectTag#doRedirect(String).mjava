@@ -1,0 +1,20 @@
+    /**
+     * Redirect to the given url converting exceptions to JspException.
+     *
+     * @param url The path to redirect to.
+     * @throws JspException
+     * @since Struts 1.2
+     */
+    protected void doRedirect(String url)
+        throws JspException {
+        HttpServletResponse response =
+            (HttpServletResponse) pageContext.getResponse();
+
+        try {
+            response.sendRedirect(url);
+        } catch (IOException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(e.getMessage());
+        }
+    }
+

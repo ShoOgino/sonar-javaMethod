@@ -1,0 +1,35 @@
+    /**
+     * <p>Extend the exception's configuration as necessary. If actionConfig is
+     * provided, then this method will process the exceptionConfig as part
+     * of that actionConfig.  If actionConfig is null, the exceptionConfig
+     * will be processed as a global forward.</p>
+     *
+     * @param exceptionConfig the configuration to process.
+     * @param moduleConfig    the module configuration for this module.
+     * @param actionConfig  If applicable, the config for the current action.
+     * @throws ServletException if initialization cannot be performed.
+     */
+    protected void processExceptionExtension(ExceptionConfig exceptionConfig,
+        ModuleConfig moduleConfig, ActionConfig actionConfig)
+        throws ServletException {
+        try {
+            if (!exceptionConfig.isExtensionProcessed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing extensions for '"
+                        + exceptionConfig.getType() + "'");
+                }
+
+                exceptionConfig =
+                    processExceptionConfigClass(exceptionConfig, moduleConfig,
+                        actionConfig);
+
+                exceptionConfig.processExtends(moduleConfig, actionConfig);
+            }
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            handleGeneralExtensionException("Exception",
+                exceptionConfig.getType(), e);
+        }
+    }
+

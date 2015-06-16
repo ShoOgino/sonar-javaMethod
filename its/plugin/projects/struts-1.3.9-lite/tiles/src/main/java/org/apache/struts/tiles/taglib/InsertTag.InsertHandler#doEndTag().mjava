@@ -1,0 +1,90 @@
+        /**
+         * Include requested page.
+         */
+        public int doEndTag() throws JspException {
+            // Check role
+            HttpServletRequest request =
+                (HttpServletRequest) pageContext.getRequest();
+
+            if (role != null && !request.isUserInRole(role)) {
+                return EVAL_PAGE;
+            }
+
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("insert page='" + page + "'.");
+                }
+
+                // set new context for included component.
+                pageContext.setAttribute(
+                    ComponentConstants.COMPONENT_CONTEXT,
+                    subCompContext,
+                    PageContext.REQUEST_SCOPE);
+
+                // Call controller if any
+                if (controller != null) {
+                    try {
+                        controller.execute(
+                            subCompContext,
+                            (HttpServletRequest) pageContext.getRequest(),
+                            (HttpServletResponse) pageContext.getResponse(),
+                            pageContext.getServletContext());
+
+                    } catch (Exception e) {
+                        throw new ServletException(e);
+                    }
+
+                }
+
+                // include requested component.
+                if (flush) {
+                    pageContext.getOut().flush();
+                }
+
+                doInclude(page, flush);
+
+            } catch (IOException e) {
+                String msg =
+                    "Can't insert page '" + page + "' : " + e.getMessage();
+                log.error(msg, e);
+                throw new JspException(msg);
+
+            } catch (IllegalArgumentException e) {
+                // Can't resolve page uri, should we ignore it?
+                if (!(page == null && isErrorIgnored)) {
+                    String msg =
+                        "Can't insert page '"
+                            + page
+                            + "'. Check if it exists.\n"
+                            + e.getMessage();
+
+                    log.error(msg, e);
+                    throw new JspException(msg,e);
+                }
+
+            } catch (ServletException e) {
+                Throwable cause = e;
+                if (e.getRootCause() != null) {
+                    cause = e.getRootCause();
+                }
+
+                String msg =
+                    "ServletException in '" + page + "': " + cause.getMessage();
+
+                log.error(msg, e);
+                throw new JspException(msg,e);
+
+            } finally {
+                // restore old context only if currentContext not null
+                // (bug with Silverstream ?; related by Arvindra Sehmi 20010712)
+                if (currentContext != null) {
+                    pageContext.setAttribute(
+                        ComponentConstants.COMPONENT_CONTEXT,
+                        currentContext,
+                        PageContext.REQUEST_SCOPE);
+                }
+            }
+
+            return EVAL_PAGE;
+        }
+

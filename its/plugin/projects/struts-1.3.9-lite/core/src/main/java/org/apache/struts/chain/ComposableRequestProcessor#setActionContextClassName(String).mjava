@@ -1,0 +1,43 @@
+    /**
+     * <p>Make sure that the specified <code>className</code> identfies a
+     * class which can be found and which implements the
+     * <code>ActionContext</code> interface.</p>
+     *
+     * @param className Fully qualified name of
+     * @throws ServletException     If an error occurs during initialization
+     * @throws UnavailableException if class does not implement ActionContext
+     *                              or is not found
+     */
+    private void setActionContextClassName(String className)
+        throws ServletException {
+        if ((className != null) && (className.trim().length() > 0)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(
+                    "setActionContextClassName: requested context class: "
+                    + className);
+            }
+
+            try {
+                Class actionContextClass =
+                    RequestUtils.applicationClass(className);
+
+                if (!ActionContext.class.isAssignableFrom(actionContextClass)) {
+                    throw new UnavailableException("ActionContextClass " + "["
+                        + className + "]"
+                        + " must implement ActionContext interface.");
+                }
+
+                this.setActionContextClass(actionContextClass);
+            } catch (ClassNotFoundException e) {
+                throw new UnavailableException("ActionContextClass "
+                    + className + " not found.");
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("setActionContextClassName: no className specified");
+            }
+
+            this.setActionContextClass(null);
+        }
+    }
+

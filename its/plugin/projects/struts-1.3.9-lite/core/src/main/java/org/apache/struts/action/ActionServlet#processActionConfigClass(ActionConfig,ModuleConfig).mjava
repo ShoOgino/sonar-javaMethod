@@ -1,0 +1,72 @@
+    /**
+     * <p>Checks if the current actionConfig is using the correct class based
+     * on the class of its ancestor ActionConfig.</p>
+     *
+     * @param actionConfig The action config to check.
+     * @param moduleConfig The config for the current module.
+     * @return The config object using the correct class as determined by the
+     *         config's ancestor and its own overridden value.
+     * @throws ServletException if an instance of the action config class
+     *                          cannot be created.
+     */
+    protected ActionConfig processActionConfigClass(ActionConfig actionConfig,
+        ModuleConfig moduleConfig)
+        throws ServletException {
+        String ancestor = actionConfig.getExtends();
+
+        if (ancestor == null) {
+            // Nothing to do, then
+            return actionConfig;
+        }
+
+        // Make sure that this config is of the right class
+        ActionConfig baseConfig = moduleConfig.findActionConfig(ancestor);
+
+        if (baseConfig == null) {
+            throw new UnavailableException("Unable to find "
+                + "action config for '" + ancestor + "' to extend.");
+        }
+
+        // Was our actionConfig's class overridden already?
+        if (actionConfig.getClass().equals(ActionMapping.class)) {
+            // Ensure that our config is using the correct class
+            if (!baseConfig.getClass().equals(actionConfig.getClass())) {
+                // Replace the config with an instance of the correct class
+                ActionConfig newActionConfig = null;
+                String baseConfigClassName = baseConfig.getClass().getName();
+
+                try {
+                    newActionConfig =
+                        (ActionConfig) RequestUtils.applicationInstance(baseConfigClassName);
+
+                    // copy the values
+                    BeanUtils.copyProperties(newActionConfig, actionConfig);
+
+                    // copy the forward and exception configs, too
+                    ForwardConfig[] forwards =
+                        actionConfig.findForwardConfigs();
+
+                    for (int i = 0; i < forwards.length; i++) {
+                        newActionConfig.addForwardConfig(forwards[i]);
+                    }
+
+                    ExceptionConfig[] exceptions =
+                        actionConfig.findExceptionConfigs();
+
+                    for (int i = 0; i < exceptions.length; i++) {
+                        newActionConfig.addExceptionConfig(exceptions[i]);
+                    }
+                } catch (Exception e) {
+                    handleCreationException(baseConfigClassName, e);
+                }
+
+                // replace actionConfig with newActionConfig
+                moduleConfig.removeActionConfig(actionConfig);
+                moduleConfig.addActionConfig(newActionConfig);
+                actionConfig = newActionConfig;
+            }
+        }
+
+        return actionConfig;
+    }
+

@@ -1,0 +1,49 @@
+    /**
+     * Gets the <code>Locale</code> sensitive value based on the key passed
+     * in.
+     *
+     * @param application     the servlet context
+     * @param request         the servlet request
+     * @param defaultMessages The default Message resources
+     * @param locale          The locale
+     * @param va              The Validator Action
+     * @param field           The Validator Field
+     */
+    public static String getMessage(ServletContext application,
+        HttpServletRequest request, MessageResources defaultMessages,
+        Locale locale, ValidatorAction va, Field field) {
+        Msg msg = field.getMessage(va.getName());
+
+        if ((msg != null) && !msg.isResource()) {
+            return msg.getKey();
+        }
+
+        String msgKey = null;
+        String msgBundle = null;
+        MessageResources messages = defaultMessages;
+
+        if (msg == null) {
+            msgKey = va.getMsg();
+        } else {
+            msgKey = msg.getKey();
+            msgBundle = msg.getBundle();
+
+            if (msg.getBundle() != null) {
+                messages =
+                    getMessageResources(application, request, msg.getBundle());
+            }
+        }
+
+        if ((msgKey == null) || (msgKey.length() == 0)) {
+            return "??? " + va.getName() + "." + field.getProperty() + " ???";
+        }
+
+        // Get the arguments
+        Arg[] args = field.getArgs(va.getName());
+        String[] argValues =
+            getArgValues(application, request, messages, locale, args);
+
+        // Return the message
+        return messages.getMessage(locale, msgKey, argValues);
+    }
+

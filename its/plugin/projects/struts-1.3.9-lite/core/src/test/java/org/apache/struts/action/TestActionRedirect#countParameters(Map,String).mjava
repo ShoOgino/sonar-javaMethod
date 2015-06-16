@@ -1,0 +1,29 @@
+    /**
+     * Determine the number of values that are available for a specific
+     * parameter. <p/>
+     *
+     * @param parameters the map of parameters to check into
+     * @param paramName  the key of the value(s) to count
+     * @return the number of values for the specified parameter
+     */
+    static int countParameters(Map parameters, String paramName) {
+        Object value = parameters.get(paramName);
+
+        if (value == null) {
+            return 0;
+        }
+
+        if (value instanceof String) {
+            return 1;
+        } else if (value instanceof String[]) {
+            String[] values = (String[]) value;
+
+            return values.length;
+        } else {
+            // can't recognize the value
+            throw new AssertionFailedError(
+                "Unexpected type found as parameter value for [" + paramName
+                + "]");
+        }
+    }
+

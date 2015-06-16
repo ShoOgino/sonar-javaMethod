@@ -1,0 +1,26 @@
+    /**
+     * <p>Removes any <code>ActionMessages</code> object stored in the session
+     * under <code>Globals.MESSAGE_KEY</code> and <code>Globals.ERROR_KEY</code>
+     * if the messages' <code>isAccessed</code> method returns true.  This
+     * allows messages to be stored in the session, displayed one time, and be
+     * released here.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception on any error
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+
+        // Get session scope
+        Map session = actionCtx.getSessionScope();
+
+        // Remove messages as needed
+        removeAccessedMessages(session, Globals.MESSAGE_KEY);
+
+        // Remove error messages as needed
+        removeAccessedMessages(session, Globals.ERROR_KEY);
+
+        return false;
+    }
+

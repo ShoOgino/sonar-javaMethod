@@ -1,0 +1,74 @@
+    /**
+     * Create a factory for specified key.
+    * If creation failes, return default factory and log an error message.
+    * @param key The key.
+    * @param request Servlet request.
+    * @param servletContext Servlet context.
+    * @return Definition factory for specified key.
+    * @throws DefinitionsFactoryException If an error occur while creating factory.
+     */
+    protected DefinitionsFactory createFactory(
+        Object key,
+        ServletRequest request,
+        ServletContext servletContext)
+        throws DefinitionsFactoryException {
+
+        if (key == null) {
+            return getDefaultFactory();
+        }
+
+        // Build possible postfixes
+        List possiblePostfixes = calculateSuffixes((Locale) key);
+
+        // Search last postix corresponding to a config file to load.
+        // First check if something is loaded for this postfix.
+        // If not, try to load its config.
+        XmlDefinitionsSet lastXmlFile = null;
+        DefinitionsFactory factory = null;
+        String curPostfix = null;
+        int i = 0;
+
+        for (i = possiblePostfixes.size() - 1; i >= 0; i--) {
+            curPostfix = (String) possiblePostfixes.get(i);
+
+            // Already loaded ?
+            factory = (DefinitionsFactory) loaded.get(curPostfix);
+            if (factory != null) { // yes, stop search
+                return factory;
+            }
+
+            // Try to load it. If success, stop search
+            lastXmlFile = parseXmlFiles(servletContext, curPostfix, null);
+            if (lastXmlFile != null) {
+                break;
+            }
+        }
+
+        // Have we found a description file ?
+        // If no, return default one
+        if (lastXmlFile == null) {
+            return getDefaultFactory();
+        }
+
+        // We found something. Need to load base and intermediate files
+        String lastPostfix = curPostfix;
+        XmlDefinitionsSet rootXmlConfig = parseXmlFiles(servletContext, "", null);
+        for (int j = 0; j < i; j++) {
+            curPostfix = (String) possiblePostfixes.get(j);
+            parseXmlFiles(servletContext, curPostfix, rootXmlConfig);
+        }
+
+        rootXmlConfig.extend(lastXmlFile);
+        rootXmlConfig.resolveInheritances();
+
+        factory = new DefinitionsFactory(rootXmlConfig);
+        loaded.put(lastPostfix, factory);
+
+        if (log.isDebugEnabled()) {
+            log.debug("factory loaded : " + factory);
+        }
+
+        // return last available found !
+        return factory;
+    }
+

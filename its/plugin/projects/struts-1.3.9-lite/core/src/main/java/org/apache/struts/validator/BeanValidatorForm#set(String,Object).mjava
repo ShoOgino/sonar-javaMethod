@@ -1,0 +1,27 @@
+    /**
+     * Set the value of a simple property with the specified name.
+     *
+     * @param name  Name of the property whose value is to be set
+     * @param value Value to which this property is to be set
+     */
+    public void set(String name, Object value) {
+        // Set the page number (for validator)
+        if ("page".equals(name)) {
+            if (value == null) {
+                page = 0;
+            } else if (value instanceof Integer) {
+                page = ((Integer) value).intValue();
+            } else {
+                try {
+                    page =
+                        ((Integer) ConvertUtils.convert(value.toString(),
+                            Integer.class)).intValue();
+                } catch (Exception ignore) {
+                    page = 0;
+                }
+            }
+        }
+
+        dynaBean.set(name, value);
+    }
+

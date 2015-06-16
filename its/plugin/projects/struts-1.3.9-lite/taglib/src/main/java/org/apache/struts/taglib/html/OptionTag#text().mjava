@@ -1,0 +1,21 @@
+    /**
+     * Return the text to be displayed to the user for this option (if any).
+     *
+     * @throws JspException if an error occurs
+     */
+    protected String text() throws JspException {
+        String optionText = this.text;
+
+        if ((optionText == null) && (this.key != null)) {
+            optionText =
+                TagUtils.getInstance().message(pageContext, bundle, locale, key);
+        }
+
+        // no body text and no key to lookup so display the value
+        if (optionText == null) {
+            optionText = this.value;
+        }
+
+        return optionText;
+    }
+

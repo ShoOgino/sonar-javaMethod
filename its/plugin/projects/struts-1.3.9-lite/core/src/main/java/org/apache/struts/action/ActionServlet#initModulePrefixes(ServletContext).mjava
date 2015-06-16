@@ -1,0 +1,33 @@
+    /**
+     * <p>Saves a String[] of module prefixes in the ServletContext under
+     * Globals.MODULE_PREFIXES_KEY.  <strong>NOTE</strong> - the "" prefix for
+     * the default module is not included in this list.</p>
+     *
+     * @param context The servlet context.
+     * @since Struts 1.2
+     */
+    protected void initModulePrefixes(ServletContext context) {
+        ArrayList prefixList = new ArrayList();
+
+        Enumeration names = context.getAttributeNames();
+
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+
+            if (!name.startsWith(Globals.MODULE_KEY)) {
+                continue;
+            }
+
+            String prefix = name.substring(Globals.MODULE_KEY.length());
+
+            if (prefix.length() > 0) {
+                prefixList.add(prefix);
+            }
+        }
+
+        String[] prefixes =
+            (String[]) prefixList.toArray(new String[prefixList.size()]);
+
+        context.setAttribute(Globals.MODULE_PREFIXES_KEY, prefixes);
+    }
+

@@ -1,0 +1,39 @@
+    /**
+     * </p> Ad   d a new <code>ActionConfig</code> instance to the set
+     * associated with this module. </p>
+     *
+     * @param config The new configuration instance to be added
+     * @throws IllegalStateException if this module configuration has been
+     *                               frozen
+     */
+    public void addActionConfig(ActionConfig config) {
+        throwIfConfigured();
+        config.setModuleConfig(this);
+
+        String path = config.getPath();
+        if (actionConfigs.containsKey(path)) {
+            log.warn("Overriding ActionConfig of path " + path);
+        }
+
+        String actionId = config.getActionId();
+        if ((actionId != null) && !actionId.equals("")) {
+            if (actionConfigIds.containsKey(actionId)) {
+                if (log.isWarnEnabled()) {
+                    ActionConfig otherConfig = (ActionConfig) actionConfigIds.get(actionId);
+                    StringBuffer msg = new StringBuffer("Overriding actionId[");
+                    msg.append(actionId);
+                    msg.append("] for path[");
+                    msg.append(otherConfig.getPath());
+                    msg.append("] with path[");
+                    msg.append(path);
+                    msg.append("]");
+                    log.warn(msg);
+                }
+            }
+            actionConfigIds.put(actionId, config);
+        }
+
+        actionConfigs.put(path, config);
+        actionConfigList.add(config);
+    }
+

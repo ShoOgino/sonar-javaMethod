@@ -1,0 +1,21 @@
+    /**
+     * This is only overriden as the include reference will need it's index
+     * updated.
+     *
+     * @return int JSP continuation directive.
+     */
+    public int doAfterBody() throws JspException {
+        // store original result
+        int temp = super.doAfterBody();
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        if (temp != SKIP_BODY) {
+            // set the new reference
+            NestedPropertyHelper.setProperty(request, deriveNestedProperty());
+        }
+
+        // return super result
+        return temp;
+    }
+

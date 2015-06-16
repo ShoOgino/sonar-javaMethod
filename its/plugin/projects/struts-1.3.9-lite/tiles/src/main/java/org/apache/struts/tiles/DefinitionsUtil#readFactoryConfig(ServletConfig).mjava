@@ -1,0 +1,30 @@
+    /**
+     * Create FactoryConfig and initialize it from web.xml.
+     *
+     * @param servletConfig ServletConfig for the module with which
+     *  this plug in is associated
+     * @exception DefinitionsFactoryException if this <code>PlugIn</code> cannot
+     *  be successfully initialized
+     */
+    protected static DefinitionsFactoryConfig readFactoryConfig(ServletConfig servletConfig)
+        throws DefinitionsFactoryException {
+
+        // Create tiles definitions config object
+        DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
+
+        // Get init parameters from web.xml files
+        try {
+            DefinitionsUtil.populateDefinitionsFactoryConfig(
+                factoryConfig,
+                servletConfig);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DefinitionsFactoryException(
+                "Can't populate DefinitionsFactoryConfig class from 'web.xml'.",
+                ex);
+        }
+
+        return factoryConfig;
+    }
+

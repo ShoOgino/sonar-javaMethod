@@ -1,0 +1,19 @@
+    /**
+     * <p>Clean up in preparation for a shutdown of this application.</p>
+     */
+    public void destroy() {
+        synchronized (this.actions) {
+            Iterator actions = this.actions.values().iterator();
+
+            while (actions.hasNext()) {
+                Action action = (Action) actions.next();
+
+                action.setServlet(null);
+            }
+
+            this.actions.clear();
+        }
+
+        this.servlet = null;
+    }
+

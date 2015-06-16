@@ -1,0 +1,18 @@
+    /**
+     * <p>Set the no-cache headers for all responses, if requested.
+     * <strong>NOTE</strong> - This header will be overridden automatically if
+     * a <code>RequestDispatcher.forward</code> call is ultimately
+     * invoked.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     */
+    protected void processNoCache(HttpServletRequest request,
+        HttpServletResponse response) {
+        if (moduleConfig.getControllerConfig().getNocache()) {
+            response.setHeader("Pragma", "No-cache");
+            response.setHeader("Cache-Control", "no-cache,no-store,max-age=0");
+            response.setDateHeader("Expires", 1);
+        }
+    }
+

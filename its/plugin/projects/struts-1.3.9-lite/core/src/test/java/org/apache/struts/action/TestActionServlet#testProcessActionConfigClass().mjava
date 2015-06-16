@@ -1,0 +1,29 @@
+    /**
+     * Make sure processActionConfigClass() returns an instance of the correct
+     * class if the base config is using a custom class.
+     */
+    public void testProcessActionConfigClass()
+        throws Exception {
+        CustomActionConfig customBase = new CustomActionConfig("/base");
+
+        moduleConfig.addActionConfig(customBase);
+
+        ActionMapping customSub = new ActionMapping();
+
+        customSub.setPath("/sub");
+        customSub.setExtends("/base");
+        moduleConfig.addActionConfig(customSub);
+
+        ActionConfig result =
+            actionServlet.processActionConfigClass(customSub, moduleConfig);
+
+        assertTrue("Incorrect class of action config",
+            result instanceof CustomActionConfig);
+        assertEquals("Incorrect path", customSub.getPath(), result.getPath());
+        assertEquals("Incorrect extends", customSub.getExtends(),
+            result.getExtends());
+
+        assertSame("Result was not registered in the module config", result,
+            moduleConfig.findActionConfig("/sub"));
+    }
+

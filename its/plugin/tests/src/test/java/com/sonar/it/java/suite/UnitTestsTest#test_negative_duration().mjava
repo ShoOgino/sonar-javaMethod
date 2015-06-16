@@ -1,0 +1,15 @@
+  @Test
+  public void test_negative_duration() {
+
+    MavenBuild build = MavenBuild.create()
+      .setPom(TestUtils.projectPom("test_negative_duration"))
+      .setGoals("sonar:sonar")
+      .setProperty("sonar.junit.reportsPath", new File(TestUtils.projectDir("test_negative_duration"), "surefire-reports").getAbsolutePath());
+    orchestrator.executeBuild(build);
+
+    Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("test:test_negative_duration",
+      "tests", "test_errors", "test_failures", "skipped_tests", "test_execution_time", "test_success_density"));
+    assertThat(project.getMeasure("tests").getIntValue()).isEqualTo(2);
+    assertThat(project.getMeasure("test_execution_time").getIntValue()).isEqualTo(1000);
+  }
+

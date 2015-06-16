@@ -1,0 +1,47 @@
+    /**
+     * <p>Select the mapping used to process the selection path for this
+     * request. If no mapping can be identified, create an error response and
+     * return <code>null</code>.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param path     The portion of the request URI for selecting a mapping
+     * @return The mapping used to process the selection path for this
+     *         request.
+     * @throws IOException if an input/output error occurs
+     */
+    protected ActionMapping processMapping(HttpServletRequest request,
+        HttpServletResponse response, String path)
+        throws IOException {
+        // Is there a mapping for this path?
+        ActionMapping mapping =
+            (ActionMapping) moduleConfig.findActionConfig(path);
+
+        // If a mapping is found, put it in the request and return it
+        if (mapping != null) {
+            request.setAttribute(Globals.MAPPING_KEY, mapping);
+
+            return (mapping);
+        }
+
+        // Locate the mapping for unknown paths (if any)
+        ActionConfig[] configs = moduleConfig.findActionConfigs();
+
+        for (int i = 0; i < configs.length; i++) {
+            if (configs[i].getUnknown()) {
+                mapping = (ActionMapping) configs[i];
+                request.setAttribute(Globals.MAPPING_KEY, mapping);
+
+                return (mapping);
+            }
+        }
+
+        // No mapping can be found to process this request
+        String msg = getInternal().getMessage("processInvalid");
+
+        log.error(msg + " " + path);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
+
+        return null;
+    }
+

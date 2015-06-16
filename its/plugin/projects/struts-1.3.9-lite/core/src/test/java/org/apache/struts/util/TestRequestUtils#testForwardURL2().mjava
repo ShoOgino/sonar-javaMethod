@@ -1,0 +1,51 @@
+    // Second module (default forwardPattern)
+    public void testForwardURL2() {
+        request.setAttribute(Globals.MODULE_KEY, moduleConfig2);
+        request.setPathElements("/myapp", "/2/action.do", null, null);
+
+        ForwardConfig forward = null;
+        String result = null;
+
+        // redirect=false, module=null
+        forward = moduleConfig2.findForwardConfig("moduleForward");
+        assertNotNull("moduleForward found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("moduleForward computed", result);
+        assertEquals("moduleForward value", "/2/module/forward", result);
+
+        // redirect=true, module=null
+        forward = moduleConfig2.findForwardConfig("moduleRedirect");
+        assertNotNull("moduleRedirect found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("moduleRedirect computed", result);
+        assertEquals("moduleRedirect value", "/2/module/redirect", result);
+
+        // redirect=false, module=/context
+        forward = moduleConfig2.findForwardConfig("contextForward");
+        assertNotNull("contextForward found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("contextForward computed", result);
+        assertEquals("contextForward value", "/context/forward", result);
+
+        // redirect=true, module=/context
+        forward = moduleConfig2.findForwardConfig("contextRedirect");
+        assertNotNull("contextRedirect found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("contextRedirect computed", result);
+        assertEquals("contextRedirct value", "/context/redirect", result);
+
+        // noslash, module=null
+        forward = moduleConfig2.findForwardConfig("moduleNoslash");
+        assertNotNull("moduleNoslash found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("moduleNoslash computed", result);
+        assertEquals("moduleNoslash value", "/2/module/noslash", result);
+
+        // noslash, module=/
+        forward = moduleConfig2.findForwardConfig("contextNoslash");
+        assertNotNull("contextNoslash found", forward);
+        result = RequestUtils.forwardURL(request, forward, null);
+        assertNotNull("contextNoslash computed", result);
+        assertEquals("contextNoslash value", "/context/noslash", result);
+    }
+

@@ -1,0 +1,27 @@
+    /**
+     * Add all missing attributes to this context.
+     * Copies all of the mappings from the specified attributes map to this context.
+     * New attribute mappings will be added only if they don't already exist in
+     * this context.
+     * @param defaultAttributes Attributes to add.
+     */
+    public void addMissing(Map defaultAttributes) {
+        if (defaultAttributes == null) {
+            return;
+        }
+
+        if (attributes == null) {
+            attributes = new HashMap(defaultAttributes);
+            return;
+        }
+
+        Set entries = defaultAttributes.entrySet();
+        Iterator iterator = entries.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            if (!attributes.containsKey(entry.getKey())) {
+                attributes.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+

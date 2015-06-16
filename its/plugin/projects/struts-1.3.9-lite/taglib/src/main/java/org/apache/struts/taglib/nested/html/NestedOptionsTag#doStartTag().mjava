@@ -1,0 +1,36 @@
+    /**
+     * Overriding method of the heart of the matter. Gets the relative
+     * property and leaves the rest up to the original tag implementation.
+     * Sweet.
+     *
+     * @return int JSP continuation directive. This is in the hands of the
+     *         super class.
+     */
+    public int doStartTag() throws JspException {
+        // get the original properties
+        originalName = getName();
+        originalProperty = getProperty();
+        originalLabelProperty = getLabelProperty();
+
+        // request
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        // if we have a label property
+        if (originalLabelProperty != null) {
+            // do the label property first
+            if ((getName() == null) || Constants.BEAN_KEY.equals(getName())) {
+                super.setLabelProperty(NestedPropertyHelper.getAdjustedProperty(
+                        request, originalLabelProperty));
+            } else {
+                super.setLabelProperty(originalLabelProperty);
+            }
+        }
+
+        // set the other properties
+        NestedPropertyHelper.setNestedProperties(request, this);
+
+        // let the super do it's thing
+        return super.doStartTag();
+    }
+

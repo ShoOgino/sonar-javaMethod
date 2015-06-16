@@ -1,0 +1,16 @@
+  @Test
+  public void test() {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("java-extension"))
+      .setCleanSonarGoals()
+      .setProperty("sonar.profile", "java-extension");
+    orchestrator.executeBuild(build);
+
+    IssueClient issueClient = orchestrator.getServer().wsClient().issueClient();
+
+    List<Issue> issues = issueClient.find(IssueQuery.create().rules("java-extension:example").componentRoots("com.sonarsource.it.projects:java-extension")).list();
+    //We found issues so the extension rule was properly set.
+    assertThat(issues).hasSize(4);
+    issues = issueClient.find(IssueQuery.create().rules("java-extension:subscriptionexamplecheck").componentRoots("com.sonarsource.it.projects:java-extension")).list();
+    assertThat(issues).hasSize(3);
+  }
+

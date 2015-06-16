@@ -1,0 +1,55 @@
+    /**
+     * <p>Forward or redirect to the specified destination, by the specified
+     * mechanism.  This method uses a <code>ForwardConfig</code> object
+     * instead an <code>ActionForward</code>.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param forward  The ForwardConfig controlling where we go next
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
+     */
+    protected void processForwardConfig(HttpServletRequest request,
+        HttpServletResponse response, ForwardConfig forward)
+        throws IOException, ServletException {
+        if (forward == null) {
+            return;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("processForwardConfig(" + forward + ")");
+        }
+
+        String forwardPath = forward.getPath();
+        String uri;
+
+        // If the forward can be unaliased into an action, then use the path of the action
+        String actionIdPath = RequestUtils.actionIdURL(forward, request, servlet);
+        if (actionIdPath != null) {
+            forwardPath = actionIdPath;
+            ForwardConfig actionIdForward = new ForwardConfig(forward);
+            actionIdForward.setPath(actionIdPath);
+            forward = actionIdForward;
+        }
+
+        // paths not starting with / should be passed through without any
+        // processing (ie. they're absolute)
+        if (forwardPath.startsWith("/")) {
+            // get module relative uri
+            uri = RequestUtils.forwardURL(request, forward, null);
+        } else {
+            uri = forwardPath;
+        }
+
+        if (forward.getRedirect()) {
+            // only prepend context path for relative uri
+            if (uri.startsWith("/")) {
+                uri = request.getContextPath() + uri;
+            }
+
+            response.sendRedirect(response.encodeRedirectURL(uri));
+        } else {
+            doForward(uri, request, response);
+        }
+    }
+

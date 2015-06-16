@@ -1,0 +1,16 @@
+    /**
+     * Process the end tag by including the template.
+     * Simply call the handler doEndTag
+     */
+    public int doEndTag() throws JspException {
+        if (!processEndTag) {
+            releaseInternal();
+            return EVAL_PAGE;
+        }
+
+        int res = tagHandler.doEndTag();
+        // Reset properties used by object, in order to be able to reuse object.
+        releaseInternal();
+        return res;
+    }
+

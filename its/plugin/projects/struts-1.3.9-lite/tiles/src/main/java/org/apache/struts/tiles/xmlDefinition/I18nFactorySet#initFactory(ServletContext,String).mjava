@@ -1,0 +1,27 @@
+    /**
+     * Initialization method.
+     * Init the factory by reading appropriate configuration file.
+     * This method is called exactly once immediately after factory creation in
+     * case of internal creation (by DefinitionUtil).
+     * @param servletContext Servlet Context passed to newly created factory.
+     * @param proposedFilename File names, comma separated, to use as  base file names.
+     * @throws DefinitionsFactoryException An error occur during initialization.
+     */
+    protected void initFactory(
+        ServletContext servletContext,
+        String proposedFilename)
+        throws DefinitionsFactoryException, FileNotFoundException {
+
+        // Init list of filenames
+        StringTokenizer tokenizer = new StringTokenizer(proposedFilename, ",");
+        this.filenames = new ArrayList(tokenizer.countTokens());
+        while (tokenizer.hasMoreTokens()) {
+            this.filenames.add(tokenizer.nextToken().trim());
+        }
+
+        loaded = new HashMap();
+        defaultFactory = createDefaultFactory(servletContext);
+        if (log.isDebugEnabled())
+            log.debug("default factory:" + defaultFactory);
+    }
+

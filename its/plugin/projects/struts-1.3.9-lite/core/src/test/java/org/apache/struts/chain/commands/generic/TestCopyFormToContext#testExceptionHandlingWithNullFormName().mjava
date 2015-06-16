@@ -1,0 +1,23 @@
+    public void testExceptionHandlingWithNullFormName()
+        throws Exception {
+        CopyFormToContext command = new CopyFormToContext();
+        String formName = "bar";
+
+        // skip setting form name to test exception
+        // command.setFormName(formName);
+        command.setScope("session");
+        command.setToKey(POST_EXECUTION_CONTEXT_KEY);
+
+        assertNull(context.get(POST_EXECUTION_CONTEXT_KEY));
+        assertNull(context.getRequestScope().get(formName));
+        assertNull(context.getSessionScope().get(formName));
+
+        try {
+            command.execute(context);
+            fail(
+                "Execution should throw an exception when form name is not set.");
+        } catch (IllegalStateException e) {
+            ; // expected.
+        }
+    }
+

@@ -1,0 +1,35 @@
+    /**
+     * Returns a text message for the specified key, for the specified Locale.
+     * <p>
+     * A null string result will be returned by this method if no relevant
+     * message resource is found.
+     *
+     * @param locale The requested key of the Locale
+     * @param key The message key to look up
+     * @param originalKey The original message key to cache any found message under
+     * @return text message for the specified key and locale
+     */
+    private String findMessage(String localeKey, String key, String originalKey) {
+
+        // Load this Locale's messages if we have not done so yet
+        loadLocale(localeKey);
+
+        // Check if we have this key for the current locale key
+        String messageKey = messageKey(localeKey, key);
+
+        // Add if not found under the original key
+        boolean addIt = !messageKey.equals(originalKey);
+
+        synchronized (messages) {
+            String message = (String) messages.get(messageKey);
+
+            if (message != null) {
+                if (addIt) {
+                    messages.put(originalKey, message);
+                }
+
+            }
+            return (message);
+        }
+    }
+

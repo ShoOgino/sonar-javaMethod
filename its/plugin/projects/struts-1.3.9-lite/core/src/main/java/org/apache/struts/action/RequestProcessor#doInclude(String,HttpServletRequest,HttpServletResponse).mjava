@@ -1,0 +1,27 @@
+    /**
+     * <p>Do an include of specified URI using a <code>RequestDispatcher</code>.
+     * This method is used by all internal method needing to do an
+     * include.</p>
+     *
+     * @param uri      Context-relative URI to include
+     * @param request  Current page request
+     * @param response Current page response
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
+     * @since Struts 1.1
+     */
+    protected void doInclude(String uri, HttpServletRequest request,
+        HttpServletResponse response)
+        throws IOException, ServletException {
+        RequestDispatcher rd = getServletContext().getRequestDispatcher(uri);
+
+        if (rd == null) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                getInternal().getMessage("requestDispatcher", uri));
+
+            return;
+        }
+
+        rd.include(request, response);
+    }
+

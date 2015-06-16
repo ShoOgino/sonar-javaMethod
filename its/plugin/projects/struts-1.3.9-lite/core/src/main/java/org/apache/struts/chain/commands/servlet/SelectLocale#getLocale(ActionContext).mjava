@@ -1,0 +1,28 @@
+    /**
+     * <p>Return the <code>Locale</code> to be used for this request.</p>
+     *
+     * @param context The <code>Context</code> for this request
+     */
+    protected Locale getLocale(ActionContext context) {
+        ServletActionContext saContext = (ServletActionContext) context;
+
+        // Has a Locale already been selected?
+        HttpSession session = saContext.getRequest().getSession();
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+
+        if (locale != null) {
+            return (locale);
+        }
+
+        // Select and cache the Locale to be used
+        locale = saContext.getRequest().getLocale();
+
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+
+        session.setAttribute(Globals.LOCALE_KEY, locale);
+
+        return (locale);
+    }
+

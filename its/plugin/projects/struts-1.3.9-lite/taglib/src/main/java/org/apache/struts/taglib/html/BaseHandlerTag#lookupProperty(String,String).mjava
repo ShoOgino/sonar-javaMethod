@@ -1,0 +1,35 @@
+    /**
+     * Searches all scopes for the bean and calls BeanUtils.getProperty() with
+     * the given arguments and converts any exceptions into JspException.
+     *
+     * @param beanName The name of the object to get the property from.
+     * @param property The name of the property to get.
+     * @return The value of the property.
+     * @throws JspException
+     * @since Struts 1.1
+     */
+    protected String lookupProperty(String beanName, String property)
+        throws JspException {
+        Object bean =
+            TagUtils.getInstance().lookup(this.pageContext, beanName, null);
+
+        if (bean == null) {
+            throw new JspException(messages.getMessage("getter.bean", beanName));
+        }
+
+        try {
+            return BeanUtils.getProperty(bean, property);
+        } catch (IllegalAccessException e) {
+            throw new JspException(messages.getMessage("getter.access",
+                    property, beanName));
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+
+            throw new JspException(messages.getMessage("getter.result",
+                    property, t.toString()));
+        } catch (NoSuchMethodException e) {
+            throw new JspException(messages.getMessage("getter.method",
+                    property, beanName));
+        }
+    }
+

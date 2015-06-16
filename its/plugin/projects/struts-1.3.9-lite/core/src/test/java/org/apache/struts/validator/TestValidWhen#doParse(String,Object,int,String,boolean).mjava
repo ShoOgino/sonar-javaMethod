@@ -1,0 +1,29 @@
+    /**
+     * Parse the expression and check that the expected result (either true or
+     * false) occurs - fail if an exception is thrown opr the wrong result
+     * occurs.
+     *
+     * @param test     Test expression
+     * @param bean     Test Bean
+     * @param index    index value
+     * @param property Bean property
+     * @param expected Expected Result
+     */
+    private void doParse(String test, Object bean, int index, String property,
+        boolean expected) {
+        boolean result = false;
+
+        try {
+            result = doParse(test, bean, index, property);
+        } catch (Exception ex) {
+            log.error("Parsing " + test + " for property '" + property + "'", ex);
+            fail("Parsing " + test + " threw " + ex);
+        }
+
+        if (expected) {
+            assertTrue(test + " didn't return TRUE for " + property, result);
+        } else {
+            assertFalse(test + " didn't return FALSE for " + property, result);
+        }
+    }
+

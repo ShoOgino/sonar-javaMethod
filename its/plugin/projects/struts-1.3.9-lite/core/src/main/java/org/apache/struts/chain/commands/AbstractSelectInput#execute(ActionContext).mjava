@@ -1,0 +1,52 @@
+    /**
+     * <p>Select and cache a <code>ForwardConfig</code> for the input page for
+     * the current request.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception if thrown by the Action class
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Skip processing if the current request is valid
+        Boolean valid = actionCtx.getFormValid();
+
+        if ((valid != null) && valid.booleanValue()) {
+            return (false);
+        }
+
+        // Acquire configuration objects that we need
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+        ModuleConfig moduleConfig = actionConfig.getModuleConfig();
+
+        // Cache an ForwardConfig back to our input page
+        ForwardConfig forwardConfig;
+        String input = actionConfig.getInput();
+
+        if (moduleConfig.getControllerConfig().getInputForward()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Finding ForwardConfig for '" + input + "'");
+            }
+
+            forwardConfig = actionConfig.findForwardConfig(input);
+
+            if (forwardConfig == null) {
+                forwardConfig = moduleConfig.findForwardConfig(input);
+            }
+        } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Delegating to forward() for '" + input + "'");
+            }
+
+            forwardConfig = forward(actionCtx, moduleConfig, input);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Forwarding back to " + forwardConfig);
+        }
+
+        actionCtx.setForwardConfig(forwardConfig);
+
+        return (false);
+    }
+

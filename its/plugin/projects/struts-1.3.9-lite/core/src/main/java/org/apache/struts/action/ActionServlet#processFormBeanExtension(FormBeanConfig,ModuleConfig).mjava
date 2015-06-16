@@ -1,0 +1,30 @@
+    /**
+     * <p>Extend the form bean's configuration as necessary.</p>
+     *
+     * @param beanConfig   the configuration to process.
+     * @param moduleConfig the module configuration for this module.
+     * @throws ServletException if initialization cannot be performed.
+     */
+    protected void processFormBeanExtension(FormBeanConfig beanConfig,
+        ModuleConfig moduleConfig)
+        throws ServletException {
+        try {
+            if (!beanConfig.isExtensionProcessed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing extensions for '"
+                        + beanConfig.getName() + "'");
+                }
+
+                beanConfig =
+                    processFormBeanConfigClass(beanConfig, moduleConfig);
+
+                beanConfig.processExtends(moduleConfig);
+            }
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            handleGeneralExtensionException("FormBeanConfig",
+                beanConfig.getName(), e);
+        }
+    }
+

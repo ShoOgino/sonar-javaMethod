@@ -1,0 +1,35 @@
+    /**
+     * <p>Adds the messages from the given <code>ActionMessages</code> object
+     * to this set of messages. The messages are added in the order they are
+     * returned from the <code>properties</code> method. If a message's
+     * property is already in the current <code>ActionMessages</code> object,
+     * it is added to the end of the list for that property. If a message's
+     * property is not in the current list it is added to the end of the
+     * properties.</p>
+     *
+     * @param actionMessages The <code>ActionMessages</code> object to be
+     *                       added. This parameter can be <code>null</code>.
+     * @since Struts 1.1
+     */
+    public void add(ActionMessages actionMessages) {
+        if (actionMessages == null) {
+            return;
+        }
+
+        // loop over properties
+        Iterator props = actionMessages.properties();
+
+        while (props.hasNext()) {
+            String property = (String) props.next();
+
+            // loop over messages for each property
+            Iterator msgs = actionMessages.get(property);
+
+            while (msgs.hasNext()) {
+                ActionMessage msg = (ActionMessage) msgs.next();
+
+                this.add(property, msg);
+            }
+        }
+    }
+

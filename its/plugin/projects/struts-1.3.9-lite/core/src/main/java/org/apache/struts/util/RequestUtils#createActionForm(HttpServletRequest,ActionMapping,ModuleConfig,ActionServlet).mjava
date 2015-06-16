@@ -1,0 +1,41 @@
+    /**
+     * <p>Create (if necessary) and return an <code>ActionForm</code> instance
+     * appropriate for this request.  If no <code>ActionForm</code> instance
+     * is required, return <code>null</code>.</p>
+     *
+     * @param request      The servlet request we are processing
+     * @param mapping      The action mapping for this request
+     * @param moduleConfig The configuration for this module
+     * @param servlet      The action servlet
+     * @return ActionForm instance associated with this request
+     */
+    public static ActionForm createActionForm(HttpServletRequest request,
+        ActionMapping mapping, ModuleConfig moduleConfig, ActionServlet servlet) {
+        // Is there a form bean associated with this mapping?
+        String attribute = mapping.getAttribute();
+
+        if (attribute == null) {
+            return (null);
+        }
+
+        // Look up the form bean configuration information to use
+        String name = mapping.getName();
+        FormBeanConfig config = moduleConfig.findFormBeanConfig(name);
+
+        if (config == null) {
+            log.warn("No FormBeanConfig found under '" + name + "'");
+
+            return (null);
+        }
+
+        ActionForm instance =
+            lookupActionForm(request, attribute, mapping.getScope());
+
+        // Can we recycle the existing form bean instance (if there is one)?
+        if ((instance != null) && config.canReuse(instance)) {
+            return (instance);
+        }
+
+        return createActionForm(config, servlet);
+    }
+

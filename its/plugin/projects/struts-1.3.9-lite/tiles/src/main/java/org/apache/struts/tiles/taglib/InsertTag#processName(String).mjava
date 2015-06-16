@@ -1,0 +1,24 @@
+    /**
+     * Process name.
+     * Search in following order :
+     * <ul>
+     * <li>Component context -  if found, process it as value.</li>
+     * <li>definitions factory</li>
+     * <li>URL</li>
+     * <li></li>
+     * </ul>
+     *
+     * @return appropriate tag handler.
+     * @throws JspException - Throws by underlying nested call to
+     * processDefinitionName()
+     */
+    public TagHandler processName(String name) throws JspException {
+        Object attrValue = getCurrentContext().getAttribute(name);
+
+        if (attrValue != null) {
+            return processObjectValue(attrValue);
+        }
+
+        return processAsDefinitionOrURL(name);
+    }
+

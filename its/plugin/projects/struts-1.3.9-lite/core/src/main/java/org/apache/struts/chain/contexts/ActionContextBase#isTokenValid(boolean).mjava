@@ -1,0 +1,23 @@
+    public boolean isTokenValid(boolean reset) {
+        // Retrieve the transaction token from this session, and
+        // reset it if requested
+        String saved = (String) this.get(TRANSACTION_TOKEN_KEY);
+
+        if (saved == null) {
+            return false;
+        }
+
+        if (reset) {
+            this.resetToken();
+        }
+
+        // Retrieve the transaction token included in this request
+        String token = (String) this.get(TOKEN_KEY);
+
+        if (token == null) {
+            return false;
+        }
+
+        return saved.equals(token);
+    }
+

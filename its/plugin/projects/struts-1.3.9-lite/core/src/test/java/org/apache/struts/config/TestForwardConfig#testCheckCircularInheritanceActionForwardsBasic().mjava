@@ -1,0 +1,17 @@
+    /**
+     * Test checkCircularInheritance() for circular inheritance between
+     * forwards in an action.
+     */
+    public void testCheckCircularInheritanceActionForwardsBasic() {
+        actionConfig.addForwardConfig(baseConfig);
+        actionConfig.addForwardConfig(subConfig);
+
+        // set base to extend sub
+        baseConfig.setExtends("subConfig");
+
+        boolean result =
+            subConfig.checkCircularInheritance(moduleConfig, actionConfig);
+
+        assertTrue("Circular inheritance not detected.", result);
+    }
+

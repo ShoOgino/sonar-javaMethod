@@ -1,0 +1,33 @@
+    /**
+     * Helper method that will set all the relevant nesting properties for the
+     * provided tag reference depending on the implementation.
+     *
+     * @param request object to pull references from
+     * @param tag     to set the nesting values into
+     */
+    public static void setNestedProperties(HttpServletRequest request,
+        NestedPropertySupport tag) {
+        boolean adjustProperty = true;
+
+        /* if the tag implements NestedNameSupport, set the name for the tag also */
+        if (tag instanceof NestedNameSupport) {
+            NestedNameSupport nameTag = (NestedNameSupport) tag;
+
+            if ((nameTag.getName() == null)
+                || Constants.BEAN_KEY.equals(nameTag.getName())) {
+                nameTag.setName(getCurrentName(request, (NestedNameSupport) tag));
+            } else {
+                adjustProperty = false;
+            }
+        }
+
+        /* get and set the relative property, adjust if required */
+        String property = tag.getProperty();
+
+        if (adjustProperty) {
+            property = getAdjustedProperty(request, property);
+        }
+
+        tag.setProperty(property);
+    }
+

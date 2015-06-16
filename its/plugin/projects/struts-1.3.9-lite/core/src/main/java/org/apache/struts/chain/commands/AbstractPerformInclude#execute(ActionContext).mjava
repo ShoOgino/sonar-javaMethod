@@ -1,0 +1,26 @@
+    /**
+     * <p>Perform an include based on the specified include uri (if any).</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>true</code> so that processing completes
+     * @throws Exception if thrown by the <code>Action</code>
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+
+        // Is there an include to be performed?
+        String include = actionCtx.getInclude();
+
+        if (include == null) {
+            return (false);
+        }
+
+        // Determine the currect uri
+        String uri = includePath(actionCtx, include);
+
+        // Perform the appropriate processing on this include uri
+        perform(actionCtx, uri);
+
+        return (true);
+    }
+

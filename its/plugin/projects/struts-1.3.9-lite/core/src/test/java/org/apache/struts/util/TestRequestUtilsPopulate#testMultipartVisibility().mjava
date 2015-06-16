@@ -1,0 +1,44 @@
+    /**
+     * Ensure that the getMultipartRequestHandler cannot be seen in
+     * a subclass of ActionForm.
+     *
+     * The purpose of this test is to ensure that Bug #38534 is fixed.
+     *
+     */
+    public void testMultipartVisibility() throws Exception {
+
+        String mockMappingName = "mockMapping";
+        String stringValue     = "Test";
+
+        MockFormBean  mockForm = new MockFormBean();
+        ActionMapping mapping  = new ActionMapping();
+        mapping.setName(mockMappingName);
+
+        // Set up the mock HttpServletRequest
+        request.setMethod("POST");
+        request.setContentType("multipart/form-data");
+        request.setAttribute(Globals.MULTIPART_KEY, MockMultipartRequestHandler.class.getName());
+        request.setAttribute(Globals.MAPPING_KEY, mapping);
+
+        request.addParameter("stringProperty", stringValue);
+        request.addParameter("multipartRequestHandler.mapping.name", "Bad");
+
+        // Check the Mapping/ActionForm before
+        assertNull("Multipart Handler already set",    mockForm.getMultipartRequestHandler());
+        assertEquals("Mapping name not set correctly", mockMappingName, mapping.getName());
+
+        // Try to populate
+        try {
+            RequestUtils.populate(mockForm, request);
+        } catch(ServletException se) {
+            // Expected BeanUtils.populate() to throw a NestedNullException
+            // which gets wrapped in RequestUtils in a ServletException
+            assertEquals("Unexpected type of Exception thrown", "BeanUtils.populate", se.getMessage());
+        }
+
+        // Check the Mapping/ActionForm after
+        assertNotNull("Multipart Handler Missing", mockForm.getMultipartRequestHandler());
+        assertEquals("Mapping name has been modified", mockMappingName, mapping.getName());
+
+    }
+

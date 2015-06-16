@@ -1,0 +1,17 @@
+    // set bundle in page scope
+    // message() assumes the bundle will never be in page scope
+    // -- bad key
+    public void donttestMessagePageBadKey() {
+        putBundleInScope(PageContext.PAGE_SCOPE, true);
+
+        String val = null;
+
+        try {
+            val = tagutils.message(pageContext, null, null,
+                    "foo.bar.does.not.exist");
+            fail("val should be null");
+        } catch (JspException e) {
+            assertNull(val);
+        }
+    }
+

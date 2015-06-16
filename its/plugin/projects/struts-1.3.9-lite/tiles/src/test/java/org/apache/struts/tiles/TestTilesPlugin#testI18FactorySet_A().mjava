@@ -1,0 +1,56 @@
+  /**
+   * Test I18nFactorySet.
+   */
+  public void testI18FactorySet_A() {
+
+     Locale locale = null;
+     ComponentDefinition definition = null;
+     org.apache.struts.tiles.xmlDefinition.DefinitionsFactory factory = null;
+
+     Map properties = new HashMap();
+
+     // Set the file name
+     properties.put(I18nFactorySet.DEFINITIONS_CONFIG_PARAMETER_NAME,
+                    "config/I18nFactorySet-A.xml");
+
+     try {
+         CustomI18nFactorySet i18nFactorySet = new CustomI18nFactorySet(context, properties);
+         String defName = "A-DEFAULT";
+
+         // Default Locale
+         locale = new Locale("", "", "");
+         factory = i18nFactorySet.createFactory(locale , request, context);
+         assertNotNull("DefinitionsFactory is nullfor locale='" + print(locale) + "'", factory);
+         definition = factory.getDefinition(defName, request, context);
+         assertNotNull("Definition '" + defName + "' Not Found for locale='" + print(locale) + "'", definition);
+         assertEquals("Definition '" + defName + "' for locale='" + print(locale) + "'", defName, definition.getName());
+
+         // Variant Only
+         locale = new Locale("", "", "XX");
+         factory = i18nFactorySet.createFactory(locale , request, context);
+         assertNotNull("DefinitionsFactory is null for locale='" + print(locale) + "'", factory);
+         definition = factory.getDefinition(defName, request, context);
+         assertNotNull("Definition '" + defName + "' Not Found for locale='" + print(locale) + "'", definition);
+         assertEquals("Definition '" + defName + "' for locale='" + print(locale) + "'", defName, definition.getName());
+
+         // No Language, Country & Variant Locale
+         locale = new Locale("", "US", "XX");
+         factory = i18nFactorySet.createFactory(locale , request, context);
+         assertNotNull("DefinitionsFactory is null for locale='" + print(locale) + "'", factory);
+         definition = factory.getDefinition(defName, request, context);
+         assertNotNull("Definition '" + defName + "' Not Found for locale='" + print(locale) + "'", definition);
+         assertEquals("Definition '" + defName + "' for locale='" + print(locale) + "'", defName, definition.getName());
+
+         // Language & Country
+         locale = new Locale("en", "US");
+         factory = i18nFactorySet.createFactory(locale , request, context);
+         assertNotNull("DefinitionsFactory is null for locale='" + print(locale) + "'", factory);
+         definition = factory.getDefinition(defName, request, context);
+         assertNotNull("Definition '" + defName + "' Not Found for locale='" + print(locale) + "'", definition);
+         assertEquals("Definition '" + defName + "' for locale='" + print(locale) + "'", defName, definition.getName());
+
+     } catch(Exception ex) {
+         fail(ex.toString());
+     }
+  }
+

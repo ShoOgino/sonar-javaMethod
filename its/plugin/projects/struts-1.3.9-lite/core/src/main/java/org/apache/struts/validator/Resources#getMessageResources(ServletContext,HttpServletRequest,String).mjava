@@ -1,0 +1,37 @@
+    /**
+     * Retrieve <code>MessageResources</code> for the module and bundle.
+     *
+     * @param application the servlet context
+     * @param request     the servlet request
+     * @param bundle      the bundle key
+     */
+    public static MessageResources getMessageResources(
+        ServletContext application, HttpServletRequest request, String bundle) {
+        if (bundle == null) {
+            bundle = Globals.MESSAGES_KEY;
+        }
+
+        MessageResources resources =
+            (MessageResources) request.getAttribute(bundle);
+
+        if (resources == null) {
+            ModuleConfig moduleConfig =
+                ModuleUtils.getInstance().getModuleConfig(request, application);
+
+            resources =
+                (MessageResources) application.getAttribute(bundle
+                    + moduleConfig.getPrefix());
+        }
+
+        if (resources == null) {
+            resources = (MessageResources) application.getAttribute(bundle);
+        }
+
+        if (resources == null) {
+            throw new NullPointerException(
+                "No message resources found for bundle: " + bundle);
+        }
+
+        return resources;
+    }
+

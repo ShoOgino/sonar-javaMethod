@@ -1,0 +1,32 @@
+    /**
+     * Do an include using PageContext.include().
+     *
+     * This method is used by the Tiles package when an include is required.
+     * The Tiles package can use indifferently any form of this method.
+     * @param uri Uri or Definition name to forward.
+     * @param pageContext Current page context.
+     * @param flush If the writer should be flushed before the include
+     */
+    public void doInclude(String uri, PageContext pageContext, boolean flush)
+        throws IOException, ServletException {
+        try {
+            // perform include with new JSP 2.0 method that supports flushing
+            if (include != null) {
+                include.invoke(pageContext, new Object[]{uri, Boolean.valueOf(flush)});
+                return;
+            }
+        } catch (IllegalAccessException e) {
+            log.debug("Could not find JSP 2.0 include method.  Using old one.", e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof ServletException){
+               throw ((ServletException)e.getCause());
+            } else if (e.getCause() instanceof IOException){
+               throw ((IOException)e.getCause());
+            } else {
+               throw new ServletException(e);
+            }
+        }
+
+        pageContext.include(uri);
+    }
+

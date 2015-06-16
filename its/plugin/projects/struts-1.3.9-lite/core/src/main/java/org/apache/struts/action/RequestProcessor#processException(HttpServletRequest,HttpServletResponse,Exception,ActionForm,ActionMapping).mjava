@@ -1,0 +1,48 @@
+    /**
+     * <p>Ask our exception handler to handle the exception. Return the
+     * <code>ActionForward</code> instance (if any) returned by the called
+     * <code>ExceptionHandler</code>.</p>
+     *
+     * @param request   The servlet request we are processing
+     * @param response  The servlet response we are processing
+     * @param exception The exception being handled
+     * @param form      The ActionForm we are processing
+     * @param mapping   The ActionMapping we are using
+     * @return The <code>ActionForward</code> instance (if any) returned by
+     *         the called <code>ExceptionHandler</code>.
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
+     */
+    protected ActionForward processException(HttpServletRequest request,
+        HttpServletResponse response, Exception exception, ActionForm form,
+        ActionMapping mapping)
+        throws IOException, ServletException {
+        // Is there a defined handler for this exception?
+        ExceptionConfig config = mapping.findException(exception.getClass());
+
+        if (config == null) {
+            log.warn(getInternal().getMessage("unhandledException",
+                    exception.getClass()));
+
+            if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else if (exception instanceof ServletException) {
+                throw (ServletException) exception;
+            } else {
+                throw new ServletException(exception);
+            }
+        }
+
+        // Use the configured exception handling
+        try {
+            ExceptionHandler handler =
+                (ExceptionHandler) RequestUtils.applicationInstance(config
+                    .getHandler());
+
+            return (handler.execute(exception, config, mapping, form, request,
+                response));
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+

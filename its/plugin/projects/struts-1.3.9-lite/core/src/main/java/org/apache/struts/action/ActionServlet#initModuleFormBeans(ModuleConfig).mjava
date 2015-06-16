@@ -1,0 +1,52 @@
+    /**
+     * <p>Initialize the form beans for the specified module.</p>
+     *
+     * @param config ModuleConfig information for this module
+     * @throws ServletException if initialization cannot be performed
+     * @since Struts 1.3
+     */
+    protected void initModuleFormBeans(ModuleConfig config)
+        throws ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing module path '" + config.getPrefix()
+                + "' form beans");
+        }
+
+        // Process form bean extensions.
+        FormBeanConfig[] formBeans = config.findFormBeanConfigs();
+
+        for (int i = 0; i < formBeans.length; i++) {
+            FormBeanConfig beanConfig = formBeans[i];
+
+            processFormBeanExtension(beanConfig, config);
+        }
+
+        for (int i = 0; i < formBeans.length; i++) {
+            FormBeanConfig formBean = formBeans[i];
+
+            // Verify that required fields are all present for the form config
+            if (formBean.getType() == null) {
+                handleValueRequiredException("type", formBean.getName(),
+                    "form bean");
+            }
+
+            // ... and the property configs
+            FormPropertyConfig[] fpcs = formBean.findFormPropertyConfigs();
+
+            for (int j = 0; j < fpcs.length; j++) {
+                FormPropertyConfig property = fpcs[j];
+
+                if (property.getType() == null) {
+                    handleValueRequiredException("type", property.getName(),
+                        "form property");
+                }
+            }
+
+            // Force creation and registration of DynaActionFormClass instances
+            // for all dynamic form beans
+            if (formBean.getDynamic()) {
+                formBean.getDynaActionFormClass();
+            }
+        }
+    }
+

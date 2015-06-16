@@ -1,0 +1,39 @@
+    /**
+     * Look up the ActionForward associated with the specified name, and
+     * perform a forward or redirect to that path as indicated.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doEndTag() throws JspException {
+        // Look up the desired ActionForward entry
+        ActionForward forward = null;
+        ModuleConfig config =
+            TagUtils.getInstance().getModuleConfig(pageContext);
+
+        if (config != null) {
+            forward = (ActionForward) config.findForwardConfig(name);
+        }
+
+        if (forward == null) {
+            JspException e =
+                new JspException(messages.getMessage("forward.lookup", name));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Forward or redirect to the corresponding actual path
+        String path = forward.getPath();
+
+        path = config.getPrefix() + path;
+
+        if (forward.getRedirect()) {
+            this.doRedirect(path);
+        } else {
+            this.doForward(path);
+        }
+
+        // Skip the remainder of this page
+        return (SKIP_PAGE);
+    }
+

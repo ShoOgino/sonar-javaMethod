@@ -1,0 +1,44 @@
+    /**
+     * Compute  real value from attributes setting.
+     */
+    protected Object computeRealValue() {
+        Object realValue = value;
+        // Is there a type set ?
+        // First check direct attribute, and translate it to a valueType.
+        // Then, evaluate valueType, and create requested typed attribute.
+        if (direct != null) {
+            this.valueType =
+                Boolean.valueOf(direct).booleanValue() ? "string" : "path";
+        }
+
+        if (value != null && valueType != null) {
+            String strValue = value.toString();
+
+            if (valueType.equalsIgnoreCase("string")) {
+                realValue = new DirectStringAttribute(strValue);
+
+            } else if (valueType.equalsIgnoreCase("page")) {
+                realValue = new PathAttribute(strValue);
+
+            } else if (valueType.equalsIgnoreCase("template")) {
+                realValue = new PathAttribute(strValue);
+
+            } else if (valueType.equalsIgnoreCase("instance")) {
+                realValue = new DefinitionNameAttribute(strValue);
+            }
+
+            // Set realValue's role value if needed
+            if (role != null) {
+                ((UntypedAttribute) realValue).setRole(role);
+            }
+        }
+
+        // Create attribute wrapper to hold role if role is set and no type
+        // specified
+        if (role != null && value != null && valueType == null) {
+            realValue = new UntypedAttribute(value.toString(), role);
+        }
+
+        return realValue;
+    }
+

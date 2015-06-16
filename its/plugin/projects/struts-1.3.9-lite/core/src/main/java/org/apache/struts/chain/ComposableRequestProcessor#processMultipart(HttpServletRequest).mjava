@@ -1,0 +1,22 @@
+    /**
+     * <p>If this is a multipart request, wrap it with a special wrapper.
+     * Otherwise, return the request unchanged.</p>
+     *
+     * @param request The HttpServletRequest we are processing
+     * @return Original or wrapped request as appropriate
+     */
+    protected HttpServletRequest processMultipart(HttpServletRequest request) {
+        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+            return (request);
+        }
+
+        String contentType = request.getContentType();
+
+        if ((contentType != null)
+            && contentType.startsWith("multipart/form-data")) {
+            return (new MultipartRequestWrapper(request));
+        } else {
+            return (request);
+        }
+    }
+

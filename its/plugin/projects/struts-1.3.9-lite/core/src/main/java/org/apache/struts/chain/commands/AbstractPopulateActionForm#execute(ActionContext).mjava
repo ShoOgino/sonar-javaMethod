@@ -1,0 +1,28 @@
+    /**
+     * <p>Populate the form bean (if any) for this request.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception On an unexpected error
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Is there a form bean for this request?
+        ActionForm actionForm = actionCtx.getActionForm();
+
+        if (actionForm == null) {
+            return (false);
+        }
+
+        // Reset the form bean property values
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+
+        reset(actionCtx, actionConfig, actionForm);
+
+        populate(actionCtx, actionConfig, actionForm);
+
+        handleCancel(actionCtx, actionConfig, actionForm);
+
+        return (false);
+    }
+

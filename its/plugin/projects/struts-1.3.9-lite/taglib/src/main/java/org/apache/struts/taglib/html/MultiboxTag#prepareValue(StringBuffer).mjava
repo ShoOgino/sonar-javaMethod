@@ -1,0 +1,23 @@
+    /**
+     * Render the value element
+     *
+     * @param results The StringBuffer that output will be appended to.
+     */
+    protected String prepareValue(StringBuffer results)
+        throws JspException {
+        String value = (this.value == null) ? this.constant : this.value;
+
+        if (value == null) {
+            JspException e =
+                new JspException(messages.getMessage("multiboxTag.value"));
+
+            pageContext.setAttribute(Globals.EXCEPTION_KEY, e,
+                PageContext.REQUEST_SCOPE);
+            throw e;
+        }
+
+        prepareAttribute(results, "value", TagUtils.getInstance().filter(value));
+
+        return value;
+    }
+

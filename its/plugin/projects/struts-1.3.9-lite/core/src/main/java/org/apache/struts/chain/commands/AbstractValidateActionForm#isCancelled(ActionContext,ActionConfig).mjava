@@ -1,0 +1,29 @@
+    /**
+     * <p>Helper method to verify the Cancel state.</p>
+     *
+     * <p>If the state is invalid, Cancel is unset and an
+     * InvalidCancelException is thrown.</p>
+     *
+     * @param actionCtx    Our ActionContext
+     * @param actionConfig Our ActionConfig
+     * @return true if cancel is set, false otherwise.
+     * @throws InvalidCancelException
+     */
+    private boolean isCancelled(ActionContext actionCtx,
+        ActionConfig actionConfig)
+        throws InvalidCancelException {
+        Boolean cancel = actionCtx.getCancelled();
+        boolean cancelled = ((cancel != null) && cancel.booleanValue());
+        boolean cancellable = actionConfig.getCancellable();
+
+        boolean invalidState = (cancelled && !cancellable);
+
+        if (invalidState) {
+            actionCtx.setCancelled(Boolean.FALSE);
+            actionCtx.setFormValid(Boolean.FALSE);
+            throw new InvalidCancelException();
+        }
+
+        return cancelled;
+    }
+

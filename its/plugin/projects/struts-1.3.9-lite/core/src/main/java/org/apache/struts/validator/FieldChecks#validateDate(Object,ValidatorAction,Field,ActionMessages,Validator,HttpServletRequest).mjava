@@ -1,0 +1,71 @@
+    /**
+     * Checks if the field is a valid date. If the field has a datePattern
+     * variable, that will be used to format <code>java.text.SimpleDateFormat</code>.
+     * If the field has a datePatternStrict variable, that will be used to
+     * format <code>java.text.SimpleDateFormat</code> and the length will be
+     * checked so '2/12/1999' will not pass validation with the format
+     * 'MM/dd/yyyy' because the month isn't two digits. If no datePattern
+     * variable is specified, then the field gets the DateFormat.SHORT format
+     * for the locale. The setLenient method is set to <code>false</code> for
+     * all variations.
+     *
+     * @param bean      The bean validation is being performed on.
+     * @param va        The <code>ValidatorAction</code> that is currently
+     *                  being performed.
+     * @param field     The <code>Field</code> object associated with the
+     *                  current field being validated.
+     * @param errors    The <code>ActionMessages</code> object to add errors
+     *                  to if any validation errors occur.
+     * @param validator The <code>Validator</code> instance, used to access
+     *                  other field values.
+     * @param request   Current request object.
+     * @return true if valid, false otherwise.
+     */
+    public static Object validateDate(Object bean, ValidatorAction va,
+        Field field, ActionMessages errors, Validator validator,
+        HttpServletRequest request) {
+        Object result = null;
+        String value = null;
+
+        value = evaluateBean(bean, field);
+
+        boolean isStrict = false;
+        String datePattern =
+            Resources.getVarValue("datePattern", field, validator, request,
+                false);
+
+        if (GenericValidator.isBlankOrNull(datePattern)) {
+            datePattern =
+                Resources.getVarValue("datePatternStrict", field, validator,
+                    request, false);
+
+            if (!GenericValidator.isBlankOrNull(datePattern)) {
+                isStrict = true;
+            }
+        }
+
+        Locale locale = RequestUtils.getUserLocale(request, null);
+
+        if (GenericValidator.isBlankOrNull(value)) {
+            return Boolean.TRUE;
+        }
+
+        try {
+            if (GenericValidator.isBlankOrNull(datePattern)) {
+                result = GenericTypeValidator.formatDate(value, locale);
+            } else {
+                result =
+                    GenericTypeValidator.formatDate(value, datePattern, isStrict);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        if (result == null) {
+            errors.add(field.getKey(),
+                Resources.getActionMessage(validator, request, va, field));
+        }
+
+        return (result == null) ? Boolean.FALSE : result;
+    }
+

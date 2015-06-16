@@ -1,0 +1,35 @@
+  /**
+   * Get a factory by its key.
+   * If key is <code>null</code>, return defaultFactory.
+   * Search in loaded factories. If not found, create factory and store return value in
+   * loaded factories.
+   * @param key Key of requested definition.
+   * @param request Current servlet request.
+   * @param servletContext Current servlet context.
+   * @throws DefinitionsFactoryException If an error occur while creating factory.
+   */
+  protected DefinitionsFactory getFactory(Object key, ServletRequest request, ServletContext servletContext)
+    throws DefinitionsFactoryException
+  {
+  if(key == null )
+    return getDefaultFactory();
+
+  Object factory = factories.get( key );
+  if( factory == null )
+    {
+      // synchronize creation to avoid double creation by separate threads.
+      // Also, check if factory hasn't been created while waiting for synchronized
+      // section.
+    synchronized(factories)
+      {
+      factory = factories.get( key );
+      if( factory == null )
+        {
+        factory = createFactory( key, request, servletContext);
+        factories.put( key, factory );
+        } // end if
+      } // end synchronized
+    } // end if
+  return (DefinitionsFactory)factory;
+  }
+

@@ -1,0 +1,26 @@
+    /**
+     * Overriding to allow the chance to set the details of the system, so
+     * that dynamic includes can be possible
+     *
+     * @return int JSP continuation directive.
+     */
+    public int doStartTag() throws JspException {
+        // store original result
+        int temp = super.doStartTag();
+
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        // original nesting details
+        originalNesting = NestedPropertyHelper.getCurrentProperty(request);
+        originalNestingName =
+            NestedPropertyHelper.getCurrentName(request, this);
+
+        // some new details
+        NestedPropertyHelper.setProperty(request, null);
+        NestedPropertyHelper.setName(request, super.getBeanName());
+
+        // continue
+        return temp;
+    }
+

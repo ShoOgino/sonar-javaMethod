@@ -1,0 +1,30 @@
+    /**
+     * <p>Process the Exception for any Command that is a filter.</p>
+     *
+     * @param context   Our ActionContext
+     * @param exception The Exception thrown by another Comamnd in a Chain
+     * @return TRUE if there is a Filter to process
+     */
+    public boolean postprocess(Context context, Exception exception) {
+        Command command = getCommand(context);
+
+        if ((command != null) && (command instanceof Filter)) {
+            try {
+                return ((Filter) command).postprocess(getContext(context),
+                    exception);
+            } catch (NoSuchMethodException ex) {
+                LOG.error("Error wrapping context in postprocess", ex);
+            } catch (IllegalAccessException ex) {
+                LOG.error("Error wrapping context in postprocess", ex);
+            } catch (InvocationTargetException ex) {
+                LOG.error("Error wrapping context in postprocess", ex);
+            } catch (InstantiationException ex) {
+                LOG.error("Error wrapping context in postprocess", ex);
+            } catch (ClassNotFoundException ex) {
+                LOG.error("Error wrapping context in postprocess", ex);
+            }
+        }
+
+        return false;
+    }
+

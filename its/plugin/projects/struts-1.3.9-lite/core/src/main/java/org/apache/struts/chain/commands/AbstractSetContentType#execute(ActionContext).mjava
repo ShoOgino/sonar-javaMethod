@@ -1,0 +1,24 @@
+    /**
+     * <p>Check to see if the content type is set, and if so, set it for this
+     * response.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception if thrown by the Action class
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Retrieve the ModuleConfig instance
+        ModuleConfig moduleConfig = actionCtx.getModuleConfig();
+
+        // If the content type is configured, set it for the response
+        String contentType =
+            moduleConfig.getControllerConfig().getContentType();
+
+        if (contentType != null) {
+            setContentType(actionCtx, contentType);
+        }
+
+        return (false);
+    }
+

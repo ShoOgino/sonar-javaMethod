@@ -1,0 +1,21 @@
+    // set bundle in session scope
+    // -- bad key
+    //
+    // This represents a use case where the user specifically set the bundle
+    //  in session under Globals.MESSAGES_KEY.
+    // Perhaps we should check session, and throw/log a rather explicit message
+    // for why this is a bad idea, instead of ignoring or returning null.
+    public void testMessageSessionBadKey() {
+        putBundleInScope(PageContext.SESSION_SCOPE, true);
+
+        String val = null;
+
+        try {
+            val = tagutils.message(pageContext, null, null,
+                    "foo.bar.does.not.exist");
+            fail("MessageResources should never be put in session scope.");
+        } catch (JspException e) {
+            assertNull(val);
+        }
+    }
+

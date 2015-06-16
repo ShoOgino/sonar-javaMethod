@@ -1,0 +1,28 @@
+    /**
+     * Make sure the code throws the correct exception when it can't create an
+     * instance of the base config's custom class.
+     */
+    public void notestProcessExceptionConfigClassError()
+        throws Exception {
+        ExceptionConfig customBase =
+            new CustomExceptionConfigArg("java.lang.NullPointerException");
+
+        moduleConfig.addExceptionConfig(customBase);
+
+        ExceptionConfig customSub = new ExceptionConfig();
+
+        customSub.setType("java.lang.IllegalStateException");
+        customSub.setExtends("java.lang.NullPointerException");
+        moduleConfig.addExceptionConfig(customSub);
+
+        try {
+            actionServlet.processExceptionConfigClass(customSub, moduleConfig,
+                null);
+            fail("Exception should be thrown");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unexpected exception thrown.");
+        }
+    }
+

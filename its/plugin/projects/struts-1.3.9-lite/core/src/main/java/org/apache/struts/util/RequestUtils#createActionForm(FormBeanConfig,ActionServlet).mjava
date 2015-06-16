@@ -1,0 +1,38 @@
+    /**
+     * <p>Create and return an <code>ActionForm</code> instance appropriate to
+     * the information in <code>config</code>.</p>
+     *
+     * <p>Does not perform any checks to see if an existing ActionForm exists
+     * which could be reused.</p>
+     *
+     * @param config  The configuration for the Form bean which is to be
+     *                created.
+     * @param servlet The action servlet
+     * @return ActionForm instance associated with this request
+     */
+    public static ActionForm createActionForm(FormBeanConfig config,
+        ActionServlet servlet) {
+        if (config == null) {
+            return (null);
+        }
+
+        ActionForm instance = null;
+
+        // Create and return a new form bean instance
+        try {
+            instance = config.createActionForm(servlet);
+
+            if (log.isDebugEnabled()) {
+                log.debug(" Creating new "
+                    + (config.getDynamic() ? "DynaActionForm" : "ActionForm")
+                    + " instance of type '" + config.getType() + "'");
+                log.trace(" --> " + instance);
+            }
+        } catch (Throwable t) {
+            log.error(servlet.getInternal().getMessage("formBean",
+                    config.getType()), t);
+        }
+
+        return (instance);
+    }
+

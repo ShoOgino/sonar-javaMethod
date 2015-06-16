@@ -1,0 +1,56 @@
+    /**
+     * Resolve inheritance.
+     * First, resolve parent's inheritance, then set path to the parent's path.
+     * Also copy attributes setted in parent, and not set in child
+     * If instance doesn't extend anything, do nothing.
+     * @throws NoSuchDefinitionException If an inheritance can not be solved.
+     */
+  public void resolveInheritance( XmlDefinitionsSet definitionsSet )
+    throws NoSuchDefinitionException
+    {
+      // Already done, or not needed ?
+    if( isVisited || !isExtending() )
+      return;
+
+    if(log.isDebugEnabled())
+      log.debug( "Resolve definition for child name='" + getName()
+              + "' extends='" + getExtends() + "'.");
+
+      // Set as visited to avoid endless recurisvity.
+    setIsVisited( true );
+
+      // Resolve parent before itself.
+    XmlDefinition parent = definitionsSet.getDefinition( getExtends() );
+    if( parent == null )
+      { // error
+      String msg = "Error while resolving definition inheritance: child '"
+                           + getName() +    "' can't find its ancestor '"
+                           + getExtends() +
+                           "'. Please check your description file.";
+      log.error( msg );
+        // to do : find better exception
+      throw new NoSuchDefinitionException( msg );
+      }
+
+    parent.resolveInheritance( definitionsSet );
+
+      // Iterate on each parent's attribute and add it if not defined in child.
+    Iterator parentAttributes = parent.getAttributes().keySet().iterator();
+    while( parentAttributes.hasNext() )
+      {
+      String name = (String)parentAttributes.next();
+      if( !getAttributes().containsKey(name) )
+        putAttribute( name, parent.getAttribute(name) );
+      }
+      // Set path and role if not setted
+    if( path == null )
+      setPath( parent.getPath() );
+    if( role == null )
+      setRole( parent.getRole() );
+    if( controller==null )
+      {
+      setController( parent.getController());
+      setControllerType( parent.getControllerType());
+      }
+    }
+

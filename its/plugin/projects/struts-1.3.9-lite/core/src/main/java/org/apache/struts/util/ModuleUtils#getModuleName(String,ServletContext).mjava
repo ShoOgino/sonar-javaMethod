@@ -1,0 +1,41 @@
+    /**
+     * Get the module name to which the specified uri belong.
+     *
+     * @param matchPath The uri from which we want the module name.
+     * @param context   The ServletContext for this web application
+     * @return The module prefix or ""
+     */
+    public String getModuleName(String matchPath, ServletContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Get module name for path " + matchPath);
+        }
+
+        String prefix = ""; // Initialize prefix before we try lookup
+        String[] prefixes = getModulePrefixes(context);
+
+        // Get all other possible prefixes
+        int lastSlash = 0; // Initialize before loop
+
+        while (prefix.equals("")
+            && ((lastSlash = matchPath.lastIndexOf("/")) > 0)) {
+            // We may be in a non-default module.  Try to get it's prefix.
+            matchPath = matchPath.substring(0, lastSlash);
+
+            // Match against the list of module prefixes
+            for (int i = 0; i < prefixes.length; i++) {
+                if (matchPath.equals(prefixes[i])) {
+                    prefix = prefixes[i];
+
+                    break;
+                }
+            }
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Module name found: "
+                + (prefix.equals("") ? "default" : prefix));
+        }
+
+        return prefix;
+    }
+

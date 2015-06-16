@@ -1,0 +1,30 @@
+    /**
+     * Return the text specified by the literal value or the message resources
+     * key, if any; otherwise return <code>null</code>.
+     *
+     * @param literal Literal text value or <code>null</code>
+     * @param key     Message resources key or <code>null</code>
+     * @throws JspException if both arguments are non-null
+     */
+    protected String message(String literal, String key)
+        throws JspException {
+        if (literal != null) {
+            if (key != null) {
+                JspException e =
+                    new JspException(messages.getMessage("common.both"));
+
+                TagUtils.getInstance().saveException(pageContext, e);
+                throw e;
+            } else {
+                return (literal);
+            }
+        } else {
+            if (key != null) {
+                return TagUtils.getInstance().message(pageContext, getBundle(),
+                    getLocale(), key);
+            } else {
+                return null;
+            }
+        }
+    }
+

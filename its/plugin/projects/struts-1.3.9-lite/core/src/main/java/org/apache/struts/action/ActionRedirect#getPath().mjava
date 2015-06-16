@@ -1,0 +1,48 @@
+    /**
+     * <p>Get the path for this object, including any parameters that may have
+     * been added at runtime.</p>
+     *
+     * @return The path for this object.
+     */
+    public String getPath() {
+        // get the original path and the parameter string that was formed
+        String originalPath = getOriginalPath();
+        String parameterString = getParameterString();
+        String anchorString = getAnchorString();
+
+        StringBuffer result = new StringBuffer(originalPath);
+
+        if ((parameterString != null) && (parameterString.length() > 0)) {
+            // the parameter separator we're going to use
+            String paramSeparator = "?";
+
+            // true if we need to use a parameter separator after originalPath
+            boolean needsParamSeparator = true;
+
+            // does the original path already have a "?"?
+            int paramStartIndex = originalPath.indexOf("?");
+
+            if (paramStartIndex > 0) {
+                // did the path end with "?"?
+                needsParamSeparator = (paramStartIndex != (originalPath.length()
+                    - 1));
+
+                if (needsParamSeparator) {
+                    paramSeparator = "&";
+                }
+            }
+
+            if (needsParamSeparator) {
+                result.append(paramSeparator);
+            }
+
+            result.append(parameterString);
+        }
+
+        // append anchor string (or blank if none was set)
+        result.append(anchorString);
+
+
+        return result.toString();
+    }
+

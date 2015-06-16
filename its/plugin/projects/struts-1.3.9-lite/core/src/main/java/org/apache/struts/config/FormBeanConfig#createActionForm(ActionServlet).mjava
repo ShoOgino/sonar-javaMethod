@@ -1,0 +1,66 @@
+    /**
+     * <p>Create and return an <code>ActionForm</code> instance appropriate to
+     * the information in this <code>FormBeanConfig</code>.</p>
+     *
+     * <p>Although this method is not formally deprecated yet, where possible,
+     * the form which accepts an <code>ActionContext</code> as an argument is
+     * preferred, to help sever direct dependencies on the Servlet API.  As
+     * the ActionContext becomes more familiar in Struts, this method will
+     * almost certainly be deprecated.</p>
+     *
+     * @param servlet The action servlet
+     * @return ActionForm instance
+     * @throws IllegalAccessException if the Class or the appropriate
+     *                                constructor is not accessible
+     * @throws InstantiationException if this Class represents an abstract
+     *                                class, an array class, a primitive type,
+     *                                or void; or if instantiation fails for
+     *                                some other reason
+     */
+    public ActionForm createActionForm(ActionServlet servlet)
+        throws IllegalAccessException, InstantiationException {
+        Object obj = null;
+
+        // Create a new form bean instance
+        if (getDynamic()) {
+            obj = getDynaActionFormClass().newInstance();
+        } else {
+            obj = formBeanClass().newInstance();
+        }
+
+        ActionForm form = null;
+
+        if (obj instanceof ActionForm) {
+            form = (ActionForm) obj;
+        } else {
+            form = new BeanValidatorForm(obj);
+        }
+
+        form.setServlet(servlet);
+
+        if (form instanceof DynaBean
+            && ((DynaBean) form).getDynaClass() instanceof MutableDynaClass) {
+            DynaBean dynaBean = (DynaBean) form;
+            MutableDynaClass dynaClass =
+                (MutableDynaClass) dynaBean.getDynaClass();
+
+            // Add properties
+            dynaClass.setRestricted(false);
+
+            FormPropertyConfig[] props = findFormPropertyConfigs();
+
+            for (int i = 0; i < props.length; i++) {
+                dynaClass.add(props[i].getName(), props[i].getTypeClass());
+                dynaBean.set(props[i].getName(), props[i].initial());
+            }
+
+            dynaClass.setRestricted(isRestricted());
+        }
+
+        if (form instanceof BeanValidatorForm) {
+            ((BeanValidatorForm)form).initialize(this);
+        }
+
+        return form;
+    }
+

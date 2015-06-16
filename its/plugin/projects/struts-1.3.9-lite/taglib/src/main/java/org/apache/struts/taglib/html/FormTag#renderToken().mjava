@@ -1,0 +1,34 @@
+    /**
+     * Generates a hidden input field with token information, if any. The
+     * field is added within a div element for HTML 4.01 Strict compliance.
+     *
+     * @return A hidden input field containing the token.
+     * @since Struts 1.1
+     */
+    protected String renderToken() {
+        StringBuffer results = new StringBuffer();
+        HttpSession session = pageContext.getSession();
+
+        if (session != null) {
+            String token =
+                (String) session.getAttribute(Globals.TRANSACTION_TOKEN_KEY);
+
+            if (token != null) {
+                results.append("<div><input type=\"hidden\" name=\"");
+                results.append(Constants.TOKEN_KEY);
+                results.append("\" value=\"");
+                results.append(token);
+
+                if (this.isXhtml()) {
+                    results.append("\" />");
+                } else {
+                    results.append("\">");
+                }
+
+                results.append("</div>");
+            }
+        }
+
+        return results.toString();
+    }
+

@@ -1,0 +1,12 @@
+  @Test
+  public void shouldSupportJava7Syntax() {
+    MavenBuild inspection = MavenBuild.create()
+      .setPom(TestUtils.projectPom("java7"))
+      .setProperty("sonar.dynamicAnalysis", "false")
+      .setGoals("sonar:sonar");
+    orchestrator.executeBuild(inspection);
+
+    assertThat(getMeasure("org.sonar.it.core:java7", "files").getIntValue()).isEqualTo(7);
+    assertThat(getMeasure("org.sonar.it.core:java7", "complexity").getIntValue()).isEqualTo(21);
+  }
+

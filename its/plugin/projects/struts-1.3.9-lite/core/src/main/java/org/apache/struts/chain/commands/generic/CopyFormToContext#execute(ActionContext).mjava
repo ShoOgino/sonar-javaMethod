@@ -1,0 +1,26 @@
+    /**
+     * <p>Look up an ActionForm instance based on the configured properties of
+     * this command and copy it into the <code>Context</code>.  After this
+     * command successfully executes, an ActionForm instance will exist in the
+     * specified scope and will be available, for example for backing fields
+     * in an HTML form.  It will also be in the <code>ActionContext</code>
+     * available for another command to do prepopulation of values or other
+     * preparation.</p>
+     *
+     * @param actionContext Our ActionContext
+     * @return TRUE if processing should halt
+     * @throws Exception on any error
+     */
+    public boolean execute(ActionContext actionContext)
+        throws Exception {
+        ActionForm form = findOrCreateForm(actionContext);
+
+        if (isEmpty(getToKey())) {
+            throw new IllegalStateException("Property 'toKey' must be defined.");
+        }
+
+        actionContext.put(getToKey(), form);
+
+        return false;
+    }
+

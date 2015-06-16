@@ -1,0 +1,34 @@
+    /*
+     * <p>
+     * Retrieve and return the <code>ActionForm</code> bean associated with
+     * this mapping, creating and stashing one if necessary.  If there is no
+     * form bean associated with this mapping, return <code>null</code>.
+     * </p>
+     */
+    public ActionForm getActionForm() {
+        // Is there a mapping associated with this request?
+        ActionMapping mapping = getMapping();
+
+        if (mapping == null) {
+            return (null);
+        }
+
+        // Is there a form bean associated with this mapping?
+        String attribute = mapping.getAttribute();
+
+        if (attribute == null) {
+            return (null);
+        }
+
+        // Look up the existing form bean, if any
+        ActionForm instance;
+
+        if ("request".equals(mapping.getScope())) {
+            instance = (ActionForm) this.request.getAttribute(attribute);
+        } else {
+            instance = (ActionForm) this.session.getAttribute(attribute);
+        }
+
+        return instance;
+    }
+

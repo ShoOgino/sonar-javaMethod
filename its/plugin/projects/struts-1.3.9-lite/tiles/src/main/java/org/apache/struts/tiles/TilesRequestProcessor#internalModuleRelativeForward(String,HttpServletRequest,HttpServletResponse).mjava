@@ -1,0 +1,27 @@
+    /**
+     * Catch the call to a module relative forward.
+     * If the specified uri is a tiles definition name, insert it.
+     * Otherwise, parent processing is called.
+     * Do a module relative forward to specified uri using request dispatcher.
+     * Uri is relative to the current module. The real uri is computed by
+     * prefixing the module name.
+     * <strong>This method is used internally and is not part of the public
+     * API. It is advised to not use it in subclasses.</strong>
+     * @param uri Module-relative URI to forward to.
+     * @param request Current page request.
+     * @param response Current page response.
+     * @since Struts 1.1
+     */
+    protected void internalModuleRelativeForward(
+        String uri,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws IOException, ServletException {
+
+        if (processTilesDefinition(uri, request, response)) {
+            return;
+        }
+
+        super.internalModuleRelativeForward(uri, request, response);
+    }
+

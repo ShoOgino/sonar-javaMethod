@@ -1,0 +1,39 @@
+    /**
+     * Create a controller from specified classname
+     * @param classname Controller classname.
+     * @return org.apache.struts.tiles.Controller
+     * @throws InstantiationException if an error occur while instanciating Controller :
+     * (classname can't be instanciated, Illegal access with instanciated class,
+     * Error while instanciating class, classname can't be instanciated.
+     */
+    public static Controller createControllerFromClassname(String classname)
+        throws InstantiationException {
+
+        try {
+            Class requestedClass = RequestUtils.applicationClass(classname);
+            Object instance = requestedClass.newInstance();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Controller created : " + instance);
+            }
+            return (Controller) instance;
+
+        } catch (java.lang.ClassNotFoundException ex) {
+            throw new InstantiationException(
+                "Error - Class not found :" + ex.getMessage());
+
+        } catch (java.lang.IllegalAccessException ex) {
+            throw new InstantiationException(
+                "Error - Illegal class access :" + ex.getMessage());
+
+        } catch (java.lang.InstantiationException ex) {
+            throw ex;
+
+        } catch (java.lang.ClassCastException ex) {
+            throw new InstantiationException(
+                "Controller of class '"
+                    + classname
+                    + "' should implements 'Controller' or extends 'Action'");
+        }
+    }
+

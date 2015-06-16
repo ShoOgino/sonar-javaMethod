@@ -1,0 +1,65 @@
+    /**
+     * <p>Checks if the current beanConfig is using the correct class based on
+     * the class of its ancestor form bean config.</p>
+     *
+     * @param beanConfig   The form bean to check.
+     * @param moduleConfig The config for the current module.
+     * @return The form bean config using the correct class as determined by
+     *         the config's ancestor and its own overridden value.
+     * @throws UnavailableException if an instance of the form bean config
+     *                              class cannot be created.
+     * @throws ServletException     on class creation error
+     */
+    protected FormBeanConfig processFormBeanConfigClass(
+        FormBeanConfig beanConfig, ModuleConfig moduleConfig)
+        throws ServletException {
+        String ancestor = beanConfig.getExtends();
+
+        if (ancestor == null) {
+            // Nothing to do, then
+            return beanConfig;
+        }
+
+        // Make sure that this bean is of the right class
+        FormBeanConfig baseConfig = moduleConfig.findFormBeanConfig(ancestor);
+
+        if (baseConfig == null) {
+            throw new UnavailableException("Unable to find " + "form bean '"
+                + ancestor + "' to extend.");
+        }
+
+        // Was our bean's class overridden already?
+        if (beanConfig.getClass().equals(FormBeanConfig.class)) {
+            // Ensure that our bean is using the correct class
+            if (!baseConfig.getClass().equals(beanConfig.getClass())) {
+                // Replace the bean with an instance of the correct class
+                FormBeanConfig newBeanConfig = null;
+                String baseConfigClassName = baseConfig.getClass().getName();
+
+                try {
+                    newBeanConfig =
+                        (FormBeanConfig) RequestUtils.applicationInstance(baseConfigClassName);
+
+                    // copy the values
+                    BeanUtils.copyProperties(newBeanConfig, beanConfig);
+
+                    FormPropertyConfig[] fpc =
+                        beanConfig.findFormPropertyConfigs();
+
+                    for (int i = 0; i < fpc.length; i++) {
+                        newBeanConfig.addFormPropertyConfig(fpc[i]);
+                    }
+                } catch (Exception e) {
+                    handleCreationException(baseConfigClassName, e);
+                }
+
+                // replace beanConfig with newBeanConfig
+                moduleConfig.removeFormBeanConfig(beanConfig);
+                moduleConfig.addFormBeanConfig(newBeanConfig);
+                beanConfig = newBeanConfig;
+            }
+        }
+
+        return beanConfig;
+    }
+

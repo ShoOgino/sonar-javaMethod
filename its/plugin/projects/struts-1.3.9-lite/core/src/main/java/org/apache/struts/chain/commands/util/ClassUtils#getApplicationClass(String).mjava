@@ -1,0 +1,24 @@
+    /**
+     * <p>Return the <code>Class</code> object for the specified fully
+     * qualified class name, from this web application's class loader.
+     *
+     * @param className Fully qualified class name
+     * @throws ClassNotFoundException if the specified class cannot be loaded
+     */
+    public static Class getApplicationClass(String className)
+        throws ClassNotFoundException {
+        if (className == null) {
+            throw new NullPointerException(
+                "getApplicationClass called with null className");
+        }
+
+        ClassLoader classLoader =
+            Thread.currentThread().getContextClassLoader();
+
+        if (classLoader == null) {
+            classLoader = ClassUtils.class.getClassLoader();
+        }
+
+        return (classLoader.loadClass(className));
+    }
+

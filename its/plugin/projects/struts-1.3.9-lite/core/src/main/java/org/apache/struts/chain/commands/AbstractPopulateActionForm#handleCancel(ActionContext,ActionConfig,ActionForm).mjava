@@ -1,0 +1,28 @@
+    /**
+     * <p>Take into account whether the request includes any defined value for
+     * the global "cancel" parameter.</p> <p> An issue was raised (but I don't
+     * think a Bugzilla ticket created) about the security implications of
+     * using a well-known cancel property which skips form validation, as you
+     * may not write your actions to deal with the cancellation case. </p>
+     *
+     * @param context      The ActionContext we are processing
+     * @param actionConfig The ActionConfig we are processing
+     * @param actionForm   The ActionForm we are processing
+     * @throws Exception On an unexpected error
+     * @see Globals.CANCEL_PROPERTY
+     * @see Globals.CANCEL_PROPERTY_X
+     */
+    protected void handleCancel(ActionContext context,
+        ActionConfig actionConfig, ActionForm actionForm)
+        throws Exception {
+        Map paramValues = context.getParameterMap();
+
+        // Set the cancellation attribute if appropriate
+        if ((paramValues.get(Globals.CANCEL_PROPERTY) != null)
+            || (paramValues.get(Globals.CANCEL_PROPERTY_X) != null)) {
+            context.setCancelled(Boolean.TRUE);
+        } else {
+            context.setCancelled(Boolean.FALSE);
+        }
+    }
+

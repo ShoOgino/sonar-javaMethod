@@ -1,0 +1,26 @@
+    /**
+     * Create and return a <code>ModuleConfigFactory</code> instance of the
+     * appropriate class, which can be used to create customized
+     * <code>ModuleConfig</code> instances.  If no such factory can be
+     * created, return <code>null</code> instead.
+     */
+    public static ModuleConfigFactory createFactory() {
+        ModuleConfigFactory factory = null;
+
+        try {
+            if (clazz == null) {
+                clazz = RequestUtils.applicationClass(factoryClass);
+            }
+
+            factory = (ModuleConfigFactory) clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+            LOG.error("ModuleConfigFactory.createFactory()", e);
+        } catch (InstantiationException e) {
+            LOG.error("ModuleConfigFactory.createFactory()", e);
+        } catch (IllegalAccessException e) {
+            LOG.error("ModuleConfigFactory.createFactory()", e);
+        }
+
+        return factory;
+    }
+

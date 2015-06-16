@@ -1,0 +1,22 @@
+    public void testParseBase(String publicId, String entityURL,
+        String strutsConfig) {
+        parseConfig(publicId, entityURL, strutsConfig);
+
+        // Perform assertion tests on the parsed information
+        FormBeanConfig[] fbcs = config.findFormBeanConfigs();
+
+        assertNotNull("Found our form bean configurations", fbcs);
+        assertEquals("Found three form bean configurations", 3, fbcs.length);
+
+        ForwardConfig[] fcs = config.findForwardConfigs();
+
+        assertNotNull("Found our forward configurations", fcs);
+        assertEquals("Found three forward configurations", 3, fcs.length);
+
+        ActionConfig logon = config.findActionConfig("/logon");
+
+        assertNotNull("Found logon action configuration", logon);
+        assertEquals("Found correct logon configuration", "logonForm",
+            logon.getName());
+    }
+

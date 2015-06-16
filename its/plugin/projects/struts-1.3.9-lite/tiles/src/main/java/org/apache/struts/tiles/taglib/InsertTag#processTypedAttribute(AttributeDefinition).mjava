@@ -1,0 +1,24 @@
+    /**
+     * Process typed attribute according to its type.
+     * @param value Typed attribute to process.
+     * @return appropriate TagHandler.
+     * @throws JspException - Throws by underlying nested call to processDefinitionName()
+     */
+    public TagHandler processTypedAttribute(AttributeDefinition value)
+        throws JspException {
+        if (value instanceof DirectStringAttribute) {
+            return new DirectStringHandler((String) value.getValue());
+
+        } else if (value instanceof DefinitionAttribute) {
+            return processDefinition((ComponentDefinition) value.getValue());
+
+        } else if (value instanceof DefinitionNameAttribute) {
+            return processDefinitionName((String) value.getValue());
+        }
+
+        return new InsertHandler(
+            (String) value.getValue(),
+            role,
+            getController());
+    }
+

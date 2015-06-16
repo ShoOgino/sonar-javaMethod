@@ -1,0 +1,24 @@
+  @Test
+  public void multi_module_project_should_not_validate_classpath_on_parent_module() {
+    SonarRunner runner = SonarRunner.create(TestUtils.projectDir("multi-module"))
+      .setProperty("sonar.projectKey", "multi-module")
+      .setProperty("sonar.projectName", "multi-module")
+      .setProperty("sonar.projectVersion", "1.0-SNAPSHOT")
+      .setProperty("sonar.profile", "dit-check")
+      .setProperty("sonar.modules", "module1,module2")
+      .setProperty("sonar.sources", "src")
+      .setProperty("sonar.java.libraries", "lib/*");
+    Integer status = ORCHESTRATOR.executeBuild(runner).getStatus();
+    assertThat(status).isEqualTo(0);
+    runner = SonarRunner.create(TestUtils.projectDir("multi-module"))
+      .setProperty("sonar.projectKey", "multi-module")
+      .setProperty("sonar.projectName", "multi-module")
+      .setProperty("sonar.projectVersion", "1.0-SNAPSHOT")
+      .setProperty("sonar.profile", "dit-check")
+      .setProperty("sonar.modules", "module1,module2")
+      .setProperty("sonar.sources", "src")
+      .setProperty("sonar.java.libraries", "../sharedlib/*");
+    status = ORCHESTRATOR.executeBuild(runner).getStatus();
+    assertThat(status).isEqualTo(0);
+  }
+

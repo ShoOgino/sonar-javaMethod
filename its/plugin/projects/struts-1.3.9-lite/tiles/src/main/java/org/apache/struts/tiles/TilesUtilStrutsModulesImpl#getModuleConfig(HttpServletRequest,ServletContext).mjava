@@ -1,0 +1,25 @@
+    /**
+     * Get the current ModuleConfig.
+     * <br>
+     * Lookup in the request and do selectModule if not found. The side effect
+     * is, that the ModuleConfig object is set in the request if it was not present.
+     * @param request Current request.
+     * @param servletContext Current servlet context*.
+     * @return The ModuleConfig for current request.
+     */
+    protected ModuleConfig getModuleConfig(
+        HttpServletRequest request,
+        ServletContext servletContext) {
+
+        ModuleConfig moduleConfig =
+            ModuleUtils.getInstance().getModuleConfig(request);
+
+        if (moduleConfig == null) {
+            // ModuleConfig not found in current request. Select it.
+            ModuleUtils.getInstance().selectModule(request, servletContext);
+            moduleConfig = ModuleUtils.getInstance().getModuleConfig(request);
+        }
+
+        return moduleConfig;
+    }
+

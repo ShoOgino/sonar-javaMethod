@@ -1,0 +1,40 @@
+    /**
+     * <p>Look up and return the {@link RequestProcessor} responsible for the
+     * specified module, creating a new one if necessary.</p>
+     *
+     * @param config The module configuration for which to acquire and return
+     *               a RequestProcessor.
+     * @return The {@link RequestProcessor} responsible for the specified
+     *         module,
+     * @throws ServletException If we cannot instantiate a RequestProcessor
+     *                          instance a {@link UnavailableException} is
+     *                          thrown, meaning your application is not loaded
+     *                          and will not be available.
+     * @since Struts 1.1
+     */
+    protected synchronized RequestProcessor getRequestProcessor(
+        ModuleConfig config) throws ServletException {
+        RequestProcessor processor = this.getProcessorForModule(config);
+
+        if (processor == null) {
+            try {
+                processor =
+                    (RequestProcessor) RequestUtils.applicationInstance(config.getControllerConfig()
+                                                                              .getProcessorClass());
+            } catch (Exception e) {
+                throw new UnavailableException(
+                    "Cannot initialize RequestProcessor of class "
+                    + config.getControllerConfig().getProcessorClass() + ": "
+                    + e);
+            }
+
+            processor.init(this, config);
+
+            String key = Globals.REQUEST_PROCESSOR_KEY + config.getPrefix();
+
+            getServletContext().setAttribute(key, processor);
+        }
+
+        return (processor);
+    }
+

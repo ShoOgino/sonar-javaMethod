@@ -1,0 +1,42 @@
+    /**
+     * Returns a text message for the specified key, for the specified Locale.
+     * <p>
+     * A null string result will be returned by this method if no relevant
+     * message resource is found. This method searches through the locale
+     * <i>hierarchy</i> (i.e. variant --> languge --> country) for the message.
+     *
+     * @param locale The requested message Locale, or <code>null</code> for
+     *  the system default Locale
+     * @param key The message key to look up
+     * @param originalKey The original message key to cache any found message under
+     * @return text message for the specified key and locale
+     */
+    private String findMessage(Locale locale, String key, String originalKey) {
+
+        // Initialize variables we will require
+        String localeKey = localeKey(locale);
+        String messageKey = null;
+        String message = null;
+        int underscore = 0;
+
+        // Loop from specific to general Locales looking for this message
+        while (true) {
+            message = findMessage(localeKey, key, originalKey);
+            if (message != null) {
+                break;
+            }
+
+            // Strip trailing modifiers to try a more general locale key
+            underscore = localeKey.lastIndexOf("_");
+
+            if (underscore < 0) {
+                break;
+            }
+
+            localeKey = localeKey.substring(0, underscore);
+        }
+
+        return message;
+
+    }
+

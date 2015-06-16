@@ -1,0 +1,43 @@
+    /**
+     * <p>Returns the bean name from the request object that the properties
+     * are nesting against.</p>
+     *
+     * <p>The requirement of the tag itself could be removed in the future,
+     * but is required if support for the <html:form> tag is maintained.</p>
+     *
+     * @param request object to fetch the bean reference from
+     * @param nested  tag from which to start the search from
+     * @return the string of the bean name to be nesting against
+     */
+    public static final String getCurrentName(HttpServletRequest request,
+        NestedNameSupport nested) {
+        // get the old one if any
+        NestedReference nr =
+            (NestedReference) request.getAttribute(NESTED_INCLUDES_KEY);
+
+        // return null or the property
+        if (nr != null) {
+            return nr.getBeanName();
+        } else {
+            // need to look for a form tag...
+            Tag tag = (Tag) nested;
+            Tag formTag = null;
+
+            // loop all parent tags until we get one that can be nested against
+            do {
+                tag = tag.getParent();
+
+                if ((tag != null) && tag instanceof FormTag) {
+                    formTag = tag;
+                }
+            } while ((formTag == null) && (tag != null));
+
+            if (formTag == null) {
+                return "";
+            }
+
+            // return the form's name
+            return ((FormTag) formTag).getBeanName();
+        }
+    }
+

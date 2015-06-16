@@ -1,0 +1,18 @@
+    /**
+     * Process a validation failure.
+     */
+    private static void processFailure(ActionMessages errors, Field field,
+        String validator, Throwable t) {
+        // Log the error
+        String logErrorMsg =
+            sysmsgs.getMessage("validation.failed", validator,
+                field.getProperty(), t.toString());
+
+        log.error(logErrorMsg);
+
+        // Add general "system error" message to show to the user
+        String userErrorMsg = sysmsgs.getMessage("system.error");
+
+        errors.add(field.getKey(), new ActionMessage(userErrorMsg, false));
+    }
+

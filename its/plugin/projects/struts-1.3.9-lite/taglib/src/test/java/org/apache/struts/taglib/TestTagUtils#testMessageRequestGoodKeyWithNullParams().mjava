@@ -1,0 +1,21 @@
+    /**
+     * Tests for:
+     *
+     * public String message( PageContext pageContext, String bundle, String
+     * locale, String key, Object args[]) throws JspException
+     */
+    public void testMessageRequestGoodKeyWithNullParams() {
+        putBundleInScope(PageContext.REQUEST_SCOPE, true);
+
+        String[] args = null;
+
+        String val = null;
+
+        try {
+            val = tagutils.message(pageContext, null, null, "foo", args);
+            assertTrue("Validate message value", "bar".equals(val));
+        } catch (JspException e) {
+            fail("val should be \"bar\"");
+        }
+    }
+

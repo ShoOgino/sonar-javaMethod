@@ -1,0 +1,37 @@
+    /**
+     * Expose the requested attribute from component context.
+     *
+     * @exception JspException if a JSP exception has occurred
+     */
+  public int doStartTag() throws JspException
+    {
+      // Do a local copy of id
+    String localId=this.id;
+    if( localId==null )
+      localId=attributeName;
+
+    ComponentContext compContext = (ComponentContext)pageContext.getAttribute( ComponentConstants.COMPONENT_CONTEXT, PageContext.REQUEST_SCOPE);
+    if( compContext == null )
+      throw new JspException ( "Error - tag useAttribute : no tiles context found." );
+
+    Object value = compContext.getAttribute(attributeName);
+        // Check if value exists and if we must send a runtime exception
+    if( value == null )
+      if(!isErrorIgnored)
+        throw new JspException ( "Error - tag useAttribute : attribute '"+ attributeName + "' not found in context. Check tag syntax" );
+       else
+        return SKIP_BODY;
+
+    if( scopeName != null )
+      {
+      scope = TagUtils.getScope( scopeName, PageContext.PAGE_SCOPE );
+      if(scope!=ComponentConstants.COMPONENT_SCOPE)
+        pageContext.setAttribute(localId, value, scope);
+      }
+     else
+      pageContext.setAttribute(localId, value);
+
+      // Continue processing this page
+    return SKIP_BODY;
+    }
+

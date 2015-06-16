@@ -1,0 +1,25 @@
+    /**
+     * <p>Save the specified messages keys into the appropriate request
+     * attribute for use by the &lt;html:messages&gt; tag (if messages="true"
+     * is set), if any messages are required. Otherwise, ensure that the
+     * request attribute is not created.</p>
+     *
+     * @param request  The servlet request we are processing.
+     * @param messages The messages to save. <code>null</code> or empty
+     *                 messages removes any existing ActionMessages in the
+     *                 request.
+     * @since Struts 1.1
+     */
+    protected void saveMessages(HttpServletRequest request,
+        ActionMessages messages) {
+        // Remove any messages attribute if none are required
+        if ((messages == null) || messages.isEmpty()) {
+            request.removeAttribute(Globals.MESSAGE_KEY);
+
+            return;
+        }
+
+        // Save the messages we need
+        request.setAttribute(Globals.MESSAGE_KEY, messages);
+    }
+

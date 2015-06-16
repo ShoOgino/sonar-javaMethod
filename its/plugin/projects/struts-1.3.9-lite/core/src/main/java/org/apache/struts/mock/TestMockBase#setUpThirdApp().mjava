@@ -1,0 +1,41 @@
+    // Set up third app for testing URL mapping
+    protected void setUpThirdApp() {
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+
+        moduleConfig3 = factoryObject.createModuleConfig("/3");
+
+        context.setAttribute(Globals.MODULE_KEY + "/3", moduleConfig3);
+
+        // Instantiate the controller configuration for this app
+        ControllerConfig controller = new ControllerConfig();
+
+        moduleConfig3.setControllerConfig(controller);
+
+        // Configure the properties we will be testing
+        controller.setForwardPattern("/forwarding$M$P");
+        controller.setInputForward(true);
+        controller.setPagePattern("/paging$M$P");
+
+        // Configure global forward declarations
+        moduleConfig3.addForwardConfig(new ForwardConfig("moduleForward",
+                "/module/forward", false)); // No redirect, same module
+
+        moduleConfig3.addForwardConfig(new ForwardConfig("moduleRedirect",
+                "/module/redirect", true)); // Redirect, same module
+
+        moduleConfig3.addForwardConfig(new ForwardConfig("contextForward",
+                "/forward", false, // No redirect
+                "/context")); // Specify module
+
+        moduleConfig3.addForwardConfig(new ForwardConfig("contextRedirect",
+                "/redirect", true, // Redirect
+                "/context")); // Specify module
+
+        moduleConfig3.addForwardConfig(new ForwardConfig("moduleNoslash",
+                "module/noslash", false)); // No redirect, same module
+
+        moduleConfig3.addForwardConfig(new ForwardConfig("contextNoslash",
+                "noslash", false, // No redirect
+                "/context")); // specify module
+    }
+

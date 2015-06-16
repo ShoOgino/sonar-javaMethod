@@ -1,0 +1,15 @@
+    // try to get the call to throw an IllegalArgumentException
+    public void test_Object_lookup_PageContext_String_String_String2() {
+        pageContext.setAttribute("bean", new MockFormBean());
+
+        Object val = null;
+
+        try {
+            val = tagutils.lookup(pageContext, "bean", "doesNotExistMethod",
+                    "page");
+            fail("should have thrown exception");
+        } catch (JspException e) {
+            assertNull(val);
+        }
+    }
+

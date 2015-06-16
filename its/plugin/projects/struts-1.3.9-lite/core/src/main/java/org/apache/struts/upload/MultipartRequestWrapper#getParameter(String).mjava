@@ -1,0 +1,20 @@
+    /**
+     * <p> Attempts to get a parameter for this request.  It first looks in
+     * the underlying HttpServletRequest object for the parameter, and if that
+     * doesn't exist it looks for the parameters retrieved from the multipart
+     * request </p>
+     */
+    public String getParameter(String name) {
+        String value = getRequest().getParameter(name);
+
+        if (value == null) {
+            String[] mValue = (String[]) parameters.get(name);
+
+            if ((mValue != null) && (mValue.length > 0)) {
+                value = mValue[0];
+            }
+        }
+
+        return value;
+    }
+

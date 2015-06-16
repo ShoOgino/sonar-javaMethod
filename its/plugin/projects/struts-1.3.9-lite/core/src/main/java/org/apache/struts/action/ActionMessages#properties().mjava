@@ -1,0 +1,34 @@
+    /**
+     * <p>Return the set of property names for which at least one message has
+     * been recorded. If there are no messages, an empty <code>Iterator</code>
+     * is returned. If you have recorded global messages, the
+     * <code>String</code> value of <code>ActionMessages.GLOBAL_MESSAGE</code>
+     * will be one of the returned property names.</p>
+     *
+     * @return An iterator over the property names for which messages exist.
+     */
+    public Iterator properties() {
+        if (messages.isEmpty()) {
+            return Collections.EMPTY_LIST.iterator();
+        }
+
+        ArrayList results = new ArrayList();
+        ArrayList actionItems = new ArrayList();
+
+        for (Iterator i = messages.values().iterator(); i.hasNext();) {
+            actionItems.add(i.next());
+        }
+
+        // Sort ActionMessageItems based on the initial order the
+        // property/key was added to ActionMessages.
+        Collections.sort(actionItems, ACTION_ITEM_COMPARATOR);
+
+        for (Iterator i = actionItems.iterator(); i.hasNext();) {
+            ActionMessageItem ami = (ActionMessageItem) i.next();
+
+            results.add(ami.getProperty());
+        }
+
+        return results.iterator();
+    }
+

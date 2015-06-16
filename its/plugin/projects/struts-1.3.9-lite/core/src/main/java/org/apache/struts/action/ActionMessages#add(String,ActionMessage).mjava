@@ -1,0 +1,24 @@
+    /**
+     * <p>Add a message to the set of messages for the specified property. An
+     * order of the property/key is maintained based on the initial addition
+     * of the property/key.</p>
+     *
+     * @param property Property name (or ActionMessages.GLOBAL_MESSAGE)
+     * @param message  The message to be added
+     */
+    public void add(String property, ActionMessage message) {
+        ActionMessageItem item = (ActionMessageItem) messages.get(property);
+        List list;
+
+        if (item == null) {
+            list = new ArrayList();
+            item = new ActionMessageItem(list, iCount++, property);
+
+            messages.put(property, item);
+        } else {
+            list = item.getList();
+        }
+
+        list.add(message);
+    }
+

@@ -1,0 +1,54 @@
+    /**
+     * Overriding method of the heart of the matter. Gets the relative
+     * property and leaves the rest up to the original tag implementation.
+     * Sweet.
+     *
+     * @return int JSP continuation directive. This is in the hands of the
+     *         super class.
+     */
+    public int doStartTag() throws JspException {
+        origName = super.getName();
+        origProperty = super.getProperty();
+        origParamProperty = super.getParamProperty();
+
+        /* decide the incoming options. Always two there are */
+        boolean doProperty =
+            ((origProperty != null) && (origProperty.length() > 0));
+        boolean doParam =
+            ((origParamProperty != null) && (origParamProperty.length() > 0));
+
+        // request
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        boolean hasName =
+            ((getName() != null) && (getName().trim().length() > 0));
+        String currentName;
+
+        if (hasName) {
+            currentName = getName();
+        } else {
+            currentName = NestedPropertyHelper.getCurrentName(request, this);
+        }
+
+        // set the bean name
+        super.setName(currentName);
+
+        // set property details
+        if (doProperty && !hasName) {
+            super.setProperty(NestedPropertyHelper.getAdjustedProperty(
+                    request, origProperty));
+        }
+
+        // do the param property details
+        if (doParam) {
+            super.setName(null);
+            super.setParamName(currentName);
+            super.setParamProperty(NestedPropertyHelper.getAdjustedProperty(
+                    request, origParamProperty));
+        }
+
+        /* do the tag */
+        return super.doStartTag();
+    }
+

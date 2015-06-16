@@ -1,0 +1,50 @@
+    /**
+     * <p>Introspect our form bean configuration to identify the supported
+     * properties.</p>
+     *
+     * @param config The FormBeanConfig instance describing the properties of
+     *               the bean to be created
+     * @throws IllegalArgumentException if the bean implementation class
+     *                                  specified in the configuration is not
+     *                                  DynaActionForm (or a subclass of
+     *                                  DynaActionForm)
+     */
+    protected void introspect(FormBeanConfig config) {
+        this.config = config;
+
+        // Validate the ActionFormBean implementation class
+        try {
+            beanClass = RequestUtils.applicationClass(config.getType());
+        } catch (Throwable t) {
+            throw new IllegalArgumentException(
+                "Cannot instantiate ActionFormBean class '" + config.getType()
+                + "': " + t);
+        }
+
+        if (!DynaActionForm.class.isAssignableFrom(beanClass)) {
+            throw new IllegalArgumentException("Class '" + config.getType()
+                + "' is not a subclass of "
+                + "'org.apache.struts.action.DynaActionForm'");
+        }
+
+        // Set the name we will know ourselves by from the form bean name
+        this.name = config.getName();
+
+        // Look up the property descriptors for this bean class
+        FormPropertyConfig[] descriptors = config.findFormPropertyConfigs();
+
+        if (descriptors == null) {
+            descriptors = new FormPropertyConfig[0];
+        }
+
+        // Create corresponding dynamic property definitions
+        properties = new DynaProperty[descriptors.length];
+
+        for (int i = 0; i < descriptors.length; i++) {
+            properties[i] =
+                new DynaProperty(descriptors[i].getName(),
+                    descriptors[i].getTypeClass());
+            propertiesMap.put(properties[i].getName(), properties[i]);
+        }
+    }
+

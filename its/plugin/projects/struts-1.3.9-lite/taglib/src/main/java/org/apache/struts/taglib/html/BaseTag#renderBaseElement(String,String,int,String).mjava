@@ -1,0 +1,46 @@
+    /**
+     * Render a fully formed HTML &lt;base&gt; element and return it as a
+     * String.
+     *
+     * @param scheme     The scheme used in the url (ie. http or https).
+     * @param serverName
+     * @param port
+     * @param uri        The portion of the url from the protocol name up to
+     *                   the query string.
+     * @return String An HTML &lt;base&gt; element.
+     * @since Struts 1.1
+     */
+    protected String renderBaseElement(String scheme, String serverName,
+        int port, String uri) {
+        StringBuffer tag = new StringBuffer("<base href=\"");
+
+        if (ref.equals(REF_SITE)) {
+            StringBuffer contextBase =
+                new StringBuffer(((HttpServletRequest) pageContext.getRequest())
+                    .getContextPath());
+
+            contextBase.append("/");
+            tag.append(RequestUtils.createServerUriStringBuffer(scheme,
+                    serverName, port, contextBase.toString()).toString());
+        } else {
+            tag.append(RequestUtils.createServerUriStringBuffer(scheme,
+                    serverName, port, uri).toString());
+        }
+
+        tag.append("\"");
+
+        if (this.target != null) {
+            tag.append(" target=\"");
+            tag.append(this.target);
+            tag.append("\"");
+        }
+
+        if (TagUtils.getInstance().isXhtml(this.pageContext)) {
+            tag.append(" />");
+        } else {
+            tag.append(">");
+        }
+
+        return tag.toString();
+    }
+

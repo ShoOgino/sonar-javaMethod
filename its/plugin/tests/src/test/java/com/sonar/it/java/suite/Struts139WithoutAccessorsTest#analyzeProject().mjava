@@ -1,0 +1,19 @@
+  @BeforeClass
+  public static void analyzeProject() {
+    orchestrator.resetData();
+
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("struts-1.3.9-lite"));
+    if(JavaTestSuite.isAtLeastPlugin3_4()) {
+      build.setGoals("org.jacoco:jacoco-maven-plugin:prepare-agent clean verify");
+    } else {
+      build.setGoals("org.jacoco:jacoco-maven-plugin:0.7.4.201502262128:prepare-agent clean verify");
+    }
+    orchestrator.executeBuild(build);
+
+    MavenBuild analysis = MavenBuild.create(TestUtils.projectPom("struts-1.3.9-lite"))
+        .setProperty("sonar.squid.analyse.property.accessors", "false")
+        .setProperty("sonar.scm.disabled", "true")
+        .setGoals("sonar:sonar");
+    orchestrator.executeBuilds(build, analysis);
+  }
+

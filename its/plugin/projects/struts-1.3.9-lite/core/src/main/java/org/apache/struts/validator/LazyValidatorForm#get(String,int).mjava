@@ -1,0 +1,29 @@
+    /**
+     * <p>Return an indexed property value.</p>
+     *
+     * <p>If the "indexed" property is a <code>List</code> type then any
+     * missing values are populated with a bean (created in the
+     * <code>newIndexedBean(name)</code> method - in this implementation this
+     * is a <code>LazyDynaBean</code> type.</p>
+     */
+    public Object get(String name, int index) {
+        int size = size(name);
+
+        // Get the indexed property
+        Object value = dynaBean.get(name, index);
+
+        // Create missing beans for Lists
+        if (value == null) {
+            Object indexedValue = dynaBean.get(name);
+
+            if (List.class.isAssignableFrom(indexedValue.getClass())) {
+                for (int i = size; i <= index; i++) {
+                    value = newIndexedBean(name);
+                    set(name, i, value);
+                }
+            }
+        }
+
+        return value;
+    }
+

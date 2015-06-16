@@ -1,0 +1,42 @@
+    /**
+     * <p>Cache the <code>ModuleConfig</code> and <code>MessageResources</code>
+     * instances for the sub-application module to be used for processing this
+     * request.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws IllegalArgumentException if no valid ModuleConfig or
+     *                                  MessageResources can be identified for
+     *                                  this request
+     * @throws Exception                if thrown by the Action class
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        String prefix = getPrefix(actionCtx);
+
+        // Cache the corresponding ModuleConfig and MessageResources instances
+        ModuleConfig moduleConfig =
+            (ModuleConfig) actionCtx.getApplicationScope().get(Globals.MODULE_KEY
+                + prefix);
+
+        if (moduleConfig == null) {
+            throw new IllegalArgumentException("No module config for prefix '"
+                + prefix + "'");
+        }
+
+        actionCtx.setModuleConfig(moduleConfig);
+
+        String key = Globals.MESSAGES_KEY + prefix;
+        MessageResources messageResources =
+            (MessageResources) actionCtx.getApplicationScope().get(key);
+
+        if (messageResources == null) {
+            throw new IllegalArgumentException(
+                "No message resources found in application scope under " + key);
+        }
+
+        actionCtx.setMessageResources(messageResources);
+
+        return (false);
+    }
+

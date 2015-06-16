@@ -1,0 +1,35 @@
+    /**
+     * <p>For a given request parameter name, trim off any prefix and/or
+     * suffix which are defined in <code>actionConfig</code> and return what
+     * remains. If either prefix or suffix is defined, then return null for
+     * <code>name</code> values which do not begin or end accordingly.</p>
+     *
+     * @param actionConfig The ActionConfig we are processing
+     * @param name         The request parameter name to proceess
+     * @return The request parameter name trimmed of any suffix or prefix
+     */
+    protected String trimParameterName(ActionConfig actionConfig, String name) {
+        String stripped = name;
+        String prefix = actionConfig.getPrefix();
+        String suffix = actionConfig.getSuffix();
+
+        if (prefix != null) {
+            if (!stripped.startsWith(prefix)) {
+                return null;
+            }
+
+            stripped = stripped.substring(prefix.length());
+        }
+
+        if (suffix != null) {
+            if (!stripped.endsWith(suffix)) {
+                return null;
+            }
+
+            stripped =
+                stripped.substring(0, stripped.length() - suffix.length());
+        }
+
+        return stripped;
+    }
+

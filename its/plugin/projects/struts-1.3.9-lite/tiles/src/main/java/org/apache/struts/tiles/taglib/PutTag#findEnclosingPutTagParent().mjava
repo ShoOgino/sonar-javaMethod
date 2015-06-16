@@ -1,0 +1,20 @@
+    /**
+     * Find parent tag which must implement AttributeContainer.
+     * @throws JspException If we can't find an appropriate enclosing tag.
+     */
+    protected PutTagParent findEnclosingPutTagParent() throws JspException {
+        try {
+            PutTagParent parent =
+                (PutTagParent) findAncestorWithClass(this, PutTagParent.class);
+
+            if (parent == null) {
+                throw new JspException("Error - tag put : enclosing tag doesn't accept 'put' tag.");
+            }
+
+            return parent;
+
+        } catch (ClassCastException ex) {
+            throw new JspException("Error - tag put : enclosing tag doesn't accept 'put' tag.", ex);
+        }
+    }
+

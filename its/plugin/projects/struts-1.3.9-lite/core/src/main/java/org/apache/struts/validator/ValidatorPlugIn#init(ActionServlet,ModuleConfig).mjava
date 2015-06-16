@@ -1,0 +1,30 @@
+    /**
+     * Initialize and load our resources.
+     *
+     * @param servlet The ActionServlet for our application
+     * @param config  The ModuleConfig for our owning module
+     * @throws ServletException if we cannot configure ourselves correctly
+     */
+    public void init(ActionServlet servlet, ModuleConfig config)
+        throws ServletException {
+        // Remember our associated configuration and servlet
+        this.config = config;
+        this.servlet = servlet;
+
+        // Load our database from persistent storage
+        try {
+            this.initResources();
+
+            servlet.getServletContext().setAttribute(VALIDATOR_KEY
+                + config.getPrefix(), resources);
+
+            servlet.getServletContext().setAttribute(STOP_ON_ERROR_KEY + '.'
+                + config.getPrefix(),
+                (this.stopOnFirstError ? Boolean.TRUE : Boolean.FALSE));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new UnavailableException(
+                "Cannot load a validator resource from '" + pathnames + "'");
+        }
+    }
+

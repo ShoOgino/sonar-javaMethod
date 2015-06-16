@@ -1,0 +1,21 @@
+    /**
+     * Render the value element
+     *
+     * @param results The StringBuffer that output will be appended to.
+     */
+    protected void prepareValue(StringBuffer results)
+        throws JspException {
+        results.append(" value=\"");
+
+        if (value != null) {
+            results.append(this.formatValue(value));
+        } else if (redisplay || !"password".equals(type)) {
+            Object value =
+                TagUtils.getInstance().lookup(pageContext, name, property, null);
+
+            results.append(this.formatValue(value));
+        }
+
+        results.append('"');
+    }
+

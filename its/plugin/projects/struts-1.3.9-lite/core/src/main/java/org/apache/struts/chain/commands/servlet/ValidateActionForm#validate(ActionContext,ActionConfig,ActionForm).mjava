@@ -1,0 +1,28 @@
+    /**
+     * <p>Call the <code>validate()</code> method of the specified form bean,
+     * and return the resulting <code>ActionErrors</code> object.</p>
+     *
+     * @param context    The context for this request
+     * @param actionForm The form bean for this request
+     */
+    protected ActionErrors validate(ActionContext context,
+        ActionConfig actionConfig, ActionForm actionForm) {
+        ServletActionContext saContext = (ServletActionContext) context;
+        ActionErrors errors =
+            (actionForm.validate((ActionMapping) actionConfig,
+                saContext.getRequest()));
+
+        // Special handling for multipart request
+        if ((errors != null) && !errors.isEmpty()) {
+            if (actionForm.getMultipartRequestHandler() != null) {
+                if (log.isTraceEnabled()) {
+                    log.trace("  Rolling back multipart request");
+                }
+
+                actionForm.getMultipartRequestHandler().rollback();
+            }
+        }
+
+        return errors;
+    }
+

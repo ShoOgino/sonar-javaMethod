@@ -1,0 +1,11 @@
+  @Test
+  public void shouldSupportEnumVariablesOfJava4() {
+    MavenBuild build = MavenBuild.create()
+      .setPom(TestUtils.projectPom("java4"))
+      .setCleanSonarGoals()
+      .setProperty("sonar.dynamicAnalysis", "false");
+    orchestrator.executeBuild(build);
+
+    assertThat(getMeasure("org.sonar.it.core:java4", "files").getIntValue()).isEqualTo(1);
+  }
+

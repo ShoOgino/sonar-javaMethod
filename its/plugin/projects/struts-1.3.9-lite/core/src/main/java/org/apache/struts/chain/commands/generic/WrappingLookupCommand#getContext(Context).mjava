@@ -1,0 +1,44 @@
+    /**
+     * <p>If the wrapperClassName property is not null, return a Context of
+     * the type specified by wrapperClassName, instantiated using a single-arg
+     * constructor which takes the context passed as an argument to this
+     * method.</p>
+     *
+     * <p>This method throws an exception if the wrapperClass cannot be found,
+     * or if there are any errors instantiating the wrapping context.</p>
+     *
+     * @param context Context we are processing
+     * @return Context wrapper
+     * @throws ClassNotFoundException    On failed instantiation
+     * @throws InstantiationException    On failed instantiation
+     * @throws InvocationTargetException On failed instantiation
+     * @throws IllegalAccessException    On failed instantiation
+     * @throws NoSuchMethodException     On failed instantiation
+     */
+    protected Context getContext(Context context)
+        throws ClassNotFoundException, InstantiationException,
+            InvocationTargetException, IllegalAccessException,
+            NoSuchMethodException {
+        if (wrapperClassName == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No defined wrapper class; "
+                    + "returning original context.");
+            }
+
+            return context;
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Looking for wrapper class: " + wrapperClassName);
+        }
+
+        Class wrapperClass = ClassUtils.getApplicationClass(wrapperClassName);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Instantiating wrapper class");
+        }
+
+        return (Context) ConstructorUtils.invokeConstructor(wrapperClass,
+            new Object[] { context });
+    }
+

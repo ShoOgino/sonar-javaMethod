@@ -1,0 +1,24 @@
+    /**
+     * Return true if a message string for the specified message key is
+     * present for the specified <code>Locale</code> and bundle.
+     *
+     * @param pageContext The PageContext associated with this request
+     * @param bundle      Name of the servlet context attribute for our
+     *                    message resources bundle
+     * @param locale      Name of the session attribute for our user's Locale
+     * @param key         Message key to be looked up and returned
+     * @return true if a message string for message key exists
+     * @throws JspException if a lookup error occurs (will have been saved in
+     *                      the request already)
+     */
+    public boolean present(PageContext pageContext, String bundle,
+        String locale, String key)
+        throws JspException {
+        MessageResources resources =
+            retrieveMessageResources(pageContext, bundle, true);
+
+        Locale userLocale = getUserLocale(pageContext, locale);
+
+        return resources.isPresent(userLocale, key);
+    }
+

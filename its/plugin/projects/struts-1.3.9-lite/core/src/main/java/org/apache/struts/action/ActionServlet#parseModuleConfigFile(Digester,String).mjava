@@ -1,0 +1,30 @@
+    /**
+     * <p>Parses one module config file.</p>
+     *
+     * @param digester Digester instance that does the parsing
+     * @param path     The path to the config file to parse.
+     * @throws UnavailableException if file cannot be read or parsed
+     * @since Struts 1.2
+     * @deprecated use parseModuleConfigFile(Digester digester, URL url)
+     *             instead
+     */
+    protected void parseModuleConfigFile(Digester digester, String path)
+        throws UnavailableException {
+        try {
+            List paths = splitAndResolvePaths(path);
+
+            if (paths.size() > 0) {
+                // Get first path as was the old behavior
+                URL url = (URL) paths.get(0);
+
+                parseModuleConfigFile(digester, url);
+            } else {
+                throw new UnavailableException("Cannot locate path " + path);
+            }
+        } catch (UnavailableException ex) {
+            throw ex;
+        } catch (ServletException ex) {
+            handleConfigException(path, ex);
+        }
+    }
+

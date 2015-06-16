@@ -1,0 +1,35 @@
+    /**
+     * Link old property names to new property names.
+     * This modifies the map.
+     * @param properties Map keyed by property name, with the
+     *  corresponding (String or String[]) value(s) to be set.
+     */
+    static public void linkOldPropertyNames(Map properties) {
+        Set entries = properties.entrySet();
+        Map toAdd = new HashMap();
+        Iterator i = entries.iterator();
+        while (i.hasNext()) {
+            Map.Entry entry = (Map.Entry) i.next();
+
+            if (DEFINITIONS_CONFIG_PARAMETER_NAME.equals(entry.getKey())) {
+                toAdd.put("definitionConfigFiles", entry.getValue());
+
+            } else if (FACTORY_CLASSNAME_PARAMETER_NAME.equals(entry.getKey())) {
+                toAdd.put("factoryClassname", entry.getValue());
+
+            } else if (PARSER_DETAILS_PARAMETER_NAME.equals(entry.getKey())) {
+                toAdd.put("parserDebugLevel", entry.getValue());
+
+            } else if (PARSER_VALIDATE_PARAMETER_NAME.equals(entry.getKey())) {
+                toAdd.put("parserValidate", entry.getValue());
+
+            } else if (TILES_DETAILS_PARAMETER_NAME.equals(entry.getKey())) {
+                toAdd.put("debugLevel", entry.getValue());
+            }
+        }
+
+        if (toAdd.size() > 0) {
+            properties.putAll(toAdd);
+        }
+    }
+

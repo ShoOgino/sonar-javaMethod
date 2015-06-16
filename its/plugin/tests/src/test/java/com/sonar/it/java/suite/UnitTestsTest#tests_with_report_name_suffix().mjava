@@ -1,0 +1,19 @@
+  @Test
+  public void tests_with_report_name_suffix() {
+    assumeTrue(JavaTestSuite.isAtLeastPlugin3_4());
+    MavenBuild build = MavenBuild.create()
+        .setPom(TestUtils.projectPom("tests-surefire-suffix"))
+        .setGoals("clean test-compile surefire:test -Dsurefire.reportNameSuffix=Run1","test-compile surefire:test -Dsurefire.reportNameSuffix=Run2", "sonar:sonar");
+    orchestrator.executeBuild(build);
+
+    Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("com.sonarsource.it.samples:tests-surefire-suffix",
+        "tests", "test_errors", "test_failures", "skipped_tests", "test_execution_time", "test_success_density"));
+
+    assertThat(project.getMeasure("tests").getIntValue()).isEqualTo(2);
+    assertThat(project.getMeasure("test_errors").getIntValue()).isEqualTo(0);
+    assertThat(project.getMeasure("test_failures").getIntValue()).isEqualTo(0);
+    assertThat(project.getMeasure("skipped_tests").getIntValue()).isEqualTo(2);
+    assertThat(project.getMeasure("test_execution_time").getIntValue()).isGreaterThan(0);
+    assertThat(project.getMeasure("test_success_density").getValue()).isEqualTo(100.0);
+  }
+

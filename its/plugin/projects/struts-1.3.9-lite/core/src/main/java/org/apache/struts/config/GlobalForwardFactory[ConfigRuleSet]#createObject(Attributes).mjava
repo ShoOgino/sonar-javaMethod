@@ -1,0 +1,22 @@
+    public Object createObject(Attributes attributes) {
+        // Identify the name of the class to instantiate
+        String className = attributes.getValue("className");
+
+        if (className == null) {
+            ModuleConfig mc = (ModuleConfig) digester.peek();
+
+            className = mc.getActionForwardClass();
+        }
+
+        // Instantiate the new object and return it
+        Object globalForward = null;
+
+        try {
+            globalForward = RequestUtils.applicationInstance(className, cl);
+        } catch (Exception e) {
+            digester.getLogger().error("GlobalForwardFactory.createObject: ", e);
+        }
+
+        return globalForward;
+    }
+

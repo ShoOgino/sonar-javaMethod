@@ -1,0 +1,24 @@
+    /**
+     * <p>Return a path to which an include should be attempted in the case
+     * when the response was committed before the <code>ExceptionHandler</code>
+     * was invoked.  </p> <p>If the <code>ExceptionConfig</code> has the
+     * property <code>INCLUDE_PATH</code> defined, then the value of that
+     * property will be returned. Otherwise, the ActionForward path is
+     * returned. </p>
+     *
+     * @param config        Configuration element
+     * @param actionForward Forward to use on error
+     * @return Path of resource to include
+     * @since Struts 1.3
+     */
+    protected String determineIncludePath(ExceptionConfig config,
+        ActionForward actionForward) {
+        String includePath = config.getProperty("INCLUDE_PATH");
+
+        if (includePath == null) {
+            includePath = actionForward.getPath();
+        }
+
+        return includePath;
+    }
+

@@ -1,0 +1,34 @@
+    /**
+     * Renders an HTML &lt;input type="radio"&gt; element.
+     *
+     * @param serverValue  The data to be used in the tag's <code>value</code>
+     *                     attribute and sent to the server when the form is
+     *                     submitted.
+     * @param checkedValue If the serverValue equals this value the radio
+     *                     button will be checked.
+     * @return A radio input element.
+     * @throws JspException
+     * @since Struts 1.1
+     */
+    protected String renderRadioElement(String serverValue, String checkedValue)
+        throws JspException {
+        StringBuffer results = new StringBuffer("<input type=\"radio\"");
+
+        prepareAttribute(results, "name", prepareName());
+        prepareAttribute(results, "accesskey", getAccesskey());
+        prepareAttribute(results, "tabindex", getTabindex());
+        prepareAttribute(results, "value",
+            TagUtils.getInstance().filter(serverValue));
+
+        if (serverValue.equals(checkedValue)) {
+            results.append(" checked=\"checked\"");
+        }
+
+        results.append(prepareEventHandlers());
+        results.append(prepareStyles());
+        prepareOtherAttributes(results);
+        results.append(getElementClose());
+
+        return results.toString();
+    }
+

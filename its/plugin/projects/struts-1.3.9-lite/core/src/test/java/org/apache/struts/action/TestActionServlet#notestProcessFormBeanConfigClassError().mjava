@@ -1,0 +1,27 @@
+    /**
+     * Make sure the code throws the correct exception when it can't create an
+     * instance of the base config's custom class.
+     */
+    public void notestProcessFormBeanConfigClassError()
+        throws Exception {
+        CustomFormBeanConfigArg customBase =
+            new CustomFormBeanConfigArg("customBase");
+
+        moduleConfig.addFormBeanConfig(customBase);
+
+        FormBeanConfig customSub = new FormBeanConfig();
+
+        customSub.setName("customSub");
+        customSub.setExtends("customBase");
+        moduleConfig.addFormBeanConfig(customSub);
+
+        try {
+            actionServlet.processFormBeanConfigClass(customSub, moduleConfig);
+            fail("Exception should be thrown");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unexpected exception thrown.");
+        }
+    }
+

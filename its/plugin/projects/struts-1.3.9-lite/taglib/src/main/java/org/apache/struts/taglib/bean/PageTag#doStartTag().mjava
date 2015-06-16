@@ -1,0 +1,34 @@
+    /**
+     * Retrieve the required configuration object and expose it as a scripting
+     * variable.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Retrieve the requested object to be exposed
+        Object object = null;
+
+        if ("application".equalsIgnoreCase(property)) {
+            object = pageContext.getServletContext();
+        } else if ("config".equalsIgnoreCase(property)) {
+            object = pageContext.getServletConfig();
+        } else if ("request".equalsIgnoreCase(property)) {
+            object = pageContext.getRequest();
+        } else if ("response".equalsIgnoreCase(property)) {
+            object = pageContext.getResponse();
+        } else if ("session".equalsIgnoreCase(property)) {
+            object = pageContext.getSession();
+        } else {
+            JspException e =
+                new JspException(messages.getMessage("page.selector", property));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Expose this value as a scripting variable
+        pageContext.setAttribute(id, object);
+
+        return (SKIP_BODY);
+    }
+

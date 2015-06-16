@@ -1,0 +1,27 @@
+    /**
+     * Extract key that will be used to get the sub factory.
+     * @param name Name of requested definition
+     * @param request Current servlet request.
+     * @param servletContext Current servlet context.
+     * @return the key or <code>null</code> if not found.
+     */
+    protected Object getDefinitionsFactoryKey(
+        String name,
+        ServletRequest request,
+        ServletContext servletContext) {
+
+        Locale locale = null;
+        try {
+            HttpSession session = ((HttpServletRequest) request).getSession(false);
+            if (session != null) {
+                locale = (Locale) session.getAttribute(ComponentConstants.LOCALE_KEY);
+            }
+
+        } catch (ClassCastException ex) {
+            log.error("I18nFactorySet.getDefinitionsFactoryKey");
+            ex.printStackTrace();
+        }
+
+        return locale;
+    }
+

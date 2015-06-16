@@ -1,0 +1,30 @@
+    /**
+     * Create Definition factory from specified configuration object.
+     * Create an instance of the factory with the class specified in the config
+     * object. Then, initialize this factory and finally store the factory in
+     * appropriate context by calling
+     * {@link #makeDefinitionsFactoryAccessible(DefinitionsFactory, ServletContext)}.
+     * Factory creation is done by {@link #createDefinitionFactoryInstance(String)}.
+     * <p>
+     *
+     * @param servletContext Servlet Context passed to newly created factory.
+     * @param factoryConfig Configuration object passed to factory.
+     * @return newly created factory of type specified in the config object.
+     * @throws DefinitionsFactoryException If an error occur while initializing factory
+     */
+    public DefinitionsFactory createDefinitionsFactory(
+        ServletContext servletContext,
+        DefinitionsFactoryConfig factoryConfig)
+        throws DefinitionsFactoryException {
+
+        // Create configurable factory
+        DefinitionsFactory factory =
+            createDefinitionFactoryInstance(factoryConfig.getFactoryClassname());
+
+        factory.init(factoryConfig, servletContext);
+
+        // Make factory accessible from jsp tags (push it in appropriate context)
+        makeDefinitionsFactoryAccessible(factory, servletContext);
+        return factory;
+    }
+

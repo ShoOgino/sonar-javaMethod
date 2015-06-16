@@ -1,0 +1,28 @@
+    /**
+     * Calculate the url to redirect to.
+     *
+     * @throws JspException
+     * @since Struts 1.2
+     */
+    protected String generateRedirectURL()
+        throws JspException {
+        Map params =
+            TagUtils.getInstance().computeParameters(pageContext, paramId,
+                paramName, paramProperty, paramScope, name, property, scope,
+                transaction);
+
+        String url = null;
+
+        try {
+            url = TagUtils.getInstance().computeURLWithCharEncoding(pageContext,
+                    forward, href, page, action, module, params, anchor, true,
+                    useLocalEncoding);
+        } catch (MalformedURLException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("redirect.url",
+                    e.toString()));
+        }
+
+        return url;
+    }
+

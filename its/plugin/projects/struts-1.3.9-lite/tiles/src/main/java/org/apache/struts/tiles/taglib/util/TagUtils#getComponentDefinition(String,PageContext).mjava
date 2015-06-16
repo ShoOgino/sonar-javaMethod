@@ -1,0 +1,32 @@
+    /**
+     * Get component definition by its name.
+     * @param name Definition name.
+     * @param pageContext The PageContext for the current page.
+     * @throws JspException -
+     */
+    public static ComponentDefinition getComponentDefinition(String name, PageContext pageContext)
+        throws JspException {
+
+        try {
+            return TilesUtil.getDefinition(
+                name,
+                pageContext.getRequest(),
+                pageContext.getServletContext());
+
+        } catch (NoSuchDefinitionException ex) {
+            throw new JspException(
+                "Error : Can't get component definition for '"
+                    + name
+                    + "'. Check if this name exist in component definitions.",ex);
+        } catch (FactoryNotFoundException ex) { // factory not found.
+            throw new JspException(ex);
+
+        } catch (DefinitionsFactoryException ex) {
+            if (debug)
+                ex.printStackTrace();
+            // Save exception to be able to show it later
+            saveException(pageContext, ex);
+            throw new JspException(ex);
+        }
+    }
+

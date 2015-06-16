@@ -1,0 +1,29 @@
+    /**
+     * Test processExtends() with an action config that extends a global
+     * config with the same name.
+     */
+    public void testProcessExtendsSameNames()
+        throws Exception {
+        String path = baseConfig.getPath();
+        boolean redirect = baseConfig.getRedirect();
+
+        String module = actionBaseConfig.getModule();
+        String inherit = actionBaseConfig.getExtends();
+        String name = actionBaseConfig.getName();
+
+        moduleConfig.addForwardConfig(baseConfig);
+        actionConfig.addForwardConfig(actionBaseConfig);
+
+        actionBaseConfig.processExtends(moduleConfig, actionConfig);
+
+        assertEquals("Path wasn't inherited", path, actionBaseConfig.getPath());
+        assertEquals("Module shouldn't have changed", module,
+            actionBaseConfig.getModule());
+        assertEquals("Name shouldn't have changed", name,
+            actionBaseConfig.getName());
+        assertEquals("Extends shouldn't have changed", inherit,
+            actionBaseConfig.getExtends());
+        assertEquals("Redirect shouldn't have changed", redirect,
+            actionBaseConfig.getRedirect());
+    }
+

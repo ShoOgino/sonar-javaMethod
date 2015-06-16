@@ -1,0 +1,30 @@
+    /**
+     * Render the beginning of this form.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+
+        postbackAction = null;
+
+        // Look up the form bean name, scope, and type if necessary
+        this.lookup();
+
+        // Create an appropriate "form" element based on our parameters
+        StringBuffer results = new StringBuffer();
+
+        results.append(this.renderFormStartElement());
+
+        results.append(this.renderToken());
+
+        TagUtils.getInstance().write(pageContext, results.toString());
+
+        // Store this tag itself as a page attribute
+        pageContext.setAttribute(Constants.FORM_KEY, this,
+            PageContext.REQUEST_SCOPE);
+
+        this.initFormBean();
+
+        return (EVAL_BODY_INCLUDE);
+    }
+

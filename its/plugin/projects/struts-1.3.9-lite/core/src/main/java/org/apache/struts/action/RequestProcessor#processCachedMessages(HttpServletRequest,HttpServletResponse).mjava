@@ -1,0 +1,39 @@
+    /**
+     * <p>Removes any <code>ActionMessages</code> object stored in the session
+     * under <code>Globals.MESSAGE_KEY</code> and <code>Globals.ERROR_KEY</code>
+     * if the messages' <code>isAccessed</code> method returns true.  This
+     * allows messages to be stored in the session, display one time, and be
+     * released here.</p>
+     *
+     * @param request  The servlet request we are processing.
+     * @param response The servlet response we are creating.
+     * @since Struts 1.2
+     */
+    protected void processCachedMessages(HttpServletRequest request,
+        HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return;
+        }
+
+        // Remove messages as needed
+        ActionMessages messages =
+            (ActionMessages) session.getAttribute(Globals.MESSAGE_KEY);
+
+        if (messages != null) {
+            if (messages.isAccessed()) {
+                session.removeAttribute(Globals.MESSAGE_KEY);
+            }
+        }
+
+        // Remove error messages as needed
+        messages = (ActionMessages) session.getAttribute(Globals.ERROR_KEY);
+
+        if (messages != null) {
+            if (messages.isAccessed()) {
+                session.removeAttribute(Globals.ERROR_KEY);
+            }
+        }
+    }
+

@@ -1,0 +1,135 @@
+    /**
+     * Process a Tile definition name.
+     * This method tries to process the parameter <code>definitionName</code>
+     * as a definition name.
+     * It returns <code>true</code> if a definition has been processed, or
+     * <code>false</code> otherwise.
+     *
+     * @param definitionName Definition name to insert.
+     * @param request Current page request.
+     * @param response Current page response.
+     * @return <code>true</code> if the method has processed uri as a
+     * definition name, <code>false</code> otherwise.
+     */
+    protected boolean processTilesDefinition(
+        String definitionName,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws IOException, ServletException {
+
+        // Do we do a forward (original behavior) or an include ?
+        boolean doInclude = false;
+
+        // Controller associated to a definition, if any
+        Controller controller = null;
+
+        // Computed uri to include
+        String uri = null;
+
+        ComponentContext tileContext = null;
+
+        try {
+            // Get current tile context if any.
+            // If context exist, we will do an include
+            tileContext = ComponentContext.getContext(request);
+            doInclude = (tileContext != null);
+            ComponentDefinition definition = null;
+
+            // Process tiles definition names only if a definition factory exist,
+            // and definition is found.
+            if (definitionsFactory != null) {
+                // Get definition of tiles/component corresponding to uri.
+                try {
+                    definition =
+                        definitionsFactory.getDefinition(
+                            definitionName,
+                            request,
+                            getServletContext());
+                } catch (NoSuchDefinitionException ex) {
+                    // Ignore not found
+                    log.debug("NoSuchDefinitionException " + ex.getMessage());
+                }
+                if (definition != null) { // We have a definition.
+                    // We use it to complete missing attribute in context.
+                    // We also get uri, controller.
+                    uri = definition.getPath();
+                    controller = definition.getOrCreateController();
+
+                    if (tileContext == null) {
+                        tileContext =
+                            new ComponentContext(definition.getAttributes());
+                        ComponentContext.setContext(tileContext, request);
+
+                    } else {
+                        tileContext.addMissing(definition.getAttributes());
+                    }
+                }
+            }
+
+            // Process definition set in Action, if any.
+            definition = DefinitionsUtil.getActionDefinition(request);
+            if (definition != null) { // We have a definition.
+                // We use it to complete missing attribute in context.
+                // We also overload uri and controller if set in definition.
+                if (definition.getPath() != null) {
+                    uri = definition.getPath();
+                }
+
+                if (definition.getOrCreateController() != null) {
+                    controller = definition.getOrCreateController();
+                }
+
+                if (tileContext == null) {
+                    tileContext =
+                        new ComponentContext(definition.getAttributes());
+                    ComponentContext.setContext(tileContext, request);
+                } else {
+                    tileContext.addMissing(definition.getAttributes());
+                }
+            }
+
+        } catch (java.lang.InstantiationException ex) {
+
+            log.error("Can't create associated controller", ex);
+
+            throw new ServletException(
+                "Can't create associated controller",
+                ex);
+        } catch (DefinitionsFactoryException ex) {
+            throw new ServletException(ex);
+        }
+
+        // Have we found a definition ?
+        if (uri == null) {
+            return false;
+        }
+
+        // Execute controller associated to definition, if any.
+        if (controller != null) {
+            try {
+                controller.execute(
+                    tileContext,
+                    request,
+                    response,
+                    getServletContext());
+
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        }
+
+        // If request comes from a previous Tile, do an include.
+        // This allows to insert an action in a Tile.
+        if (log.isDebugEnabled()) {
+            log.debug("uri=" + uri + " doInclude=" + doInclude);
+        }
+
+        if (doInclude) {
+            doInclude(uri, request, response);
+        } else {
+            doForward(uri, request, response); // original behavior
+        }
+
+        return true;
+    }
+

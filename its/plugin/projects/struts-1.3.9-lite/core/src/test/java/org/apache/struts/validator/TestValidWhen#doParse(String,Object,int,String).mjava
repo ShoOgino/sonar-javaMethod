@@ -1,0 +1,33 @@
+    /**
+     * Parse the expression returning the result
+     *
+     * @param test     Test expression
+     * @param bean     Test Bean
+     * @param index    index value
+     * @param property Bean property
+     */
+    private boolean doParse(String test, Object bean, int index, String property)
+        throws Exception {
+        if (bean == null) {
+            throw new NullPointerException("Bean is null for property '"
+                + property + "'");
+        }
+
+        String value =
+            String.class.isInstance(bean) ? (String) bean
+                                          : ValidatorUtils.getValueAsString(bean,
+                property);
+
+        ValidWhenLexer lexer = new ValidWhenLexer(new StringReader(test));
+
+        ValidWhenParser parser = new ValidWhenParser(lexer);
+
+        parser.setForm(bean);
+        parser.setIndex(index);
+        parser.setValue(value);
+
+        parser.expression();
+
+        return parser.getResult();
+    }
+

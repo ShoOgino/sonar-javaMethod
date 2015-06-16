@@ -1,0 +1,18 @@
+    /**
+     * Make sure processExtends() throws an error when the config is already
+     * configured.
+     */
+    public void testProcessExtendsConfigured()
+        throws Exception {
+        baseConfig.configured = true;
+        moduleConfig.addForwardConfig(baseConfig);
+
+        try {
+            baseConfig.processExtends(moduleConfig, null);
+            fail(
+                "processExtends should not succeed when object is already configured");
+        } catch (IllegalStateException e) {
+            // success
+        }
+    }
+

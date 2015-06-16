@@ -1,0 +1,11 @@
+  @BeforeClass
+  public static void init() {
+    orchestrator.resetData();
+
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("squid"))
+      .setCleanPackageSonarGoals()
+      .setProperty("sonar.scm.disabled", "true")
+      .setProperty("sonar.profile", "squid");
+    orchestrator.executeBuild(build);
+  }
+

@@ -1,0 +1,28 @@
+    /**
+     * Process the start tag by creating a new definition.
+     * @throws JspException On errors processing tag.
+     */
+    public int doStartTag() throws JspException {
+        // Do we extend a definition ?
+        if (extendsDefinition != null && !extendsDefinition.equals("")) {
+            ComponentDefinition parentDef =
+                TagUtils.getComponentDefinition(extendsDefinition, pageContext);
+
+            definition = new ComponentDefinition(parentDef);
+
+        } else {
+            definition = new ComponentDefinition();
+        }
+
+        // Set definitions attributes
+        if (page != null) {
+            definition.setTemplate(page);
+        }
+
+        if (role != null) {
+            definition.setRole(role);
+        }
+
+        return EVAL_BODY_INCLUDE;
+    }
+

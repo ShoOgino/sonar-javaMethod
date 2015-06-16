@@ -1,0 +1,30 @@
+    protected synchronized RequestProcessor
+            getRequestProcessor(ModuleConfig config) throws ServletException {
+
+        if (tileProcessor != null) {
+            TilesRequestProcessor processor = (TilesRequestProcessor) super.getRequestProcessor(config);
+            return processor;
+        }
+
+        // reset the request processor
+        String requestProcessorKey = Globals.REQUEST_PROCESSOR_KEY +
+                config.getPrefix();
+        getServletContext().removeAttribute(requestProcessorKey);
+
+        // create a new request processor instance
+        TilesRequestProcessor processor = (TilesRequestProcessor) super.getRequestProcessor(config);
+
+        tileProcessor = processor;
+
+        try {
+            // reload Tiles defs
+            DefinitionsFactory factory = processor.getDefinitionsFactory();
+            factory.init(factory.getConfig(), getServletContext());
+            // System.out.println("reloaded tiles-definitions");
+        } catch (DefinitionsFactoryException e) {
+            e.printStackTrace();
+        }
+
+        return processor;
+    }
+

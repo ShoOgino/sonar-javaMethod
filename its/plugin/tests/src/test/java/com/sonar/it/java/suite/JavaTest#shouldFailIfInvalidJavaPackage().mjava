@@ -1,0 +1,14 @@
+  /**
+   * SONARJAVA-444
+   */
+  @Test
+  public void shouldFailIfInvalidJavaPackage() {
+    MavenBuild build = MavenBuild.create()
+      .setPom(TestUtils.projectPom("invalid-java-package"))
+      .setCleanSonarGoals()
+      .setProperty("sonar.dynamicAnalysis", "false");
+
+    BuildResult buildResult = orchestrator.executeBuildQuietly(build);
+    assertThat(buildResult.getStatus()).isEqualTo(0);
+  }
+

@@ -1,0 +1,59 @@
+    /**
+     * Returns the appropriate MessageResources object for the current module
+     * and the given bundle.
+     *
+     * @param pageContext    Search the context's scopes for the resources.
+     * @param bundle         The bundle name to look for.  If this is
+     *                       <code>null</code>, the default bundle name is
+     *                       used.
+     * @param checkPageScope Whether to check page scope
+     * @return MessageResources The bundle's resources stored in some scope.
+     * @throws JspException if the MessageResources object could not be
+     *                      found.
+     */
+    public MessageResources retrieveMessageResources(PageContext pageContext,
+        String bundle, boolean checkPageScope)
+        throws JspException {
+        MessageResources resources = null;
+
+        if (bundle == null) {
+            bundle = Globals.MESSAGES_KEY;
+        }
+
+        if (checkPageScope) {
+            resources =
+                (MessageResources) pageContext.getAttribute(bundle,
+                    PageContext.PAGE_SCOPE);
+        }
+
+        if (resources == null) {
+            resources =
+                (MessageResources) pageContext.getAttribute(bundle,
+                    PageContext.REQUEST_SCOPE);
+        }
+
+        if (resources == null) {
+            ModuleConfig moduleConfig = getModuleConfig(pageContext);
+
+            resources =
+                (MessageResources) pageContext.getAttribute(bundle
+                    + moduleConfig.getPrefix(), PageContext.APPLICATION_SCOPE);
+        }
+
+        if (resources == null) {
+            resources =
+                (MessageResources) pageContext.getAttribute(bundle,
+                    PageContext.APPLICATION_SCOPE);
+        }
+
+        if (resources == null) {
+            JspException e =
+                new JspException(messages.getMessage("message.bundle", bundle));
+
+            saveException(pageContext, e);
+            throw e;
+        }
+
+        return resources;
+    }
+

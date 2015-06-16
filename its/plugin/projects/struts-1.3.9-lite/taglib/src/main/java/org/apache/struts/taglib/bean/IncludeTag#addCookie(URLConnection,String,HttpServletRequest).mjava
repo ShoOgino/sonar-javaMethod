@@ -1,0 +1,22 @@
+    /**
+     * Add a session id cookie if appropriate. Can be overloaded to support a
+     * cluster.
+     *
+     * @param conn
+     * @param urlString
+     * @param request
+     * @since Struts 1.2.0
+     */
+    protected void addCookie(URLConnection conn, String urlString,
+        HttpServletRequest request) {
+        if ((conn instanceof HttpURLConnection)
+            && urlString.startsWith(request.getContextPath())
+            && (request.getRequestedSessionId() != null)
+            && request.isRequestedSessionIdFromCookie()) {
+            StringBuffer sb = new StringBuffer("JSESSIONID=");
+
+            sb.append(request.getRequestedSessionId());
+            conn.setRequestProperty("Cookie", sb.toString());
+        }
+    }
+

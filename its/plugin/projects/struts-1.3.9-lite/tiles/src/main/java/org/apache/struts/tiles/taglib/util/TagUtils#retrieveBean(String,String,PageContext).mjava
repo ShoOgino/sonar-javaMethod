@@ -1,0 +1,25 @@
+    /**
+     * Retrieve bean from page context, using specified scope.
+     * If scope is not set, use <code>findAttribute()</code>.
+     *
+     * @param beanName Name of bean to retrieve.
+     * @param scopeName Scope or <code>null</code>. If <code>null</code>, bean is searched using
+     *  findAttribute().
+     * @param pageContext Current pageContext.
+     * @return Requested bean or <code>null</code> if not found.
+     * @throws JspException Scope name is not recognized as a valid scope.
+     */
+    public static Object retrieveBean(String beanName, String scopeName, PageContext pageContext)
+        throws JspException {
+
+        if (scopeName == null) {
+            return findAttribute(beanName, pageContext);
+        }
+
+        // Default value doesn't matter because we have already check it
+        int scope = getScope(scopeName, PageContext.PAGE_SCOPE);
+
+        //return pageContext.getAttribute( beanName, scope );
+        return getAttribute(beanName, scope, pageContext);
+    }
+

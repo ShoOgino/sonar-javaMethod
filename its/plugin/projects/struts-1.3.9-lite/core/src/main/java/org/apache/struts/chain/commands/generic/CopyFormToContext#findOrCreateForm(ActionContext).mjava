@@ -1,0 +1,42 @@
+    /**
+     * <p>Based on the properties of this command and the given
+     * <code>ActionContext</code>, find or create an ActionForm instance for
+     * preparation.</p>
+     *
+     * @param context ActionContextBase class that we are processing
+     * @return ActionForm instance
+     * @throws IllegalArgumentException On ActionConfig not found
+     * @throws IllegalStateException    On undefined scope and formbean
+     * @throws IllegalAccessException   On failed instantiation
+     * @throws InstantiationException   If ActionContext is not subsclass of
+     *                                  ActionContextBase
+     */
+    protected ActionForm findOrCreateForm(ActionContext context)
+        throws IllegalAccessException, InstantiationException {
+        String effectiveFormName;
+        String effectiveScope;
+
+        if (!(isEmpty(this.getActionPath()))) {
+            ActionConfig actionConfig =
+                context.getModuleConfig().findActionConfig(this.getActionPath());
+
+            if (actionConfig == null) {
+                throw new IllegalArgumentException(
+                    "No ActionConfig found for path " + this.getActionPath());
+            }
+
+            effectiveFormName = actionConfig.getName();
+            effectiveScope = actionConfig.getScope();
+        } else {
+            effectiveFormName = this.getFormName();
+            effectiveScope = this.getScope();
+        }
+
+        if (isEmpty(effectiveScope) || isEmpty(effectiveFormName)) {
+            throw new IllegalStateException("Both scope [" + effectiveScope
+                + "] and formName [" + effectiveFormName + "] must be defined.");
+        }
+
+        return findOrCreateForm(context, effectiveFormName, effectiveScope);
+    }
+

@@ -1,0 +1,52 @@
+    /**
+    * Create Definition factory from provided classname.
+    * If a factory class name is provided, a factory of this class is created. Otherwise,
+    * a default factory is created.
+    * Factory must have a constructor taking ServletContext and Map as parameter.
+    * @param classname Class name of the factory to create.
+    * @param servletContext Servlet Context passed to newly created factory.
+    * @param properties Map of name/property passed to newly created factory.
+    * @return newly created factory.
+    * @throws DefinitionsFactoryException If an error occur while initializing factory
+    */
+    public ComponentDefinitionsFactory createFactoryFromClassname(
+        ServletContext servletContext,
+        Map properties,
+        String classname)
+        throws DefinitionsFactoryException {
+
+        if (classname == null) {
+            return createFactory(servletContext, properties);
+        }
+
+        // Try to create from classname
+        try {
+            Class factoryClass = RequestUtils.applicationClass(classname);
+            ComponentDefinitionsFactory factory =
+                (ComponentDefinitionsFactory) factoryClass.newInstance();
+            factory.initFactory(servletContext, properties);
+            return factory;
+
+        } catch (ClassCastException ex) { // Bad classname
+            throw new DefinitionsFactoryException(
+                "Error - createDefinitionsFactory : Factory class '"
+                    + classname
+                    + " must implements 'ComponentDefinitionsFactory'.",
+                ex);
+
+        } catch (ClassNotFoundException ex) { // Bad classname
+            throw new DefinitionsFactoryException(
+                "Error - createDefinitionsFactory : Bad class name '"
+                    + classname
+                    + "'.",
+                ex);
+
+        } catch (InstantiationException ex) { // Bad constructor or error
+            throw new DefinitionsFactoryException(ex);
+
+        } catch (IllegalAccessException ex) {
+            throw new DefinitionsFactoryException(ex);
+        }
+
+    }
+

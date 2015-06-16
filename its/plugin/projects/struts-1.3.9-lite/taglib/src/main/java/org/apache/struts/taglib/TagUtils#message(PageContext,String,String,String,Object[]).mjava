@@ -1,0 +1,38 @@
+    /**
+     * Look up and return a message string, based on the specified
+     * parameters.
+     *
+     * @param pageContext The PageContext associated with this request
+     * @param bundle      Name of the servlet context attribute for our
+     *                    message resources bundle
+     * @param locale      Name of the session attribute for our user's Locale
+     * @param key         Message key to be looked up and returned
+     * @param args        Replacement parameters for this message
+     * @return message string
+     * @throws JspException if a lookup error occurs (will have been saved in
+     *                      the request already)
+     */
+    public String message(PageContext pageContext, String bundle,
+        String locale, String key, Object[] args)
+        throws JspException {
+        MessageResources resources =
+            retrieveMessageResources(pageContext, bundle, false);
+
+        Locale userLocale = getUserLocale(pageContext, locale);
+        String message = null;
+
+        if (args == null) {
+            message = resources.getMessage(userLocale, key);
+        } else {
+            message = resources.getMessage(userLocale, key, args);
+        }
+
+        if ((message == null) && log.isDebugEnabled()) {
+            // log missing key to ease debugging
+            log.debug(resources.getMessage("message.resources", key, bundle,
+                    locale));
+        }
+
+        return message;
+    }
+

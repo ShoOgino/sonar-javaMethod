@@ -1,0 +1,21 @@
+    /**
+     * <p> Return the path for the specified forward, otherwise return
+     * <code>null</code>. </p>
+     *
+     * @param name Name given to local or global forward.
+     */
+    public String getLink(String name) {
+        ActionForward forward = getActionForward(name);
+
+        if (forward == null) {
+            return null;
+        }
+
+        StringBuffer path = new StringBuffer(this.request.getContextPath());
+
+        path.append(forward.getPath());
+
+        // :TODO: What about runtime parameters?
+        return getEncodeURL(path.toString());
+    }
+

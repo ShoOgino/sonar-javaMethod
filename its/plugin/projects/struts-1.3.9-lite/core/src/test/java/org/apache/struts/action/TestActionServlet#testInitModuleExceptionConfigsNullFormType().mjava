@@ -1,0 +1,21 @@
+    /**
+     * Test that initModuleExceptionConfigs throws an exception when a handler
+     * with a null key is present.
+     */
+    public void testInitModuleExceptionConfigsNullFormType()
+        throws ServletException {
+        ExceptionConfig handler = new ExceptionConfig();
+
+        handler.setType("java.lang.NullPointerException");
+        moduleConfig.addExceptionConfig(handler);
+
+        try {
+            actionServlet.initModuleExceptionConfigs(moduleConfig);
+            fail("An exception should've been thrown here.");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unrecognized exception thrown: " + e);
+        }
+    }
+

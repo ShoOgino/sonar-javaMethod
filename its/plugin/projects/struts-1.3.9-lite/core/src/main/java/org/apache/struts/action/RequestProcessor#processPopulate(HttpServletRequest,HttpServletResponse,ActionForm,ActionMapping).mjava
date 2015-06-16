@@ -1,0 +1,43 @@
+    /**
+     * <p>Populate the properties of the specified <code>ActionForm</code>
+     * instance from the request parameters included with this request.  In
+     * addition, request attribute <code>Globals.CANCEL_KEY</code> will be set
+     * if the request was submitted with a button created by
+     * <code>CancelTag</code>.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param form     The ActionForm instance we are populating
+     * @param mapping  The ActionMapping we are using
+     * @throws ServletException if thrown by RequestUtils.populate()
+     */
+    protected void processPopulate(HttpServletRequest request,
+        HttpServletResponse response, ActionForm form, ActionMapping mapping)
+        throws ServletException {
+        if (form == null) {
+            return;
+        }
+
+        // Populate the bean properties of this ActionForm instance
+        if (log.isDebugEnabled()) {
+            log.debug(" Populating bean properties from this request");
+        }
+
+        form.setServlet(this.servlet);
+        form.reset(mapping, request);
+
+        if (mapping.getMultipartClass() != null) {
+            request.setAttribute(Globals.MULTIPART_KEY,
+                mapping.getMultipartClass());
+        }
+
+        RequestUtils.populate(form, mapping.getPrefix(), mapping.getSuffix(),
+            request);
+
+        // Set the cancellation request attribute if appropriate
+        if ((request.getParameter(Globals.CANCEL_PROPERTY) != null)
+            || (request.getParameter(Globals.CANCEL_PROPERTY_X) != null)) {
+            request.setAttribute(Globals.CANCEL_KEY, Boolean.TRUE);
+        }
+    }
+

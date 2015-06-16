@@ -1,0 +1,35 @@
+    /**
+     * Create Definition factory.
+     * Create configuration object from servlet web.xml file, then create
+     * ConfigurableDefinitionsFactory and initialized it with object.
+     * <p>
+     * If checkIfExist is true, start by checking if factory already exist. If yes,
+     * return it. If no, create a new one.
+     * <p>
+     * If checkIfExist is false, factory is always created.
+     * <p>
+     * Convenience method. Calls createDefinitionsFactory(ServletContext servletContext, DefinitionsFactoryConfig factoryConfig)
+     *
+     * @param servletContext Servlet Context passed to newly created factory.
+     * @param servletConfig Servlet config containing parameters to be passed to factory configuration object.
+     * @param checkIfExist Check if factory already exist. If true and factory exist, return it.
+     * If true and factory doesn't exist, create it. If false, create it in all cases.
+     * @return newly created factory of type ConfigurableDefinitionsFactory.
+     * @throws DefinitionsFactoryException If an error occur while initializing factory
+     */
+    public static DefinitionsFactory createDefinitionsFactory(
+        ServletContext servletContext,
+        ServletConfig servletConfig,
+        boolean checkIfExist)
+        throws DefinitionsFactoryException {
+
+        if (checkIfExist) {
+            // Check if already exist in context
+            DefinitionsFactory factory = getDefinitionsFactory(servletContext);
+            if (factory != null)
+                return factory;
+        }
+
+        return createDefinitionsFactory(servletContext, servletConfig);
+    }
+

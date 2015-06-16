@@ -1,0 +1,35 @@
+    /**
+     * Parse files associated to postix if they exist.
+     * For each name in filenames, append postfix before file extension,
+     * then try to load the corresponding file.
+     * If file doesn't exist, try next one. Each file description is added to
+     * the XmlDefinitionsSet description.
+     * The XmlDefinitionsSet description is created only if there is a definition file.
+     * Inheritance is not resolved in the returned XmlDefinitionsSet.
+     * If no description file can be opened and no definiion set is provided, return <code>null</code>.
+     * @param postfix Postfix to add to each description file.
+     * @param xmlDefinitions Definitions set to which definitions will be added. If <code>null</code>, a definitions
+     * set is created on request.
+     * @return XmlDefinitionsSet The definitions set created or passed as parameter.
+     * @throws DefinitionsFactoryException On errors parsing file.
+     */
+    protected XmlDefinitionsSet parseXmlFiles(
+        ServletContext servletContext,
+        String postfix,
+        XmlDefinitionsSet xmlDefinitions)
+        throws DefinitionsFactoryException {
+
+        if (postfix != null && postfix.length() == 0) {
+            postfix = null;
+        }
+
+        // Iterate throw each file name in list
+        Iterator i = filenames.iterator();
+        while (i.hasNext()) {
+            String filename = concatPostfix((String) i.next(), postfix);
+            xmlDefinitions = parseXmlFile(servletContext, filename, xmlDefinitions);
+        }
+
+        return xmlDefinitions;
+    }
+

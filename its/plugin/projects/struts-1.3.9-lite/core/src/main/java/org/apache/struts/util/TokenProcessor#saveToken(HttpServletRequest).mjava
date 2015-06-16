@@ -1,0 +1,15 @@
+    /**
+     * Save a new transaction token in the user's current session, creating a
+     * new session if necessary.
+     *
+     * @param request The servlet request we are processing
+     */
+    public synchronized void saveToken(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String token = generateToken(request);
+
+        if (token != null) {
+            session.setAttribute(Globals.TRANSACTION_TOKEN_KEY, token);
+        }
+    }
+

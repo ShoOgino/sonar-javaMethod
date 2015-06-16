@@ -1,0 +1,21 @@
+    /**
+     * <p>Get the <code>RequestDispatcher</code> for the specified <code>uri</code>.  If it is not found,
+     * send a 500 error as a response and return null;
+     *
+     * @param context the current <code>ServletActionContext</code>
+     * @param uri the ServletContext-relative URI of the request dispatcher to find.
+     * @return the <code>RequestDispatcher</code>, or null if none is returned from the <code>ServletContext</code>.
+     * @throws IOException if <code>getRequestDispatcher(uri)</code> has an error.
+     */
+    private RequestDispatcher getRequiredDispatcher(ServletActionContext context, String uri) throws IOException {
+        RequestDispatcher rd = context.getContext().getRequestDispatcher(uri);
+        if (rd == null) {
+            log.debug("No request dispatcher found for " + uri);
+            HttpServletResponse response = context.getResponse();
+            response.sendError(
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "Error getting RequestDispatcher for " + uri);
+        }
+        return rd;
+    }
+

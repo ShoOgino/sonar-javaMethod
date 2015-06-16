@@ -1,0 +1,63 @@
+    /**
+     * <p>Attempt to give good information when the response has already been
+     * committed when the exception was thrown. This happens often when Tiles
+     * is used. Base implementation will see if the INCLUDE_PATH property has
+     * been set, or if not, it will attempt to use the same path to which
+     * control would have been forwarded.</p>
+     *
+     * @param ex            The exception to handle
+     * @param config        The ExceptionConfig we are processing
+     * @param mapping       The ActionMapping we are processing
+     * @param formInstance  The ActionForm we are processing
+     * @param request       The servlet request we are processing
+     * @param response      The servlet response we are creating
+     * @param actionForward The ActionForward we are processing
+     * @since Struts 1.3
+     */
+    protected void handleCommittedResponse(Exception ex,
+        ExceptionConfig config, ActionMapping mapping, ActionForm formInstance,
+        HttpServletRequest request, HttpServletResponse response,
+        ActionForward actionForward) {
+        String includePath = determineIncludePath(config, actionForward);
+
+        if (includePath != null) {
+            if (includePath.startsWith("/")) {
+                LOG.debug("response committed, "
+                    + "but attempt to include results "
+                    + "of actionForward path");
+
+                RequestDispatcher requestDispatcher =
+                    request.getRequestDispatcher(includePath);
+
+                try {
+                    requestDispatcher.include(request, response);
+
+                    return;
+                } catch (IOException e) {
+                    LOG.error("IOException when trying to include "
+                        + "the error page path " + includePath, e);
+                } catch (ServletException e) {
+                    LOG.error("ServletException when trying to include "
+                        + "the error page path " + includePath, e);
+                }
+            } else {
+                LOG.warn("Suspicious includePath doesn't seem likely to work, "
+                    + "so skipping it: " + includePath
+                    + "; expected path to start with '/'");
+            }
+        }
+
+        LOG.debug("Include not available or failed; "
+            + "try writing to the response directly.");
+
+        try {
+            response.getWriter().println("Unexpected error: " + ex);
+            response.getWriter().println("<!-- ");
+            ex.printStackTrace(response.getWriter());
+            response.getWriter().println("-->");
+        } catch (IOException e) {
+            LOG.error("Error giving minimal information about exception", e);
+            LOG.error("Original exception: ", ex);
+        }
+    }
+

@@ -1,0 +1,65 @@
+    /**
+     * <p>Initialize the plug ins for the specified module.</p>
+     *
+     * @param config ModuleConfig information for this module
+     * @throws ServletException if initialization cannot be performed
+     * @since Struts 1.1
+     */
+    protected void initModulePlugIns(ModuleConfig config)
+        throws ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing module path '" + config.getPrefix()
+                + "' plug ins");
+        }
+
+        PlugInConfig[] plugInConfigs = config.findPlugInConfigs();
+        PlugIn[] plugIns = new PlugIn[plugInConfigs.length];
+
+        getServletContext().setAttribute(Globals.PLUG_INS_KEY
+            + config.getPrefix(), plugIns);
+
+        for (int i = 0; i < plugIns.length; i++) {
+            try {
+                plugIns[i] =
+                    (PlugIn) RequestUtils.applicationInstance(plugInConfigs[i]
+                        .getClassName());
+                BeanUtils.populate(plugIns[i], plugInConfigs[i].getProperties());
+
+                // Pass the current plugIn config object to the PlugIn.
+                // The property is set only if the plugin declares it.
+                // This plugin config object is needed by Tiles
+                try {
+                    PropertyUtils.setProperty(plugIns[i],
+                        "currentPlugInConfigObject", plugInConfigs[i]);
+                } catch (Exception e) {
+                    ;
+
+                    // FIXME Whenever we fail silently, we must document a valid
+                    // reason for doing so.  Why should we fail silently if a
+                    // property can't be set on the plugin?
+
+                    /**
+                     * Between version 1.138-1.140 cedric made these changes.
+                     * The exceptions are caught to deal with containers
+                     * applying strict security. This was in response to bug
+                     * #15736
+                     *
+                     * Recommend that we make the currentPlugInConfigObject part
+                     * of the PlugIn Interface if we can, Rob
+                     */
+                }
+
+                plugIns[i].init(this, config);
+            } catch (ServletException e) {
+                throw e;
+            } catch (Exception e) {
+                String errMsg =
+                    internal.getMessage("plugIn.init",
+                        plugInConfigs[i].getClassName());
+
+                log(errMsg, e);
+                throw new UnavailableException(errMsg);
+            }
+        }
+    }
+

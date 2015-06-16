@@ -1,0 +1,26 @@
+    /**
+     * Render an input element for this tag.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doEndTag() throws JspException {
+        // Create an appropriate "input" element based on our parameters
+        StringBuffer results = new StringBuffer("<input type=\"checkbox\"");
+
+        prepareAttribute(results, "name", prepareName());
+        prepareAttribute(results, "accesskey", getAccesskey());
+        prepareAttribute(results, "tabindex", getTabindex());
+
+        String value = prepareValue(results);
+
+        prepareChecked(results, value);
+        results.append(prepareEventHandlers());
+        results.append(prepareStyles());
+        prepareOtherAttributes(results);
+        results.append(getElementClose());
+
+        TagUtils.getInstance().write(pageContext, results.toString());
+
+        return EVAL_PAGE;
+    }
+

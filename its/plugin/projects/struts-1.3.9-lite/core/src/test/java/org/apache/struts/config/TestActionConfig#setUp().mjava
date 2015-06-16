@@ -1,0 +1,39 @@
+    /**
+     * Set up instance variables required by this test case.
+     */
+    public void setUp() {
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+
+        config = factoryObject.createModuleConfig("");
+
+        // setup the base form
+        baseConfig = new ActionConfig();
+        baseConfig.setPath("/base");
+        baseConfig.setType("org.apache.struts.actions.DummyAction");
+
+        // set up success and failure forward
+        ForwardConfig forward =
+            new ForwardConfig("success", "/success.jsp", false);
+
+        baseConfig.addForwardConfig(forward);
+
+        forward = new ForwardConfig("failure", "/failure.jsp", false);
+        forward.setProperty("forwardCount", "10");
+        baseConfig.addForwardConfig(forward);
+
+        // setup an exception handler
+        ExceptionConfig exceptionConfig = new ExceptionConfig();
+
+        exceptionConfig.setType("java.sql.SQLException");
+        exceptionConfig.setKey("msg.exception.sql");
+        exceptionConfig.setProperty("exceptionCount", "10");
+        baseConfig.addExceptionConfig(exceptionConfig);
+
+        // set some arbitrary properties
+        baseConfig.setProperty("label", "base");
+        baseConfig.setProperty("version", "1a");
+
+        // register it to our config
+        config.addActionConfig(baseConfig);
+    }
+

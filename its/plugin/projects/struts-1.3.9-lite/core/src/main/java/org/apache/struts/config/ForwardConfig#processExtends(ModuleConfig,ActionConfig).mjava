@@ -1,0 +1,70 @@
+    /**
+     * <p>Inherit configuration information from the ForwardConfig that this
+     * instance is extending.  This method verifies that any forward config
+     * object that it inherits from has also had its processExtends() method
+     * called.</p>
+     *
+     * @param moduleConfig The {@link ModuleConfig} that this config is from.
+     * @param actionConfig The {@link ActionConfig} that this config is from,
+     *                     if applicable.  This must be null for global
+     *                     forwards.
+     * @see #inheritFrom(ForwardConfig)
+     */
+    public void processExtends(ModuleConfig moduleConfig,
+        ActionConfig actionConfig)
+        throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        if (configured) {
+            throw new IllegalStateException("Configuration is frozen");
+        }
+
+        String ancestorName = getExtends();
+
+        if ((!extensionProcessed) && (ancestorName != null)) {
+            ForwardConfig baseConfig = null;
+
+            // We only check the action config if we're not a global forward
+            boolean checkActionConfig =
+                (this != moduleConfig.findForwardConfig(getName()));
+
+            // ... and the action config was provided
+            checkActionConfig &= (actionConfig != null);
+
+            // ... and we're not extending a config with the same name
+            // (because if we are, that means we're an action-level forward
+            //  extending a global forward).
+            checkActionConfig &= !ancestorName.equals(getName());
+
+            // We first check in the action config's forwards
+            if (checkActionConfig) {
+                baseConfig = actionConfig.findForwardConfig(ancestorName);
+            }
+
+            // Then check the global forwards
+            if (baseConfig == null) {
+                baseConfig = moduleConfig.findForwardConfig(ancestorName);
+            }
+
+            if (baseConfig == null) {
+                throw new NullPointerException("Unable to find " + "forward '"
+                    + ancestorName + "' to extend.");
+            }
+
+            // Check for circular inheritance and make sure the base config's
+            //  own extends have been processed already
+            if (checkCircularInheritance(moduleConfig, actionConfig)) {
+                throw new IllegalArgumentException(
+                    "Circular inheritance detected for forward " + getName());
+            }
+
+            if (!baseConfig.isExtensionProcessed()) {
+                baseConfig.processExtends(moduleConfig, actionConfig);
+            }
+
+            // copy values from the base config
+            inheritFrom(baseConfig);
+        }
+
+        extensionProcessed = true;
+    }
+

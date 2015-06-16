@@ -1,0 +1,21 @@
+    /**
+     * Find enclosing parent tag accepting this tag.
+     * @throws JspException If we can't find an appropriate enclosing tag.
+     */
+    protected PutListTagParent findEnclosingParent() throws JspException {
+        try {
+            PutListTagParent parent =
+                (PutListTagParent) findAncestorWithClass(this,
+                    PutListTagParent.class);
+
+            if (parent == null) {
+                throw new JspException("Error - tag putList : enclosing tag doesn't accept 'putList' tag.");
+            }
+
+            return parent;
+
+        } catch (ClassCastException ex) {
+            throw new JspException("Error - tag putList : enclosing tag doesn't accept 'putList' tag.", ex);
+        }
+    }
+

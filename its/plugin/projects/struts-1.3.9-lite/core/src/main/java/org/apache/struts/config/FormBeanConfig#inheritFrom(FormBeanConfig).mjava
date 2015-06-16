@@ -1,0 +1,47 @@
+    /**
+     * <p>Inherit values that have not been overridden from the provided
+     * config object.  Subclasses overriding this method should verify that
+     * the given parameter is of a class that contains a property it is trying
+     * to inherit:</p>
+     *
+     * <pre>
+     * if (config instanceof MyCustomConfig) {
+     *     MyCustomConfig myConfig =
+     *         (MyCustomConfig) config;
+     *
+     *     if (getMyCustomProp() == null) {
+     *         setMyCustomProp(myConfig.getMyCustomProp());
+     *     }
+     * }
+     * </pre>
+     *
+     * <p>If the given <code>config</code> is extending another object, those
+     * extensions should be resolved before it's used as a parameter to this
+     * method.</p>
+     *
+     * @param config The object that this instance will be inheriting its
+     *               values from.
+     * @see #processExtends(ModuleConfig)
+     */
+    public void inheritFrom(FormBeanConfig config)
+        throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        throwIfConfigured();
+
+        // Inherit values that have not been overridden
+        if (getName() == null) {
+            setName(config.getName());
+        }
+
+        if (!isRestricted()) {
+            setRestricted(config.isRestricted());
+        }
+
+        if (getType() == null) {
+            setType(config.getType());
+        }
+
+        inheritFormProperties(config);
+        inheritProperties(config);
+    }
+

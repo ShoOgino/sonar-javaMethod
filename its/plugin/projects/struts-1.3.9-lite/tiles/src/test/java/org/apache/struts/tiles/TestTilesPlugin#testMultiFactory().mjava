@@ -1,0 +1,39 @@
+    /**
+     * Test multi factory creation when moduleAware=true.
+     */
+    public void testMultiFactory() {
+        // init TilesPlugin
+        module1 = createModuleConfig("/module1", "tiles-defs.xml", true);
+        module2 = createModuleConfig("/module2", "tiles-defs.xml", true);
+        initModulePlugIns(module1);
+        initModulePlugIns(module2);
+
+        // mock request context
+        request.setAttribute(Globals.MODULE_KEY, module1);
+        request.setPathElements("/myapp", "/module1/foo.do", null, null);
+        // Retrieve factory for module1
+        DefinitionsFactory factory1 =
+            TilesUtil.getDefinitionsFactory(request, context);
+
+        assertNotNull("factory found", factory1);
+        assertEquals(
+            "factory name",
+            "/module1",
+            factory1.getConfig().getFactoryName());
+
+        // mock request context
+        request.setAttribute(Globals.MODULE_KEY, module2);
+        request.setPathElements("/myapp", "/module2/foo.do", null, null);
+        // Retrieve factory for module2
+        DefinitionsFactory factory2 =
+            TilesUtil.getDefinitionsFactory(request, context);
+        assertNotNull("factory found", factory2);
+        assertEquals(
+            "factory name",
+            "/module2",
+            factory2.getConfig().getFactoryName());
+
+        // Check that factory are different
+        assertNotSame("Factory from different modules", factory1, factory2);
+    }
+

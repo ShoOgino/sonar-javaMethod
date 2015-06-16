@@ -1,0 +1,16 @@
+  /**
+   * See SONAR-1865
+   */
+  @Test
+  public void shouldAcceptFilenamesWithDollar() {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("dollar-in-names"))
+      .setCleanPackageSonarGoals()
+      .setProperty("sonar.dynamicAnalysis", "false");
+    orchestrator.executeBuild(build);
+
+    Resource file = orchestrator.getServer().getWsClient()
+      .find(ResourceQuery.createForMetrics(JavaTestSuite.keyFor("org.sonar.it.core:dollar-in-names", "dollars/", "FilenameWith$Dollar.java"), "files"));
+    assertThat(file).isNotNull();
+    assertThat(file.getLongName()).contains("FilenameWith$Dollar");
+  }
+

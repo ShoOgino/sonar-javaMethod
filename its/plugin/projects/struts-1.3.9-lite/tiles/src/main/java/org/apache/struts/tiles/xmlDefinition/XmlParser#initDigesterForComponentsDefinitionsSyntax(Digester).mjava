@@ -1,0 +1,42 @@
+   /**
+    * Init digester for components syntax.
+    * This is an old set of rules, left for backward compatibility.
+    * @param digester Digester instance to use.
+    */
+  private void initDigesterForComponentsDefinitionsSyntax( Digester digester )
+  {
+     // Common constants
+  String PACKAGE_NAME = "org.apache.struts.tiles.xmlDefinition";
+  String DEFINITION_TAG = "component-definitions/definition";
+  String definitionHandlerClass = PACKAGE_NAME + ".XmlDefinition";
+
+  String PUT_TAG  = DEFINITION_TAG + "/put";
+  String putAttributeHandlerClass = PACKAGE_NAME + ".XmlAttribute";
+
+  String LIST_TAG = DEFINITION_TAG + "/putList";
+  String listHandlerClass     = PACKAGE_NAME + ".XmlListAttribute";
+
+  String ADD_LIST_ELE_TAG = LIST_TAG + "/add";
+
+    // syntax rules
+    digester.addObjectCreate(  DEFINITION_TAG, definitionHandlerClass );
+    digester.addSetProperties( DEFINITION_TAG);
+    digester.addSetNext(       DEFINITION_TAG, "putDefinition", definitionHandlerClass);
+    // put / putAttribute rules
+    digester.addObjectCreate(  PUT_TAG, putAttributeHandlerClass);
+    digester.addSetNext(       PUT_TAG, "addAttribute", putAttributeHandlerClass);
+    digester.addSetProperties( PUT_TAG);
+    digester.addCallMethod(    PUT_TAG, "setBody", 0);
+    // list rules
+    digester.addObjectCreate(  LIST_TAG, listHandlerClass);
+    digester.addSetProperties( LIST_TAG);
+    digester.addSetNext(       LIST_TAG, "addAttribute", putAttributeHandlerClass);
+    // list elements rules
+    // We use Attribute class to avoid rewriting a new class.
+    // Name part can't be used in listElement attribute.
+    digester.addObjectCreate(  ADD_LIST_ELE_TAG, putAttributeHandlerClass);
+    digester.addSetNext(       ADD_LIST_ELE_TAG, "add", putAttributeHandlerClass);
+    digester.addSetProperties( ADD_LIST_ELE_TAG);
+    digester.addCallMethod(    ADD_LIST_ELE_TAG, "setBody", 0);
+  }
+

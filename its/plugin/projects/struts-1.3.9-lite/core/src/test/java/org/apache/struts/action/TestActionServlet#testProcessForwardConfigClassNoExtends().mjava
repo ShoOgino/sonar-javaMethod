@@ -1,0 +1,22 @@
+    /**
+     * Make sure processForwardConfigClass() returns what it was given if the
+     * forward passed to it doesn't extend anything.
+     */
+    public void testProcessForwardConfigClassNoExtends()
+        throws Exception {
+        moduleConfig.addForwardConfig(baseForward);
+
+        ForwardConfig result = null;
+
+        try {
+            result =
+                actionServlet.processForwardConfigClass(baseForward,
+                    moduleConfig, null);
+        } catch (UnavailableException e) {
+            fail("An exception should not be thrown when there's nothing to do");
+        }
+
+        assertSame("Result should be the same as the input.", baseForward,
+            result);
+    }
+

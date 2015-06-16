@@ -1,0 +1,78 @@
+   /**
+    * Init digester for Tiles syntax.
+    * Same as components, but with first element = tiles-definitions
+    * @param digester Digester instance to use.
+    */
+  private void initDigesterForTilesDefinitionsSyntax( Digester digester )
+  {
+     // Common constants
+  String PACKAGE_NAME = "org.apache.struts.tiles.xmlDefinition";
+  String DEFINITION_TAG = "tiles-definitions/definition";
+  String definitionHandlerClass = PACKAGE_NAME + ".XmlDefinition";
+
+  String PUT_TAG  = DEFINITION_TAG + "/put";
+  String putAttributeHandlerClass = PACKAGE_NAME + ".XmlAttribute";
+
+  //String LIST_TAG = DEFINITION_TAG + "/putList";
+    // List tag value
+  String LIST_TAG = "putList";
+  String DEF_LIST_TAG = DEFINITION_TAG + "/" + LIST_TAG;
+  String listHandlerClass     = PACKAGE_NAME + ".XmlListAttribute";
+    // Tag value for adding an element in a list
+  String ADD_LIST_ELE_TAG = "*/" + LIST_TAG + "/add";
+
+    // syntax rules
+    digester.addObjectCreate(  DEFINITION_TAG, definitionHandlerClass );
+    digester.addSetProperties( DEFINITION_TAG);
+    digester.addSetNext(       DEFINITION_TAG, "putDefinition", definitionHandlerClass);
+    // put / putAttribute rules
+    // Rules for a same pattern are called in order, but rule.end() are called
+    // in reverse order.
+    // SetNext and CallMethod use rule.end() method. So, placing SetNext in
+    // first position ensure it will be called last (sic).
+    digester.addObjectCreate(  PUT_TAG, putAttributeHandlerClass);
+    digester.addSetNext(       PUT_TAG, "addAttribute", putAttributeHandlerClass);
+    digester.addSetProperties( PUT_TAG);
+    digester.addCallMethod(    PUT_TAG, "setBody", 0);
+    // Definition level list rules
+    // This is rules for lists nested in a definition
+    digester.addObjectCreate(  DEF_LIST_TAG, listHandlerClass);
+    digester.addSetProperties( DEF_LIST_TAG);
+    digester.addSetNext(       DEF_LIST_TAG, "addAttribute", putAttributeHandlerClass);
+    // list elements rules
+    // We use Attribute class to avoid rewriting a new class.
+    // Name part can't be used in listElement attribute.
+    digester.addObjectCreate(  ADD_LIST_ELE_TAG, putAttributeHandlerClass);
+    digester.addSetNext(       ADD_LIST_ELE_TAG, "add", putAttributeHandlerClass);
+    digester.addSetProperties( ADD_LIST_ELE_TAG);
+    digester.addCallMethod(    ADD_LIST_ELE_TAG, "setBody", 0);
+
+    // nested list elements rules
+    // Create a list handler, and add it to parent list
+  String NESTED_LIST = "*/" + LIST_TAG + "/" + LIST_TAG;
+    digester.addObjectCreate(  NESTED_LIST, listHandlerClass);
+    digester.addSetProperties( NESTED_LIST);
+    digester.addSetNext(       NESTED_LIST, "add", putAttributeHandlerClass);
+
+    // item elements rules
+    // We use Attribute class to avoid rewriting a new class.
+    // Name part can't be used in listElement attribute.
+  //String ADD_WILDCARD = LIST_TAG + "/addItem";
+  // non String ADD_WILDCARD = LIST_TAG + "/addx*";
+  String ADD_WILDCARD = "*/item";
+  String menuItemDefaultClass = "org.apache.struts.tiles.beans.SimpleMenuItem";
+    digester.addObjectCreate(  ADD_WILDCARD, menuItemDefaultClass, "classtype");
+    digester.addSetNext(       ADD_WILDCARD, "add", "java.lang.Object");
+    digester.addSetProperties( ADD_WILDCARD);
+
+    // bean elements rules
+  String BEAN_TAG = "*/bean";
+  String beanDefaultClass = "org.apache.struts.tiles.beans.SimpleMenuItem";
+    digester.addObjectCreate(  BEAN_TAG, beanDefaultClass, "classtype");
+    digester.addSetNext(       BEAN_TAG, "add", "java.lang.Object");
+    digester.addSetProperties( BEAN_TAG);
+
+    // Set properties to surrounding element
+  digester.addSetProperty(BEAN_TAG+ "/set-property", "property", "value");
+  }
+

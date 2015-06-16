@@ -1,0 +1,28 @@
+    /**
+     * Do start tag.
+     */
+  public int doStartTag() throws JspException
+  {
+  DefinitionsFactory factory =
+      TilesUtil.getDefinitionsFactory(pageContext.getRequest(),
+          pageContext.getServletContext());
+  if(factory != null )
+    return SKIP_BODY;
+
+  DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
+  factoryConfig.setFactoryClassname( classname );
+  factoryConfig.setDefinitionConfigFiles( filename );
+
+  try
+    {
+    factory = TilesUtil.createDefinitionsFactory(
+        pageContext.getServletContext(), factoryConfig);
+    }
+   catch( DefinitionsFactoryException ex )
+      {
+      ex.printStackTrace();
+      throw new JspException( ex );
+      }
+  return SKIP_BODY;
+  }
+

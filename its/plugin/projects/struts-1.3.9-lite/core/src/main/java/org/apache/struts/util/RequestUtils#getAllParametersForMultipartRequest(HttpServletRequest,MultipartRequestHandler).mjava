@@ -1,0 +1,42 @@
+    /**
+     * <p>Create a <code>Map</code> containing all of the parameters supplied
+     * for a multipart request, keyed by parameter name. In addition to text
+     * and file elements from the multipart body, query string parameters are
+     * included as well.</p>
+     *
+     * @param request          The (wrapped) HTTP request whose parameters are
+     *                         to be added to the map.
+     * @param multipartHandler The multipart handler used to parse the
+     *                         request.
+     * @return the map containing all parameters for this multipart request.
+     */
+    private static Map getAllParametersForMultipartRequest(
+        HttpServletRequest request, MultipartRequestHandler multipartHandler) {
+        Map parameters = new HashMap();
+        Hashtable elements = multipartHandler.getAllElements();
+        Enumeration e = elements.keys();
+
+        while (e.hasMoreElements()) {
+            String key = (String) e.nextElement();
+
+            parameters.put(key, elements.get(key));
+        }
+
+        if (request instanceof MultipartRequestWrapper) {
+            request =
+                (HttpServletRequest) ((MultipartRequestWrapper) request)
+                .getRequest();
+            e = request.getParameterNames();
+
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+
+                parameters.put(key, request.getParameterValues(key));
+            }
+        } else {
+            log.debug("Gathering multipart parameters for unwrapped request");
+        }
+
+        return parameters;
+    }
+

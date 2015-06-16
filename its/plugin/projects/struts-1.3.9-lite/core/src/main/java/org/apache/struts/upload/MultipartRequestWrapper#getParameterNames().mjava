@@ -1,0 +1,23 @@
+    /**
+     * <p> Returns the names of the parameters for this request. The
+     * enumeration consists of the normal request parameter names plus the
+     * parameters read from the multipart request </p>
+     */
+    public Enumeration getParameterNames() {
+        Enumeration baseParams = getRequest().getParameterNames();
+        Vector list = new Vector();
+
+        while (baseParams.hasMoreElements()) {
+            list.add(baseParams.nextElement());
+        }
+
+        Collection multipartParams = parameters.keySet();
+        Iterator iterator = multipartParams.iterator();
+
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+
+        return Collections.enumeration(list);
+    }
+

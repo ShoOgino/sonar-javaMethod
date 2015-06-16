@@ -1,0 +1,27 @@
+    /**
+     * <p>Return the value of a mapped property with the specified name, or
+     * <code>null</code> if there is no value for the specified key. </p>
+     *
+     * @param name Name of the property whose value is to be retrieved
+     * @param key  Key of the value to be retrieved
+     * @return The value of a mapped property with the specified name, or
+     *         <code>null</code> if there is no value for the specified key.
+     * @throws NullPointerException     if there is no property of the
+     *                                  specified name
+     * @throws IllegalArgumentException if the specified property exists, but
+     *                                  is not mapped
+     */
+    public Object get(String name, String key) {
+        Object value = dynaValues.get(name);
+
+        if (value == null) {
+            throw new NullPointerException("No mapped value for '" + name + "("
+                + key + ")'");
+        } else if (value instanceof Map) {
+            return (((Map) value).get(key));
+        } else {
+            throw new IllegalArgumentException("Non-mapped property for '"
+                + name + "(" + key + ")'");
+        }
+    }
+

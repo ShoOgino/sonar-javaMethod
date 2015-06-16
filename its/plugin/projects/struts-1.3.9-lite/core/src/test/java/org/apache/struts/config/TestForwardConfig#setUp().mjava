@@ -1,0 +1,32 @@
+    /**
+     * Set up instance variables required by this test case.
+     */
+    public void setUp() {
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+
+        moduleConfig = factoryObject.createModuleConfig("");
+
+        // Setup the base and sub forwards, with sub extending base
+        baseConfig = new ForwardConfig();
+        baseConfig.setName("baseConfig");
+        baseConfig.setPath("/somePage.jsp");
+
+        subConfig = new ForwardConfig();
+        subConfig.setName("subConfig");
+        subConfig.setExtends("baseConfig");
+        subConfig.setRedirect(true);
+
+        actionBaseConfig = new ForwardConfig();
+        actionBaseConfig.setName("baseConfig");
+        actionBaseConfig.setExtends("baseConfig");
+        actionBaseConfig.setModule("/other");
+
+        // Setup the default action config
+        actionConfig = new ActionConfig();
+        actionConfig.setPath("/index");
+        moduleConfig.addActionConfig(actionConfig);
+
+        // No forward configs are registered to either module or action configs.
+        // Each test will determine where it needs these configs, if at all.
+    }
+

@@ -1,0 +1,40 @@
+    /**
+     * <p>Compare the exception handlers of this action with that of the given
+     * and copy those that are not present.</p>
+     *
+     * @param baseConfig The action config to copy handlers from.
+     * @see #inheritFrom(ActionConfig)
+     */
+    protected void inheritExceptionHandlers(ActionConfig baseConfig)
+        throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        if (configured) {
+            throw new IllegalStateException("Configuration is frozen");
+        }
+
+        // Inherit exception handler configs
+        ExceptionConfig[] baseHandlers = baseConfig.findExceptionConfigs();
+
+        for (int i = 0; i < baseHandlers.length; i++) {
+            ExceptionConfig baseHandler = baseHandlers[i];
+
+            // Do we have this handler?
+            ExceptionConfig copy =
+                this.findExceptionConfig(baseHandler.getType());
+
+            if (copy == null) {
+                // We don't have this, so let's copy it
+                copy =
+                    (ExceptionConfig) RequestUtils.applicationInstance(baseHandler.getClass()
+                                                                                  .getName());
+
+                BeanUtils.copyProperties(copy, baseHandler);
+                this.addExceptionConfig(copy);
+                copy.setProperties(baseHandler.copyProperties());
+            } else {
+                // process any extension that this config might have
+                copy.processExtends(getModuleConfig(), this);
+            }
+        }
+    }
+

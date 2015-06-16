@@ -1,0 +1,10 @@
+  @Before
+  public void copyGuavaJar() {
+    MavenLocation guava = MavenLocation.of("com.google.guava", "guava", "10.0.1");
+    File subFolder = new File(tmp.getRoot(), "subFolder");
+    File subSubFolder = new File(subFolder, "subSubFolder");
+    new MavenLocator(ORCHESTRATOR.getConfiguration()).copyToDirectory(guava, subSubFolder);
+
+    guavaJarPath = new File(subSubFolder.getAbsolutePath(), guava.getFilename()).getAbsolutePath();
+  }
+

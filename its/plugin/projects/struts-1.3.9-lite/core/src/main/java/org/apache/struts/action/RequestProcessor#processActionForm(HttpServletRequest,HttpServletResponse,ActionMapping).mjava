@@ -1,0 +1,40 @@
+    /**
+     * <p>Retrieve and return the <code>ActionForm</code> associated with this
+     * mapping, creating and retaining one if necessary. If there is no
+     * <code>ActionForm</code> associated with this mapping, return
+     * <code>null</code>.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param mapping  The mapping we are using
+     * @return The <code>ActionForm</code> associated with this mapping.
+     */
+    protected ActionForm processActionForm(HttpServletRequest request,
+        HttpServletResponse response, ActionMapping mapping) {
+        // Create (if necessary) a form bean to use
+        ActionForm instance =
+            RequestUtils.createActionForm(request, mapping, moduleConfig,
+                servlet);
+
+        if (instance == null) {
+            return (null);
+        }
+
+        // Store the new instance in the appropriate scope
+        if (log.isDebugEnabled()) {
+            log.debug(" Storing ActionForm bean instance in scope '"
+                + mapping.getScope() + "' under attribute key '"
+                + mapping.getAttribute() + "'");
+        }
+
+        if ("request".equals(mapping.getScope())) {
+            request.setAttribute(mapping.getAttribute(), instance);
+        } else {
+            HttpSession session = request.getSession();
+
+            session.setAttribute(mapping.getAttribute(), instance);
+        }
+
+        return (instance);
+    }
+

@@ -1,0 +1,93 @@
+    /**
+     * Define the contents returned for the specified resource as a page scope
+     * attribute.
+     *
+     * @throws JspException if a JSP error occurs
+     */
+    public int doStartTag() throws JspException {
+        // Set up a URLConnection to read the requested resource
+        Map params =
+            TagUtils.getInstance().computeParameters(pageContext, null, null,
+                null, null, null, null, null, transaction);
+
+        // FIXME - <html:link> attributes
+        String urlString = null;
+        URL url = null;
+
+        try {
+            urlString =
+                TagUtils.getInstance().computeURLWithCharEncoding(pageContext,
+                    forward, href, page, null, null, params, anchor, false,
+                    useLocalEncoding);
+
+            if (urlString.indexOf(':') < 0) {
+                HttpServletRequest request =
+                    (HttpServletRequest) pageContext.getRequest();
+
+                url = new URL(RequestUtils.requestURL(request), urlString);
+            } else {
+                url = new URL(urlString);
+            }
+        } catch (MalformedURLException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("include.url",
+                    e.toString()));
+        }
+
+        URLConnection conn = null;
+
+        try {
+            // Set up the basic connection
+            conn = url.openConnection();
+            conn.setAllowUserInteraction(false);
+            conn.setDoInput(true);
+            conn.setDoOutput(false);
+
+            // Add a session id cookie if appropriate
+            HttpServletRequest request =
+                (HttpServletRequest) pageContext.getRequest();
+
+            addCookie(conn, urlString, request);
+
+            // Connect to the requested resource
+            conn.connect();
+        } catch (Exception e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("include.open",
+                    url.toString(), e.toString()));
+        }
+
+        // Copy the contents of this URL
+        StringBuffer sb = new StringBuffer();
+
+        try {
+            BufferedInputStream is =
+                new BufferedInputStream(conn.getInputStream());
+            InputStreamReader in = new InputStreamReader(is); // FIXME- encoding
+            char[] buffer = new char[BUFFER_SIZE];
+            int n = 0;
+
+            while (true) {
+                n = in.read(buffer);
+
+                if (n < 1) {
+                    break;
+                }
+
+                sb.append(buffer, 0, n);
+            }
+
+            in.close();
+        } catch (Exception e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("include.read",
+                    url.toString(), e.toString()));
+        }
+
+        // Define the retrieved content as a page scope attribute
+        pageContext.setAttribute(id, sb.toString());
+
+        // Skip any body of this tag
+        return (SKIP_BODY);
+    }
+

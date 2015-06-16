@@ -1,0 +1,23 @@
+    /**
+     * Pulls the current nesting reference from the request object, and if
+     * there isn't one there, then it will create one and set it.
+     *
+     * @param request object to manipulate the reference into
+     * @return current nesting reference as stored in the request object
+     */
+    private static final NestedReference referenceInstance(
+        HttpServletRequest request) {
+        /* get the old one if any */
+        NestedReference nr =
+            (NestedReference) request.getAttribute(NESTED_INCLUDES_KEY);
+
+        // make a new one if required
+        if (nr == null) {
+            nr = new NestedReference();
+            request.setAttribute(NESTED_INCLUDES_KEY, nr);
+        }
+
+        // return the reference
+        return nr;
+    }
+

@@ -1,0 +1,115 @@
+    protected void setUpDefaultApp() {
+        ActionFormBean formBean = null;
+        ActionMapping mapping = null;
+
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+
+        moduleConfig = factoryObject.createModuleConfig("");
+
+        context.setAttribute(Globals.MODULE_KEY, moduleConfig);
+
+        // Forward "external" to "http://jakarta.apache.org/"
+        moduleConfig.addForwardConfig(new ActionForward("external",
+                "http://jakarta.apache.org/", false));
+
+        // Forward "foo" to "/bar.jsp"
+        moduleConfig.addForwardConfig(new ActionForward("foo", "/bar.jsp", false));
+
+        // Forward "relative1" to "relative.jsp" non-context-relative
+        moduleConfig.addForwardConfig(new ActionForward("relative1",
+                "relative.jsp", false));
+
+        // Forward "relative2" to "relative.jsp" context-relative
+        moduleConfig.addForwardConfig(new ActionForward("relative2",
+                "relative.jsp", false));
+
+        // Form Bean "static" is a standard ActionForm subclass
+        formBean =
+            new ActionFormBean("static", "org.apache.struts.mock.MockFormBean");
+        moduleConfig.addFormBeanConfig(formBean);
+
+        // Action "/static" uses the "static" form bean in request scope
+        mapping = new ActionMapping();
+        mapping.setInput("/static.jsp");
+        mapping.setName("static");
+        mapping.setPath("/static");
+        mapping.setScope("request");
+        mapping.setType("org.apache.struts.mock.MockAction");
+        moduleConfig.addActionConfig(mapping);
+
+        // Form Bean "dynamic" is a DynaActionForm with the same properties
+        formBean =
+            new ActionFormBean("dynamic",
+                "org.apache.struts.action.DynaActionForm");
+        formBean.addFormPropertyConfig(new FormPropertyConfig(
+                "booleanProperty", "boolean", "false"));
+        formBean.addFormPropertyConfig(new FormPropertyConfig(
+                "stringProperty", "java.lang.String", null));
+        moduleConfig.addFormBeanConfig(formBean);
+
+        // Action "/dynamic" uses the "dynamic" form bean in session scope
+        mapping = new ActionMapping();
+        mapping.setInput("/dynamic.jsp");
+        mapping.setName("dynamic");
+        mapping.setPath("/dynamic");
+        mapping.setScope("session");
+        mapping.setType("org.apache.struts.mock.MockAction");
+        moduleConfig.addActionConfig(mapping);
+
+        // Form Bean "/dynamic0" is a DynaActionForm with initializers
+        formBean =
+            new ActionFormBean("dynamic0",
+                "org.apache.struts.action.DynaActionForm");
+        formBean.addFormPropertyConfig(new FormPropertyConfig(
+                "booleanProperty", "boolean", "true"));
+        formBean.addFormPropertyConfig(new FormPropertyConfig(
+                "stringProperty", "java.lang.String", "String Property"));
+        formBean.addFormPropertyConfig(new FormPropertyConfig("intArray1",
+                "int[]", "{1,2,3}", 4)); // 4 should be ignored
+        formBean.addFormPropertyConfig(new FormPropertyConfig("intArray2",
+                "int[]", null, 5)); // 5 should be respected
+        formBean.addFormPropertyConfig(new FormPropertyConfig("principal",
+                "org.apache.struts.mock.MockPrincipal", null));
+        formBean.addFormPropertyConfig(new FormPropertyConfig("stringArray1",
+                "java.lang.String[]", "{aaa,bbb,ccc}", 2)); // 2 should be ignored
+        formBean.addFormPropertyConfig(new FormPropertyConfig("stringArray2",
+                "java.lang.String[]", null, 3)); // 3 should be respected
+        moduleConfig.addFormBeanConfig(formBean);
+
+        // Action "/dynamic0" uses the "dynamic0" form bean in request scope
+        mapping = new ActionMapping();
+        mapping.setName("dynamic0");
+        mapping.setPath("/dynamic0");
+        mapping.setScope("request");
+        mapping.setType("org.apache.struts.mock.MockAction");
+        moduleConfig.addActionConfig(mapping);
+
+        // Action "/noform" has no form bean associated with it
+        mapping = new ActionMapping();
+        mapping.setPath("/noform");
+        mapping.setType("org.apache.struts.mock.MockAction");
+        moduleConfig.addActionConfig(mapping);
+
+        // Configure global forward declarations
+        moduleConfig.addForwardConfig(new ForwardConfig("moduleForward",
+                "/module/forward", false)); // No redirect, same module
+
+        moduleConfig.addForwardConfig(new ForwardConfig("moduleRedirect",
+                "/module/redirect", true)); // Redirect, same module
+
+        moduleConfig.addForwardConfig(new ForwardConfig("contextForward",
+                "/forward", false, // No redirect
+                "/context")); // Specify module
+
+        moduleConfig.addForwardConfig(new ForwardConfig("contextRedirect",
+                "/redirect", true, // Redirect
+                "/context")); // Specify module
+
+        moduleConfig.addForwardConfig(new ForwardConfig("moduleNoslash",
+                "module/noslash", false)); // No redirect, same module
+
+        moduleConfig.addForwardConfig(new ForwardConfig("contextNoslash",
+                "noslash", false, // No redirect
+                "/context")); // Specify module
+    }
+

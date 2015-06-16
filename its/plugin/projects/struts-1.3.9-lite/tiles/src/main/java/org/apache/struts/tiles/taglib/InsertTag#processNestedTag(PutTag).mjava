@@ -1,0 +1,19 @@
+    /**
+     * Process nested &lg;put&gt; tag.
+     * Method calls by nested &lg;put&gt; tags.
+     * Nested list is added to current list.
+     * If role is defined, it is checked immediately.
+     */
+    public void processNestedTag(PutTag nestedTag) throws JspException {
+        // Check role
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+        String role = nestedTag.getRole();
+        if (role != null && !request.isUserInRole(role)) {
+            // not allowed : skip attribute
+            return;
+        }
+
+        putAttribute(nestedTag.getName(), nestedTag.getRealValue());
+    }
+

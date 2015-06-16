@@ -1,0 +1,16 @@
+  @Test
+  public void multiple_package_in_directory_should_not_fail() throws Exception {
+    MavenBuild inspection = MavenBuild.create()
+      .setPom(TestUtils.projectPom("multiple-packages-in-directory"))
+      .setCleanPackageSonarGoals();
+    BuildResult result = orchestrator.executeBuildQuietly(inspection);
+    assertThat(result.getStatus()).isEqualTo(0);
+    inspection = MavenBuild.create()
+      .setPom(TestUtils.projectPom("multiple-packages-in-directory"))
+      .setProperty(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY, "true")
+      .setGoals("sonar:sonar");
+    result = orchestrator.executeBuildQuietly(inspection);
+    assertThat(result.getStatus()).isEqualTo(0);
+
+  }
+

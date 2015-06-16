@@ -1,0 +1,40 @@
+    /**
+     * Prepares the focus event handlers, appending them to the the given
+     * StringBuffer.
+     *
+     * @param handlers The StringBuffer that output will be appended to.
+     */
+    protected void prepareFocusEvents(StringBuffer handlers) {
+        prepareAttribute(handlers, "onblur", getOnblur());
+        prepareAttribute(handlers, "onfocus", getOnfocus());
+
+        // Get the parent FormTag (if necessary)
+        FormTag formTag = null;
+
+        if ((doDisabled && !getDisabled()) || (doReadonly && !getReadonly())) {
+            formTag =
+                (FormTag) pageContext.getAttribute(Constants.FORM_KEY,
+                    PageContext.REQUEST_SCOPE);
+        }
+
+        // Format Disabled
+        if (doDisabled) {
+            boolean formDisabled =
+                (formTag == null) ? false : formTag.isDisabled();
+
+            if (formDisabled || getDisabled()) {
+                handlers.append(" disabled=\"disabled\"");
+            }
+        }
+
+        // Format Read Only
+        if (doReadonly) {
+            boolean formReadOnly =
+                (formTag == null) ? false : formTag.isReadonly();
+
+            if (formReadOnly || getReadonly()) {
+                handlers.append(" readonly=\"readonly\"");
+            }
+        }
+    }
+

@@ -1,0 +1,32 @@
+    /**
+     * Read component instance mapping configuration file.
+     * This is where we read files properties.
+     */
+    protected void initDefinitionsMapping() throws ServletException {
+        // Retrieve and set factory for this modules
+        definitionsFactory =
+            (
+                (TilesUtilStrutsImpl) TilesUtil
+                    .getTilesUtil())
+                    .getDefinitionsFactory(
+                getServletContext(),
+                moduleConfig);
+
+        if (definitionsFactory == null) { // problem !
+
+            log.info(
+                "Definition Factory not found for module '"
+                    + moduleConfig.getPrefix()
+                    + "'. "
+                    + "Have you declared the appropriate plugin in struts-config.xml ?");
+
+            return;
+        }
+
+        log.info(
+            "Tiles definition factory found for request processor '"
+                + moduleConfig.getPrefix()
+                + "'.");
+
+    }
+

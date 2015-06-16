@@ -1,0 +1,33 @@
+        /**
+         * <p> Returns the base file name from the supplied file path. On the
+         * surface, this would appear to be a trivial task. Apparently,
+         * however, some Linux JDKs do not implement <code>File.getName()</code>
+         * correctly for Windows paths, so we attempt to take care of that
+         * here. </p>
+         *
+         * @param filePath The full path to the file.
+         * @return The base file name, from the end of the path.
+         */
+        protected String getBaseFileName(String filePath) {
+            // First, ask the JDK for the base file name.
+            String fileName = new File(filePath).getName();
+
+            // Now check for a Windows file name parsed incorrectly.
+            int colonIndex = fileName.indexOf(":");
+
+            if (colonIndex == -1) {
+                // Check for a Windows SMB file path.
+                colonIndex = fileName.indexOf("\\\\");
+            }
+
+            int backslashIndex = fileName.lastIndexOf("\\");
+
+            if ((colonIndex > -1) && (backslashIndex > -1)) {
+                // Consider this filename to be a full Windows path, and parse it
+                // accordingly to retrieve just the base file name.
+                fileName = fileName.substring(backslashIndex + 1);
+            }
+
+            return fileName;
+        }
+

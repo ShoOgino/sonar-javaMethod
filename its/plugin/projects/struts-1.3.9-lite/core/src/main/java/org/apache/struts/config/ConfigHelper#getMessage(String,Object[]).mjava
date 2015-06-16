@@ -1,0 +1,24 @@
+    /**
+     * <p> Look up and return a message string, based on the specified
+     * parameters. </p>
+     *
+     * @param key  Message key to be looked up and returned
+     * @param args Replacement parameters for this message
+     */
+    public String getMessage(String key, Object[] args) {
+        MessageResources resources = getMessageResources();
+
+        if (resources == null) {
+            return null;
+        }
+
+        // Return the requested message
+        if (args == null) {
+            return resources.getMessage(RequestUtils.getUserLocale(request, null),
+                key);
+        } else {
+            return resources.getMessage(RequestUtils.getUserLocale(request, null),
+                key, args);
+        }
+    }
+

@@ -1,0 +1,46 @@
+    /**
+     * <p>Inherit configuration information from the FormBeanConfig that this
+     * instance is extending.  This method verifies that any form bean config
+     * object that it inherits from has also had its processExtends() method
+     * called.</p>
+     *
+     * @param moduleConfig The {@link ModuleConfig} that this bean is from.
+     * @see #inheritFrom(FormBeanConfig)
+     */
+    public void processExtends(ModuleConfig moduleConfig)
+        throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        if (configured) {
+            throw new IllegalStateException("Configuration is frozen");
+        }
+
+        String ancestor = getExtends();
+
+        if ((!extensionProcessed) && (ancestor != null)) {
+            FormBeanConfig baseConfig =
+                moduleConfig.findFormBeanConfig(ancestor);
+
+            if (baseConfig == null) {
+                throw new NullPointerException("Unable to find "
+                    + "form bean '" + ancestor + "' to extend.");
+            }
+
+            // Check against circule inheritance and make sure the base config's
+            //  own extends have been processed already
+            if (checkCircularInheritance(moduleConfig)) {
+                throw new IllegalArgumentException(
+                    "Circular inheritance detected for form bean " + getName());
+            }
+
+            // Make sure the ancestor's own extension has been processed.
+            if (!baseConfig.isExtensionProcessed()) {
+                baseConfig.processExtends(moduleConfig);
+            }
+
+            // Copy values from the base config
+            inheritFrom(baseConfig);
+        }
+
+        extensionProcessed = true;
+    }
+

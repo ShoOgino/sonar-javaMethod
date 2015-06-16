@@ -1,0 +1,34 @@
+    /**
+     * <p>Initialize the exception handlers for the specified module.</p>
+     *
+     * @param config ModuleConfig information for this module
+     * @throws ServletException if initialization cannot be performed
+     * @since Struts 1.3
+     */
+    protected void initModuleExceptionConfigs(ModuleConfig config)
+        throws ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing module path '" + config.getPrefix()
+                + "' forwards");
+        }
+
+        // Process exception config extensions.
+        ExceptionConfig[] exceptions = config.findExceptionConfigs();
+
+        for (int i = 0; i < exceptions.length; i++) {
+            ExceptionConfig exception = exceptions[i];
+
+            processExceptionExtension(exception, config, null);
+        }
+
+        for (int i = 0; i < exceptions.length; i++) {
+            ExceptionConfig exception = exceptions[i];
+
+            // Verify that required fields are all present for the config
+            if (exception.getKey() == null) {
+                handleValueRequiredException("key", exception.getType(),
+                    "global exception config");
+            }
+        }
+    }
+

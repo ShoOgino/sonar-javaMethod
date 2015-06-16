@@ -1,0 +1,12 @@
+  @Test
+  public void should_support_the_old_binaries_and_libraries_properties() {
+    SonarRunner runner = ditProjectSonarRunner();
+    runner.setProperty("sonar.binaries", "target/classes");
+    runner.setProperty("sonar.libraries", guavaJarPath);
+    String logs = ORCHESTRATOR.executeBuild(runner).getLogs();
+
+    assertThat(logs).contains("sonar.binaries and sonar.libraries are deprecated since version 2.5 of sonar-java-plugin," +
+      " please use sonar.java.binaries and sonar.java.libraries instead");
+    assertThat(getNumberOfViolations()).isEqualTo(2);
+  }
+

@@ -1,0 +1,55 @@
+    /**
+     * Retrieve the required property and expose it as a scripting variable.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Retrieve the required property value
+        Object value = this.collection;
+
+        if (value == null) {
+            if (name == null) {
+                // Must specify either a collection attribute or a name
+                // attribute.
+                JspException e =
+                    new JspException(messages.getMessage(
+                            "size.noCollectionOrName"));
+
+                TagUtils.getInstance().saveException(pageContext, e);
+                throw e;
+            }
+
+            value =
+                TagUtils.getInstance().lookup(pageContext, name, property, scope);
+        }
+
+        // Identify the number of elements, based on the collection type
+        int size = 0;
+
+        if (value == null) {
+            JspException e =
+                new JspException(messages.getMessage("size.collection"));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        } else if (value.getClass().isArray()) {
+            size = Array.getLength(value);
+        } else if (value instanceof Collection) {
+            size = ((Collection) value).size();
+        } else if (value instanceof Map) {
+            size = ((Map) value).size();
+        } else {
+            JspException e =
+                new JspException(messages.getMessage("size.collection"));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Expose this size as a scripting variable
+        pageContext.setAttribute(this.id, new Integer(size),
+            PageContext.PAGE_SCOPE);
+
+        return (SKIP_BODY);
+    }
+

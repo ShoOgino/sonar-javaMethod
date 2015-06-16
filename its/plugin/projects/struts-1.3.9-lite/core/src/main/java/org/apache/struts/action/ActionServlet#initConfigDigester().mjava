@@ -1,0 +1,39 @@
+    /**
+     * <p>Create (if needed) and return a new <code>Digester</code> instance
+     * that has been initialized to process Struts module configuration files
+     * and configure a corresponding <code>ModuleConfig</code> object (which
+     * must be pushed on to the evaluation stack before parsing begins).</p>
+     *
+     * @return A new configured <code>Digester</code> instance.
+     * @throws ServletException if a Digester cannot be configured
+     * @since Struts 1.1
+     */
+    protected Digester initConfigDigester()
+        throws ServletException {
+        // :FIXME: Where can ServletException be thrown?
+        // Do we have an existing instance?
+        if (configDigester != null) {
+            return (configDigester);
+        }
+
+        // Create a new Digester instance with standard capabilities
+        configDigester = new Digester();
+        configDigester.setNamespaceAware(true);
+        configDigester.setValidating(this.isValidating());
+        configDigester.setUseContextClassLoader(true);
+        configDigester.addRuleSet(new ConfigRuleSet());
+
+        for (int i = 0; i < registrations.length; i += 2) {
+            URL url = this.getClass().getResource(registrations[i + 1]);
+
+            if (url != null) {
+                configDigester.register(registrations[i], url.toString());
+            }
+        }
+
+        this.addRuleSets();
+
+        // Return the completely configured Digester instance
+        return (configDigester);
+    }
+

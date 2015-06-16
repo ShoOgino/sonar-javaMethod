@@ -1,0 +1,41 @@
+    /**
+     * Close tag.
+     * @throws JspException On error processing tag.
+     */
+  public int doEndTag() throws JspException {
+
+      // Check role
+    if(role != null && !((HttpServletRequest)pageContext.getRequest()).isUserInRole(role) )
+      {
+      return EVAL_PAGE;
+      } // end if
+
+      // Get context
+    ComponentContext compContext = (ComponentContext)pageContext.getAttribute( ComponentConstants.COMPONENT_CONTEXT, PageContext.REQUEST_SCOPE);
+
+    if( compContext == null )
+      throw new JspException ( "Error - tag.getAsString : component context is not defined. Check tag syntax" );
+
+    Object value = compContext.getAttribute(attribute);
+    if( value == null)
+      { // no value : throw error or fail silently according to ignore
+      if(isErrorIgnored == false )
+        throw new JspException ( "Error - tag.getAsString : attribute '"+ attribute + "' not found in context. Check tag syntax" );
+       else
+        return EVAL_PAGE;
+      } // end if
+
+
+    try
+      {
+      pageContext.getOut().print( value );
+      }
+     catch( IOException ex )
+      {
+      ex.printStackTrace();
+      throw new JspException ( "Error - tag.getProperty : IOException ", ex);
+      }
+
+    return EVAL_PAGE;
+  }
+

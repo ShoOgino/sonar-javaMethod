@@ -1,0 +1,38 @@
+    /**
+     * Adds the specified errors keys into the appropriate request attribute
+     * for use by the &lt;html:errors&gt; tag, if any messages are required.
+     * Initialize the attribute if it has not already been. Otherwise, ensure
+     * that the request attribute is not set.
+     *
+     * @param request The servlet request we are processing
+     * @param errors  Errors object
+     * @since Struts 1.2.1
+     */
+    protected void addErrors(HttpServletRequest request, ActionMessages errors) {
+        if (errors == null) {
+            //  bad programmer! *slap*
+            return;
+        }
+
+        // get any existing errors from the request, or make a new one
+        ActionMessages requestErrors =
+            (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
+
+        if (requestErrors == null) {
+            requestErrors = new ActionMessages();
+        }
+
+        // add incoming errors
+        requestErrors.add(errors);
+
+        // if still empty, just wipe it out from the request
+        if (requestErrors.isEmpty()) {
+            request.removeAttribute(Globals.ERROR_KEY);
+
+            return;
+        }
+
+        // Save the errors
+        request.setAttribute(Globals.ERROR_KEY, requestErrors);
+    }
+

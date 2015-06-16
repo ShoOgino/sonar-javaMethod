@@ -1,0 +1,38 @@
+    /**
+     * Create Definition factory from provided classname which must implement {@link ComponentDefinitionsFactory}.
+     * Factory class must extend {@link DefinitionsFactory}.
+     * @param classname Class name of the factory to create.
+     * @return newly created factory.
+     * @throws DefinitionsFactoryException If an error occur while initializing factory
+     */
+    protected ComponentDefinitionsFactory createFactoryInstance(String classname)
+        throws DefinitionsFactoryException {
+
+        try {
+            Class factoryClass = RequestUtils.applicationClass(classname);
+            Object factory = factoryClass.newInstance();
+            return (ComponentDefinitionsFactory) factory;
+
+        } catch (ClassCastException ex) { // Bad classname
+            throw new DefinitionsFactoryException(
+                "Error - createDefinitionsFactory : Factory class '"
+                    + classname
+                    + " must implement 'DefinitionsFactory'.",
+                ex);
+
+        } catch (ClassNotFoundException ex) { // Bad classname
+            throw new DefinitionsFactoryException(
+                "Error - createDefinitionsFactory : Bad class name '"
+                    + classname
+                    + "'.",
+                ex);
+
+        } catch (InstantiationException ex) { // Bad constructor or error
+            throw new DefinitionsFactoryException(ex);
+
+        } catch (IllegalAccessException ex) {
+            throw new DefinitionsFactoryException(ex);
+        }
+
+    }
+

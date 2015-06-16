@@ -1,0 +1,52 @@
+    /**
+     * Initialize the DefinitionsFactory this module will use.
+     * @param servletContext
+     * @param moduleConfig
+     * @param factoryConfig
+     * @throws ServletException
+     */
+    private void initDefinitionsFactory(
+        ServletContext servletContext,
+        ModuleConfig moduleConfig,
+        DefinitionsFactoryConfig factoryConfig)
+        throws ServletException {
+
+        // Check if a factory already exist for this module
+        definitionFactory =
+            ((TilesUtilStrutsImpl) TilesUtil.getTilesUtil()).getDefinitionsFactory(
+                servletContext,
+                moduleConfig);
+
+        if (definitionFactory != null) {
+            log.info(
+                "Factory already exists for module '"
+                    + moduleConfig.getPrefix()
+                    + "'. The factory found is from module '"
+                    + definitionFactory.getConfig().getFactoryName()
+                    + "'. No new creation.");
+
+            return;
+        }
+
+        // Create configurable factory
+        try {
+            definitionFactory =
+                TilesUtil.createDefinitionsFactory(
+                    servletContext,
+                    factoryConfig);
+
+        } catch (DefinitionsFactoryException ex) {
+            log.error(
+                "Can't create Tiles definition factory for module '"
+                    + moduleConfig.getPrefix()
+                    + "'.");
+
+            throw new ServletException(ex);
+        }
+
+        log.info(
+            "Tiles definition factory loaded for module '"
+                + moduleConfig.getPrefix()
+                + "'.");
+    }
+

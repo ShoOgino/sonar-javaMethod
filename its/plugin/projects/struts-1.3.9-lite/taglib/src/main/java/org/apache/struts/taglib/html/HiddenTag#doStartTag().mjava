@@ -1,0 +1,37 @@
+    /**
+     * Generate the required input tag, followed by the optional rendered
+     * text. Support for <code>write</code> property since Struts 1.1.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Render the <html:input type="hidden"> tag as before
+        super.doStartTag();
+
+        // Is rendering the value separately requested?
+        if (!write) {
+            return (EVAL_BODY_TAG);
+        }
+
+        // Calculate the value to be rendered separately
+        // * @since Struts 1.1
+        String results = null;
+
+        if (value != null) {
+            results = TagUtils.getInstance().filter(value);
+        } else {
+            Object value =
+                TagUtils.getInstance().lookup(pageContext, name, property, null);
+
+            if (value == null) {
+                results = "";
+            } else {
+                results = TagUtils.getInstance().filter(value.toString());
+            }
+        }
+
+        TagUtils.getInstance().write(pageContext, results);
+
+        return (EVAL_BODY_TAG);
+    }
+

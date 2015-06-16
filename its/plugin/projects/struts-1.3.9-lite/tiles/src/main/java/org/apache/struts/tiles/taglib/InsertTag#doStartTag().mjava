@@ -1,0 +1,40 @@
+    /**
+     * Process the start tag by checking tag's attributes and creating appropriate handler.
+     * Possible handlers :
+     * <ul>
+     * <li> URL
+     * <li> definition
+     * <li> direct String
+     * </ul>
+     * Handlers also contain sub-component context.
+     */
+    public int doStartTag() throws JspException {
+
+            // Additional fix for Bug 20034 (2005-04-28)
+            cachedCurrentContext = null;
+
+        // Check role immediatly to avoid useless stuff.
+        // In case of insertion of a "definition", definition's role still checked later.
+        // This lead to a double check of "role" ;-(
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+        if (role != null && !request.isUserInRole(role)) {
+            processEndTag = false;
+            return SKIP_BODY;
+        }
+
+        try {
+            tagHandler = createTagHandler();
+
+        } catch (JspException e) {
+            if (isErrorIgnored) {
+                processEndTag = false;
+                return SKIP_BODY;
+            } else {
+                throw e;
+            }
+        }
+
+        return tagHandler.doStartTag();
+    }
+

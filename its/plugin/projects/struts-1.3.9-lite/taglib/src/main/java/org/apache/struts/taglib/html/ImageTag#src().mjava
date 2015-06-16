@@ -1,0 +1,91 @@
+    /**
+     * Return the base source URL that will be rendered in the
+     * <code>src</code> property for this generated element, or
+     * <code>null</code> if there is no such URL.
+     *
+     * @throws JspException if an error occurs
+     */
+    protected String src() throws JspException {
+        // Deal with a direct context-relative page that has been specified
+        if (this.page != null) {
+            if ((this.src != null) || (this.srcKey != null)
+                || (this.pageKey != null)) {
+                JspException e =
+                    new JspException(messages.getMessage("imgTag.src"));
+
+                TagUtils.getInstance().saveException(pageContext, e);
+                throw e;
+            }
+
+            HttpServletRequest request =
+                (HttpServletRequest) pageContext.getRequest();
+
+            ModuleConfig config =
+                ModuleUtils.getInstance().getModuleConfig(this.module,
+                    request, pageContext.getServletContext());
+
+            String pageValue = this.page;
+
+            if (config != null) {
+                pageValue =
+                    TagUtils.getInstance().pageURL(request, this.page, config);
+            }
+
+            return (request.getContextPath() + pageValue);
+        }
+
+        // Deal with an indirect context-relative page that has been specified
+        if (this.pageKey != null) {
+            if ((this.src != null) || (this.srcKey != null)) {
+                JspException e =
+                    new JspException(messages.getMessage("imgTag.src"));
+
+                TagUtils.getInstance().saveException(pageContext, e);
+                throw e;
+            }
+
+            HttpServletRequest request =
+                (HttpServletRequest) pageContext.getRequest();
+
+            ModuleConfig config =
+                ModuleUtils.getInstance().getModuleConfig(this.module,
+                    request, pageContext.getServletContext());
+
+            String pageValue =
+                TagUtils.getInstance().message(pageContext, getBundle(),
+                    getLocale(), this.pageKey);
+
+            if (config != null) {
+                pageValue =
+                    TagUtils.getInstance().pageURL(request, pageValue, config);
+            }
+
+            return (request.getContextPath() + pageValue);
+        }
+
+        // Deal with an absolute source that has been specified
+        if (this.src != null) {
+            if (this.srcKey != null) {
+                JspException e =
+                    new JspException(messages.getMessage("imgTag.src"));
+
+                TagUtils.getInstance().saveException(pageContext, e);
+                throw e;
+            }
+
+            return (this.src);
+        }
+
+        // Deal with an indirect source that has been specified
+        if (this.srcKey == null) {
+            JspException e =
+                new JspException(messages.getMessage("imgTag.src"));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        return TagUtils.getInstance().message(pageContext, getBundle(),
+            getLocale(), this.srcKey);
+    }
+

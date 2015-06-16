@@ -1,0 +1,23 @@
+    /**
+     * Process nested &lg;putList&gt; tag.
+     * Method calls by nested &lg;putList&gt; tags.
+     * Nested list is added to current list.
+     * If role is defined, nested attribute is wrapped into an untypped definition
+     * containing attribute value and role.
+     */
+    public void processNestedTag(PutListTag nestedTag) throws JspException {
+        // Get real value and check role
+        // If role is set, add it in attribute definition if any.
+        // If no attribute definition, create untyped one, and set role.
+        Object attributeValue = nestedTag.getList();
+
+        if (nestedTag.getRole() != null) {
+            AttributeDefinition def = new UntypedAttribute(attributeValue);
+            def.setRole(nestedTag.getRole());
+            attributeValue = def;
+        }
+
+        // now add attribute to enclosing parent (i.e. : this object)
+        addElement(attributeValue);
+    }
+

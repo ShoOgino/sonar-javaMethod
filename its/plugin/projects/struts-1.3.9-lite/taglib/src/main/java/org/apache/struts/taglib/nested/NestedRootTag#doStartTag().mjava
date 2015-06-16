@@ -1,0 +1,27 @@
+    /**
+     * Overriding method of the heart of the tag. Gets the relative property
+     * and tells the JSP engine to evaluate its body content.
+     *
+     * @return int JSP continuation directive.
+     */
+    public int doStartTag() throws JspException {
+        /* set the nested reference for possible inclusions etc */
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+
+        // get al the originals
+        originalName = name;
+        originalNesting = NestedPropertyHelper.getCurrentProperty(request);
+        originalNestingName =
+            NestedPropertyHelper.getCurrentName(request, this);
+
+        // set what we have to
+        if (name != null) {
+            NestedPropertyHelper.setProperty(request, "");
+            NestedPropertyHelper.setName(request, this.name);
+        }
+
+        // do the JSP thing
+        return (EVAL_BODY_TAG);
+    }
+

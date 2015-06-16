@@ -1,0 +1,33 @@
+    /**
+     * Original Struts Action's method.
+     * Retrieve current Tile context and call TilesAction execute method.
+     * Do not overload this method!
+     *
+     * @param mapping The ActionMapping used to select this instance.
+     * @param form The optional ActionForm bean for this request (if any).
+     * @param request The HTTP request we are processing.
+     * @param response The HTTP response we are creating.
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     * @since Struts 1.1
+     */
+    public ActionForward execute(
+        ActionMapping mapping,
+        ActionForm form,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws Exception {
+
+        // Try to retrieve tile context
+        ComponentContext context = ComponentContext.getContext(request);
+        if (context == null) {
+            throw new ServletException(
+                "Can't find Tile context for '"
+                    + this.getClass().getName()
+                    + "'. TilesAction subclasses must be called from a Tile");
+        }
+
+        return this.execute(context, mapping, form, request, response);
+    }
+

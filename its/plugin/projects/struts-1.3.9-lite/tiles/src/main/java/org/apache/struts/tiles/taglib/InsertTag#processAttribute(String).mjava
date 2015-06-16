@@ -1,0 +1,22 @@
+    /**
+     * Process tag attribute "attribute".
+     * Get value from component attribute.
+     * Found value is process by processObjectValue().
+     * @param name Name of the attribute.
+     * @return Appropriate TagHandler.
+     * @throws JspException - NoSuchDefinitionException No Definition  found for name.
+     * @throws JspException - Throws by underlying nested call to processDefinitionName()
+     */
+    public TagHandler processAttribute(String name) throws JspException {
+        Object attrValue = getCurrentContext().getAttribute(name);
+
+        if (attrValue == null) {
+            throw new JspException(
+                "Error - Tag Insert : No value found for attribute '"
+                    + name
+                    + "'.");
+        }
+
+        return processObjectValue(attrValue);
+    }
+

@@ -1,0 +1,36 @@
+    /**
+     * Populate this config object from properties map, based on
+     * the specified name/value pairs.  This method uses the populate() method from
+     * org.apache.commons.beanutils.BeanUtil.
+     * <p>
+     * Properties keys are scanned for old property names, and linked to the new name
+     * if necessary. This modifies the properties map.
+     * <p>
+     * The particular setter method to be called for each property is
+     * determined using the usual JavaBeans introspection mechanisms.  Thus,
+     * you may identify custom setter methods using a BeanInfo class that is
+     * associated with the class of the bean itself.  If no such BeanInfo
+     * class is available, the standard method name conversion ("set" plus
+     * the capitalized name of the property in question) is used.
+     * <p>
+     * <strong>NOTE</strong>:  It is contrary to the JavaBeans Specification
+     * to have more than one setter method (with different argument
+     * signatures) for the same property.
+     *
+     * @param properties Map keyed by property name, with the
+     *  corresponding (String or String[]) value(s) to be set.
+     *
+     * @exception IllegalAccessException if the caller does not have
+     *  access to the property accessor method.
+     * @exception InvocationTargetException if the property accessor method
+     *  throws an exception.
+     * @see org.apache.commons.beanutils.BeanUtils
+     */
+    public void populate(Map properties)
+        throws IllegalAccessException, InvocationTargetException {
+
+        // link old parameter names for backward compatibility
+        linkOldPropertyNames(properties);
+        BeanUtils.populate(this, properties);
+    }
+

@@ -1,0 +1,53 @@
+    /**
+     * <p>Initialize the action configs for the specified module.</p>
+     *
+     * @param config ModuleConfig information for this module
+     * @throws ServletException if initialization cannot be performed
+     * @since Struts 1.3
+     */
+    protected void initModuleActions(ModuleConfig config)
+        throws ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing module path '" + config.getPrefix()
+                + "' action configs");
+        }
+
+        // Process ActionConfig extensions.
+        ActionConfig[] actionConfigs = config.findActionConfigs();
+
+        for (int i = 0; i < actionConfigs.length; i++) {
+            ActionConfig actionConfig = actionConfigs[i];
+
+            processActionConfigExtension(actionConfig, config);
+        }
+
+        for (int i = 0; i < actionConfigs.length; i++) {
+            ActionConfig actionConfig = actionConfigs[i];
+
+            // Verify that required fields are all present for the forward
+            // configs
+            ForwardConfig[] forwards = actionConfig.findForwardConfigs();
+
+            for (int j = 0; j < forwards.length; j++) {
+                ForwardConfig forward = forwards[j];
+
+                if (forward.getPath() == null) {
+                    handleValueRequiredException("path", forward.getName(),
+                        "action forward");
+                }
+            }
+
+            // ... and the exception configs
+            ExceptionConfig[] exceptions = actionConfig.findExceptionConfigs();
+
+            for (int j = 0; j < exceptions.length; j++) {
+                ExceptionConfig exception = exceptions[j];
+
+                if (exception.getKey() == null) {
+                    handleValueRequiredException("key", exception.getType(),
+                        "action exception config");
+                }
+            }
+        }
+    }
+

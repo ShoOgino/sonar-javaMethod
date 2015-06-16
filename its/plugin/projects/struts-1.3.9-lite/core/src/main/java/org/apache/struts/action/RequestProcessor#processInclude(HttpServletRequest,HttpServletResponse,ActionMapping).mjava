@@ -1,0 +1,34 @@
+    /**
+     * <p>Process an include requested by this mapping (if any). Return
+     * <code>true</code> if standard processing should continue, or
+     * <code>false</code> if we have already handled this request.</p>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param mapping  The ActionMapping we are using
+     * @return <code>true</code> to continue normal processing;
+     *         <code>false</code> if a response has been created.
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if thrown by invoked methods
+     */
+    protected boolean processInclude(HttpServletRequest request,
+        HttpServletResponse response, ActionMapping mapping)
+        throws IOException, ServletException {
+        // Are we going to processing this request?
+        String include = mapping.getInclude();
+
+        if (include == null) {
+            return (true);
+        }
+
+        // If the forward can be unaliased into an action, then use the path of the action
+        String actionIdPath = RequestUtils.actionIdURL(include, this.moduleConfig, this.servlet);
+        if (actionIdPath != null) {
+            include = actionIdPath;
+        }
+
+        internalModuleRelativeInclude(include, request, response);
+
+        return (false);
+    }
+

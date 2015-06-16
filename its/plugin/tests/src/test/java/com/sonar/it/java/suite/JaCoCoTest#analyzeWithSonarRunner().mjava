@@ -1,0 +1,11 @@
+  private void analyzeWithSonarRunner() {
+    BuildResult buildResult = orchestrator.executeBuild(SonarRunner.create(TestUtils.projectDir("squid"))
+        .setProperty("sonar.projectKey", "squid")
+        .setProperty("sonar.projectName", "squid")
+        .setProperty("sonar.projectVersion", "1.0-SNAPSHOT")
+        .setProperty("sonar.profile", "squid")
+        .setProperty("sonar.sources", "src/main/java")
+        .setProperty("sonar.java.binaries", "target/classes"));
+    assertThat(buildResult.getLogs()).doesNotContain("No JaCoCo analysis of project coverage can be done since there is no class files.");
+  }
+

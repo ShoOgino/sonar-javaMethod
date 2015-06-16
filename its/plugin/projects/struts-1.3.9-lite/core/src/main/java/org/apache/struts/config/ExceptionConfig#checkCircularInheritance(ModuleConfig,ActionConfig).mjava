@@ -1,0 +1,87 @@
+    /**
+     * <p>Traces the hierarchy of this object to check if any of the ancestors
+     * are extending this instance.</p>
+     *
+     * @param moduleConfig The {@link ModuleConfig} that this config is from.
+     * @param actionConfig The {@link ActionConfig} that this config is from,
+     *                     if applicable.  This parameter must be null if this
+     *                     is a global handler.
+     * @return true if circular inheritance was detected.
+     */
+    protected boolean checkCircularInheritance(ModuleConfig moduleConfig,
+        ActionConfig actionConfig) {
+        String ancestorType = getExtends();
+
+        if (ancestorType == null) {
+            return false;
+        }
+
+        // Find our ancestor
+        ExceptionConfig ancestor = null;
+
+        // First check the action config
+        if (actionConfig != null) {
+            ancestor = actionConfig.findExceptionConfig(ancestorType);
+
+            // If we found *this*, set ancestor to null to check for a global def
+            if (ancestor == this) {
+                ancestor = null;
+            }
+        }
+
+        // Then check the global handlers
+        if (ancestor == null) {
+            ancestor = moduleConfig.findExceptionConfig(ancestorType);
+
+            if (ancestor != null) {
+                // If the ancestor is a global handler, set actionConfig
+                //  to null so further searches are only done among
+                //  global handlers.
+                actionConfig = null;
+            }
+        }
+
+        while (ancestor != null) {
+            // Check if an ancestor is extending *this*
+            if (ancestor == this) {
+                return true;
+            }
+
+            // Get our ancestor's ancestor
+            ancestorType = ancestor.getExtends();
+
+            // check against ancestors extending same typed ancestors
+            if (ancestor.getType().equals(ancestorType)) {
+                // If the ancestor is extending a config for the same type,
+                //  make sure we look for its ancestor in the global handlers.
+                //  If we're already at that level, we return false.
+                if (actionConfig == null) {
+                    return false;
+                } else {
+                    // Set actionConfig = null to force us to look for global
+                    //  forwards
+                    actionConfig = null;
+                }
+            }
+
+            ancestor = null;
+
+            // First check the action config
+            if (actionConfig != null) {
+                ancestor = actionConfig.findExceptionConfig(ancestorType);
+            }
+
+            // Then check the global handlers
+            if (ancestor == null) {
+                ancestor = moduleConfig.findExceptionConfig(ancestorType);
+
+                if (ancestor != null) {
+                    // Limit further checks to moduleConfig.
+                    actionConfig = null;
+                }
+            }
+        }
+
+        return false;
+    }
+

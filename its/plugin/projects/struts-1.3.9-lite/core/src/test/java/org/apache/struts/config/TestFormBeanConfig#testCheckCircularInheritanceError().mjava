@@ -1,0 +1,24 @@
+    /**
+     * Basic check that SHOULD detect an error.
+     */
+    public void testCheckCircularInheritanceError() {
+        FormBeanConfig child = new FormBeanConfig();
+
+        child.setName("child");
+        child.setExtends("baseForm");
+
+        FormBeanConfig grandChild = new FormBeanConfig();
+
+        grandChild.setName("grandChild");
+        grandChild.setExtends("child");
+
+        // establish the circular relationship with base
+        baseForm.setExtends("grandChild");
+
+        config.addFormBeanConfig(child);
+        config.addFormBeanConfig(grandChild);
+
+        assertTrue("Circular inheritance should've been detected",
+            grandChild.checkCircularInheritance(config));
+    }
+

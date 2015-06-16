@@ -1,0 +1,25 @@
+    /**
+     * <p>Remove any existing value for the specified key on the specified
+     * mapped property.</p>
+     *
+     * @param name Name of the property for which a value is to be removed
+     * @param key  Key of the value to be removed
+     * @throws NullPointerException     if there is no property of the
+     *                                  specified name
+     * @throws IllegalArgumentException if there is no mapped property of the
+     *                                  specified name
+     */
+    public void remove(String name, String key) {
+        Object value = dynaValues.get(name);
+
+        if (value == null) {
+            throw new NullPointerException("No mapped value for '" + name + "("
+                + key + ")'");
+        } else if (value instanceof Map) {
+            ((Map) value).remove(key);
+        } else {
+            throw new IllegalArgumentException("Non-mapped property for '"
+                + name + "(" + key + ")'");
+        }
+    }
+

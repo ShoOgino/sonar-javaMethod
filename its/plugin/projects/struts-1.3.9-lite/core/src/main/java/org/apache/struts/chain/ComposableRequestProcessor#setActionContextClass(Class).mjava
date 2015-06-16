@@ -1,0 +1,20 @@
+    /**
+     * <p> Set and cache ActionContext class. </p><p> If there is a custom
+     * class provided and if it uses our "preferred" constructor, cache a
+     * reference to that constructor rather than looking it up every time.
+     * </p>
+     *
+     * @param actionContextClass The ActionContext class to process
+     */
+    private void setActionContextClass(Class actionContextClass) {
+        this.actionContextClass = actionContextClass;
+
+        if (actionContextClass != null) {
+            this.servletActionContextConstructor =
+                ConstructorUtils.getAccessibleConstructor(actionContextClass,
+                    SERVLET_ACTION_CONTEXT_CTOR_SIGNATURE);
+        } else {
+            this.servletActionContextConstructor = null;
+        }
+    }
+

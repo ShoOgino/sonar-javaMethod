@@ -1,0 +1,39 @@
+    /**
+     * Locate or create the bean associated with our form.
+     *
+     * @throws JspException
+     * @since Struts 1.1
+     */
+    protected void initFormBean()
+        throws JspException {
+        int scope = PageContext.SESSION_SCOPE;
+
+        if ("request".equalsIgnoreCase(beanScope)) {
+            scope = PageContext.REQUEST_SCOPE;
+        }
+
+        Object bean = pageContext.getAttribute(beanName, scope);
+
+        if (bean == null) {
+            // New and improved - use the values from the action mapping
+            bean =
+                RequestUtils.createActionForm((HttpServletRequest) pageContext
+                    .getRequest(), mapping, moduleConfig, servlet);
+
+            if (bean instanceof ActionForm) {
+                ((ActionForm) bean).reset(mapping,
+                    (HttpServletRequest) pageContext.getRequest());
+            }
+
+            if (bean == null) {
+                throw new JspException(messages.getMessage("formTag.create",
+                        beanType));
+            }
+
+            pageContext.setAttribute(beanName, bean, scope);
+        }
+
+        pageContext.setAttribute(Constants.BEAN_KEY, bean,
+            PageContext.REQUEST_SCOPE);
+    }
+

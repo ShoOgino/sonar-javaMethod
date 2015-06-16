@@ -1,0 +1,59 @@
+    /**
+     * Set up instance variables required by this test case.
+     */
+    public void setUp() throws Exception {
+        actionServlet = new ActionServlet();
+        actionServlet.initInternal();
+
+        ModuleConfigFactory factoryObject = ModuleConfigFactory.createFactory();
+
+        moduleConfig = factoryObject.createModuleConfig("");
+
+        // Setup the base form
+        baseFormBean = new FormBeanConfig();
+        baseFormBean.setName("baseForm");
+        baseFormBean.setType("org.apache.struts.action.DynaActionForm");
+
+        // Set up id, name, and score
+        FormPropertyConfig property = new FormPropertyConfig();
+
+        property.setName("id");
+        property.setType("java.lang.String");
+        baseFormBean.addFormPropertyConfig(property);
+
+        property = new FormPropertyConfig();
+        property.setName("name");
+        property.setType("java.lang.String");
+        baseFormBean.addFormPropertyConfig(property);
+
+        property = new FormPropertyConfig();
+        property.setName("score");
+        property.setType("java.lang.String");
+        baseFormBean.addFormPropertyConfig(property);
+
+        // Setup the exception handler
+        baseException = new ExceptionConfig();
+        baseException.setType("java.lang.NullPointerException");
+        baseException.setKey("msg.exception.npe");
+
+        // Setup the forward config
+        baseForward = new ActionForward("success", "/succes.jsp", false);
+
+        // Setup the action config
+        baseAction = new ActionMapping();
+        baseAction.setPath("/index");
+        baseAction.setType("org.apache.struts.actions.DummyAction");
+        baseAction.setName("someForm");
+        baseAction.setInput("/input.jsp");
+        baseAction.addForwardConfig(new ActionForward("next", "/next.jsp", false));
+        baseAction.addForwardConfig(new ActionForward("prev", "/prev.jsp", false));
+
+        ExceptionConfig exceptionConfig = new ExceptionConfig();
+
+        exceptionConfig.setType("java.sql.SQLException");
+        exceptionConfig.setKey("msg.exception.sql");
+        baseAction.addExceptionConfig(exceptionConfig);
+
+        // Nothing is registered to our module config until they are needed
+    }
+

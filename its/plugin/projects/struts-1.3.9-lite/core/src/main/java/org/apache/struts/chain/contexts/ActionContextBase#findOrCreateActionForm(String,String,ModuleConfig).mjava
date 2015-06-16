@@ -1,0 +1,49 @@
+    /**
+     * <p> In the context of the given <code>ModuleConfig</code> and this
+     * <code>ActionContext</code>, look for an existing
+     * <code>ActionForm</code> in the specified scope. If one is found, return
+     * it; otherwise, create a new instance, add it to that scope, and then
+     * return it. </p>
+     *
+     * @param formName  The name attribute of our ActionForm
+     * @param scopeName The scope identier (request, session)
+     * @return The ActionForm for this request
+     * @throws IllegalAccessException   If object cannot be created
+     * @throws InstantiationException   If object cannot be created
+     * @throws IllegalArgumentException If form config is missing from module
+     *                                  or scopeName is invalid
+     */
+    public ActionForm findOrCreateActionForm(String formName, String scopeName,
+        ModuleConfig moduleConfig)
+        throws IllegalAccessException, InstantiationException {
+        Map scope = this.getScope(scopeName);
+
+        ActionForm instance;
+        FormBeanConfig formBeanConfig =
+            moduleConfig.findFormBeanConfig(formName);
+
+        if (formBeanConfig == null) {
+            throw new IllegalArgumentException("No form config found under "
+                + formName + " in module " + moduleConfig.getPrefix());
+        }
+
+        instance = (ActionForm) scope.get(formName);
+
+        // ISSUE: Can we recycle the existing instance (if any)?
+        if (instance != null) {
+            getLogger().trace("Found an instance in scope " + scopeName
+                + "; test for reusability");
+
+            if (formBeanConfig.canReuse(instance)) {
+                return instance;
+            }
+        }
+
+        ActionForm form = formBeanConfig.createActionForm(this);
+
+        // ISSUE: Should we check this call to put?
+        scope.put(formName, form);
+
+        return form;
+    }
+

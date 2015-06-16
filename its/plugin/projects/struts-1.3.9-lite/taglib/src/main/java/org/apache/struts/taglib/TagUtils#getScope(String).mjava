@@ -1,0 +1,20 @@
+    /**
+     * Converts the scope name into its corresponding PageContext constant
+     * value.
+     *
+     * @param scopeName Can be "page", "request", "session", or "application"
+     *                  in any case.
+     * @return The constant representing the scope (ie. PageContext.REQUEST_SCOPE).
+     * @throws JspException if the scopeName is not a valid name.
+     */
+    public int getScope(String scopeName)
+        throws JspException {
+        Integer scope = (Integer) scopes.get(scopeName.toLowerCase());
+
+        if (scope == null) {
+            throw new JspException(messages.getMessage("lookup.scope", scope));
+        }
+
+        return scope.intValue();
+    }
+

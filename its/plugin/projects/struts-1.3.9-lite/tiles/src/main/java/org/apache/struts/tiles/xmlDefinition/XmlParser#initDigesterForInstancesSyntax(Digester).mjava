@@ -1,0 +1,46 @@
+   /**
+    * Init digester in order to parse instances definition file syntax.
+    * Instances is an old name for "definition". This method is left for
+    * backwards compatibility.
+    * @param digester Digester instance to use.
+    */
+  private void initDigesterForInstancesSyntax( Digester digester )
+  {
+        // Build a digester to process our configuration resource
+  String PACKAGE_NAME = "org.apache.struts.tiles.xmlDefinition";
+  String INSTANCE_TAG = "component-instances/instance";
+  String instanceHandlerClass = PACKAGE_NAME + ".XmlDefinition";
+
+  String PUT_TAG = INSTANCE_TAG + "/put";
+  String PUTATTRIBUTE_TAG = INSTANCE_TAG + "/putAttribute";
+  String putAttributeHandlerClass = PACKAGE_NAME + ".XmlAttribute";
+
+  String LIST_TAG     = INSTANCE_TAG + "/putList";
+  String listHandlerClass     = PACKAGE_NAME + ".XmlListAttribute";
+
+  String ADD_LIST_ELE_TAG = LIST_TAG + "/add";
+
+    // component instance rules
+    digester.addObjectCreate(  INSTANCE_TAG, instanceHandlerClass );
+    digester.addSetProperties( INSTANCE_TAG);
+    digester.addSetNext(       INSTANCE_TAG, "putDefinition", instanceHandlerClass);
+    // put / putAttribute rules
+    digester.addObjectCreate(  PUTATTRIBUTE_TAG, putAttributeHandlerClass);
+    digester.addSetProperties( PUTATTRIBUTE_TAG);
+    digester.addSetNext(       PUTATTRIBUTE_TAG, "addAttribute", putAttributeHandlerClass);
+    // put / putAttribute rules
+    digester.addObjectCreate(  PUT_TAG, putAttributeHandlerClass);
+    digester.addSetProperties( PUT_TAG);
+    digester.addSetNext(       PUT_TAG, "addAttribute", putAttributeHandlerClass);
+    // list rules
+    digester.addObjectCreate(  LIST_TAG, listHandlerClass);
+    digester.addSetProperties( LIST_TAG);
+    digester.addSetNext(       LIST_TAG, "addAttribute", putAttributeHandlerClass);
+    // list elements rules
+    // We use Attribute class to avoid rewriting a new class.
+    // Name part can't be used in listElement attribute.
+    digester.addObjectCreate(  ADD_LIST_ELE_TAG, putAttributeHandlerClass);
+    digester.addSetProperties( ADD_LIST_ELE_TAG);
+    digester.addSetNext(       ADD_LIST_ELE_TAG, "add", putAttributeHandlerClass);
+  }
+

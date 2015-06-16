@@ -1,0 +1,32 @@
+    /**
+     * Overriding method of the heart of the tag. Gets the relative property
+     * and tells the JSP engine to evaluate its body content.
+     *
+     * @return int JSP continuation directive.
+     */
+    public int doStartTag() throws JspException {
+        // set the original property
+        originalProperty = property;
+
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
+        String nesting =
+            NestedPropertyHelper.getAdjustedProperty(request, property);
+
+        if (id != null) {
+            // use it as a scripting variable instead
+            pageContext.setAttribute(id, nesting);
+        } else {
+            /* write output, filtering if required */
+            if (this.filter) {
+                TagUtils.getInstance().write(pageContext,
+                    TagUtils.getInstance().filter(nesting));
+            } else {
+                TagUtils.getInstance().write(pageContext, nesting);
+            }
+        }
+
+        /* continue with page processing */
+        return (SKIP_BODY);
+    }
+

@@ -1,0 +1,66 @@
+    /**
+     * Expose the requested property from component context.
+     *
+     * @exception JspException On errors processing tag.
+     */
+public int doStartTag() throws JspException
+    {
+      // retrieve component context
+    ComponentContext compContext =
+        (ComponentContext)pageContext.getAttribute(
+            ComponentConstants.COMPONENT_CONTEXT, PageContext.REQUEST_SCOPE);
+    if( compContext == null )
+        throw new JspException ( "Error - tag importAttribute : "
+            + "no tiles context found." );
+
+      // set scope
+    scope = TagUtils.getScope( scopeName, PageContext.PAGE_SCOPE );
+
+      // push attribute in requested context.
+    if( name != null )
+      {
+      Object value = compContext.getAttribute(name);
+        // Check if value exist and if we must send a runtime exception
+      if( value == null ) 
+        {
+        if(!isErrorIgnored) 
+          {
+          throw new JspException ( "Error - tag importAttribute : property '"+
+              name + "' not found in context. Check tag syntax" );
+          }
+        }
+       else 
+        {
+        pageContext.setAttribute(name, value, scope);
+        }
+      }
+     else
+      { // set all attributes
+      Iterator names = compContext.getAttributeNames();
+      while(names.hasNext())
+        {
+        String name = (String)names.next();
+        if(name == null ) {
+          if(!isErrorIgnored)
+            throw new JspException ( "Error - tag importAttribute : "
+                + "encountered an attribute with key 'null'" );
+          else
+            return SKIP_BODY;
+        }
+
+        Object value = compContext.getAttribute(name);
+        // Check if value exist and if we must send a runtime exception
+        if( value == null ) {
+          if(!isErrorIgnored) {
+            throw new JspException ( "Error - tag importAttribute : property '"
+                + name + "' has a value of 'null'" );
+          }
+        }
+        pageContext.setAttribute(name, value, scope);
+        } // end loop
+      } // end else
+
+      // Continue processing this page
+    return SKIP_BODY;
+    }
+

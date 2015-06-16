@@ -1,0 +1,16 @@
+    // set bundle in request scope
+    // -- bad key
+    public void testMessageRequestBadKey() {
+        putBundleInScope(PageContext.REQUEST_SCOPE, true);
+
+        String val = null;
+
+        try {
+            val = tagutils.message(pageContext, null, null,
+                    "foo.bar.does.not.exist");
+            assertNull(val);
+        } catch (JspException e) {
+            fail("val should be null, no exception");
+        }
+    }
+

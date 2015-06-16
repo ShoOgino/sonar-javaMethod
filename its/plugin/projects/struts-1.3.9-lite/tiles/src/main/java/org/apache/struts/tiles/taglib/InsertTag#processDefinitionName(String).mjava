@@ -1,0 +1,49 @@
+    /**
+     * Process tag attribute "definition".
+     * First, search definition in the factory, then create handler from this definition.
+     * @param name Name of the definition.
+     * @return Appropriate TagHandler.
+     * @throws JspException- NoSuchDefinitionException No Definition  found for name.
+     * @throws JspException- FactoryNotFoundException Can't find Definitions factory.
+     * @throws JspException- DefinedComponentFactoryException General error in factory.
+     * @throws JspException InstantiationException Can't create requested controller
+     */
+    protected TagHandler processDefinitionName(String name)
+        throws JspException {
+
+        try {
+            ComponentDefinition definition =
+                TilesUtil.getDefinition(
+                    name,
+                    (HttpServletRequest) pageContext.getRequest(),
+                    pageContext.getServletContext());
+
+            if (definition == null) { // is it possible ?
+                throw new NoSuchDefinitionException();
+            }
+
+            return processDefinition(definition);
+
+        } catch (NoSuchDefinitionException ex) {
+            throw new JspException(
+                "Error -  Tag Insert : Can't get definition '"
+                    + definitionName
+                    + "'. Check if this name exist in definitions factory.", ex);
+
+        } catch (FactoryNotFoundException ex) {
+            throw new JspException(ex.getMessage());
+
+        } catch (DefinitionsFactoryException ex) {
+            if (log.isDebugEnabled()) {
+                ex.printStackTrace();
+            }
+
+            // Save exception to be able to show it later
+            pageContext.setAttribute(
+                Globals.EXCEPTION_KEY,
+                ex,
+                PageContext.REQUEST_SCOPE);
+            throw new JspException(ex);
+        }
+    }
+

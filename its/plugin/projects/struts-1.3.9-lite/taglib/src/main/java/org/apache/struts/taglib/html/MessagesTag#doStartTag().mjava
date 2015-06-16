@@ -1,0 +1,57 @@
+    /**
+     * Construct an iterator for the specified collection, and begin looping
+     * through the body once per element.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Initialize for a new request.
+        processed = false;
+
+        // Were any messages specified?
+        ActionMessages messages = null;
+
+        // Make a local copy of the name attribute that we can modify.
+        String name = this.name;
+
+        if ((message != null) && "true".equalsIgnoreCase(message)) {
+            name = Globals.MESSAGE_KEY;
+        }
+
+        try {
+            messages =
+                TagUtils.getInstance().getActionMessages(pageContext, name);
+        } catch (JspException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Acquire the collection we are going to iterate over
+        this.iterator =
+            (property == null) ? messages.get() : messages.get(property);
+
+        // Store the first value and evaluate, or skip the body if none
+        if (!this.iterator.hasNext()) {
+            return SKIP_BODY;
+        }
+
+        // process the first message
+        processMessage((ActionMessage) iterator.next());
+
+        if ((header != null) && (header.length() > 0)) {
+            String headerMessage =
+                TagUtils.getInstance().message(pageContext, bundle, locale,
+                    header);
+
+            if (headerMessage != null) {
+                TagUtils.getInstance().write(pageContext, headerMessage);
+            }
+        }
+
+        // Set the processed variable to true so the
+        // doEndTag() knows processing took place
+        processed = true;
+
+        return (EVAL_BODY_TAG);
+    }
+

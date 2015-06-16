@@ -1,0 +1,37 @@
+    /**
+     * <p>Set the value of a simple property with the specified name.</p>
+     *
+     * @param name  Name of the property whose value is to be set
+     * @param value Value to which this property is to be set
+     * @throws ConversionException      if the specified value cannot be
+     *                                  converted to the type required for
+     *                                  this property
+     * @throws IllegalArgumentException if there is no property of the
+     *                                  specified name
+     * @throws NullPointerException     if the type specified for the property
+     *                                  is invalid
+     * @throws NullPointerException     if an attempt is made to set a
+     *                                  primitive property to null
+     */
+    public void set(String name, Object value) {
+        DynaProperty descriptor = getDynaProperty(name);
+
+        if (descriptor.getType() == null) {
+            throw new NullPointerException("The type for property " + name
+                + " is invalid");
+        }
+
+        if (value == null) {
+            if (descriptor.getType().isPrimitive()) {
+                throw new NullPointerException("Primitive value for '" + name
+                    + "'");
+            }
+        } else if (!isDynaAssignable(descriptor.getType(), value.getClass())) {
+            throw new ConversionException("Cannot assign value of type '"
+                + value.getClass().getName() + "' to property '" + name
+                + "' of type '" + descriptor.getType().getName() + "'");
+        }
+
+        dynaValues.put(name, value);
+    }
+

@@ -1,0 +1,16 @@
+    /**
+     * Get object from requested context. Return <code>null</code> if not found.
+     * Context can be "component" or normal JSP contexts.
+     * @param beanName Name of bean to retrieve.
+     * @param scope Scope from which bean must be retrieved.
+     * @param pageContext Current pageContext.
+     * @return Requested bean or <code>null</code> if not found.
+     */
+    public static Object getAttribute(String beanName, int scope, PageContext pageContext) {
+        if (scope == ComponentConstants.COMPONENT_SCOPE) {
+            ComponentContext compContext = ComponentContext.getContext(pageContext.getRequest());
+            return compContext.getAttribute(beanName);
+        }
+        return pageContext.getAttribute(beanName, scope);
+    }
+

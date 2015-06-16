@@ -1,0 +1,43 @@
+    /**
+     * <p> Converts a size value from a string representation to its numeric
+     * value. The string must be of the form nnnm, where nnn is an arbitrary
+     * decimal value, and m is a multiplier. The multiplier must be one of
+     * 'K', 'M' and 'G', representing kilobytes, megabytes and gigabytes
+     * respectively. </p><p> If the size value cannot be converted, for
+     * example due to invalid syntax, the supplied default is returned
+     * instead. </p>
+     *
+     * @param sizeString  The string representation of the size to be
+     *                    converted.
+     * @param defaultSize The value to be returned if the string is invalid.
+     * @return The actual size in bytes.
+     */
+    protected long convertSizeToBytes(String sizeString, long defaultSize) {
+        int multiplier = 1;
+
+        if (sizeString.endsWith("K")) {
+            multiplier = 1024;
+        } else if (sizeString.endsWith("M")) {
+            multiplier = 1024 * 1024;
+        } else if (sizeString.endsWith("G")) {
+            multiplier = 1024 * 1024 * 1024;
+        }
+
+        if (multiplier != 1) {
+            sizeString = sizeString.substring(0, sizeString.length() - 1);
+        }
+
+        long size = 0;
+
+        try {
+            size = Long.parseLong(sizeString);
+        } catch (NumberFormatException nfe) {
+            log.warn("Invalid format for file size ('" + sizeString
+                + "'). Using default.");
+            size = defaultSize;
+            multiplier = 1;
+        }
+
+        return (size * multiplier);
+    }
+

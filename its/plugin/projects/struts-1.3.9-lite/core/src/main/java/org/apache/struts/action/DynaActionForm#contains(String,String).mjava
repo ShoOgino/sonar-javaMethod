@@ -1,0 +1,28 @@
+    /**
+     * <p>Indicates if the specified mapped property contain a value for the
+     * specified key value.</p>
+     *
+     * @param name Name of the property to check
+     * @param key  Name of the key to check
+     * @return <code>true</code> if the specified mapped property contains a
+     *         value for the specified key value; <code>true</code>
+     *         otherwise.
+     * @throws NullPointerException     if there is no property of the
+     *                                  specified name
+     * @throws IllegalArgumentException if there is no mapped property of the
+     *                                  specified name
+     */
+    public boolean contains(String name, String key) {
+        Object value = dynaValues.get(name);
+
+        if (value == null) {
+            throw new NullPointerException("No mapped value for '" + name + "("
+                + key + ")'");
+        } else if (value instanceof Map) {
+            return (((Map) value).containsKey(key));
+        } else {
+            throw new IllegalArgumentException("Non-mapped property for '"
+                + name + "(" + key + ")'");
+        }
+    }
+

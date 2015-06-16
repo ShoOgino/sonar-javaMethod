@@ -1,0 +1,30 @@
+    /**
+     * <p>Instantiate and return a new {@link DynaActionForm} instance,
+     * associated with this <code>DynaActionFormClass</code>.  The properties
+     * of the returned {@link DynaActionForm} will have been initialized to
+     * the default values specified in the form bean configuration
+     * information.</p>
+     *
+     * @return A new {@link DynaActionForm} instance.
+     * @throws IllegalAccessException if the Class or the appropriate
+     *                                constructor is not accessible
+     * @throws InstantiationException if this Class represents an abstract
+     *                                class, an array class, a primitive type,
+     *                                or void; or if instantiation fails for
+     *                                some other reason
+     */
+    public DynaBean newInstance()
+        throws IllegalAccessException, InstantiationException {
+        DynaActionForm dynaBean = (DynaActionForm) getBeanClass().newInstance();
+
+        dynaBean.setDynaActionFormClass(this);
+
+        FormPropertyConfig[] props = config.findFormPropertyConfigs();
+
+        for (int i = 0; i < props.length; i++) {
+            dynaBean.set(props[i].getName(), props[i].initial());
+        }
+
+        return (dynaBean);
+    }
+

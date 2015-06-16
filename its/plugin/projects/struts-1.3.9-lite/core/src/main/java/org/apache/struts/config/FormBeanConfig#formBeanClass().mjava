@@ -1,0 +1,21 @@
+    /**
+     * Return the <code>Class</code> instance for the form bean implementation
+     * configured by this <code>FormBeanConfig</code> instance.  This method
+     * uses the same algorithm as <code>RequestUtils.applicationClass()</code>
+     * but is reproduced to avoid a runtime dependence.
+     */
+    protected Class formBeanClass() {
+        ClassLoader classLoader =
+            Thread.currentThread().getContextClassLoader();
+
+        if (classLoader == null) {
+            classLoader = this.getClass().getClassLoader();
+        }
+
+        try {
+            return (classLoader.loadClass(getType()));
+        } catch (Exception e) {
+            return (null);
+        }
+    }
+

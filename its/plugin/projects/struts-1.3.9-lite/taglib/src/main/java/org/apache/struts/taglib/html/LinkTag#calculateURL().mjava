@@ -1,0 +1,54 @@
+    /**
+     * Return the complete URL to which this hyperlink will direct the user.
+     * Support for indexed property since Struts 1.1
+     *
+     * @throws JspException if an exception is thrown calculating the value
+     */
+    protected String calculateURL()
+        throws JspException {
+        // Identify the parameters we will add to the completed URL
+        Map params =
+            TagUtils.getInstance().computeParameters(pageContext, paramId,
+                paramName, paramProperty, paramScope, name, property, scope,
+                transaction);
+
+        // Add parameters collected from the tag's inner body
+        if (!this.parameters.isEmpty()) {
+            if (params == null) {
+                params = new HashMap();
+            }
+            params.putAll(this.parameters);
+        }
+
+        // if "indexed=true", add "index=x" parameter to query string
+        // * @since Struts 1.1
+        if (indexed) {
+            int indexValue = getIndexValue();
+
+            //calculate index, and add as a parameter
+            if (params == null) {
+                params = new HashMap(); //create new HashMap if no other params
+            }
+
+            if (indexId != null) {
+                params.put(indexId, Integer.toString(indexValue));
+            } else {
+                params.put("index", Integer.toString(indexValue));
+            }
+        }
+
+        String url = null;
+
+        try {
+            url = TagUtils.getInstance().computeURLWithCharEncoding(pageContext,
+                    forward, href, page, action, module, params, anchor, false,
+                    useLocalEncoding);
+        } catch (MalformedURLException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("rewrite.url",
+                    e.toString()));
+        }
+
+        return (url);
+    }
+

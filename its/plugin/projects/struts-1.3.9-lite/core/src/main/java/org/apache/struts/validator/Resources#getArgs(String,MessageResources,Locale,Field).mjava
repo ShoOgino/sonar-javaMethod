@@ -1,0 +1,34 @@
+    /**
+     * Gets the message arguments based on the current <code>ValidatorAction</code>
+     * and <code>Field</code>.
+     *
+     * @param actionName action name
+     * @param messages   message resources
+     * @param locale     the locale
+     * @param field      the validator field
+     */
+    public static String[] getArgs(String actionName,
+        MessageResources messages, Locale locale, Field field) {
+        String[] argMessages = new String[4];
+
+        Arg[] args =
+            new Arg[] {
+                field.getArg(actionName, 0), field.getArg(actionName, 1),
+                field.getArg(actionName, 2), field.getArg(actionName, 3)
+            };
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] == null) {
+                continue;
+            }
+
+            if (args[i].isResource()) {
+                argMessages[i] = getMessage(messages, locale, args[i].getKey());
+            } else {
+                argMessages[i] = args[i].getKey();
+            }
+        }
+
+        return argMessages;
+    }
+

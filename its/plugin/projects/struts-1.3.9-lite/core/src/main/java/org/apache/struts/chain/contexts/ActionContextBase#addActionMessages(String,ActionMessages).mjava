@@ -1,0 +1,30 @@
+    /**
+     * <p> Add the given messages to a cache stored in this Context, under
+     * key. </p>
+     *
+     * @param key      The attribute name for the message cache
+     * @param messages The ActionMessages to add
+     */
+    public void addActionMessages(String key, ActionMessages messages) {
+        if (messages == null) {
+            // bad programmer! *slap*
+            return;
+        }
+
+        // get any existing messages from the request, or make a new one
+        ActionMessages requestMessages = (ActionMessages) this.get(key);
+
+        if (requestMessages == null) {
+            requestMessages = new ActionMessages();
+        }
+
+        // add incoming messages
+        requestMessages.add(messages);
+
+        // if still empty, just wipe it out from the request
+        this.remove(key);
+
+        // save the messages
+        this.saveActionMessages(key, requestMessages);
+    }
+

@@ -1,0 +1,32 @@
+    /**
+     * <p>Return the context-relative URL that corresponds to the specified
+     * {@link ActionConfig}, relative to the module associated with the
+     * current modules's {@link ModuleConfig}.</p>
+     *
+     * @param request The servlet request we are processing
+     * @param action  ActionConfig to be evaluated
+     * @param pattern URL pattern used to map the controller servlet
+     * @return context-relative URL relative to the module
+     * @since Struts 1.1
+     */
+    public static String actionURL(HttpServletRequest request,
+        ActionConfig action, String pattern) {
+        StringBuffer sb = new StringBuffer();
+
+        if (pattern.endsWith("/*")) {
+            sb.append(pattern.substring(0, pattern.length() - 2));
+            sb.append(action.getPath());
+        } else if (pattern.startsWith("*.")) {
+            ModuleConfig appConfig =
+                ModuleUtils.getInstance().getModuleConfig(request);
+
+            sb.append(appConfig.getPrefix());
+            sb.append(action.getPath());
+            sb.append(pattern.substring(1));
+        } else {
+            throw new IllegalArgumentException(pattern);
+        }
+
+        return sb.toString();
+    }
+

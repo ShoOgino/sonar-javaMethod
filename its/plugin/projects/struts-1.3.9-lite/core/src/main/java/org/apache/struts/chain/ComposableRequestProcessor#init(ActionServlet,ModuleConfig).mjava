@@ -1,0 +1,40 @@
+    /**
+     * <p>Initialize this request processor instance.</p>
+     *
+     * @param servlet      The ActionServlet we are associated with
+     * @param moduleConfig The ModuleConfig we are associated with.
+     * @throws ServletException If an error occurs during initialization
+     */
+    public void init(ActionServlet servlet, ModuleConfig moduleConfig)
+        throws ServletException {
+        LOG.info(
+            "Initializing composable request processor for module prefix '"
+            + moduleConfig.getPrefix() + "'");
+        super.init(servlet, moduleConfig);
+
+        initCatalogFactory(servlet, moduleConfig);
+
+        ControllerConfig controllerConfig = moduleConfig.getControllerConfig();
+
+        String catalogName = controllerConfig.getCatalog();
+
+        catalog = this.catalogFactory.getCatalog(catalogName);
+
+        if (catalog == null) {
+            throw new ServletException("Cannot find catalog '" + catalogName
+                + "'");
+        }
+
+        String commandName = controllerConfig.getCommand();
+
+        command = catalog.getCommand(commandName);
+
+        if (command == null) {
+            throw new ServletException("Cannot find command '" + commandName
+                + "'");
+        }
+
+        this.setActionContextClassName(controllerConfig.getProperty(
+                ACTION_CONTEXT_CLASS));
+    }
+

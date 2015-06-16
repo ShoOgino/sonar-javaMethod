@@ -1,0 +1,20 @@
+  /**
+   * Get a definition by its name.
+   *
+   * @param name Name of requested definition.
+   * @param request Current servlet request.
+   * @param servletContext Current servlet context.
+   * @throws NoSuchDefinitionException No definition found for specified name
+   * @throws DefinitionsFactoryException General exception
+   */
+  public ComponentDefinition getDefinition(String name, ServletRequest request, ServletContext servletContext)
+    throws NoSuchDefinitionException, DefinitionsFactoryException
+  {
+  if( factories == null )
+    throw new FactoryNotFoundException( "No definitions factory defined" );
+
+  Object key = getDefinitionsFactoryKey( name, request, servletContext);
+  DefinitionsFactory factory = getFactory( key, request, servletContext);
+  return factory.getDefinition( name, request, servletContext );
+  }
+

@@ -1,0 +1,80 @@
+    /**
+     * <p>Checks if the current forwardConfig is using the correct class based
+     * on the class of its configuration ancestor.  If actionConfig is
+     * provided, then this method will process the forwardConfig as part
+     * of that actionConfig.  If actionConfig is null, the forwardConfig
+     * will be processed as a global forward.</p>
+     *
+     * @param forwardConfig The forward to check.
+     * @param moduleConfig  The config for the current module.
+     * @param actionConfig  If applicable, the config for the current action.
+     * @return The forward config using the correct class as determined by the
+     *         config's ancestor and its own overridden value.
+     * @throws UnavailableException if an instance of the forward config class
+     *                              cannot be created.
+     * @throws ServletException     on class creation error
+     */
+    protected ForwardConfig processForwardConfigClass(
+        ForwardConfig forwardConfig, ModuleConfig moduleConfig,
+        ActionConfig actionConfig)
+        throws ServletException {
+        String ancestor = forwardConfig.getExtends();
+
+        if (ancestor == null) {
+            // Nothing to do, then
+            return forwardConfig;
+        }
+
+        // Make sure that this config is of the right class
+        ForwardConfig baseConfig = null;
+        if (actionConfig != null) {
+            // Look for this in the actionConfig
+            baseConfig = actionConfig.findForwardConfig(ancestor);
+        }
+
+        if (baseConfig == null) {
+            // Either this is a forwardConfig that inherits a global config,
+            //  or actionConfig is null
+            baseConfig = moduleConfig.findForwardConfig(ancestor);
+        }
+
+        if (baseConfig == null) {
+            throw new UnavailableException("Unable to find " + "forward '"
+                + ancestor + "' to extend.");
+        }
+
+        // Was our forwards's class overridden already?
+        if (forwardConfig.getClass().equals(ActionForward.class)) {
+            // Ensure that our forward is using the correct class
+            if (!baseConfig.getClass().equals(forwardConfig.getClass())) {
+                // Replace the config with an instance of the correct class
+                ForwardConfig newForwardConfig = null;
+                String baseConfigClassName = baseConfig.getClass().getName();
+
+                try {
+                    newForwardConfig =
+                        (ForwardConfig) RequestUtils.applicationInstance(
+                                baseConfigClassName);
+
+                    // copy the values
+                    BeanUtils.copyProperties(newForwardConfig, forwardConfig);
+                } catch (Exception e) {
+                    handleCreationException(baseConfigClassName, e);
+                }
+
+                // replace forwardConfig with newForwardConfig
+                if (actionConfig != null) {
+                    actionConfig.removeForwardConfig(forwardConfig);
+                    actionConfig.addForwardConfig(newForwardConfig);
+                } else {
+                    // this is a global forward
+                    moduleConfig.removeForwardConfig(forwardConfig);
+                    moduleConfig.addForwardConfig(newForwardConfig);
+                }
+                forwardConfig = newForwardConfig;
+            }
+        }
+
+        return forwardConfig;
+    }
+

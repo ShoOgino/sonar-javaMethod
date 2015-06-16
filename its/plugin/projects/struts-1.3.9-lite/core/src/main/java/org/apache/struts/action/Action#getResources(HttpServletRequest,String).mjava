@@ -1,0 +1,21 @@
+    /**
+     * <p>Return the specified message resources for the current module.</p>
+     *
+     * @param request The servlet request we are processing
+     * @param key     The key specified in the message-resources element for
+     *                the requested bundle.
+     * @return The specified message resource for the current module.
+     * @since Struts 1.1
+     */
+    protected MessageResources getResources(HttpServletRequest request,
+        String key) {
+        // Identify the current module
+        ServletContext context = getServlet().getServletContext();
+        ModuleConfig moduleConfig =
+            ModuleUtils.getInstance().getModuleConfig(request, context);
+
+        // Return the requested message resources instance
+        return (MessageResources) context.getAttribute(key
+            + moduleConfig.getPrefix());
+    }
+

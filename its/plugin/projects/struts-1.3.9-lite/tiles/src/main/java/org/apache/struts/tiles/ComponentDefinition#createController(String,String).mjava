@@ -1,0 +1,41 @@
+    /**
+     * Create a new instance of controller named in parameter.
+     * If controllerType is specified, create controller accordingly.
+     * Otherwise, if name denote a classname, create an instance of it. If class is
+     *  subclass of org.apache.struts.action.Action, wrap controller
+     * appropriately.
+     * Otherwise, consider name as an url.
+     * @param name Controller name (classname, url, ...)
+     * @param controllerType Expected Controller type
+     * @return org.apache.struts.tiles.Controller
+     * @throws InstantiationException if an error occur while instanciating Controller :
+     * (classname can't be instanciated, Illegal access with instanciated class,
+     * Error while instanciating class, classname can't be instanciated.
+     */
+    public static Controller createController(String name, String controllerType)
+        throws InstantiationException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Create controller name=" + name + ", type=" + controllerType);
+        }
+
+        Controller controller = null;
+
+        if (controllerType == null) { // first try as a classname
+            try {
+                return createControllerFromClassname(name);
+
+            } catch (InstantiationException ex) { // ok, try something else
+                controller = new UrlController(name);
+            }
+
+        } else if ("url".equalsIgnoreCase(controllerType)) {
+            controller = new UrlController(name);
+
+        } else if ("classname".equalsIgnoreCase(controllerType)) {
+            controller = createControllerFromClassname(name);
+        }
+
+        return controller;
+    }
+

@@ -1,0 +1,20 @@
+    /**
+     * <p> Add a new <code>ExceptionConfig</code> instance to the set
+     * associated with this module. </p>
+     *
+     * @param config The new configuration instance to be added
+     * @throws IllegalStateException if this module configuration has been
+     *                               frozen
+     */
+    public void addExceptionConfig(ExceptionConfig config) {
+        throwIfConfigured();
+
+        String key = config.getType();
+
+        if (exceptions.containsKey(key)) {
+            log.warn("Overriding ExceptionConfig of type " + key);
+        }
+
+        exceptions.put(key, config);
+    }
+

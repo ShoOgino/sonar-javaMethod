@@ -1,0 +1,59 @@
+    /**
+     * <p>Checks if the given <code>ActionForm</code> instance is suitable for
+     * use as an alternative to calling this <code>FormBeanConfig</code>
+     * instance's <code>createActionForm</code> method.</p>
+     *
+     * @param form an existing form instance that may be reused.
+     * @return true if the given form can be reused as the form for this
+     *         config.
+     */
+    public boolean canReuse(ActionForm form) {
+        if (form != null) {
+            if (this.getDynamic()) {
+                String className = ((DynaBean) form).getDynaClass().getName();
+
+                if (className.equals(this.getName())) {
+                    log.debug("Can reuse existing instance (dynamic)");
+
+                    return (true);
+                }
+            } else {
+                try {
+                    // check if the form's class is compatible with the class
+                    //      we're configured for
+                    Class formClass = form.getClass();
+
+                    if (form instanceof BeanValidatorForm) {
+                        BeanValidatorForm beanValidatorForm =
+                            (BeanValidatorForm) form;
+
+                        if (beanValidatorForm.getInstance() instanceof DynaBean) {
+                            String formName = beanValidatorForm.getStrutsConfigFormName();
+                            if (getName().equals(formName)) {
+                                log.debug("Can reuse existing instance (BeanValidatorForm)");
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                        formClass = beanValidatorForm.getInstance().getClass();
+                    }
+
+                    Class configClass =
+                        ClassUtils.getApplicationClass(this.getType());
+
+                    if (configClass.isAssignableFrom(formClass)) {
+                        log.debug("Can reuse existing instance (non-dynamic)");
+
+                        return (true);
+                    }
+                } catch (Exception e) {
+                    log.debug("Error testing existing instance for reusability; just create a new instance",
+                        e);
+                }
+            }
+        }
+
+        return false;
+    }
+

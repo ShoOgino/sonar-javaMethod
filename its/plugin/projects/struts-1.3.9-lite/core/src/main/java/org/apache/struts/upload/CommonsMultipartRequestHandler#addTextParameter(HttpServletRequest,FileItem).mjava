@@ -1,0 +1,69 @@
+    /**
+     * <p> Adds a regular text parameter to the set of text parameters for
+     * this request and also to the list of all parameters. Handles the case
+     * of multiple values for the same parameter by using an array for the
+     * parameter value. </p>
+     *
+     * @param request The request in which the parameter was specified.
+     * @param item    The file item for the parameter to add.
+     */
+    protected void addTextParameter(HttpServletRequest request, FileItem item) {
+        String name = item.getFieldName();
+        String value = null;
+        boolean haveValue = false;
+        String encoding = null;
+
+        if (item instanceof DiskFileItem) {
+            encoding = ((DiskFileItem)item).getCharSet();
+            if (log.isDebugEnabled()) {
+                log.debug("DiskFileItem.getCharSet=[" + encoding + "]");
+            }
+        }
+
+        if (encoding == null) {
+            encoding = request.getCharacterEncoding();
+            if (log.isDebugEnabled()) {
+                log.debug("request.getCharacterEncoding=[" + encoding + "]");
+            }
+        }
+
+        if (encoding != null) {
+            try {
+                value = item.getString(encoding);
+                haveValue = true;
+            } catch (Exception e) {
+                // Handled below, since haveValue is false.
+            }
+        }
+
+        if (!haveValue) {
+            try {
+                value = item.getString("ISO-8859-1");
+            } catch (java.io.UnsupportedEncodingException uee) {
+                value = item.getString();
+            }
+
+            haveValue = true;
+        }
+
+        if (request instanceof MultipartRequestWrapper) {
+            MultipartRequestWrapper wrapper = (MultipartRequestWrapper) request;
+
+            wrapper.setParameter(name, value);
+        }
+
+        String[] oldArray = (String[]) elementsText.get(name);
+        String[] newArray;
+
+        if (oldArray != null) {
+            newArray = new String[oldArray.length + 1];
+            System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
+            newArray[oldArray.length] = value;
+        } else {
+            newArray = new String[] { value };
+        }
+
+        elementsText.put(name, newArray);
+        elementsAll.put(name, newArray);
+    }
+

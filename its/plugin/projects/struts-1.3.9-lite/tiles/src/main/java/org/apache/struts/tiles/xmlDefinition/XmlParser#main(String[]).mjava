@@ -1,0 +1,53 @@
+    /**
+     * Main method to check file syntax.
+     */
+  public static void main(String[] args)
+  {
+  //String filename = "E:/programs/jakarta-tomcat/webapps/wtiles-struts/WEB-INF/tiles-examples-defs.xml";
+  String filename = "E:/programs/jakarta-tomcat-4.0.3/webapps/wtiles-struts/WEB-INF/tiles-examples-defs.xml";
+  //String filename = "E:/programs/jakarta-tomcat/webapps/wtiles-struts/WEB-INF/tilesDefinitions.xml";
+  //String filename = "E:/programs/jakarta-tomcat/webapps/wtiles-channel/WEB-INF/componentDefinitions.xml";
+  //String filename2 = "E:/programs/jakarta-tomcat/webapps/wtiles-tutorial/WEB-INF/componentDefinitions.xml";
+
+
+    if( args.length > 1 )
+      {
+      filename = args[1];
+      } // end if
+
+  System.out.println( "Read file '" + filename  +"'" );
+
+  InputStream input = null;
+  // InputStream input2 = null;
+    // Open file
+    try
+      {
+        input = new BufferedInputStream(
+                             new FileInputStream( filename) );
+    //    input2 = new BufferedInputStream(
+          //                   new FileInputStream( filename2) );
+      }
+     catch( IOException ex )
+      {
+      System.out.println( "can't open file '" + filename + "' : " + ex.getMessage() );
+      }
+    // Check file syntax
+    try
+      {
+        XmlParser parser = new XmlParser();
+      parser.setValidating(true);
+      XmlDefinitionsSet definitions = new XmlDefinitionsSet();
+        System.out.println( "  Parse file" );
+      parser.parse( input, definitions);
+      //  System.out.println( "  Check file 2" );
+      //parser.parse( input2, definitions);
+        System.out.println( "  done." );
+      System.out.println( "  Result : " + definitions.toString() );
+      }
+     catch( Exception ex )
+      {
+      System.out.println( "Error during parsing '" + filename + "' : " + ex.getMessage() );
+      ex.printStackTrace();
+      }
+  }
+

@@ -1,0 +1,27 @@
+    /**
+     * Try to process name as a definition, or as an URL if not found.
+     * @param name Name to process.
+     * @return appropriate TagHandler
+     * @throws JspException InstantiationException Can't create requested controller
+     */
+    public TagHandler processAsDefinitionOrURL(String name)
+        throws JspException {
+        try {
+            ComponentDefinition definition =
+                TilesUtil.getDefinition(
+                    name,
+                    pageContext.getRequest(),
+                    pageContext.getServletContext());
+
+            if (definition != null) {
+                return processDefinition(definition);
+            }
+
+        } catch (DefinitionsFactoryException ex) {
+            // silently failed, because we can choose to not define a factory.
+        }
+
+        // no definition found, try as url
+        return processUrl(name);
+    }
+

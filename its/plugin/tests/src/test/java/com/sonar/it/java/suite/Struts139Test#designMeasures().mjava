@@ -1,0 +1,15 @@
+  @Test
+  public void designMeasures() {
+    assumeTrue(JavaTestSuite.sonarqube_version_is_prior_to_5_2());
+    assertThat(getCoreModuleMeasure("package_cycles").getIntValue()).isGreaterThan(10);
+    assertThat(getCoreModuleMeasure("package_cycles").getIntValue()).isLessThan(50);
+
+    assertThat(getCoreModuleMeasure("package_feedback_edges").getIntValue()).isGreaterThan(3);
+    assertThat(getCoreModuleMeasure("package_feedback_edges").getIntValue()).isLessThan(10);
+
+    assertThat(getCoreModuleMeasure("package_tangles").getIntValue()).isGreaterThan(10);
+    assertThat(getCoreModuleMeasure("package_tangles").getIntValue()).isLessThan(50);
+
+    assertThat(orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics(PROJECT_STRUTS, "dit", "noc")).getMeasures().size()).isEqualTo(0);
+  }
+

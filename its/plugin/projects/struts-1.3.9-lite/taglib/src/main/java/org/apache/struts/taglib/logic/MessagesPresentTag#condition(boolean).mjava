@@ -1,0 +1,30 @@
+    /**
+     * Evaluate the condition that is being tested by this particular tag, and
+     * return <code>true</code> if there is at least one message in the class
+     * or for the property specified.
+     *
+     * @param desired Desired outcome for a true result
+     * @throws JspException if a JSP exception occurs
+     */
+    protected boolean condition(boolean desired)
+        throws JspException {
+        ActionMessages am = null;
+
+        String key = name;
+
+        if ((message != null) && "true".equalsIgnoreCase(message)) {
+            key = Globals.MESSAGE_KEY;
+        }
+
+        try {
+            am = TagUtils.getInstance().getActionMessages(pageContext, key);
+        } catch (JspException e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        Iterator iterator = (property == null) ? am.get() : am.get(property);
+
+        return (iterator.hasNext() == desired);
+    }
+

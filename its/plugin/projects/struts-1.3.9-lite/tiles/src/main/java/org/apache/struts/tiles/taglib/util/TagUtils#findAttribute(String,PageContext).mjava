@@ -1,0 +1,21 @@
+    /**
+     * Search attribute in different contexts.
+     * First, check in component context, then use pageContext.findAttribute().
+     * @param beanName Name of bean to retrieve.
+     * @param pageContext Current pageContext.
+     * @return Requested bean or <code>null</code> if not found.
+     */
+    public static Object findAttribute(String beanName, PageContext pageContext) {
+        ComponentContext compContext = ComponentContext.getContext(pageContext.getRequest());
+
+        if (compContext != null) {
+            Object attribute = compContext.findAttribute(beanName, pageContext);
+            if (attribute != null) {
+                return attribute;
+            }
+        }
+
+        // Search in pageContext scopes
+        return pageContext.findAttribute(beanName);
+    }
+

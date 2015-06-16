@@ -1,0 +1,38 @@
+    /**
+     * Process a bean.
+     * Get bean value, eventually using property and scope. Found value is process by processObjectValue().
+     * @param beanName Name of the bean
+     * @param beanProperty Property in the bean, or null.
+     * @param beanScope bean scope, or null.
+     * @return Appropriate TagHandler.
+     * @throws JspException - NoSuchDefinitionException No value associated to bean.
+     * @throws JspException an error occur while reading bean, or no definition found.
+     * @throws JspException - Throws by underlying nested call to processDefinitionName()
+     */
+    protected TagHandler processBean(
+        String beanName,
+        String beanProperty,
+        String beanScope)
+        throws JspException {
+
+        Object beanValue =
+            TagUtils.getRealValueFromBean(
+                beanName,
+                beanProperty,
+                beanScope,
+                pageContext);
+
+        if (beanValue == null) {
+            throw new JspException(
+                "Error - Tag Insert : No value defined for bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'.");
+        }
+
+        return processObjectValue(beanValue);
+    }
+

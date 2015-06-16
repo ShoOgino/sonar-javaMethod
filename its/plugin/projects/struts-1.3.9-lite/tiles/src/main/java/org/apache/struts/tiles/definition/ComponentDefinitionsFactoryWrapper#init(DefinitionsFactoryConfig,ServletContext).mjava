@@ -1,0 +1,18 @@
+    /**
+     * Call underlying factory init method.
+     * @param config DefinitionsFactoryConfig.
+     * @param servletContext Our servlet context.
+     */
+    public void init(DefinitionsFactoryConfig config, ServletContext servletContext)
+        throws DefinitionsFactoryException {
+
+        this.config = config;
+
+        // create factory and initialize it
+        if (factory == null) {
+            factory = createFactoryInstance(config.getFactoryClassname());
+        }
+
+        factory.initFactory(servletContext, createConfigMap(config));
+    }
+

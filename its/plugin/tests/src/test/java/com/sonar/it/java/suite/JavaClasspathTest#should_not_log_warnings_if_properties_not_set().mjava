@@ -1,0 +1,10 @@
+  @Test
+  public void should_not_log_warnings_if_properties_not_set() {
+    SonarRunner runner = ditProjectSonarRunner();
+    String logs = ORCHESTRATOR.executeBuild(runner).getLogs();
+
+    assertThat(logs).doesNotContain("sonar.binaries and sonar.libraries are deprecated since version 2.5 of sonar-java-plugin," +
+      " please use sonar.java.binaries and sonar.java.libraries instead");
+    assertThat(getNumberOfViolations()).isEqualTo(0);
+  }
+

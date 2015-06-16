@@ -1,0 +1,117 @@
+    /**
+     * Checks if a field has a valid url. Four optional variables can be
+     * specified to configure url validation.
+     *
+     * <ul>
+     *
+     * <li>Variable <code>allow2slashes</code> can be set to <code>true</code>
+     * or <code>false</code> to control whether two slashes are allowed -
+     * default is <code>false</code> (i.e. two slashes are NOT allowed).</li>
+     *
+     * <li>Variable <code>nofragments</code> can be set to <code>true</code>
+     * or <code>false</code> to control whether fragments are allowed -
+     * default is <code>false</code> (i.e. fragments ARE allowed).</li>
+     *
+     * <li>Variable <code>allowallschemes</code> can be set to
+     * <code>true</code> or <code>false</code> to control if all schemes are
+     * allowed - default is <code>false</code> (i.e. all schemes are NOT
+     * allowed).</li>
+     *
+     * <li>Variable <code>schemes</code> can be set to a comma delimited list
+     * of valid schemes. This value is ignored if <code>allowallschemes</code>
+     * is set to <code>true</code>. Default schemes allowed are "http",
+     * "https" and "ftp" if this variable is not specified.</li>
+     *
+     * </ul>
+     *
+     * @param bean      The bean validation is being performed on.
+     * @param va        The <code>ValidatorAction</code> that is currently
+     *                  being performed.
+     * @param field     The <code>Field</code> object associated with the
+     *                  current field being validated.
+     * @param errors    The <code>ActionMessages</code> object to add errors
+     *                  to if any validation errors occur.
+     * @param validator The <code>Validator</code> instance, used to access
+     *                  other field values.
+     * @param request   Current request object.
+     * @return True if valid, false otherwise.
+     */
+    public static boolean validateUrl(Object bean, ValidatorAction va,
+        Field field, ActionMessages errors, Validator validator,
+        HttpServletRequest request) {
+        String value = null;
+
+        value = evaluateBean(bean, field);
+
+        if (GenericValidator.isBlankOrNull(value)) {
+            return true;
+        }
+
+        // Get the options and schemes Vars
+        String allowallschemesVar =
+            Resources.getVarValue("allowallschemes", field, validator, request,
+                false);
+        boolean allowallschemes = "true".equalsIgnoreCase(allowallschemesVar);
+        int options = allowallschemes ? UrlValidator.ALLOW_ALL_SCHEMES : 0;
+
+        String allow2slashesVar =
+            Resources.getVarValue("allow2slashes", field, validator, request,
+                false);
+
+        if ("true".equalsIgnoreCase(allow2slashesVar)) {
+            options += UrlValidator.ALLOW_2_SLASHES;
+        }
+
+        String nofragmentsVar =
+            Resources.getVarValue("nofragments", field, validator, request,
+                false);
+
+        if ("true".equalsIgnoreCase(nofragmentsVar)) {
+            options += UrlValidator.NO_FRAGMENTS;
+        }
+
+        String schemesVar =
+            allowallschemes ? null
+                            : Resources.getVarValue("schemes", field,
+                validator, request, false);
+
+        // No options or schemes - use GenericValidator as default
+        if ((options == 0) && (schemesVar == null)) {
+            if (GenericValidator.isUrl(value)) {
+                return true;
+            } else {
+                errors.add(field.getKey(),
+                    Resources.getActionMessage(validator, request, va, field));
+
+                return false;
+            }
+        }
+
+        // Parse comma delimited list of schemes into a String[]
+        String[] schemes = null;
+
+        if (schemesVar != null) {
+            StringTokenizer st = new StringTokenizer(schemesVar, ",");
+
+            schemes = new String[st.countTokens()];
+
+            int i = 0;
+
+            while (st.hasMoreTokens()) {
+                schemes[i++] = st.nextToken().trim();
+            }
+        }
+
+        // Create UrlValidator and validate with options/schemes
+        UrlValidator urlValidator = new UrlValidator(schemes, options);
+
+        if (urlValidator.isValid(value)) {
+            return true;
+        } else {
+            errors.add(field.getKey(),
+                Resources.getActionMessage(validator, request, va, field));
+
+            return false;
+        }
+    }
+

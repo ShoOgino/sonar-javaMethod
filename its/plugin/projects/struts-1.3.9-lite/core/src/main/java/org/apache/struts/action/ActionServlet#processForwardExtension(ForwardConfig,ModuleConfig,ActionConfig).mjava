@@ -1,0 +1,35 @@
+    /**
+     * <p>Extend the forward's configuration as necessary.  If actionConfig is
+     * provided, then this method will process the forwardConfig as part
+     * of that actionConfig.  If actionConfig is null, the forwardConfig
+     * will be processed as a global forward.</p>
+     *
+     * @param forwardConfig the configuration to process.
+     * @param moduleConfig  the module configuration for this module.
+     * @param actionConfig  If applicable, the config for the current action.
+     * @throws ServletException if initialization cannot be performed.
+     */
+    protected void processForwardExtension(ForwardConfig forwardConfig,
+        ModuleConfig moduleConfig, ActionConfig actionConfig)
+        throws ServletException {
+        try {
+            if (!forwardConfig.isExtensionProcessed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing extensions for '"
+                        + forwardConfig.getName() + "'");
+                }
+
+                forwardConfig =
+                    processForwardConfigClass(forwardConfig, moduleConfig,
+                        actionConfig);
+
+                forwardConfig.processExtends(moduleConfig, actionConfig);
+            }
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            handleGeneralExtensionException("Forward", forwardConfig.getName(),
+                e);
+        }
+    }
+

@@ -1,0 +1,24 @@
+    /**
+     * Test the case where the subform has already specified its own form bean
+     * config class.  If the code still attempts to create a new instance, an
+     * error will be thrown.
+     */
+    public void testProcessFormBeanConfigClassOverriddenSubFormClass()
+        throws Exception {
+        CustomFormBeanConfigArg customBase =
+            new CustomFormBeanConfigArg("customBase");
+
+        moduleConfig.addFormBeanConfig(customBase);
+
+        FormBeanConfig customSub = new CustomFormBeanConfigArg("customSub");
+
+        customSub.setExtends("customBase");
+        moduleConfig.addFormBeanConfig(customSub);
+
+        try {
+            actionServlet.processFormBeanConfigClass(customSub, moduleConfig);
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
+    }
+

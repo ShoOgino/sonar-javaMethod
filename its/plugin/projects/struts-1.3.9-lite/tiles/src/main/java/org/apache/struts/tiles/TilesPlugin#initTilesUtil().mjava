@@ -1,0 +1,50 @@
+    /**
+     * Set TilesUtil implementation according to properties 'tilesUtilImplClassname'
+     * and 'moduleAware'.  These properties are taken into account only once. A
+     * side effect is that only the values set in the first initialized plugin are
+     * effectively taken into account.
+     * @throws ServletException
+     */
+    private void initTilesUtil() throws ServletException {
+
+        if (TilesUtil.isTilesUtilImplSet()) {
+            return;
+        }
+
+        // Check if user has specified a TilesUtil implementation classname or not.
+        // If no implementation is specified, check if user has specified one
+        // shared single factory for all module, or one factory for each module.
+
+        if (this.getTilesUtilImplClassname() == null) {
+
+            if (isModuleAware()) {
+                TilesUtil.setTilesUtil(new TilesUtilStrutsModulesImpl());
+            } else {
+                TilesUtil.setTilesUtil(new TilesUtilStrutsImpl());
+            }
+
+        } else { // A classname is specified for the tilesUtilImp, use it.
+            try {
+                TilesUtilStrutsImpl impl =
+                    (TilesUtilStrutsImpl) RequestUtils
+                        .applicationClass(getTilesUtilImplClassname())
+                        .newInstance();
+                TilesUtil.setTilesUtil(impl);
+
+            } catch (ClassCastException ex) {
+                throw new ServletException(
+                    "Can't set TilesUtil implementation to '"
+                        + getTilesUtilImplClassname()
+                        + "'. TilesUtil implementation should be a subclass of '"
+                        + TilesUtilStrutsImpl.class.getName()
+                        + "'");
+
+            } catch (Exception ex) {
+                throw new ServletException(
+                    "Can't set TilesUtil implementation.",
+                    ex);
+            }
+        }
+
+    }
+

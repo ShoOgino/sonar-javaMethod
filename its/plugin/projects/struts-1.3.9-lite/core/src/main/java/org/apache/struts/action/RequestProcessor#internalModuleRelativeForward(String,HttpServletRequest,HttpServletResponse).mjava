@@ -1,0 +1,29 @@
+    /**
+     * <p>Do a module relative forward to specified URI using request
+     * dispatcher. URI is relative to the current module. The real URI is
+     * compute by prefixing the module name.</p> <p>This method is used
+     * internally and is not part of the public API. It is advised to not use
+     * it in subclasses. </p>
+     *
+     * @param uri      Module-relative URI to forward to
+     * @param request  Current page request
+     * @param response Current page response
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
+     * @since Struts 1.1
+     */
+    protected void internalModuleRelativeForward(String uri,
+        HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
+        // Construct a request dispatcher for the specified path
+        uri = moduleConfig.getPrefix() + uri;
+
+        // Delegate the processing of this request
+        // :FIXME: - exception handling?
+        if (log.isDebugEnabled()) {
+            log.debug(" Delegating via forward to '" + uri + "'");
+        }
+
+        doForward(uri, request, response);
+    }
+

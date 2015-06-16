@@ -1,0 +1,14 @@
+    // try to get the call to throw an NoSuchMethodException
+    public void test_Object_lookup_PageContext_String_String_String3() {
+        pageContext.setAttribute("bean", new MockFormBean());
+
+        Object val = null;
+
+        try {
+            val = tagutils.lookup(pageContext, "bean", "doesNotExistMethod");
+            fail("should have thrown exception");
+        } catch (JspException e) {
+            assertNull(val);
+        }
+    }
+

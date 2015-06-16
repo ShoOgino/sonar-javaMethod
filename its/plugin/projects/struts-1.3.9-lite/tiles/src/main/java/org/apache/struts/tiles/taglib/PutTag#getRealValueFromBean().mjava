@@ -1,0 +1,48 @@
+    /**
+     * Extract real value from specified bean.
+     * @throws JspException If something goes wrong while getting value from bean.
+     */
+    protected void getRealValueFromBean() throws JspException {
+        try {
+            Object bean = TagUtils.retrieveBean(beanName, beanScope, pageContext);
+            if (bean != null && beanProperty != null) {
+                realValue = PropertyUtils.getProperty(bean, beanProperty);
+            } else {
+                realValue = bean; // value can be null
+            }
+
+        } catch (NoSuchMethodException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+
+        } catch (InvocationTargetException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+
+        } catch (IllegalAccessException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+        }
+    }
+

@@ -1,0 +1,48 @@
+    /**
+     * <p>Find and return the <code>ExceptionConfig</code> instance defining
+     * how <code>Exceptions</code> of the specified type should be handled.
+     * This is performed by checking local and then global configurations for
+     * the specified exception's class, and then looking up the superclass
+     * chain (again checking local and then global configurations). If no
+     * handler configuration can be found, return <code>null</code>.</p>
+     *
+     * <p>Introduced in <code>ActionMapping</code> in Struts 1.1, but pushed
+     * up to <code>ActionConfig</code> in Struts 1.2.0.</p>
+     *
+     * @param type Exception class for which to find a handler
+     * @since Struts 1.2.0
+     */
+    public ExceptionConfig findException(Class type) {
+        // Check through the entire superclass hierarchy as needed
+        ExceptionConfig config;
+
+        while (true) {
+            // Check for a locally defined handler
+            String name = type.getName();
+
+            log.debug("findException: look locally for " + name);
+            config = findExceptionConfig(name);
+
+            if (config != null) {
+                return (config);
+            }
+
+            // Check for a globally defined handler
+            log.debug("findException: look globally for " + name);
+            config = getModuleConfig().findExceptionConfig(name);
+
+            if (config != null) {
+                return (config);
+            }
+
+            // Loop again for our superclass (if any)
+            type = type.getSuperclass();
+
+            if (type == null) {
+                break;
+            }
+        }
+
+        return (null); // No handler has been configured
+    }
+

@@ -1,0 +1,37 @@
+    /**
+     * Returns the Validation key
+     *
+     * @param mapping The mapping used to select this instance
+     * @param request The servlet request we are processing
+     * @return validation key to use
+     */
+    public String getValidationKey(ActionMapping mapping,
+        HttpServletRequest request) {
+        String validationKey = null;
+
+        if (isPathValidation()) {
+            // Get the path replacing any slashes by underscore
+            validationKey = mapping.getPath();
+
+            // Remove any leading slash
+            if (validationKey.charAt(0) == '/') {
+                validationKey = validationKey.substring(1);
+            }
+
+            // Replace any slashes by underscore
+            if (validationKey.indexOf("/") > 0) {
+                validationKey = validationKey.replace('/', '_');
+            }
+        } else {
+            validationKey = mapping.getAttribute();
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Validating ActionForm '" + mapping.getName()
+                + "' using key '" + validationKey + "' for mapping '"
+                + mapping.getPath() + "'");
+        }
+
+        return validationKey;
+    }
+

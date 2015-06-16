@@ -1,0 +1,135 @@
+    /**
+     * Construct an iterator for the specified collection, and begin looping
+     * through the body once per element.
+     *
+     * @throws JspException if a JSP exception has occurred
+     */
+    public int doStartTag() throws JspException {
+        // Acquire the collection we are going to iterate over
+        Object collection = this.collection;
+
+        if (collection == null) {
+            collection =
+                TagUtils.getInstance().lookup(pageContext, name, property,
+                    scope);
+        }
+
+        if (collection == null) {
+            JspException e =
+                new JspException(messages.getMessage("iterate.collection"));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Construct an iterator for this collection
+        if (collection.getClass().isArray()) {
+            try {
+                // If we're lucky, it is an array of objects
+                // that we can iterate over with no copying
+                iterator = Arrays.asList((Object[]) collection).iterator();
+            } catch (ClassCastException e) {
+                // Rats -- it is an array of primitives
+                int length = Array.getLength(collection);
+                ArrayList c = new ArrayList(length);
+
+                for (int i = 0; i < length; i++) {
+                    c.add(Array.get(collection, i));
+                }
+
+                iterator = c.iterator();
+            }
+        } else if (collection instanceof Collection) {
+            iterator = ((Collection) collection).iterator();
+        } else if (collection instanceof Iterator) {
+            iterator = (Iterator) collection;
+        } else if (collection instanceof Map) {
+            iterator = ((Map) collection).entrySet().iterator();
+        } else if (collection instanceof Enumeration) {
+            iterator = new IteratorAdapter((Enumeration) collection);
+        } else {
+            JspException e =
+                new JspException(messages.getMessage("iterate.iterator"));
+
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw e;
+        }
+
+        // Calculate the starting offset
+        if (offset == null) {
+            offsetValue = 0;
+        } else {
+            try {
+                offsetValue = Integer.parseInt(offset);
+            } catch (NumberFormatException e) {
+                Integer offsetObject =
+                    (Integer) TagUtils.getInstance().lookup(pageContext,
+                        offset, null);
+
+                if (offsetObject == null) {
+                    offsetValue = 0;
+                } else {
+                    offsetValue = offsetObject.intValue();
+                }
+            }
+        }
+
+        if (offsetValue < 0) {
+            offsetValue = 0;
+        }
+
+        // Calculate the rendering length
+        if (length == null) {
+            lengthValue = 0;
+        } else {
+            try {
+                lengthValue = Integer.parseInt(length);
+            } catch (NumberFormatException e) {
+                Integer lengthObject =
+                    (Integer) TagUtils.getInstance().lookup(pageContext,
+                        length, null);
+
+                if (lengthObject == null) {
+                    lengthValue = 0;
+                } else {
+                    lengthValue = lengthObject.intValue();
+                }
+            }
+        }
+
+        if (lengthValue < 0) {
+            lengthValue = 0;
+        }
+
+        lengthCount = 0;
+
+        // Skip the leading elements up to the starting offset
+        for (int i = 0; i < offsetValue; i++) {
+            if (iterator.hasNext()) {
+                iterator.next();
+            }
+        }
+
+        // Store the first value and evaluate, or skip the body if none
+        if (iterator.hasNext()) {
+            Object element = iterator.next();
+
+            if (element == null) {
+                pageContext.removeAttribute(id);
+            } else {
+                pageContext.setAttribute(id, element);
+            }
+
+            lengthCount++;
+            started = true;
+
+            if (indexId != null) {
+                pageContext.setAttribute(indexId, new Integer(getIndex()));
+            }
+
+            return (EVAL_BODY_TAG);
+        } else {
+            return (SKIP_BODY);
+        }
+    }
+

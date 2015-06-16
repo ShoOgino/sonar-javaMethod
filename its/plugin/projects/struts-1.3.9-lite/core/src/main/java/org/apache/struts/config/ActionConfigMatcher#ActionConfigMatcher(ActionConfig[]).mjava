@@ -1,0 +1,32 @@
+    /**
+     * <p> Finds and precompiles the wildcard patterns from the ActionConfig
+     * "path" attributes. ActionConfig's will be evaluated in the order they
+     * exist in the Struts config file. Only paths that actually contain a
+     * wildcard will be compiled. </p>
+     *
+     * @param configs An array of ActionConfig's to process
+     */
+    public ActionConfigMatcher(ActionConfig[] configs) {
+        compiledPaths = new ArrayList();
+
+        int[] pattern;
+        String path;
+
+        for (int x = 0; x < configs.length; x++) {
+            path = configs[x].getPath();
+
+            if ((path != null) && (path.indexOf('*') > -1)) {
+                if ((path.length() > 0) && (path.charAt(0) == '/')) {
+                    path = path.substring(1);
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Compiling action config path '" + path + "'");
+                }
+
+                pattern = wildcard.compilePattern(path);
+                compiledPaths.add(new Mapping(pattern, configs[x]));
+            }
+        }
+    }
+

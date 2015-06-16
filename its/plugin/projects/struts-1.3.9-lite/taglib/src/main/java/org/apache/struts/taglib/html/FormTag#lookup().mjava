@@ -1,0 +1,87 @@
+    /**
+     * Look up values for the <code>name</code>, <code>scope</code>, and
+     * <code>type</code> properties if necessary.
+     *
+     * @throws JspException if a required value cannot be looked up
+     */
+    protected void lookup() throws JspException {
+
+        // Look up the module configuration information we need
+        moduleConfig = TagUtils.getInstance().getModuleConfig(pageContext);
+
+        if (moduleConfig == null) {
+            JspException e =
+                new JspException(messages.getMessage("formTag.collections"));
+
+            pageContext.setAttribute(Globals.EXCEPTION_KEY, e,
+                PageContext.REQUEST_SCOPE);
+            throw e;
+        }
+
+        String calcAction = this.action;
+
+        // If the action is not specified, use the original request uri
+        if (this.action == null) {
+            HttpServletRequest request =
+                (HttpServletRequest) pageContext.getRequest();
+            postbackAction =
+                (String) request.getAttribute(Globals.ORIGINAL_URI_KEY);
+
+            String prefix = moduleConfig.getPrefix();
+            if (postbackAction != null && prefix.length() > 0 && postbackAction.startsWith(prefix)) {
+                postbackAction = postbackAction.substring(prefix.length());
+            }
+            calcAction = postbackAction;
+        } else {
+            // Translate the action if it is an actionId
+            ActionConfig actionConfig = moduleConfig.findActionConfigId(this.action);
+            if (actionConfig != null) {
+                this.action = actionConfig.getPath();
+                calcAction = this.action;
+            }
+        }
+
+        servlet =
+            (ActionServlet) pageContext.getServletContext().getAttribute(Globals.ACTION_SERVLET_KEY);
+
+        // Look up the action mapping we will be submitting to
+        String mappingName =
+            TagUtils.getInstance().getActionMappingName(calcAction);
+
+        mapping = (ActionMapping) moduleConfig.findActionConfig(mappingName);
+
+        if (mapping == null) {
+            JspException e =
+                new JspException(messages.getMessage("formTag.mapping",
+                        mappingName));
+
+            pageContext.setAttribute(Globals.EXCEPTION_KEY, e,
+                PageContext.REQUEST_SCOPE);
+            throw e;
+        }
+
+        // Look up the form bean definition
+        FormBeanConfig formBeanConfig =
+            moduleConfig.findFormBeanConfig(mapping.getName());
+
+        if (formBeanConfig == null) {
+            JspException e = null;
+
+            if (mapping.getName() == null) {
+                e = new JspException(messages.getMessage("formTag.name", calcAction));
+            } else {
+                e = new JspException(messages.getMessage("formTag.formBean",
+                            mapping.getName(), calcAction));
+            }
+
+            pageContext.setAttribute(Globals.EXCEPTION_KEY, e,
+                PageContext.REQUEST_SCOPE);
+            throw e;
+        }
+
+        // Calculate the required values
+        beanName = mapping.getAttribute();
+        beanScope = mapping.getScope();
+        beanType = formBeanConfig.getType();
+    }
+

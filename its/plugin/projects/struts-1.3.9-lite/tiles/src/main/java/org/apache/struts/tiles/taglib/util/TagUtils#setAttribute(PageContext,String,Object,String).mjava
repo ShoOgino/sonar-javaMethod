@@ -1,0 +1,34 @@
+    /**
+     * Store bean in requested context.
+     * If scope is <code>null</code>, save it in REQUEST_SCOPE context.
+     *
+     * @param pageContext Current pageContext.
+     * @param name Name of the bean.
+     * @param scope Scope under which bean is saved (page, request, session, application)
+     *  or <code>null</code> to store in <code>request()</code> instead.
+     * @param value Bean value to store.
+     *
+     * @exception JspException Scope name is not recognized as a valid scope
+     */
+    public static void setAttribute(
+        PageContext pageContext,
+        String name,
+        Object value,
+        String scope)
+        throws JspException {
+
+        if (scope == null)
+            pageContext.setAttribute(name, value, PageContext.REQUEST_SCOPE);
+        else if (scope.equalsIgnoreCase("page"))
+            pageContext.setAttribute(name, value, PageContext.PAGE_SCOPE);
+        else if (scope.equalsIgnoreCase("request"))
+            pageContext.setAttribute(name, value, PageContext.REQUEST_SCOPE);
+        else if (scope.equalsIgnoreCase("session"))
+            pageContext.setAttribute(name, value, PageContext.SESSION_SCOPE);
+        else if (scope.equalsIgnoreCase("application"))
+            pageContext.setAttribute(name, value, PageContext.APPLICATION_SCOPE);
+        else {
+            throw new JspException("Error - bad scope name '" + scope + "'");
+        }
+    }
+

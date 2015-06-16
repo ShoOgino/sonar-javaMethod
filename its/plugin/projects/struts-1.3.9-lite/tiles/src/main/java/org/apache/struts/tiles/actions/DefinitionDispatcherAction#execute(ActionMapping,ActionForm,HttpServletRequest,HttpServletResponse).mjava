@@ -1,0 +1,72 @@
+    /**
+     * Process the specified HTTP request, and create the corresponding HTTP
+     * response (or forward to another web component that will create it),
+     * with provision for handling exceptions thrown by the business logic.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     * @since Struts 1.1
+     */
+    public ActionForward execute(
+        ActionMapping mapping,
+        ActionForm form,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws Exception {
+
+        // Identify the request parameter containing the method name
+        // If none defined, use "def"
+        String parameter = mapping.getParameter();
+        if (parameter == null) {
+            parameter = "def";
+        }
+
+        // Identify the method name to be dispatched to
+        String name = request.getParameter(parameter);
+        if (name == null) {
+            log.error("Can't get parameter '" + parameter + "'.");
+
+            return mapping.findForward("error");
+        }
+
+        // Try to dispatch to requested definition
+        try {
+            // Read definition from factory, but we can create it here.
+            ComponentDefinition definition =
+                TilesUtil.getDefinition(
+                    name,
+                    request,
+                    getServlet().getServletContext());
+
+            if (log.isDebugEnabled()) {
+                log.debug("Get Definition " + definition);
+            }
+
+            DefinitionsUtil.setActionDefinition(request, definition);
+
+        } catch (FactoryNotFoundException e) {
+            log.error("Can't get definition factory.", e);
+            return mapping.findForward("error");
+
+        } catch (NoSuchDefinitionException e) {
+            log.error("Can't get definition '" + name + "'.", e);
+            return mapping.findForward("error");
+
+        } catch (DefinitionsFactoryException e) {
+            log.error("General Factory error '" + e.getMessage() + "'.", e);
+            return mapping.findForward("error");
+
+        } catch (Exception e) {
+            log.error("General error '" + e.getMessage() + "'.", e);
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("success");
+
+    }
+

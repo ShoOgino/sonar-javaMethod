@@ -1,0 +1,25 @@
+    /**
+     * Test Joined expressions ('and' or 'or')
+     */
+    public void testJoined() {
+        // Join with 'or'
+        doParse("((*this* == 'ABC') or (stringValue2 == null))", testBean, 0,
+            "stringValue1", true);
+        doParse("((*this* != 'ABC') or (stringValue2 == null))", testBean, 0,
+            "stringValue1", true);
+        doParse("((*this* == 'ABC') or (stringValue2 != null))", testBean, 0,
+            "stringValue1", true);
+        doParse("((*this* != 'ABC') or (stringValue2 != null))", testBean, 0,
+            "stringValue1", false);
+
+        // Join with 'and'
+        doParse("((*this* == 'ABC') and (stringValue2 == null))", testBean, 0,
+            "stringValue1", true);
+        doParse("((*this* != 'ABC') and (stringValue2 == null))", testBean, 0,
+            "stringValue1", false);
+        doParse("((*this* == 'ABC') and (stringValue2 != null))", testBean, 0,
+            "stringValue1", false);
+        doParse("((*this* != 'ABC') and (stringValue2 != null))", testBean, 0,
+            "stringValue1", false);
+    }
+

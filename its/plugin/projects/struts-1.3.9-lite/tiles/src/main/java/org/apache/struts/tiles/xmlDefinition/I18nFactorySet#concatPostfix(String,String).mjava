@@ -1,0 +1,26 @@
+    /**
+     * Concat postfix to the name. Take care of existing filename extension.
+     * Transform the given name "name.ext" to have "name" + "postfix" + "ext".
+     * If there is no ext, return "name" + "postfix".
+     * @param name Filename.
+     * @param postfix Postfix to add.
+     * @return Concatenated filename.
+     */
+    private String concatPostfix(String name, String postfix) {
+        if (postfix == null) {
+            return name;
+        }
+
+        // Search file name extension.
+        // take care of Unix files starting with .
+        int dotIndex = name.lastIndexOf(".");
+        int lastNameStart = name.lastIndexOf(java.io.File.pathSeparator);
+        if (dotIndex < 1 || dotIndex < lastNameStart) {
+            return name + postfix;
+        }
+
+        String ext = name.substring(dotIndex);
+        name = name.substring(0, dotIndex);
+        return name + postfix + ext;
+    }
+

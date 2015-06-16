@@ -1,0 +1,22 @@
+    /**
+     * Test the "lang" attribute with valid characters.
+     */
+    public void testValidLangTrue() {
+        
+        // switch to render "lang" attribute
+        htmlTag.setLang(true);
+
+        // Render for Locale.US
+        request.setLocale(Locale.US);
+        assertEquals("render en_US", "<html lang=\"en-US\">", htmlTag.renderHtmlStartElement());
+
+        // Render for Locale.ENGLISH
+        request.setLocale(Locale.ENGLISH);
+        assertEquals("render en", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+        // Test valid characters
+        request.setLocale(new Locale("abcd-efghijklmnopqrstuvwxyz", "ABCDEFGHIJKLM-NOPQRSTUVWXYZ", ""));
+        assertEquals("valid characters", "<html lang=\"abcd-efghijklmnopqrstuvwxyz-ABCDEFGHIJKLM-NOPQRSTUVWXYZ\">", htmlTag.renderHtmlStartElement());
+
+    }
+

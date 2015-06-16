@@ -1,0 +1,39 @@
+    /**
+     * Adds the specified messages keys into the appropriate request attribute
+     * for use by the &lt;html:messages&gt; tag (if messages="true" is set),
+     * if any messages are required. Initialize the attribute if it has not
+     * already been. Otherwise, ensure that the request attribute is not set.
+     *
+     * @param request  The servlet request we are processing
+     * @param messages Messages object
+     * @since Struts 1.2.1
+     */
+    protected void addMessages(HttpServletRequest request,
+        ActionMessages messages) {
+        if (messages == null) {
+            //  bad programmer! *slap*
+            return;
+        }
+
+        // get any existing messages from the request, or make a new one
+        ActionMessages requestMessages =
+            (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
+
+        if (requestMessages == null) {
+            requestMessages = new ActionMessages();
+        }
+
+        // add incoming messages
+        requestMessages.add(messages);
+
+        // if still empty, just wipe it out from the request
+        if (requestMessages.isEmpty()) {
+            request.removeAttribute(Globals.MESSAGE_KEY);
+
+            return;
+        }
+
+        // Save the messages
+        request.setAttribute(Globals.MESSAGE_KEY, requestMessages);
+    }
+

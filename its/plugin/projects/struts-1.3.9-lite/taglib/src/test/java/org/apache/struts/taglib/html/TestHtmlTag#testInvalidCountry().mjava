@@ -1,0 +1,34 @@
+    /**
+     * Test an invalid "country"
+     */
+    public void testInvalidCountry() {
+        
+        // switch to render "lang" attribute
+        htmlTag.setLang(true);
+
+        // make sure HtmlTag is setup to render "lang" using a valid value
+        request.setLocale(Locale.US);
+        assertEquals("check valid", "<html lang=\"en-US\">", htmlTag.renderHtmlStartElement());
+
+        // Test script injection
+        request.setLocale(new Locale("en", "/><script>alert()</script>", ""));
+        assertEquals("invalid <script>", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+        // Test <
+        request.setLocale(new Locale("en", "abc<def", ""));
+        assertEquals("invalid LT", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+        // Test >
+        request.setLocale(new Locale("en", "abc>def", ""));
+        assertEquals("invalid GT", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+        // Test /
+        request.setLocale(new Locale("en", "abc/def", ""));
+        assertEquals("invalid SLASH", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+        // Test &
+        request.setLocale(new Locale("en", "abc&def", ""));
+        assertEquals("invalid AMP", "<html lang=\"en\">", htmlTag.renderHtmlStartElement());
+
+    }
+

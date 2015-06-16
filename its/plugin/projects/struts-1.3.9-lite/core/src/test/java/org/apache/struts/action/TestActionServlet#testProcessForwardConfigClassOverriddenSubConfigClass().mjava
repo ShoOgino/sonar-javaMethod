@@ -1,0 +1,23 @@
+    /**
+     * Test the case where the subconfig has already specified its own config
+     * class.  If the code still attempts to create a new instance, an error
+     * will be thrown.
+     */
+    public void testProcessForwardConfigClassOverriddenSubConfigClass()
+        throws Exception {
+        moduleConfig.addForwardConfig(baseForward);
+
+        ForwardConfig customSub =
+            new CustomForwardConfigArg("failure", "/failure.jsp");
+
+        customSub.setExtends("success");
+        moduleConfig.addForwardConfig(customSub);
+
+        try {
+            actionServlet.processForwardConfigClass(customSub, moduleConfig,
+                null);
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
+    }
+

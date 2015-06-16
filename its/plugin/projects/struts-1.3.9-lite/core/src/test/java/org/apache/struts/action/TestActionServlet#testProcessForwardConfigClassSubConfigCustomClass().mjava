@@ -1,0 +1,22 @@
+    /**
+     * Make sure processForwardConfigClass() returns the same class instance
+     * if the base config isn't using a custom class.
+     */
+    public void testProcessForwardConfigClassSubConfigCustomClass()
+        throws Exception {
+        moduleConfig.addForwardConfig(baseForward);
+
+        ForwardConfig customSub = new ActionForward();
+
+        customSub.setName("failure");
+        customSub.setExtends("success");
+        moduleConfig.addForwardConfig(customSub);
+
+        ForwardConfig result =
+            actionServlet.processForwardConfigClass(customSub, moduleConfig,
+                null);
+
+        assertSame("The instance returned should be the param given it.",
+            customSub, result);
+    }
+

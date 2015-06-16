@@ -1,0 +1,22 @@
+    /**
+     * Retrieves any existing errors placed in the request by previous
+     * actions. This method could be called instead of creating a <code>new
+     * ActionMessages()</code> at the beginning of an <code>Action</code>.
+     * This will prevent saveErrors() from wiping out any existing Errors
+     *
+     * @param request The servlet request we are processing
+     * @return the Errors that already exist in the request, or a new
+     *         ActionMessages object if empty.
+     * @since Struts 1.2.1
+     */
+    protected ActionMessages getErrors(HttpServletRequest request) {
+        ActionMessages errors =
+            (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
+
+        if (errors == null) {
+            errors = new ActionMessages();
+        }
+
+        return errors;
+    }
+

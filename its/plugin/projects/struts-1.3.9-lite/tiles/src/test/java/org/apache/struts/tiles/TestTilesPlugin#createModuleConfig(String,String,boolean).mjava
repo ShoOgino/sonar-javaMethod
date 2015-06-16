@@ -1,0 +1,30 @@
+    /**
+     * Create a module configuration
+     * @param moduleName
+     */
+    public ModuleConfig createModuleConfig(
+        String moduleName,
+        String configFileName,
+        boolean moduleAware) {
+
+        ModuleConfig moduleConfig =
+            ModuleConfigFactory.createFactory().createModuleConfig(moduleName);
+
+        context.setAttribute(Globals.MODULE_KEY + moduleName, moduleConfig);
+
+        // Set tiles plugin
+        PlugInConfig pluginConfig = new PlugInConfig();
+        pluginConfig.setClassName("org.apache.struts.tiles.TilesPlugin");
+
+        pluginConfig.addProperty(
+            "moduleAware",
+            (moduleAware == true ? "true" : "false"));
+
+        pluginConfig.addProperty(
+            "definitions-config",
+            "/org/apache/struts/tiles/config/" + configFileName);
+
+        moduleConfig.addPlugInConfig(pluginConfig);
+        return moduleConfig;
+    }
+

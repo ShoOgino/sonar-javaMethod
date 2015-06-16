@@ -1,0 +1,69 @@
+    /**
+     * Locate and return the specified property of the specified bean, from
+     * an optionally specified scope, in the specified page context.
+     *
+     * @param pageContext Page context to be searched.
+     * @param beanName Name of the bean to be retrieved.
+     * @param beanProperty Name of the property to be retrieved, or
+     *  <code>null</code> to retrieve the bean itself.
+     * @param beanScope Scope to be searched (page, request, session, application)
+     *  or <code>null</code> to use <code>findAttribute()</code> instead.
+     *
+     * @exception JspException Scope name is not recognized as a valid scope
+     * @exception JspException if the specified bean is not found
+     * @exception JspException if accessing this property causes an
+     *  IllegalAccessException, IllegalArgumentException,
+     *  InvocationTargetException, or NoSuchMethodException
+     */
+    public static Object getRealValueFromBean(
+        String beanName,
+        String beanProperty,
+        String beanScope,
+        PageContext pageContext)
+        throws JspException {
+
+        try {
+            Object realValue;
+            Object bean = retrieveBean(beanName, beanScope, pageContext);
+            if (bean != null && beanProperty != null) {
+                realValue = PropertyUtils.getProperty(bean, beanProperty);
+            } else {
+                realValue = bean; // value can be null
+            }
+            return realValue;
+
+        } catch (NoSuchMethodException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+
+        } catch (InvocationTargetException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+
+        } catch (IllegalAccessException ex) {
+            throw new JspException(
+                "Error - component.PutAttributeTag : Error while retrieving value from bean '"
+                    + beanName
+                    + "' with property '"
+                    + beanProperty
+                    + "' in scope '"
+                    + beanScope
+                    + "'. (exception : "
+                    + ex.getMessage(), ex);
+        }
+    }
+

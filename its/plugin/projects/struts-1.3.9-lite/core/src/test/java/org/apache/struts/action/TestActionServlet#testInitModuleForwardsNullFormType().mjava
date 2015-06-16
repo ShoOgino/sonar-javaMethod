@@ -1,0 +1,20 @@
+    /**
+     * Test that initModuleForwards throws an exception when a forward with a
+     * null path is present.
+     */
+    public void testInitModuleForwardsNullFormType()
+        throws ServletException {
+        ActionForward forward = new ActionForward("success", null, false);
+
+        moduleConfig.addForwardConfig(forward);
+
+        try {
+            actionServlet.initModuleForwards(moduleConfig);
+            fail("An exception should've been thrown here.");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unrecognized exception thrown: " + e);
+        }
+    }
+

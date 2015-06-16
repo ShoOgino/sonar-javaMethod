@@ -1,0 +1,32 @@
+    /**
+     * <p>Process the specified non-HTTP request, and create the corresponding
+     * non-HTTP response (or forward to another web component that will create
+     * it), with provision for handling exceptions thrown by the business
+     * logic. Return an {@link ActionForward} instance describing where and
+     * how control should be forwarded, or <code>null</code> if the response
+     * has already been completed.</p>
+     *
+     * <p>The default implementation attempts to forward to the HTTP version
+     * of this method.</p>
+     *
+     * @param mapping  The ActionMapping used to select this instance
+     * @param form     The optional ActionForm bean for this request (if any)
+     * @param request  The non-HTTP request we are processing
+     * @param response The non-HTTP response we are creating
+     * @return The forward to which control should be transferred, or
+     *         <code>null</code> if the response has been completed.
+     * @throws Exception if the application business logic throws an
+     *                   exception.
+     * @since Struts 1.1
+     */
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+        ServletRequest request, ServletResponse response)
+        throws Exception {
+        try {
+            return execute(mapping, form, (HttpServletRequest) request,
+                (HttpServletResponse) response);
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+

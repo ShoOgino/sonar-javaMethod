@@ -1,0 +1,19 @@
+    /**
+     * <p>General handling for exceptions caught while inheriting config
+     * information.</p>
+     *
+     * @param configType The type of configuration object of configName.
+     * @param configName The name of the config that could not be extended.
+     * @param e          The exception that was caught.
+     * @throws ServletException to communicate the error.
+     */
+    private void handleGeneralExtensionException(String configType,
+        String configName, Exception e)
+        throws ServletException {
+        String errorMessage =
+            internal.getMessage("configExtends", configType, configName);
+
+        log.error(errorMessage, e);
+        throw new UnavailableException(errorMessage);
+    }
+

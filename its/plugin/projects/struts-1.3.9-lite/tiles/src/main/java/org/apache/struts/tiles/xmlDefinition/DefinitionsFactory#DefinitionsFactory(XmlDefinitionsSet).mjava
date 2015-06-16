@@ -1,0 +1,23 @@
+   /**
+    * Constructor.
+    * Create a factory initialized with definitions from {@link XmlDefinitionsSet}.
+    * @param xmlDefinitions Resolved definition from XmlDefinitionSet.
+    * @throws NoSuchDefinitionException If an error occurs while resolving inheritance
+    */
+   public DefinitionsFactory(XmlDefinitionsSet xmlDefinitions)
+    throws NoSuchDefinitionException
+    {
+    definitions = new HashMap();
+
+      // First, resolve inheritance
+    xmlDefinitions.resolveInheritances();
+
+      // Walk thru xml set and copy each definitions.
+    Iterator i = xmlDefinitions.getDefinitions().values().iterator();
+    while( i.hasNext() )
+      {
+      XmlDefinition xmlDefinition = (XmlDefinition)i.next();
+        putDefinition( new ComponentDefinition( xmlDefinition) );
+      }  // end loop
+   }
+

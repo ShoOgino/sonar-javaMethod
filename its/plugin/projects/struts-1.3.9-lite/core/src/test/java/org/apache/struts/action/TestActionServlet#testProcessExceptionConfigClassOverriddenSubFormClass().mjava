@@ -1,0 +1,23 @@
+    /**
+     * Test the case where the subconfig has already specified its own config
+     * class.  If the code still attempts to create a new instance, an error
+     * will be thrown.
+     */
+    public void testProcessExceptionConfigClassOverriddenSubFormClass()
+        throws Exception {
+        moduleConfig.addExceptionConfig(baseException);
+
+        ExceptionConfig customSub =
+            new CustomExceptionConfigArg("java.lang.IllegalStateException");
+
+        customSub.setExtends("java.lang.NullPointerException");
+        moduleConfig.addExceptionConfig(customSub);
+
+        try {
+            actionServlet.processExceptionConfigClass(customSub, moduleConfig,
+                null);
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
+    }
+

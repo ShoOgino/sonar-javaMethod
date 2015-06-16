@@ -1,0 +1,34 @@
+    /**
+     * Generates the opening <code>&lt;form&gt;</code> element with
+     * appropriate attributes.
+     *
+     * @since Struts 1.1
+     */
+    protected String renderFormStartElement()
+        throws JspException {
+        StringBuffer results = new StringBuffer("<form");
+
+        // render attributes
+        renderName(results);
+
+        renderAttribute(results, "method",
+            (getMethod() == null) ? "post" : getMethod());
+        renderAction(results);
+        renderAttribute(results, "accept-charset", getAcceptCharset());
+        renderAttribute(results, "class", getStyleClass());
+        renderAttribute(results, "dir", getDir());
+        renderAttribute(results, "enctype", getEnctype());
+        renderAttribute(results, "lang", getLang());
+        renderAttribute(results, "onreset", getOnreset());
+        renderAttribute(results, "onsubmit", getOnsubmit());
+        renderAttribute(results, "style", getStyle());
+        renderAttribute(results, "target", getTarget());
+
+        // Hook for additional attributes
+        renderOtherAttributes(results);
+
+        results.append(">");
+
+        return results.toString();
+    }
+

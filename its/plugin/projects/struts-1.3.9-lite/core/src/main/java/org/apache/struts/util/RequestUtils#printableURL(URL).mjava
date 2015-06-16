@@ -1,0 +1,29 @@
+    /**
+     * <p>Compute the printable representation of a URL, leaving off the
+     * scheme/host/port part if no host is specified. This will typically be
+     * the case for URLs that were originally created from relative or
+     * context-relative URIs.</p>
+     *
+     * @param url URL to render in a printable representation
+     * @return printable representation of a URL
+     */
+    public static String printableURL(URL url) {
+        if (url.getHost() != null) {
+            return (url.toString());
+        }
+
+        String file = url.getFile();
+        String ref = url.getRef();
+
+        if (ref == null) {
+            return (file);
+        } else {
+            StringBuffer sb = new StringBuffer(file);
+
+            sb.append('#');
+            sb.append(ref);
+
+            return (sb.toString());
+        }
+    }
+

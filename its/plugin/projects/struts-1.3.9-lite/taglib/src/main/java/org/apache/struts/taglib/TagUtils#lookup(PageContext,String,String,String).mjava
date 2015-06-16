@@ -1,0 +1,85 @@
+    /**
+     * Locate and return the specified property of the specified bean, from an
+     * optionally specified scope, in the specified page context.  If an
+     * exception is thrown, it will have already been saved via a call to
+     * <code>saveException()</code>.
+     *
+     * @param pageContext Page context to be searched
+     * @param name        Name of the bean to be retrieved
+     * @param property    Name of the property to be retrieved, or
+     *                    <code>null</code> to retrieve the bean itself
+     * @param scope       Scope to be searched (page, request, session,
+     *                    application) or <code>null</code> to use
+     *                    <code>findAttribute()</code> instead
+     * @return property of specified JavaBean
+     * @throws JspException if an invalid scope name is requested
+     * @throws JspException if the specified bean is not found
+     * @throws JspException if accessing this property causes an
+     *                      IllegalAccessException, IllegalArgumentException,
+     *                      InvocationTargetException, or NoSuchMethodException
+     */
+    public Object lookup(PageContext pageContext, String name, String property,
+        String scope) throws JspException {
+        // Look up the requested bean, and return if requested
+        Object bean = lookup(pageContext, name, scope);
+
+        if (bean == null) {
+            JspException e = null;
+
+            if (scope == null) {
+                e = new JspException(messages.getMessage("lookup.bean.any", name));
+            } else {
+                e = new JspException(messages.getMessage("lookup.bean", name,
+                            scope));
+            }
+
+            saveException(pageContext, e);
+            throw e;
+        }
+
+        if (property == null) {
+            return bean;
+        }
+
+        // Locate and return the specified property
+        try {
+            return PropertyUtils.getProperty(bean, property);
+        } catch (IllegalAccessException e) {
+            saveException(pageContext, e);
+            throw new JspException(messages.getMessage("lookup.access",
+                    property, name));
+        } catch (IllegalArgumentException e) {
+            saveException(pageContext, e);
+            throw new JspException(messages.getMessage("lookup.argument",
+                    property, name));
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+
+            if (t == null) {
+                t = e;
+            }
+
+            saveException(pageContext, t);
+            throw new JspException(messages.getMessage("lookup.target",
+                    property, name));
+        } catch (NoSuchMethodException e) {
+            saveException(pageContext, e);
+
+            String beanName = name;
+
+            // Name defaults to Contants.BEAN_KEY if no name is specified by
+            // an input tag. Thus lookup the bean under the key and use
+            // its class name for the exception message.
+            if (Constants.BEAN_KEY.equals(name)) {
+                Object obj = pageContext.findAttribute(Constants.BEAN_KEY);
+
+                if (obj != null) {
+                    beanName = obj.getClass().getName();
+                }
+            }
+
+            throw new JspException(messages.getMessage("lookup.method",
+                    property, beanName));
+        }
+    }
+

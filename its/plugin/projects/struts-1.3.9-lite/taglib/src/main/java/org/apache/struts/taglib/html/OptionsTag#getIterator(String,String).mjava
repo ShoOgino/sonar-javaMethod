@@ -1,0 +1,68 @@
+    /**
+     * Return an iterator for the option labels or values, based on our
+     * configured properties.
+     *
+     * @param name     Name of the bean attribute (if any)
+     * @param property Name of the bean property (if any)
+     * @throws JspException if an error occurs
+     */
+    protected Iterator getIterator(String name, String property)
+        throws JspException {
+        // Identify the bean containing our collection
+        String beanName = name;
+
+        if (beanName == null) {
+            beanName = Constants.BEAN_KEY;
+        }
+
+        Object bean =
+            TagUtils.getInstance().lookup(pageContext, beanName, null);
+
+        if (bean == null) {
+            throw new JspException(messages.getMessage("getter.bean", beanName));
+        }
+
+        // Identify the collection itself
+        Object collection = bean;
+
+        if (property != null) {
+            try {
+                collection = PropertyUtils.getProperty(bean, property);
+
+                if (collection == null) {
+                    throw new JspException(messages.getMessage(
+                            "getter.property", property));
+                }
+            } catch (IllegalAccessException e) {
+                throw new JspException(messages.getMessage("getter.access",
+                        property, name));
+            } catch (InvocationTargetException e) {
+                Throwable t = e.getTargetException();
+
+                throw new JspException(messages.getMessage("getter.result",
+                        property, t.toString()));
+            } catch (NoSuchMethodException e) {
+                throw new JspException(messages.getMessage("getter.method",
+                        property, name));
+            }
+        }
+
+        // Construct and return an appropriate iterator
+        if (collection.getClass().isArray()) {
+            collection = Arrays.asList((Object[]) collection);
+        }
+
+        if (collection instanceof Collection) {
+            return (((Collection) collection).iterator());
+        } else if (collection instanceof Iterator) {
+            return ((Iterator) collection);
+        } else if (collection instanceof Map) {
+            return (((Map) collection).entrySet().iterator());
+        } else if (collection instanceof Enumeration) {
+            return new IteratorAdapter((Enumeration) collection);
+        } else {
+            throw new JspException(messages.getMessage("optionsTag.iterator",
+                    collection.toString()));
+        }
+    }
+

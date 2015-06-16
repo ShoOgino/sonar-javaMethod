@@ -1,0 +1,18 @@
+    /**
+     * Forward to the given path converting exceptions to JspException.
+     *
+     * @param path The path to forward to.
+     * @throws JspException
+     * @since Struts 1.2
+     */
+    protected void doForward(String path)
+        throws JspException {
+        try {
+            pageContext.forward(path);
+        } catch (Exception e) {
+            TagUtils.getInstance().saveException(pageContext, e);
+            throw new JspException(messages.getMessage("forward.forward", name,
+                    e.toString()));
+        }
+    }
+

@@ -1,0 +1,78 @@
+    /**
+     * <p>Checks if the current exceptionConfig is using the correct class
+     * based on the class of its configuration ancestor. If actionConfig is
+     * provided, then this method will process the exceptionConfig as part
+     * of that actionConfig.  If actionConfig is null, the exceptionConfig
+     * will be processed as a global forward.</p>
+     *
+     * @param exceptionConfig The config to check.
+     * @param moduleConfig    The config for the current module.
+     * @param actionConfig  If applicable, the config for the current action.
+     * @return The exception config using the correct class as determined by
+     *         the config's ancestor and its own overridden value.
+     * @throws ServletException if an instance of the exception config class
+     *                          cannot be created.
+     */
+    protected ExceptionConfig processExceptionConfigClass(
+        ExceptionConfig exceptionConfig, ModuleConfig moduleConfig,
+        ActionConfig actionConfig)
+        throws ServletException {
+        String ancestor = exceptionConfig.getExtends();
+
+        if (ancestor == null) {
+            // Nothing to do, then
+            return exceptionConfig;
+        }
+
+        // Make sure that this config is of the right class
+        ExceptionConfig baseConfig = null;
+        if (actionConfig != null) {
+            baseConfig = actionConfig.findExceptionConfig(ancestor);
+        }
+
+        if (baseConfig == null) {
+            // This means either there's no actionConfig anyway, or the
+            // ancestor is not defined within the action.
+            baseConfig = moduleConfig.findExceptionConfig(ancestor);
+        }
+
+        if (baseConfig == null) {
+            throw new UnavailableException("Unable to find "
+                + "exception config '" + ancestor + "' to extend.");
+        }
+
+        // Was our config's class overridden already?
+        if (exceptionConfig.getClass().equals(ExceptionConfig.class)) {
+            // Ensure that our config is using the correct class
+            if (!baseConfig.getClass().equals(exceptionConfig.getClass())) {
+                // Replace the config with an instance of the correct class
+                ExceptionConfig newExceptionConfig = null;
+                String baseConfigClassName = baseConfig.getClass().getName();
+
+                try {
+                    newExceptionConfig =
+                        (ExceptionConfig) RequestUtils.applicationInstance(
+                            baseConfigClassName);
+
+                    // copy the values
+                    BeanUtils.copyProperties(newExceptionConfig,
+                        exceptionConfig);
+                } catch (Exception e) {
+                    handleCreationException(baseConfigClassName, e);
+                }
+
+                // replace exceptionConfig with newExceptionConfig
+                if (actionConfig != null) {
+                    actionConfig.removeExceptionConfig(exceptionConfig);
+                    actionConfig.addExceptionConfig(newExceptionConfig);
+                } else {
+                    moduleConfig.removeExceptionConfig(exceptionConfig);
+                    moduleConfig.addExceptionConfig(newExceptionConfig);
+                }
+                exceptionConfig = newExceptionConfig;
+            }
+        }
+
+        return exceptionConfig;
+    }
+

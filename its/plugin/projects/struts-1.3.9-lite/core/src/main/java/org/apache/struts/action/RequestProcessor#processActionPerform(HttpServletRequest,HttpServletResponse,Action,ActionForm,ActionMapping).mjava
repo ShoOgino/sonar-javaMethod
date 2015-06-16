@@ -1,0 +1,27 @@
+    /**
+     * <P>Ask the specified <code>Action</code> instance to handle this
+     * request. Return the <code>ActionForward</code> instance (if any)
+     * returned by the called <code>Action</code> for further processing.
+     * </P>
+     *
+     * @param request  The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param action   The Action instance to be used
+     * @param form     The ActionForm instance to pass to this Action
+     * @param mapping  The ActionMapping instance to pass to this Action
+     * @return The <code>ActionForward</code> instance (if any) returned by
+     *         the called <code>Action</code>.
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet exception occurs
+     */
+    protected ActionForward processActionPerform(HttpServletRequest request,
+        HttpServletResponse response, Action action, ActionForm form,
+        ActionMapping mapping)
+        throws IOException, ServletException {
+        try {
+            return (action.execute(mapping, form, request, response));
+        } catch (Exception e) {
+            return (processException(request, response, e, form, mapping));
+        }
+    }
+

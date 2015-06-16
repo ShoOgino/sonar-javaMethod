@@ -1,0 +1,9 @@
+  @Test
+  public void relative_path_with_wildcard_for_libraries_should_be_supported() throws Exception {
+    SonarRunner runner = ditProjectSonarRunner();
+    runner.setProperty("sonar.java.binaries", "target/classes");
+    runner.setProperty("sonar.java.libraries", "../dit-check/**/library.jar");
+    ORCHESTRATOR.executeBuild(runner);
+    assertThat(getNumberOfViolations()).isEqualTo(1);
+  }
+

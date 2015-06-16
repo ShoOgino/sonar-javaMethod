@@ -1,0 +1,46 @@
+    /**
+     * End of Process tag attribute "definition".
+     * Overload definition with tag attributes "template" and "role".
+     * Then, create appropriate tag handler.
+     * @param definition Definition to process.
+     * @return Appropriate TagHandler.
+     * @throws JspException InstantiationException Can't create requested controller
+     */
+    protected TagHandler processDefinition(ComponentDefinition definition)
+        throws JspException {
+        // Declare local variable in order to not change Tag attribute values.
+        String role = this.role;
+        String page = this.page;
+        Controller controller = null;
+
+        try {
+            controller = definition.getOrCreateController();
+
+            // Overload definition with tag's template and role.
+            if (role == null) {
+                role = definition.getRole();
+            }
+
+            if (page == null) {
+                page = definition.getTemplate();
+            }
+
+            if (controllerName != null) {
+                controller =
+                    ComponentDefinition.createController(
+                        controllerName,
+                        controllerType);
+            }
+
+            // Can check if page is set
+            return new InsertHandler(
+                definition.getAttributes(),
+                page,
+                role,
+                controller);
+
+        } catch (InstantiationException ex) {
+            throw new JspException(ex);
+        }
+    }
+

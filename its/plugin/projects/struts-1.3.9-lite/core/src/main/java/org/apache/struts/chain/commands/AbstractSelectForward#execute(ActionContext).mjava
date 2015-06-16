@@ -1,0 +1,37 @@
+    /**
+     * <p>Select and cache the <code>ActionForward</code> for this
+     * <code>ActionConfig</code> if specified.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception if thrown by the Action class
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Skip processing if the current request is not valid
+        Boolean valid = actionCtx.getFormValid();
+
+        if ((valid == null) || !valid.booleanValue()) {
+            return (false);
+        }
+
+        // Acquire configuration objects that we need
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+        ModuleConfig moduleConfig = actionConfig.getModuleConfig();
+
+        ForwardConfig forwardConfig = null;
+        String forward = actionConfig.getForward();
+
+        if (forward != null) {
+            forwardConfig = forward(actionCtx, moduleConfig, forward);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Forwarding to " + forwardConfig);
+            }
+
+            actionCtx.setForwardConfig(forwardConfig);
+        }
+
+        return (false);
+    }
+

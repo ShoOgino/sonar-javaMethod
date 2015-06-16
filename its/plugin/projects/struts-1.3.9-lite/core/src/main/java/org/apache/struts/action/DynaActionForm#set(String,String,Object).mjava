@@ -1,0 +1,25 @@
+    /**
+     * <p>Set the value of a mapped property with the specified name.</p>
+     *
+     * @param name  Name of the property whose value is to be set
+     * @param key   Key of the property to be set
+     * @param value Value to which this property is to be set
+     * @throws NullPointerException     if there is no property of the
+     *                                  specified name
+     * @throws IllegalArgumentException if the specified property exists, but
+     *                                  is not mapped
+     */
+    public void set(String name, String key, Object value) {
+        Object prop = dynaValues.get(name);
+
+        if (prop == null) {
+            throw new NullPointerException("No mapped value for '" + name + "("
+                + key + ")'");
+        } else if (prop instanceof Map) {
+            ((Map) prop).put(key, value);
+        } else {
+            throw new IllegalArgumentException("Non-mapped property for '"
+                + name + "(" + key + ")'");
+        }
+    }
+

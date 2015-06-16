@@ -1,0 +1,24 @@
+    // Check for ability to remove a property before and after freezing
+    public void testConfigRemove() {
+        FormPropertyConfig prop = null;
+
+        // Before freezing
+        prop = beanConfig.findFormPropertyConfig("booleanProperty");
+        assertNotNull("booleanProperty found", prop);
+        beanConfig.removeFormPropertyConfig(prop);
+        prop = beanConfig.findFormPropertyConfig("booleanProperty");
+        assertNull("booleanProperty not deleted", prop);
+
+        // after freezing
+        beanConfig.freeze();
+        prop = beanConfig.findFormPropertyConfig("booleanSecond");
+        assertNotNull("booleanSecond found", prop);
+
+        try {
+            beanConfig.removeFormPropertyConfig(prop);
+            fail("booleanSecond remove not prevented");
+        } catch (IllegalStateException e) {
+            ; // Expected result
+        }
+    }
+

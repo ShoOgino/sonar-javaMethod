@@ -1,0 +1,53 @@
+    /**
+     * Create FactoryConfig and initialize it from web.xml and struts-config.xml.
+     *
+     * @param servlet ActionServlet that is managing all the modules
+     *  in this web application.
+     * @param config ModuleConfig for the module with which
+     *  this plugin is associated.
+     * @exception ServletException if this <code>PlugIn</code> cannot
+     *  be successfully initialized.
+     */
+    protected DefinitionsFactoryConfig readFactoryConfig(
+        ActionServlet servlet,
+        ModuleConfig config)
+        throws ServletException {
+
+        // Create tiles definitions config object
+        DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
+        // Get init parameters from web.xml files
+        try {
+            DefinitionsUtil.populateDefinitionsFactoryConfig(
+                factoryConfig,
+                servlet.getServletConfig());
+
+        } catch (Exception ex) {
+            if (log.isDebugEnabled()){
+                log.debug("", ex);
+            }
+            ex.printStackTrace();
+            throw new UnavailableException(
+                "Can't populate DefinitionsFactoryConfig class from 'web.xml': "
+                    + ex.getMessage());
+        }
+
+        // Get init parameters from struts-config.xml
+        try {
+            Map strutsProperties = findStrutsPlugInConfigProperties(servlet, config);
+            factoryConfig.populate(strutsProperties);
+
+        } catch (Exception ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("", ex);
+            }
+
+            throw new UnavailableException(
+                "Can't populate DefinitionsFactoryConfig class from '"
+                    + config.getPrefix()
+                    + "/struts-config.xml':"
+                    + ex.getMessage());
+        }
+
+        return factoryConfig;
+    }
+

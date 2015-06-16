@@ -1,0 +1,55 @@
+    /**
+     * <p>Create (if necessary) and cache an <code>Action</code> for this
+     * request.</p>
+     *
+     * @param actionCtx The <code>Context</code> for the current request
+     * @return <code>false</code> so that processing continues
+     * @throws Exception if there are any problems instantiating the Action
+     *                   class.
+     */
+    public boolean execute(ActionContext actionCtx)
+        throws Exception {
+        // Skip processing if the current request is not valid
+        Boolean valid = actionCtx.getFormValid();
+
+        if ((valid == null) || !valid.booleanValue()) {
+            LOG.trace("Invalid form; not going to execute.");
+
+            return (false);
+        }
+
+        // Check to see if an action has already been created
+        if (actionCtx.getAction() != null) {
+            LOG.trace("already have an action [" + actionCtx.getAction() + "]");
+
+            return (false);
+        }
+
+        // Look up the class name for the desired Action
+        ActionConfig actionConfig = actionCtx.getActionConfig();
+        String type = actionConfig.getType();
+
+        if (type == null) {
+            String command = actionConfig.getCommand();
+            if ((command == null) && (actionConfig.getForward() == null)
+                && (actionConfig.getInclude() == null)) {
+                LOG.error("no type or command for " + actionConfig.getPath());
+            } else {
+                LOG.trace("no type for " + actionConfig.getPath());
+            }
+
+            return (false);
+        }
+
+        // Create (if necessary) and cache an Action instance
+        Action action = getAction(actionCtx, type, actionConfig);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("setting action to " + action);
+        }
+
+        actionCtx.setAction(action);
+
+        return (false);
+    }
+

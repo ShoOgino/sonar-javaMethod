@@ -1,0 +1,42 @@
+    /**
+     * Get the value of a variable.
+     *
+     * @param var         the validator variable
+     * @param application The ServletContext
+     * @param request     the servlet request
+     * @param required    Whether the variable is mandatory
+     * @return The variables values
+     */
+    public static String getVarValue(Var var, ServletContext application,
+        HttpServletRequest request, boolean required) {
+        String varName = var.getName();
+        String varValue = var.getValue();
+
+        // Non-resource variable
+        if (!var.isResource()) {
+            return varValue;
+        }
+
+        // Get the message resources
+        String bundle = var.getBundle();
+        MessageResources messages =
+            getMessageResources(application, request, bundle);
+
+        // Retrieve variable's value from message resources
+        Locale locale = RequestUtils.getUserLocale(request, null);
+        String value = messages.getMessage(locale, varValue, null);
+
+        // Not found in message resources
+        if ((value == null) && required) {
+            throw new IllegalArgumentException(sysmsgs.getMessage(
+                    "variable.resource.notfound", varName, varValue, bundle));
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Var=[" + varName + "], " + "bundle=[" + bundle + "], "
+                + "key=[" + varValue + "], " + "value=[" + value + "]");
+        }
+
+        return value;
+    }
+

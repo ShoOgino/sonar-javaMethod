@@ -1,0 +1,18 @@
+    /**
+     * Test processExtends() with an incorrect setup where a global config
+     * attempts to extend an action config.
+     */
+    public void testProcessExtendsGlobalExtendingAction()
+        throws Exception {
+        moduleConfig.addForwardConfig(subConfig);
+        actionConfig.addForwardConfig(baseConfig);
+
+        try {
+            subConfig.processExtends(moduleConfig, actionConfig);
+            fail(
+                "Should not find config from actionConfig when *this* is global");
+        } catch (NullPointerException npe) {
+            // succeed
+        }
+    }
+

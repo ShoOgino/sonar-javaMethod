@@ -1,0 +1,22 @@
+    /**
+     * Test checkCircularInheritance() for circular inheritance between global
+     * forwards.
+     */
+    public void testCheckCircularInheritanceGlobal2Levels() {
+        moduleConfig.addForwardConfig(baseConfig);
+        moduleConfig.addForwardConfig(subConfig);
+
+        ForwardConfig grand = new ForwardConfig();
+
+        grand.setName("grandConfig");
+        grand.setExtends("subConfig");
+        moduleConfig.addForwardConfig(grand);
+
+        // set the baseConfig to extend grandConfig
+        baseConfig.setExtends("grandConfig");
+
+        boolean result = grand.checkCircularInheritance(moduleConfig, null);
+
+        assertTrue("Circular inheritance not detected.", result);
+    }
+

@@ -1,0 +1,20 @@
+    /**
+     * <p> Add a new <code>ForwardConfig</code> instance to the set of global
+     * forwards associated with this module. </p>
+     *
+     * @param config The new configuration instance to be added
+     * @throws IllegalStateException if this module configuration has been
+     *                               frozen
+     */
+    public void addForwardConfig(ForwardConfig config) {
+        throwIfConfigured();
+
+        String key = config.getName();
+
+        if (forwards.containsKey(key)) {
+            log.warn("Overriding global ActionForward of name " + key);
+        }
+
+        forwards.put(key, config);
+    }
+

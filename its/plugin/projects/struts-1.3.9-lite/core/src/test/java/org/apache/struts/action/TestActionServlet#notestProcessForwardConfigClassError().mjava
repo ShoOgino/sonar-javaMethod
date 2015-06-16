@@ -1,0 +1,28 @@
+    /**
+     * Make sure the code throws the correct exception when it can't create an
+     * instance of the base config's custom class.
+     */
+    public void notestProcessForwardConfigClassError()
+        throws Exception {
+        ForwardConfig customBase =
+            new CustomForwardConfigArg("success", "/success.jsp");
+
+        moduleConfig.addForwardConfig(customBase);
+
+        ForwardConfig customSub = new ActionForward();
+
+        customSub.setName("failure");
+        customSub.setExtends("success");
+        moduleConfig.addForwardConfig(customSub);
+
+        try {
+            actionServlet.processForwardConfigClass(customSub, moduleConfig,
+                null);
+            fail("Exception should be thrown");
+        } catch (UnavailableException e) {
+            // success
+        } catch (Exception e) {
+            fail("Unexpected exception thrown.");
+        }
+    }
+

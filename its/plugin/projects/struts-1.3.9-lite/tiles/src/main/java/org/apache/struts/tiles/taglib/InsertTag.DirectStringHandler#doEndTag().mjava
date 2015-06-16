@@ -1,0 +1,28 @@
+        /**
+         * Print String in page output stream.
+         */
+        public int doEndTag() throws JspException {
+            try {
+                if (flush) {
+                    pageContext.getOut().flush();
+                }
+
+                pageContext.getOut().print(value);
+
+            } catch (IOException ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Can't write string '" + value + "' : ", ex);
+                }
+
+                pageContext.setAttribute(
+                    ComponentConstants.EXCEPTION_KEY,
+                    ex,
+                    PageContext.REQUEST_SCOPE);
+
+                throw new JspException(
+                    "Can't write string '" + value + "' : " + ex.getMessage(), ex);
+            }
+
+            return EVAL_PAGE;
+        }
+

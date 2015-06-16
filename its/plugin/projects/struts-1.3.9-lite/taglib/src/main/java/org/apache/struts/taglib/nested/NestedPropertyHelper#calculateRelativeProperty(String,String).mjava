@@ -1,0 +1,78 @@
+    /* This property, providing the property to be appended, and the parent tag
+    * to append the property to, will calculate the stepping of the property
+    * and return the qualified nested property
+    *
+    * @param property the property which is to be appended nesting style
+    * @param parent the "dot notated" string representing the structure
+    * @return qualified nested property that the property param is to the parent
+    */
+    private static String calculateRelativeProperty(String property,
+        String parent) {
+        if (parent == null) {
+            parent = "";
+        }
+
+        if (property == null) {
+            property = "";
+        }
+
+        /* Special case... reference my parent's nested property.
+        Otherwise impossible for things like indexed properties */
+        if ("./".equals(property) || "this/".equals(property)) {
+            return parent;
+        }
+
+        /* remove the stepping from the property */
+        String stepping;
+
+        /* isolate a parent reference */
+        if (property.endsWith("/")) {
+            stepping = property;
+            property = "";
+        } else {
+            stepping = property.substring(0, property.lastIndexOf('/') + 1);
+
+            /* isolate the property */
+            property =
+                property.substring(property.lastIndexOf('/') + 1,
+                    property.length());
+        }
+
+        if (stepping.startsWith("/")) {
+            /* return from root */
+            return property;
+        } else {
+            /* tokenize the nested property */
+            StringTokenizer proT = new StringTokenizer(parent, ".");
+            int propCount = proT.countTokens();
+
+            /* tokenize the stepping */
+            StringTokenizer strT = new StringTokenizer(stepping, "/");
+            int count = strT.countTokens();
+
+            if (count >= propCount) {
+                /* return from root */
+                return property;
+            } else {
+                /* append the tokens up to the token difference */
+                count = propCount - count;
+
+                StringBuffer result = new StringBuffer();
+
+                for (int i = 0; i < count; i++) {
+                    result.append(proT.nextToken());
+                    result.append('.');
+                }
+
+                result.append(property);
+
+                /* parent reference will have a dot on the end. Leave it off */
+                if (result.charAt(result.length() - 1) == '.') {
+                    return result.substring(0, result.length() - 1);
+                } else {
+                    return result.toString();
+                }
+            }
+        }
+    }
+

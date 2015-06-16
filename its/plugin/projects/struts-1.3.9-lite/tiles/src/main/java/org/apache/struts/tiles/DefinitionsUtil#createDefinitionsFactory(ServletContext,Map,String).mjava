@@ -1,0 +1,37 @@
+    /**
+     * Create Definition factory.
+     * If a factory class name is provided, a factory of this class is created. Otherwise,
+     * default factory is created.
+     * @param classname Class name of the factory to create.
+     * @param servletContext Servlet Context passed to newly created factory.
+     * @param properties Map of name/property used to initialize factory configuration object.
+     * @return newly created factory.
+     * @throws DefinitionsFactoryException If an error occur while initializing factory
+     * @deprecated Use createDefinitionsFactory(ServletContext servletContext, ServletConfig servletConfig)
+     */
+    public static DefinitionsFactory createDefinitionsFactory(
+        ServletContext servletContext,
+        Map properties,
+        String classname)
+        throws DefinitionsFactoryException {
+
+        // Create config object
+        DefinitionsFactoryConfig factoryConfig = new DefinitionsFactoryConfig();
+        // populate it from map.
+        try {
+            factoryConfig.populate(properties);
+
+        } catch (Exception ex) {
+            throw new DefinitionsFactoryException(
+                "Error - createDefinitionsFactory : Can't populate config object from properties map",
+                ex);
+        }
+
+        // Add classname
+        if (classname != null)
+            factoryConfig.setFactoryClassname(classname);
+
+        // Create factory using config object
+        return createDefinitionsFactory(servletContext, factoryConfig);
+    }
+

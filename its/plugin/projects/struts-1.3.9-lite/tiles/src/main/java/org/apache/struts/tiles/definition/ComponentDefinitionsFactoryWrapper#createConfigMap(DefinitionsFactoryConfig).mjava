@@ -1,0 +1,28 @@
+    /**
+     * Create map of configuration attributes from configuration object.
+     * Mapping is done between old names and new names.
+     * @param config The DefinitionsFactoryConfig to use.
+     * @return Map Map of name/value pairs.
+     */
+    public static Map createConfigMap(DefinitionsFactoryConfig config) {
+        Map map = new HashMap(config.getAttributes());
+        // Add property attributes using old names
+        map.put(
+            DefinitionsFactoryConfig.DEFINITIONS_CONFIG_PARAMETER_NAME,
+            config.getDefinitionConfigFiles());
+
+        map.put(
+            DefinitionsFactoryConfig.PARSER_VALIDATE_PARAMETER_NAME,
+            (config.getParserValidate() ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
+
+        if (!"org.apache.struts.tiles.xmlDefinition.I18nFactorySet"
+            .equals(config.getFactoryClassname())) {
+
+            map.put(
+                DefinitionsFactoryConfig.FACTORY_CLASSNAME_PARAMETER_NAME,
+                config.getFactoryClassname());
+        }
+
+        return map;
+    }
+

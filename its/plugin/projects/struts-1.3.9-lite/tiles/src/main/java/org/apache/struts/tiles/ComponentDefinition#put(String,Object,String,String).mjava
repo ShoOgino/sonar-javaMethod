@@ -1,0 +1,39 @@
+    /**
+     * Put an attribute in template definition.
+     * Attribute can be used as content for tag get.
+     * @param name Attribute name
+     * @param content Attribute value
+     * @param type attribute type: template, string, definition
+     * @param role Determine if content is used by get tag. If user is in role, content is used.
+     */
+    public void put(String name, Object content, String type, String role) {
+        // Is there a type set ?
+        // First check direct attribute, and translate it to a valueType.
+        // Then, evaluate valueType, and create requested typed attribute.
+        AttributeDefinition attribute = null;
+
+        if (content != null
+            && type != null
+            && !(content instanceof AttributeDefinition)) {
+
+            String strValue = content.toString();
+            if (type.equalsIgnoreCase("string")) {
+                attribute = new DirectStringAttribute(strValue);
+
+            } else if (type.equalsIgnoreCase("page")) {
+                attribute = new PathAttribute(strValue);
+
+            } else if (type.equalsIgnoreCase("template")) {
+                attribute = new PathAttribute(strValue);
+
+            } else if (type.equalsIgnoreCase("instance")) {
+                attribute = new DefinitionNameAttribute(strValue);
+
+            } else if (type.equalsIgnoreCase("definition")) {
+                attribute = new DefinitionNameAttribute(strValue);
+            }
+        }
+
+        putAttribute(name, attribute);
+    }
+

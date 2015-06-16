@@ -1,0 +1,27 @@
+    public void skiptestComputeParametersParamIdAsStringArray() {
+        Map params = new HashMap();
+
+        //        String[] vals = new String[]{"test0, test1"};
+        params.put("fooParamId", "fooParamValue");
+
+        request.getSession().setAttribute("SomeBean", params);
+
+        Map map = null;
+
+        try {
+            map = tagutils.computeParameters(pageContext, "fooParamId",
+                    "SomeBean", null, null, "SomeBean", null, null, false);
+
+            //            map = tagutils.computeParameters(
+            //                    page, "paramId", "SomeBean", "stringArray", null,
+            //                    null, null, null, false);
+            assertNotNull("map is null", map);
+
+            String val = (String) map.get("key0");
+
+            assertTrue("paramId should be \"test\"", "1.0".equals(val));
+        } catch (JspException e) {
+            fail("JspException not thrown");
+        }
+    }
+

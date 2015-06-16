@@ -1,0 +1,42 @@
+    /**
+     * Assert that the given parameters contains an entry for
+     * <code>paramValue</code> under the <code>paramName</code> key. <p/>
+     *
+     * @param parameters the map of parameters to check into
+     * @param paramName  the key of the value to be checked
+     * @param paramValue the value to check for
+     */
+    static void assertHasParameter(Map parameters, String paramName,
+        String paramValue) {
+        Object value = parameters.get(paramName);
+
+        if (value == null) {
+            throw new AssertionFailedError("Parameter [" + paramName
+                + "] not found");
+        }
+
+        if (value instanceof String) {
+            if (!paramValue.equals(value)) {
+                throw new ComparisonFailure("Incorrect value found",
+                    paramValue, (String) value);
+            }
+        } else if (value instanceof String[]) {
+            // see if our value is among those in the array
+            String[] values = (String[]) value;
+
+            for (int i = 0; i < values.length; i++) {
+                if (paramValue.equals(values[i])) {
+                    return;
+                }
+            }
+
+            throw new AssertionFailedError(
+                "Expected value not found for parameter [" + paramName + "]");
+        } else {
+            // can't recognize the value
+            throw new AssertionFailedError(
+                "Unexpected type found as parameter value for [" + paramName
+                + "]");
+        }
+    }
+

@@ -1,0 +1,21 @@
+  /**
+   * SONAR-3228
+   */
+  @Test
+  public void shouldPersistMetricsEvenIfZero() {
+    assumeTrue(JavaTestSuite.sonarqube_version_is_prior_to_5_2());
+    MavenBuild build = MavenBuild.create()
+      .setPom(TestUtils.projectPom("zero-value-metric-project"))
+      .setCleanPackageSonarGoals();
+    orchestrator.executeBuild(build);
+
+    Sonar wsClient = orchestrator.getServer().getWsClient();
+
+    Resource project = wsClient.find(ResourceQuery.createForMetrics("com.sonarsource.it.projects:zero-value-metric-project",
+      "package_cycles", "package_feedback_edges", "package_tangles"));
+
+    assertThat(project.getMeasureIntValue("package_cycles")).isEqualTo(0);
+    assertThat(project.getMeasureIntValue("package_feedback_edges")).isEqualTo(0);
+    assertThat(project.getMeasureIntValue("package_tangles")).isEqualTo(0);
+  }
+

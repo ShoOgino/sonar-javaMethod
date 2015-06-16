@@ -1,0 +1,27 @@
+    // ------------------------------------------------ Individual Test Methods
+    private void parseConfig(String publicId, String entityURL,
+        String strutsConfig) {
+        // Prepare a Digester for parsing a struts-config.xml file
+        Digester digester = new Digester();
+
+        digester.push(config);
+        digester.setNamespaceAware(true);
+        digester.setValidating(true);
+        digester.addRuleSet(new ConfigRuleSet());
+        digester.register(publicId,
+            this.getClass().getResource(entityURL).toString());
+
+        // Parse the test struts-config.xml file
+        try {
+            InputStream input =
+                this.getClass().getResourceAsStream(strutsConfig);
+
+            assertNotNull("Got an input stream for " + strutsConfig, input);
+            digester.parse(input);
+            input.close();
+        } catch (Throwable t) {
+            t.printStackTrace(System.out);
+            fail("Parsing threw exception:  " + t);
+        }
+    }
+
