@@ -10,18 +10,28 @@
 
     JavaTree result = null;
 
+    List<AstNode> pendingChildren = Lists.newArrayList();
     InternalSyntaxToken dotToken = null;
     for (AstNode child : children) {
       if (!child.is(JavaTokenType.IDENTIFIER)) {
         dotToken = InternalSyntaxToken.create(child);
+        pendingChildren.add(child);
       } else {
         InternalSyntaxToken identifierToken = InternalSyntaxToken.create(child);
+
         if (result == null) {
           result = new IdentifierTreeImpl(identifierToken);
         } else {
           IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
-          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, dotToken, identifier);
+
+          pendingChildren.add(0, result);
+          pendingChildren.add(identifier);
+
+          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, dotToken, identifier,
+            pendingChildren.toArray(new AstNode[pendingChildren.size()]));
         }
+
+        pendingChildren.clear();
       }
     }
 
