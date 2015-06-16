@@ -1,13 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(
-      new File("src/test/files/checks/URLHashCodeAndEqualsCheck.java"),
-      new VisitorsBridge(new URLHashCodeAndEqualsCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(9).withMessage("Use the URI class instead.")
-      .next().atLine(10)
-      .next().atLine(13)
-      .next().atLine(14)
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/URLHashCodeAndEqualsCheck.java", new URLHashCodeAndEqualsCheck());
   }
 
