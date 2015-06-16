@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      if (tree.is(Kind.THROW_STATEMENT)) {
+        ExpressionTree expressionTree = ((ThrowStatementTree) tree).expression();
+        raiseIssueOnNpe(expressionTree, expressionTree.symbolType());
+      } else {
+        for (TypeTree throwClause : ((MethodTree) tree).throwsClauses()) {
+          raiseIssueOnNpe(throwClause, throwClause.symbolType());
+        }
+      }
+    }
+  }
+

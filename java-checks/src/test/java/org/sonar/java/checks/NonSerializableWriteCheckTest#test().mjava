@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/NonSerializableWriteCheck.java"),
-      new VisitorsBridge(new NonSerializableWriteCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(14).withMessage("Make the \"MyNonSerializable\" class \"Serializable\" or don't write it.")
-      .next().atLine(20);
+    JavaCheckVerifier.verify("src/test/files/checks/NonSerializableWriteCheck.java", new NonSerializableWriteCheck());
   }
 
