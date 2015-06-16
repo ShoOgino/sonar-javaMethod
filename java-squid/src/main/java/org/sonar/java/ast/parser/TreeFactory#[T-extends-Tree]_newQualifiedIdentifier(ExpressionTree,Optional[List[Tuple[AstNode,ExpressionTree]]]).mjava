@@ -5,14 +5,12 @@
       for (Tuple<AstNode, ExpressionTree> rest : rests.get()) {
         InternalSyntaxToken dotToken = InternalSyntaxToken.create(rest.first());
         if (rest.second().is(Kind.IDENTIFIER)) {
-          result = new MemberSelectExpressionTreeImpl(result, dotToken, (IdentifierTreeImpl) rest.second(),
-            (AstNode) result, rest.first(), (AstNode) rest.second());
+          result = new MemberSelectExpressionTreeImpl(result, dotToken, (IdentifierTreeImpl) rest.second());
         } else if (rest.second().is(Kind.PARAMETERIZED_TYPE)) {
           ParameterizedTypeTreeImpl parameterizedType = (ParameterizedTypeTreeImpl) rest.second();
           IdentifierTreeImpl identifier = (IdentifierTreeImpl) parameterizedType.type();
 
-          result = new MemberSelectExpressionTreeImpl(result, dotToken, identifier,
-            (AstNode) result, rest.first(), identifier);
+          result = new MemberSelectExpressionTreeImpl(result, dotToken, identifier);
 
           result = new ParameterizedTypeTreeImpl((TypeTree) result, (TypeArgumentListTreeImpl) parameterizedType.typeArguments());
         } else {
