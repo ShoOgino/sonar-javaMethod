@@ -11,6 +11,7 @@
     if (rests.isPresent()) {
       for (AstNode rest : rests.get()) {
         for (AstNode child : rest.getChildren()) {
+          // FIXME SONARJAVA-547 comma should be part of the ArgumentList as token
           if (!child.is(JavaPunctuator.COMMA)) {
             typeArguments.add((Tree) child);
           }
@@ -20,6 +21,6 @@
       }
     }
 
-    return new TypeArgumentListTreeImpl(openBracketToken, typeArguments.build(), children, closeBracketToken);
+    return new TypeArgumentListTreeImpl(openBracketToken, typeArguments.build(), closeBracketToken, children);
   }
 

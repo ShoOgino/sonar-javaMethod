@@ -1,19 +1,21 @@
   @Test
   public void type_parameters_tokens() {
-    ParameterizedTypeTree tree = (ParameterizedTypeTree) p.parse("class Foo<E> extends List<E> {}").getFirstDescendant(getKindsAssociatedTo(ParameterizedTypeTree.class));
+    ParameterizedTypeTree tree = (ParameterizedTypeTree) firstType("class Foo<E> extends List<E> {}").superClass();
     assertThat(tree).isNotNull();
     TypeArguments typeArguments = tree.typeArguments();
     assertThat(typeArguments).isNotNull();
     assertThat(typeArguments).hasSize(1);
     assertThat(typeArguments.openBracketToken()).isNotNull();
     assertThat(typeArguments.closeBracketToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(typeArguments, 3);
 
-    tree = (ParameterizedTypeTree) p.parse("class Mop<K,V> implements Map<K,V> {}").getFirstDescendant(getKindsAssociatedTo(ParameterizedTypeTree.class));
+    tree = (ParameterizedTypeTree) firstType("class Mop<K,V> implements Map<K,V> {}").superInterfaces().get(0);
     assertThat(tree).isNotNull();
     typeArguments = tree.typeArguments();
     assertThat(typeArguments).isNotNull();
     assertThat(typeArguments).hasSize(2);
     assertThat(typeArguments.openBracketToken()).isNotNull();
     assertThat(typeArguments.closeBracketToken()).isNotNull();
+    assertThatChildrenIteratorHasSize(typeArguments, 4);
   }
 

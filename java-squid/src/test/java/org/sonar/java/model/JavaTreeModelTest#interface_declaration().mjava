@@ -1,18 +1,18 @@
   @Test
   public void interface_declaration() {
-    AstNode astNode = p.parse("public interface T<U> extends I1, I2 { }");
-    ClassTree tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    ClassTree tree = firstType("public interface T<U> extends I1, I2 { }");
     assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);
     assertThat(tree.simpleName().name()).isEqualTo("T");
-    assertThat(tree.typeParameters()).isNotEmpty();
+    TypeParameters typeParameters = tree.typeParameters();
+    assertThatChildrenIteratorHasSize(typeParameters, 3);
+    assertThat(typeParameters).isNotEmpty();
     assertThat(tree.superClass()).isNull();
     assertThat(tree.superInterfaces()).hasSize(2);
     assertThat(tree.declarationKeyword().text()).isEqualTo("interface");
 
-    astNode = p.parse("public interface T { }");
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("public interface T { }");
     assertThat(tree.is(Tree.Kind.INTERFACE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);

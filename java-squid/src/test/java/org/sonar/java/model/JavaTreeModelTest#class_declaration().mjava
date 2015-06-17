@@ -1,23 +1,22 @@
   @Test
   public void class_declaration() {
-    AstNode astNode = p.parse("public class T<U> extends C implements I1, I2 { }");
-    ClassTree tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    ClassTree tree = firstType("public class T<U> extends C implements I1, I2 { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
     List<ModifierKeywordTree> modifiers = tree.modifiers().modifiers();
     assertThat(modifiers).hasSize(1);
     assertThat(modifiers.get(0).modifier()).isEqualTo(Modifier.PUBLIC);
     assertThat(modifiers.get(0).keyword().text()).isEqualTo("public");
     assertThat(tree.simpleName().name()).isEqualTo("T");
-    assertThat(tree.typeParameters()).isNotEmpty();
+    TypeParameters typeParameters = tree.typeParameters();
+    assertThat(typeParameters).isNotEmpty();
+    assertThatChildrenIteratorHasSize(typeParameters, 3);
     assertThat(tree.openBraceToken().text()).isEqualTo("{");
     assertThat(tree.superClass()).isNotNull();
     assertThat(tree.superInterfaces()).hasSize(2);
     assertThat(tree.closeBraceToken().text()).isEqualTo("}");
     assertThat(tree.declarationKeyword().text()).isEqualTo("class");
 
-    astNode = p.parse("public class T { }");
-    assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
+    tree = firstType("public class T { }");
     modifiers = tree.modifiers().modifiers();
     assertThat(modifiers).hasSize(1);
     assertThat(modifiers.get(0).modifier()).isEqualTo(Modifier.PUBLIC);
@@ -28,9 +27,19 @@
     assertThat(tree.superInterfaces()).isEmpty();
     assertThat(tree.declarationKeyword().text()).isEqualTo("class");
 
-    astNode = p.parse("@Deprecated class T { }");
+    tree = firstType("class T<U,V> { }");
+    assertThat(tree.modifiers()).isEmpty();
+    assertThat(tree.simpleName().name()).isEqualTo("T");
+    typeParameters = tree.typeParameters();
+    assertThat(typeParameters).isNotEmpty();
+    // FIXME SONARJAVA-547 separators should be present in children iterator of type parameters
+    assertThatChildrenIteratorHasSize(typeParameters, 4);
+    assertThat(tree.superClass()).isNull();
+    assertThat(tree.superInterfaces()).isEmpty();
+    assertThat(tree.declarationKeyword().text()).isEqualTo("class");
+
+    tree = firstType("@Deprecated class T { }");
     assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    tree = (ClassTree) ((CompilationUnitTree) astNode).types().get(0);
     assertThat(tree.modifiers().annotations()).hasSize(1);
     assertThat(tree.declarationKeyword().text()).isEqualTo("class");
   }
