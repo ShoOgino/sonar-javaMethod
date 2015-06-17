@@ -1,19 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(
-      new File("src/test/files/checks/StaticFieldUpateCheck.java"),
-      new VisitorsBridge(new StaticFieldUpateCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(8).withMessage("Make the enclosing method \"static\" or remove this set.")
-      .next().atLine(9)
-      .next().atLine(10)
-      .next().atLine(11)
-      .next().atLine(12)
-      .next().atLine(13)
-      .next().atLine(15)
-      .next().atLine(16)
-      .next().atLine(21)
-      .next().atLine(28)
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/StaticFieldUpateCheck.java", new StaticFieldUpateCheck());
   }
 
