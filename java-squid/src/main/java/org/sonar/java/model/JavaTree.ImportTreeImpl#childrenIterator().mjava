@@ -1,7 +1,8 @@
     @Override
     public Iterator<Tree> childrenIterator() {
-      return Iterators.singletonIterator(
-        qualifiedIdentifier
-        );
+
+      return Iterators.<Tree>concat(
+        isStatic ? Iterators.<Tree>singletonIterator(staticToken) : Iterators.<Tree>emptyIterator(),
+        Iterators.<Tree>forArray(importToken, qualifiedIdentifier, semiColonToken));
     }
 
