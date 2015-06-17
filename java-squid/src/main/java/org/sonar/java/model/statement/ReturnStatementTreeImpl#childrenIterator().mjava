@@ -1,6 +1,10 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    return Iterators.<Tree>singletonIterator(
-      expression);
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder().add(returnKeyword);
+    if (expression != null) {
+      iteratorBuilder.add(expression);
+    }
+    iteratorBuilder.add(semicolonToken);
+    return iteratorBuilder.build().iterator();
   }
 
