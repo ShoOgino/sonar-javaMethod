@@ -1,0 +1,12 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    if (TO_STRING_MATCHERS.anyMatch(tree)) {
+      ExpressionTree abstractTypedTree = ((MemberSelectExpressionTree) tree.methodSelect()).expression();
+      if (abstractTypedTree.is(Kind.NEW_CLASS) || isValueOfInvocation(abstractTypedTree)) {
+        String typeName = abstractTypedTree.symbolType().toString();
+        createIssue(tree, typeName);
+      }
+    }
+    super.visitMethodInvocation(tree);
+  }
+

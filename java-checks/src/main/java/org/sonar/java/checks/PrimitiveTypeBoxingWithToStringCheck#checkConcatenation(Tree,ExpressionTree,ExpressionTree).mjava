@@ -1,0 +1,12 @@
+  private void checkConcatenation(Tree tree, ExpressionTree leftOperand, ExpressionTree rightOperand) {
+    Type wrapper = null;
+    if (isEmptyString(leftOperand)) {
+      wrapper = ((JavaType) rightOperand.symbolType()).primitiveWrapperType();
+    } else if (isEmptyString(rightOperand)) {
+      wrapper = ((JavaType) leftOperand.symbolType()).primitiveWrapperType();
+    }
+    if (wrapper != null) {
+      createIssue(tree, wrapper.name());
+    }
+  }
+
