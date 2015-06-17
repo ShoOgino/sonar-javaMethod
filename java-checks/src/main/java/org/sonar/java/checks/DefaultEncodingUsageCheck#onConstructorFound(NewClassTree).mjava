@@ -1,8 +1,6 @@
   @Override
   protected void onConstructorFound(NewClassTree newClassTree) {
-    NewClassTreeImpl newClassTreeImpl = (NewClassTreeImpl) newClassTree;
-    IdentifierTree constructorIdentifier = newClassTreeImpl.getConstructorIdentifier();
-    Symbol symbol = constructorIdentifier.symbol();
+    Symbol symbol = newClassTree.constructorSymbol();
     if(symbol.isMethodSymbol()) {
       Symbol.MethodSymbol constructor = (Symbol.MethodSymbol) symbol;
       String signature = constructor.owner().name() + "(" + Joiner.on(',').join(constructor.parameterTypes()) + ")";
