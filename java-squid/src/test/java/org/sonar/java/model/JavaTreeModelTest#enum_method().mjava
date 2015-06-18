@@ -1,7 +1,6 @@
   @Test
   public void enum_method() {
-    AstNode astNode = p.parse("enum T { ; int m(int p1, int... p2) throws Exception1, Exception2 {} }");
-    MethodTree tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    MethodTree tree = (MethodTree) firstTypeMember("enum T { ; int m(int p1, int... p2) throws Exception1, Exception2 {} }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName().name()).isEqualTo("m");
@@ -11,10 +10,10 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 12);
 
     // void method
-    astNode = p.parse("enum T { ; void m(int p) throws Exception1, Exception2; }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("enum T { ; void m(int p) throws Exception1, Exception2; }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName().name()).isEqualTo("m");
@@ -22,5 +21,6 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 11);
   }
 

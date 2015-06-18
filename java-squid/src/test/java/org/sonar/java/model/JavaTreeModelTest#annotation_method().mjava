@@ -1,6 +1,6 @@
   @Test
   public void annotation_method() {
-    MethodTree tree = (MethodTree) p.parse("@interface T { int m() default 0; }").getFirstDescendant(Kind.METHOD);
+    MethodTree tree = (MethodTree) firstTypeMember("@interface T { int m() default 0; }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.returnType()).isNotNull();
     assertThat(tree.simpleName().name()).isEqualTo("m");
@@ -8,9 +8,12 @@
     assertThat(tree.throwsClauses()).isEmpty();
     assertThat(tree.block()).isNull();
     assertThat(tree.defaultValue()).isNotNull();
-    tree = (MethodTree) p.parse("@interface plop{ public String method(); }").getFirstDescendant(Kind.METHOD);
+    assertThatChildrenIteratorHasSize(tree, 9);
+
+    tree = (MethodTree) firstTypeMember("@interface plop{ public String method(); }");
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).keyword().text()).isEqualTo("public");
+    assertThatChildrenIteratorHasSize(tree, 7);
 
   }
 

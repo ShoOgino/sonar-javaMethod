@@ -1,7 +1,6 @@
   @Test
   public void interface_method() {
-    AstNode astNode = p.parse("interface T { <T> int m(int p1, int... p2) throws Exception1, Exception2; }");
-    MethodTree tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    MethodTree tree = (MethodTree) firstTypeMember("interface T { <T> int m(int p1, int... p2) throws Exception1, Exception2; }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.typeParameters()).isNotEmpty();
     assertThat(tree.returnType()).isNotNull();
@@ -12,10 +11,10 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 12);
 
     // void method
-    astNode = p.parse("interface T { void m(int p) throws Exception1, Exception2; }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("interface T { void m(int p) throws Exception1, Exception2; }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.typeParameters()).isEmpty();
     assertThat(tree.returnType()).isNotNull();
@@ -24,5 +23,6 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 11);
   }
 

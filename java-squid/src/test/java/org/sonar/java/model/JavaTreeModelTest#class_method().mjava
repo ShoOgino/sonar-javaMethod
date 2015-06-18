@@ -1,14 +1,13 @@
   @Test
   public void class_method() {
-    AstNode astNode = p.parse("class T { public int m(int p[][]){} }");
-    MethodTree tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    MethodTree tree = (MethodTree) firstTypeMember("class T { public int m(int p[][]){} }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.parameters()).hasSize(1);
     assertThat(tree.parameters().get(0).type()).isInstanceOf(ArrayTypeTree.class);
+    assertThatChildrenIteratorHasSize(tree, 8);
     assertThat(((ArrayTypeTree) tree.parameters().get(0).type()).type()).isInstanceOf(ArrayTypeTree.class);
 
-    astNode = p.parse("class T { public <T> int m(@Annotate int p1, int... p2) throws Exception1, Exception2 {} }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("class T { public <T> int m(@Annotate int p1, int... p2) throws Exception1, Exception2 {} }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);
@@ -23,10 +22,10 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 12);
 
     // void method
-    astNode = p.parse("class T { public void m(int p) throws Exception1, Exception2 {} }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("class T { public void m(int p) throws Exception1, Exception2 {} }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);
@@ -38,9 +37,9 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 11);
 
-    astNode = p.parse("class T { public int[] m(int p1, int... p2)[] throws Exception1, Exception2 {} }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("class T { public int[] m(int p1, int... p2)[] throws Exception1, Exception2 {} }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);
@@ -55,12 +54,13 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 12);
 
-    astNode = p.parse("class T { public int m()[] { return null; } }");
-    tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    tree = (MethodTree) firstTypeMember("class T { public int m()[] { return null; } }");
     assertThat(tree.is(Tree.Kind.METHOD)).isTrue();
     assertThat(tree.parameters()).isEmpty();
     assertThat(tree.returnType().is(Kind.ARRAY_TYPE)).isTrue();
     assertThat(tree.returnType().is(Kind.PRIMITIVE_TYPE)).isFalse();
+    assertThatChildrenIteratorHasSize(tree, 7);
   }
 

@@ -1,7 +1,6 @@
   @Test
   public void enum_constructor() {
-    AstNode astNode = p.parse("enum T { ; T(int p1, int... p2) throws Exception1, Exception2 {} }");
-    MethodTree tree = (MethodTree) ((ClassTree) ((CompilationUnitTree) astNode).types().get(0)).members().get(0);
+    MethodTree tree = (MethodTree) firstTypeMember("enum T { ; T(int p1, int... p2) throws Exception1, Exception2 {} }");
     assertThat(tree.is(Tree.Kind.CONSTRUCTOR)).isTrue();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.simpleName().name()).isEqualTo("T");
@@ -11,5 +10,6 @@
     assertThat(tree.throwsClauses()).hasSize(2);
     assertThat(tree.block()).isNotNull();
     assertThat(tree.defaultValue()).isNull();
+    assertThatChildrenIteratorHasSize(tree, 11);
   }
 
