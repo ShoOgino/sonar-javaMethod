@@ -1,10 +1,11 @@
   @Test
   public void basic_type() {
-    AstNode astNode = p.parse("class T { int m() { return null; } }").getFirstDescendant(Kind.PRIMITIVE_TYPE);
-    PrimitiveTypeTree tree = (PrimitiveTypeTree) astNode;
+    PrimitiveTypeTree tree = (PrimitiveTypeTree) ((MethodTree) firstTypeMember("class T { int m() { return null; } }")).returnType();
     assertThat(tree.keyword().text()).isEqualTo("int");
+    assertThatChildrenIteratorHasSize(tree, 1);
 
-    tree = (PrimitiveTypeTree) p.parse("class T { void m() { return null; } }").getFirstDescendant(Kind.PRIMITIVE_TYPE);
+    tree = (PrimitiveTypeTree) ((MethodTree) firstTypeMember("class T { void m() { return null; } }")).returnType();
     assertThat(tree.keyword().text()).isEqualTo("void");
+    assertThatChildrenIteratorHasSize(tree, 1);
   }
 
