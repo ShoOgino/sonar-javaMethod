@@ -18,14 +18,18 @@
       partial.completeTypeParameters(typeParameters.get());
     }
     if (extendsClause.isPresent()) {
-      children.add(extendsClause.get().first());
-      children.add((AstNode) extendsClause.get().second());
-      partial.completeSuperclass(extendsClause.get().second());
+      InternalSyntaxToken extendsKeyword = InternalSyntaxToken.create(extendsClause.get().first());
+      TypeTree superClass = extendsClause.get().second();
+      children.add(extendsKeyword);
+      children.add((AstNode) superClass);
+      partial.completeSuperclass(extendsKeyword, superClass);
     }
     if (implementsClause.isPresent()) {
-      children.add(implementsClause.get().first());
-      children.add(implementsClause.get().second());
-      partial.completeInterfaces(implementsClause.get().second());
+      InternalSyntaxToken implementsKeyword = InternalSyntaxToken.create(implementsClause.get().first());
+      QualifiedIdentifierListTreeImpl interfaces = implementsClause.get().second();
+      children.add(implementsKeyword);
+      children.add(interfaces);
+      partial.completeInterfaces(implementsKeyword, interfaces);
     }
 
     partial.prependChildren(children);

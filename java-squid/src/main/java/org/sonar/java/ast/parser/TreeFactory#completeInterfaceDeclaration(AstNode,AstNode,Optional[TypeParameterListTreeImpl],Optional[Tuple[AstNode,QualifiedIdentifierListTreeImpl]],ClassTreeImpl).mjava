@@ -18,9 +18,11 @@
       partial.completeTypeParameters(typeParameters.get());
     }
     if (extendsClause.isPresent()) {
-      children.add(extendsClause.get().first());
-      children.add(extendsClause.get().second());
-      partial.completeInterfaces(extendsClause.get().second());
+      InternalSyntaxToken extendsKeyword = InternalSyntaxToken.create(extendsClause.get().first());
+      QualifiedIdentifierListTreeImpl interfaces = extendsClause.get().second();
+      children.add(extendsKeyword);
+      children.add(interfaces);
+      partial.compleInterfacesForInterface(extendsKeyword, interfaces);
     }
 
     partial.prependChildren(children);

@@ -1,6 +1,6 @@
   @Test
   public void annotation_declaration() {
-    ClassTree tree = (ClassTree) ((CompilationUnitTree) p.parse("public @interface T { }")).types().get(0);
+    ClassTree tree = firstType("public @interface T { }");
     assertThat(tree.is(Tree.Kind.ANNOTATION_TYPE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).keyword().text()).isEqualTo("public");
@@ -9,6 +9,7 @@
     assertThat(tree.openBraceToken().text()).isEqualTo("{");
     assertThat(tree.closeBraceToken().text()).isEqualTo("}");
     assertThat(tree.superInterfaces()).isEmpty();
-    assertThat(tree.declarationKeyword().text()).isEqualTo("@");
+    assertThat(tree.declarationKeyword().text()).isEqualTo("interface");
+    assertThatChildrenIteratorHasSize(tree, 7);
   }
 

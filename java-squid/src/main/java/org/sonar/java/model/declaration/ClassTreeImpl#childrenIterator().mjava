@@ -1,18 +1,20 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    Iterator<TypeParameters> typeParamIterator = Iterators.emptyIterator();
-    if (typeParameters != null) {
-      typeParamIterator = Iterators.singletonIterator(typeParameters);
-    }
-    return Iterators.concat(
-      Iterators.forArray(
-        modifiers,
-        simpleName
-        ),
-      typeParamIterator,
-      Iterators.singletonIterator(superClass),
-      superInterfaces.iterator(),
-      members.iterator()
-      );
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
+
+    iteratorBuilder.add(modifiers);
+    addIfNotNull(iteratorBuilder, atToken);
+    addIfNotNull(iteratorBuilder, declarationKeyowrd);
+    addIfNotNull(iteratorBuilder, simpleName);
+    iteratorBuilder.add(typeParameters);
+    addIfNotNull(iteratorBuilder, extendsKeyword);
+    addIfNotNull(iteratorBuilder, superClass);
+    addIfNotNull(iteratorBuilder, implementsKeyowrd);
+    iteratorBuilder.addAll(superInterfaces);
+    addIfNotNull(iteratorBuilder, openBraceToken);
+    iteratorBuilder.addAll(members);
+    addIfNotNull(iteratorBuilder, closeBraceToken);
+
+    return iteratorBuilder.build().iterator();
   }
 

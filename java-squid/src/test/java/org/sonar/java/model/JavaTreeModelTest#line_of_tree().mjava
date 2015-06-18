@@ -1,9 +1,8 @@
   @Test
   public void line_of_tree() throws Exception {
-    CompilationUnitTree empty = (CompilationUnitTree) p.parse("");
+    CompilationUnitTree empty = compilationUnit("");
     assertThat(((JavaTree) empty).getLine()).isEqualTo(-1);
-    CompilationUnitTree cut = (CompilationUnitTree) p.parse("class A {}");
-    ClassTree classTree = (ClassTree) cut.types().get(0);
+    ClassTree classTree = firstType("class A {}");
     assertThat(((JavaTree) classTree).getLine()).isEqualTo(1);
     assertThat(((JavaTree) classTree.modifiers()).getLine()).isEqualTo(-1);
   }

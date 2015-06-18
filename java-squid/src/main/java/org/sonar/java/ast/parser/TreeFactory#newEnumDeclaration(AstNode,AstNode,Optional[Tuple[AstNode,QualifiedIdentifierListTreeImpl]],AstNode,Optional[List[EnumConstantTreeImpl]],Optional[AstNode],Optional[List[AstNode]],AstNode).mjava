@@ -35,10 +35,11 @@
     children.add(identifier);
 
     if (implementsClause.isPresent()) {
-      children.add(implementsClause.get().first());
-      children.add(implementsClause.get().second());
-
-      result.completeInterfaces(implementsClause.get().second());
+      InternalSyntaxToken implementsKeyword = InternalSyntaxToken.create(implementsClause.get().first());
+      QualifiedIdentifierListTreeImpl interfaces = implementsClause.get().second();
+      children.add(implementsKeyword);
+      children.add(interfaces);
+      result.completeInterfaces(implementsKeyword, interfaces);
     }
 
     result.prependChildren(children);
