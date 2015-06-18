@@ -1,0 +1,21 @@
+  @Test
+  public void package_declaration() {
+    PackageDeclarationTree tree = compilationUnit("package myPackage;").packageDeclaration();
+    assertThat(tree.is(Tree.Kind.PACKAGE)).isTrue();
+    assertThat(tree.annotations()).isEmpty();
+    assertThat(tree.packageKeyword().text()).isEqualTo("package");
+    assertThat(tree.packageName()).isNotNull();
+    assertThat(tree.packageName().is(Tree.Kind.IDENTIFIER)).isTrue();
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
+    assertThatChildrenIteratorHasSize(tree, 3);
+
+    tree = compilationUnit("@Foo @Bar package org.myPackage;").packageDeclaration();
+    assertThat(tree.is(Tree.Kind.PACKAGE)).isTrue();
+    assertThat(tree.annotations()).hasSize(2);
+    assertThat(tree.packageKeyword().text()).isEqualTo("package");
+    assertThat(tree.packageName()).isNotNull();
+    assertThat(tree.packageName().is(Tree.Kind.MEMBER_SELECT)).isTrue();
+    assertThat(tree.semicolonToken().text()).isEqualTo(";");
+    assertThatChildrenIteratorHasSize(tree, 5);
+  }
+

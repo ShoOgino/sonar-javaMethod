@@ -1,22 +1,25 @@
   @Test
   public void compilation_unit() {
-    CompilationUnitTree tree = (CompilationUnitTree) p.parse("import foo; import bar; class Foo {} class Bar {}");
+    CompilationUnitTree tree = compilationUnit("import foo; import bar; class Foo {} class Bar {}");
     assertThat(tree.is(Tree.Kind.COMPILATION_UNIT)).isTrue();
     assertThat(tree.packageDeclaration()).isNull();
     assertThat(tree.imports()).hasSize(2);
     assertThat(tree.types()).hasSize(2);
+    assertThatChildrenIteratorHasSize(tree, 5);
 
-    tree = (CompilationUnitTree) p.parse("package pkg; import foo; import bar; class Foo {} class Bar {}");
+    tree = compilationUnit("package pkg; import foo; import bar; class Foo {} class Bar {}");
     assertThat(tree.is(Tree.Kind.COMPILATION_UNIT)).isTrue();
     assertThat(tree.packageDeclaration()).isNotNull();
     assertThat(tree.imports()).hasSize(2);
     assertThat(tree.types()).hasSize(2);
+    assertThatChildrenIteratorHasSize(tree, 6);
 
-    tree = (CompilationUnitTree) p.parse("import foo; ; import bar; class Foo {} class Bar {}");
+    tree = compilationUnit("import foo; ; import bar; class Foo {} class Bar {}");
     assertThat(tree.is(Tree.Kind.COMPILATION_UNIT)).isTrue();
     assertThat(tree.packageDeclaration()).isNull();
     assertThat(tree.imports()).hasSize(3);
     assertThat(tree.imports().get(1).is(Kind.EMPTY_STATEMENT)).isTrue();
     assertThat(tree.types()).hasSize(2);
+    assertThatChildrenIteratorHasSize(tree, 6);
   }
 
