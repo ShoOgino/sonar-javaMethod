@@ -1,0 +1,14 @@
+  public ExpressionTree newDotClassSelector(Optional<List<Tuple<InternalSyntaxToken, InternalSyntaxToken>>> dimensions, InternalSyntaxToken dotToken, JavaTree classToken) {
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) classToken);
+
+    ArrayTypeTreeImpl nestedDimensions = newArrayTypeTree(dimensions);
+    List<AstNode> children = Lists.newArrayList();
+    if (nestedDimensions != null) {
+      children.add(nestedDimensions);
+    }
+    children.add(dotToken);
+    children.add(identifier);
+
+    return new MemberSelectExpressionTreeImpl(nestedDimensions, dotToken, identifier, children);
+  }
+

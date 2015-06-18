@@ -1,0 +1,17 @@
+  public VariableDeclaratorListTreeImpl completeLocalVariableDeclaration(
+    ModifiersTreeImpl modifiers,
+    TypeTree type,
+    VariableDeclaratorListTreeImpl variables,
+    InternalSyntaxToken semicolonSyntaxToken) {
+    variables.prependChildren(modifiers, (AstNode) type);
+
+    for (VariableTreeImpl variable : variables) {
+      variable.completeModifiersAndType(modifiers, type);
+    }
+
+    // store the semicolon as endToken for the last variable
+    variables.get(variables.size() - 1).setEndToken(semicolonSyntaxToken);
+
+    return variables;
+  }
+

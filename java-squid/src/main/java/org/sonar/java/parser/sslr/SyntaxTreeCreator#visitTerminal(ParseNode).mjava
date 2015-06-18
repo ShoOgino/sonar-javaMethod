@@ -1,4 +1,4 @@
-  private AstNode visitTerminal(ParseNode node) {
+  private InternalSyntaxToken visitTerminal(ParseNode node) {
     if (node.getMatcher() instanceof TriviaExpression) {
       TriviaExpression ruleMatcher = (TriviaExpression) node.getMatcher();
       if (ruleMatcher.getTriviaKind() == TriviaKind.SKIPPED_TEXT) {
@@ -27,9 +27,6 @@
     }
     Token token = tokenBuilder.setTrivia(trivias).build();
     trivias.clear();
-    AstNode astNode = new AstNode(token);
-    astNode.setFromIndex(node.getStartIndex());
-    astNode.setToIndex(node.getEndIndex());
-    return astNode;
+    return new InternalSyntaxToken(token);
   }
 

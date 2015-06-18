@@ -1,0 +1,14 @@
+  public TryStatementTreeImpl newTryWithResourcesStatement(
+    JavaTree tryToken, InternalSyntaxToken openParenToken, ResourceListTreeImpl resources, InternalSyntaxToken closeParenToken,
+    BlockTreeImpl block,
+    Optional<List<CatchTreeImpl>> catches, Optional<TryStatementTreeImpl> finallyBlock) {
+
+    InternalSyntaxToken tryKeyword = (InternalSyntaxToken) tryToken;
+    List<CatchTreeImpl> catchTrees = catches.isPresent() ? catches.get() : ImmutableList.<CatchTreeImpl>of();
+    if (finallyBlock.isPresent()) {
+      return finallyBlock.get().completeTryWithResources(tryKeyword, openParenToken, resources, closeParenToken, block, catchTrees);
+    } else {
+      return new TryStatementTreeImpl(tryKeyword, openParenToken, resources, closeParenToken, block, catchTrees);
+    }
+  }
+

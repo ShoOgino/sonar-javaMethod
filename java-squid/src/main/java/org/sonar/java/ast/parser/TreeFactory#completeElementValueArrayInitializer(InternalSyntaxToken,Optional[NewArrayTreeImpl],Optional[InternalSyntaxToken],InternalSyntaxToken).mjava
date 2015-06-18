@@ -1,0 +1,18 @@
+  public NewArrayTreeImpl completeElementValueArrayInitializer(
+      InternalSyntaxToken openBraceToken, Optional<NewArrayTreeImpl> partial, Optional<InternalSyntaxToken> commaTokenOptional, InternalSyntaxToken closeBraceToken) {
+
+    InternalSyntaxToken commaToken = commaTokenOptional.orNull();
+
+    NewArrayTreeImpl elementValues = partial.isPresent() ?
+      partial.get() :
+      new NewArrayTreeImpl(ImmutableList.<ExpressionTree>of(), ImmutableList.<ExpressionTree>of(), ImmutableList.<AstNode>of());
+
+    elementValues.prependChildren(openBraceToken);
+    if (commaToken != null) {
+      elementValues.addChild(commaToken);
+    }
+    elementValues.addChild(closeBraceToken);
+
+    return elementValues.completeWithCurlyBraces(openBraceToken, closeBraceToken);
+  }
+

@@ -1,0 +1,16 @@
+  public ExpressionTree newAnnotatedParameterizedIdentifier(
+    Optional<List<AnnotationTreeImpl>> annotations, JavaTree identifierToken, Optional<TypeArgumentListTreeImpl> typeArguments) {
+
+    ExpressionTree result = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
+
+    if (annotations.isPresent()) {
+      ((JavaTree) result).prependChildren(annotations.get());
+    }
+
+    if (typeArguments.isPresent()) {
+      result = new ParameterizedTypeTreeImpl((TypeTree) result, typeArguments.get());
+    }
+
+    return result;
+  }
+

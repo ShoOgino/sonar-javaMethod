@@ -1,0 +1,49 @@
+  public ClassTreeImpl newEnumDeclaration(
+    JavaTree enumToken,
+    JavaTree identifierToken,
+    Optional<Tuple<JavaTree, QualifiedIdentifierListTreeImpl>> implementsClause,
+    InternalSyntaxToken openBraceToken,
+    Optional<List<EnumConstantTreeImpl>> enumConstants,
+    Optional<InternalSyntaxToken> semicolonToken,
+    Optional<List<JavaTree>> enumDeclarations,
+    InternalSyntaxToken closeBraceToken) {
+
+    ImmutableList.Builder<JavaTree> members = ImmutableList.builder();
+    if (enumConstants.isPresent()) {
+      for (EnumConstantTreeImpl enumConstant : enumConstants.get()) {
+        members.add(enumConstant);
+      }
+    }
+    if (semicolonToken.isPresent()) {
+      // TODO This is a hack
+//      members.add(semicolonToken.get());
+    }
+    if (enumDeclarations.isPresent()) {
+      for (JavaTree enumDeclaration : enumDeclarations.get()) {
+        members.add(enumDeclaration);
+      }
+    }
+
+    ClassTreeImpl result = newClassBody(Kind.ENUM, openBraceToken, Optional.of((List<JavaTree>) members.build()), closeBraceToken);
+
+    List<JavaTree> children = Lists.newArrayList();
+    children.add(enumToken);
+    result.completeDeclarationKeyword((SyntaxToken) enumToken);
+
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
+    result.completeIdentifier(identifier);
+    children.add(identifier);
+
+    if (implementsClause.isPresent()) {
+      InternalSyntaxToken implementsKeyword = InternalSyntaxToken.create(implementsClause.get().first());
+      QualifiedIdentifierListTreeImpl interfaces = implementsClause.get().second();
+      children.add(implementsKeyword);
+      children.add(interfaces);
+      result.completeInterfaces(implementsKeyword, interfaces);
+    }
+
+    result.prependChildren(children);
+
+    return result;
+  }
+

@@ -1,0 +1,20 @@
+  public BlockTreeImpl newInitializerMember(Optional<JavaTree> staticToken, BlockTreeImpl block) {
+    BlockTreeImpl blockTree;
+    List<AstNode> children = Lists.newArrayList();
+
+    if (staticToken.isPresent()) {
+      InternalSyntaxToken staticKeyword = (InternalSyntaxToken) staticToken.get();
+      children.add(staticKeyword);
+      children.addAll(block.getChildren());
+      blockTree = new StaticInitializerTreeImpl(staticKeyword, (InternalSyntaxToken) block.openBraceToken(), block.body(), (InternalSyntaxToken) block.closeBraceToken(),
+        children.toArray(new AstNode[0]));
+    } else {
+      children.addAll(block.getChildren());
+      blockTree = new BlockTreeImpl(Kind.INITIALIZER, (InternalSyntaxToken) block.openBraceToken(), block.body(), (InternalSyntaxToken) block.closeBraceToken(),
+        children.toArray(new AstNode[0]));
+    }
+
+    return blockTree;
+
+  }
+

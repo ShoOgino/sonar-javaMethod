@@ -1,0 +1,26 @@
+  public <T extends Tree> T newQualifiedIdentifier(ExpressionTree firstIdentifier, Optional<List<Tuple<InternalSyntaxToken, ExpressionTree>>> rests) {
+    ExpressionTree result = firstIdentifier;
+
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, ExpressionTree> rest : rests.get()) {
+        InternalSyntaxToken dotToken = rest.first();
+        if (rest.second().is(Kind.IDENTIFIER)) {
+          result = new MemberSelectExpressionTreeImpl(result, dotToken, (IdentifierTreeImpl) rest.second(),
+            (AstNode) result, rest.first(), (AstNode) rest.second());
+        } else if (rest.second().is(Kind.PARAMETERIZED_TYPE)) {
+          ParameterizedTypeTreeImpl parameterizedType = (ParameterizedTypeTreeImpl) rest.second();
+          IdentifierTreeImpl identifier = (IdentifierTreeImpl) parameterizedType.type();
+
+          result = new MemberSelectExpressionTreeImpl(result, dotToken, identifier,
+            (AstNode) result, rest.first(), identifier);
+
+          result = new ParameterizedTypeTreeImpl((TypeTree) result, (TypeArgumentListTreeImpl) parameterizedType.typeArguments());
+        } else {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+
+    return (T) result;
+  }
+

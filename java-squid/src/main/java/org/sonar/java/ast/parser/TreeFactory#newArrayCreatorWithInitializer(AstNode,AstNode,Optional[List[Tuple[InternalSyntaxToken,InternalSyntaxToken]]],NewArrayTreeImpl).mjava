@@ -1,0 +1,20 @@
+  public NewArrayTreeImpl newArrayCreatorWithInitializer(
+    AstNode openBracketToken, AstNode closeBracketToken,
+    Optional<List<Tuple<InternalSyntaxToken, InternalSyntaxToken>>> dimensions,
+    NewArrayTreeImpl partial) {
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(openBracketToken);
+    children.add(closeBracketToken);
+    if (dimensions.isPresent()) {
+      for (Tuple<InternalSyntaxToken, InternalSyntaxToken> dimension : dimensions.get()) {
+        children.add(dimension.first());
+        children.add(dimension.second());
+      }
+    }
+
+    partial.prependChildren(children);
+
+    return partial;
+  }
+

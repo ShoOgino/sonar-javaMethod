@@ -1,0 +1,23 @@
+  public TypeArgumentListTreeImpl newTypeArgumentList(InternalSyntaxToken openBracketToken, Tree typeArgument, Optional<List<AstNode>> rests, InternalSyntaxToken closeBracketToken) {
+    ImmutableList.Builder<Tree> typeArguments = ImmutableList.builder();
+    List<AstNode> children = Lists.newArrayList();
+
+    typeArguments.add(typeArgument);
+    children.add((AstNode) typeArgument);
+
+    if (rests.isPresent()) {
+      for (AstNode rest : rests.get()) {
+        for (AstNode child : rest.getChildren()) {
+          // FIXME SONARJAVA-547 comma should be part of the ArgumentList as token
+          if (!child.is(JavaPunctuator.COMMA)) {
+            typeArguments.add((Tree) child);
+          }
+
+          children.add(child);
+        }
+      }
+    }
+
+    return new TypeArgumentListTreeImpl(openBracketToken, typeArguments.build(), closeBracketToken, children);
+  }
+

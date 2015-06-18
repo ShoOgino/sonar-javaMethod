@@ -1,0 +1,42 @@
+  public ForStatementTreeImpl newStandardForStatement(
+    JavaTree forTokenAstNode,
+    InternalSyntaxToken openParenToken,
+    Optional<StatementExpressionListTreeImpl> forInit, InternalSyntaxToken forInitSemicolonToken,
+    Optional<ExpressionTree> expression, InternalSyntaxToken expressionSemicolonToken,
+    Optional<StatementExpressionListTreeImpl> forUpdate, InternalSyntaxToken closeParenToken,
+    StatementTree statement) {
+
+    StatementExpressionListTreeImpl forInit2 = forInit.isPresent() ? forInit.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
+    StatementExpressionListTreeImpl forUpdate2 = forUpdate.isPresent() ? forUpdate.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
+
+    InternalSyntaxToken forKeyword = (InternalSyntaxToken) forTokenAstNode;
+
+    ForStatementTreeImpl result = new ForStatementTreeImpl(
+      forKeyword,
+      openParenToken,
+      forInit2,
+      forInitSemicolonToken,
+      expression.isPresent() ? expression.get() : null,
+      expressionSemicolonToken,
+      forUpdate2,
+      closeParenToken,
+      statement);
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(forKeyword);
+    children.add(openParenToken);
+    children.add(forInit2);
+    children.add(forInitSemicolonToken);
+    if (expression.isPresent()) {
+      children.add((AstNode) expression.get());
+    }
+    children.add(expressionSemicolonToken);
+    children.add(forUpdate2);
+    children.add(closeParenToken);
+    children.add((AstNode) statement);
+
+    result.prependChildren(children);
+
+    return result;
+  }
+

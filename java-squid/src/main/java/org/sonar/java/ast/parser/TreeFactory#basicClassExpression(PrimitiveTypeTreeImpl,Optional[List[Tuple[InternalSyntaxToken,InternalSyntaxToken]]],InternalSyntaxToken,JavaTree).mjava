@@ -1,0 +1,21 @@
+  public ExpressionTree basicClassExpression(PrimitiveTypeTreeImpl basicType, Optional<List<Tuple<InternalSyntaxToken, InternalSyntaxToken>>> dimensions,
+                                             InternalSyntaxToken dotToken, JavaTree classTokenAstNode) {
+    // 15.8.2. Class Literals
+    // int.class
+    // int[].class
+
+    IdentifierTreeImpl classToken = new IdentifierTreeImpl((InternalSyntaxToken) classTokenAstNode);
+    ArrayTypeTreeImpl nestedDimensions = newArrayTypeTree(dimensions);
+
+    List<AstNode> children = Lists.newArrayList();
+    children.add(basicType);
+    if (nestedDimensions != null) {
+      children.add(nestedDimensions);
+    }
+    children.add(dotToken);
+    children.add(classToken);
+
+    TypeTree typeTree = applyDim(basicType, nestedDimensions);
+    return new MemberSelectExpressionTreeImpl((ExpressionTree) typeTree, dotToken, classToken, children.toArray(new AstNode[children.size()]));
+  }
+

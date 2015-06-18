@@ -1,0 +1,40 @@
+  public TypeTree annotationIdentifier(JavaTree firstIdentifier, Optional<List<Tuple<InternalSyntaxToken, JavaTree>>> rests) {
+    List<JavaTree> children = Lists.newArrayList();
+    children.add(firstIdentifier);
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, JavaTree> rest : rests.get()) {
+        children.add(rest.first());
+        children.add(rest.second());
+      }
+    }
+
+    JavaTree result = null;
+
+    List<AstNode> pendingChildren = Lists.newArrayList();
+    InternalSyntaxToken dotToken = null;
+    for (JavaTree child : children) {
+      if (!child.is(JavaTokenType.IDENTIFIER)) {
+        dotToken = (InternalSyntaxToken) child;
+        pendingChildren.add(child);
+      } else {
+        InternalSyntaxToken identifierToken = (InternalSyntaxToken) child;
+
+        if (result == null) {
+          result = new IdentifierTreeImpl(identifierToken);
+        } else {
+          IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+
+          pendingChildren.add(0, result);
+          pendingChildren.add(identifier);
+
+          result = new MemberSelectExpressionTreeImpl((ExpressionTree) result, dotToken, identifier,
+            pendingChildren.toArray(new AstNode[pendingChildren.size()]));
+        }
+
+        pendingChildren.clear();
+      }
+    }
+
+    return (TypeTree) result;
+  }
+
