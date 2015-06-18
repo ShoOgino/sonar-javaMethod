@@ -2,6 +2,7 @@
   public void type_parameters_tokens() {
     ParameterizedTypeTree tree = (ParameterizedTypeTree) firstType("class Foo<E> extends List<E> {}").superClass();
     assertThat(tree).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 2);
     TypeArguments typeArguments = tree.typeArguments();
     assertThat(typeArguments).isNotNull();
     assertThat(typeArguments).hasSize(1);
@@ -11,6 +12,7 @@
 
     tree = (ParameterizedTypeTree) firstType("class Mop<K,V> implements Map<K,V> {}").superInterfaces().get(0);
     assertThat(tree).isNotNull();
+    assertThatChildrenIteratorHasSize(tree, 2);
     typeArguments = tree.typeArguments();
     assertThat(typeArguments).isNotNull();
     assertThat(typeArguments).hasSize(2);
