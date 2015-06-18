@@ -1,12 +1,12 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    return Iterators.concat(
-      Iterators.forArray(
-        enclosingExpression,
-        identifier
-        ),
-      arguments.iterator(),
-      Iterators.singletonIterator(classBody)
-      );
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
+    addIfNotNull(iteratorBuilder, enclosingExpression, dotToken, newKeyword);
+    iteratorBuilder.add(identifier);
+    addIfNotNull(iteratorBuilder, openParenToken);
+    iteratorBuilder.addAll(arguments);
+    addIfNotNull(iteratorBuilder, closeParenToken, classBody);
+    
+    return iteratorBuilder.build().iterator();
   }
 
