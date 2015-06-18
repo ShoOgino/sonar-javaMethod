@@ -1,7 +1,9 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
     //do not scan imports and package name identifiers.
-    scan(tree.packageAnnotations());
+    if (tree.packageDeclaration() != null) {
+      scan(tree.packageDeclaration().annotations());
+    }
     scan(tree.types());
   }
 

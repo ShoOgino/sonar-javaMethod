@@ -1,6 +1,6 @@
   public CompilationUnitTreeImpl newCompilationUnit(
     AstNode spacing,
-    Optional<ExpressionTree> packageDeclaration,
+    Optional<PackageDeclarationTree> packageDeclaration,
     Optional<List<ImportClauseTree>> importDeclarations,
     Optional<List<Tree>> typeDeclarations,
     AstNode eof) {
@@ -8,14 +8,8 @@
     List<AstNode> children = Lists.newArrayList();
     children.add(spacing);
 
-    ImmutableList.Builder<AnnotationTree> packageAnnotations = ImmutableList.builder();
     if (packageDeclaration.isPresent()) {
       children.add((AstNode) packageDeclaration.get());
-      for (AstNode child : ((AstNode) packageDeclaration.get()).getChildren()) {
-        if (child.is(Kind.ANNOTATION)) {
-          packageAnnotations.add((AnnotationTree) child);
-        }
-      }
     }
 
     ImmutableList.Builder<ImportClauseTree> imports = ImmutableList.builder();
@@ -45,7 +39,6 @@
       packageDeclaration.orNull(),
       imports.build(),
       types.build(),
-      packageAnnotations.build(),
       children);
   }
 

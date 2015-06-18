@@ -1,10 +1,12 @@
     @Override
     public Iterator<Tree> childrenIterator() {
+      Iterator<Tree> packageIterator = packageDeclaration == null ?
+        Iterators.<Tree>emptyIterator() :
+        Iterators.<Tree>singletonIterator(packageDeclaration);
       return Iterators.concat(
-        Iterators.singletonIterator(packageName),
+        packageIterator,
         imports.iterator(),
-        types.iterator(),
-        packageAnnotations.iterator()
+        types.iterator()
         );
     }
 

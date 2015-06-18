@@ -2,11 +2,13 @@
   public void scanFile(JavaFileScannerContext context) {
     this.context = context;
     CompilationUnitTree cut = context.getTree();
+    ExpressionTree packageName = cut.packageDeclaration() != null ? cut.packageDeclaration().packageName() : null;
 
     pendingReferences.clear();
     lineByImportReference.clear();
     pendingImports.clear();
-    currentPackage = concatenate(cut.packageName());
+
+    currentPackage = concatenate(packageName);
     for (ImportClauseTree importClauseTree : cut.imports()) {
       ImportTree importTree = null;
 

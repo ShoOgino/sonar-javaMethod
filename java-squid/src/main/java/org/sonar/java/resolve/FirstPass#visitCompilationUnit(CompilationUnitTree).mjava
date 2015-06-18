@@ -2,8 +2,9 @@
   public void visitCompilationUnit(CompilationUnitTree tree) {
     JavaSymbol.PackageJavaSymbol compilationUnitPackage = symbols.defaultPackage;
 
-    ExpressionTree packageName = tree.packageName();
-    if (packageName != null) {
+    PackageDeclarationTree packageDeclaration = tree.packageDeclaration();
+    if (packageDeclaration != null) {
+      ExpressionTree packageName = packageDeclaration.packageName();
       PackageResolverVisitor packageResolver = new PackageResolverVisitor();
       packageName.accept(packageResolver);
       compilationUnitPackage = (JavaSymbol.PackageJavaSymbol) resolve.findIdentInPackage(compilationUnitPackage, packageResolver.packageName, JavaSymbol.PCK);
