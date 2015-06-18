@@ -1,8 +1,10 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    return Iterators.forArray(
-      type,
-      expression
+    Iterator<Tree> boundIterators = bounds.isEmpty() ? Iterators.<Tree>emptyIterator() : bounds.iterator();
+    return Iterators.<Tree>concat(
+      Iterators.<Tree>forArray(openParenToken, type),
+      boundIterators,
+      Iterators.<Tree>forArray(closeParenToken, expression)
       );
   }
 
