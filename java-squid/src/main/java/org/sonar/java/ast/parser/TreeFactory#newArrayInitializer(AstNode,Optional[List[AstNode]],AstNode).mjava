@@ -2,7 +2,10 @@
     ImmutableList.Builder<ExpressionTree> initializers = ImmutableList.builder();
     List<AstNode> children = Lists.newArrayList();
 
-    children.add(openBraceTokenAstNode);
+    InternalSyntaxToken openBraceToken = InternalSyntaxToken.create(openBraceTokenAstNode);
+    InternalSyntaxToken closeBraceToken = InternalSyntaxToken.create(closeBraceTokenAstNode);
+
+    children.add(openBraceToken);
     if (rests.isPresent()) {
       for (AstNode rest : rests.get()) {
         initializers.add((ExpressionTree) rest.getFirstChild());
@@ -13,8 +16,8 @@
         }
       }
     }
-    children.add(closeBraceTokenAstNode);
+    children.add(closeBraceToken);
 
-    return new NewArrayTreeImpl(ImmutableList.<ExpressionTree>of(), initializers.build(), children);
+    return new NewArrayTreeImpl(ImmutableList.<ExpressionTree>of(), initializers.build(), children).completeWithCurlyBraces(openBraceToken, closeBraceToken);
   }
 

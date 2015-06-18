@@ -1,9 +1,13 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    return Iterators.concat(
-      Iterators.singletonIterator(type),
-      dimensions.iterator(),
-      initializers.iterator()
-      );
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
+    addIfNotNull(iteratorBuilder, newKeyword);
+    addIfNotNull(iteratorBuilder, type);
+    // TODO SONARJAVA-547 Brackets of dimensions are missing
+    iteratorBuilder.addAll(dimensions);
+    addIfNotNull(iteratorBuilder, openCurlyBraceToken);
+    iteratorBuilder.addAll(initializers);
+    addIfNotNull(iteratorBuilder, closeCurlyBraceToken);
+    return iteratorBuilder.build().iterator();
   }
 
