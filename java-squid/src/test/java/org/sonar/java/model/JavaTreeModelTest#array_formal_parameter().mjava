@@ -6,6 +6,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int[] a); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3); // 1+2, as empty modifiers are always included
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
@@ -14,6 +15,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int... a); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
@@ -22,6 +24,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo ... a); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
@@ -30,6 +33,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo ... a[]); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
@@ -42,6 +46,7 @@
     assertThat(childArrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo [] a); }");
+    assertThatChildrenIteratorHasSize(variable, 3);
     variable = method.parameters().get(0);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
@@ -51,6 +56,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int @Foo @bar [] a); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree.type()).isInstanceOf(PrimitiveTypeTree.class);
@@ -59,6 +65,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int[] @Foo [] a); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBracketsAndAnnotations(arrayTypeTree, 1);
@@ -72,6 +79,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int[] a[]); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThatArrayTypeHasBrackets(arrayTypeTree);
@@ -85,6 +93,7 @@
 
     method = (MethodTree) firstTypeMember("interface T { void m(int[] a @Foo []); }");
     variable = method.parameters().get(0);
+    assertThatChildrenIteratorHasSize(variable, 3);
     assertThat(variable.type()).isInstanceOf(ArrayTypeTree.class);
     arrayTypeTree = (ArrayTypeTree) variable.type();
     assertThat(arrayTypeTree).isInstanceOf(ArrayTypeTree.class);

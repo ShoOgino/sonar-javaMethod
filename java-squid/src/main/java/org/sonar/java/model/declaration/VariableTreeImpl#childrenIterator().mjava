@@ -1,10 +1,11 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    return Iterators.forArray(
-      modifiers,
-      type,
-      simpleName,
-      initializer
+    Iterator<Tree> initializerIterator = initializer != null ? Iterators.<Tree>forArray(equalToken, initializer) : Iterators.<Tree>emptyIterator();
+    Iterator<Tree> endTokenIterator = endToken != null ? Iterators.<Tree>singletonIterator(endToken) : Iterators.<Tree>emptyIterator();
+    return Iterators.<Tree>concat(
+      Iterators.<Tree>forArray(modifiers, type, simpleName),
+      initializerIterator,
+      endTokenIterator
       );
   }
 

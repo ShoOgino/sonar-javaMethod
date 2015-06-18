@@ -45,8 +45,8 @@
     assertThat(annotation.atToken()).isNotNull();
     assertThatChildrenIteratorHasSize(annotation, 6);
 
-    tree = firstType("class T { private void meth() { @NonNullable String str;}}");
-    VariableTree variable = (VariableTree) ((MethodTree) tree.members().get(0)).block().body().get(0);
+    VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void meth() { @NonNullable String str;}}");
+    assertThatChildrenIteratorHasSize(variable, 4);
     annotations = variable.modifiers().annotations();
     assertThat(annotations).hasSize(1);
     annotation = annotations.get(0);

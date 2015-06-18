@@ -33,12 +33,14 @@
     assertThat(parameterTree.type()).isNotNull();
     assertThat(parameterTree.simpleName().name()).isEqualTo("e1");
     assertThat(parameterTree.initializer()).isNull();
+    assertThatChildrenIteratorHasSize(parameterTree, 3);
     catchTree = tree.catches().get(1);
     assertThatChildrenIteratorHasSize(catchTree, 5);
     parameterTree = catchTree.parameter();
     assertThat(parameterTree.type()).isNotNull();
     assertThat(parameterTree.simpleName().name()).isEqualTo("e2");
     assertThat(parameterTree.initializer()).isNull();
+    assertThatChildrenIteratorHasSize(parameterTree, 3);
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (Exception e) { } finally { } } }");
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
@@ -70,6 +72,7 @@
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (Exception1 | Exception2 e) { } } }");
     parameterTree = tree.catches().get(0).parameter();
+    assertThatChildrenIteratorHasSize(parameterTree, 3);
     UnionTypeTree type = (UnionTypeTree) parameterTree.type();
     // TODO SONARJAVA-547 or operator is not stored
     assertThatChildrenIteratorHasSize(type, 2);
