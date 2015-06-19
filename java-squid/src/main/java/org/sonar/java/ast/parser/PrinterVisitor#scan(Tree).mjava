@@ -22,10 +22,8 @@
         nodeName = kind.getAssociatedInterface().getSimpleName();
       }
       indent().append(nodeName);
-      int line = -1;
-      AstNode node = ((JavaTree) tree).getAstNode();
-      if (node != null && node.hasToken()) {
-        line = node.getTokenLine();
+      int line = ((JavaTree) tree).getLine();
+      if(line >= 0) {
         sb.append(" ").append(line);
       }
       if (idents.get(tree) != null) {
@@ -49,7 +47,7 @@
           idents.put(identifierTree, sym);
           sb.append(" ").append(sym.getName());
         }
-        int refLine = ((JavaTree) sym.declaration()).getTokenLine();
+        int refLine = ((JavaTree) sym.declaration()).getLine();
         if (refLine != line) {
           sb.append(" ref#").append(refLine);
         }
