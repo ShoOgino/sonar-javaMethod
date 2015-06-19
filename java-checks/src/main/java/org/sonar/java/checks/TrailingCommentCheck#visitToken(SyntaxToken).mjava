@@ -1,5 +1,8 @@
   @Override
   public void visitToken(SyntaxToken syntaxToken) {
+    if (ignoreMultipleOccurences && !visitedTokens.add(syntaxToken)) {
+      return;
+    }
     int tokenLine = syntaxToken.line();
     if (tokenLine != previousTokenLine) {
       for (SyntaxTrivia trivia : syntaxToken.trivias()) {
