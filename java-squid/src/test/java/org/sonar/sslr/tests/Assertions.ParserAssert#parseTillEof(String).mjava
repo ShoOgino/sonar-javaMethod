@@ -1,7 +1,7 @@
     private void parseTillEof(String input) {
       AstNode astNode = actual.parse(input);
-      SyntaxToken syntaxToken = LastSyntaxTokenFinder.lastSyntaxToken((Tree) astNode);
-      if (syntaxToken == null || (syntaxToken.column()+syntaxToken.text().length() != input.length())) {
+      InternalSyntaxToken syntaxToken = (InternalSyntaxToken) LastSyntaxTokenFinder.lastSyntaxToken((Tree) astNode);
+      if (syntaxToken == null || (!syntaxToken.isEOF() && (syntaxToken.column()+syntaxToken.text().length() != input.length()))) {
         if (syntaxToken == null)  {
           throw new RecognitionException(0, "Did not match till EOF : Last syntax token cannot be found");
         }
