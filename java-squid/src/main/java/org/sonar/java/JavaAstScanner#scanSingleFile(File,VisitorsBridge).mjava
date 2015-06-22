@@ -2,11 +2,11 @@
    * Helper method for testing checks without having to deploy them on a Sonar instance.
    */
   @VisibleForTesting
-  public static SourceFile scanSingleFile(File file, File parentFile, SquidAstVisitor<LexerlessGrammar>... visitors) {
+  public static SourceFile scanSingleFile(File file, VisitorsBridge visitorsBridge) {
     if (!file.isFile()) {
       throw new IllegalArgumentException("File '" + file + "' not found.");
     }
-    org.sonar.java.ast.AstScanner scanner = create(new JavaConfiguration(Charset.forName("UTF-8")), visitors);
+    org.sonar.java.ast.AstScanner scanner = create(new JavaConfiguration(Charset.forName("UTF-8")), visitorsBridge);
 
     scanner.scan(Collections.singleton(file));
     Collection<SourceCode> sources = scanner.getIndex().search(new QueryByType(SourceFile.class));
