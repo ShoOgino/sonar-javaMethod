@@ -1,5 +1,5 @@
   public ForStatementTreeImpl newStandardForStatement(
-    JavaTree forTokenAstNode,
+    JavaTree forTokenKeyword,
     InternalSyntaxToken openParenToken,
     Optional<StatementExpressionListTreeImpl> forInit, InternalSyntaxToken forInitSemicolonToken,
     Optional<ExpressionTree> expression, InternalSyntaxToken expressionSemicolonToken,
@@ -9,9 +9,9 @@
     StatementExpressionListTreeImpl forInit2 = forInit.isPresent() ? forInit.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
     StatementExpressionListTreeImpl forUpdate2 = forUpdate.isPresent() ? forUpdate.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
 
-    InternalSyntaxToken forKeyword = (InternalSyntaxToken) forTokenAstNode;
+    InternalSyntaxToken forKeyword = (InternalSyntaxToken) forTokenKeyword;
 
-    ForStatementTreeImpl result = new ForStatementTreeImpl(
+    return new ForStatementTreeImpl(
       forKeyword,
       openParenToken,
       forInit2,
@@ -21,7 +21,5 @@
       forUpdate2,
       closeParenToken,
       statement);
-
-    return result;
   }
 
