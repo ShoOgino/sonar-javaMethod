@@ -1,18 +1,14 @@
   public QualifiedIdentifierListTreeImpl newQualifiedIdentifierList(TypeTree qualifiedIdentifier, Optional<List<Tuple<InternalSyntaxToken, TypeTree>>> rests) {
     ImmutableList.Builder<TypeTree> qualifiedIdentifiers = ImmutableList.builder();
-    List<AstNode> children = Lists.newArrayList();
 
     qualifiedIdentifiers.add(qualifiedIdentifier);
-    children.add((AstNode) qualifiedIdentifier);
 
     if (rests.isPresent()) {
       for (Tuple<InternalSyntaxToken, TypeTree> rest : rests.get()) {
         qualifiedIdentifiers.add(rest.second());
-        children.add(rest.first());
-        children.add((AstNode) rest.second());
       }
     }
 
-    return new QualifiedIdentifierListTreeImpl(qualifiedIdentifiers.build(), children);
+    return new QualifiedIdentifierListTreeImpl(qualifiedIdentifiers.build());
   }
 

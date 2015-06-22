@@ -26,23 +26,16 @@
 
     ClassTreeImpl result = newClassBody(Kind.ENUM, openBraceToken, Optional.of((List<JavaTree>) members.build()), closeBraceToken);
 
-    List<JavaTree> children = Lists.newArrayList();
-    children.add(enumToken);
     result.completeDeclarationKeyword((SyntaxToken) enumToken);
 
     IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
     result.completeIdentifier(identifier);
-    children.add(identifier);
 
     if (implementsClause.isPresent()) {
       InternalSyntaxToken implementsKeyword = (InternalSyntaxToken) implementsClause.get().first();
       QualifiedIdentifierListTreeImpl interfaces = implementsClause.get().second();
-      children.add(implementsKeyword);
-      children.add(interfaces);
       result.completeInterfaces(implementsKeyword, interfaces);
     }
-
-    result.prependChildren(children);
 
     return result;
   }

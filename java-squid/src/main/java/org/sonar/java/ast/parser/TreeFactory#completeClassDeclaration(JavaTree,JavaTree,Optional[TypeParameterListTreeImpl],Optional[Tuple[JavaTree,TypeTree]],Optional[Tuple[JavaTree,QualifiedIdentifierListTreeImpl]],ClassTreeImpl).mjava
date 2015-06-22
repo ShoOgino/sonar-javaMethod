@@ -7,29 +7,19 @@
 
     IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
 
-    List<JavaTree> children = Lists.newArrayList();
-    children.add(classSyntaxToken);
     partial.completeDeclarationKeyword((SyntaxToken) classSyntaxToken);
-    children.add(identifier);
     partial.completeIdentifier(identifier);
     if (typeParameters.isPresent()) {
-      children.add(typeParameters.get());
       partial.completeTypeParameters(typeParameters.get());
     }
     if (extendsClause.isPresent()) {
-      children.add(extendsClause.get().first());
-      children.add((JavaTree) extendsClause.get().second());
       partial.completeSuperclass((SyntaxToken) extendsClause.get().first(), extendsClause.get().second());
     }
     if (implementsClause.isPresent()) {
       InternalSyntaxToken implementsKeyword = ((InternalSyntaxToken) implementsClause.get().first());
       QualifiedIdentifierListTreeImpl interfaces = implementsClause.get().second();
-      children.add(implementsKeyword);
-      children.add(interfaces);
       partial.completeInterfaces(implementsKeyword, interfaces);
     }
-
-    partial.prependChildren(children);
 
     return partial;
   }

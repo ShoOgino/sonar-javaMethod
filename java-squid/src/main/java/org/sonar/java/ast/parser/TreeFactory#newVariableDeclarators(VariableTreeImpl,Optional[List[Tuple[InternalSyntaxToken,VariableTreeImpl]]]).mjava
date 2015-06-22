@@ -2,9 +2,6 @@
     ImmutableList.Builder<VariableTreeImpl> variables = ImmutableList.builder();
 
     variables.add(variable);
-    List<AstNode> children = Lists.newArrayList();
-    children.add(variable);
-
     if (rests.isPresent()) {
       VariableTreeImpl previousVariable = variable;
       for (Tuple<InternalSyntaxToken, VariableTreeImpl> rest : rests.get()) {
@@ -12,7 +9,6 @@
         InternalSyntaxToken separator = rest.first();
 
         variables.add(newVariable);
-        children.add(newVariable);
 
         // store the separator
         previousVariable.setEndToken(separator);
@@ -20,6 +16,6 @@
       }
     }
 
-    return new VariableDeclaratorListTreeImpl(variables.build(), children);
+    return new VariableDeclaratorListTreeImpl(variables.build());
   }
 

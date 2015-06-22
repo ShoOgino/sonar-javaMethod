@@ -4,12 +4,8 @@
 
     ImmutableList.Builder<Tree> members = ImmutableList.builder();
 
-    List<AstNode> children = Lists.newArrayList();
-    children.add(openBraceToken);
-
     if (annotationTypeElementDeclarations.isPresent()) {
       for (JavaTree annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
-        children.add(annotationTypeElementDeclaration);
         if (annotationTypeElementDeclaration.is(JavaLexer.VARIABLE_DECLARATORS)) {
           for (VariableTreeImpl variable : (VariableDeclaratorListTreeImpl) annotationTypeElementDeclaration) {
             members.add(variable);
@@ -20,8 +16,6 @@
       }
     }
 
-    children.add(closeBraceToken);
-
-    return new ClassTreeImpl(emptyModifiers, openBraceToken, members.build(), closeBraceToken, children);
+    return new ClassTreeImpl(emptyModifiers, openBraceToken, members.build(), closeBraceToken);
   }
 

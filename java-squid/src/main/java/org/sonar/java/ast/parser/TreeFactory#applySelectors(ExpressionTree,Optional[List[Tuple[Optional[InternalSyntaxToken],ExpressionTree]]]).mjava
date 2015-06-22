@@ -11,26 +11,22 @@
 
           if (selector.is(Kind.IDENTIFIER)) {
             IdentifierTreeImpl identifier = (IdentifierTreeImpl) selector;
-            result = new MemberSelectExpressionTreeImpl(result, dotToken, identifier,
-              (AstNode) result, dotToken, identifier);
+            result = new MemberSelectExpressionTreeImpl(result, dotToken, identifier);
           } else {
             MethodInvocationTreeImpl methodInvocation = (MethodInvocationTreeImpl) selector;
             IdentifierTreeImpl identifier = (IdentifierTreeImpl) methodInvocation.methodSelect();
-            MemberSelectExpressionTreeImpl memberSelect = new MemberSelectExpressionTreeImpl(result, dotToken, identifier,
-              (AstNode) result, dotToken, identifier);
+            MemberSelectExpressionTreeImpl memberSelect = new MemberSelectExpressionTreeImpl(result, dotToken, identifier);
 
             result = new MethodInvocationTreeImpl(memberSelect, methodInvocation.typeArguments(), (ArgumentListTreeImpl) methodInvocation.arguments());
           }
         } else if (selector.is(Kind.NEW_CLASS)) {
           NewClassTreeImpl newClass = (NewClassTreeImpl) selector;
-          newClass.prependChildren((AstNode) result);
           result = newClass.completeWithEnclosingExpression(result);
         } else if (selector.is(Kind.ARRAY_ACCESS_EXPRESSION)) {
           ArrayAccessExpressionTreeImpl arrayAccess = (ArrayAccessExpressionTreeImpl) selector;
           result = arrayAccess.complete(result);
         } else if (selector.is(Kind.MEMBER_SELECT)) {
           MemberSelectExpressionTreeImpl memberSelect = (MemberSelectExpressionTreeImpl) selector;
-          memberSelect.prependChildren((AstNode) result);
           result = memberSelect.completeWithExpression(result);
         } else {
           throw new IllegalStateException();

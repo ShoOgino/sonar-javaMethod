@@ -5,22 +5,17 @@
 
     ImmutableList.Builder<VariableTreeImpl> params = ImmutableList.builder();
 
-    List<AstNode> children = Lists.newArrayList();
-    children.add(openParenToken);
-
     if (identifiersOpt.isPresent()) {
       Tuple<VariableTreeImpl, Optional<List<Tuple<InternalSyntaxToken, VariableTreeImpl>>>> identifiers = identifiersOpt.get();
 
       VariableTreeImpl variable = identifiers.first();
       params.add(variable);
-      children.add(variable);
 
       VariableTreeImpl previousVariable = variable;
       if (identifiers.second().isPresent()) {
         for (Tuple<InternalSyntaxToken, VariableTreeImpl> identifier : identifiers.second().get()) {
           variable = identifier.second();
           params.add(variable);
-          children.add(variable);
 
           InternalSyntaxToken comma = identifier.first();
           previousVariable.setEndToken(comma);
@@ -29,8 +24,6 @@
       }
     }
 
-    children.add(closeParenToken);
-
-    return new LambdaParameterListTreeImpl(openParenToken, params.build(), closeParenToken, children);
+    return new LambdaParameterListTreeImpl(openParenToken, params.build(), closeParenToken);
   }
 

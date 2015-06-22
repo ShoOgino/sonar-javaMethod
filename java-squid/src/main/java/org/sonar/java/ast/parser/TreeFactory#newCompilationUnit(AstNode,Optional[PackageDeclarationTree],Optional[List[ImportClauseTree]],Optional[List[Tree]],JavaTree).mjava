@@ -5,17 +5,9 @@
     Optional<List<Tree>> typeDeclarations,
     JavaTree eof) {
 
-    List<AstNode> children = Lists.newArrayList();
-    children.add(spacing);
-
-    if (packageDeclaration.isPresent()) {
-      children.add((AstNode) packageDeclaration.get());
-    }
-
     ImmutableList.Builder<ImportClauseTree> imports = ImmutableList.builder();
     if (importDeclarations.isPresent()) {
       for (ImportClauseTree child : importDeclarations.get()) {
-        children.add((AstNode) child);
         imports.add(child);
       }
     }
@@ -23,19 +15,16 @@
     ImmutableList.Builder<Tree> types = ImmutableList.builder();
     if (typeDeclarations.isPresent()) {
       for (Tree child : typeDeclarations.get()) {
-        children.add((AstNode) child);
         types.add(child);
       }
     }
 
-    InternalSyntaxToken eofToken = ((InternalSyntaxToken) eof);
-    children.add(eofToken);
+    InternalSyntaxToken eofToken = (InternalSyntaxToken) eof;
 
     return new CompilationUnitTreeImpl(
       packageDeclaration.orNull(),
       imports.build(),
       types.build(),
-      eofToken,
-      children);
+      eofToken);
   }
 
