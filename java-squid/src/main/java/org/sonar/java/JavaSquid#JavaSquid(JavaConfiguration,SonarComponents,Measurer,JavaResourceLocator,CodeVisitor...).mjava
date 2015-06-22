@@ -5,21 +5,21 @@
     astScanner = JavaAstScanner.create(conf);
 
     Iterable<CodeVisitor> visitorsToBridge = Iterables.concat(Arrays.asList(javaResourceLocator), Arrays.asList(visitors));
-    if(measurer != null) {
-      Iterable<CodeVisitor> measurers = Arrays.asList((CodeVisitor)measurer);
-      visitorsToBridge =  Iterables.concat(visitorsToBridge, measurers);
+    if (measurer != null) {
+      Iterable<CodeVisitor> measurers = Arrays.asList((CodeVisitor) measurer);
+      visitorsToBridge = Iterables.concat(visitorsToBridge, measurers);
     }
     List<File> classpath = Lists.newArrayList();
     List<File> testClasspath = Lists.newArrayList();
     Collection<CodeVisitor> testCheckClasses = Lists.<CodeVisitor>newArrayList(javaResourceLocator);
-    if(sonarComponents != null) {
+    if (sonarComponents != null) {
       visitorsToBridge = Iterables.concat(
-        visitorsToBridge,
-        Arrays.asList(
-          new FileLinesVisitor(sonarComponents, conf.getCharset()),
-          new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset())
+          visitorsToBridge,
+          Arrays.asList(
+              new FileLinesVisitor(sonarComponents, conf.getCharset()),
+              new SyntaxHighlighterVisitor(sonarComponents, conf.getCharset())
           )
-        );
+      );
       classpath = sonarComponents.getJavaClasspath();
       testClasspath = sonarComponents.getJavaTestClasspath();
       testCheckClasses.addAll(sonarComponents.testCheckClasses());
@@ -41,7 +41,6 @@
     }
 
     astScannerForTests = new AstScanner(astScanner);
-    astScannerForTests.accept(new FileVisitor());
     setupAstScanner(astScannerForTests, testCheckClasses, testClasspath, conf, sonarComponents);
   }
 
