@@ -1,0 +1,13 @@
+  public TypeArgumentListTreeImpl newTypeArgumentList(InternalSyntaxToken openBracketToken, Tree typeArgument, Optional<List<Tuple<InternalSyntaxToken, Tree>>> rests, InternalSyntaxToken closeBracketToken) {
+    ImmutableList.Builder<Tree> typeArguments = ImmutableList.builder();
+    typeArguments.add(typeArgument);
+
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, Tree> rest : rests.get()) {
+        // FIXME SONARJAVA-547 comma (rest.first()) should be part of the ArgumentList as token
+        typeArguments.add(rest.second());
+      }
+    }
+    return new TypeArgumentListTreeImpl(openBracketToken, typeArguments.build(), closeBracketToken, Lists.<AstNode>newArrayList());
+  }
+

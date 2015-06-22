@@ -1,0 +1,15 @@
+  public NewArrayTreeImpl newArrayCreatorWithDimension(AstNode openBracketToken, ExpressionTree expression, AstNode closeBracketToken,
+    Optional<List<ArrayAccessExpressionTreeImpl>> arrayAccesses,
+    Optional<List<Tuple<Optional<List<AnnotationTreeImpl>>, Tuple<InternalSyntaxToken, InternalSyntaxToken>>>> dims) {
+
+    ImmutableList.Builder<ExpressionTree> dimensions = ImmutableList.builder();
+    dimensions.add(expression);
+    if (arrayAccesses.isPresent()) {
+      for (ArrayAccessExpressionTreeImpl arrayAccess : arrayAccesses.get()) {
+        dimensions.add(arrayAccess.index());
+      }
+    }
+    // TODO SONARJAVA-547 brackets should be stored (dims parameter should be used).
+    return new NewArrayTreeImpl(dimensions.build(), ImmutableList.<ExpressionTree>of(), Lists.<AstNode>newArrayList());
+  }
+

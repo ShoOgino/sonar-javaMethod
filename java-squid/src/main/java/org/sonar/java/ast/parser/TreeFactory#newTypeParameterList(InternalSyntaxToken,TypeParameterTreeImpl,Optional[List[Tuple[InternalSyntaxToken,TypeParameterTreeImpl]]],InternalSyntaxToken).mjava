@@ -1,0 +1,14 @@
+  public TypeParameterListTreeImpl newTypeParameterList(InternalSyntaxToken openBracketToken, TypeParameterTreeImpl typeParameter, Optional<List<Tuple<InternalSyntaxToken,
+      TypeParameterTreeImpl>>> rests, InternalSyntaxToken closeBracketToken) {
+    ImmutableList.Builder<TypeParameterTree> typeParameters = ImmutableList.builder();
+    typeParameters.add(typeParameter);
+
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, TypeParameterTreeImpl> rest : rests.get()) {
+        //FIXME SONARJAVA-547 commas should be handled rest.first()
+        typeParameters.add(rest.second());
+      }
+    }
+    return new TypeParameterListTreeImpl(openBracketToken, typeParameters.build(), Lists.<AstNode>newArrayList(), closeBracketToken);
+  }
+

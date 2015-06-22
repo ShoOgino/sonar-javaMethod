@@ -1,0 +1,13 @@
+  public ArgumentListTreeImpl newArguments(ExpressionTree expression, Optional<List<Tuple<InternalSyntaxToken, ExpressionTree>>> rests) {
+    ImmutableList.Builder<ExpressionTree> expressions = ImmutableList.builder();
+    expressions.add(expression);
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, ExpressionTree> rest : rests.get()) {
+        //FIXME : SONARJAVA-547 Comma should be handled : rest.first()
+        expressions.add(rest.second());
+      }
+    }
+
+    return new ArgumentListTreeImpl(expressions.build(), Lists.<AstNode>newArrayList());
+  }
+

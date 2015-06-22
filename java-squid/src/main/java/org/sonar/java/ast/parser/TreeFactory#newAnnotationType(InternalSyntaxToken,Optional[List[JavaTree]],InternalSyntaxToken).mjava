@@ -1,4 +1,4 @@
-  public ClassTreeImpl newAnnotationType(InternalSyntaxToken openBraceToken, Optional<List<AstNode>> annotationTypeElementDeclarations, InternalSyntaxToken closeBraceToken) {
+  public ClassTreeImpl newAnnotationType(InternalSyntaxToken openBraceToken, Optional<List<JavaTree>> annotationTypeElementDeclarations, InternalSyntaxToken closeBraceToken) {
     // TODO
     ModifiersTreeImpl emptyModifiers = ModifiersTreeImpl.emptyModifiers();
 
@@ -8,14 +8,14 @@
     children.add(openBraceToken);
 
     if (annotationTypeElementDeclarations.isPresent()) {
-      for (AstNode annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
+      for (JavaTree annotationTypeElementDeclaration : annotationTypeElementDeclarations.get()) {
         children.add(annotationTypeElementDeclaration);
         if (annotationTypeElementDeclaration.is(JavaLexer.VARIABLE_DECLARATORS)) {
           for (VariableTreeImpl variable : (VariableDeclaratorListTreeImpl) annotationTypeElementDeclaration) {
             members.add(variable);
           }
         } else if (!annotationTypeElementDeclaration.is(JavaPunctuator.SEMI)) {
-          members.add((Tree) annotationTypeElementDeclaration);
+          members.add(annotationTypeElementDeclaration);
         }
       }
     }

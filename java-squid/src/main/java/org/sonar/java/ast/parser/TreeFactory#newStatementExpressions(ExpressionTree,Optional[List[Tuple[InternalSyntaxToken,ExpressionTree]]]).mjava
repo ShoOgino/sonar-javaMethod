@@ -1,0 +1,19 @@
+  public StatementExpressionListTreeImpl newStatementExpressions(ExpressionTree expression, Optional<List<Tuple<InternalSyntaxToken, ExpressionTree>>> rests) {
+    ImmutableList.Builder<StatementTree> statements = ImmutableList.builder();
+
+    ExpressionStatementTreeImpl statement = new ExpressionStatementTreeImpl(expression, null);
+    statements.add(statement);
+
+    if (rests.isPresent()) {
+      for (Tuple<InternalSyntaxToken, ExpressionTree> rest : rests.get()) {
+        statement = new ExpressionStatementTreeImpl(rest.second(), null);
+        statements.add(statement);
+      }
+    }
+
+    StatementExpressionListTreeImpl result = new StatementExpressionListTreeImpl(statements.build());
+    result.prependChildren(Lists.<AstNode>newArrayList());
+
+    return result;
+  }
+
