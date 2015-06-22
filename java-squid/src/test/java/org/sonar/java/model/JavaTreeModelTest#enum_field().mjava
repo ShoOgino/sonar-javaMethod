@@ -1,9 +1,11 @@
   @Test
   public void enum_field() {
     List<Tree> declarations = firstType("enum T { ; public int f1 = 42, f2[]; }").members();
-    assertThat(declarations).hasSize(2);
+    assertThat(declarations).hasSize(3);
 
-    VariableTree tree = (VariableTree) declarations.get(0);
+    assertThat(declarations.get(0).is(Tree.Kind.EMPTY_STATEMENT)).isTrue();
+
+    VariableTree tree = (VariableTree) declarations.get(1);
     assertThat(tree.is(Tree.Kind.VARIABLE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);
@@ -12,7 +14,7 @@
     assertThat(tree.initializer()).isNotNull();
     assertThatChildrenIteratorHasSize(tree, 6);
 
-    tree = (VariableTree) declarations.get(1);
+    tree = (VariableTree) declarations.get(2);
     assertThat(tree.is(Tree.Kind.VARIABLE)).isTrue();
     assertThat(tree.modifiers().modifiers()).hasSize(1);
     assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.PUBLIC);

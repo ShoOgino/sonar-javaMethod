@@ -1,6 +1,12 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    // the ideentifierTree simpleName is also present in initializer
-    return Iterators.<Tree>forArray(modifiers(), initializer());
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.builder();
+    // the identifierTree simpleName is also present in initializer
+    iteratorBuilder.add(modifiers(), initializer());
+    SyntaxToken endToken = endToken();
+    if (endToken != null) {
+      iteratorBuilder.add(endToken);
+    }
+    return iteratorBuilder.build().iterator();
   }
 

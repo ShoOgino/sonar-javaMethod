@@ -2,7 +2,7 @@
     Optional<List<AnnotationTreeImpl>> annotations, JavaTree identifierToken,
     Optional<ArgumentListTreeImpl> arguments,
     Optional<ClassTreeImpl> classBody,
-    Optional<InternalSyntaxToken> semicolonToken) {
+    Optional<InternalSyntaxToken> commaToken) {
 
     // FIXME SONARJAVA-547 Handle annotations
     IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
@@ -25,9 +25,6 @@
       );
     newClass.completeWithIdentifier(identifier);
 
-    @SuppressWarnings("unchecked")
-    EnumConstantTreeImpl result = new EnumConstantTreeImpl(modifiers((Optional<List<ModifierTree>>) (Optional<?>) annotations), identifier, newClass);
-
-    return result;
+    return new EnumConstantTreeImpl(modifiers((Optional<List<ModifierTree>>) (Optional<?>) annotations), identifier, newClass, commaToken.orNull());
   }
 
