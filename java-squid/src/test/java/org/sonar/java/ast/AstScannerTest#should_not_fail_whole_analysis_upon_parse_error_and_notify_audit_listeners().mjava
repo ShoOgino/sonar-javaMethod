@@ -1,8 +1,8 @@
   @Test
   public void should_not_fail_whole_analysis_upon_parse_error_and_notify_audit_listeners() {
     FakeAuditListener listener = spy(new FakeAuditListener());
-
-    AstScanner scanner = new AstScanner(new ParserAdapter<>(Charsets.UTF_8, FakeGrammar.builder().build()));
+    AstScanner scanner = new AstScanner(new ActionParser(Charsets.UTF_8, FakeLexer.builder(), FakeGrammar.class, new FakeTreeFactory(), FakeLexer.ROOT));
+//    AstScanner scanner = new AstScanner(new ParserAdapter<>(Charsets.UTF_8, FakeLexer.builder().build()));
     scanner.setVisitorBridge(new VisitorsBridge(listener));
 
     scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerParseError.txt")));

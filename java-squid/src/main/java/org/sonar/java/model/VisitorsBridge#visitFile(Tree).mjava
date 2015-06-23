@@ -1,8 +1,8 @@
-  public void visitFile(@Nullable AstNode astNode) {
+  public void visitFile(@Nullable Tree parsedTree) {
     semanticModel = null;
     CompilationUnitTree tree = new JavaTree.CompilationUnitTreeImpl(null, Lists.<ImportClauseTree>newArrayList(), Lists.<Tree>newArrayList(), null);
-    if (astNode != null && astNode instanceof Tree) {
-      tree = (CompilationUnitTree) astNode;
+    if (parsedTree != null && parsedTree.is(Tree.Kind.COMPILATION_UNIT)) {
+      tree = (CompilationUnitTree) parsedTree;
       if (isNotJavaLangOrSerializable()) {
         try {
           semanticModel = SemanticModel.createFor(tree, getProjectClasspath());
