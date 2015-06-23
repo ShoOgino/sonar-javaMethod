@@ -1,4 +1,5 @@
   private InternalSyntaxToken visitTerminal(ParseNode node) {
+    boolean isEof = false;
     if (node.getMatcher() instanceof TriviaExpression) {
       TriviaExpression ruleMatcher = (TriviaExpression) node.getMatcher();
       if (ruleMatcher.getTriviaKind() == TriviaKind.SKIPPED_TEXT) {
@@ -16,17 +17,17 @@
       updateTokenPositionAndValue(node);
       TokenExpression ruleMatcher = (TokenExpression) node.getMatcher();
       tokenBuilder.setType(ruleMatcher.getTokenType());
+      isEof = ruleMatcher.getTokenType() == GenericTokenType.EOF;
       if (ruleMatcher.getTokenType() == GenericTokenType.COMMENT) {
         tokenBuilder.setTrivia(Collections.<Trivia>emptyList());
         trivias.add(Trivia.createComment(tokenBuilder.build()));
         return null;
       }
-    } else {
-      updateTokenPositionAndValue(node);
-      tokenBuilder.setType(UNDEFINED_TOKEN_TYPE);
     }
-    Token token = tokenBuilder.setTrivia(trivias).build();
+    LineColumnValue lineColumnValue = tokenPosition(node);
+    InternalSyntaxToken internalSyntaxToken = new InternalSyntaxToken(lineColumnValue.line, lineColumnValue.column, lineColumnValue.value,
+        createTrivias(trivias), node.getStartIndex(), node.getEndIndex(), isEof);
     trivias.clear();
-    return new InternalSyntaxToken(token, node.getStartIndex(), node.getEndIndex());
+    return internalSyntaxToken;
   }
 
