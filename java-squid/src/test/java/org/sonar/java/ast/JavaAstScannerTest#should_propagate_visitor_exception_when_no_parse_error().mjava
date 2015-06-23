@@ -1,7 +1,6 @@
   @Test
-  public void should_propagate_visitor_exception_when_there_also_is_a_parse_error() {
-    AstScanner scanner = new AstScanner(new ActionParser(Charsets.UTF_8, FakeLexer.builder(), FakeGrammar.class, new FakeTreeFactory(), FakeLexer.ROOT));
-//    AstScanner scanner = new AstScanner(new ParserAdapter<>(Charsets.UTF_8, FakeLexer.builder().build()));
+  public void should_propagate_visitor_exception_when_no_parse_error() {
+    JavaAstScanner scanner = new JavaAstScanner(new ActionParser(Charsets.UTF_8, FakeLexer.builder(), FakeGrammar.class, new FakeTreeFactory(), FakeLexer.ROOT));
     scanner.setVisitorBridge(new VisitorsBridge(new JavaFileScanner() {
 
       @Override
@@ -9,6 +8,7 @@
         throw new NullPointerException("foo");
       }
     }));
+
 
     thrown.expectMessage("SonarQube is unable to analyze file");
     thrown.expect(new BaseMatcher() {
@@ -25,6 +25,6 @@
       }
 
     });
-    scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerParseError.txt")));
+    scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerNoParseError.txt")));
   }
 
