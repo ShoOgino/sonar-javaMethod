@@ -2,8 +2,8 @@
   public void should_not_fail_whole_analysis_upon_parse_error_and_notify_audit_listeners() {
     FakeAuditListener listener = spy(new FakeAuditListener());
 
-    AstScanner scanner = new AstScanner(new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, FakeGrammar.builder().build()));
-    scanner.withSquidAstVisitor(listener);
+    AstScanner scanner = new AstScanner(new ParserAdapter<>(Charsets.UTF_8, FakeGrammar.builder().build()));
+    scanner.setVisitorBridge(new VisitorsBridge(listener));
 
     scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerParseError.txt")));
     verify(listener).processRecognitionException(Mockito.any(RecognitionException.class));

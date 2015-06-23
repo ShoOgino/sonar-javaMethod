@@ -1,8 +1,7 @@
-  @Override
   public void visitFile(@Nullable AstNode astNode) {
     semanticModel = null;
     CompilationUnitTree tree = new JavaTree.CompilationUnitTreeImpl(null, Lists.<ImportClauseTree>newArrayList(), Lists.<Tree>newArrayList(), null);
-    if (astNode != null) {
+    if (astNode != null && astNode instanceof Tree) {
       tree = (CompilationUnitTree) astNode;
       if (isNotJavaLangOrSerializable()) {
         try {
@@ -18,9 +17,7 @@
     }
     JavaFileScannerContext context = new DefaultJavaFileScannerContext(tree, (SourceFile) getContext().peekSourceCode(), getContext().getFile(), semanticModel, analyseAccessors);
     for (JavaFileScanner scanner : scanners) {
-      if (astNode != null || scanner instanceof AstScannerExceptionHandler) {
-        scanner.scanFile(context);
-      }
+      scanner.scanFile(context);
     }
     if (semanticModel != null) {
       // Close class loader after all the checks.

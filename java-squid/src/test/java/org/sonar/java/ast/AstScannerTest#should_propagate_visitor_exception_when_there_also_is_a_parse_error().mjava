@@ -1,14 +1,13 @@
   @Test
   public void should_propagate_visitor_exception_when_there_also_is_a_parse_error() {
-    AstScanner scanner = new AstScanner(new ParserAdapter<LexerlessGrammar>(Charsets.UTF_8, FakeGrammar.builder().build()));
-    scanner.withSquidAstVisitor(new SquidAstVisitor<LexerlessGrammar>() {
+    AstScanner scanner = new AstScanner(new ParserAdapter<>(Charsets.UTF_8, FakeGrammar.builder().build()));
+    scanner.setVisitorBridge(new VisitorsBridge(new JavaFileScanner() {
 
       @Override
-      public void visitFile(AstNode node) {
+      public void scanFile(JavaFileScannerContext context) {
         throw new NullPointerException("foo");
       }
-
-    });
+    }));
 
     thrown.expectMessage("SonarQube is unable to analyze file");
     thrown.expect(new BaseMatcher() {

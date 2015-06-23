@@ -6,13 +6,8 @@
     SourceProject project = (SourceProject) index.search("Java Project");
     VisitorContext context = new VisitorContext(project);
     context.setCommentAnalyser(commentAnalyser);
+    visitor.setContext(context);
 
-    for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
-      visitor.setContext(context);
-      visitor.init();
-    }
-
-    AstWalker astWalker = new AstWalker(visitors);
     ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(Lists.newArrayList(files));
     for (File file : files) {
@@ -20,7 +15,7 @@
       context.addSourceCode(new SourceFile(file.getAbsolutePath(), file.getPath()));
       try {
         AstNode ast = parser.parse(file);
-        astWalker.walkAndVisit(ast);
+        visitor.visitFile(ast);
         progressReport.nextFile();
         context.popSourceCode();
       } catch (RecognitionException e) {
@@ -34,9 +29,5 @@
       }
     }
     progressReport.stop();
-
-    for (SquidAstVisitor<LexerlessGrammar> visitor : visitors) {
-      visitor.destroy();
-    }
   }
 

@@ -3,6 +3,9 @@
     File file = temp.newFile();
     Files.write("ParseError", file, Charsets.UTF_8);
     scan(file);
-    Mockito.verifyZeroInteractions(highlightable);
+    Mockito.verify(highlightable, times(1)).newHighlighting();
+    Mockito.verify(highlighting, never()).highlight(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString());
+    assertThat(highlighting.done).isTrue();
+    assertThat(highlighting.entries).isEmpty();
   }
 
