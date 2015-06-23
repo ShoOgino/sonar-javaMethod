@@ -6,8 +6,13 @@
     String code = "class T { T() { return a[42]; } }";
     ArrayAccessExpressionTree tree = (ArrayAccessExpressionTree) expressionOfReturnStatement(code);
     assertThat(tree.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)).isTrue();
+    assertThatChildrenIteratorHasSize(tree, 2);
     assertThat(tree.expression()).isNotNull();
-    assertThat(tree.index()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 4);
+    ArrayDimensionTree dimension = tree.dimension();
+    assertThat(dimension).isNotNull();
+    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+    assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
+    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+    assertThatChildrenIteratorHasSize(dimension, 3);
   }
 

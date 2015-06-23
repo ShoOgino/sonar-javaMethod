@@ -1,6 +1,9 @@
   public ArrayAccessExpressionTreeImpl newArrayAccessExpression(Optional<List<AnnotationTreeImpl>> annotations, InternalSyntaxToken openBracketToken, ExpressionTree index,
                                                                 InternalSyntaxToken closeBracketToken) {
-    // FIXME SONARJAVA-547 Handle annotations
-    return new ArrayAccessExpressionTreeImpl(openBracketToken, index, closeBracketToken);
+    return new ArrayAccessExpressionTreeImpl(new ArrayDimensionTreeImpl(
+      annotations.isPresent() ? annotations.get() : ImmutableList.<AnnotationTreeImpl>of(),
+      openBracketToken,
+      index,
+      closeBracketToken));
   }
 
