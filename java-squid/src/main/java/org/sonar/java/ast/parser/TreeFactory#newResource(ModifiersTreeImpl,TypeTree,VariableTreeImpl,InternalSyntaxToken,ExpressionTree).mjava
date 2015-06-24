@@ -1,5 +1,7 @@
   public VariableTreeImpl newResource(ModifiersTreeImpl modifiers, TypeTree classType, VariableTreeImpl partial, InternalSyntaxToken equalToken, ExpressionTree expression) {
-    // FIXME SONARJAVA-547 handle modifiers
+    if (!modifiers.isEmpty()) {
+      partial.completeModifiers(modifiers);
+    }
     return partial.completeTypeAndInitializer(classType, equalToken, expression);
   }
 
