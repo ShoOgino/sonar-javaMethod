@@ -1,0 +1,27 @@
+  @Test
+  public void annotations() {
+    String p =
+      "class Foo {"
+        + "  void foo(int f) {"
+        + "    (@Bar long) f;"
+        + "  }"
+        + "}";
+    assertFirstTokenValue(((TypeCastTree) ((ExpressionStatementTree) getFirstStatement(p)).expression()).type(), "@");
+    
+    p = "class Foo {"
+        + "  void foo(Collection<@Bar ?> c) {"
+        + "  }"
+        + "}";
+    MethodTree m = getFirstMethod(getCompilationUnit(p));
+    assertFirstTokenValue(((ParameterizedTypeTree) m.parameters().get(0).type()).typeArguments().get(0), "@");
+    
+    p = "class Foo extends @Foo List<Object> { }";
+    assertFirstTokenValue(getFirstClass(getCompilationUnit(p)).superClass(), "@");
+
+    p = "class Foo extends @Foo Object { }";
+    assertFirstTokenValue(getFirstClass(getCompilationUnit(p)).superClass(), "@");
+
+    p = "class Foo extends @Foo java.lang.List { }";
+    assertFirstTokenValue(getFirstClass(getCompilationUnit(p)).superClass(), "@");
+  }
+

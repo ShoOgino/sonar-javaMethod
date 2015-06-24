@@ -16,6 +16,17 @@
           throw new IllegalArgumentException();
         }
       }
+      TypeTree typeTree = (TypeTree) firstIdentifier;
+      // move the annotations from the first identifier to the member select or the parameterized type
+      List<AnnotationTree> firstIdentifierAnnotations = typeTree.annotations();
+      if (!firstIdentifierAnnotations.isEmpty()) {
+        if (result.is(Tree.Kind.MEMBER_SELECT)) {
+          ((MemberSelectExpressionTreeImpl) result).complete(firstIdentifierAnnotations);
+        } else {
+          ((ParameterizedTypeTreeImpl) result).complete(firstIdentifierAnnotations);
+        }
+        completeTypeTreeWithAnnotations(typeTree, ImmutableList.<AnnotationTree>of());
+      }
     }
 
     return (T) result;

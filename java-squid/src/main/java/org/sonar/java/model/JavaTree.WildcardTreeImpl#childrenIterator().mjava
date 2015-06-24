@@ -1,14 +1,12 @@
     @Override
     public Iterator<Tree> childrenIterator() {
-      Iterator<Tree> boundIterator = bound == null ?
-        Iterators.<Tree>emptyIterator() :
-        Iterators.concat(
-          Iterators.singletonIterator(extendsOrSuperToken), 
-          annotations.iterator(),
-          Iterators.singletonIterator(bound));
-      return Iterators.concat(
-        Iterators.<Tree>singletonIterator(queryToken),
-        boundIterator
-        );
+      ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.builder();
+      iteratorBuilder.addAll(annotations);
+      iteratorBuilder.add(queryToken);
+      if (bound != null) {
+        iteratorBuilder.add(extendsOrSuperToken);
+        iteratorBuilder.add(bound);
+      }
+      return iteratorBuilder.build().iterator();
     }
 

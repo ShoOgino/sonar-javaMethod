@@ -12,9 +12,8 @@
     }
     if (dims.isPresent()) {
       for (Tuple<Optional<List<AnnotationTreeImpl>>, Tuple<InternalSyntaxToken, InternalSyntaxToken>> dim : dims.get()) {
-        Optional<List<AnnotationTreeImpl>> optionalAnnotations = dim.first();
         Tuple<InternalSyntaxToken, InternalSyntaxToken> brackets = dim.second();
-        List<AnnotationTreeImpl> annotations = optionalAnnotations.isPresent() ? optionalAnnotations.get() : ImmutableList.<AnnotationTreeImpl>of();
+        List<AnnotationTreeImpl> annotations = dim.first().or(ImmutableList.<AnnotationTreeImpl>of());
         dimensions.add(new ArrayDimensionTreeImpl(annotations, brackets.first(), null, brackets.second()));
       }
     }

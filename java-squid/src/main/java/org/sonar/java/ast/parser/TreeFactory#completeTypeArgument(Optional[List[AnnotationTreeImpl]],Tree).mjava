@@ -1,5 +1,12 @@
   public Tree completeTypeArgument(Optional<List<AnnotationTreeImpl>> annotations, Tree partial) {
-    // FIXME SONARJAVA-547 Handle annotations
+    if (partial.is(Tree.Kind.UNBOUNDED_WILDCARD, Tree.Kind.EXTENDS_WILDCARD, Tree.Kind.SUPER_WILDCARD)) {
+      List<AnnotationTree> annotationList = annotations.isPresent() ?
+        ImmutableList.<AnnotationTree>builder().addAll(annotations.get()).build() :
+        ImmutableList.<AnnotationTree>of();
+      ((WildcardTreeImpl) partial).complete(annotationList);
+    } else {
+      completeTypeTreeWithAnnotations((TypeTree) partial, annotations);
+    }
     return partial;
   }
 

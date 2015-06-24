@@ -6,8 +6,8 @@
     Optional<StatementExpressionListTreeImpl> forUpdate, InternalSyntaxToken closeParenToken,
     StatementTree statement) {
 
-    StatementExpressionListTreeImpl forInit2 = forInit.isPresent() ? forInit.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
-    StatementExpressionListTreeImpl forUpdate2 = forUpdate.isPresent() ? forUpdate.get() : new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of());
+    StatementExpressionListTreeImpl forInit2 = forInit.or(new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of()));
+    StatementExpressionListTreeImpl forUpdate2 = forUpdate.or(new StatementExpressionListTreeImpl(ImmutableList.<StatementTree>of()));
 
     InternalSyntaxToken forKeyword = (InternalSyntaxToken) forTokenKeyword;
 
@@ -16,7 +16,7 @@
       openParenToken,
       forInit2,
       forInitSemicolonToken,
-      expression.isPresent() ? expression.get() : null,
+      expression.orNull(),
       expressionSemicolonToken,
       forUpdate2,
       closeParenToken,

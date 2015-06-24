@@ -39,6 +39,19 @@
 
     assertThat(typeArguments.get(3)).isInstanceOf(IdentifierTree.class);
 
+    variableTree = (VariableTree) firstMethodFirstStatement("public class T { void m() { ClassType<@Foo ? extends A> var; } }");
+    parameterizedTypeTree = (ParameterizedTypeTree) variableTree.type();
+    assertThatChildrenIteratorHasSize(parameterizedTypeTree, 2);
+    typeArguments = parameterizedTypeTree.typeArguments();
+    assertThatChildrenIteratorHasSize(typeArguments, 3);
+    wildcard = (WildcardTree) typeArguments.get(0);
+    assertThat(wildcard.is(Tree.Kind.EXTENDS_WILDCARD)).isTrue();
+    assertThat(wildcard.bound()).isInstanceOf(IdentifierTree.class);
+    assertThat(wildcard.queryToken().text()).isEqualTo("?");
+    assertThat(wildcard.annotations()).hasSize(1);
+    assertThat(wildcard.extendsOrSuperToken().text()).isEqualTo("extends");
+    assertThatChildrenIteratorHasSize(wildcard, 4);
+
     variableTree = (VariableTree) firstMethodFirstStatement("public class T { void m() { ClassType<? extends @Foo @Bar A> var; } }");
     parameterizedTypeTree = (ParameterizedTypeTree) variableTree.type();
     assertThatChildrenIteratorHasSize(parameterizedTypeTree, 2);
@@ -47,11 +60,9 @@
     wildcard = (WildcardTree) typeArguments.get(0);
     assertThat(wildcard.is(Tree.Kind.EXTENDS_WILDCARD)).isTrue();
     assertThat(wildcard.bound()).isInstanceOf(IdentifierTree.class);
-    assertThat(wildcard.queryToken()).isNotNull();
+    assertThat(wildcard.annotations()).isEmpty();
     assertThat(wildcard.queryToken().text()).isEqualTo("?");
-    assertThat(wildcard.extendsOrSuperToken()).isNotNull();
     assertThat(wildcard.extendsOrSuperToken().text()).isEqualTo("extends");
-    // FIXME SONARJAVA-547 annotations should be present in the wildcard tree
-    assertThatChildrenIteratorHasSize(wildcard, 5);
+    assertThatChildrenIteratorHasSize(wildcard, 3);
   }
 

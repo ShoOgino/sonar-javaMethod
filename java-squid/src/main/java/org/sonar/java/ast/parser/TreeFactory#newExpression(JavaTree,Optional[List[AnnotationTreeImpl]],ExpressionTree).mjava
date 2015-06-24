@@ -1,11 +1,17 @@
   public ExpressionTree newExpression(JavaTree newToken, Optional<List<AnnotationTreeImpl>> annotations, ExpressionTree partial) {
-    // FIXME SONARJAVA-547 Handle annotations
     InternalSyntaxToken newSyntaxToken = (InternalSyntaxToken) newToken;
+    
+    TypeTree typeTree;
     if (partial.is(Tree.Kind.NEW_CLASS)) {
-      ((NewClassTreeImpl) partial).completeWithNewKeyword(newSyntaxToken);
+      NewClassTreeImpl newClassTree = (NewClassTreeImpl) partial;
+      newClassTree.completeWithNewKeyword(newSyntaxToken);
+      typeTree = newClassTree.identifier();
     } else {
-      ((NewArrayTreeImpl) partial).completeWithNewKeyword(newSyntaxToken);
+      NewArrayTreeImpl newArrayTree = (NewArrayTreeImpl) partial;
+      newArrayTree.completeWithNewKeyword(newSyntaxToken);
+      typeTree = newArrayTree.type();
     }
+    completeTypeTreeWithAnnotations(typeTree, annotations);
     return partial;
   }
 
