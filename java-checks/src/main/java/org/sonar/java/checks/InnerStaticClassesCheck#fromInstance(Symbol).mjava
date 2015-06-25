@@ -1,10 +1,12 @@
-  private boolean fromInstance(Symbol owner) {
+  private int fromInstance(Symbol owner) {
+    int i = -1;
+    Type ownerType = owner.type();
     for (Symbol outerClass : outerClasses) {
-      Type ownerType = owner.type();
-      if (owner.equals(outerClass) || (ownerType != null && outerClass.type().isSubtypeOf(ownerType))) {
-        return true;
+      i++;
+      if (owner.equals(outerClass) || (ownerType != null && owner.isTypeSymbol() && outerClass.type().isSubtypeOf(ownerType))) {
+        return i;
       }
     }
-    return false;
+    return -1;
   }
 
