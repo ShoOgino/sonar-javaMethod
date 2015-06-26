@@ -1,15 +1,8 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    ImmutableList.Builder<Tree> iterator = ImmutableList.<Tree>builder();
-    if (openBracketToken != null) {
-      iterator.add(openBracketToken);
-    }
-    // FIXME SONARJAVA-547 separators between parameters are currently ignored
-    iterator.addAll(this);
-    if (closeBracketToken != null) {
-      iterator.add(closeBracketToken);
-    }
-
-    return iterator.build().iterator();
+    return Iterators.concat(
+        Iterators.singletonIterator(openBracketToken),
+        super.childrenIterator(),
+        Iterators.singletonIterator(closeBracketToken));
   }
 

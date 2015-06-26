@@ -1,6 +1,10 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    // TODO
-    throw new UnsupportedOperationException();
+    //FIXME SONARJAVA-547 Separators
+    Iterator<Tree> iterator = (Iterator<Tree>) ((Iterable<? extends Tree>) list).iterator();
+    if(separators.isEmpty()) {
+      return iterator;
+    }
+    return new InterleaveIterator<>(ImmutableList.of(iterator, separators.iterator()));
   }
 
