@@ -1,0 +1,23 @@
+    private void printTrivia(SyntaxTrivia trivia) {
+      String comment = trivia.comment();
+      int deltaLine = trivia.startLine() - lastLine;
+      for (int i = 0; i < deltaLine; i++) {
+        newLine();
+      }
+      int numberEOL = StringUtils.countMatches(comment, EOL);
+      if (numberEOL > 0) {
+        lastLine = trivia.startLine() + numberEOL; // recalculate the last line
+      }
+      int deltaColumn = trivia.column() - lastColumn;
+      for (int i = 0; i < deltaColumn; i++) {
+        space();
+      }
+      print(comment);
+
+      if (numberEOL > 0) {
+        lastColumn = StringUtils.substringAfterLast(comment, EOL).length();
+      } else {
+        lastColumn += comment.length();
+      }
+    }
+

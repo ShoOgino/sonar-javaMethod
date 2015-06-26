@@ -1,0 +1,17 @@
+  @Test
+  public void test() {
+    File file = new File("src/test/java/org/sonar/java/model/TreeTokenCompletenessTest.java");
+
+    List<String> basedOnSyntaxTree = readFileFromSyntaxTree(file);
+    List<String> basedOnFileLine = readFile(file);
+    Map<Integer, String> differences = getDifferences(basedOnSyntaxTree, basedOnFileLine);
+
+    assertThat(basedOnSyntaxTree).isNotEmpty();
+    assertThat(basedOnSyntaxTree.size()).isEqualTo(basedOnFileLine.size());
+
+    // printListString(basedOnSyntaxTree);
+    // printDifferences(differences);
+
+    assertThat(differences).hasSize(10);
+  }
+
