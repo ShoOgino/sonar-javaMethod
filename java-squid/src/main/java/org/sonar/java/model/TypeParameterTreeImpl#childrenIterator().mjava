@@ -1,8 +1,9 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    Iterator<Tree> boundsIterator = bounds == null ? Iterators.<Tree>emptyIterator() : Iterators.concat(Iterators.singletonIterator(extendsToken), bounds.iterator());
-    return Iterators.concat(
-      Iterators.singletonIterator(identifier),
-      boundsIterator);
+    Iterator<Tree> boundsIterator = Iterators.emptyIterator();
+    if (extendsToken != null) {
+      boundsIterator = Iterators.concat(Iterators.<Tree>singletonIterator(extendsToken), Iterators.singletonIterator(bounds));
+    }
+    return Iterators.concat(Iterators.singletonIterator(identifier), boundsIterator);
   }
 

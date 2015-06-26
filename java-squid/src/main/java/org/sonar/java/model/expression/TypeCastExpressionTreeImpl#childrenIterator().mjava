@@ -1,10 +1,11 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    Iterator<Tree> boundIterators = bounds.isEmpty() ? Iterators.<Tree>emptyIterator() : bounds.iterator();
-    return Iterators.<Tree>concat(
-      Iterators.<Tree>forArray(openParenToken, type),
-      boundIterators,
-      Iterators.<Tree>forArray(closeParenToken, expression)
+    Iterator<Tree> andTokenIterator = andToken == null ? Iterators.<Tree>emptyIterator() : Iterators.<Tree>singletonIterator(andToken());
+    return Iterators.concat(
+      Iterators.forArray(openParenToken, type),
+      andTokenIterator,
+      Iterators.singletonIterator(bounds),
+      Iterators.forArray(closeParenToken, expression)
       );
   }
 
