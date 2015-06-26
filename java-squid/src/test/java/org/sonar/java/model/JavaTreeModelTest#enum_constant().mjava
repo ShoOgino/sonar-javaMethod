@@ -9,12 +9,10 @@
     assertThat(tree.separatorToken().text()).isEqualTo(",");
     assertThatChildrenIteratorHasSize(tree, 3);
     NewClassTree newClassTree = tree.initializer();
-    assertThat(newClassTree.openParenToken()).isNull();
     assertThat(newClassTree.arguments()).isEmpty();
-    assertThat(newClassTree.closeParenToken()).isNull();
     assertThat(newClassTree.classBody()).isNull();
     assertThat(newClassTree.newKeyword()).isNull();
-    assertThatChildrenIteratorHasSize(newClassTree, 1);
+    assertThatChildrenIteratorHasSize(newClassTree, 2);
 
     tree = (EnumConstantTree) declarations.get(1);
     assertThat(tree.is(Tree.Kind.ENUM_CONSTANT)).isTrue();
@@ -22,12 +20,12 @@
     assertThat(tree.separatorToken().text()).isEqualTo(";");
     assertThatChildrenIteratorHasSize(tree, 3);
     newClassTree = tree.initializer();
-    assertThat(newClassTree.openParenToken()).isNotNull();
+    assertThat(newClassTree.arguments().openParenToken()).isNotNull();
     assertThat(newClassTree.arguments()).hasSize(1);
-    assertThat(newClassTree.closeParenToken()).isNotNull();
+    assertThat(newClassTree.arguments().closeParenToken()).isNotNull();
     assertThat(newClassTree.classBody()).isNotNull();
     assertThat(newClassTree.classBody().openBraceToken().text()).isEqualTo("{");
     assertThat(newClassTree.newKeyword()).isNull();
-    assertThatChildrenIteratorHasSize(newClassTree, 5);
+    assertThatChildrenIteratorHasSize(newClassTree, 3);
   }
 

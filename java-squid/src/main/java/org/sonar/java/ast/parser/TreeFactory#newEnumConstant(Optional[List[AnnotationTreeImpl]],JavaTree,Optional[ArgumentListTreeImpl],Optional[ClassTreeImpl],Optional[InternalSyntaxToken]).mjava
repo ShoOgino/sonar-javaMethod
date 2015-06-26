@@ -6,22 +6,8 @@
 
     IdentifierTreeImpl identifier = new IdentifierTreeImpl((InternalSyntaxToken) identifierToken);
 
-    SyntaxToken openParenToken = null;
-    SyntaxToken closeParenToken = null;
-    List<ExpressionTree> argumentsList = Collections.emptyList();
-    if (arguments.isPresent()) {
-      ArgumentListTreeImpl argumentsListTreeImpl = arguments.get();
-      argumentsList = argumentsListTreeImpl;
-      openParenToken = argumentsListTreeImpl.openParenToken();
-      closeParenToken = argumentsListTreeImpl.closeParenToken();
-    }
-
-    NewClassTreeImpl newClass = new NewClassTreeImpl(
-      openParenToken,
-      argumentsList,
-      closeParenToken,
-      classBody.orNull()
-      );
+    ArgumentListTreeImpl defaultArguments = new ArgumentListTreeImpl(ImmutableList.<ExpressionTree>of(), ImmutableList.<SyntaxToken>of());
+    NewClassTreeImpl newClass = new NewClassTreeImpl(arguments.or(defaultArguments), classBody.orNull());
     newClass.completeWithIdentifier(identifier);
 
     return new EnumConstantTreeImpl(modifiers((Optional<List<ModifierTree>>) (Optional<?>) annotations), identifier, newClass, commaToken.orNull());

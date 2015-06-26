@@ -6,9 +6,10 @@
       return;
     }
     resolveAs(tree.annotationType(), JavaSymbol.TYP);
-    if (tree.arguments().size() > 1 || (!tree.arguments().isEmpty() && tree.arguments().get(0).is(Tree.Kind.ASSIGNMENT))) {
+    Arguments arguments = tree.arguments();
+    if (arguments.size() > 1 || (!arguments.isEmpty() && arguments.get(0).is(Tree.Kind.ASSIGNMENT))) {
       // resolve by identifying correct identifier in assignment.
-      for (ExpressionTree expressionTree : tree.arguments()) {
+      for (ExpressionTree expressionTree : arguments) {
         AssignmentExpressionTree aet = (AssignmentExpressionTree) expressionTree;
         IdentifierTree variable = (IdentifierTree) aet.variable();
         JavaSymbol identInType = resolve.findMethod(semanticModel.getEnv(tree), getType(tree.annotationType()), variable.name(), ImmutableList.<JavaType>of()).symbol();
@@ -21,7 +22,7 @@
         resolveAs(aet.expression(), JavaSymbol.VAR);
       }
     } else {
-      for (ExpressionTree expressionTree : tree.arguments()) {
+      for (ExpressionTree expressionTree : arguments) {
         resolveAs(expressionTree, JavaSymbol.VAR);
       }
     }
