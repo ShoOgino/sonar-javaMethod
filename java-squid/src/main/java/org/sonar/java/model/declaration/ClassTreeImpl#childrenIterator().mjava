@@ -1,20 +1,18 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
-
-    iteratorBuilder.add(modifiers);
-    addIfNotNull(iteratorBuilder, atToken);
-    addIfNotNull(iteratorBuilder, declarationKeyowrd);
-    addIfNotNull(iteratorBuilder, simpleName);
-    iteratorBuilder.add(typeParameters);
-    addIfNotNull(iteratorBuilder, extendsKeyword);
-    addIfNotNull(iteratorBuilder, superClass);
-    addIfNotNull(iteratorBuilder, implementsKeyowrd);
-    iteratorBuilder.addAll(superInterfaces);
-    addIfNotNull(iteratorBuilder, openBraceToken);
-    iteratorBuilder.addAll(members);
-    addIfNotNull(iteratorBuilder, closeBraceToken);
-
-    return iteratorBuilder.build().iterator();
+    return Iterators.concat(
+      Iterators.singletonIterator(modifiers),
+      addIfNotNull(atToken),
+      addIfNotNull(declarationKeyowrd),
+      addIfNotNull(simpleName),
+      Iterators.singletonIterator(typeParameters),
+      addIfNotNull(extendsKeyword),
+      addIfNotNull(superClass),
+      addIfNotNull(implementsKeyowrd),
+      Iterators.singletonIterator(superInterfaces),
+      addIfNotNull(openBraceToken),
+      members.iterator(),
+      addIfNotNull(closeBraceToken)
+      );
   }
 

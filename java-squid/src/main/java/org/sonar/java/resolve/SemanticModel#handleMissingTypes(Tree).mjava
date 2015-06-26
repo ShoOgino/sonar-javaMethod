@@ -4,6 +4,7 @@
   public static void handleMissingTypes(Tree tree) {
     // (Godin): Another and probably better (safer) way to do the same - is to assign default value during creation of nodes, so that to guarantee that this step won't be skipped.
     tree.accept(new BaseTreeVisitor() {
+
       @Override
       protected void scan(@Nullable Tree tree) {
         if (tree instanceof AbstractTypedTree) {
@@ -13,6 +14,13 @@
           }
         }
         super.scan(tree);
+      }
+
+      @Override
+      protected void scan(ListTree<? extends Tree> listTree) {
+        if (listTree != null) {
+          scan((List<? extends Tree>) listTree);
+        }
       }
     });
   }
