@@ -1,7 +1,11 @@
   public Collection<JavaCheck> testCheckClasses() {
-    if(testChecks == null) {
-      return Lists.newArrayList();
+    List<JavaCheck> visitors = Lists.newArrayList();
+    for (Checks<JavaCheck> checksElement : testChecks) {
+      Collection<JavaCheck> checksCollection = checksElement.all();
+      if (!checksCollection.isEmpty()) {
+        visitors.addAll(checksCollection);
+      }
     }
-    return testChecks.all();
+    return visitors;
   }
 

@@ -1,17 +1,18 @@
   @Test
-  public void creation_of_custom_checks() {
+  public void creation_of_both_types_test_checks() {
     JavaCheck expectedCheck = new CustomCheck();
+    JavaCheck expectedTestCheck = new CustomTestCheck();
     CheckRegistrar expectedRegistrar = new CheckRegistrar() {
       @Override
       public void register(RegistrarContext registrarContext) {
         registrarContext.registerClassesForRepository(
           REPOSITORY_NAME,
-          Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class),
-          null);
+          Lists.<Class<? extends JavaCheck>>newArrayList(CustomCheck.class),
+          Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class));
       }
     };
 
-    when(this.checks.all()).thenReturn(Lists.<JavaCheck>newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
+    when(this.checks.all()).thenReturn(Lists.<JavaCheck>newArrayList(expectedCheck)).thenReturn(Lists.<JavaCheck>newArrayList(expectedTestCheck));
     SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, null, null, null, this.checkFactory, new CheckRegistrar[] {
       expectedRegistrar
     });
@@ -20,6 +21,7 @@
     assertThat(visitors).hasSize(1);
     assertThat(visitors[0]).isEqualTo(expectedCheck);
     Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
-    assertThat(testChecks).hasSize(0);
+    assertThat(testChecks).hasSize(1);
+    assertThat(testChecks.iterator().next()).isEqualTo(expectedTestCheck);
   }
 

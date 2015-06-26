@@ -1,7 +1,10 @@
   public CodeVisitor[] checkClasses() {
     List<CodeVisitor> visitors = Lists.newArrayList();
-    for (Checks<JavaCheck> check : checks) {
-      visitors.addAll(check.all());
+    for (Checks<JavaCheck> checksElement : checks) {
+      Collection<JavaCheck> checksCollection = checksElement.all();
+      if (!checksCollection.isEmpty()) {
+        visitors.addAll(checksCollection);
+      }
     }
     return visitors.toArray(new CodeVisitor[visitors.size()]);
   }
