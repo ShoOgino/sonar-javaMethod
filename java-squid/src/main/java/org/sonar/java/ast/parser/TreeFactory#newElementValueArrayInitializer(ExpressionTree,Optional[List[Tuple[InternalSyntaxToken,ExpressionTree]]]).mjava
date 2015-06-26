@@ -1,11 +1,13 @@
   public NewArrayTreeImpl newElementValueArrayInitializer(ExpressionTree elementValue, Optional<List<Tuple<InternalSyntaxToken, ExpressionTree>>> rests) {
     ImmutableList.Builder<ExpressionTree> expressions = ImmutableList.builder();
+    ImmutableList.Builder<SyntaxToken> separators = ImmutableList.builder();
     expressions.add(elementValue);
     if (rests.isPresent()) {
       for (Tuple<InternalSyntaxToken, ExpressionTree> rest : rests.get()) {
+        separators.add(rest.first());
         expressions.add(rest.second());
       }
     }
-    return new NewArrayTreeImpl(ImmutableList.<ArrayDimensionTree>of(), expressions.build());
+    return new NewArrayTreeImpl(ImmutableList.<ArrayDimensionTree>of(), new InitializerListTreeImpl(expressions.build(), separators.build()));
   }
 
