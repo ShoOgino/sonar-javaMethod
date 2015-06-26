@@ -3,9 +3,9 @@
     TypeParameterListTreeImpl tree = (TypeParameterListTreeImpl) firstType("class Foo<T, U extends Object & Number> {}").typeParameters();
     assertThat(tree.openBracketToken().text()).isEqualTo("<");
     assertThat(tree.closeBracketToken().text()).isEqualTo(">");
-    // TODO SONARJAVA-547 comma is missing
-    assertThatChildrenIteratorHasSize(tree, 4);
     assertThat(tree).hasSize(2);
+    assertThat(tree.separators()).hasSize(1);
+    assertThatChildrenIteratorHasSize(tree, 5);
 
     TypeParameterTree param = tree.get(0);
     assertThat(param.identifier().name()).isEqualTo("T");
