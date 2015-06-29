@@ -1,0 +1,18 @@
+  public ExpressionTree newAnnotatedParameterizedIdentifier(
+    Optional<List<AnnotationTreeImpl>> annotations, InternalSyntaxToken identifierToken, Optional<TypeArgumentListTreeImpl> typeArguments) {
+
+    List<AnnotationTree> annotationList = annotations.isPresent() ?
+      ImmutableList.<AnnotationTree>builder().addAll(annotations.get()).build() :
+      ImmutableList.<AnnotationTree>of();
+
+    ExpressionTree result = new IdentifierTreeImpl(identifierToken);
+
+    if (typeArguments.isPresent()) {
+      result = new ParameterizedTypeTreeImpl((TypeTree) result, typeArguments.get()).complete(annotationList);
+    } else {
+      result = ((IdentifierTreeImpl) result).complete(annotationList);
+    }
+
+    return result;
+  }
+

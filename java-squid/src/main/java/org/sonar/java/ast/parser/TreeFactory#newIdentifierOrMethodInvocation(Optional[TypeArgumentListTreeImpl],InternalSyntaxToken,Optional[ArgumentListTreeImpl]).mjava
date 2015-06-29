@@ -1,0 +1,10 @@
+  public ExpressionTree newIdentifierOrMethodInvocation(Optional<TypeArgumentListTreeImpl> typeArguments, InternalSyntaxToken identifierToken, Optional<ArgumentListTreeImpl> arguments) {
+    // FIXME SONARJAVA-547 Handle type arguments
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(identifierToken);
+    ExpressionTree result = identifier;
+    if (arguments.isPresent()) {
+      result = new MethodInvocationTreeImpl(identifier, typeArguments.orNull(), arguments.get());
+    }
+    return result;
+  }
+
