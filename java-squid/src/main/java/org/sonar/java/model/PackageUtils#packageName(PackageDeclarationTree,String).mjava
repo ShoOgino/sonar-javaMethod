@@ -1,11 +1,13 @@
-  private static String concatenate(ExpressionTree tree) {
-    Deque<String> pieces = new LinkedList<String>();
-
-    ExpressionTree expr = tree;
+  public static String packageName(@Nullable PackageDeclarationTree packageDeclarationTree, String separator) {
+    if(packageDeclarationTree == null) {
+      return "";
+    }
+    Deque<String> pieces = new LinkedList<>();
+    ExpressionTree expr = packageDeclarationTree.packageName();
     while (expr.is(Tree.Kind.MEMBER_SELECT)) {
       MemberSelectExpressionTree mse = (MemberSelectExpressionTree) expr;
       pieces.push(mse.identifier().name());
-      pieces.push(".");
+      pieces.push(separator);
       expr = mse.expression();
     }
     if (expr.is(Tree.Kind.IDENTIFIER)) {

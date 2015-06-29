@@ -1,7 +1,7 @@
   @Override
   public void visitCompilationUnit(CompilationUnitTree tree) {
     if (tree.packageDeclaration() != null) {
-      String name = concatenate(tree.packageDeclaration().packageName());
+      String name = PackageUtils.packageName(tree.packageDeclaration(), ".");
       if (!pattern.matcher(name).matches()) {
         context.addIssue(tree, this, "Rename this package name to match the regular expression '" + format + "'.");
       }

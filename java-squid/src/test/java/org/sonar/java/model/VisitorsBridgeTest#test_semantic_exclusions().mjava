@@ -1,0 +1,24 @@
+  @Test
+  public void test_semantic_exclusions() {
+    VisitorsBridge visitorsBridgeWithoutSemantic = new VisitorsBridge(new JavaFileScanner() {
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        assertThat(context.getSemanticModel() == null).isTrue();
+      }
+    });
+    visitorsBridgeWithoutSemantic.setContext(context);
+    checkFile(contstructFileName("java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
+    checkFile(contstructFileName("src", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
+    checkFile(contstructFileName("home", "user", "oracleSdk", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
+    checkFile(contstructFileName("java","io","Serializable.java"), "package java.io; class A {}", visitorsBridgeWithoutSemantic);
+    checkFile(contstructFileName("java","lang", "annotation", "Annotation.java"), "package java.lang.annotation; class Annotation {}", visitorsBridgeWithoutSemantic);
+    VisitorsBridge visitorsBridgeWithSemantic = new VisitorsBridge(new JavaFileScanner() {
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        assertThat(context.getSemanticModel() == null).isFalse();
+      }
+    });
+    visitorsBridgeWithSemantic.setContext(context);
+    checkFile(contstructFileName("src", "foo", "bar", "java", "lang", "someFile.java"), "package foo.bar.java.lang; class A{}", visitorsBridgeWithSemantic);
+  }
+
