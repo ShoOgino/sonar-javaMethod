@@ -1,11 +1,9 @@
   @Override
   public Iterator<Tree> childrenIterator() {
-    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
-    addIfNotNull(iteratorBuilder, enclosingExpression, dotToken, newKeyword);
-    iteratorBuilder.add(identifier);
-    iteratorBuilder.add(arguments);
-    addIfNotNull(iteratorBuilder, classBody);
-    
-    return iteratorBuilder.build().iterator();
+    Iterator<Tree> result = Iterators.<Tree>emptyIterator();
+    result = addIfNotNull(result, enclosingExpression, dotToken, newKeyword, typeArguments);
+    result = add(result, identifier, arguments);
+    result = addIfNotNull(result, classBody);
+    return result;
   }
 
