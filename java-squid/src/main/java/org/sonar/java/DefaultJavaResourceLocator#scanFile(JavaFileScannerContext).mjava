@@ -3,7 +3,8 @@
     Preconditions.checkNotNull(sensorContext);
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
-    org.sonar.api.resources.File currentResource = org.sonar.api.resources.File.fromIOFile(context.getFile(), project);
+    InputFile inputFile = fs.inputFile(fs.predicates().is(context.getFile()));
+    org.sonar.api.resources.File currentResource = (org.sonar.api.resources.File) sensorContext.getResource(inputFile);
     if (currentResource == null) {
       throw new IllegalStateException("resource not found : " + context.getFileKey());
     }
@@ -15,9 +16,8 @@
       }
     }
     methodStartLines.putAll(javaFilesCache.getMethodStartLines());
-    org.sonar.api.resources.File indexedResource = sensorContext.getResource(currentResource);
-    if (indexedResource != null && javaFilesCache.hasSuppressWarningLines()) {
-      suppressWarningsFilter.addComponent(indexedResource.getEffectiveKey(), javaFilesCache.getSuppressWarningLines());
+    if (javaFilesCache.hasSuppressWarningLines()) {
+      suppressWarningsFilter.addComponent(currentResource.getEffectiveKey(), javaFilesCache.getSuppressWarningLines());
     }
   }
 

@@ -1,8 +1,8 @@
   private Map<String, Double> getMetrics() {
     ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
-    ArgumentCaptor<org.sonar.api.resources.File> files = ArgumentCaptor.forClass(org.sonar.api.resources.File.class);
+    ArgumentCaptor<InputFile> files = ArgumentCaptor.forClass(InputFile.class);
     verify(context, atLeastOnce()).saveMeasure(files.capture(), captor.capture());
-    Map<String, Double> metrics = new HashMap<String, Double>();
+    Map<String, Double> metrics = new HashMap<>();
     for (Measure measure : captor.getAllValues()) {
       if(measure.getValue() != null ){
         if(metrics.get(measure.getMetricKey())==null) {
