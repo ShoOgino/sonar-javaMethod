@@ -1,7 +1,6 @@
   @Override
   public void visitMethod(AsmMethod asmMethod) {
-    if (!asmMethod.isUsed() && asmMethod.isProtected() && !asmClass.isAbstract() && !SerializableContract.methodMatch(asmMethod)
-      && !asmMethod.isInherited()) {
+    if (isUnusedNonOverridenProtectedMethod(asmMethod) && !asmClass.isAbstract() && !SerializableContract.methodMatch(asmMethod)) {
       CheckMessage message = new CheckMessage(this, "Protected method '" + asmMethod.getName() + "(...)' is never used.");
       int line = getMethodLineNumber(asmMethod);
       if (line > 0) {
