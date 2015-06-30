@@ -1,7 +1,14 @@
-  public NewArrayTreeImpl newArrayInitializer(InternalSyntaxToken openBraceToken, Optional<List<Tuple<ExpressionTree, Optional<InternalSyntaxToken>>>> rests,
+  public NewArrayTreeImpl newArrayInitializer(
+    InternalSyntaxToken openBraceToken,
+    Optional<InternalSyntaxToken> optionalComma,
+    Optional<List<Tuple<ExpressionTree, Optional<InternalSyntaxToken>>>> rests,
     InternalSyntaxToken closeBraceToken) {
     ImmutableList.Builder<ExpressionTree> initializers = ImmutableList.builder();
     ImmutableList.Builder<SyntaxToken> separators = ImmutableList.builder();
+
+    if (optionalComma.isPresent()) {
+      separators.add(optionalComma.get());
+    }
     if (rests.isPresent()) {
       for (Tuple<ExpressionTree, Optional<InternalSyntaxToken>> rest : rests.get()) {
         initializers.add(rest.first());
