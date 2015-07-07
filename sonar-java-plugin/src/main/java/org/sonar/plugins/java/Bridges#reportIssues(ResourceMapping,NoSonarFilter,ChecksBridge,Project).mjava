@@ -1,10 +1,11 @@
   private void reportIssues(ResourceMapping resourceMapping, NoSonarFilter noSonarFilter, ChecksBridge checksBridge, Project project) {
     ProjectIssue projectIssue = null;
     if (settings.getBoolean(JavaPlugin.JSON_OUTPUT)) {
+      LOG.error("creating project issue ");
       projectIssue = new ProjectIssue();
     }
     for (Resource directory : resourceMapping.directories()) {
-      checksBridge.reportIssueForPackageInfo((Directory) directory, project);
+      checksBridge.reportIssueForPackageInfo((Directory) directory, project, projectIssue);
       for (Resource sonarFile : resourceMapping.files((Directory) directory)) {
         String key = resourceMapping.getFileKeyByResource((org.sonar.api.resources.File) sonarFile);
         // key would be null for test files as they are not in squid index.

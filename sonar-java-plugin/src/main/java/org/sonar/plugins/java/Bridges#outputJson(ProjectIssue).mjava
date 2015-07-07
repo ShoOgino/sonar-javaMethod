@@ -2,28 +2,24 @@
     if (projectIssue != null) {
       File folder = new File(settings.getString(JavaPlugin.JSON_OUTPUT_FOLDER));
       folder.mkdir();
-      LOG.info("Outputing json files to folder: "+folder.getAbsolutePath());
+      LOG.info("Outputing json files to folder: " + folder.getAbsolutePath());
       for (Map.Entry<RuleKey, RuleIssues> entry : projectIssue.rules.entrySet()) {
-        PrintWriter pw = null;
-        try {
-          pw = new PrintWriter(new File(folder, "squid-" + entry.getKey().rule() + ".json"), "UTF-8");
-          pw.println("{");
+        try (FileWriter pw = new FileWriter(folder.getAbsolutePath() + File.separator + "squid-" + entry.getKey().rule() + ".json")) {
+          pw.write("{\n");
           RuleIssues ruleIssues = entry.getValue();
           for (Map.Entry<String, FileIssues> stringFileIssuesEntry : ruleIssues.files.entrySet()) {
             FileIssues fileIssues = stringFileIssuesEntry.getValue();
-            if (!fileIssues.lines.isEmpty()) {
-              pw.println("'project:" + stringFileIssuesEntry.getKey() + "':[");
-              for (Integer line : fileIssues.lines) {
-                pw.println(line + ",");
+            if (!fileIssues.getLines().isEmpty()) {
+              pw.write("'project:" + stringFileIssuesEntry.getKey() + "':[\n");
+              for (Integer line : fileIssues.getLines()) {
+                pw.write(line + ",\n");
               }
-              pw.println("],");
+              pw.write("],\n");
             }
           }
-          pw.println("}");
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+          pw.write("}\n");
+        } catch (IOException e) {
           e.printStackTrace();
-        } finally {
-          pw.close();
         }
       }
     }
