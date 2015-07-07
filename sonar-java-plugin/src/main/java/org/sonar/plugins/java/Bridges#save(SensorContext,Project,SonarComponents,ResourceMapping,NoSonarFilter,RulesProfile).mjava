@@ -1,12 +1,12 @@
   public void save(SensorContext context, Project project, SonarComponents sonarComponents, ResourceMapping resourceMapping,
     NoSonarFilter noSonarFilter, RulesProfile rulesProfile) {
     boolean skipPackageDesignAnalysis = settings.getBoolean(CoreProperties.DESIGN_SKIP_PACKAGE_DESIGN_PROPERTY);
-    //Design
+    // Design
     if (!skipPackageDesignAnalysis && squid.isBytecodeScanned()) {
       DesignBridge designBridge = new DesignBridge(context, squid.getGraph(), resourceMapping, sonarComponents.getResourcePerspectives());
       designBridge.saveDesign(project);
     }
-    //Report Issues
+    // Report Issues
     ChecksBridge checksBridge = new ChecksBridge(sonarComponents, rulesProfile);
     reportIssues(resourceMapping, noSonarFilter, checksBridge, project);
   }

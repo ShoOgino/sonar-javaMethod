@@ -1,0 +1,31 @@
+  private void outputJson(@Nullable ProjectIssue projectIssue) {
+    if (projectIssue != null) {
+      File folder = new File(settings.getString(JavaPlugin.JSON_OUTPUT_FOLDER));
+      folder.mkdir();
+      LOG.info("Outputing json files to folder: "+folder.getAbsolutePath());
+      for (Map.Entry<RuleKey, RuleIssues> entry : projectIssue.rules.entrySet()) {
+        PrintWriter pw = null;
+        try {
+          pw = new PrintWriter(new File(folder, "squid-" + entry.getKey().rule() + ".json"), "UTF-8");
+          pw.println("{");
+          RuleIssues ruleIssues = entry.getValue();
+          for (Map.Entry<String, FileIssues> stringFileIssuesEntry : ruleIssues.files.entrySet()) {
+            FileIssues fileIssues = stringFileIssuesEntry.getValue();
+            if (!fileIssues.lines.isEmpty()) {
+              pw.println("'project:" + stringFileIssuesEntry.getKey() + "':[");
+              for (Integer line : fileIssues.lines) {
+                pw.println(line + ",");
+              }
+              pw.println("],");
+            }
+          }
+          pw.println("}");
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+          e.printStackTrace();
+        } finally {
+          pw.close();
+        }
+      }
+    }
+  }
+

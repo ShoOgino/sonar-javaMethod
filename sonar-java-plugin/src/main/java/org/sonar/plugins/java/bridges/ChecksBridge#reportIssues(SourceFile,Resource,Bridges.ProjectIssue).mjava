@@ -1,23 +1,26 @@
-  public void reportIssues(SourceFile squidFile, Resource sonarFile) {
+  public void reportIssues(SourceFile squidFile, Resource sonarFile, @Nullable Bridges.ProjectIssue project) {
     if (squidFile.hasCheckMessages()) {
       Issuable issuable = resourcePerspectives.as(Issuable.class, sonarFile);
       Set<CheckMessage> messages = squidFile.getCheckMessages();
-      if(issuable != null) {
+      if (issuable != null) {
         for (CheckMessage checkMessage : messages) {
           Object check = checkMessage.getCheck();
 
           RuleKey ruleKey = getRuleKey((JavaCheck) check);
           if (ruleKey != null) {
-            Issue issue = issuable.newIssueBuilder()
+            if (project == null) {
+              Issue issue = issuable.newIssueBuilder()
                 .ruleKey(ruleKey)
                 .line(checkMessage.getLine())
                 .message(checkMessage.formatDefaultMessage())
                 .effortToFix(checkMessage.getCost())
                 .build();
-
-            issuable.addIssue(issue);
+              issuable.addIssue(issue);
+            } else {
+              project.addIssue(ruleKey, sonarFile.getKey(), checkMessage.getLine());
+            }
           } else {
-            throw new IllegalStateException("Cannot find rule key for instance of "+check.getClass());
+            throw new IllegalStateException("Cannot find rule key for instance of " + check.getClass());
           }
         }
       }
