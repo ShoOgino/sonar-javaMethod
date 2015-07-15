@@ -4,22 +4,10 @@
       folder.mkdir();
       LOG.info("Outputing json files to folder: " + folder.getAbsolutePath());
       for (Map.Entry<RuleKey, RuleIssues> entry : projectIssue.rules.entrySet()) {
-        try (FileWriter pw = new FileWriter(folder.getAbsolutePath() + File.separator + "squid-" + entry.getKey().rule() + ".json")) {
-          pw.write("{\n");
-          RuleIssues ruleIssues = entry.getValue();
-          for (Map.Entry<String, FileIssues> stringFileIssuesEntry : ruleIssues.files.entrySet()) {
-            FileIssues fileIssues = stringFileIssuesEntry.getValue();
-            if (!fileIssues.getLines().isEmpty()) {
-              pw.write("'project:" + stringFileIssuesEntry.getKey() + "':[\n");
-              for (Integer line : fileIssues.getLines()) {
-                pw.write(line + ",\n");
-              }
-              pw.write("],\n");
-            }
-          }
-          pw.write("}\n");
+        try (PrintWriter pw = new PrintWriter(folder.getAbsolutePath() + File.separator + "squid-" + entry.getKey().rule() + ".json", Charsets.UTF_8.name())) {
+          writeIssueFile(pw, entry.getValue());
         } catch (IOException e) {
-          e.printStackTrace();
+          LOG.error("Could not output json file for rule : " + entry.getKey(), e);
         }
       }
     }
