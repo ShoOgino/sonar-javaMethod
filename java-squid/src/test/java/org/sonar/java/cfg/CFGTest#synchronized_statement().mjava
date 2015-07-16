@@ -1,0 +1,9 @@
+  @Test
+  public void synchronized_statement() throws Exception {
+    CFG cfg = buildCFG("void fun(Object a) {if(a==null) { synchronized(a) { foo();bar();} } System.out.println(''); }");
+    assertThat(cfg.blocks).hasSize(4);
+    assertThat(cfg.blocks.get(2).elements).hasSize(5);
+    assertThat(cfg.blocks.get(2).elements.get(4).is(Tree.Kind.IDENTIFIER)).isTrue();
+    assertThat(((IdentifierTree) cfg.blocks.get(2).elements.get(4)).name()).isEqualTo("a");
+  }
+

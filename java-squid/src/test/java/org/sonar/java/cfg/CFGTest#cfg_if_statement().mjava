@@ -1,0 +1,29 @@
+  @Test
+  public void cfg_if_statement() throws Exception {
+    CFG cfg = buildCFG("void fun() {if(a) { foo(); } }");
+    assertThat(cfg.blocks).hasSize(4);
+    assertThat(successors(cfg.blocks.get(1))).containsOnly(0);
+    assertThat(successors(cfg.blocks.get(2))).containsOnly(1);
+    assertThat(successors(cfg.blocks.get(3))).containsOnly(1, 2);
+    assertThat(cfg.blocks.get(3).terminator).isNotNull();
+    assertThat(cfg.blocks.get(3).elements).hasSize(1);
+    assertThat(cfg.blocks.get(3).terminator.is(Tree.Kind.IF_STATEMENT)).isTrue();
+
+    cfg = buildCFG("void fun() {if(a) { foo(); } else { bar(); } }");
+    assertThat(cfg.blocks).hasSize(5);
+    assertThat(successors(cfg.blocks.get(1))).containsOnly(0);
+    assertThat(successors(cfg.blocks.get(2))).containsOnly(1);
+    assertThat(successors(cfg.blocks.get(3))).containsOnly(1);
+    assertThat(successors(cfg.blocks.get(4))).containsOnly(2, 3);
+    assertThat(cfg.blocks.get(4).terminator).isNotNull();
+    assertThat(cfg.blocks.get(4).elements).hasSize(1);
+    assertThat(cfg.blocks.get(3).elements).hasSize(2);
+    assertThat(cfg.blocks.get(2).elements).hasSize(2);
+    assertThat(cfg.blocks.get(4).terminator.is(Tree.Kind.IF_STATEMENT)).isTrue();
+
+    cfg = buildCFG("void fun() {\nif(a) {\n foo(); \n } else if(b) {\n bar();\n } }");
+    assertThat(cfg.blocks).hasSize(6);
+    assertThat(cfg.blocks.get(5).terminator.is(Tree.Kind.IF_STATEMENT)).isTrue();
+    assertThat(cfg.blocks.get(3).terminator.is(Tree.Kind.IF_STATEMENT)).isTrue();
+  }
+

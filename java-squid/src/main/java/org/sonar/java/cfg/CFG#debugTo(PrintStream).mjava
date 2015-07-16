@@ -1,0 +1,26 @@
+  public void debugTo(PrintStream out) {
+    for (Block block : Lists.reverse(blocks)) {
+      if (block.id != 0) {
+        out.println("B" + block.id + ":");
+      } else {
+        out.println("B" + block.id + " (Exit) :");
+      }
+      int i = 0;
+      for (Tree tree : block.elements()) {
+        out.println("  " + i + ": " + syntaxNodeToDebugString(tree));
+        i++;
+      }
+      if (block.terminator != null) {
+        out.println("  T: " + syntaxNodeToDebugString(block.terminator));
+      }
+      if (!block.successors.isEmpty()) {
+        out.print("  Successors:");
+        for (Block successor : block.successors) {
+          out.print(" B" + successor.id);
+        }
+        out.println();
+      }
+    }
+    out.println();
+  }
+

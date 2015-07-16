@@ -1,0 +1,25 @@
+  private CFG(BlockTree tree) {
+    exitBlock = createBlock();
+    currentBlock = createBlock(exitBlock);
+    for (StatementTree statementTree : Lists.reverse(tree.body())) {
+      build(statementTree);
+    }
+
+    for (Block b : gotos) {
+      assert b.successors.isEmpty();
+      Tree s = b.terminator;
+      assert s != null;
+      String label;
+      if(s instanceof BreakStatementTree) {
+        label = ((BreakStatementTree) s).label().name();
+      } else {
+        label = ((ContinueStatementTree) s).label().name();
+      }
+      Block target = labels.get(label);
+      if (target == null) {
+        throw new IllegalStateException("Undeclared label: " + label);
+      }
+      b.successors.add(target);
+    }
+  }
+
