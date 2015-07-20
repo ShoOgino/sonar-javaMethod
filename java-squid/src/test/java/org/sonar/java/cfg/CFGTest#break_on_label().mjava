@@ -1,29 +1,25 @@
   @Test
-  public void break_on_label()  {
+  public void break_on_label() {
     final CFG cfg = buildCFG("void fun() { foo: for(int i = 0; i<10;i++) { if(i==5) break foo; } }");
     final CFGChecker cfgChecker = checker(
       emptyBlock(8),
       block(
         element(Tree.Kind.INT_LITERAL, 0),
-        element(Tree.Kind.VARIABLE, "i")
-        ).successors(7),
+        element(Tree.Kind.VARIABLE, "i")).successors(7),
       block(
         element(Tree.Kind.IDENTIFIER, "i"),
         element(Tree.Kind.INT_LITERAL, 10),
-        element(Tree.Kind.LESS_THAN)
-        ).terminator(Tree.Kind.FOR_STATEMENT).successors(1,6),
+        element(Tree.Kind.LESS_THAN)).terminator(Tree.Kind.FOR_STATEMENT).successors(1, 6),
       block(
         element(Tree.Kind.IDENTIFIER, "i"),
         element(Tree.Kind.INT_LITERAL, 5),
-        element(Tree.Kind.EQUAL_TO)
-        ).terminator(Tree.Kind.IF_STATEMENT).successors(3,5),
+        element(Tree.Kind.EQUAL_TO)).terminator(Tree.Kind.IF_STATEMENT).successors(3, 5),
       emptyBlock(9).terminator(Tree.Kind.BREAK_STATEMENT),
       emptyBlock(3),
       emptyBlock(2),
       block(
         element(Tree.Kind.IDENTIFIER, "i"),
-        element(Tree.Kind.POSTFIX_INCREMENT)
-        ).successors(7),
+        element(Tree.Kind.POSTFIX_INCREMENT)).successors(7),
       emptyBlock(0));
     cfgChecker.check(cfg);
   }

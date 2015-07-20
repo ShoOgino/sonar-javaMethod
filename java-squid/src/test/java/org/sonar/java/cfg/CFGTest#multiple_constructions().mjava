@@ -1,11 +1,10 @@
   @Test
-  public void multiple_constructions()  {
+  public void multiple_constructions() {
     final CFG cfg = buildCFG("void fun(Object a) {if(a instanceof String) { a::toString;foo(y -> y+1); a += (String) a;  } }");
     final CFGChecker cfgChecker = checker(
       block(
         element(Tree.Kind.IDENTIFIER, "a"),
-        element(Tree.Kind.INSTANCE_OF)
-        ).terminator(Tree.Kind.IF_STATEMENT).successors(1,2),
+        element(Tree.Kind.INSTANCE_OF)).terminator(Tree.Kind.IF_STATEMENT).successors(1, 2),
       block(
         element(Tree.Kind.LAMBDA_EXPRESSION),
         element(Tree.Kind.IDENTIFIER, "foo"),
@@ -13,8 +12,7 @@
         element(Tree.Kind.IDENTIFIER, "a"),
         element(Tree.Kind.TYPE_CAST),
         element(Tree.Kind.IDENTIFIER, "a"),
-        element(Tree.Kind.PLUS_ASSIGNMENT)
-        ).successors(1),
+        element(Tree.Kind.PLUS_ASSIGNMENT)).successors(1),
       emptyBlock(0));
     cfgChecker.check(cfg);
   }

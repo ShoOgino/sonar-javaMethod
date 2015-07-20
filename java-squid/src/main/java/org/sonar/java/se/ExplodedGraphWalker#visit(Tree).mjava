@@ -1,0 +1,42 @@
+  private void visit(Tree tree) {
+    LOG.debug("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
+    switch (tree.kind()) {
+      case LABELED_STATEMENT:
+      case SWITCH_STATEMENT:
+      case EXPRESSION_STATEMENT:
+      case PARENTHESIZED_EXPRESSION:
+        throw new IllegalStateException("Cannot appear in CFG: " + tree.kind().name());
+      case VARIABLE:
+        VariableTree variableTree = (VariableTree) tree;
+        ExpressionTree initializer = variableTree.initializer();
+        if (variableTree.type().symbolType().isPrimitive()) {
+          if (initializer == null) {
+            if (variableTree.type().symbolType().is("boolean")) {
+              programState = put(programState, variableTree.symbol(), SymbolicValue.FALSE_LITERAL);
+            }
+          } else {
+            SymbolicValue val = constraintManager.eval(programState, initializer);
+            programState = put(programState, variableTree.symbol(), val);
+          }
+        } else {
+          if (initializer == null) {
+            programState = put(programState, variableTree.symbol(), SymbolicValue.NULL_LITERAL);
+          } else {
+            SymbolicValue val = constraintManager.eval(programState, initializer);
+            programState = put(programState, variableTree.symbol(), val);
+          }
+        }
+        break;
+      case ASSIGNMENT:
+        AssignmentExpressionTree assignmentExpressionTree = ((AssignmentExpressionTree) tree);
+        //FIXME restricted to identifiers for now.
+        if (assignmentExpressionTree.variable().is(Tree.Kind.IDENTIFIER)) {
+          SymbolicValue value = getVal(assignmentExpressionTree.expression());
+          programState = put(programState, ((IdentifierTree) assignmentExpressionTree.variable()).symbol(), value);
+        }
+        break;
+      default:
+    }
+    checkerDispatcher.executeCheckPreStatement(tree);
+  }
+

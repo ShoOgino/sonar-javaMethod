@@ -1,0 +1,19 @@
+  /**
+   * Remove parenthesis and type cast.
+   */
+  private static Tree skipTrivial(Tree expression) {
+    do {
+      switch (expression.kind()) {
+        case PARENTHESIZED_EXPRESSION:
+          expression = ((ParenthesizedTree) expression).expression();
+          break;
+        case TYPE_CAST:
+          expression = ((TypeCastTree) expression).expression();
+          break;
+        default:
+          return expression;
+      }
+    } while (true);
+
+  }
+

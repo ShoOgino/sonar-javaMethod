@@ -1,0 +1,11 @@
+  private static ProgramState put(ProgramState programState, Symbol symbol, SymbolicValue value) {
+    SymbolicValue symbolicValue = programState.values.get(symbol);
+    // update program state only for a different symbolic value
+    if (symbolicValue == null || !symbolicValue.equals(value)) {
+      Map<Symbol, SymbolicValue> temp = Maps.newHashMap(programState.values);
+      temp.put(symbol, value);
+      return new ProgramState(temp, programState.constraints);
+    }
+    return programState;
+  }
+

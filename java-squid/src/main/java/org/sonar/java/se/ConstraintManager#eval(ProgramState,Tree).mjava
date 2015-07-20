@@ -1,0 +1,46 @@
+  public SymbolicValue eval(ProgramState programState, Tree syntaxNode) {
+    syntaxNode = skipTrivial(syntaxNode);
+    switch (syntaxNode.kind()) {
+      case NULL_LITERAL: {
+        return SymbolicValue.NULL_LITERAL;
+      }
+      case BOOLEAN_LITERAL: {
+        boolean value = Boolean.parseBoolean(((LiteralTree) syntaxNode).value());
+        if(value) {
+          return SymbolicValue.TRUE_LITERAL;
+        }
+        return SymbolicValue.FALSE_LITERAL;
+      }
+      case VARIABLE: {
+        Symbol symbol = ((VariableTree) syntaxNode).symbol();
+        SymbolicValue result = programState.values.get(symbol);
+        if (result != null) {
+          // symbolic value associated with local variable
+          return result;
+        }
+        break;
+      }
+      case IDENTIFIER: {
+        Symbol symbol = ((IdentifierTree) syntaxNode).symbol();
+        SymbolicValue result = programState.values.get(symbol);
+        if (result != null) {
+          // symbolic value associated with local variable
+          return result;
+        }
+        break;
+      }
+      case LOGICAL_COMPLEMENT : {
+        UnaryExpressionTree unaryExpressionTree = (UnaryExpressionTree) syntaxNode;
+        SymbolicValue val = eval(programState, unaryExpressionTree.expression());
+        if(SymbolicValue.FALSE_LITERAL.equals(val)) {
+          return SymbolicValue.TRUE_LITERAL;
+        } else if(val.equals(SymbolicValue.TRUE_LITERAL)) {
+          return SymbolicValue.FALSE_LITERAL;
+        }
+        //if not tied to a concrete value, create symbolic value with no constraint for now.
+        //TODO : create constraint between expression and created symbolic value
+      }
+    }
+    return createSymbolicValue(syntaxNode);
+  }
+

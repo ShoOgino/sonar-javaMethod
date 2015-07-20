@@ -1,0 +1,12 @@
+  @Test
+  public void verify_missing_expected_issue() {
+    IssuableSubscriptionVisitor visitor = new FakeVisitor().withDefaultIssues().withoutIssue(1);
+
+    try {
+      JavaCheckVerifier.verify(FILENAME_ISSUES, visitor);
+      Fail.fail();
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("Expected {1=[{MESSAGE=message}]}");
+    }
+  }
+

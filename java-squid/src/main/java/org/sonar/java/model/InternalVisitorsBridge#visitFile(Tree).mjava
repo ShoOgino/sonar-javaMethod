@@ -1,7 +1,7 @@
   public void visitFile(@Nullable Tree parsedTree) {
     semanticModel = null;
     CompilationUnitTree tree = new JavaTree.CompilationUnitTreeImpl(null, Lists.<ImportClauseTree>newArrayList(), Lists.<Tree>newArrayList(), null);
-    if (parsedTree != null && parsedTree.is(Tree.Kind.COMPILATION_UNIT)) {
+    if ((parsedTree != null) && parsedTree.is(Tree.Kind.COMPILATION_UNIT)) {
       tree = (CompilationUnitTree) parsedTree;
       if (isNotJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"))) {
         try {
@@ -16,6 +16,10 @@
       }
     }
     JavaFileScannerContext javaFileScannerContext = createScannerContext(tree, semanticModel, analyseAccessors, sonarComponents);
+    // Symbolic execution checks
+    if (symbolicExecutionEnabled && isNotJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"))) {
+      new SymbolicExecutionVisitor().scanFile(javaFileScannerContext);
+    }
     for (JavaFileScanner scanner : executableScanners(scanners)) {
       scanner.scanFile(javaFileScannerContext);
     }

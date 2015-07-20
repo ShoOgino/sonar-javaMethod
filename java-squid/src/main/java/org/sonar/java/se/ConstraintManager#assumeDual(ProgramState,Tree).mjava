@@ -1,0 +1,65 @@
+  public Pair<ProgramState, ProgramState> assumeDual(ProgramState programState, Tree condition) {
+    //FIXME condition value should be evaluated to determine if it is worth exploring this branch. This should probably be done in a dedicated checker.
+    condition = skipTrivial(condition);
+    switch (condition.kind()) {
+      case INSTANCE_OF: {
+        InstanceOfTree instanceOfTree = (InstanceOfTree) condition;
+        SymbolicValue exprValue = eval(programState, instanceOfTree.expression());
+        if(isNull(programState, exprValue)) {
+          return new Pair<>(programState, null);
+        }
+        //if instanceof is true then we know for sure that expression is not null.
+        return new Pair<>(programState, setConstraint(programState, exprValue, NullConstraint.NOT_NULL));
+      }
+      case EQUAL_TO: {
+        BinaryExpressionTree equalTo = (BinaryExpressionTree) condition;
+        SymbolicValue lhs = eval(programState, equalTo.leftOperand());
+        SymbolicValue rhs = eval(programState, equalTo.rightOperand());
+        if (isNull(programState, lhs)) {
+          ProgramState stateNull = setConstraint(programState, rhs, NullConstraint.NULL);
+          ProgramState stateNotNull = setConstraint(programState, rhs, NullConstraint.NOT_NULL);
+          return new Pair<>(stateNotNull, stateNull);
+        } else if (isNull(programState, rhs)) {
+          ProgramState stateNull = setConstraint(programState, lhs, NullConstraint.NULL);
+          ProgramState stateNotNull = setConstraint(programState, lhs, NullConstraint.NOT_NULL);
+          return new Pair<>(stateNotNull, stateNull);
+        }
+        break;
+      }
+      case NOT_EQUAL_TO: {
+        BinaryExpressionTree notEqualTo = (BinaryExpressionTree) condition;
+        SymbolicValue lhs = eval(programState, notEqualTo.leftOperand());
+        SymbolicValue rhs = eval(programState, notEqualTo.rightOperand());
+        if (isNull(programState, lhs)) {
+          ProgramState stateNull = setConstraint(programState, rhs, NullConstraint.NULL);
+          ProgramState stateNotNull = setConstraint(programState, rhs, NullConstraint.NOT_NULL);
+          return new Pair<>(stateNull, stateNotNull);
+        } else if (isNull(programState, rhs)) {
+          ProgramState stateNull = setConstraint(programState, lhs, NullConstraint.NULL);
+          ProgramState stateNotNull = setConstraint(programState, lhs, NullConstraint.NOT_NULL);
+          return new Pair<>(stateNull, stateNotNull);
+        }
+        break;
+      }
+      case LOGICAL_COMPLEMENT:
+        return assumeDual(programState, ((UnaryExpressionTree) condition).expression()).invert();
+      case CONDITIONAL_OR:
+      case CONDITIONAL_AND:
+        // this is the case for branches such as "if (lhs && rhs)" and "if (lhs || rhs)"
+        // we already made an assumption on lhs, because CFG contains branch for it, so now let's make an assumption on rhs
+        BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) condition;
+        return assumeDual(programState, binaryExpressionTree.rightOperand());
+      case BOOLEAN_LITERAL:
+        LiteralTree literalTree = ((LiteralTree) condition);
+        if ("true".equals(literalTree.value())) {
+          return new Pair<>(null, programState);
+        }
+        return new Pair<>(programState, null);
+      case IDENTIFIER:
+        IdentifierTree id = (IdentifierTree) condition;
+        SymbolicValue eval = eval(programState, id);
+        return new Pair<>(setConstraint(programState, eval, BooleanConstraint.FALSE), setConstraint(programState, eval, BooleanConstraint.TRUE));
+    }
+    return new Pair<>(programState, programState);
+  }
+

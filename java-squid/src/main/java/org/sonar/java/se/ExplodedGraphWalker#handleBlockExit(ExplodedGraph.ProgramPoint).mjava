@@ -1,0 +1,29 @@
+  private void handleBlockExit(ExplodedGraph.ProgramPoint programPosition) {
+    CFG.Block block = programPosition.block;
+    Tree terminator = block.terminator();
+    if (terminator != null) {
+      switch (terminator.kind()) {
+        case IF_STATEMENT:
+          handleBranch(block, ((IfStatementTree) terminator).condition());
+          return;
+        case CONDITIONAL_OR:
+        case CONDITIONAL_AND:
+          handleBranch(block, ((BinaryExpressionTree) terminator).leftOperand());
+          return;
+        case CONDITIONAL_EXPRESSION:
+          handleBranch(block, ((ConditionalExpressionTree) terminator).condition());
+          return;
+        case FOR_STATEMENT:
+          ForStatementTree forStatement = (ForStatementTree) terminator;
+          if (forStatement.condition() != null) {
+            handleBranch(block, forStatement.condition(), false);
+            return;
+          }
+      }
+    }
+    // unconditional jumps, for-statement, switch-statement:
+    for (CFG.Block successor : Lists.reverse(block.successors())) {
+      enqueue(new ExplodedGraph.ProgramPoint(successor, 0), programState);
+    }
+  }
+

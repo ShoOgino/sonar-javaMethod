@@ -1,0 +1,75 @@
+  private void execute(MethodTree tree) {
+    checkerDispatcher.init();
+    CFG cfg = CFG.build(tree);
+    explodedGraph = new ExplodedGraph();
+    constraintManager = new ConstraintManager();
+    workList = new LinkedList<>();
+    LOG.debug("Exploring Exploded Graph for method " + tree.simpleName().name() + " at line " + ((JavaTree) tree).getLine());
+    programState = ProgramState.EMPTY_STATE;
+    Iterable<ProgramState> startingStates = Lists.newArrayList(programState);
+    for (final VariableTree variableTree : tree.parameters()) {
+      //create
+      final SymbolicValue sv = constraintManager.eval(programState, variableTree);
+      startingStates = Iterables.transform(startingStates, new Function<ProgramState, ProgramState>() {
+        @Override
+        public ProgramState apply(ProgramState input) {
+          return put(input, variableTree.symbol(), sv);
+        }
+      });
+
+      if (variableTree.symbol().metadata().isAnnotatedWith("javax.annotation.CheckForNull")) {
+        startingStates = Iterables.concat(Iterables.transform(startingStates, new Function<ProgramState, List<ProgramState>>() {
+          @Override
+          public List<ProgramState> apply(ProgramState input) {
+            return Lists.newArrayList(
+              ConstraintManager.setConstraint(input, sv, ConstraintManager.NullConstraint.NULL),
+              ConstraintManager.setConstraint(input, sv, ConstraintManager.NullConstraint.NOT_NULL));
+          }
+        }));
+
+
+      }
+    }
+    for (ProgramState startingState : startingStates) {
+      enqueue(new ExplodedGraph.ProgramPoint(cfg.entry(), 0), startingState);
+    }
+    steps = 0;
+    while (!workList.isEmpty()) {
+      steps++;
+      if (steps > MAX_STEPS) {
+        throw new MaximumStepsReachedException("reached limit of " + MAX_STEPS + " steps for method " + tree.simpleName().name() + "in class " + tree.symbol().owner().name());
+      }
+      // LIFO:
+      node = workList.removeFirst();
+      programPosition = node.programPoint;
+      if (/* last */programPosition.block.successors().isEmpty()) {
+        // not guaranteed that last block will be reached, e.g. "label: goto label;"
+        // TODO(Godin): notify clients before continuing with another position
+        continue;
+      }
+      programState = node.programState;
+
+      if (programPosition.i < programPosition.block.elements().size()) {
+        // process block element
+        visit(programPosition.block.elements().get(programPosition.i));
+      } else if (programPosition.block.terminator() == null) {
+        // process block exit, which is unconditional jump such as goto-statement or return-statement
+        handleBlockExit(programPosition);
+      } else if (programPosition.i == programPosition.block.elements().size()) {
+        // process block exist, which is conditional jump such as if-statement
+        checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
+      } else {
+        // process branch
+        handleBlockExit(programPosition);
+      }
+    }
+
+    checkerDispatcher.executeCheckEndOfExecution();
+    // Cleanup:
+    explodedGraph = null;
+    workList = null;
+    node = null;
+    programState = null;
+    constraintManager = null;
+  }
+

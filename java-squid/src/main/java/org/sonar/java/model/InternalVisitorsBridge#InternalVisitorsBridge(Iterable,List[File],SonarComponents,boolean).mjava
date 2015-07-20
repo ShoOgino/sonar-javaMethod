@@ -1,0 +1,13 @@
+  public InternalVisitorsBridge(Iterable visitors, List<File> projectClasspath, @Nullable SonarComponents sonarComponents, boolean symbolicExecutionEnabled) {
+    ImmutableList.Builder<JavaFileScanner> scannersBuilder = ImmutableList.builder();
+    for (Object visitor : visitors) {
+      if (visitor instanceof JavaFileScanner) {
+        scannersBuilder.add((JavaFileScanner) visitor);
+      }
+    }
+    this.scanners = scannersBuilder.build();
+    this.sonarComponents = sonarComponents;
+    this.projectClasspath = projectClasspath;
+    this.symbolicExecutionEnabled = symbolicExecutionEnabled;
+  }
+

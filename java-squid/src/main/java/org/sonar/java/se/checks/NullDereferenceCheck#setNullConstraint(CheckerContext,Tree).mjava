@@ -1,0 +1,17 @@
+  private static ProgramState setNullConstraint(CheckerContext context, Tree syntaxNode) {
+    SymbolicValue val = context.getVal(syntaxNode);
+    switch (syntaxNode.kind()) {
+      case NULL_LITERAL:
+        return context.setConstraint(val, ConstraintManager.NullConstraint.NULL);
+      case METHOD_INVOCATION:
+        ProgramState ps = context.getState();
+        if (((MethodInvocationTree) syntaxNode).symbol().metadata().isAnnotatedWith("javax.annotation.CheckForNull")) {
+          ps = context.setConstraint(val, ConstraintManager.NullConstraint.NULL);
+        }
+        return ps;
+      default:
+        // ignore
+    }
+    return context.getState();
+  }
+
