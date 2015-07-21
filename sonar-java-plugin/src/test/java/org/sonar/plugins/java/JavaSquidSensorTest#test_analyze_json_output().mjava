@@ -1,0 +1,29 @@
+  @Test
+  public void test_analyze_json_output() throws Exception {
+    RulesProfile qp = RulesProfile.create("test", Java.KEY);
+    Settings settings = new Settings();
+    settings.setProperty(JavaPlugin.JSON_OUTPUT_FOLDER, "target");
+    DefaultFileSystem fs = new DefaultFileSystem();
+    File file = new File("src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java");
+    DefaultInputFile defaultInputFile = new DefaultInputFile(file.getPath()).setFile(file).setLanguage("java");
+    fs.add(defaultInputFile);
+    Project project = mock(Project.class);
+    JavaClasspath javaClasspath = new JavaClasspath(project, settings, fs);
+
+    SonarComponents sonarComponents = createSonarComponentsMock();
+    DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, javaClasspath, mock(SuppressWarningsFilter.class));
+    JavaSquidSensor jss = new JavaSquidSensor(qp, javaClasspath, sonarComponents, fs, javaResourceLocator, settings, mock(NoSonarFilter.class));
+    SensorContext context = mock(SensorContext.class);
+    when(context.getResource(any(InputPath.class))).thenReturn(org.sonar.api.resources.File.create("src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java"));
+
+    jss.analyse(project, context);
+
+    File outputFile = new File("target/squid-S00100.json");
+    if(!outputFile.isFile()) {
+      fail("Output json file " + file.getPath() + " was not created");
+    }
+
+    List<String> output = FileUtils.readLines(outputFile);
+    assertThat(output).containsExactly("{", "'project:src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java':[", "73,", "83,", "138,", "],", "}");
+  }
+
