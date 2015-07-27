@@ -1,6 +1,8 @@
   private static boolean isConcatenation(AssignmentExpressionTree tree) {
-    return tree.is(Tree.Kind.PLUS_ASSIGNMENT) || (tree.is(Tree.Kind.ASSIGNMENT) && removeParenthesis(tree.expression()).is(Tree.Kind.PLUS)
-      && concatenateVariable(tree.variable(), (BinaryExpressionTree) removeParenthesis(tree.expression()))
-    );
+    if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      ExpressionTree expressionTree = ExpressionsHelper.skipParentheses(tree.expression());
+      return expressionTree.is(Tree.Kind.PLUS) && concatenateVariable(tree.variable(), (BinaryExpressionTree) expressionTree);
+    }
+    return tree.is(Tree.Kind.PLUS_ASSIGNMENT);
   }
 

@@ -1,10 +1,9 @@
-  private static boolean isNullComparison(Tree tree, Tree.Kind comparatorKind) {
+  private static boolean isNullComparison(ExpressionTree expressionTree, Tree.Kind comparatorKind) {
+    ExpressionTree tree = ExpressionsHelper.skipParentheses(expressionTree);
     boolean result = false;
     if (tree.is(comparatorKind)) {
       BinaryExpressionTree binary = (BinaryExpressionTree) tree;
       result = binary.leftOperand().is(Tree.Kind.NULL_LITERAL) || binary.rightOperand().is(Tree.Kind.NULL_LITERAL);
-    } else if (tree.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
-      return isNullComparison(((ParenthesizedTree) tree).expression(), comparatorKind);
     }
     return result;
   }
