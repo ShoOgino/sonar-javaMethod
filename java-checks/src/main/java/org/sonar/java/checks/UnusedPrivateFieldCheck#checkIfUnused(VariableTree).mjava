@@ -1,8 +1,9 @@
   public void checkIfUnused(VariableTree tree) {
-    if (ModifiersUtils.hasModifier(tree.modifiers(), Modifier.PRIVATE) && !"serialVersionUID".equals(tree.simpleName().name())) {
+    if (tree.modifiers().annotations().isEmpty()) {
       Symbol symbol = tree.symbol();
-      if (symbol.usages().size() == assignments.get(symbol).size() && !hasExcludedAnnotation(tree)) {
-        addIssue(tree, "Remove this unused \"" + tree.simpleName() + "\" private field.");
+      String name = symbol.name();
+      if (symbol.isPrivate() && !"serialVersionUID".equals(name) && symbol.usages().size() == assignments.get(symbol).size()) {
+        addIssue(tree, "Remove this unused \"" + name + "\" private field.");
       }
     }
   }
