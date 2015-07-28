@@ -1,4 +1,7 @@
   private static boolean isTestMethod(boolean forJunit4, MethodTree member) {
-    return (forJunit4 && member.symbol().metadata().isAnnotatedWith("org.junit.Test")) || member.simpleName().name().startsWith("test");
+    if (forJunit4) {
+      return Iterables.any(member.symbol().metadata().annotations(), PREDICATE_ANNOTATION_TEST_OR_UNKNOWN);
+    }
+    return member.simpleName().name().startsWith("test");
   }
 
