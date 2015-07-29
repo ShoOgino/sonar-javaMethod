@@ -1,13 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/LoggersDeclarationCheck.java"), new VisitorsBridge(new LoggersDeclarationCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(5)
-      .next().atLine(6)
-      .next().atLine(7)
-      .next().atLine(9)
-      .next().atLine(14).withMessage("Rename the \"foo\" logger to comply with the format \"LOG(?:GER)?\".")
-      .next().atLine(20).withMessage("Make the \"foo\" logger private static final and rename it to comply with the format \"LOG(?:GER)?\".")
-      .next().atLine(23).withMessage("Make the \"LOG\" logger private static final.");
+    JavaCheckVerifier.verify("src/test/files/checks/LoggersDeclarationCheck.java", new LoggersDeclarationCheck());
   }
 
