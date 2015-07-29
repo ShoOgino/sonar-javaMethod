@@ -1,7 +1,9 @@
   @Override
   public void visitVariable(VariableTree tree) {
     super.visitVariable(tree);
-
+    if (tree.symbol().type().is("org.apache.maven.plugin.logging.Log")) {
+      return;
+    }
     if (isLoggerType(tree.type())) {
       boolean isPrivateStaticFinal = isPrivateStaticFinal(tree.modifiers());
       boolean hasValidLoggerName = isValidLoggerName(tree.simpleName().name());
