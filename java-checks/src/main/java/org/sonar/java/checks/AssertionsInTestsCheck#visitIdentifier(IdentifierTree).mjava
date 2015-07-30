@@ -1,0 +1,15 @@
+  @Override
+  public void visitIdentifier(IdentifierTree tree) {
+    if (inUnitTest()) {
+      Symbol symbol = tree.symbol();
+      Type type = symbol.type();
+      if (type != null && type.isSubtypeOf("org.assertj.core.api.AbstractStandardSoftAssertions")){
+        setTrue(methodContainsAssertjSoftAssertionUsage);
+        if (symbol.metadata().isAnnotatedWith("org.junit.Rule")) {
+          setTrue(methodContainsJunitSoftAssertionUsage);
+        }
+      }
+    }
+    super.visitIdentifier(tree);
+  }
+

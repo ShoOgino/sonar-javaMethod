@@ -3,10 +3,16 @@
     boolean isUnitTest = isUnitTest(methodTree);
     inUnitTest.push(isUnitTest);
     methodContainsAssertion.push(false);
+    methodContainsAssertjSoftAssertionUsage.push(false);
+    methodContainsAssertjAssertAll.push(false);
+    methodContainsJunitSoftAssertionUsage.push(false);
     super.visitMethod(methodTree);
     inUnitTest.pop();
     Boolean containsAssertion = methodContainsAssertion.pop();
-    if (isUnitTest && !containsAssertion) {
+    Boolean containsSoftAssertionDecl = methodContainsAssertjSoftAssertionUsage.pop();
+    Boolean containsAssertjAssertAll = methodContainsAssertjAssertAll.pop();
+    Boolean containsJunitSoftAssertionUsage = methodContainsJunitSoftAssertionUsage.pop();
+    if (isUnitTest && (!containsAssertion || badSoftAssertionUsage(containsSoftAssertionDecl, containsAssertjAssertAll, containsJunitSoftAssertionUsage))) {
       context.addIssue(methodTree, this, "Add at least one assertion to this test case.");
     }
   }

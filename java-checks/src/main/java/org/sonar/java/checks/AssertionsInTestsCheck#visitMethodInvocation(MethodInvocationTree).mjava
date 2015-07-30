@@ -1,7 +1,10 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree mit) {
-    if (inUnitTest.isEmpty() || !inUnitTest.peek() || methodContainsAssertion.peek()) {
-      // if not in test case or assertion already found let's skip method
+    if (!inUnitTest()) {
+      return;
+    }
+    checkForAssertjSoftAssertions(mit);
+    if (methodContainsAssertion.peek()) {
       return;
     }
     chainedTo.push(ChainedMethods.NONE);
