@@ -12,7 +12,9 @@
     Boolean containsSoftAssertionDecl = methodContainsAssertjSoftAssertionUsage.pop();
     Boolean containsAssertjAssertAll = methodContainsAssertjAssertAll.pop();
     Boolean containsJunitSoftAssertionUsage = methodContainsJunitSoftAssertionUsage.pop();
-    if (isUnitTest && (!containsAssertion || badSoftAssertionUsage(containsSoftAssertionDecl, containsAssertjAssertAll, containsJunitSoftAssertionUsage))) {
+    if (isUnitTest &&
+        !expectAssertion(methodTree) &&
+        (!containsAssertion || badSoftAssertionUsage(containsSoftAssertionDecl, containsAssertjAssertAll, containsJunitSoftAssertionUsage))) {
       context.addIssue(methodTree, this, "Add at least one assertion to this test case.");
     }
   }
