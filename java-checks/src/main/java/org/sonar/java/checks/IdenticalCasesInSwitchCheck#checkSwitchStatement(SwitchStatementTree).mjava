@@ -1,0 +1,18 @@
+  public void checkSwitchStatement(SwitchStatementTree node) {
+    int index = 0;
+    List<CaseGroupTree> cases = node.cases();
+    Set<CaseLabelTree> reportedLabels = Sets.newHashSet();
+    for (CaseGroupTree caseGroupTree : cases) {
+      index++;
+      for (int i = index; i < cases.size(); i++) {
+        if (SyntacticEquivalence.areEquivalent(caseGroupTree.body(), cases.get(i).body())) {
+          CaseLabelTree labelToReport = getLastLabel(cases.get(i));
+          if (!reportedLabels.contains(labelToReport)) {
+            reportedLabels.add(labelToReport);
+            addIssue(labelToReport, issueMessage("case", caseGroupTree));
+          }
+        }
+      }
+    }
+  }
+
