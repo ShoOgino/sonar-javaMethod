@@ -1,0 +1,13 @@
+  @CheckForNull
+  private static String isCallingToStringOrCompareTo(ExpressionTree methodSelect) {
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      String name = ((MemberSelectExpressionTree) methodSelect).identifier().name();
+      if ("toString".equals(name)) {
+        return name;
+      } else if ("compareTo".equals(name)) {
+        return "compare";
+      }
+    }
+    return null;
+  }
+
