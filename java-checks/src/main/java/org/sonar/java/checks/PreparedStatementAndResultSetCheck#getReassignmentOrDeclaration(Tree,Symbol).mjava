@@ -1,0 +1,17 @@
+  private Tree getReassignmentOrDeclaration(Tree startingPoint, Symbol referenceSymbol) {
+    Tree result = referenceSymbol.declaration();
+    List<IdentifierTree> usages = referenceSymbol.usages();
+    if (usages.size() == 1) {
+      return result;
+    }
+    if (!reassignmentBySymbol.containsKey(referenceSymbol)) {
+      reassignmentBySymbol.putAll(referenceSymbol, getReassignments(referenceSymbol.owner().declaration(), usages));
+    }
+    int line = FirstSyntaxTokenFinder.firstSyntaxToken(startingPoint).line();
+    Tree lastReassignment = getLastReassignment(line, referenceSymbol);
+    if (lastReassignment != null) {
+      return lastReassignment;
+    }
+    return result;
+  }
+

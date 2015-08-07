@@ -1,0 +1,21 @@
+  @CheckForNull
+  private Integer getNumberQuery(ExpressionTree expression) {
+    ExpressionTree expr = ExpressionsHelper.skipParentheses(expression);
+    if (expr.is(Tree.Kind.IDENTIFIER)) {
+      // variable used as query
+      Symbol variableSymbol = ((IdentifierTree) expression).symbol();
+      Tree lastAssignment = getReassignmentOrDeclaration(expression, variableSymbol);
+      ExpressionTree initializer = lastAssignment.is(Tree.Kind.VARIABLE) ?
+        ((VariableTree) lastAssignment).initializer() :
+        ((AssignmentExpressionTree) lastAssignment).expression();
+      return initializer != null ? getNumberQuery(initializer) : null;
+    } else if (expr.is(Tree.Kind.PLUS)) {
+      // string concatenation
+      BinaryExpressionTree stringConcatenation = (BinaryExpressionTree) expr;
+      Integer left = getNumberQuery(stringConcatenation.leftOperand());
+      Integer right = getNumberQuery(stringConcatenation.rightOperand());
+      return (left == null && right == null) ? null : (zeroIfNull(left) + zeroIfNull(right));
+    }
+    return countQuery(expr);
+  }
+

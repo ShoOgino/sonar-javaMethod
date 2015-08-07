@@ -1,0 +1,21 @@
+  void hio(boolean test) throws SQLException {
+    PreparedStatement ps = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > 1986");
+    
+    if (test) {
+      ps = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > ? and salary < ?");
+      ps.setDouble(1, 0.0); // Compliant - last assignment is used
+      ps.setDouble(2, 0.0); // Compliant
+    }
+    
+    ps = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > 1986");
+    
+    PreparedStatement ps2 = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > ? and salary < ?");
+    ps2.setDouble(1, 0.0); // Compliant
+    
+    int a;
+    a = 2;
+    
+    int[] b = new int[1];
+    b[0] = 3;
+  }
+

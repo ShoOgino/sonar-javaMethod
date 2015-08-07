@@ -1,0 +1,13 @@
+  void false_negative(boolean test) throws SQLException {
+    PreparedStatement ps;
+    
+    if (test) {
+      ps = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > ?");
+    } else {
+      ps = getPreparedStatement("SELECT fname, lname FROM employees where hireDate > ? and salary < ?");
+    }
+    
+    ps.setDouble(1, 0.0); // Compliant - last assignment is used
+    ps.setDouble(2, 0.0); // Compliant FALSE NEGATIVE - in then would have been applied, there would be no 2nd parameter (CFG?)
+  }
+
