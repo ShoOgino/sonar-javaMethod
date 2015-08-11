@@ -1,0 +1,21 @@
+  private void checkForIssue(Symbol symbol, Multimap<String, Symbol> membersByName) {
+    String name = symbol.name();
+    for (String knownMemberName : membersByName.keySet()) {
+      if (name.equalsIgnoreCase(knownMemberName)) {
+        for (Symbol knownMemberSymbol : membersByName.get(knownMemberName)) {
+          if (!symbol.equals(knownMemberSymbol)
+            && isValidIssueLocation(symbol, knownMemberSymbol)
+            && isInvalidMember(symbol, knownMemberSymbol)) {
+            addIssue(symbol.declaration(),
+              "Rename "
+                + getSymbolTypeName(symbol) + " \"" + name + "\" "
+                + "to prevent any misunderstanding/clash with "
+                + getSymbolTypeName(knownMemberSymbol) + " \"" + knownMemberName + "\" "
+                + "defined " + getDefinitionPlace(symbol, knownMemberSymbol) + ".");
+            break;
+          }
+        }
+      }
+    }
+  }
+

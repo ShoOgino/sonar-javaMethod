@@ -1,0 +1,15 @@
+  private static List<Symbol> retrieveMembers(Symbol.TypeSymbol classSymbol) {
+    List<Symbol> results = Lists.newLinkedList();
+    results.addAll(extractMembers(classSymbol, false));
+
+    for (Type parentInterface : classSymbol.interfaces()) {
+      results.addAll(extractMembers(parentInterface.symbol(), true));
+    }
+    Type superClass = classSymbol.superClass();
+    if (superClass != null) {
+      results.addAll(extractMembers(superClass.symbol(), true));
+    }
+
+    return results;
+  }
+
