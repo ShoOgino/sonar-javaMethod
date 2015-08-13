@@ -2,7 +2,7 @@
   public void visitMethod(MethodTree tree) {
     parent.push(tree);
     String methodKey = currentClassKey.peek() + "#" + MethodSignaturePrinter.print(MethodSignatureScanner.scan(tree));
-    methodStartLines.put(methodKey, ((JavaTree) tree.simpleName()).getLine());
+    methodStartLines.put(methodKey, tree.simpleName().identifierToken().line());
     handleSuppressWarning(tree);
     super.visitMethod(tree);
     parent.pop();

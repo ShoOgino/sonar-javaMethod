@@ -1,0 +1,17 @@
+  @Test
+  public void suppressWarning_lines_mapping() {
+    JavaFilesCache javaFilesCache = new JavaFilesCache();
+    JavaAstScanner.scanSingleFile(new File("src/test/resources/JavaFilesCacheTest.java"), new VisitorsBridge(javaFilesCache));
+    assertThat(javaFilesCache.suppressWarningLines.keySet()).hasSize(21);
+    for (Integer line : Lists.newArrayList(14, 15, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29)) {
+      assertThat(javaFilesCache.suppressWarningLines.get(line)).contains("all");
+    }
+    for (Integer line : Lists.newArrayList(23, 24, 25, 26, 27)) {
+      assertThat(javaFilesCache.suppressWarningLines.get(line)).contains("foo", "bar");
+    }
+
+    for (Integer line : Lists.newArrayList(10, 11, 32, 33, 34, 35, 36, 37)) {
+      assertThat(javaFilesCache.suppressWarningLines.get(line)).contains("qix");
+    }
+  }
+

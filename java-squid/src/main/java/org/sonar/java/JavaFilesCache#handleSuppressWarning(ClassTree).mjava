@@ -1,5 +1,11 @@
   private void handleSuppressWarning(ClassTree tree) {
     int endLine = tree.closeBraceToken().line();
     handleSuppressWarning(tree.modifiers().annotations(), endLine);
+
+    for (Tree member : tree.members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        handleSuppressWarning((VariableTree) member);
+      }
+    }
   }
 
