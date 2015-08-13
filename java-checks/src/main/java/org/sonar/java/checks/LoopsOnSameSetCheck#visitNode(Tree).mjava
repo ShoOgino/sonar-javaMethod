@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Map<Symbol, Integer> forEachSymbols = new HashMap<>();
+    Set<Tree> forEachIterables = new HashSet<>();
+    for (Tree item : ((BlockTree) tree).body()) {
+      if (item.is(Tree.Kind.FOR_EACH_STATEMENT)) {
+        checkForEach(forEachSymbols, forEachIterables, (ForEachStatement) item);
+      } else {
+        item.accept(new InvalidatorVisitor(forEachSymbols));
+      }
+    }
+  }
+
