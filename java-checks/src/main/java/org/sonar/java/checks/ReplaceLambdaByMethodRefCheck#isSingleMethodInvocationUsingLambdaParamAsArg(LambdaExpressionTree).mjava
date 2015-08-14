@@ -1,0 +1,11 @@
+  private static boolean isSingleMethodInvocationUsingLambdaParamAsArg(LambdaExpressionTree tree) {
+    List<VariableTree> parameters = tree.parameters();
+    Tree body = tree.body();
+    if (parameters.size() == 1 && body.is(Tree.Kind.METHOD_INVOCATION)) {
+      List<IdentifierTree> usages = parameters.get(0).symbol().usages();
+      Arguments arguments = ((MethodInvocationTree) body).arguments();
+      return usages.size() == 1 && arguments.size() == 1 && usages.get(0).equals(arguments.get(0));
+    }
+    return false;
+  }
+
