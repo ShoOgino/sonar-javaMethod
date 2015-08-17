@@ -1,4 +1,7 @@
   private static int getDeclarationLine(Symbol symbol) {
-    return FirstSyntaxTokenFinder.firstSyntaxToken(symbol.declaration()).line();
+    if (symbol.isVariableSymbol()) {
+      return ((Symbol.VariableSymbol) symbol).declaration().simpleName().identifierToken().line();
+    }
+    return ((Symbol.MethodSymbol) symbol).declaration().simpleName().identifierToken().line();
   }
 

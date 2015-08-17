@@ -1,8 +1,7 @@
   private static String getDefinitionPlace(Symbol symbol, Symbol knownMemberSymbol) {
-    Symbol.TypeSymbol knownMemberOwner = (Symbol.TypeSymbol) knownMemberSymbol.owner();
-    if (symbol.owner().equals(knownMemberOwner)) {
+    if (sameOwner(symbol, knownMemberSymbol)) {
       return "on line " + getDeclarationLine(knownMemberSymbol);
     }
-    return "in " + (knownMemberOwner.isInterface() ? "interface" : "superclass") + " \"" + knownMemberOwner.type().fullyQualifiedName() + "\"";
+    return "in " + (knownMemberSymbol.owner().isInterface() ? "interface" : "superclass") + " \"" + knownMemberSymbol.owner().type().fullyQualifiedName() + "\"";
   }
 
