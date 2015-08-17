@@ -1,0 +1,20 @@
+  private static int computeFlagsForInterfaceMember(Tree tree) {
+    int result;
+    // JLS7 6.6.1: All members of interfaces are implicitly public.
+    result = Flags.PUBLIC;
+    if (tree.is(Tree.Kind.METHOD)) {
+      if (((MethodTree) tree).block() == null) {
+        // JLS8 9.4: methods lacking a block are implicitly abstract
+        result |= Flags.ABSTRACT;
+      }
+    } else {
+      // JLS7 9.5: member type declarations are implicitly static and public
+      result |= Flags.STATIC;
+      if (tree.is(Tree.Kind.VARIABLE)) {
+        // JLS7 9.3: fields are implicitly public, static and final
+        result |= Flags.FINAL;
+      }
+    }
+    return result;
+  }
+

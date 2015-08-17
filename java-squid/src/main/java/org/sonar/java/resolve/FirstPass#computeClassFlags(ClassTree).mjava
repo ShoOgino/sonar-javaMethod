@@ -1,15 +1,11 @@
   private int computeClassFlags(ClassTree tree) {
-    int flags = computeFlags(tree.modifiers());
+    int flags = computeFlags(tree.modifiers(), tree);
     if (tree.is(Tree.Kind.INTERFACE)) {
       flags |= Flags.INTERFACE;
     }else if (tree.is(Tree.Kind.ENUM)) {
       flags |= Flags.ENUM;
     }else if (tree.is(Tree.Kind.ANNOTATION_TYPE)) {
       flags |= Flags.INTERFACE | Flags.ANNOTATION;
-    }
-    if (env.scope.owner instanceof JavaSymbol.TypeJavaSymbol && ((env.enclosingClass.flags() & Flags.INTERFACE) != 0)) {
-      // JLS7 6.6.1: All members of interfaces are implicitly public.
-      flags |= Flags.PUBLIC;
     }
     return flags;
   }

@@ -1,8 +1,7 @@
-  private int computeFlags(ModifiersTree modifiers) {
+  private int computeFlags(ModifiersTree modifiers, Tree tree) {
     int result = 0;
-    //JLS7 6.6.1: All members of interfaces are implicitly public.
     if ((env.scope.owner.flags & Flags.INTERFACE) != 0) {
-      result = Flags.PUBLIC;
+      result = computeFlagsForInterfaceMember(tree);
     }
     for (ModifierKeywordTree modifier : modifiers.modifiers()) {
       result |= Flags.flagForModifier(modifier.modifier());

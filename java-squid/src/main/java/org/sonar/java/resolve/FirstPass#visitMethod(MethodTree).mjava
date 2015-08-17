@@ -1,7 +1,7 @@
   @Override
   public void visitMethod(MethodTree tree) {
     String name = tree.returnType() == null ? "<init>" : tree.simpleName().name();
-    JavaSymbol.MethodJavaSymbol symbol = new JavaSymbol.MethodJavaSymbol(computeFlags(tree.modifiers()), name, env.scope.owner);
+    JavaSymbol.MethodJavaSymbol symbol = new JavaSymbol.MethodJavaSymbol(computeFlags(tree.modifiers(), tree), name, env.scope.owner);
     symbol.declaration = tree;
     if((env.scope.owner.flags & Flags.ENUM) !=0 && tree.returnType()==null ) {
       //enum constructors are private.
