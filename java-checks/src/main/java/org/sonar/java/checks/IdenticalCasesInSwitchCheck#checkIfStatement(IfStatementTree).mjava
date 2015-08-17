@@ -3,13 +3,13 @@
     StatementTree elseStatement = node.elseStatement();
     while (elseStatement != null && elseStatement.is(Tree.Kind.IF_STATEMENT)) {
       IfStatementTree ifStatement = (IfStatementTree) elseStatement;
-      if (SyntacticEquivalence.areEquivalent(thenStatement, ifStatement.thenStatement())) {
+      if (areIfBlocksSyntacticalEquivalent(thenStatement, ifStatement.thenStatement())) {
         addIssue(ifStatement.thenStatement(), issueMessage("branch", thenStatement));
         break;
       }
       elseStatement = ifStatement.elseStatement();
     }
-    if (elseStatement != null && SyntacticEquivalence.areEquivalent(thenStatement, elseStatement)) {
+    if (elseStatement != null && areIfBlocksSyntacticalEquivalent(thenStatement, elseStatement)) {
       addIssue(elseStatement, issueMessage("branch", thenStatement));
     }
   }
