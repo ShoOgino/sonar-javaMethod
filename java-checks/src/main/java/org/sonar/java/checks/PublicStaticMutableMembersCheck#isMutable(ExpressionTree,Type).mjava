@@ -1,0 +1,18 @@
+  static boolean isMutable(@Nullable ExpressionTree initializer, Type type) {
+    if (initializer == null) {
+      return Iterables.any(ALWAYS_MUTABLE_TYPES, SyntaxNodePredicates.isSubtypeOf(type));
+    }
+    ExpressionTree expression = ExpressionsHelper.skipParentheses(initializer);
+    if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) expression;
+      if (isAcceptedTypeOrUnmodifiableMethodCall(mit)) {
+        return false;
+      } else if (ARRAYS_AS_LIST.matches(mit)) {
+        return !mit.arguments().isEmpty();
+      }
+    } else if (expression.is(Tree.Kind.NEW_CLASS)) {
+      return !isAcceptedType(expression.symbolType(), ACCEPTED_NEW_TYPES);
+    }
+    return true;
+  }
+

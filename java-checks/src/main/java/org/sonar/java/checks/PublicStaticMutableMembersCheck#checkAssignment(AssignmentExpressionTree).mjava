@@ -1,0 +1,11 @@
+  private void checkAssignment(AssignmentExpressionTree node) {
+    ExpressionTree variable = ExpressionsHelper.skipParentheses(node.variable());
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) variable).symbol();
+      if (IMMUTABLE_CANDIDATES.contains(symbol) && isMutable(node.expression(), symbol.type())) {
+        addIssue(variable, "Make member \"" + symbol.name() + "\" \"protected\".");
+        IMMUTABLE_CANDIDATES.remove(symbol);
+      }
+    }
+  }
+

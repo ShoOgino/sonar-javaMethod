@@ -1,0 +1,12 @@
+  private void preCheckVariable(Tree owner, VariableTree variableTree) {
+    Symbol symbol = variableTree.symbol();
+    if (symbol != null && isPublicStatic(symbol) && isForbiddenType(symbol.type())) {
+      if (isMutable(variableTree.initializer(), symbol.type())) {
+        addIssue(variableTree, "Make this member \"protected\".");
+      } else {
+        IMMUTABLE_CANDIDATES.add(symbol);
+        CLASS_IMMUTABLE_CANDIDATES.put(owner, symbol);
+      }
+    }
+  }
+

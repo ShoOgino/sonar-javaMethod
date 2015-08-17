@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      checkAssignment((AssignmentExpressionTree) tree);
+    } else {
+      List<Tree> members = ((ClassTree) tree).members();
+      for (Tree member : members) {
+        if (member.is(Tree.Kind.VARIABLE)) {
+          preCheckVariable(tree, (VariableTree) member);
+        }
+      }
+    }
+  }
+
