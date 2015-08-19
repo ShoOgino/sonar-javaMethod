@@ -1,6 +1,11 @@
   private static String algorithm(ExpressionTree invocationArgument) {
-    if (invocationArgument.is(Tree.Kind.STRING_LITERAL)) {
-      String algo = LiteralUtils.trimQuotes(((LiteralTree) invocationArgument).value());
+    ExpressionTree expectedAlgorithm = invocationArgument;
+    ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(invocationArgument);
+    if (defaultPropertyValue != null) {
+      expectedAlgorithm = defaultPropertyValue;
+    }
+    if (expectedAlgorithm.is(Tree.Kind.STRING_LITERAL)) {
+      String algo = LiteralUtils.trimQuotes(((LiteralTree) expectedAlgorithm).value());
       return algo.replaceAll("-", "");
     }
     return null;
