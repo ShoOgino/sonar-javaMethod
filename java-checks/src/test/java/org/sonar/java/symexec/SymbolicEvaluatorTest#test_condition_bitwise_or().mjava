@@ -1,0 +1,25 @@
+  @Test
+  public void test_condition_bitwise_or() {
+    // evaluation
+    assertThat(evaluateCondition("false | false").isAlwaysFalse()).isTrue();
+    assertThat(evaluateCondition("false | true").isAlwaysTrue()).isTrue();
+    assertThat(evaluateCondition("false | local2").isUnknown()).isTrue();
+    assertThat(evaluateCondition("true | false").isAlwaysTrue()).isTrue();
+    assertThat(evaluateCondition("true | true").isAlwaysTrue()).isTrue();
+    assertThat(evaluateCondition("true | local2").isAlwaysTrue()).isTrue();
+    assertThat(evaluateCondition("local1 | false").isUnknown()).isTrue();
+    assertThat(evaluateCondition("local1 | true").isAlwaysTrue()).isTrue();
+    assertThat(evaluateCondition("local1 | local").isUnknown()).isTrue();
+
+    // number of spawned states
+    assertOutputStates(evaluateCondition("false | false"), 0, 1, 0);
+    assertOutputStates(evaluateCondition("false | true"), 1, 0, 0);
+    assertOutputStates(evaluateCondition("false | local2"), 1, 1, 0);
+    assertOutputStates(evaluateCondition("true | false"), 1, 0, 0);
+    assertOutputStates(evaluateCondition("true | true"), 1, 0, 0);
+    assertOutputStates(evaluateCondition("true | local2"), 1, 0, 0);
+    assertOutputStates(evaluateCondition("local1 | false"), 1, 1, 0);
+    assertOutputStates(evaluateCondition("local1 | true"), 2, 0, 0);
+    assertOutputStates(evaluateCondition("local1 | local2"), 2, 1, 0);
+  }
+

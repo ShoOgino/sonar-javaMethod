@@ -1,0 +1,19 @@
+    @Override
+    void evaluateXor(BinaryExpressionTree tree) {
+      PackedStates leftStates = evaluateCondition(currentState, tree.leftOperand());
+      currentResult = leftStates.getBooleanConstraint();
+      if (currentResult == SymbolicBooleanConstraint.FALSE) {
+        currentResult = null;
+        for (ExecutionState state : leftStates.falseStates) {
+          SymbolicBooleanConstraint newResult = evaluateExpression(state, tree.rightOperand());
+          currentResult = newResult.union(currentResult);
+        }
+      } else if (currentResult == SymbolicBooleanConstraint.TRUE) {
+        currentResult = null;
+        for (ExecutionState state : leftStates.trueStates) {
+          SymbolicBooleanConstraint newResult = evaluateExpression(state, tree.rightOperand());
+          currentResult = newResult.negate().union(currentResult);
+        }
+      }
+    }
+

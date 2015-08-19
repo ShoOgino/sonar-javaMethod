@@ -1,0 +1,17 @@
+    @Override
+    void evaluateXor(BinaryExpressionTree tree) {
+      PackedStates leftResult = evaluateCondition(currentState, tree.leftOperand());
+      for (ExecutionState leftState : leftResult.trueStates) {
+        PackedStates rightResult = evaluateCondition(leftState, tree.rightOperand());
+        currentResult.trueStates.addAll(rightResult.falseStates);
+        currentResult.falseStates.addAll(rightResult.trueStates);
+        currentResult.unknownStates.addAll(rightResult.unknownStates);
+      }
+      for (ExecutionState leftState : leftResult.falseStates) {
+        PackedStates rightResult = evaluateCondition(leftState, tree.rightOperand());
+        currentResult.trueStates.addAll(rightResult.trueStates);
+        currentResult.falseStates.addAll(rightResult.falseStates);
+        currentResult.unknownStates.addAll(rightResult.unknownStates);
+      }
+    }
+
