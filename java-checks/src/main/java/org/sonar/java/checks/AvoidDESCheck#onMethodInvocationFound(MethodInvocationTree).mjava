@@ -1,10 +1,9 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree firstArg = mit.arguments().get(0);
-    if (firstArg.is(Tree.Kind.IDENTIFIER)) {
-      firstArg = retrievedPropertyDefaultValue((IdentifierTree) firstArg);
-    } else if (firstArg.is(Tree.Kind.METHOD_INVOCATION)) {
-      firstArg = retrievedPropertyDefaultValue((MethodInvocationTree) firstArg);
+    ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(firstArg);
+    if (defaultPropertyValue != null) {
+      firstArg = defaultPropertyValue;
     }
     if (firstArg != null && firstArg.is(Tree.Kind.STRING_LITERAL)) {
       String algo = LiteralUtils.trimQuotes(((LiteralTree) firstArg).value());

@@ -1,0 +1,10 @@
+  @Test
+  public void null_if_variable_used_more_than_once() throws Exception {
+    ExpressionTree tree = firstExpression(
+      "void foo(String prop){ foo(myValue); myValue = 0; } "
+        + "java.util.Properties props = new java.util.Properties();"
+        + "String myValue = props.getProperty(\"myKey\", \"defaultValue\");");
+    ExpressionTree defaultValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(((MethodInvocationTree) tree).arguments().get(0));
+    assertThat(defaultValue).isNull();
+  }
+

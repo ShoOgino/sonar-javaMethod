@@ -1,0 +1,8 @@
+  @Test
+  public void retrieve_default_value_on_method_invocation() throws Exception {
+    ExpressionTree tree = firstExpression("void foo(java.util.Properties props){ props.getProperty(\"myKey\", \"defaultValue\"); }");
+    ExpressionTree defaultValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(tree);
+    assertThat(defaultValue).isNotNull();
+    assertThat(defaultValue.is(Tree.Kind.STRING_LITERAL)).isTrue();
+  }
+
