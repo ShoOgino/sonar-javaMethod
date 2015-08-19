@@ -2,7 +2,7 @@
   public void visitIfStatement(IfStatementTree tree) {
     super.visitIfStatement(tree);
     ExpressionTree condition = tree.condition();
-    if (condition.is(Tree.Kind.ASSIGNMENT) && EQUALITY_RELATIONAL_OPERATORS.contains(getKind(((AssignmentExpressionTree) condition).expression()))) {
+    if (condition.is(Tree.Kind.ASSIGNMENT) && EQUALITY_RELATIONAL_OPERATORS.contains(((AssignmentExpressionTree) condition).expression().kind())) {
       raiseIssue(((AssignmentExpressionTree) condition).operatorToken().line(), tree);
     }
   }
