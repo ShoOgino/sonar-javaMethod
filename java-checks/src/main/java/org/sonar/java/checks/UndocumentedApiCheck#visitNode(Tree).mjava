@@ -1,7 +1,7 @@
   private void visitNode(Tree tree) {
     if (!isExcluded(tree)) {
       String javadoc = PublicApiChecker.getApiJavadoc(tree);
-      if (javadoc == null) {
+      if (javadoc == null || isEmptyJavadoc(javadoc)) {
         context.addIssue(tree, this, "Document this public " + getType(tree) + ".");
       } else if (!javadoc.contains("{@inheritDoc}")) {
         List<String> undocumentedParameters = getUndocumentedParameters(javadoc, getParameters(tree));
