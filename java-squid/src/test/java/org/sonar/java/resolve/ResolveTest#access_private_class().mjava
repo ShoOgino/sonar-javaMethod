@@ -12,14 +12,12 @@
    */
   @Test
   public void access_private_class() {
-    JavaSymbol.PackageJavaSymbol packageSymbol = new JavaSymbol.PackageJavaSymbol(null, null);
-    JavaSymbol.TypeJavaSymbol outermostClassSymbol = new JavaSymbol.TypeJavaSymbol(0, "OutermostClass", packageSymbol);
-    JavaSymbol.TypeJavaSymbol targetClassSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PRIVATE, "TargetClass", outermostClassSymbol);
+    env.enclosingClass = new JavaSymbol.TypeJavaSymbol(0, "OutermostClass", env.packge);
+    JavaSymbol.TypeJavaSymbol targetClassSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PRIVATE, "TargetClass", env.enclosingClass);
 
-    when(env.enclosingClass()).thenReturn(outermostClassSymbol);
     assertThat(resolve.isAccessible(env, targetClassSymbol)).isTrue();
 
-    when(env.enclosingClass()).thenReturn(new JavaSymbol.TypeJavaSymbol(0, "AnotherOutermostClass", packageSymbol));
+    env.enclosingClass = new JavaSymbol.TypeJavaSymbol(0, "AnotherOutermostClass", env.packge);
     assertThat(resolve.isAccessible(env, targetClassSymbol)).isFalse();
   }
 

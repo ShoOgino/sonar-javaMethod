@@ -1,12 +1,10 @@
   @Test
   public void access_protected_class() {
-    JavaSymbol.PackageJavaSymbol packageSymbol = new JavaSymbol.PackageJavaSymbol(null, null);
-    JavaSymbol.TypeJavaSymbol targetClassSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PROTECTED, "TargetClass", packageSymbol);
+    JavaSymbol.TypeJavaSymbol targetClassSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PROTECTED, "TargetClass", env.packge);
 
-    when(env.packge()).thenReturn(packageSymbol);
     assertThat(resolve.isAccessible(env, targetClassSymbol)).isTrue();
 
-    when(env.packge()).thenReturn(new JavaSymbol.PackageJavaSymbol("AnotherPackage", null));
+    env.packge = new JavaSymbol.PackageJavaSymbol("AnotherPackage", null);
     assertThat(resolve.isAccessible(env, targetClassSymbol)).isFalse();
   }
 
