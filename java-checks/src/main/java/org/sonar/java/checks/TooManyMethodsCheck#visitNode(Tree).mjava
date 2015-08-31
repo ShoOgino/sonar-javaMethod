@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(Tree tree) {
+    int count = 0;
+    ClassTree classTree = (ClassTree) tree;
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR) && (countNonPublic || ((MethodTree) member).symbol().isPublic())) {
+        count++;
+      }
+    }
+    if (count > maximumMethodThreshold) {
+      addIssue(
+        tree,
+        String.format("\"%s\" \"%s\" has %d%s methods, which is greater than the %d authorized. Split it into smaller classes.",
+          classTree.declarationKeyword().text(), classTree.simpleName(), count, countNonPublic ? "" : " public", maximumMethodThreshold));
+    }
+  }
+
