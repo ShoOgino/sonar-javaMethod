@@ -1,31 +1,5 @@
   // FIXME(Godin): or parameter must be renamed, or should not receive flat name, in a former case - first transformation in this method seems useless
   JavaSymbol.TypeJavaSymbol getClassSymbol(String bytecodeName, int flags) {
-    String flatName = Convert.flatName(bytecodeName);
-    JavaSymbol.TypeJavaSymbol symbol = classes.get(flatName);
-    if (symbol == null) {
-      String shortName = Convert.shortName(flatName);
-      String packageName = Convert.packagePart(flatName);
-      String enclosingClassName = Convert.enclosingClassName(shortName);
-      if (StringUtils.isNotEmpty(enclosingClassName)) {
-        //handle innerClasses
-        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), Convert.innerClassName(shortName), getClassSymbol(Convert.fullName(packageName, enclosingClassName)));
-      } else {
-        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), shortName, enterPackage(packageName));
-      }
-      symbol.members = new Scope(symbol);
-      symbol.typeParameters = new Scope(symbol);
-
-      // (Godin): IOException will happen without this condition in case of missing class:
-      if (getClassLoader().getResource(Convert.bytecodeName(flatName) + ".class") != null) {
-        symbol.completer = this;
-      } else {
-        LOG.error("Class not found: " + bytecodeName);
-        ((JavaType.ClassJavaType) symbol.type).interfaces = ImmutableList.of();
-        ((JavaType.ClassJavaType) symbol.type).supertype = Symbols.unknownType;
-      }
-
-      classes.put(flatName, symbol);
-    }
-    return symbol;
+    return getClassSymbol(null, bytecodeName, flags);
   }
 
