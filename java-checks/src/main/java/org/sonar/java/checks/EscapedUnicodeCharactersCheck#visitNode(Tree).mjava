@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(Tree node) {
+    String value = LiteralUtils.trimQuotes(((LiteralTree) node).value());
+    if (value.isEmpty()) {
+      return;
+    }
+    // replace \\u with \\z just to differentiate \u0000 and \\u0000
+    Matcher matcher = UNICODE_ESCAPED_CHAR.matcher(value.replaceAll("\\\\\\\\u", "\\\\z"));
+    List<String> matches = getAllMatches(matcher);
+    if (!matches.isEmpty()) {
+      boolean notOnlyUnicodeEscaped = !matcher.replaceAll("").isEmpty();
+      if (notOnlyUnicodeEscaped && Iterables.any(matches, IS_PRINTABLE_ESCAPED_UNICODE)) {
+        addIssue(node, "Remove this Unicode escape sequence and use the character instead.");
+      }
+    }
+  }
+
