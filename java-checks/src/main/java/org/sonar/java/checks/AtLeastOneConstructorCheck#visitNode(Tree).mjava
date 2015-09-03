@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree node = (ClassTree) tree;
+    if (node.simpleName() != null && !ModifiersUtils.hasModifier(((ClassTree) tree).modifiers(), Modifier.ABSTRACT)) {
+      List<Tree> members = node.members();
+      boolean hasPrivateMember = false;
+      for (Tree member : members) {
+        if (member.is(Kind.CONSTRUCTOR)) {
+          return;
+        } else if (member.is(Kind.VARIABLE)) {
+          VariableTree variable = (VariableTree) member;
+          Symbol symbol = variable.symbol();
+          hasPrivateMember |= variable.initializer() == null && symbol.isPrivate() && !symbol.isStatic();
+        }
+      }
+      if (hasPrivateMember) {
+        addIssue(tree, "Add a constructor to the " + node.declarationKeyword().text() + ".");
+      }
+    }
+  }
+
