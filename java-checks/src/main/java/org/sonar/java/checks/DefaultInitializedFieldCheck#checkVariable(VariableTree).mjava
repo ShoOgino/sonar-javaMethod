@@ -1,0 +1,10 @@
+  private void checkVariable(VariableTree member) {
+    ExpressionTree initializer = member.initializer();
+    if (initializer != null) {
+      initializer = ExpressionsHelper.skipParentheses(initializer);
+      if (isDefault(initializer)) {
+        addIssue(member, "Remove this initialization to \"" + ((LiteralTree) initializer).value() + "\", the compiler will do that for you.");
+      }
+    }
+  }
+
