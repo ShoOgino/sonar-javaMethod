@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree node = (ClassTree) tree;
+    Symbol.TypeSymbol symbol = node.symbol();
+    if (isServletOrEjb(symbol)) {
+      for (Tree member : node.members()) {
+        if (member.is(Tree.Kind.METHOD) && ((MethodTreeImpl) member).isMainMethod()) {
+          addIssue(member, "Remove this unwanted \"main\" method.");
+        }
+      }
+    }
+  }
+
