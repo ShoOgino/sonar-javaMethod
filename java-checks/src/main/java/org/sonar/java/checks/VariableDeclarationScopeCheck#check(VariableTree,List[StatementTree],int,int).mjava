@@ -1,0 +1,14 @@
+  private void check(VariableTree variable, List<StatementTree> body, int bodySize, int next) {
+    Symbol symbol = variable.symbol();
+    ReferenceVisitor referenceVisitor = new ReferenceVisitor(symbol);
+    for (int i = next; i < bodySize; i++) {
+      referenceVisitor.visit(body.get(i));
+      if (referenceVisitor.referenceSymbol) {
+        return;
+      } else if (referenceVisitor.hasBreakingStatement) {
+        addIssue(variable, "Move the declaration of \"" + symbol.name() + "\" closer to the code that uses it.");
+        return;
+      }
+    }
+  }
+
