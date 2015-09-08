@@ -1,10 +1,6 @@
   private void reportIssues(ResourceMapping resourceMapping, NoSonarFilter noSonarFilter, ChecksBridge checksBridge, Project project) {
-    ProjectIssue projectIssue = null;
-    if (StringUtils.isNotBlank(settings.getString(JavaPlugin.JSON_OUTPUT_FOLDER))) {
-      projectIssue = new ProjectIssue();
-    }
     for (Resource directory : resourceMapping.directories()) {
-      checksBridge.reportIssueForPackageInfo((Directory) directory, project, projectIssue);
+      checksBridge.reportIssueForPackageInfo((Directory) directory, project);
       for (Resource sonarFile : resourceMapping.files((Directory) directory)) {
         String key = resourceMapping.getFileKeyByResource((org.sonar.api.resources.File) sonarFile);
         // key would be null for test files as they are not in squid index.
@@ -12,13 +8,12 @@
           SourceFile squidFile = (SourceFile) squid.search(key);
           if (squidFile != null) {
             noSonarFilter.addResource(sonarFile, squidFile.getNoSonarTagLines());
-            checksBridge.reportIssues(squidFile, sonarFile, projectIssue);
+            checksBridge.reportIssues(squidFile, sonarFile);
           } else {
             LOG.error("Could not report issue on file: " + sonarFile.getKey());
           }
         }
       }
     }
-    outputJson(projectIssue);
   }
 
