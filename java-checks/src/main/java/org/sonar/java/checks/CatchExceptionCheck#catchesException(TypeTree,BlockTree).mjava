@@ -1,0 +1,14 @@
+  private boolean catchesException(TypeTree catchType, BlockTree block) {
+    if (catchType.is(Kind.UNION_TYPE)) {
+      UnionTypeTree unionTypeTree = (UnionTypeTree) catchType;
+      for (TypeTree typeAlternative : unionTypeTree.typeAlternatives()) {
+        if (catchesExceptionCheck(block, typeAlternative)) {
+          return true;
+        }
+      }
+    } else if (catchesExceptionCheck(block, catchType)) {
+      return true;
+    }
+    return false;
+  }
+
