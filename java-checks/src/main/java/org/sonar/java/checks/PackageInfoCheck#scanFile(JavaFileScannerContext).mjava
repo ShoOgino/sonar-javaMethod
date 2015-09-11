@@ -1,12 +1,9 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
     File parentFile = context.getFile().getParentFile();
-    if(!directoriesWithPackageFile.contains(parentFile)) {
+    if (!new File(parentFile, "package-info.java").isFile() && !directoriesWithoutPackageFile.contains(parentFile)) {
+      context.addIssue(parentFile, PackageInfoCheck.this, -1, "Add a 'package-info.java' file to document the '" + parentFile.getName() + "' package");
       directoriesWithoutPackageFile.add(parentFile);
-    }
-    if ("package-info.java".equals(context.getFile().getName())) {
-      directoriesWithoutPackageFile.remove(parentFile);
-      directoriesWithPackageFile.add(parentFile);
     }
   }
 
