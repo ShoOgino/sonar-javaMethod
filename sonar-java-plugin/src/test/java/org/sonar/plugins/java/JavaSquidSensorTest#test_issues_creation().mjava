@@ -1,0 +1,41 @@
+  @Test
+  public void test_issues_creation() throws Exception {
+    RulesProfile qp = RulesProfile.create("test", Java.KEY);
+    Settings settings = new Settings();
+    DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/java/"));
+    File file = new File("src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java");
+    fs.add(new DefaultInputFile(file.getPath()).setFile(file).setLanguage("java"));
+    Project project = mock(Project.class);
+    JavaClasspath javaClasspath = new JavaClasspath(project, settings, fs);
+
+    SonarComponents sonarComponents = createSonarComponentsMock();
+    DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, javaClasspath, mock(SuppressWarningsFilter.class));
+    JavaSquidSensor jss = new JavaSquidSensor(qp, javaClasspath, sonarComponents, fs, javaResourceLocator, settings, mock(NoSonarFilter.class));
+    SensorContext context = mock(SensorContext.class);
+    when(context.getResource(any(InputPath.class))).thenReturn(org.sonar.api.resources.File.create("src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java"));
+
+    ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
+    when(sonarComponents.getResourcePerspectives()).thenReturn(resourcePerspectives);
+    Issuable issuable = mock(Issuable.class);
+
+    Issuable.IssueBuilder issueBuilder = mock(Issuable.IssueBuilder.class);
+    when(issuable.newIssueBuilder()).thenReturn(issueBuilder);
+    Issue issue = mock(Issue.class);
+    when(issueBuilder.ruleKey(Mockito.any(RuleKey.class))).thenReturn(issueBuilder);
+    when(issueBuilder.line(Mockito.anyInt())).thenReturn(issueBuilder);
+    when(issueBuilder.message(Mockito.anyString())).thenReturn(issueBuilder);
+    when(issueBuilder.effortToFix(Mockito.anyDouble())).thenReturn(issueBuilder);
+    when(issueBuilder.build()).thenReturn(issue);
+
+    when(resourcePerspectives.as(any(Issuable.class.getClass()), any(Resource.class))).thenReturn(issuable);
+
+    jss.analyse(project, context);
+
+    verify(issueBuilder, times(3)).ruleKey(RuleKey.of("squid", "S00100"));
+    verify(issueBuilder, times(3)).message("Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.");
+    verify(issuable, times(3)).addIssue(issue);
+
+    settings.setProperty(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY, true);
+    jss.analyse(project, context);
+  }
+
