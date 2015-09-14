@@ -2,8 +2,11 @@
    * @return true, if signature of m1 is more specific than signature of m2
    */
   private boolean isSignatureMoreSpecific(JavaSymbol m1, JavaSymbol m2) {
-    //TODO handle specific signature with varargs
-    // ((MethodSymbol) m2).isVarArgs()
-    return isArgumentsAcceptable(((JavaType.MethodJavaType) m1.type).argTypes, ((JavaType.MethodJavaType) m2.type).argTypes, false, false);
+    List<JavaType> m1ArgTypes = ((JavaType.MethodJavaType) m1.type).argTypes;
+    List<JavaType> m2ArgTypes = ((JavaType.MethodJavaType) m2.type).argTypes;
+    if (((JavaSymbol.MethodJavaSymbol) m1).isVarArgs()) {
+      m1ArgTypes = expandVarArgsToFitSize(m1ArgTypes, m2ArgTypes.size());
+    }
+    return isArgumentsAcceptable(m1ArgTypes, m2ArgTypes, ((JavaSymbol.MethodJavaSymbol) m2).isVarArgs(), false);
   }
 

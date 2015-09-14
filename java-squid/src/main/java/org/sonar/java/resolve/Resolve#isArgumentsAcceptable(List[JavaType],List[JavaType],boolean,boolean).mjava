@@ -7,20 +7,20 @@
     int formalsSize = formals.size();
     int nbArgToCheck = argsSize - formalsSize;
     if (isVarArgs) {
-      //Check at least last parameter for varags compatibility
-      nbArgToCheck += 1;
+      // check at least last parameter for varargs compatibility
+      nbArgToCheck++;
       if (nbArgToCheck < 0) {
-        //arity is not correct, it can only differ negatively by one for varargs.
+        // arity is not correct, it can only differ negatively by one for varargs.
         return false;
       }
     } else if (nbArgToCheck != 0) {
-      //Not a vararg, we should have same number of arguments
+      // not a vararg, we should have same number of arguments
       return false;
     }
     for (int i = 1; i <= nbArgToCheck; i++) {
       JavaType.ArrayJavaType lastFormal = (JavaType.ArrayJavaType) formals.get(formalsSize - 1);
       JavaType argType = argTypes.get(argsSize - i);
-      //Check type of element of array or if we invoke with an array that it is a compatible array type
+      // check type of element of array or if we invoke with an array that it is a compatible array type
       if (!isAcceptableType(argType, lastFormal.elementType, autoboxing) && (nbArgToCheck != 1 || !types.isSubtype(argType, lastFormal))) {
         return false;
       }
