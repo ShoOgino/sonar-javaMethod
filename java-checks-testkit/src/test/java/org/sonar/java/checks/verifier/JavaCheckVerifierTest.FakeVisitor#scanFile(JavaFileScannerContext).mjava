@@ -1,0 +1,15 @@
+    @Override
+    public void scanFile(JavaFileScannerContext context) {
+      super.scanFile(context);
+      List<Integer> lines = Lists.newArrayList(issues.keySet());
+      Collections.sort(lines);
+      for (Integer line : lines) {
+        for (String message : issues.get(line)) {
+          addIssue(line, message);
+        }
+      }
+      for (String message : issuesOnFile) {
+        addIssueOnFile(message);
+      }
+    }
+
