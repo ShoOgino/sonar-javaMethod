@@ -1,0 +1,12 @@
+  private void buildContinueStatement(ContinueStatementTree tree) {
+    if (tree.label() == null) {
+      if (continueTargets.isEmpty()) {
+        throw new IllegalStateException("'continue' statement not in loop or switch statement");
+      }
+      currentBlock = createUnconditionalJump(tree, continueTargets.getLast());
+    } else {
+      currentBlock = createUnconditionalJump(tree, null);
+      gotos.add(currentBlock);
+    }
+  }
+

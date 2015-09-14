@@ -1,0 +1,14 @@
+  private void buildTryStatement(TryStatementTree tree) {
+    // FIXME only path with no failure constructed for now, (not taking try with resources into consideration).
+    TryStatementTree tryStatementTree = tree;
+    currentBlock = createBlock(currentBlock);
+    BlockTree finallyBlock = tryStatementTree.finallyBlock();
+    if (finallyBlock != null) {
+      build(finallyBlock);
+    }
+    currentBlock = createBlock(currentBlock);
+    build(tryStatementTree.block());
+    currentBlock = createBlock(currentBlock);
+    currentBlock.elements.add(tree);
+  }
+

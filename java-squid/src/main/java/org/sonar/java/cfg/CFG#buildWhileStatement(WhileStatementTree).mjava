@@ -1,0 +1,19 @@
+  private void buildWhileStatement(WhileStatementTree tree) {
+    WhileStatementTree s = tree;
+    Block falseBranch = currentBlock;
+    Block loopback = createBlock();
+    // process body
+    currentBlock = createBlock(loopback);
+    continueTargets.addLast(loopback);
+    breakTargets.addLast(falseBranch);
+    build(s.statement());
+    breakTargets.removeLast();
+    continueTargets.removeLast();
+    Block bodyBlock = currentBlock;
+    // process condition
+    currentBlock = createBranch(s, bodyBlock, falseBranch);
+    buildCondition(s.condition(), bodyBlock, falseBranch);
+    loopback.successors.add(currentBlock);
+    currentBlock = createBlock(currentBlock);
+  }
+

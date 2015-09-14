@@ -1,0 +1,28 @@
+  private void buildSwitchStatement(SwitchStatementTree tree) {
+    // FIXME useless node created for default cases.
+    SwitchStatementTree switchStatementTree = tree;
+    Block switchSuccessor = currentBlock;
+    // process condition
+    currentBlock = createBlock();
+    currentBlock.terminator = switchStatementTree;
+    switches.addLast(currentBlock);
+    build(switchStatementTree.expression());
+    // process body
+    currentBlock = createBlock(switchSuccessor);
+    breakTargets.addLast(switchSuccessor);
+    if (!switchStatementTree.cases().isEmpty()) {
+      CaseGroupTree firstCase = switchStatementTree.cases().get(0);
+      for (CaseGroupTree caseGroupTree : Lists.reverse(switchStatementTree.cases())) {
+        build(caseGroupTree.body());
+        switches.getLast().successors.add(currentBlock);
+        if (caseGroupTree != firstCase) {
+          // No block predecessing the first case group.
+          currentBlock = createBlock(currentBlock);
+        }
+      }
+    }
+    breakTargets.removeLast();
+    // process condition
+    currentBlock = switches.removeLast();
+  }
+

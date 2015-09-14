@@ -1,0 +1,8 @@
+  @Test
+  public void test_while_loop() throws Exception {
+    CFG cfg = buildCFG("void foo(boolean condition) { while (condition) { int x = 0; use(x); x = 1; /* x should not be live here*/}}");
+    LiveVariables liveVariables = LiveVariables.analyze(cfg);
+    assertThat(liveVariables.getOut(cfg.reversedBlocks().get(3))).hasSize(1);
+    assertThat(liveVariables.getOut(cfg.reversedBlocks().get(4))).hasSize(1);
+  }
+

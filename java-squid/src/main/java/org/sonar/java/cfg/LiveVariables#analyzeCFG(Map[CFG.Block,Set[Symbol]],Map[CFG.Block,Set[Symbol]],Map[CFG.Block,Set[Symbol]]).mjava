@@ -1,0 +1,31 @@
+  private void analyzeCFG(Map<CFG.Block, Set<Symbol>> in, Map<CFG.Block, Set<Symbol>> kill, Map<CFG.Block, Set<Symbol>> gen) {
+    Deque<CFG.Block> workList = new LinkedList<>();
+    workList.addAll(cfg.reversedBlocks());
+    while (!workList.isEmpty()) {
+      CFG.Block block = workList.removeFirst();
+
+      Set<Symbol> blockOut = out.get(block);
+      if (blockOut == null) {
+        blockOut = new HashSet<>();
+        out.put(block, blockOut);
+      }
+      for (CFG.Block successor : block.successors()) {
+        Set<Symbol> inOfSuccessor = in.get(successor);
+        if (inOfSuccessor != null) {
+          blockOut.addAll(inOfSuccessor);
+        }
+      }
+      // in = gen and (out - kill)
+      Set<Symbol> newIn = new HashSet<>(gen.get(block));
+      newIn.addAll(Sets.difference(blockOut, kill.get(block)));
+
+      if (newIn.equals(in.get(block))) {
+        continue;
+      }
+      in.put(block, newIn);
+      for (CFG.Block predecessor : block.predecessors()) {
+        workList.addLast(predecessor);
+      }
+    }
+  }
+

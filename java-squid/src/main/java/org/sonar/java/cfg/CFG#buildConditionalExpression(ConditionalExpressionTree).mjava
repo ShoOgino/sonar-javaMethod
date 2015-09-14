@@ -1,0 +1,17 @@
+  private void buildConditionalExpression(ConditionalExpressionTree tree) {
+    ConditionalExpressionTree cond = tree;
+    Block next = currentBlock;
+    // process else-branch
+    ExpressionTree elseStatement = cond.falseExpression();
+    currentBlock = createBlock(next);
+    build(elseStatement);
+    Block elseBlock = currentBlock;
+    // process then-branch
+    currentBlock = createBlock(next);
+    build(cond.trueExpression());
+    Block thenBlock = currentBlock;
+    // process condition
+    currentBlock = createBranch(cond, thenBlock, elseBlock);
+    buildCondition(cond.condition(), thenBlock, elseBlock);
+  }
+

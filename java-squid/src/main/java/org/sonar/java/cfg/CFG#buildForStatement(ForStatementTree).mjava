@@ -1,0 +1,32 @@
+  private void buildForStatement(ForStatementTree tree) {
+    Block falseBranch = currentBlock;
+    // process step
+    currentBlock = createBlock();
+    Block updateBlock = currentBlock;
+    for (StatementTree updateTree : Lists.reverse(tree.update())) {
+      build(updateTree);
+    }
+    continueTargets.addLast(currentBlock);
+    // process body
+    currentBlock = createBlock(currentBlock);
+    breakTargets.addLast(falseBranch);
+    build(tree.statement());
+    breakTargets.removeLast();
+    continueTargets.removeLast();
+    Block body = currentBlock;
+    // process condition
+    ExpressionTree condition = tree.condition();
+    if (condition != null) {
+      currentBlock = createBranch(tree, body, falseBranch);
+      buildCondition(condition, body, falseBranch);
+    } else {
+      currentBlock = createUnconditionalJump(tree, body);
+    }
+    updateBlock.successors.add(currentBlock);
+    // process init
+    currentBlock = createBlock(currentBlock);
+    for (StatementTree init : Lists.reverse(tree.initializer())) {
+      build(init);
+    }
+  }
+

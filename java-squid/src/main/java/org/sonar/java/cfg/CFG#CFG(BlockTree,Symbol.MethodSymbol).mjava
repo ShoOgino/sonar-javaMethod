@@ -1,4 +1,5 @@
-  private CFG(BlockTree tree) {
+  private CFG(BlockTree tree, Symbol.MethodSymbol symbol) {
+    methodSymbol = symbol;
     exitBlock = createBlock();
     currentBlock = createBlock(exitBlock);
     for (StatementTree statementTree : Lists.reverse(tree.body())) {
@@ -10,7 +11,7 @@
       Tree s = b.terminator;
       assert s != null;
       String label;
-      if(s instanceof BreakStatementTree) {
+      if (s.is(Tree.Kind.BREAK_STATEMENT)) {
         label = ((BreakStatementTree) s).label().name();
       } else {
         label = ((ContinueStatementTree) s).label().name();
@@ -20,6 +21,12 @@
         throw new IllegalStateException("Undeclared label: " + label);
       }
       b.successors.add(target);
+    }
+
+    for (Block b : blocks) {
+      for (Block successor : b.successors) {
+        successor.predecessors.add(b);
+      }
     }
   }
 

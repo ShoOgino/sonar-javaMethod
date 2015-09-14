@@ -1,0 +1,47 @@
+  private void processBlockElements(CFG.Block block, Set<Symbol> blockKill, Set<Symbol> blockGen) {
+    // process elements from bottom to top
+    Set<Tree> assignmentLHS = new HashSet<>();
+    for (Tree element : Lists.reverse(block.elements())) {
+      Symbol symbol;
+      switch (element.kind()) {
+        case ASSIGNMENT:
+          ExpressionTree lhs = ((AssignmentExpressionTree) element).variable();
+
+          if (lhs.is(Tree.Kind.IDENTIFIER)) {
+            symbol = ((IdentifierTree) lhs).symbol();
+            if (isLocalVariable(symbol)) {
+              assignmentLHS.add(lhs);
+              blockGen.remove(symbol);
+              blockKill.add(symbol);
+            }
+          }
+          break;
+        case IDENTIFIER:
+          symbol = ((IdentifierTree) element).symbol();
+          if (!assignmentLHS.contains(element) && isLocalVariable(symbol)) {
+            blockGen.add(symbol);
+          }
+          break;
+        case VARIABLE:
+          blockKill.add(((VariableTree) element).symbol());
+          blockGen.remove(((VariableTree) element).symbol());
+          break;
+        case LAMBDA_EXPRESSION:
+          LocalVariableReadExtractor extractor = new LocalVariableReadExtractor(cfg.methodSymbol());
+          ((LambdaExpressionTree) element).body().accept(extractor);
+          blockGen.addAll(extractor.usedVariables());
+          break;
+        case NEW_CLASS:
+          ClassTree body = ((NewClassTree) element).classBody();
+          if (body != null) {
+            LocalVariableReadExtractor extractorFromClass = new LocalVariableReadExtractor(cfg.methodSymbol());
+            body.accept(extractorFromClass);
+            blockGen.addAll(extractorFromClass.usedVariables());
+          }
+          break;
+        default:
+          // Ignore other kind of elements, no change of gen/kill
+      }
+    }
+  }
+

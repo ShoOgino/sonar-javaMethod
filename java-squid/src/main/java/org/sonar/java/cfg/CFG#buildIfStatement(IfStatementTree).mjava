@@ -1,0 +1,23 @@
+  private void buildIfStatement(IfStatementTree tree) {
+    IfStatementTree ifStatementTree = tree;
+    Block next = currentBlock;
+    // process else-branch
+    Block elseBlock = next;
+    StatementTree elseStatement = ifStatementTree.elseStatement();
+    if (elseStatement != null) {
+      // if statement will create the required block.
+      if (!elseStatement.is(Tree.Kind.IF_STATEMENT)) {
+        currentBlock = createBlock(next);
+      }
+      build(elseStatement);
+      elseBlock = currentBlock;
+    }
+    // process then-branch
+    currentBlock = createBlock(next);
+    build(ifStatementTree.thenStatement());
+    Block thenBlock = currentBlock;
+    // process condition
+    currentBlock = createBranch(ifStatementTree, thenBlock, elseBlock);
+    buildCondition(ifStatementTree.condition(), thenBlock, elseBlock);
+  }
+

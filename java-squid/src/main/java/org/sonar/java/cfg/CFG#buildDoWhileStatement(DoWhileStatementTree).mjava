@@ -1,0 +1,18 @@
+  private void buildDoWhileStatement(DoWhileStatementTree tree) {
+    DoWhileStatementTree s = tree;
+    Block falseBranch = currentBlock;
+    Block loopback = createBlock();
+    // process condition
+    currentBlock = createBranch(s, loopback, falseBranch);
+    buildCondition(s.condition(), loopback, falseBranch);
+    // process body
+    currentBlock = createBlock(currentBlock);
+    continueTargets.addLast(loopback);
+    breakTargets.addLast(falseBranch);
+    build(s.statement());
+    breakTargets.removeLast();
+    continueTargets.removeLast();
+    loopback.successors.add(currentBlock);
+    currentBlock = createBlock(currentBlock);
+  }
+

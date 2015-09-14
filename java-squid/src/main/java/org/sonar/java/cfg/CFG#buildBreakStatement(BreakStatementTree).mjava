@@ -1,0 +1,12 @@
+  private void buildBreakStatement(BreakStatementTree tree) {
+    if (tree.label() == null) {
+      if (breakTargets.isEmpty()) {
+        throw new IllegalStateException("'break' statement not in loop or switch statement");
+      }
+      currentBlock = createUnconditionalJump(tree, breakTargets.getLast());
+    } else {
+      currentBlock = createUnconditionalJump(tree, null);
+      gotos.add(currentBlock);
+    }
+  }
+

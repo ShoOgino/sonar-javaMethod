@@ -1,0 +1,14 @@
+  @Test
+  public void should_not_extract_local_vars_written() throws Exception {
+    MethodTree methodTree = buildMethodTree("void foo(boolean a) { new Object() { void foo() { a = false;} };  }");
+    StatementTree statementTree = methodTree.block().body().get(0);
+    LocalVariableReadExtractor extractor = new LocalVariableReadExtractor(methodTree.symbol());
+    statementTree.accept(extractor);
+    assertThat(extractor.usedVariables()).isEmpty();
+    methodTree = buildMethodTree("void foo(boolean a) { new Object() { void foo() { a = !a;} };  }");
+    statementTree = methodTree.block().body().get(0);
+    extractor = new LocalVariableReadExtractor(methodTree.symbol());
+    statementTree.accept(extractor);
+    assertThat(extractor.usedVariables()).hasSize(1);
+  }
+
