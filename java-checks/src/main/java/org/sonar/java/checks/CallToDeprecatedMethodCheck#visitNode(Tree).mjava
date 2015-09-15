@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Symbol symbol;
+    if (tree.is(Tree.Kind.NEW_CLASS)) {
+      symbol = ((NewClassTree) tree).constructorSymbol();
+    } else {
+      symbol = ((MethodInvocationTree) tree).symbol();
+    }
+    if (symbol.metadata().isAnnotatedWith("java.lang.Deprecated")) {
+      String name = symbol.name();
+      String message;
+      if ("<init>".equals(name)) {
+        message = "Constructor '" + symbol.owner().name() + "(...)' is deprecated.";
+      } else {
+        message = "Method '" + symbol.owner().name() + "." + name + "(...)' is deprecated.";
+      }
+      addIssue(tree, message);
+    }
+  }
+
