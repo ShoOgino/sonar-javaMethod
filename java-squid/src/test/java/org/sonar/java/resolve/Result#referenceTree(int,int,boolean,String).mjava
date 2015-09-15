@@ -1,7 +1,10 @@
-  private Object referenceTree(int line, int column, boolean searchSymbol) {
+  private Object referenceTree(int line, int column, boolean searchSymbol, @Nullable String name) {
     // In SSLR column starts at 0, but here we want consistency with IDE, so we start from 1:
     column -= 1;
     for (Symbol symbol : semanticModel.getSymbolUsed()) {
+      if (name != null && !name.equals(symbol.name())) {
+        continue;
+      }
       for (IdentifierTree usage : symbol.usages()) {
         SyntaxToken token = usage.identifierToken();
         if (token.line() == line && token.column() == column) {
