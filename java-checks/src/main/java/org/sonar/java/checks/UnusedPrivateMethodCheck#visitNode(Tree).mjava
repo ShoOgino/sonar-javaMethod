@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree node = (MethodTree) tree;
+    Symbol symbol = node.symbol();
+    if (symbol.isPrivate() && symbol.usages().isEmpty()) {
+      if (node.is(Tree.Kind.CONSTRUCTOR)) {
+        if (!node.parameters().isEmpty()) {
+          addIssue(node, "Remove this unused private \"" + node.simpleName().name() + "\" constructor.");
+        }
+      } else if (!SerializableContract.SERIALIZABLE_CONTRACT_METHODS.contains(symbol.name())) {
+        addIssue(node, "Remove this unused private \"" + symbol.name() + "\" method.");
+      }
+    }
+  }
+
