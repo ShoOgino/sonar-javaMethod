@@ -1,9 +1,7 @@
   @Test
   public void test() {
+    DITCheck check = new DITCheck();
     check.setMax(2);
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/java/org/sonar/java/checks/targets/Dit.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(22).withMessage("This class has 3 parents which is greater than 2 authorized.")
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/Dit.java", check);
   }
 
