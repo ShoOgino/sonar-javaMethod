@@ -2,5 +2,14 @@
       super(TYP, flags, name, owner);
       this.type = new JavaType.ClassJavaType(this);
       this.typeVariableTypes = Lists.newArrayList();
+      if (owner.isMethodSymbol()) {
+        // declaration of a class or an anonymous class in a method
+        internalName = ((TypeJavaSymbol) owner.owner).registerClassInternalName(name);
+      } else if (owner.isTypeSymbol() && name.isEmpty()) {
+        // anonymous class in a field
+        internalName = ((TypeJavaSymbol) owner).registerClassInternalName("");
+      } else {
+        internalName = name;
+      }
     }
 

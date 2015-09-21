@@ -1,8 +1,16 @@
     public String getFullyQualifiedName() {
-      String ownerName = "";
-      if (!owner.name.isEmpty()) {
-        ownerName = owner.name + ".";
+      String newQualification = "";
+      if (owner.isPackageSymbol()) {
+        if (!owner.name.isEmpty()) {
+          newQualification = owner.name + ".";
+        }
+      } else if (owner.isTypeSymbol()) {
+        newQualification = owner.type.fullyQualifiedName() + "$";
+      } else if (owner.isMethodSymbol()) {
+        newQualification = owner.owner.type().fullyQualifiedName() + "$";
+      } else {
+        throw new IllegalStateException("" + owner);
       }
-      return ownerName + name;
+      return newQualification + getInternalName();
     }
 
