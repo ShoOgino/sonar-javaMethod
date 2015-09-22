@@ -1,0 +1,13 @@
+  private boolean usedBetween(Symbol variable, Tree start, Tree end) {
+    SyntaxToken startToken = LastSyntaxTokenFinder.lastSyntaxToken(start);
+    SyntaxToken endToken = FirstSyntaxTokenFinder.firstSyntaxToken(end);
+
+    for (IdentifierTree identifier : variable.usages()) {
+      SyntaxToken identifierToken = identifier.identifierToken();
+      if (isAfterFirstToken(identifierToken, startToken) && isBeforeLastToken(identifierToken, endToken) && !identifiersUsedToSetAttribute.contains(identifier)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
