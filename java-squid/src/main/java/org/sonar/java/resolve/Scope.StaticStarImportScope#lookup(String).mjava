@@ -2,7 +2,7 @@
     public List<JavaSymbol> lookup(String name) {
       List<JavaSymbol> symbolsList = Lists.newArrayList();
       for (JavaSymbol site : symbols.values()) {
-        //site is a package, try to load referenced type.
+        // site is a package, try to load referenced type.
         if ((site.kind & JavaSymbol.PCK) != 0) {
           JavaSymbol symbol = bytecodeCompleter.loadClass(bytecodeCompleter.formFullName(name, site));
           if (symbol.kind < JavaSymbol.ERRONEOUS) {
@@ -10,12 +10,12 @@
           }
         }
 
-        //site is a type, try to find a matching type or field
+        // site is a type, try to find a matching type or field
         if ((site.kind & JavaSymbol.TYP) != 0) {
           List<JavaSymbol> resolved = ((JavaSymbol.TypeJavaSymbol) site).members().lookup(name);
           for (JavaSymbol symbol : resolved) {
-            //TODO check accessibility
-            //TODO factorize with static named import ?
+            // TODO check accessibility
+            // TODO factorize with static named import ?
             if (symbol.kind < JavaSymbol.ERRONEOUS && (symbol.flags & Flags.STATIC) != 0) {
               symbolsList.add(symbol);
             }

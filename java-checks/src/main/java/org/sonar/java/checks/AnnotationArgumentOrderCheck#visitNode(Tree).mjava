@@ -1,0 +1,22 @@
+  @Override
+  public void visitNode(Tree tree) {
+    AnnotationTree annotationTree = (AnnotationTree) tree;
+    Collection<Symbol> symbols = annotationTree.symbolType().symbol().memberSymbols();
+    List<String> declarationNames = new ArrayList<>();
+    for (Symbol symbol : symbols) {
+      declarationNames.add(symbol.name());
+    }
+    List<String> annotationArguments = new ArrayList<>();
+    for (ExpressionTree argument : annotationTree.arguments()) {
+      if (argument.is(Tree.Kind.ASSIGNMENT)) {
+        AssignmentExpressionTree assigmentTree = (AssignmentExpressionTree) argument;
+        IdentifierTree nameTree = (IdentifierTree) assigmentTree.variable();
+        annotationArguments.add(nameTree.name());
+      }
+    }
+    declarationNames.retainAll(annotationArguments);
+    if (!declarationNames.equals(annotationArguments)) {
+      addIssue(tree, "Reorder annotation arguments to match the order of declaration.");
+    }
+  }
+
