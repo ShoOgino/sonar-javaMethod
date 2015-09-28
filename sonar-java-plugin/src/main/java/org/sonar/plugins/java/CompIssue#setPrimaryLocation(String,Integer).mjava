@@ -1,0 +1,14 @@
+  public CompIssue setPrimaryLocation(String message, @Nullable Integer line) {
+    if (SQ_5_2 == null) {
+      issueBuilder.line(line).message(message);
+      return this;
+    }
+    try {
+      Object range = line == null ? null : SQ_5_2.inputFile_selectLine.invoke(inputFile, line);
+      setPrimaryLocation(message, range);
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw Throwables.propagate(e);
+    }
+    return this;
+  }
+

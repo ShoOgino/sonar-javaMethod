@@ -1,0 +1,16 @@
+  private void reportIssueNew(Resource sonarFile, Issuable issuable, AnalyzerMessage issue, RuleKey ruleKey) {
+    InputFile inputFile = fs.inputFile(fs.predicates().hasPath(sonarFile.getPath()));
+    CompIssue compIssue = CompIssue.create(inputFile, issuable, ruleKey, issue.getCost());
+    AnalyzerMessage.TextSpan textSpan = issue.primaryLocation();
+    if (textSpan == null) {
+      compIssue.setPrimaryLocation(issue.getMessage(), null);
+    } else {
+      compIssue.setPrimaryLocation(issue.getMessage(), textSpan.startLine, textSpan.startCharacter, textSpan.endLine, textSpan.endCharacter);
+    }
+    for (AnalyzerMessage secondaryLocation : issue.secondaryLocations) {
+      AnalyzerMessage.TextSpan secondarySpan = secondaryLocation.primaryLocation();
+      compIssue.addSecondaryLocation(secondarySpan.startLine, secondarySpan.startCharacter, secondarySpan.endLine, secondarySpan.endCharacter, secondaryLocation.getMessage());
+    }
+    compIssue.save();
+  }
+

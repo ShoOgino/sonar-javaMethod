@@ -10,6 +10,13 @@
           if (ruleKey == null) {
             throw new IllegalStateException("Cannot find rule key for instance of " + check.getClass());
           }
+          if (checkMessage instanceof org.sonar.java.CheckMessage) {
+            AnalyzerMessage issue = ((org.sonar.java.CheckMessage) checkMessage).analyzerMessage;
+            if (issue != null) {
+              reportIssueNew(sonarFile, issuable, issue, ruleKey);
+              continue;
+            }
+          }
           Issue issue = issuable.newIssueBuilder()
             .ruleKey(ruleKey)
             .line(checkMessage.getLine())

@@ -1,0 +1,17 @@
+    public Reflection() throws ClassNotFoundException, NoSuchMethodException {
+      Class<?> classTextRange = Class.forName("org.sonar.api.batch.fs.TextRange");
+      Class<?> classInputComponent = Class.forName("org.sonar.api.batch.fs.InputComponent");
+      Class<?> classNewIssueLocation = Class.forName("org.sonar.api.batch.sensor.issue.NewIssueLocation");
+
+      inputFile_selectLine = method(InputFile.class, "selectLine", int.class);
+      inputFile_newRange = method(InputFile.class, "newRange", int.class, int.class, int.class, int.class);
+
+      issueBuilder_at = method(Issuable.IssueBuilder.class, "at", classNewIssueLocation);
+      issueBuilder_newLocation = method(Issuable.IssueBuilder.class, "newLocation");
+      issueBuilder_addFlow = method(Issuable.IssueBuilder.class, "addFlow", Iterable.class);
+
+      newIssueLocation_on = method(classNewIssueLocation, "on", classInputComponent);
+      newIssueLocation_at = method(classNewIssueLocation, "at", classTextRange);
+      newIssueLocation_message = method(classNewIssueLocation, "message", String.class);
+    }
+

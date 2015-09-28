@@ -1,0 +1,19 @@
+  public CompIssue setPrimaryLocation(String message, int startLine, int startLineOffset, int endLine, int endLineOffset) {
+    if (SQ_5_2 == null) {
+      issueBuilder.line(startLine).message(message);
+      return this;
+    }
+    try {
+      Object range;
+      if (startLineOffset != -1) {
+        range = SQ_5_2.inputFile_newRange.invoke(inputFile, startLine, startLineOffset, endLine, endLineOffset);
+      } else {
+        range = SQ_5_2.inputFile_selectLine.invoke(inputFile, startLine);
+      }
+      setPrimaryLocation(message, range);
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw Throwables.propagate(e);
+    }
+    return this;
+  }
+
