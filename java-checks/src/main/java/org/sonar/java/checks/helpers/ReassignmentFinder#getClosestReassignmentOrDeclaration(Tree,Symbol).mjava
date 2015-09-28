@@ -1,5 +1,5 @@
   @CheckForNull
-  public static Tree getReassignmentOrDeclaration(Tree startingPoint, Symbol referenceSymbol) {
+  public static Tree getClosestReassignmentOrDeclaration(Tree startingPoint, Symbol referenceSymbol) {
     Tree result = referenceSymbol.declaration();
     List<IdentifierTree> usages = referenceSymbol.usages();
     if (usages.size() == 1) {
@@ -9,7 +9,7 @@
     List<Tree> reassignments = getReassignments(referenceSymbol.owner().declaration(), usages);
 
     int line = FirstSyntaxTokenFinder.firstSyntaxToken(startingPoint).line();
-    Tree lastReassignment = getLastReassignment(line, reassignments);
+    Tree lastReassignment = getClosestReassignment(line, reassignments);
     if (lastReassignment != null) {
       return lastReassignment;
     }
