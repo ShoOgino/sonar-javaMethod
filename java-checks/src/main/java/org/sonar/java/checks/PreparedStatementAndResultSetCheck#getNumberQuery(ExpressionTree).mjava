@@ -1,10 +1,10 @@
   @CheckForNull
-  private Integer getNumberQuery(ExpressionTree expression) {
+  private static Integer getNumberQuery(ExpressionTree expression) {
     ExpressionTree expr = ExpressionsHelper.skipParentheses(expression);
     if (expr.is(Tree.Kind.IDENTIFIER)) {
       // variable used as query
       Symbol variableSymbol = ((IdentifierTree) expression).symbol();
-      Tree lastAssignment = getReassignmentOrDeclaration(expression, variableSymbol);
+      Tree lastAssignment = ReassignmentFinder.getReassignmentOrDeclaration(expression, variableSymbol);
       ExpressionTree initializer = lastAssignment.is(Tree.Kind.VARIABLE) ?
         ((VariableTree) lastAssignment).initializer() :
         ((AssignmentExpressionTree) lastAssignment).expression();
