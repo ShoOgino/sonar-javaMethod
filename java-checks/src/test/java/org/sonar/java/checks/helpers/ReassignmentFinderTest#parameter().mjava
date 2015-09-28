@@ -1,0 +1,13 @@
+  @Test
+  public void parameter() throws Exception {
+    String code = newCode(
+      "int foo(int a) {",
+      "  return a;",
+      "}");
+
+    MethodTree method = methodTree(code);
+    List<StatementTree> statements = method.block().body();
+    VariableTree methodParameter = method.parameters().get(0);
+    assertThatLastReassignmentsOfReturnedVariableIsEqualTo(statements, methodParameter);
+  }
+

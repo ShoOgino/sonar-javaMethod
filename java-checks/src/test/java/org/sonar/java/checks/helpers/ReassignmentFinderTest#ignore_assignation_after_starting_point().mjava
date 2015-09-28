@@ -1,0 +1,16 @@
+  @Test
+  public void ignore_assignation_after_starting_point() throws Exception {
+    String code = newCode(
+      "int foo() {",
+      "  int b = 0;",
+      "  doSomething(b);",
+      "  b = 1;",
+      "}");
+
+    List<StatementTree> statements = methodBody(code);
+    Tree expectedVariableDeclaration = statements.get(0);
+    MethodInvocationTree startingPoint = (MethodInvocationTree) ((ExpressionStatementTree) statements.get(1)).expression();
+    Symbol searchedVariable = ((IdentifierTree) startingPoint.arguments().get(0)).symbol();
+    assertThatLastReassignmentsOfVariableIsEqualTo(searchedVariable, startingPoint, expectedVariableDeclaration);
+  }
+

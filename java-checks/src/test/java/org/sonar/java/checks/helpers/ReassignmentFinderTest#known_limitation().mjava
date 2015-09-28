@@ -1,0 +1,18 @@
+  @Test
+  public void known_limitation() throws Exception {
+    String code = newCode(
+      "int foo(boolean test) {",
+      "  int a;",
+      "  if (test) {",
+      "    a = 0;",
+      "  } else {",
+      "    a = 1;", // Should have returned both thenAssignment and elseAssignment. CFG?
+      "  }",
+      "  return a;",
+      "}");
+
+    List<StatementTree> statements = methodBody(code);
+    StatementTree elseAssignment = ((BlockTree) ((IfStatementTree) statements.get(1)).elseStatement()).body().get(0);
+    assertThatLastReassignmentsOfReturnedVariableIsEqualTo(statements, elseAssignment);
+  }
+

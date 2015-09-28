@@ -1,0 +1,14 @@
+  @Test
+  public void parameter_with_usage() throws Exception {
+    String code = newCode(
+      "int foo(boolean test) {",
+      "  if (test) {}",
+      "  return test;",
+      "}");
+
+    MethodTree method = methodTree(code);
+    List<StatementTree> statements = method.block().body();
+    VariableTree methodParameter = method.parameters().get(0);
+    assertThatLastReassignmentsOfReturnedVariableIsEqualTo(statements, methodParameter);
+  }
+
