@@ -1,0 +1,14 @@
+  @Test
+  public void last_assignement_on_same_line() throws Exception {
+    String code = newCode(
+      "int foo() {",
+      "  int a;",
+      "  a = 0;",
+      "  a = 1; return a;",
+      "}");
+
+    List<StatementTree> statements = methodBody(code);
+    ExpressionTree secondAssignment = assignementExpressionFromStatement(statements.get(2));
+    assertThatLastReassignmentsOfReturnedVariableIsEqualTo(statements, secondAssignment);
+  }
+
