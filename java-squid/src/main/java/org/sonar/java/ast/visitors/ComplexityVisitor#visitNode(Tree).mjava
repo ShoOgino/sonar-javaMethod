@@ -1,16 +1,40 @@
   @Override
   public void visitNode(Tree tree) {
-    if (isClass(tree)) {
-      classTrees.push((ClassTree) tree);
-    } else if (isMethod(tree)) {
-      computeMethodComplexity((MethodTree) tree);
-    } else if (tree.is(Tree.Kind.CASE_LABEL)) {
-      CaseLabelTree caseLabelTree = (CaseLabelTree) tree;
-      if (!"default".equals(caseLabelTree.caseOrDefaultKeyword().text())) {
-        complexity++;
-      }
-    } else {
-      complexity++;
+    switch (tree.kind()) {
+      case CLASS:
+      case ENUM:
+      case ANNOTATION_TYPE:
+        classTrees.push((ClassTree) tree);
+        break;
+      case METHOD:
+      case CONSTRUCTOR:
+        computeMethodComplexity((MethodTree) tree);
+        break;
+      case CASE_LABEL:
+        CaseLabelTree caseLabelTree = (CaseLabelTree) tree;
+        if (!"default".equals(caseLabelTree.caseOrDefaultKeyword().text())) {
+          blame.add(caseLabelTree.caseOrDefaultKeyword());
+        }
+        break;
+      case IF_STATEMENT:
+      case FOR_STATEMENT:
+      case FOR_EACH_STATEMENT:
+      case DO_STATEMENT:
+      case WHILE_STATEMENT:
+      case RETURN_STATEMENT:
+      case THROW_STATEMENT:
+      case CATCH:
+        blame.add(FirstSyntaxTokenFinder.firstSyntaxToken(tree));
+        break;
+      case CONDITIONAL_EXPRESSION:
+        blame.add(((ConditionalExpressionTree) tree).questionToken());
+        break;
+      case CONDITIONAL_AND:
+      case CONDITIONAL_OR:
+        blame.add(((BinaryExpressionTree) tree).operatorToken());
+        break;
+      default:
+        throw new UnsupportedOperationException();
     }
   }
 
