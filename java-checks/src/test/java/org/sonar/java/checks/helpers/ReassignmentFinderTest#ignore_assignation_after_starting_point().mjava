@@ -8,7 +8,7 @@
       "}");
 
     List<StatementTree> statements = methodBody(code);
-    Tree expectedVariableDeclaration = statements.get(0);
+    Tree expectedVariableDeclaration = initializerFromVariableDeclarationStatement(statements.get(0));
     MethodInvocationTree startingPoint = (MethodInvocationTree) ((ExpressionStatementTree) statements.get(1)).expression();
     Symbol searchedVariable = ((IdentifierTree) startingPoint.arguments().get(0)).symbol();
     assertThatLastReassignmentsOfVariableIsEqualTo(searchedVariable, startingPoint, expectedVariableDeclaration);

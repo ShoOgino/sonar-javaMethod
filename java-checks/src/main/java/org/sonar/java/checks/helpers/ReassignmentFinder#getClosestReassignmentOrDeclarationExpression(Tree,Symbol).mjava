@@ -1,0 +1,17 @@
+  @CheckForNull
+  public static ExpressionTree getClosestReassignmentOrDeclarationExpression(Tree startingPoint, Symbol referenceSymbol) {
+    Tree result = referenceSymbol.declaration();
+    List<IdentifierTree> usages = referenceSymbol.usages();
+    if (usages.size() != 1) {
+      List<Tree> reassignments = getReassignments(referenceSymbol.owner().declaration(), usages);
+
+      int line = FirstSyntaxTokenFinder.firstSyntaxToken(startingPoint).line();
+      Tree lastReassignment = getClosestReassignment(line, reassignments);
+      if (lastReassignment != null) {
+        result = lastReassignment;
+      }
+    }
+
+    return getInitializerOrExpression(result);
+  }
+

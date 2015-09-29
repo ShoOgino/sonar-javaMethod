@@ -1,9 +1,7 @@
   private static Integer handleVariableUsedAsQuery(IdentifierTree identifier) {
-    Tree lastAssignment = ReassignmentFinder.getClosestReassignmentOrDeclaration(identifier, identifier.symbol());
+    ExpressionTree lastAssignment = ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(identifier, identifier.symbol());
     if (lastAssignment != null) {
-      ExpressionTree initializer = lastAssignment.is(Tree.Kind.VARIABLE) ? ((VariableTree) lastAssignment).initializer()
-        : ((AssignmentExpressionTree) lastAssignment).expression();
-      return initializer != null ? getNumberQuery(initializer) : null;
+      return getNumberQuery(lastAssignment);
     }
     return null;
   }
