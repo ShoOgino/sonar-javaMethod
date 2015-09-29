@@ -1,0 +1,77 @@
+  private void checkElements(CFG.Block block, Set<Symbol> blockOut, Symbol.MethodSymbol methodSymbol) {
+    List<Tree> elements = Lists.reverse(block.elements());
+    Set<Symbol> out = new HashSet<>(blockOut);
+    Set<Tree> assignmentLHS = new HashSet<>();
+    for (Tree element : elements) {
+      Symbol symbol;
+      switch (element.kind()) {
+        case ASSIGNMENT:
+          ExpressionTree lhs = ExpressionsHelper.skipParentheses(((AssignmentExpressionTree) element).variable());
+          if (lhs.is(Tree.Kind.IDENTIFIER)) {
+            symbol = ((IdentifierTree) lhs).symbol();
+            if (isLocalVariable(symbol) && !out.contains(symbol)) {
+              createIssue(element, symbol);
+            }
+            assignmentLHS.add(lhs);
+            out.remove(symbol);
+          }
+          break;
+        case IDENTIFIER:
+          symbol = ((IdentifierTree) element).symbol();
+          if (!assignmentLHS.contains(element) && isLocalVariable(symbol)) {
+            out.add(symbol);
+          }
+          break;
+        case VARIABLE:
+          out = handleVariable(out, element);
+          break;
+        case NEW_CLASS:
+          ClassTree body = ((NewClassTree) element).classBody();
+          if (body != null) {
+            out.addAll(getUsedLocalVarInSubTree(body, methodSymbol));
+          }
+          break;
+        case LAMBDA_EXPRESSION:
+          LambdaExpressionTree lambda = (LambdaExpressionTree) element;
+          out.addAll(getUsedLocalVarInSubTree(lambda.body(), methodSymbol));
+          break;
+        case TRY_STATEMENT:
+          TryStatementTree tryStatement = (TryStatementTree) element;
+          for (CatchTree catchTree : tryStatement.catches()) {
+            out.addAll(getUsedLocalVarInSubTree(catchTree, methodSymbol));
+          }
+          break;
+        case PREFIX_DECREMENT:
+        case PREFIX_INCREMENT:
+          // within each block, each produced value is consumed or by following elements or by terminator
+          ExpressionTree prefixExpression = ExpressionsHelper.skipParentheses(((UnaryExpressionTree) element).expression());
+          if (isParentExpressionStatement(element) && prefixExpression.is(Tree.Kind.IDENTIFIER)) {
+            symbol = ((IdentifierTree) prefixExpression).symbol();
+            if (isLocalVariable(symbol) && !out.contains(symbol)) {
+              createIssue(element, symbol);
+            }
+          }
+          break;
+        case POSTFIX_INCREMENT:
+        case POSTFIX_DECREMENT:
+          ExpressionTree expression = ExpressionsHelper.skipParentheses(((UnaryExpressionTree) element).expression());
+          if (expression.is(Tree.Kind.IDENTIFIER)) {
+            symbol = ((IdentifierTree) expression).symbol();
+            if (isLocalVariable(symbol) && !out.contains(symbol)) {
+              createIssue(element, symbol);
+            }
+          }
+          break;
+        case CLASS:
+        case ENUM:
+        case ANNOTATION_TYPE:
+        case INTERFACE:
+          ClassTree classTree = (ClassTree) element;
+          out.addAll(getUsedLocalVarInSubTree(classTree, methodSymbol));
+          break;
+        default:
+          // Ignore instructions that does not affect liveness of variables
+      }
+    }
+  }
+

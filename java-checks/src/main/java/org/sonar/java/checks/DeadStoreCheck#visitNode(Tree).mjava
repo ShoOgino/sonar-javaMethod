@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    if (methodTree.block() == null) {
+      return;
+    }
+
+    // TODO(npe) Exclude try statements with finally as CFG is incorrect for those and lead to false positive
+    if (hasTryFinallyWithLocalVar(methodTree.block(), methodTree.symbol())) {
+      return;
+    }
+
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+    CFG cfg = CFG.build(methodTree);
+    LiveVariables liveVariables = LiveVariables.analyze(cfg);
+    // Liveness analysis provides information only for block boundaries, so we should do analysis between elements within blocks
+    for (CFG.Block block : cfg.blocks()) {
+      checkElements(block, liveVariables.getOut(block), methodSymbol);
+    }
+  }
+

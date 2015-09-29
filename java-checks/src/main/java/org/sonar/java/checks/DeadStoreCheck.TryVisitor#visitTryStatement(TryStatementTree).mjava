@@ -1,0 +1,9 @@
+    @Override
+    public void visitTryStatement(TryStatementTree tree) {
+      BlockTree finallyBlock = tree.finallyBlock();
+      hasTryFinally |= finallyBlock != null && !getUsedLocalVarInSubTree(finallyBlock, methodSymbol).isEmpty();
+      if (!hasTryFinally) {
+        super.visitTryStatement(tree);
+      }
+    }
+
