@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadGenericName.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(1).withMessage("Rename this generic name to match the regular expression '^[A-Z][0-9]?$'.")
-        .next().atLine(2)
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/BadGenericNameNoncompliant.java", new BadTypeParameterName_S00119_Check());
   }
 

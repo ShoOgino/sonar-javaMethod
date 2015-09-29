@@ -1,11 +1,7 @@
   @Test
   public void testOverrideWithoutAnnotation() throws Exception {
+    BadMethodName_S00100_Check check = new BadMethodName_S00100_Check();
     check.format = "^[A-Z0-9]*$";
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadMethodName.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(5)
-        .next().atLine(8)
-        .next().atLine(16)
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/BadMethodNameCustomNoncompliant.java", check);
   }
 

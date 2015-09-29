@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/PACKAGE/BadPackageName.java"), new VisitorsBridge(check));
-
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(1).withMessage("Rename this package name to match the regular expression '^[a-z]+(\\.[a-z][a-z0-9]*)*$'.")
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/PACKAGE/BadPackageNameNoncompliant.java", new BadPackageName_S00120_Check());
   }
 

@@ -1,9 +1,5 @@
   @Test
-  public void test3() throws Exception {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/PACKAGE/BadQualifiedIdentifierPackageName.java"), new VisitorsBridge(check));
-
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(1).withMessage("Rename this package name to match the regular expression '^[a-z]+(\\.[a-z][a-z0-9]*)*$'.")
-        .noMore();
+  public void test3() {
+    JavaCheckVerifier.verify("src/test/files/checks/PACKAGE/BadQualifiedIdentifierPackageName.java", new BadPackageName_S00120_Check());
   }
 

@@ -1,14 +1,14 @@
   public int shift(int a) {
     int b;
-    b = a <<  31; // Compliant
-    b = a >> -31; // Compliant
-    b = a <<  32; // Nomcompliant
-    b = a >> -32; // Noncompliant
-    b = a <<  33; // Noncompliant
-    b = a >> -33; // Noncompliant
+    b = a <<  31;
+    b = a >> -31;
+    b = a <<  32; // Noncompliant {{Remove this useless shift}}
+    b = a >> -32; // Noncompliant {{Remove this useless shift}}
+    b = a <<  33; // Noncompliant {{Either make "a" a "long" or correct this shift to 1}}
+    b = a >> -33; // Noncompliant {{Either make "a" a "long" or correct this shift to -1}}
 
-    a <<=  31; // Compliant
-    a >>= -31; // Compliant
+    a <<=  31;
+    a >>= -31;
     a <<=  32; // Noncompliant
     a >>= -32; // Noncompliant
     a <<=  33; // Noncompliant

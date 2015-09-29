@@ -1,13 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/BadConstantName.java"), new VisitorsBridge(check));
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(6).withMessage("Rename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.")
-        .next().atLine(12)
-        .next().atLine(19)
-        .next().atLine(24)
-        .next().atLine(29)
-        .next().atLine(31)
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/BadConstantNameNoncompliant.java", new BadConstantName_S00115_Check());
   }
 
