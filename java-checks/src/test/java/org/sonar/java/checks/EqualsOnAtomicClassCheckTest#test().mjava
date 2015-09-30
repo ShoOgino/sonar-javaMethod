@@ -1,10 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/EqualsOnAtomicClassCheck.java"),
-      new VisitorsBridge(new EqualsOnAtomicClassCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(12).withMessage("Use \".get()\" to retrieve the value and compare it instead.")
-      .next().atLine(16)
-      .next().atLine(20);
+    JavaCheckVerifier.verify("src/test/files/checks/EqualsOnAtomicClassCheck.java", new EqualsOnAtomicClassCheck());
   }
 

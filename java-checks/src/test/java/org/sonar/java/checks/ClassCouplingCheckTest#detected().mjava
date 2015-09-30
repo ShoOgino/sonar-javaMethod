@@ -1,15 +1,5 @@
   @Test
   public void detected() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ClassCouplingCheck.java"), new VisitorsBridge(new ClassCouplingCheck()));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(1)
-      .withMessage("Split this class into smaller and more specialized ones to reduce its dependencies on other classes from 21 to the maximum authorized 20 or less.")
-      .next().atLine(33)
-      .next().atLine(60)
-      .next().atLine(85)
-      .next().atLine(144)
-      .withMessage("Split this class into smaller and more specialized ones to reduce its dependencies on other classes from 21 to the maximum authorized 20 or less.")
-      .next().atLine(167)
-      .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/ClassCouplingCheck.java", new ClassCouplingCheck());
   }
 

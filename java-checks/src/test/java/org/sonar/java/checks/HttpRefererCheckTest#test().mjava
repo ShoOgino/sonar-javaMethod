@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/HttpRefererCheck.java"),
-        new VisitorsBridge(new HttpRefererCheck(), ImmutableList.of(new File("target/test-classes"))));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(7).withMessage("\"referer\" header should not be relied on")
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/HttpRefererCheck.java", new HttpRefererCheck());
   }
 

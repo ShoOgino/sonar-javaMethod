@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ServletInstanceFieldCheck.java"),
-      new VisitorsBridge(new ServletInstanceFieldCheck(), ImmutableList.of(new File("target/test-classes"))));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(10).withMessage("Remove this misleading mutable servlet instance fields or make it \"static\" and/or \"final\"")
-      .next().atLine(22);
+    JavaCheckVerifier.verify("src/test/files/checks/ServletInstanceFieldCheck.java", new ServletInstanceFieldCheck());
   }
 

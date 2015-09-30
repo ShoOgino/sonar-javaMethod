@@ -2,11 +2,6 @@
   public void custom() {
     ClassCouplingCheck check = new ClassCouplingCheck();
     check.max = 22;
-
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/ClassCouplingCheck.java"), new VisitorsBridge(check));
-
-    checkMessagesVerifier.verify(file.getCheckMessages())
-      .next().atLine(33)
-      .withMessage("Split this class into smaller and more specialized ones to reduce its dependencies on other classes from 23 to the maximum authorized 22 or less.");
+    JavaCheckVerifier.verify("src/test/files/checks/ClassCouplingCheckCustom.java", check);
   }
 

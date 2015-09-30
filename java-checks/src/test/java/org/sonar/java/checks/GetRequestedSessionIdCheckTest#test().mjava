@@ -1,9 +1,5 @@
   @Test
   public void test() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/checks/GetRequestedSessionIdCheck.java"),
-        new VisitorsBridge(new GetRequestedSessionIdCheck(), ImmutableList.of(new File("target/test-classes"))));
-    checkMessagesVerifier.verify(file.getCheckMessages())
-        .next().atLine(7).withMessage("Remove use of this unsecured \"getRequestedSessionId()\" method")
-        .noMore();
+    JavaCheckVerifier.verify("src/test/files/checks/GetRequestedSessionIdCheck.java", new GetRequestedSessionIdCheck());
   }
 

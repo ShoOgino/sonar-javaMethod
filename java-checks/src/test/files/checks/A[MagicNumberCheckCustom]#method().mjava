@@ -1,0 +1,14 @@
+  byte[] method() {
+    final int foo = 42; // Compliant, because final
+    final long[] la = {3L, 4L}; // Compliant, array initialisation
+    final long[] lan = new long[] {3L, 4L}; // Compliant, array initialisation
+    long[] array = new long[] {42}; // Noncompliant {{Assign this magic number 42 to a well-named constant, and use the constant instead.}}
+    final Object[] o1 = new Object[42]; // Noncompliant {{Assign this magic number 42 to a well-named constant, and use the constant instead.}}
+    Object[] o2 = new Object[42]; // Noncompliant {{Assign this magic number 42 to a well-named constant, and use the constant instead.}}
+    final char[] c = new char[1024]; // Noncompliant {{Assign this magic number 1024 to a well-named constant, and use the constant instead.}}
+    final List<Object> a = new ArrayList<>(42); // Compliant, class constructor
+    final Long l = new Long(3L); // Compliant, class constructor
+    final ByteBuffer b = ByteBuffer.allocateDirect(8); // Compliant, method usage
+    return new byte[4096]; // Noncompliant {{Assign this magic number 4096 to a well-named constant, and use the constant instead.}}
+  }
+

@@ -1,14 +1,7 @@
   @Test
   public void detectedWithTwoAuthorized() {
-    // Use CheckMessagesVerifierRule to have only one test file
-    CheckMessagesVerifierRule checkMessagesVerifier = new CheckMessagesVerifierRule();
     MagicNumberCheck check = new MagicNumberCheck();
     check.authorizedNumbers = "-1,0,1,2";
-
-    SourceFile file = JavaAstScanner
-      .scanSingleFile(new File("src/test/files/checks/MagicNumberCheck.java"), new VisitorsBridge(check));
-
-    // Check first error at line 16 (=> 2 is authorized)
-    checkMessagesVerifier.verify(file.getCheckMessages()).next().atLine(16);
+    JavaCheckVerifier.verify("src/test/files/checks/MagicNumberCheckCustom.java", check);
   }
 
