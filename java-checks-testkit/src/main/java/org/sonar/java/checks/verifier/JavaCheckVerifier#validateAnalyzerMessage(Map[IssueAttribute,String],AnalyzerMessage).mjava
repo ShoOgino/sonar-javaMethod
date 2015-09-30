@@ -1,0 +1,30 @@
+  private static void validateAnalyzerMessage(Map<IssueAttribute, String> attrs, AnalyzerMessage analyzerMessage) {
+    Double effortToFix = analyzerMessage.getCost();
+    if (effortToFix != null) {
+      assertEquals(Integer.toString(effortToFix.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
+    }
+    AnalyzerMessage.TextSpan textSpan = analyzerMessage.primaryLocation();
+    assertEquals(normalizeColumn(textSpan.startCharacter), attrs, IssueAttribute.START_COLUMN);
+    assertEquals(Integer.toString(textSpan.endLine), attrs, IssueAttribute.END_LINE);
+    assertEquals(normalizeColumn(textSpan.endCharacter), attrs, IssueAttribute.END_COLUMN);
+    if (attrs.containsKey(IssueAttribute.SECONDARY_LOCATIONS)) {
+      List<AnalyzerMessage> secondaryLocations = analyzerMessage.secondaryLocations;
+      Multiset<String> actualLines = HashMultiset.create();
+      for (AnalyzerMessage secondaryLocation : secondaryLocations) {
+        actualLines.add(Integer.toString(secondaryLocation.getLine()));
+      }
+      List<String> expected = Lists.newArrayList(Splitter.on(",").omitEmptyStrings().trimResults().split(attrs.get(IssueAttribute.SECONDARY_LOCATIONS)));
+      List<String> unexpected = new ArrayList<>();
+      for (String actualLine : actualLines) {
+        if (expected.contains(actualLine)) {
+          expected.remove(actualLine);
+        } else {
+          unexpected.add(actualLine);
+        }
+      }
+      if (!expected.isEmpty() || !unexpected.isEmpty()) {
+        Fail.fail("Secondary locations: expected: " + expected + " unexpected:" + unexpected);
+      }
+    }
+  }
+

@@ -2,10 +2,15 @@
     if (comment.startsWith(TRIGGER)) {
       String cleanedComment = StringUtils.remove(comment, TRIGGER);
 
+      EnumMap<IssueAttribute, String> attr = new EnumMap<>(IssueAttribute.class);
       String expectedMessage = StringUtils.substringBetween(cleanedComment, "{{", "}}");
+      if (StringUtils.isNotEmpty(expectedMessage)) {
+        attr.put(IssueAttribute.MESSAGE, expectedMessage);
+      }
       int expectedLine = line;
+      String attributesSubstr = extractAttributes(comment, attr);
 
-      cleanedComment = StringUtils.stripEnd(StringUtils.remove(cleanedComment, "{{" + expectedMessage + "}}"), " \t");
+      cleanedComment = StringUtils.stripEnd(StringUtils.remove(StringUtils.remove(cleanedComment, "[[" + attributesSubstr + "]]"), "{{" + expectedMessage + "}}"), " \t");
       if (StringUtils.startsWith(cleanedComment, "@")) {
         final int lineAdjustment;
         final char firstChar = cleanedComment.charAt(1);
@@ -20,10 +25,11 @@
         } else if (firstChar == '-') {
           expectedLine -= lineAdjustment;
         } else {
-          throw Fail.fail("Use only '@+N' or '@-N' to shifts messages.");
+          Fail.fail("Use only '@+N' or '@-N' to shifts messages.");
         }
       }
-      expected.put(expectedLine, expectedMessage);
+      updateEndLine(expectedLine, attr);
+      expected.put(expectedLine, attr);
     }
   }
 

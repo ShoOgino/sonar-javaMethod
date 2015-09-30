@@ -1,12 +1,19 @@
     @Override
     public void scanFile(JavaFileScannerContext context) {
       super.scanFile(context);
-      List<Integer> lines = Lists.newArrayList(issues.keySet());
-      Collections.sort(lines);
-      for (Integer line : lines) {
+      for (Integer line : issues.keySet()) {
         for (String message : issues.get(line)) {
           addIssue(line, message);
         }
+      }
+      for (AnalyzerMessage analyzerMessage : preciseIssues.values()) {
+        Double messageCost = analyzerMessage.getCost();
+        Integer cost = messageCost != null ? messageCost.intValue() : null;
+        List<JavaFileScannerContext.Location> secLocations = new ArrayList<>();
+        for (AnalyzerMessage secondaryLocation : analyzerMessage.secondaryLocations) {
+          secLocations.add(new JavaFileScannerContext.Location("", mockTree(secondaryLocation)));
+        }
+        reportIssue(mockTree(analyzerMessage), analyzerMessage.getMessage(), secLocations, cost);
       }
       for (String message : issuesOnFile) {
         addIssueOnFile(message);
