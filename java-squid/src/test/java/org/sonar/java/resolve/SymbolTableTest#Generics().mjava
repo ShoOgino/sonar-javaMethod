@@ -12,13 +12,13 @@
     assertThat(result.reference(12, 5)).isSameAs(result.symbol("foo", 8));
     assertThat(result.reference(13, 5)).isSameAs(result.symbol("foo", 9));
 
-    //Check erasure
+    // Check erasure
     JavaType.TypeVariableJavaType STypeVariableType = (JavaType.TypeVariableJavaType) typeSymbol.typeParameters.lookup("S").get(0).type;
     assertThat(STypeVariableType.erasure().getSymbol().getName()).isEqualTo("CharSequence");
     JavaType arrayErasure = typeSymbol.members().lookup("arrayErasure").get(0).type;
     assertThat(arrayErasure.isTagged(JavaType.ARRAY)).isTrue();
     assertThat(arrayErasure.erasure().isTagged(JavaType.ARRAY)).isTrue();
-    assertThat(((JavaType.ArrayJavaType)arrayErasure.erasure()).elementType().symbol.getName()).isEqualTo("CharSequence");
+    assertThat(((JavaType.ArrayJavaType) arrayErasure.erasure()).elementType().symbol.getName()).isEqualTo("CharSequence");
 
     IdentifierTree tree = result.referenceTree(20, 7);
     JavaType symbolType = (JavaType) tree.symbolType();
@@ -29,19 +29,19 @@
     assertThat(ptt.typeSubstitution.substitutedType(ptt.typeSubstitution.typeVariables().iterator().next()).symbol.getName()).isEqualTo("String");
 
     JavaSymbol.MethodJavaSymbol method1 = (JavaSymbol.MethodJavaSymbol) typeSymbol.members().lookup("method1").get(0);
-    assertThat(((JavaType.MethodJavaType)method1.type).resultType).isSameAs(STypeVariableType);
+    assertThat(((JavaType.MethodJavaType) method1.type).resultType).isSameAs(STypeVariableType);
 
     JavaSymbol.MethodJavaSymbol method2 = (JavaSymbol.MethodJavaSymbol) typeSymbol.members().lookup("method2").get(0);
     JavaType.TypeVariableJavaType PTypeVariableType = (JavaType.TypeVariableJavaType) method2.typeParameters().lookup("P").get(0).type;
     assertThat(method2.getReturnType().type).isSameAs(PTypeVariableType);
     assertThat(method2.parameterTypes().get(0)).isSameAs(PTypeVariableType);
 
-    //Type parameter defined in outer class
+    // Type parameter defined in outer class
     JavaSymbol.TypeJavaSymbol classCSymbol = (JavaSymbol.TypeJavaSymbol) typeSymbol.members().lookup("C").get(0);
     JavaSymbol innerClassField = classCSymbol.members().lookup("innerClassField").get(0);
     assertThat(innerClassField.type).isSameAs(STypeVariableType);
 
-    //Unknown parametrized type should be tagged as unknown
+    // Unknown parametrized type should be tagged as unknown
     MethodTree methodTree = (MethodTree) result.getTree(result.symbol("unknownSymbol"));
     VariableTree variableTree = (VariableTree) methodTree.block().body().get(0);
     assertThat(variableTree.type().symbolType().isUnknown()).isTrue();
