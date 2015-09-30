@@ -1,11 +1,13 @@
   @Test
-  public void prefix_operators()  {
-    CFG cfg = buildCFG("void fun() { ++i;i++; }");
-    List<Tree> elements = cfg.reversedBlocks().get(1).elements();
-    assertThat(elements.get(0).kind()).isEqualTo(Tree.Kind.IDENTIFIER);
-    assertThat(elements.get(1).kind()).isEqualTo(Tree.Kind.PREFIX_INCREMENT);
-    assertThat(elements.get(2).kind()).isEqualTo(Tree.Kind.IDENTIFIER);
-    assertThat(elements.get(3).kind()).isEqualTo(Tree.Kind.POSTFIX_INCREMENT);
-
+  public void prefix_operators() throws Exception {
+    final CFG cfg = buildCFG("void fun() { ++i;i++; }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "i"),
+        element(Tree.Kind.PREFIX_INCREMENT),
+        element(Tree.Kind.IDENTIFIER, "i"),
+        element(Tree.Kind.POSTFIX_INCREMENT)
+        ).successors(0));
+    cfgChecker.check(cfg);
   }
 

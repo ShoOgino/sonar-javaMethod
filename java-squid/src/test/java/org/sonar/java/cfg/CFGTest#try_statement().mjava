@@ -1,7 +1,25 @@
   @Test
   public void try_statement() throws Exception {
-    //Only two blocks connected to each other for now. s
-    CFG cfg = buildCFG("void fun() {try {System.out.println('');} finally { System.out.println(''); }}");
-    assertThat(cfg.reversedBlocks()).hasSize(5);
+    final CFG cfg = buildCFG("void fun() {try {System.out.println('');} finally { System.out.println(''); }}");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.TRY_STATEMENT)
+        ).successors(3),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(2),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(1),
+      emptyBlock(0));
+    cfgChecker.check(cfg);
   }
 

@@ -1,10 +1,21 @@
   @Test
   public void array_access_expression() throws Exception {
-    CFG cfg = buildCFG("void fun(int[] array) { array[0] = 1; array[3+2] = 4; }");
-    assertThat(cfg.reversedBlocks()).hasSize(2);
-    assertThat(cfg.reversedBlocks().get(1).elements()).hasSize(12);
-    cfg.debugTo(System.out);
-    assertThat(cfg.reversedBlocks().get(1).elements().get(3).kind()).isEqualTo(Tree.Kind.ARRAY_ACCESS_EXPRESSION);
-    assertThat(cfg.reversedBlocks().get(1).elements().get(10).kind()).isEqualTo(Tree.Kind.ARRAY_ACCESS_EXPRESSION);
+    final CFG cfg = buildCFG("void fun(int[] array) { array[0] = 1; array[3+2] = 4; }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.INT_LITERAL, 1),
+        element(Tree.Kind.INT_LITERAL, 0),
+        element(Tree.Kind.IDENTIFIER, "array"),
+        element(Tree.Kind.ARRAY_ACCESS_EXPRESSION),
+        element(Tree.Kind.ASSIGNMENT),
+        element(Tree.Kind.INT_LITERAL, 4),
+        element(Tree.Kind.INT_LITERAL, 3),
+        element(Tree.Kind.INT_LITERAL, 2),
+        element(Tree.Kind.PLUS),
+        element(Tree.Kind.IDENTIFIER, "array"),
+        element(Tree.Kind.ARRAY_ACCESS_EXPRESSION),
+        element(Tree.Kind.ASSIGNMENT)
+        ).successors(0));
+    cfgChecker.check(cfg);
   }
 

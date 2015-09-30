@@ -1,0 +1,34 @@
+  @Test
+  public void switch_statement() throws Exception {
+    final CFG cfg = buildCFG("void fun(int foo) { int a; switch(foo) { case 1: System.out.println(bar);case 2: System.out.println(qix);break; default: System.out.println(baz);} }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(5),
+      block(
+        element(Tree.Kind.IDENTIFIER, "qix"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).terminator(Tree.Kind.BREAK_STATEMENT).successors(1),
+      emptyBlock(3),
+      block(
+        element(Tree.Kind.IDENTIFIER, "baz"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(1),
+      block(
+        element(Tree.Kind.VARIABLE, "a"),
+        element(Tree.Kind.IDENTIFIER, "foo")
+        ).terminator(Tree.Kind.SWITCH_STATEMENT).successors(3,5,6),
+      emptyBlock(0));
+    cfgChecker.check(cfg);
+  }
+

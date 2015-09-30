@@ -1,10 +1,11 @@
   @Test
   public void simplest_cfg() throws Exception {
-    CFG cfg = buildCFG("void fun() {}");
-    assertThat(cfg.reversedBlocks()).hasSize(2);
-    cfg = buildCFG("void fun() { bar();}");
-    assertThat(cfg.reversedBlocks()).hasSize(2);
-    cfg = buildCFG("void fun() { bar();qix();baz();}");
-    assertThat(cfg.reversedBlocks()).hasSize(2);
+    final CFG cfg = buildCFG("void fun() { bar();}");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(0));
+    cfgChecker.check(cfg);
   }
 

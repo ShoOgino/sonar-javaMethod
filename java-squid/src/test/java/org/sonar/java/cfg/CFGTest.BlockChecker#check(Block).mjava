@@ -1,0 +1,21 @@
+    public void check(final Block block) {
+      assertThat(block.elements()).as("Expected number of elements in block " + block.id).hasSize(checkers.size());
+      final Iterator<ElementChecker> checkerIterator = checkers.iterator();
+      for (final Tree element : block.elements()) {
+        checkerIterator.next().check(element);
+      }
+      if (successorIDs != null) {
+        assertThat(block.successors()).as("Expected number of successors in block " + block.id).hasSize(successorIDs.length);
+        final int[] actualSuccessorIDs = new int[successorIDs.length];
+        int n = 0;
+        for (final Block successor : block.successors()) {
+          actualSuccessorIDs[n++] = successor.id;
+        }
+        Arrays.sort(actualSuccessorIDs);
+        assertThat(actualSuccessorIDs).as("Expected successors in block " + block.id).isEqualTo(successorIDs);
+      }
+      if (terminatorChecker != null) {
+        terminatorChecker.check(block.terminator());
+      }
+    }
+

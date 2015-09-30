@@ -1,0 +1,16 @@
+  @Test
+  public void assignmentAND() throws Exception {
+    final CFG cfg = buildCFG("void fun() {boolean bool = a && b;}");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "a")
+        ).terminator(Tree.Kind.CONDITIONAL_AND).successors(1, 2),
+      block(
+        element(Tree.Kind.IDENTIFIER, "b")
+        ).successors(1),
+      block(
+        element(Tree.Kind.VARIABLE, "bool")
+        ).successors(0));
+    cfgChecker.check(cfg);
+  }
+

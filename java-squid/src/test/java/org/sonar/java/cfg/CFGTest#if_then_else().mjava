@@ -1,0 +1,19 @@
+  @Test
+  public void if_then_else() throws Exception {
+    final CFG cfg = buildCFG("void fun() {if(a) { foo(); } else { bar(); } }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "a")
+        ).terminator(Tree.Kind.IF_STATEMENT).successors(2,3),
+      block(
+        element(Tree.Kind.IDENTIFIER, "foo"),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(1),
+      block(
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(1),
+      emptyBlock(0));
+    cfgChecker.check(cfg);
+  }
+

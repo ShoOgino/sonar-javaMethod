@@ -1,9 +1,23 @@
   @Test
   public void throw_statement() throws Exception {
-    CFG cfg = buildCFG("void fun(Object a) {if(a==null) { throw new Exception();} System.out.println(''); }");
-    assertThat(cfg.reversedBlocks()).hasSize(5);
-    assertThat(cfg.reversedBlocks().get(3).successors()).hasSize(1);
-    //verify that throw statement jumps to exit block.
-    assertThat(cfg.reversedBlocks().get(3).successors().get(0)).isEqualTo(cfg.reversedBlocks().get(0));
+    final CFG cfg = buildCFG("void fun(Object a) {if(a==null) { throw new Exception();} System.out.println(''); }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "a"),
+        element(Tree.Kind.NULL_LITERAL),
+        element(Tree.Kind.EQUAL_TO)
+        ).terminator(Tree.Kind.IF_STATEMENT).successors(1,3),
+      block(
+        element(Tree.Kind.NEW_CLASS)
+        ).terminator(Tree.Kind.THROW_STATEMENT).successors(0),
+      emptyBlock(1),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(0));
+    cfgChecker.check(cfg);
   }
 

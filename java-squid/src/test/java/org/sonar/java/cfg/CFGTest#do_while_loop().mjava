@@ -1,0 +1,27 @@
+  @Test
+  public void do_while_loop() throws Exception {
+    final CFG cfg = buildCFG("void fun() {int i = 0; do {i++; System.out.println(i); }while(i < 10); }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.INT_LITERAL, 0),
+        element(Tree.Kind.VARIABLE, "i")
+        ).successors(4),
+      block(
+        element(Tree.Kind.IDENTIFIER, "i"),
+        element(Tree.Kind.POSTFIX_INCREMENT),
+        element(Tree.Kind.IDENTIFIER, "i"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(3),
+      block(
+        element(Tree.Kind.IDENTIFIER, "i"),
+        element(Tree.Kind.INT_LITERAL, 10),
+        element(Tree.Kind.LESS_THAN)
+        ).terminator(Tree.Kind.DO_STATEMENT).successors(1,2),
+      emptyBlock(4),
+      emptyBlock(0));
+    cfgChecker.check(cfg);
+  }
+
