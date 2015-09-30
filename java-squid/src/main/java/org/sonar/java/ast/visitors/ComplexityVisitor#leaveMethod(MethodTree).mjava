@@ -1,0 +1,11 @@
+  private void leaveMethod(MethodTree tree) {
+    BlockTree block = tree.block();
+    if (block != null && !block.body().isEmpty()) {
+      StatementTree last = Iterables.getLast(block.body());
+      if (last.is(Tree.Kind.RETURN_STATEMENT)) {
+        // minus one because we are going to count the return with +1
+        blame.remove(blame.size() - 1);
+      }
+    }
+  }
+

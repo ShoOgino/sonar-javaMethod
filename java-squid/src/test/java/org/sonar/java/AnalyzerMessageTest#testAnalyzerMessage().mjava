@@ -1,0 +1,22 @@
+  @Test
+  public void testAnalyzerMessage() {
+    JavaCheck javaCheck = mock(JavaCheck.class);
+    File file = new File("a");
+    int line = 5;
+    String message = "analyzer message";
+    int cost = 3;
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(javaCheck, file, line, message, cost);
+    assertThat(analyzerMessage.getCheck()).isEqualTo(javaCheck);
+    assertThat(analyzerMessage.getFile()).isEqualTo(file);
+    assertThat(analyzerMessage.getLine()).isEqualTo(line);
+    assertThat(analyzerMessage.getMessage()).isEqualTo(message);
+    assertThat(analyzerMessage.getCost()).isEqualTo(cost);
+
+    AnalyzerMessage.TextSpan location = analyzerMessage.primaryLocation();
+    assertThat(location.startLine).isEqualTo(line);
+    assertThat(location.startCharacter).isEqualTo(-1);
+    assertThat(location.endLine).isEqualTo(line);
+    assertThat(location.endCharacter).isEqualTo(-1);
+    assertThat(location.toString()).isEqualTo("(5:-1)-(5:-1)");
+  }
+
