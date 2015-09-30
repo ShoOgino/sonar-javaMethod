@@ -1,0 +1,12 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      ExpressionTree lhs = ExpressionsHelper.skipParentheses(tree.variable());
+      if (lhs.is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) lhs).symbol();
+        if (isLocalVariable(symbol)) {
+          assignedLocalVars.add(symbol);
+        }
+        super.visitAssignmentExpression(tree);
+      }
+    }
+

@@ -37,6 +37,9 @@
           break;
         case TRY_STATEMENT:
           TryStatementTree tryStatement = (TryStatementTree) element;
+          AssignedLocalVarVisitor visitor = new AssignedLocalVarVisitor();
+          tryStatement.block().accept(visitor);
+          out.addAll(visitor.assignedLocalVars);
           for (CatchTree catchTree : tryStatement.catches()) {
             out.addAll(getUsedLocalVarInSubTree(catchTree, methodSymbol));
           }
