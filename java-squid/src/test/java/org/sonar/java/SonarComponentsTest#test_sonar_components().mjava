@@ -4,31 +4,29 @@
     JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
     ImmutableList<File> javaTestClasspathList = ImmutableList.of();
     when(javaTestClasspath.getElements()).thenReturn(javaTestClasspathList);
+    File file = new File("");
+    Issuable issuable = mock(Issuable.class);
+    when(resourcePerspectives.as(eq(Issuable.class), any(InputFile.class))).thenReturn(issuable);
+    Highlightable highlightable = mock(Highlightable.class);
+    when(resourcePerspectives.as(eq(Highlightable.class), any(InputFile.class))).thenReturn(highlightable);
+    Symbolizable symbolizable = mock(Symbolizable.class);
+    when(resourcePerspectives.as(eq(Symbolizable.class), any(InputFile.class))).thenReturn(symbolizable);
+    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
+    when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
-    JavaCheck expectedCheck = new CustomCheck();
-    CheckRegistrar expectedRegistrar = new CheckRegistrar() {
-      @Override
-      public void register(RegistrarContext registrarContext) {
-        registrarContext.registerClassesForRepository(
-          REPOSITORY_NAME,
-          Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class),
-          null);
-      }
-    };
-
-    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, null, javaTestClasspath, checkFactory, new CheckRegistrar[] {
-      expectedRegistrar
-    });
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, null, javaTestClasspath, checkFactory);
 
     CodeVisitor[] visitors = sonarComponents.checkClasses();
-    assertThat(visitors).hasSize(1);
-    assertThat(visitors[0]).isEqualTo(expectedCheck);
+    assertThat(visitors).hasSize(0);
     Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
     assertThat(testChecks).hasSize(0);
     assertThat(sonarComponents.getFileSystem()).isEqualTo(fs);
     assertThat(sonarComponents.getResourcePerspectives()).isEqualTo(resourcePerspectives);
     assertThat(sonarComponents.getJavaClasspath()).isEmpty();
     assertThat(sonarComponents.getJavaTestClasspath()).isEqualTo(javaTestClasspathList);
+    assertThat(sonarComponents.issuableFor(file)).isEqualTo(issuable);
+    assertThat(sonarComponents.highlightableFor(file)).isEqualTo(highlightable);
+    assertThat(sonarComponents.symbolizableFor(file)).isEqualTo(symbolizable);
+    assertThat(sonarComponents.fileLinesContextFor(file)).isEqualTo(fileLinesContext);
   }
 
