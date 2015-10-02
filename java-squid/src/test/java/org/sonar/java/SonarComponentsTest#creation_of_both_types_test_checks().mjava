@@ -12,7 +12,7 @@
       }
     };
 
-    when(this.checks.all()).thenReturn(Lists.<JavaCheck>newArrayList(expectedCheck)).thenReturn(Lists.<JavaCheck>newArrayList(expectedTestCheck));
+    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(Lists.newArrayList(expectedTestCheck));
     SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, null, null, null, this.checkFactory, new CheckRegistrar[] {
       expectedRegistrar
     });
@@ -23,5 +23,6 @@
     Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
     assertThat(testChecks).hasSize(1);
     assertThat(testChecks.iterator().next()).isEqualTo(expectedTestCheck);
+    assertThat(sonarComponents.checks()).hasSize(2);
   }
 

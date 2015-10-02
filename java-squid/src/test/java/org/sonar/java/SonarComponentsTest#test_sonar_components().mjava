@@ -1,5 +1,10 @@
   @Test
-  public void creation_of_custom_checks() {
+  public void test_sonar_components() {
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
+    ImmutableList<File> javaTestClasspathList = ImmutableList.of();
+    when(javaTestClasspath.getElements()).thenReturn(javaTestClasspathList);
+
     JavaCheck expectedCheck = new CustomCheck();
     CheckRegistrar expectedRegistrar = new CheckRegistrar() {
       @Override
@@ -12,7 +17,7 @@
     };
 
     when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
-    SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, null, null, null, this.checkFactory, new CheckRegistrar[] {
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, null, javaTestClasspath, checkFactory, new CheckRegistrar[] {
       expectedRegistrar
     });
 
@@ -21,5 +26,9 @@
     assertThat(visitors[0]).isEqualTo(expectedCheck);
     Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
     assertThat(testChecks).hasSize(0);
+    assertThat(sonarComponents.getFileSystem()).isEqualTo(fs);
+    assertThat(sonarComponents.getResourcePerspectives()).isEqualTo(resourcePerspectives);
+    assertThat(sonarComponents.getJavaClasspath()).isEmpty();
+    assertThat(sonarComponents.getJavaTestClasspath()).isEqualTo(javaTestClasspathList);
   }
 
