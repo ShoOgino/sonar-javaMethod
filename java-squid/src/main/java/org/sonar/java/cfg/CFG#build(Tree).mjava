@@ -1,9 +1,7 @@
   private void build(Tree tree) {
     switch (tree.kind()) {
       case BLOCK:
-        for (StatementTree statementTree : Lists.reverse(((BlockTree) tree).body())) {
-          build(statementTree);
-        }
+        build(((BlockTree) tree).body());
         break;
       case RETURN_STATEMENT:
         buildReturnStatement((ReturnStatementTree) tree);
@@ -120,17 +118,6 @@
       case NEW_CLASS:
         buildNewClass((NewClassTree) tree);
         break;
-      case IDENTIFIER:
-      case INT_LITERAL:
-      case LONG_LITERAL:
-      case DOUBLE_LITERAL:
-      case CHAR_LITERAL:
-      case FLOAT_LITERAL:
-      case STRING_LITERAL:
-      case BOOLEAN_LITERAL:
-      case NULL_LITERAL:
-        currentBlock.elements.add(tree);
-        break;
       case TYPE_CAST:
         buildTypeCast(tree);
         break;
@@ -140,19 +127,28 @@
       case NEW_ARRAY:
         buildNewArray((NewArrayTree) tree);
         break;
+      // Java 8 constructions : ignored for now.
       case METHOD_REFERENCE:
-        // Java 8 constructions : ignored for now.
-        break;
+      // assert can be ignored by VM so skip them for now.
       case ASSERT_STATEMENT:
-        // assert can be ignored by VM so skip them for now.
         break;
+      // store declarations as complete blocks.
       case EMPTY_STATEMENT:
       case CLASS:
       case ENUM:
       case ANNOTATION_TYPE:
       case INTERFACE:
       case LAMBDA_EXPRESSION:
-        // store declarations as complete blocks.
+      // simple instructions
+      case IDENTIFIER:
+      case INT_LITERAL:
+      case LONG_LITERAL:
+      case DOUBLE_LITERAL:
+      case CHAR_LITERAL:
+      case FLOAT_LITERAL:
+      case STRING_LITERAL:
+      case BOOLEAN_LITERAL:
+      case NULL_LITERAL:
         currentBlock.elements.add(tree);
         break;
       default:

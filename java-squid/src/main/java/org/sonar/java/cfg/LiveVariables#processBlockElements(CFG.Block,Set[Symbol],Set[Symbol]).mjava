@@ -6,7 +6,6 @@
       switch (element.kind()) {
         case ASSIGNMENT:
           ExpressionTree lhs = ((AssignmentExpressionTree) element).variable();
-
           if (lhs.is(Tree.Kind.IDENTIFIER)) {
             symbol = ((IdentifierTree) lhs).symbol();
             if (isLocalVariable(symbol)) {
@@ -27,17 +26,10 @@
           blockGen.remove(((VariableTree) element).symbol());
           break;
         case LAMBDA_EXPRESSION:
-          LocalVariableReadExtractor extractor = new LocalVariableReadExtractor(cfg.methodSymbol());
-          ((LambdaExpressionTree) element).body().accept(extractor);
-          blockGen.addAll(extractor.usedVariables());
+          blockGen.addAll(getUsedVariables(((LambdaExpressionTree) element).body(), cfg.methodSymbol()));
           break;
         case NEW_CLASS:
-          ClassTree body = ((NewClassTree) element).classBody();
-          if (body != null) {
-            LocalVariableReadExtractor extractorFromClass = new LocalVariableReadExtractor(cfg.methodSymbol());
-            body.accept(extractorFromClass);
-            blockGen.addAll(extractorFromClass.usedVariables());
-          }
+          blockGen.addAll(getUsedVariables(((NewClassTree) element).classBody(), cfg.methodSymbol()));
           break;
         default:
           // Ignore other kind of elements, no change of gen/kill

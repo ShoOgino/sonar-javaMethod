@@ -1,25 +1,12 @@
   private void buildCondition(Tree syntaxNode, Block trueBlock, Block falseBlock) {
     switch (syntaxNode.kind()) {
-      case CONDITIONAL_OR: {
-        BinaryExpressionTree e = (BinaryExpressionTree) syntaxNode;
-        // process RHS
-        buildCondition(e.rightOperand(), trueBlock, falseBlock);
-        falseBlock = currentBlock;
-        // process LHS
-        currentBlock = createBranch(e, trueBlock, falseBlock);
-        buildCondition(e.leftOperand(), trueBlock, falseBlock);
+      case CONDITIONAL_OR:
+        buildConditionalOr((BinaryExpressionTree) syntaxNode, trueBlock, falseBlock);
         break;
-      }
-      case CONDITIONAL_AND: {
+      case CONDITIONAL_AND:
         // process RHS
-        BinaryExpressionTree e = (BinaryExpressionTree) syntaxNode;
-        buildCondition(e.rightOperand(), trueBlock, falseBlock);
-        trueBlock = currentBlock;
-        // process LHS
-        currentBlock = createBranch(e, trueBlock, falseBlock);
-        buildCondition(e.leftOperand(), trueBlock, falseBlock);
+        buildConditionalAnd((BinaryExpressionTree) syntaxNode, trueBlock, falseBlock);
         break;
-      }
       // Skip syntactic sugar:
       case PARENTHESIZED_EXPRESSION:
         buildCondition(((ParenthesizedTree) syntaxNode).expression(), trueBlock, falseBlock);
