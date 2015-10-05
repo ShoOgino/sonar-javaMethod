@@ -1,0 +1,21 @@
+  @Override
+  public void reportIssue(JavaCheck javaCheck, Tree syntaxNode, String message, List<Location> secondary, @Nullable Integer cost) {
+    if (ENABLE_NEW_APIS) {
+      JavaCheckMessage checkMessage = new JavaCheckMessage(javaCheck, message);
+      AnalyzerMessage.TextSpan textSpan = textSpanFor(syntaxNode);
+      if (cost != null) {
+        checkMessage.setCost(cost);
+      }
+      checkMessage.setLine(textSpan.startLine);
+      AnalyzerMessage analyzerMessage = new AnalyzerMessage(javaCheck, file, textSpan, message, cost != null ? cost : 0);
+      for (Location location : secondary) {
+        AnalyzerMessage secondaryLocation = new AnalyzerMessage(javaCheck, file, textSpanFor(location.syntaxNode), location.msg, 0);
+        analyzerMessage.secondaryLocations.add(secondaryLocation);
+      }
+      checkMessage.setAnalyzerMessage(analyzerMessage);
+      sourceFile.log(checkMessage);
+    } else {
+      addIssue(syntaxNode, javaCheck, message, cost != null ? (double) cost : null);
+    }
+  }
+

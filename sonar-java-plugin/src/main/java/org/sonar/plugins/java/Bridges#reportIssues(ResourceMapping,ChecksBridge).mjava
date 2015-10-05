@@ -1,4 +1,4 @@
-  private void reportIssues(ResourceMapping resourceMapping, NoSonarFilter noSonarFilter, ChecksBridge checksBridge, Project project) {
+  private void reportIssues(ResourceMapping resourceMapping, ChecksBridge checksBridge) {
     for (Resource directory : resourceMapping.directories()) {
       for (Resource sonarFile : resourceMapping.files((Directory) directory)) {
         String key = resourceMapping.getFileKeyByResource((org.sonar.api.resources.File) sonarFile);
@@ -6,7 +6,6 @@
         if (key != null) {
           SourceFile squidFile = (SourceFile) squid.search(key);
           if (squidFile != null) {
-            noSonarFilter.addResource(sonarFile, squidFile.getNoSonarTagLines());
             checksBridge.reportIssues(squidFile, sonarFile);
           } else {
             LOG.error("Could not report issue on file: " + sonarFile.getKey());

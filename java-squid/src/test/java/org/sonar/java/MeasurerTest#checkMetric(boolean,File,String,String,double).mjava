@@ -3,8 +3,10 @@
    */
   private void checkMetric(boolean separateAccessorsFromMethods, File baseDir, String filename, String metric, double expectedValue) {
     context = mock(SensorContext.class);
-    fs.add(new DefaultInputFile(filename));
-    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods);
+    DefaultInputFile inputFile = new DefaultInputFile(filename);
+    fs.add(inputFile);
+    when(context.getResource(any(InputPath.class))).thenReturn(mock(Resource.class));
+    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods, mock(NoSonarFilter.class));
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
     conf.setSeparateAccessorsFromMethods(separateAccessorsFromMethods);
     squid = new JavaSquid(conf, null, measurer, null, new CodeVisitor[0]);

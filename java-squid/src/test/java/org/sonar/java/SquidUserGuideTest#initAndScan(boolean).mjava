@@ -6,12 +6,13 @@
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
     conf.setSeparateAccessorsFromMethods(separateAccessorsFromMethods);
     context = mock(SensorContext.class);
+    when(context.getResource(any(InputPath.class))).thenReturn(mock(Resource.class));
     DefaultFileSystem fs = new DefaultFileSystem(srcDir);
     Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
     for (File file : files) {
       fs.add(new DefaultInputFile(file.getPath()));
     }
-    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods);
+    Measurer measurer = new Measurer(fs, context, separateAccessorsFromMethods, mock(NoSonarFilter.class));
     JavaResourceLocator javaResourceLocator = new JavaResourceLocator() {
       public Map<String, String> sourceFileCache = Maps.newHashMap();
 

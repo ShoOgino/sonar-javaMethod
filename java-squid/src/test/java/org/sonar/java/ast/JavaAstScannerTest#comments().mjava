@@ -1,6 +1,11 @@
   @Test
   public void comments() {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/metrics/Comments.java"), new VisitorsBridge(new Measurer(fs, context, false)));
-    assertThat(file.getNoSonarTagLines()).contains(15).hasSize(1);
+    File file = new File("src/test/files/metrics/Comments.java");
+    Resource resource = mock(Resource.class);
+    when(resource.getEffectiveKey()).thenReturn(file.getAbsolutePath());
+    when(context.getResource(any(InputPath.class))).thenReturn(resource);
+    NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
+    JavaAstScanner.scanSingleFile(file, new VisitorsBridge(new Measurer(fs, context, false, noSonarFilter)));
+    verify(noSonarFilter).addComponent(file.getAbsolutePath(), ImmutableSet.of(15));
   }
 

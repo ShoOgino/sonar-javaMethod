@@ -1,7 +1,11 @@
   @Test
   public void noSonarLines() throws Exception {
-    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/metrics/NoSonar.java"), new VisitorsBridge(new Measurer(fs, context, false)));
-    assertThat(file.getNoSonarTagLines()).hasSize(1);
-    assertThat(file.getNoSonarTagLines()).contains(8);
+    File file = new File("src/test/files/metrics/NoSonar.java");
+    Resource resource = mock(Resource.class);
+    when(resource.getEffectiveKey()).thenReturn(file.getAbsolutePath());
+    when(context.getResource(any(InputPath.class))).thenReturn(resource);
+    NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
+    JavaAstScanner.scanSingleFile(file, new VisitorsBridge(new Measurer(fs, context, false, noSonarFilter)));
+    verify(noSonarFilter).addComponent(file.getAbsolutePath(), ImmutableSet.of(8));
   }
 
