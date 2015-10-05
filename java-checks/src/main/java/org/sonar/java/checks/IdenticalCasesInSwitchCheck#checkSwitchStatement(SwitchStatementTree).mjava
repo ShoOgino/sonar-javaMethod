@@ -5,11 +5,12 @@
     for (CaseGroupTree caseGroupTree : cases) {
       index++;
       for (int i = index; i < cases.size(); i++) {
-        if (SyntacticEquivalence.areEquivalent(caseGroupTree.body(), cases.get(i).body())) {
-          CaseLabelTree labelToReport = getLastLabel(cases.get(i));
+        CaseGroupTree current = cases.get(i);
+        if (SyntacticEquivalence.areEquivalent(caseGroupTree.body(), current.body())) {
+          CaseLabelTree labelToReport = getLastLabel(current);
           if (!reportedLabels.contains(labelToReport)) {
             reportedLabels.add(labelToReport);
-            createIssue(labelToReport, "case", caseGroupTree);
+            createIssue(current, issueMessage("case", caseGroupTree), caseGroupTree);
           }
         }
       }
