@@ -1,0 +1,22 @@
+  private void prune() {
+    List<Block> inactiveBlocks = new ArrayList<>();
+    boolean first = true;
+    for (Block block : blocks) {
+      if (!first && notActive(block)) {
+        inactiveBlocks.add(block);
+      }
+      first = false;
+    }
+    if (!inactiveBlocks.isEmpty()) {
+      removeInactiveBlocks(inactiveBlocks);
+      if (inactiveBlocks.contains(currentBlock)) {
+        currentBlock = currentBlock.successors.iterator().next();
+      }
+      int id = 0;
+      for (Block block : blocks) {
+        block.id = id;
+        id += 1;
+      }
+    }
+  }
+
