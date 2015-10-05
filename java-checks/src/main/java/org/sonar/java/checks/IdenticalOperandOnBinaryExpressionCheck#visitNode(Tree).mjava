@@ -1,8 +1,14 @@
   @Override
   public void visitNode(Tree tree) {
     BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
-    if (hasEquivalentOperand(binaryExpressionTree)) {
-      addIssue(binaryExpressionTree.rightOperand(), "Identical sub-expressions on both sides of operator \"" + binaryExpressionTree.operatorToken().text() + "\"");
+    ExpressionTree rightOperand = binaryExpressionTree.rightOperand();
+    ExpressionTree equivalentOperand = equivalentOperand(binaryExpressionTree, rightOperand);
+    if (equivalentOperand != null) {
+      reportIssue(
+        rightOperand,
+        "Identical sub-expressions on both sides of operator \"" + binaryExpressionTree.operatorToken().text() + "\"",
+        ImmutableList.of(new JavaFileScannerContext.Location("", equivalentOperand)),
+        null);
     }
   }
 

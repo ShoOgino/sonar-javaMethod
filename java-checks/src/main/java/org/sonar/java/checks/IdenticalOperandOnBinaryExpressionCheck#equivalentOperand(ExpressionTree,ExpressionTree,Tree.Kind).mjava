@@ -1,0 +1,15 @@
+  public static ExpressionTree equivalentOperand(ExpressionTree left, ExpressionTree right, Tree.Kind binaryKind) {
+    if (SyntacticEquivalence.areEquivalent(left, right)) {
+      return left;
+    }
+    // Check other operands if operator is symmetric.
+    if (SYMMETRIC_OPERATORS.contains(binaryKind) && left.is(binaryKind)) {
+      ExpressionTree equivalent = equivalentOperand(((BinaryExpressionTree) left).leftOperand(), right, binaryKind);
+      if (equivalent != null) {
+        return equivalent;
+      }
+      return equivalentOperand(((BinaryExpressionTree) left).rightOperand(), right, binaryKind);
+    }
+    return null;
+  }
+
