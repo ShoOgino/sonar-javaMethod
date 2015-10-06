@@ -1,0 +1,33 @@
+  @Test
+  public void switch_statement() {
+    final CFG cfg = buildCFG(
+      "void fun(int foo) { int a; switch(foo) { case 1: System.out.println(bar);case 2: System.out.println(qix);break; default: System.out.println(baz);} }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(3),
+      block(
+        element(Tree.Kind.IDENTIFIER, "qix"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).terminator(Tree.Kind.BREAK_STATEMENT).successors(0),
+      block(
+        element(Tree.Kind.IDENTIFIER, "baz"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(0),
+      block(
+        element(Tree.Kind.VARIABLE, "a"),
+        element(Tree.Kind.IDENTIFIER, "foo")
+        ).terminator(Tree.Kind.SWITCH_STATEMENT).successors(2, 3, 4));
+    cfgChecker.check(cfg);
+  }
+

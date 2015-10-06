@@ -1,0 +1,17 @@
+  @Test
+  public void conditionalAND() {
+    final CFG cfg = buildCFG("void fun() {if((a && b)) { foo(); } }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "a")
+        ).terminator(Tree.Kind.CONDITIONAL_AND).successors(0, 2),
+      block(
+        element(Tree.Kind.IDENTIFIER, "b")
+        ).terminator(Tree.Kind.IF_STATEMENT).successors(0, 1),
+      block(
+        element(Tree.Kind.IDENTIFIER, "foo"),
+        element(Tree.Kind.METHOD_INVOCATION)
+        ).successors(0));
+    cfgChecker.check(cfg);
+  }
+

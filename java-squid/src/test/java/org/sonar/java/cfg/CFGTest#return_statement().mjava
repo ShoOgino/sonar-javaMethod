@@ -1,0 +1,13 @@
+  @Test
+  public void return_statement() {
+    final CFG cfg = buildCFG("void fun(Object foo) { if(foo == null) return; }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "foo"),
+        element(Tree.Kind.NULL_LITERAL),
+        element(Tree.Kind.EQUAL_TO)
+        ).terminator(Tree.Kind.IF_STATEMENT).successors(0, 1),
+      terminator(Tree.Kind.RETURN_STATEMENT, 0));
+    cfgChecker.check(cfg);
+  }
+

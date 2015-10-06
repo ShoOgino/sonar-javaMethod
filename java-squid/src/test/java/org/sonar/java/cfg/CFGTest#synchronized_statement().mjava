@@ -1,0 +1,23 @@
+  @Test
+  public void synchronized_statement() {
+    final CFG cfg = buildCFG("void fun(Object a) {if(a==null) { synchronized(a) { foo();bar();} } System.out.println(''); }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.IDENTIFIER, "a"),
+        element(Tree.Kind.NULL_LITERAL),
+        element(Tree.Kind.EQUAL_TO)).terminator(Tree.Kind.IF_STATEMENT).successors(1, 2),
+      block(
+        element(Tree.Kind.IDENTIFIER, "a"),
+        element(Tree.Kind.IDENTIFIER, "foo"),
+        element(Tree.Kind.METHOD_INVOCATION),
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(1),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(0));
+    cfgChecker.check(cfg);
+  }
+
