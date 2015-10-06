@@ -1,8 +1,4 @@
   private static boolean isHibernateCall(MethodInvocationTree methodTree) {
-    if (methodTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) methodTree.methodSelect();
-      return !methodTree.arguments().isEmpty() && isMethodCall("org.hibernate.Session", "createQuery", memberSelectExpressionTree);
-    }
-    return false;
+    return HIBERNATE_SESSION_CREATE_QUERY_MATCHER.matches(methodTree);
   }
 

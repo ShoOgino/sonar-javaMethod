@@ -1,11 +1,4 @@
   private static boolean isExecuteQueryOrPrepareStatement(MethodInvocationTree methodTree) {
-    if (methodTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) methodTree.methodSelect();
-      return !methodTree.arguments().isEmpty() && (isMethodCall("java.sql.Statement", "executeQuery", memberSelectExpressionTree)
-          || isMethodCall("java.sql.Connection", "prepareStatement", memberSelectExpressionTree)
-          || isMethodCall("java.sql.Connection", "prepareCall", memberSelectExpressionTree)
-      );
-    }
-    return false;
+    return !methodTree.arguments().isEmpty() && (STATEMENT_EXECUTE_QUERY_MATCHER.matches(methodTree) || CONNECTION_MATCHERS.anyMatch(methodTree));
   }
 
