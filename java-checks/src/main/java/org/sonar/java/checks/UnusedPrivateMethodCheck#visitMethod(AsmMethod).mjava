@@ -14,13 +14,8 @@
         }
         messageStr += Joiner.on(",").join(params) + ")' is never used.";
       }
-      CheckMessage message = new CheckMessage(this, messageStr);
       int line = getMethodLineNumber(asmMethod);
-      if (line > 0) {
-        message.setLine(line);
-      }
-      SourceFile file = getSourceFile(asmClass);
-      file.log(message);
+      getContext().reportIssue(this, getSourceFile(asmClass), messageStr, line > 0 ? line : 0);
     }
   }
 

@@ -1,6 +1,6 @@
-  public static SourceFile scan(String target, CodeVisitor visitor) {
+  public static List<AnalyzerMessage> scan(String target, CodeVisitor visitor) {
     final File baseDir = new File("src/test/java/");
-    File file = new File(baseDir, "org/sonar/java/checks/targets/" + target + ".java");
+    final File file = new File(baseDir, "org/sonar/java/checks/targets/" + target + ".java");
 
     File bytecodeFile = new File("target/test-classes/");
 
@@ -13,13 +13,19 @@
     fs.add(new DefaultInputFile(file.getPath()));
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, null, new SuppressWarningsFilter());
     javaResourceLocator.setSensorContext(sensorContext);
-    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), javaResourceLocator, visitor);
+    final List<AnalyzerMessage> analyzerMessages = new ArrayList<>();
+    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), null, null, javaResourceLocator, new DefaultBytecodeContext(javaResourceLocator) {
+      @Override
+      public void reportIssue(JavaCheck check, Resource resource, String message, int line) {
+        analyzerMessages.add(new AnalyzerMessage(check, file, line, message, 0));
+      }
+    }, visitor);
     javaSquid.scan(Collections.singleton(file), Collections.<File>emptyList(), Collections.singleton(bytecodeFile));
 
     Collection<SourceCode> sources = javaSquid.getIndex().search(new QueryByType(SourceFile.class));
     if (sources.size() != 1) {
       throw new IllegalStateException("Only one SourceFile was expected whereas " + sources.size() + " has been returned.");
     }
-    return (SourceFile) sources.iterator().next();
+    return analyzerMessages;
   }
 

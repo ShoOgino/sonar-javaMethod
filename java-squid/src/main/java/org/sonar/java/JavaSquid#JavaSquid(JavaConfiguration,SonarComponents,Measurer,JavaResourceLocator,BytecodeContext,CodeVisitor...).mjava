@@ -1,8 +1,6 @@
   public JavaSquid(JavaConfiguration conf,
                    @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer,
-                   JavaResourceLocator javaResourceLocator, CodeVisitor... visitors) {
-
-
+                   JavaResourceLocator javaResourceLocator, BytecodeContext bytecodeContext, CodeVisitor... visitors) {
     Iterable<CodeVisitor> codeVisitors = Iterables.concat(Collections.singletonList(javaResourceLocator), Arrays.asList(visitors));
     if (measurer != null) {
       Iterable<CodeVisitor> measurers = Collections.singletonList((CodeVisitor) measurer);
@@ -35,8 +33,9 @@
 
     //Bytecode scanner
     squidIndex = (SquidIndex) astScanner.getIndex();
-    bytecodeScanner = new BytecodeScanner(squidIndex, javaResourceLocator);
-    bytecodeScanner.accept(new DependenciesVisitor(graph));
+    bytecodeScanner = new BytecodeScanner(bytecodeContext);
+    DependenciesVisitor dependenciesVisitor = new DependenciesVisitor(bytecodeContext, graph);
+    bytecodeScanner.accept(dependenciesVisitor);
     for (CodeVisitor visitor : visitors) {
       bytecodeScanner.accept(visitor);
     }

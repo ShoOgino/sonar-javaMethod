@@ -1,11 +1,26 @@
   @Test
   public void test() {
-    SourceFile file = BytecodeFixture.scan("UnusedPrivateMethod", check);
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-        .next().withMessage("Private constructor 'org.sonar.java.checks.targets.UnusedPrivateMethod$A(UnusedPrivateMethod)' is never used.")
-        .next().atLine(54).withMessage("Private method 'unusedPrivateMethod' is never used.")
-        .next().atLine(57).withMessage("Private method 'unusedPrivateMethod' is never used.")
-        .next().atLine(67).withMessage("Private constructor 'org.sonar.java.checks.targets.UnusedPrivateMethod$Attribute(String,String[],int)' is never used.")
-        .noMore();
+    List<AnalyzerMessage> messages = BytecodeFixture.scan("UnusedPrivateMethod", check);
+    assertThat(messages).hasSize(4);
+    for (AnalyzerMessage message : messages) {
+      Integer line = message.getLine();
+      if (line == null) {
+        checkMessage(message, "Private constructor 'org.sonar.java.checks.targets.UnusedPrivateMethod$A(UnusedPrivateMethod)' is never used.");
+        continue;
+      }
+      switch (line) {
+        case 54:
+          checkMessage(message, "Private method 'unusedPrivateMethod' is never used.");
+          break;
+        case 57:
+          checkMessage(message, "Private method 'unusedPrivateMethod' is never used.");
+          break;
+        case 67:
+          checkMessage(message, "Private constructor 'org.sonar.java.checks.targets.UnusedPrivateMethod$Attribute(String,String[],int)' is never used.");
+          break;
+        default:
+          throw new IllegalStateException("Unexpected " + line);
+      }
+    }
   }
 

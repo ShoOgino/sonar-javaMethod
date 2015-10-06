@@ -1,10 +1,10 @@
   @Test
   public void test() {
-    SourceFile file = BytecodeFixture.scan("UnusedProtectedMethod", check);
-    CheckMessagesVerifier.verify(file.getCheckMessages())
-      .next()
-      .withMessage("Protected method 'unusedProtectedMethod(...)' is never used.")
-      .atLine(31)
-      .noMore();
+    UnusedProtectedMethodCheck check = new UnusedProtectedMethodCheck();
+    List<AnalyzerMessage> unusedProtectedMethod = BytecodeFixture.scan("UnusedProtectedMethod", check);
+    assertThat(unusedProtectedMethod).hasSize(1);
+    AnalyzerMessage analyzerMessage = unusedProtectedMethod.iterator().next();
+    assertThat(analyzerMessage.getLine()).isEqualTo(31);
+    assertThat(analyzerMessage.getMessage()).isEqualTo("Protected method 'unusedProtectedMethod(...)' is never used.");
   }
 

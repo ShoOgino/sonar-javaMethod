@@ -1,0 +1,17 @@
+  public void addIssue(File file, JavaCheck check, int line, String message) {
+    RuleKey key = getRuleKey(check);
+    if (key != null) {
+      Issuable issuable = issuableFor(file);
+      if (issuable != null) {
+        Issuable.IssueBuilder issueBuilder = issuable.newIssueBuilder()
+          .ruleKey(key)
+          .message(message);
+        if (line > -1) {
+          issueBuilder.line(line);
+        }
+        Issue issue = issueBuilder.build();
+        issuable.addIssue(issue);
+      }
+    }
+  }
+
