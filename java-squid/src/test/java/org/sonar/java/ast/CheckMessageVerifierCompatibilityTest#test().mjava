@@ -1,0 +1,9 @@
+  @Test
+  public void test() {
+    SourceFile file = JavaAstScanner.scanSingleFile(new File("src/test/files/ast/CheckMessageVerifierCompatibility.java"), new VisitorsBridge(new CustomRuleCheck()));
+    CheckMessagesVerifier.verify(file.getCheckMessages())
+      .next().atLine(3).withMessage("method message")
+      .next().atLine(4).withMessage("variable message")
+      .noMore();
+  }
+

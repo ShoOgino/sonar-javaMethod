@@ -1,0 +1,22 @@
+    /**
+     * @deprecated should be removed once CheckMessageVerifier support is dropped
+     */
+    @Deprecated
+    private void addIssueForCheckMessageVerifier(int line, JavaCheck javaCheck, String message, @Nullable Double cost) {
+      // compatibility with CheckMessageVerifier
+      JavaCheckMessage checkMessage = new JavaCheckMessage(javaCheck, message);
+      if (line > 0) {
+        checkMessage.setLine(line);
+      }
+      if (cost == null) {
+        Annotation linear = AnnotationUtils.getAnnotation(javaCheck, SqaleLinearRemediation.class);
+        Annotation linearWithOffset = AnnotationUtils.getAnnotation(javaCheck, SqaleLinearWithOffsetRemediation.class);
+        if (linear != null || linearWithOffset != null) {
+          throw new IllegalStateException("A check annotated with a linear sqale function should provide an effort to fix");
+        }
+      } else {
+        checkMessage.setCost(cost);
+      }
+      sourceFile.log(checkMessage);
+    }
+

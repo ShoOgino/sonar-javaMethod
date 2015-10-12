@@ -1,6 +1,5 @@
   @Test
   public void test_issues_creation() throws Exception {
-    RulesProfile qp = RulesProfile.create("test", Java.KEY);
     Settings settings = new Settings();
     DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/java/"));
     File file = new File("src/test/java/org/sonar/plugins/java/JavaSquidSensorTest.java");
@@ -26,8 +25,7 @@
     when(issueBuilder.message(Mockito.anyString())).thenReturn(issueBuilder);
     when(issueBuilder.effortToFix(Mockito.anyDouble())).thenReturn(issueBuilder);
     when(issueBuilder.build()).thenReturn(issue);
-
-    when(resourcePerspectives.as(any(Issuable.class.getClass()), any(Resource.class))).thenReturn(issuable);
+    when(sonarComponents.issuableFor(any(File.class))).thenReturn(issuable);
 
     jss.analyse(project, context);
 
