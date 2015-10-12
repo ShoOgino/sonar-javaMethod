@@ -1,0 +1,21 @@
+  private void resetNullValuesOnFields(MethodInvocationTree tree) {
+    boolean changed = false;
+    Map<Symbol, SymbolicValue> values = Maps.newHashMap(programState.values);
+    for (Entry<Symbol, SymbolicValue> entry : values.entrySet()) {
+      if (constraintManager.isNull(programState, entry.getValue())) {
+        Symbol symbol = entry.getKey();
+        if (isField(symbol)) {
+          VariableTree variable = ((Symbol.VariableSymbol) symbol).declaration();
+          if (variable != null) {
+            changed = true;
+            SymbolicValue nonNullValue = constraintManager.supersedeSymbolicValue(variable);
+            values.put(symbol, nonNullValue);
+          }
+        }
+      }
+    }
+    if (changed) {
+      programState = new ProgramState(values, programState.constraints);
+    }
+  }
+
