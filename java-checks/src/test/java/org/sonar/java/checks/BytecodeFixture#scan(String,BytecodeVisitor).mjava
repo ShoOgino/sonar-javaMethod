@@ -1,6 +1,5 @@
-  public static List<AnalyzerMessage> scan(String target, CodeVisitor visitor) {
-    final File baseDir = new File("src/test/java/");
-    final File file = new File(baseDir, "org/sonar/java/checks/targets/" + target + ".java");
+  public static List<AnalyzerMessage> scan(String target, final BytecodeVisitor visitor) {
+    final File file = new File(target);
 
     File bytecodeFile = new File("target/test-classes/");
 
@@ -14,12 +13,8 @@
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, null, new SuppressWarningsFilter());
     javaResourceLocator.setSensorContext(sensorContext);
     final List<AnalyzerMessage> analyzerMessages = new ArrayList<>();
-    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), null, null, javaResourceLocator, new DefaultBytecodeContext(javaResourceLocator) {
-      @Override
-      public void reportIssue(JavaCheck check, Resource resource, String message, int line) {
-        analyzerMessages.add(new AnalyzerMessage(check, file, line, message, 0));
-      }
-    }, visitor);
+    BytecodeVisitor visitorWithFakeContext = new ByteCodeVisitorWithFakeContext(visitor, file, javaResourceLocator, analyzerMessages);
+    JavaSquid javaSquid = new JavaSquid(new JavaConfiguration(Charset.forName("UTF-8")), null, null, javaResourceLocator, visitorWithFakeContext);
     javaSquid.scan(Collections.singleton(file), Collections.<File>emptyList(), Collections.singleton(bytecodeFile));
 
     Collection<SourceCode> sources = javaSquid.getIndex().search(new QueryByType(SourceFile.class));
