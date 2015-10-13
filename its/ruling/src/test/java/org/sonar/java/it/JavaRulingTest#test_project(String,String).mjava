@@ -1,7 +1,8 @@
-  private static void test_project(String projectName) throws IOException {
+  private static void test_project(String projectKey, String projectName) throws IOException {
     File pomFile = FileLocation.of("../sources/" + projectName + "/pom.xml").getFile();
+    orchestrator.getServer().provisionProject(projectKey, projectName);
+    orchestrator.getServer().associateProjectToQualityProfile(projectKey, "java", "rules");
     MavenBuild mavenBuild = MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests")
-      .setProfile("rules")
       .setProperty("sonar.cpd.skip", "true")
       .setProperty("sonar.skipPackageDesign", "true")
       .setProperty("sonar.analysis.mode", "preview")
