@@ -1,0 +1,22 @@
+  @Test
+  public void no_issue_if_file_not_found() throws Exception {
+    JavaCheck expectedCheck = new CustomCheck();
+    CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
+
+    DefaultFileSystem fileSystem = new DefaultFileSystem(new File(""));
+    fileSystem.add(new DefaultInputFile("file.java"));
+    File file = new File("file.java");
+
+    Issuable issuable = mock(Issuable.class);
+    when(resourcePerspectives.as(eq(Issuable.class), any(InputFile.class))).thenReturn(null);
+    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
+    when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));
+
+    SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, fileSystem, null, null, this.checkFactory, new CheckRegistrar[] {
+      expectedRegistrar
+    });
+
+    sonarComponents.addIssue(file, expectedCheck, 0, "message");
+    verify(issuable, never()).addIssue(any(Issue.class));
+  }
+

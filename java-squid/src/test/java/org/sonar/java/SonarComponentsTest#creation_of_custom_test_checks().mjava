@@ -1,15 +1,7 @@
   @Test
   public void creation_of_custom_test_checks() {
     JavaCheck expectedCheck = new CustomTestCheck();
-    CheckRegistrar expectedRegistrar = new CheckRegistrar() {
-      @Override
-      public void register(RegistrarContext registrarContext) {
-        registrarContext.registerClassesForRepository(
-          REPOSITORY_NAME,
-          null,
-          Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class));
-      }
-    };
+    CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
 
     when(this.checks.all()).thenReturn(new ArrayList<JavaCheck>()).thenReturn(Lists.newArrayList(expectedCheck));
     SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, null, null, null, this.checkFactory, new CheckRegistrar[] {

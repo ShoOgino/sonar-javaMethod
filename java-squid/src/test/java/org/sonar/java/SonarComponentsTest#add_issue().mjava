@@ -1,0 +1,27 @@
+  @Test
+  public void add_issue() throws Exception {
+    JavaCheck expectedCheck = new CustomCheck();
+    CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
+
+    DefaultFileSystem fileSystem = new DefaultFileSystem(new File(""));
+    File file = new File("file.java");
+    fileSystem.add(new DefaultInputFile("file.java"));
+
+    Issuable issuable = mock(Issuable.class);
+    Issuable.IssueBuilder issueBuilder = mock(Issuable.IssueBuilder.class);
+    when(issuable.newIssueBuilder()).thenReturn(issueBuilder);
+    when(issueBuilder.ruleKey(any(RuleKey.class))).thenReturn(issueBuilder);
+    when(issueBuilder.message(any(String.class))).thenReturn(issueBuilder);
+    when(resourcePerspectives.as(eq(Issuable.class), any(InputFile.class))).thenReturn(issuable);
+    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
+    when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));
+
+    SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, fileSystem, null, null, this.checkFactory, new CheckRegistrar[] {
+      expectedRegistrar
+    });
+
+    sonarComponents.addIssue(file, expectedCheck, -5, "message on wrong line");
+    sonarComponents.addIssue(file, expectedCheck, 42, "message on line");
+    verify(issuable, times(2)).addIssue(any(Issue.class));
+  }
+

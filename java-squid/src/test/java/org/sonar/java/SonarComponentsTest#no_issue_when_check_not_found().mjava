@@ -1,19 +1,17 @@
   @Test
-  public void creation_of_custom_checks() {
+  public void no_issue_when_check_not_found() throws Exception {
     JavaCheck expectedCheck = new CustomCheck();
     CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
 
+    Issuable issuable = mock(Issuable.class);
+
     when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
+    when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(null);
     SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, null, null, null, this.checkFactory, new CheckRegistrar[] {
       expectedRegistrar
     });
 
-    CodeVisitor[] visitors = sonarComponents.checkClasses();
-    assertThat(visitors).hasSize(1);
-    assertThat(visitors[0]).isEqualTo(expectedCheck);
-    Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
-    assertThat(testChecks).hasSize(0);
-
-    postTestExecutionChecks();
+    sonarComponents.addIssue(new File(""), expectedCheck, 0, "message");
+    verify(issuable, never()).addIssue(any(Issue.class));
   }
 
