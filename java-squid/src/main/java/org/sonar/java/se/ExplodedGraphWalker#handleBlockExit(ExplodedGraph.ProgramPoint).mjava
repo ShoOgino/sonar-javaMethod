@@ -1,25 +1,23 @@
   private void handleBlockExit(ExplodedGraph.ProgramPoint programPosition) {
     CFG.Block block = programPosition.block;
-    Tree terminator = block.terminator();
-    if (terminator != null) {
-      switch (terminator.kind()) {
+    if (block.terminator() != null) {
+      switch (block.terminator().kind()) {
         case IF_STATEMENT:
-          handleBranch(block, ((IfStatementTree) terminator).condition());
+          handleBranch(block, ((IfStatementTree) block.terminator()).condition());
           return;
         case CONDITIONAL_OR:
         case CONDITIONAL_AND:
-          handleBranch(block, ((BinaryExpressionTree) terminator).leftOperand());
+          handleBranch(block, ((BinaryExpressionTree) block.terminator()).leftOperand());
           return;
         case CONDITIONAL_EXPRESSION:
-          handleBranch(block, ((ConditionalExpressionTree) terminator).condition());
+          handleBranch(block, ((ConditionalExpressionTree) block.terminator()).condition());
           return;
         case FOR_STATEMENT:
-          ForStatementTree forStatement = (ForStatementTree) terminator;
+          ForStatementTree forStatement = (ForStatementTree) block.terminator();
           if (forStatement.condition() != null) {
             handleBranch(block, forStatement.condition(), false);
             return;
           }
-        default:
       }
     }
     // unconditional jumps, for-statement, switch-statement:

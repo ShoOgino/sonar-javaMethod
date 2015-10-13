@@ -1,6 +1,13 @@
   private void visit(Tree tree, Tree terminator) {
     LOG.debug("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
     switch (tree.kind()) {
+      case METHOD_INVOCATION:
+        setSymbolicValueOnFields((MethodInvocationTree) tree);
+        ExpressionTree methodName = ((MethodInvocationTree) tree).methodSelect();
+        if (methodName.is(Tree.Kind.IDENTIFIER) && "printState".equals(((IdentifierTree) methodName).name())) {
+          debugPrint(((JavaTree) tree).getLine(), node);
+        }
+        break;
       case LABELED_STATEMENT:
       case SWITCH_STATEMENT:
       case EXPRESSION_STATEMENT:
@@ -22,19 +29,11 @@
         }
         break;
       case ASSIGNMENT:
-        AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) tree;
+        AssignmentExpressionTree assignmentExpressionTree = ((AssignmentExpressionTree) tree);
         // FIXME restricted to identifiers for now.
         if (assignmentExpressionTree.variable().is(Tree.Kind.IDENTIFIER)) {
           SymbolicValue value = getVal(assignmentExpressionTree.expression());
           programState = put(programState, ((IdentifierTree) assignmentExpressionTree.variable()).symbol(), value);
-        }
-        break;
-      case METHOD_INVOCATION:
-        setSymbolicValueOnFields((MethodInvocationTree) tree);
-        break;
-      case IDENTIFIER:
-        if (terminator != null && terminator.is(Tree.Kind.SYNCHRONIZED_STATEMENT)) {
-          resetConstraintsOnFields();
         }
         break;
       default:
