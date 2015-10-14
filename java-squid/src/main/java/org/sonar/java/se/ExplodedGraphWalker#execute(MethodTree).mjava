@@ -1,6 +1,7 @@
   private void execute(MethodTree tree) {
     checkerDispatcher.init();
     CFG cfg = CFG.build(tree);
+    System.out.println("Exploring Exploded Graph for method " + tree.simpleName().name() + " at line " + ((JavaTree) tree).getLine());
     explodedGraph = new ExplodedGraph();
     constraintManager = new ConstraintManager();
     workList = new LinkedList<>();
@@ -9,11 +10,11 @@
     Iterable<ProgramState> startingStates = Lists.newArrayList(programState);
     for (final VariableTree variableTree : tree.parameters()) {
       // create
-      final SymbolicValue sv = constraintManager.eval(programState, variableTree);
+      final SymbolicValue sv = constraintManager.createSymbolicValue(variableTree);
       startingStates = Iterables.transform(startingStates, new Function<ProgramState, ProgramState>() {
         @Override
         public ProgramState apply(ProgramState input) {
-          return put(input, variableTree.symbol(), sv);
+          return ProgramState.put(input, variableTree.symbol(), sv);
         }
       });
 
@@ -47,7 +48,6 @@
         continue;
       }
       programState = node.programState;
-
       if (programPosition.i < programPosition.block.elements().size()) {
         // process block element
         visit(programPosition.block.elements().get(programPosition.i), programPosition.block.terminator());
@@ -56,7 +56,7 @@
         handleBlockExit(programPosition);
       } else if (programPosition.i == programPosition.block.elements().size()) {
         // process block exist, which is conditional jump such as if-statement
-        checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
+        checkerDispatcher.executeCheckPostStatement(programPosition.block.terminator());
       } else {
         // process branch
         handleBlockExit(programPosition);
@@ -70,5 +70,6 @@
     node = null;
     programState = null;
     constraintManager = null;
+    System.out.println("=============================");
   }
 

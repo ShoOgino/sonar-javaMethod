@@ -2,27 +2,30 @@
     Pair<ProgramState, ProgramState> pair = constraintManager.assumeDual(programState, condition);
     if (pair.a != null) {
       // enqueue false-branch, if feasible
-      enqueue(new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0), pair.a);
+      ProgramState ps = ProgramState.stackValue(pair.a, SymbolicValue.FALSE_LITERAL);
+      enqueue(new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0), ps);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToFalse(condition);
       }
     } else {
-      SymbolicValue val = getVal(condition);
-      if (val != null) {
-        programState = ConstraintManager.setConstraint(programState, val, ConstraintManager.BooleanConstraint.TRUE);
-      }
+//      SymbolicValue val = getVal(condition);
+//
+//      if (val != null) {
+//        programState = ConstraintManager.setConstraint(programState, val, ConstraintManager.BooleanConstraint.TRUE);
+//      }
     }
     if (pair.b != null) {
+      ProgramState ps = ProgramState.stackValue(pair.b, SymbolicValue.TRUE_LITERAL);
       // enqueue true-branch, if feasible
-      enqueue(new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0), pair.b);
+      enqueue(new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0), ps);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToTrue(condition);
       }
     } else {
-      SymbolicValue val = getVal(condition);
-      if (val != null) {
-        programState = ConstraintManager.setConstraint(programState, val, ConstraintManager.BooleanConstraint.FALSE);
-      }
+//      SymbolicValue val = getVal(condition);
+//      if (val != null) {
+//        programState = ConstraintManager.setConstraint(programState, val, ConstraintManager.BooleanConstraint.FALSE);
+//      }
     }
 
   }

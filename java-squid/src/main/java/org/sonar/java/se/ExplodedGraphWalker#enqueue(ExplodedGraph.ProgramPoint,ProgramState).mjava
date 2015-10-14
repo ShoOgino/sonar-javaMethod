@@ -1,12 +1,12 @@
   public void enqueue(ExplodedGraph.ProgramPoint programPoint, ProgramState programState) {
     int nbOfExecution = programState.numberOfTimeVisited(programPoint);
-    if(nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
+    if (nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
       debugPrint(programState);
       return;
     }
     Multiset<ExplodedGraph.ProgramPoint> visitedPoints = HashMultiset.create(programState.visitedPoints);
     visitedPoints.add(programPoint);
-    ExplodedGraph.Node node = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints));
+    ExplodedGraph.Node node = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints, programState.stack));
     if (!node.isNew) {
       // has been enqueued earlier
       return;

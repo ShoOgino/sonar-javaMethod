@@ -1,12 +1,17 @@
   private void visit(Tree tree, Tree terminator) {
     LOG.debug("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
+    System.out.println("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
+    System.out.println("??>"+programState.stack.size()+"  "+programPosition.block.id()+"-"+programPosition.i);
+    if(!checkerDispatcher.executeCheckPreStatement(tree)) {
+      //Some of the check pre statement sink the execution on this node.
+      return;
+    }
     switch (tree.kind()) {
       case METHOD_INVOCATION:
-        setSymbolicValueOnFields((MethodInvocationTree) tree);
-        ExpressionTree methodName = ((MethodInvocationTree) tree).methodSelect();
-        if (methodName.is(Tree.Kind.IDENTIFIER) && "printState".equals(((IdentifierTree) methodName).name())) {
-          debugPrint(((JavaTree) tree).getLine(), node);
-        }
+        MethodInvocationTree mit = (MethodInvocationTree) tree;
+        programState = ProgramState.unstack(programState, mit.arguments().size()).a;
+        logState(mit);
+        programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(mit));
         break;
       case LABELED_STATEMENT:
       case SWITCH_STATEMENT:
@@ -17,27 +22,109 @@
         VariableTree variableTree = (VariableTree) tree;
         ExpressionTree initializer = variableTree.initializer();
         if (initializer == null) {
+          SymbolicValue sv = null;
           if (terminator != null && terminator.is(Tree.Kind.FOR_EACH_STATEMENT)) {
-            setSymbolicValueForEachValue(variableTree);
+            sv = constraintManager.createSymbolicValue(variableTree);
           } else if (variableTree.type().symbolType().is("boolean")) {
-            setSymbolicValueFalseValue(variableTree);
+            sv = SymbolicValue.FALSE_LITERAL;
           } else if (!variableTree.type().symbolType().isPrimitive()) {
-            setSymbolicValueNullValue(variableTree);
+            sv = SymbolicValue.NULL_LITERAL;
+          }
+          if (sv != null) {
+            programState = ProgramState.put(programState, variableTree.symbol(), sv);
           }
         } else {
-          setSymbolicValueValueFromInitializer(variableTree, initializer);
+          Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 1);
+          programState = unstack.a;
+          programState = ProgramState.put(programState, variableTree.symbol(), unstack.b.get(0));
         }
         break;
       case ASSIGNMENT:
         AssignmentExpressionTree assignmentExpressionTree = ((AssignmentExpressionTree) tree);
         // FIXME restricted to identifiers for now.
         if (assignmentExpressionTree.variable().is(Tree.Kind.IDENTIFIER)) {
-          SymbolicValue value = getVal(assignmentExpressionTree.expression());
-          programState = put(programState, ((IdentifierTree) assignmentExpressionTree.variable()).symbol(), value);
+          Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 2);
+          SymbolicValue value = unstack.b.get(1);
+          programState = unstack.a;
+          programState = ProgramState.put(programState, ((IdentifierTree) assignmentExpressionTree.variable()).symbol(), value);
+          programState = ProgramState.stackValue(programState, value);
         }
+        break;
+      case NEW_CLASS:
+        NewClassTree newClassTree = (NewClassTree) tree;
+        programState = ProgramState.unstack(programState, newClassTree.arguments().size()).a;
+        SymbolicValue svNewClass = constraintManager.createSymbolicValue(newClassTree);
+        programState = ProgramState.stackValue(programState, svNewClass);
+        programState = ConstraintManager.setConstraint(programState, svNewClass, ConstraintManager.NullConstraint.NOT_NULL);
+        break;
+      case MULTIPLY:
+      case DIVIDE:
+      case REMAINDER:
+      case PLUS:
+      case MINUS:
+      case LEFT_SHIFT:
+      case RIGHT_SHIFT:
+      case UNSIGNED_RIGHT_SHIFT:
+      case AND:
+      case XOR:
+      case OR:
+      case GREATER_THAN:
+      case GREATER_THAN_OR_EQUAL_TO:
+      case LESS_THAN:
+      case LESS_THAN_OR_EQUAL_TO:
+      case EQUAL_TO:
+      case NOT_EQUAL_TO:
+        //Consume two and produce one SV.
+        Pair<ProgramState, List<SymbolicValue>> unstackBinary = ProgramState.unstack(programState, 2);
+        programState = unstackBinary.a;
+        SymbolicValue symbolicValue = constraintManager.createSymbolicValue(tree);
+        symbolicValue.computedFrom(unstackBinary.b);
+        programState = ProgramState.stackValue(programState, symbolicValue);
+        break;
+      case POSTFIX_INCREMENT:
+      case POSTFIX_DECREMENT:
+      case PREFIX_INCREMENT:
+      case PREFIX_DECREMENT:
+      case UNARY_MINUS:
+      case UNARY_PLUS:
+      case BITWISE_COMPLEMENT:
+      case LOGICAL_COMPLEMENT:
+        //consume one and produce one
+        Pair<ProgramState, List<SymbolicValue>> unstackUnary = ProgramState.unstack(programState, 1);
+        programState = unstackUnary.a;
+        programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(tree));
+        break;
+      case IDENTIFIER:
+        Symbol symbol = ((IdentifierTree) tree).symbol();
+        SymbolicValue value = programState.values.get(symbol);
+        if(value == null) {
+          value = constraintManager.createSymbolicValue(tree);
+          programState = ProgramState.put(programState, symbol, value);
+        }
+        programState  = ProgramState.stackValue(programState, value);
+        break;
+      case MEMBER_SELECT:
+        Pair<ProgramState, List<SymbolicValue>> unstackMSE = ProgramState.unstack(programState, 1);
+        SymbolicValue MSEValue = constraintManager.createSymbolicValue(tree);
+        programState = ProgramState.stackValue(unstackMSE.a, MSEValue);
+        break;
+      case INT_LITERAL:
+      case LONG_LITERAL:
+      case FLOAT_LITERAL:
+      case DOUBLE_LITERAL:
+      case BOOLEAN_LITERAL:
+      case CHAR_LITERAL:
+      case STRING_LITERAL:
+      case NULL_LITERAL:
+        SymbolicValue val = constraintManager.eval(programState, tree);
+        programState = ProgramState.stackValue(programState, val);
         break;
       default:
     }
-    checkerDispatcher.executeCheckPreStatement(tree);
+
+    checkerDispatcher.executeCheckPostStatement(tree);
+    if (tree.parent().is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      programState = ProgramState.unstack(programState, programState.stack.size()).a;
+    }
   }
 

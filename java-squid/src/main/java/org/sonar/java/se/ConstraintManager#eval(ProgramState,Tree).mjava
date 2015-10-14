@@ -1,29 +1,38 @@
-  public SymbolicValue eval(ProgramState programState, Tree node) {
-    Tree syntaxNode = skipTrivial(node);
+  public SymbolicValue eval(ProgramState programState, Tree syntaxNode) {
+    syntaxNode = skipTrivial(syntaxNode);
     switch (syntaxNode.kind()) {
-      case NULL_LITERAL:
+      case ASSIGNMENT: {
+        return eval(programState, ((AssignmentExpressionTree) syntaxNode).variable());
+      }
+      case NULL_LITERAL: {
         return SymbolicValue.NULL_LITERAL;
-      case BOOLEAN_LITERAL:
+      }
+      case BOOLEAN_LITERAL: {
         boolean value = Boolean.parseBoolean(((LiteralTree) syntaxNode).value());
         if (value) {
           return SymbolicValue.TRUE_LITERAL;
         }
         return SymbolicValue.FALSE_LITERAL;
-      case VARIABLE:
-        SymbolicValue variableResult = programState.values.get(((VariableTree) syntaxNode).symbol());
-        if (variableResult != null) {
+      }
+      case VARIABLE: {
+        Symbol symbol = ((VariableTree) syntaxNode).symbol();
+        SymbolicValue result = programState.values.get(symbol);
+        if (result != null) {
           // symbolic value associated with local variable
-          return variableResult;
+          return result;
         }
         break;
-      case IDENTIFIER:
-        SymbolicValue identifierResult = programState.values.get(((IdentifierTree) syntaxNode).symbol());
-        if (identifierResult != null) {
+      }
+      case IDENTIFIER: {
+        Symbol symbol = ((IdentifierTree) syntaxNode).symbol();
+        SymbolicValue result = programState.values.get(symbol);
+        if (result != null) {
           // symbolic value associated with local variable
-          return identifierResult;
+          return result;
         }
         break;
-      case LOGICAL_COMPLEMENT:
+      }
+      case LOGICAL_COMPLEMENT: {
         UnaryExpressionTree unaryExpressionTree = (UnaryExpressionTree) syntaxNode;
         SymbolicValue val = eval(programState, unaryExpressionTree.expression());
         if (SymbolicValue.FALSE_LITERAL.equals(val)) {
@@ -33,7 +42,7 @@
         }
         // if not tied to a concrete value, create symbolic value with no constraint for now.
         // TODO : create constraint between expression and created symbolic value
-      default:
+      }
     }
     return createSymbolicValue(syntaxNode);
   }

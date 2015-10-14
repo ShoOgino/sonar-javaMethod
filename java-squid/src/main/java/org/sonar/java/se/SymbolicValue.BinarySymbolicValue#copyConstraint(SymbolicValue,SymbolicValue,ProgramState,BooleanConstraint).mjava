@@ -1,0 +1,13 @@
+    private ProgramState copyConstraint(SymbolicValue from, SymbolicValue to, ProgramState programState, BooleanConstraint booleanConstraint) {
+      ProgramState result = programState;
+      Object constraintLeft = programState.constraints.get(from);
+      if (constraintLeft instanceof BooleanConstraint) {
+        BooleanConstraint boolConstraint = (BooleanConstraint) constraintLeft;
+        result = to.setConstraint(result, shouldNotInverse().equals(booleanConstraint) ? boolConstraint : boolConstraint.inverse());
+      } else if (constraintLeft instanceof NullConstraint) {
+        NullConstraint nullConstraint = (NullConstraint) constraintLeft;
+        result = to.setConstraint(result, shouldNotInverse().equals(booleanConstraint) ? nullConstraint : nullConstraint.inverse());
+      }
+      return result;
+    }
+

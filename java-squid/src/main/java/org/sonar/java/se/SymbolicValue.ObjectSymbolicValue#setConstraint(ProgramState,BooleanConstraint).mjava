@@ -1,0 +1,11 @@
+    @Override
+    public ProgramState setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+      // store constraint only if symbolic value can be reached by a symbol.
+      if (programState.values.containsValue(this)) {
+        Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
+        temp.put(this, booleanConstraint);
+        return new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack);
+      }
+      return programState;
+    }
+

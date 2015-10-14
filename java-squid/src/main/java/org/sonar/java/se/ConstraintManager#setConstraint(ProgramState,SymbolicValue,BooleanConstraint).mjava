@@ -11,9 +11,25 @@
       }
     }
     if (data == null || !data.equals(booleanConstraint)) {
-      Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
-      temp.put(sv, booleanConstraint);
-      return new ProgramState(programState.values, temp, programState.visitedPoints);
+      return sv.setConstraint(programState, booleanConstraint);
+//      if(sv instanceof SymbolicValue.EqualToSymbolicValue) {
+//        SymbolicValue.EqualToSymbolicValue equalToSymbolicValue = (SymbolicValue.EqualToSymbolicValue) sv;
+//        if(equalToSymbolicValue.leftOp.equals(equalToSymbolicValue.rightOp)) {
+//          return BooleanConstraint.TRUE.equals(booleanConstraint) ? programState : null;
+//        }
+//        programState = copyConstraint(equalToSymbolicValue.leftOp, equalToSymbolicValue.rightOp, programState, booleanConstraint);
+//        if(programState == null) {
+//          return null;
+//        }
+//        programState = copyConstraint(equalToSymbolicValue.rightOp, equalToSymbolicValue.leftOp, programState, booleanConstraint);
+//      } else {
+//        // store constraint only if symbolic value can be reached by a symbol.
+//        if(programState.values.containsValue(sv)) {
+//          Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
+//          temp.put(sv, booleanConstraint);
+//          return new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack);
+//        }
+//      }
     }
     return programState;
   }
