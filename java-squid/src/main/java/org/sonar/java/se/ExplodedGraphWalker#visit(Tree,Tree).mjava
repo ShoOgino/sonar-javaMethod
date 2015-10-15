@@ -1,7 +1,5 @@
   private void visit(Tree tree, Tree terminator) {
     LOG.debug("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
-    System.out.println("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
-    System.out.println("??>"+programState.stack.size()+"  "+programPosition.block.id()+"-"+programPosition.i);
     if(!checkerDispatcher.executeCheckPreStatement(tree)) {
       //Some of the check pre statement sink the execution on this node.
       return;
@@ -92,7 +90,9 @@
         //consume one and produce one
         Pair<ProgramState, List<SymbolicValue>> unstackUnary = ProgramState.unstack(programState, 1);
         programState = unstackUnary.a;
-        programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(tree));
+        SymbolicValue unarySymbolicValue = constraintManager.createSymbolicValue(tree);
+        unarySymbolicValue.computedFrom(unstackUnary.b);
+        programState = ProgramState.stackValue(programState, unarySymbolicValue);
         break;
       case IDENTIFIER:
         Symbol symbol = ((IdentifierTree) tree).symbol();
