@@ -1,0 +1,13 @@
+    @Override
+    public ProgramState setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+      if (BooleanConstraint.TRUE.equals(booleanConstraint)) {
+        if (NullConstraint.NULL.equals(programState.constraints.get(operand))) {
+          // irrealizable constraint : instance of true if operand is null
+          return null;
+        }
+        // if instanceof is true then we know for sure that expression is not null.
+        return operand.setConstraint(programState, NullConstraint.NOT_NULL);
+      }
+      return programState;
+    }
+
