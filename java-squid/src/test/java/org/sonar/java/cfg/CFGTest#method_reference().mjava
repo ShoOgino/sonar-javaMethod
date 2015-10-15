@@ -1,0 +1,12 @@
+  @Test
+  public void method_reference() throws Exception {
+    final CFG cfg = buildCFG("void fun() { foo(Object::toString); }");
+    final CFGChecker cfgChecker = checker(
+        block(
+            element(Kind.METHOD_REFERENCE),
+            element(Kind.IDENTIFIER, "foo"),
+            element(Kind.METHOD_INVOCATION)
+        ).successors(0));
+    cfgChecker.check(cfg);
+  }
+

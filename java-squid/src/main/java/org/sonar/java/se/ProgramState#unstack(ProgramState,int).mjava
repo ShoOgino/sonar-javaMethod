@@ -1,10 +1,14 @@
   static Pair<ProgramState, List<SymbolicValue>> unstack(ProgramState programState, int nbElements) {
+    if(nbElements == 0) {
+      return new Pair<>(programState, Collections.<SymbolicValue>emptyList());
+    }
     Preconditions.checkArgument(programState.stack.size() >= nbElements, nbElements);
     Deque<SymbolicValue> newStack = new LinkedList<>(programState.stack);
     List<SymbolicValue> result = Lists.newArrayList();
     for (int i = 0; i < nbElements; i++) {
       result.add(newStack.pop());
     }
+    System.out.println("Untacking "+result);
     return new Pair<>(new ProgramState(programState.values, programState.constraints, programState.visitedPoints, newStack), result);
   }
 
