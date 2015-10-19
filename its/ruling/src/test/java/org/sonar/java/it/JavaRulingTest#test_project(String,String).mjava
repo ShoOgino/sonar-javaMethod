@@ -1,17 +1,4 @@
   private static void test_project(String projectKey, String projectName) throws IOException {
-    File pomFile = FileLocation.of("../sources/" + projectName + "/pom.xml").getFile();
-    orchestrator.getServer().provisionProject(projectKey, projectName);
-    orchestrator.getServer().associateProjectToQualityProfile(projectKey, "java", "rules");
-    MavenBuild mavenBuild = MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests")
-      .setProperty("sonar.cpd.skip", "true")
-      .setProperty("sonar.skipPackageDesign", "true")
-      .setProperty("sonar.analysis.mode", "preview")
-      .setProperty("sonar.issuesReport.html.enable", "true")
-      .setProperty("sonar.issuesReport.html.location", htmlReportPath(projectName))
-      .setProperty("dump.old", FileLocation.of("src/test/resources/" + projectName).getFile().getAbsolutePath())
-      .setProperty("dump.new", FileLocation.of("target/actual/" + projectName).getFile().getAbsolutePath())
-      .setProperty("lits.differences", litsDifferencesPath(projectName));
-    orchestrator.executeBuild(mavenBuild);
-    assertNoDifferences(projectName);
+    test_project(projectKey, null, projectName);
   }
 
