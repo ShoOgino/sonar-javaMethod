@@ -5,7 +5,7 @@
       String param = rawParam;
       int argIndex = index;
       if (param.contains("$")) {
-        argIndex = Integer.valueOf(param.substring(0, param.indexOf("$"))) - 1;
+        argIndex = getIndex(param) - 1;
         if (argIndex == -1) {
           addIssue(mit, "Arguments are numbered starting from 1.");
           return;
@@ -17,12 +17,8 @@
       ExpressionTree argExpressionTree = args.get(argIndex);
       unusedArgs.remove(argExpressionTree);
       Type argType = argExpressionTree.symbolType();
-      if (param.startsWith("d") && !isNumerical(argType)) {
-        addIssue(mit, "An 'int' is expected rather than a " + argType + ".");
-      }
-      if (param.startsWith("b") && !(argType.is("boolean") || argType.is("java.lang.Boolean"))) {
-        addIssue(mit, "Directly inject the boolean value.");
-      }
+      checkNumerical(mit, param, argType);
+      checkBoolean(mit, param, argType);
       checkTimeConversion(mit, param, argType);
 
     }
