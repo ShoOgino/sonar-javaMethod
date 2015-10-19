@@ -1,0 +1,17 @@
+  @Test
+  public void test_with_sonar_components() throws Exception {
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    JavaResourceLocator javaResourceLocator = mock(JavaResourceLocator.class);
+    DefaultBytecodeContext context = new DefaultBytecodeContext(sonarComponents, javaResourceLocator);
+    assertThat(context.getJavaResourceLocator()).isEqualTo(javaResourceLocator);
+
+    String message = "msg";
+    int line = 42;
+    JavaCheck javaCheck = mock(JavaCheck.class);
+    Resource resource = mock(Resource.class);
+    String name = "name";
+    when(resource.getPath()).thenReturn(name);
+    context.reportIssue(javaCheck, resource, message, line);
+    verify(sonarComponents).addIssue(new File(name), javaCheck, line, message, null);
+  }
+

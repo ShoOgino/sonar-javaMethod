@@ -1,0 +1,28 @@
+  public void addIssue(File file, JavaCheck check, int line, String message, @Nullable Double cost) {
+    Preconditions.checkNotNull(check);
+    Preconditions.checkNotNull(message);
+    RuleKey key = getRuleKey(check);
+    if (key != null) {
+      Issuable issuable = issuableFor(file);
+      if (issuable != null) {
+        Issuable.IssueBuilder issueBuilder = issuable.newIssueBuilder()
+          .ruleKey(key)
+          .message(message);
+        if (line > -1) {
+          issueBuilder.line(line);
+        }
+        if (cost == null) {
+          Annotation linear = AnnotationUtils.getAnnotation(check, SqaleLinearRemediation.class);
+          Annotation linearWithOffset = AnnotationUtils.getAnnotation(check, SqaleLinearWithOffsetRemediation.class);
+          if (linear != null || linearWithOffset != null) {
+            throw new IllegalStateException("A check annotated with a linear sqale function should provide an effort to fix");
+          }
+        } else {
+          issueBuilder.effortToFix(cost);
+        }
+        Issue issue = issueBuilder.build();
+        issuable.addIssue(issue);
+      }
+    }
+  }
+

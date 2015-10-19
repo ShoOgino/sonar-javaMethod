@@ -1,29 +1,5 @@
   @Override
   public void addIssue(int line, JavaCheck javaCheck, String message, @Nullable Double cost) {
-    Preconditions.checkNotNull(javaCheck);
-    Preconditions.checkNotNull(message);
-    RuleKey key = getRuleKey(javaCheck);
-    if (key != null) {
-      Issuable issuable = sonarComponents.issuableFor(file);
-      if (issuable != null) {
-        Issuable.IssueBuilder issueBuilder = issuable.newIssueBuilder()
-          .ruleKey(key)
-          .message(message);
-        if (line > 0) {
-          issueBuilder.line(line);
-        }
-        if (cost == null) {
-          Annotation linear = AnnotationUtils.getAnnotation(javaCheck, SqaleLinearRemediation.class);
-          Annotation linearWithOffset = AnnotationUtils.getAnnotation(javaCheck, SqaleLinearWithOffsetRemediation.class);
-          if (linear != null || linearWithOffset != null) {
-            throw new IllegalStateException("A check annotated with a linear sqale function should provide an effort to fix");
-          }
-        } else {
-          issueBuilder.effortToFix(cost);
-        }
-        Issue issue = issueBuilder.build();
-        issuable.addIssue(issue);
-      }
-    }
+    sonarComponents.addIssue(file, javaCheck, line, message, cost);
   }
 
