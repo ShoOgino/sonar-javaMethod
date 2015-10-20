@@ -1,0 +1,14 @@
+    private void checkIfThrowThrowable(Symbol symbol) {
+      if (containsExplicitThrowable) {
+        return;
+      }
+      if (symbol.isMethodSymbol()) {
+        for (Type type : ((Symbol.MethodSymbol) symbol).thrownTypes()) {
+          if (type.is(JAVA_LANG_THROWABLE)) {
+            containsExplicitThrowable = true;
+            return;
+          }
+        }
+      }
+    }
+

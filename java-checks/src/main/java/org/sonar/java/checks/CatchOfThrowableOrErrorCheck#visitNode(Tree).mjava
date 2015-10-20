@@ -1,14 +1,18 @@
   @Override
   public void visitNode(Tree tree) {
-    CatchTree catchTree = (CatchTree) tree;
-    TypeTree typeTree = catchTree.parameter().type();
-
-    if (typeTree.is(Tree.Kind.UNION_TYPE)) {
-      for (TypeTree alternativeTypeTree : ((UnionTypeTree) typeTree).typeAlternatives()) {
-        checkType(alternativeTypeTree, catchTree);
+    TryStatementTree tryStatement = (TryStatementTree) tree;
+    if (throwableExceptionVisitor.containsExplicitThrowableException(tryStatement.block())) {
+      return;
+    }
+    for (CatchTree catchTree : tryStatement.catches()) {
+      TypeTree typeTree = catchTree.parameter().type();
+      if (typeTree.is(Tree.Kind.UNION_TYPE)) {
+        for (TypeTree alternativeTypeTree : ((UnionTypeTree) typeTree).typeAlternatives()) {
+          checkType(alternativeTypeTree, catchTree);
+        }
+      } else {
+        checkType(typeTree, catchTree);
       }
-    } else {
-      checkType(typeTree, catchTree);
     }
   }
 
