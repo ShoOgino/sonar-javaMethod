@@ -1,7 +1,9 @@
   private void buildSynchronizedStatement(SynchronizedStatementTree tree) {
     SynchronizedStatementTree sst = tree;
-    // Naively build synchronized statement.
+    // First create the block of the statement,
     build(sst.block());
+    // Then create a single block with the SYNCHRONIZED tree as terminator
+    currentBlock = createUnconditionalJump(tree, currentBlock);
     build(sst.expression());
   }
 

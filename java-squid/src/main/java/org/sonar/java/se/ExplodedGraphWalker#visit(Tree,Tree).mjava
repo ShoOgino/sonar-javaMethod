@@ -32,6 +32,10 @@
       case METHOD_INVOCATION:
         setSymbolicValueOnFields((MethodInvocationTree) tree);
         break;
+      case IDENTIFIER:
+        if (terminator != null && terminator.is(Tree.Kind.SYNCHRONIZED_STATEMENT)) {
+          resetConstraintsOnFields();
+        }
       default:
     }
     checkerDispatcher.executeCheckPreStatement(tree);
