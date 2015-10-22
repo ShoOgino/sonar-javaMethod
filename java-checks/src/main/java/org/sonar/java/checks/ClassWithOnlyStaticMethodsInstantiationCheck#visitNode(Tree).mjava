@@ -2,13 +2,13 @@
   public void visitNode(Tree tree) {
     TypeTree identifier = ((NewClassTree) tree).identifier();
     Symbol.TypeSymbol newClassTypeSymbol = identifier.symbolType().symbol();
-    if (!newClassTypeSymbol.isEnum() && hasOnlyStaticMethods(newClassTypeSymbol) && !instantiateOwnClass(identifier, newClassTypeSymbol)) {
+    if (!newClassTypeSymbol.isEnum() && hasOnlyStaticMethodsAndFields(newClassTypeSymbol) && !instantiateOwnClass(identifier, newClassTypeSymbol)) {
       String message = "Remove this instantiation.";
       String name = getNewClassName(identifier);
       if (name != null) {
         message = "Remove this instantiation of \"{0}\".";
       }
-      addIssue(tree, MessageFormat.format(message, name));
+      reportIssue(identifier, MessageFormat.format(message, name));
     }
   }
 
