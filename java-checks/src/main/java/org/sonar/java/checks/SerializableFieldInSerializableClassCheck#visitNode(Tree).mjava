@@ -4,10 +4,7 @@
     if (isSerializable(classTree) && !hasSpecialHandlingSerializationMethods(classTree)) {
       for (Tree member : classTree.members()) {
         if (member.is(Tree.Kind.VARIABLE)) {
-          VariableTree variableTree = (VariableTree) member;
-          if (!isStatic(variableTree) && !isTransientOrSerializable(variableTree) && !isCollectionOfSerializable(variableTree.type())) {
-            addIssue(member, "Make \"" + variableTree.simpleName().name() + "\" transient or serializable.");
-          }
+          checkVariableMember((VariableTree) member);
         }
       }
     }
