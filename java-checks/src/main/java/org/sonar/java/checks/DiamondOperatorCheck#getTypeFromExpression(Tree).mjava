@@ -1,0 +1,10 @@
+  @CheckForNull
+  private static TypeTree getTypeFromExpression(Tree expression) {
+    if (expression.is(Tree.Kind.VARIABLE, Tree.Kind.TYPE_CAST, Tree.Kind.RETURN_STATEMENT, Tree.Kind.ASSIGNMENT, Tree.Kind.CONDITIONAL_EXPRESSION)) {
+      TypeTreeLocator visitor = new TypeTreeLocator();
+      expression.accept(visitor);
+      return visitor.type;
+    }
+    return null;
+  }
+
