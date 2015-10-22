@@ -1,0 +1,24 @@
+  private static String memberSelectString(MemberSelectExpressionTree expression) {
+    StringBuilder buffer = new StringBuilder();
+    ExpressionTree target = expression.expression();
+    switch (target.kind()) {
+      case IDENTIFIER:
+        buffer.append(identifierString((IdentifierTree) target));
+        break;
+      case METHOD_INVOCATION:
+        buffer.append(methodInvocationString((MethodInvocationTree) target));
+        break;
+      case VARIABLE:
+        buffer.append(variableString((VariableTree) target));
+        break;
+      case INT_LITERAL:
+        buffer.append(literalString((LiteralTree) target));
+        break;
+      default:
+        break;
+    }
+    buffer.append('.');
+    buffer.append(identifierString(expression.identifier()));
+    return buffer.toString();
+  }
+

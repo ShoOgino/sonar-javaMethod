@@ -1,0 +1,27 @@
+  private static String methodString(MethodTree syntaxNode) {
+    StringBuilder buffer = new StringBuilder();
+    for (ModifierTree modifier : syntaxNode.modifiers()) {
+      if (modifier.is(Tree.Kind.TOKEN)) {
+        buffer.append(((SyntaxToken) modifier).text());
+        buffer.append(' ');
+      }
+    }
+    buffer.append(syntaxNode.returnType().symbolType().toString());
+    buffer.append(' ');
+    buffer.append(syntaxNode.simpleName().name());
+    buffer.append('(');
+    boolean first = true;
+    for (VariableTree parameter : syntaxNode.parameters()) {
+      if (first) {
+        first = false;
+      } else {
+        buffer.append(", ");
+      }
+      buffer.append(parameter.type().symbolType().toString());
+      buffer.append(' ');
+      buffer.append(parameter.simpleName().toString());
+    }
+    buffer.append(')');
+    return buffer.toString();
+  }
+

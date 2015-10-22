@@ -1,0 +1,14 @@
+  private static String methodInvocationString(MethodInvocationTree method) {
+    StringBuilder buffer = new StringBuilder();
+    ExpressionTree methodSelect = method.methodSelect();
+    if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
+      buffer.append(identifierString((IdentifierTree) methodSelect));
+    } else if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      buffer.append(memberSelectString((MemberSelectExpressionTree) methodSelect));
+    }
+    buffer.append('(');
+    buffer.append(toString(method.arguments()));
+    buffer.append(')');
+    return buffer.toString();
+  }
+

@@ -1,0 +1,44 @@
+  public static String toString(CFG.Block block) {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append('B');
+    buffer.append(block.id());
+    if (block.id() == 0) {
+      buffer.append(" (Exit):");
+    }
+    int i = 0;
+    for (Tree tree : block.elements()) {
+      buffer.append('\n');
+      buffer.append(i);
+      buffer.append(":\t");
+      appendKind(buffer, tree.kind());
+      buffer.append(SyntaxTreeDebug.toString(tree));
+      i++;
+    }
+    Tree terminator = block.terminator();
+    if (terminator != null) {
+      buffer.append("\nT:\t");
+      appendKind(buffer, terminator.kind());
+      buffer.append(SyntaxTreeDebug.toString(terminator));
+    }
+    boolean first = true;
+    for (Block successor : block.successors()) {
+      if (first) {
+        first = false;
+        buffer.append('\n');
+        buffer.append("\tjumps to: ");
+      } else {
+        buffer.append(' ');
+      }
+      buffer.append('B');
+      buffer.append(successor.id());
+      if (successor == block.trueBlock()) {
+        buffer.append("(true)");
+      } else if (successor == block.falseBlock()) {
+        buffer.append("(false)");
+      }
+    }
+    buffer.append('\n');
+    buffer.append('\n');
+    return buffer.toString();
+  }
+
