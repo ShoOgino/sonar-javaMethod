@@ -5,7 +5,10 @@
     if (newClassTree.classBody() == null && isParameterizedType(newTypeTree)) {
       TypeTree type = getTypeFromExpression(tree.parent());
       if (type != null && isParameterizedType(type)) {
-        reportIssue(((ParameterizedTypeTree) newTypeTree).typeArguments(), "Replace the type specification in this constructor call.");
+        reportIssue(
+          ((ParameterizedTypeTree) newTypeTree).typeArguments(),
+          "Replace the type specification in this constructor call with the diamond operator (\"<>\")." +
+            JavaVersionHelper.java7CompatibilityMessage(context.getJavaVersion()));
       }
     }
   }
