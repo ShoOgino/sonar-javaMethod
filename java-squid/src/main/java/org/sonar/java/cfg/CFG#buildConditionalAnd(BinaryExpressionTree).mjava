@@ -1,11 +1,12 @@
   private void buildConditionalAnd(BinaryExpressionTree tree) {
+    // If the current block is itself a conditional expression, the false block should branch to the false block of it
+    final Block falseBlock = currentBlock;
     // process RHS
-    Block falseBlock = currentBlock;
     currentBlock = createBlock(falseBlock);
     build(tree.rightOperand());
-    Block trueBlock = currentBlock;
+    final Block trueBlock = currentBlock;
     // process LHS
-    currentBlock = createBranch(tree, trueBlock, falseBlock);
+    currentBlock = createBranch(tree, trueBlock, falseBlock.branchingBlock());
     build(tree.leftOperand());
   }
 

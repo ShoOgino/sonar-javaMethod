@@ -4,7 +4,14 @@
       for (final Tree element : block.elements()) {
         checkerIterator.next().check(element);
       }
-      if (successorIDs != null) {
+      if (successorIDs.length == 0) {
+        if (ifTrue != -1) {
+          assertThat(block.trueBlock().id()).as("Expected true successor block " + block.id()).isEqualTo(ifTrue);
+        }
+        if (ifFalse != -1) {
+          assertThat(block.falseBlock().id()).as("Expected true successor block " + block.id()).isEqualTo(ifFalse);
+        }
+      } else {
         assertThat(block.successors()).as("Expected number of successors in block " + block.id()).hasSize(successorIDs.length);
         final int[] actualSuccessorIDs = new int[successorIDs.length];
         int n = 0;
