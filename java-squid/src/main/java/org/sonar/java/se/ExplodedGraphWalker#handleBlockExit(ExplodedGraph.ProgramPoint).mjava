@@ -18,9 +18,11 @@
             handleBranch(block, forStatement.condition(), false);
             return;
           }
+        case SYNCHRONIZED_STATEMENT:
+          resetFieldValues(null);
       }
     }
-    // unconditional jumps, for-statement, switch-statement:
+    // unconditional jumps, for-statement, switch-statement, synchronized:
     for (CFG.Block successor : block.successors()) {
       enqueue(new ExplodedGraph.ProgramPoint(successor, 0), programState);
     }
