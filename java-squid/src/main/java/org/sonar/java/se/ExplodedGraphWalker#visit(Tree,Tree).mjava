@@ -50,6 +50,13 @@
           programState = ProgramState.stackValue(programState, value);
         }
         break;
+      case ARRAY_ACCESS_EXPRESSION:
+        ArrayAccessExpressionTree arrayAccessExpressionTree = (ArrayAccessExpressionTree) tree;
+        //unstack expression and dimension
+        Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 2);
+        programState = unstack.a;
+        programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(arrayAccessExpressionTree));
+        break;
       case NEW_ARRAY:
         NewArrayTree newArrayTree = (NewArrayTree) tree;
         programState = ProgramState.unstack(programState, newArrayTree.initializers().size()).a;
