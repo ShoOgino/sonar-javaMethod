@@ -1,0 +1,18 @@
+  private void endWaitingFor(Guard guard) {
+    int waiters = --guard.waiterCount;
+    if (waiters == 0) {
+      // unlink guard from activeGuards
+      for (Guard p = activeGuards, pred = null;; pred = p, p = p.next) {
+        if (p == guard) {
+          if (pred == null) {
+            activeGuards = p.next;
+          } else {
+            pred.next = p.next;
+          }
+          p.next = null;  // help GC
+          break;
+        }
+      }
+    }
+  }
+
