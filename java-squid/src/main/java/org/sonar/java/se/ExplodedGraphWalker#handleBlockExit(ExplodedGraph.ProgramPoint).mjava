@@ -18,8 +18,14 @@
             handleBranch(block, forStatement.condition(), false);
             return;
           }
+          break;
+        case WHILE_STATEMENT:
+          ExpressionTree condition = ((WhileStatementTree) block.terminator()).condition();
+          handleBranch(block, condition, !condition.is(Tree.Kind.BOOLEAN_LITERAL));
+          return;
         case SYNCHRONIZED_STATEMENT:
           resetFieldValues(null);
+          break;
       }
     }
     // unconditional jumps, for-statement, switch-statement, synchronized:
