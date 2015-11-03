@@ -1,0 +1,18 @@
+  @VisibleForTesting
+  void reportIssueAfterSQ52(AnalyzerMessage analyzerMessage, RuleKey key, InputPath inputPath, Double cost) {
+    JavaIssue issue = JavaIssue.create(context, key, cost);
+    AnalyzerMessage.TextSpan textSpan = analyzerMessage.primaryLocation();
+    if (textSpan == null) {
+      // either an issue at file or folder level
+      issue.setPrimaryLocationOnFile(inputPath, analyzerMessage.getMessage());
+    } else {
+      issue.setPrimaryLocation((InputFile) inputPath, analyzerMessage.getMessage(), textSpan.startLine, textSpan.startCharacter, textSpan.endLine, textSpan.endCharacter);
+    }
+    for (AnalyzerMessage location : analyzerMessage.secondaryLocations) {
+      AnalyzerMessage.TextSpan secondarySpan = location.primaryLocation();
+      issue.addSecondaryLocation(
+        inputFromIOFile(location.getFile()), secondarySpan.startLine, secondarySpan.startCharacter, secondarySpan.endLine, secondarySpan.endCharacter, location.getMessage());
+    }
+    issue.save();
+  }
+

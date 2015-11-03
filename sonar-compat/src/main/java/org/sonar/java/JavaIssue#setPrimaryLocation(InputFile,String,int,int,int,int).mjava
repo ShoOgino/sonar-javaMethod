@@ -1,0 +1,17 @@
+  public JavaIssue setPrimaryLocation(InputFile file, String message, int startLine, int startLineOffset, int endLine, int endLineOffset) {
+    NewIssueLocation newIssueLocation;
+    if (startLineOffset == -1) {
+      newIssueLocation = newIssue.newLocation()
+        .on(file)
+        .at(file.selectLine(startLine))
+        .message(message);
+    } else {
+      newIssueLocation = newIssue.newLocation()
+        .on(file)
+        .at(file.newRange(startLine, startLineOffset, endLine, endLineOffset))
+        .message(message);
+    }
+    newIssue.at(newIssueLocation);
+    return this;
+  }
+

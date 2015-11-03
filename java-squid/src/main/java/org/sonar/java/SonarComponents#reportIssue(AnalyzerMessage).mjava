@@ -1,0 +1,22 @@
+  public void reportIssue(AnalyzerMessage analyzerMessage) {
+    JavaCheck check = analyzerMessage.getCheck();
+    Preconditions.checkNotNull(check);
+    Preconditions.checkNotNull(analyzerMessage.getMessage());
+    RuleKey key = getRuleKey(check);
+    if (key == null) {
+      return;
+    }
+    File file = analyzerMessage.getFile();
+    InputPath inputPath = inputPathFromIOFile(file);
+    if (inputPath == null) {
+      return;
+    }
+    Double cost = analyzerMessage.getCost();
+    assertEffortToFixIsNotRequired(check, cost);
+    if (IS_SONARQUBE_52) {
+      reportIssueAfterSQ52(analyzerMessage, key, inputPath, cost);
+    } else {
+      reportIssueBeforeSQ52(inputPath, key, cost, analyzerMessage.getMessage(), analyzerMessage.getLine());
+    }
+  }
+

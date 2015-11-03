@@ -5,23 +5,50 @@
 
     DefaultFileSystem fileSystem = new DefaultFileSystem(new File(""));
     File file = new File("file.java");
-    fileSystem.add(new DefaultInputFile("file.java"));
+    InputFile inputFile = new DefaultInputFile("file.java");
+    fileSystem.add(inputFile);
 
     Issuable issuable = mock(Issuable.class);
     Issuable.IssueBuilder issueBuilder = mock(Issuable.IssueBuilder.class);
     when(issuable.newIssueBuilder()).thenReturn(issueBuilder);
     when(issueBuilder.ruleKey(any(RuleKey.class))).thenReturn(issueBuilder);
-    when(issueBuilder.message(any(String.class))).thenReturn(issueBuilder);
+    when(issueBuilder.message(anyString())).thenReturn(issueBuilder);
+    when(issueBuilder.line(anyInt())).thenReturn(issueBuilder);
+    when(issueBuilder.effortToFix(anyDouble())).thenReturn(issueBuilder);
     when(resourcePerspectives.as(eq(Issuable.class), any(InputFile.class))).thenReturn(issuable);
     when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
     when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));
 
-    SonarComponents sonarComponents = new SonarComponents(this.fileLinesContextFactory, this.resourcePerspectives, fileSystem, null, null, this.checkFactory, new CheckRegistrar[] {
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fileSystem, null, null, checkFactory, context, new CheckRegistrar[] {
       expectedRegistrar
     });
 
     sonarComponents.addIssue(file, expectedCheck, -5, "message on wrong line", null);
     sonarComponents.addIssue(file, expectedCheck, 42, "message on line", 1.0);
-    verify(issuable, times(2)).addIssue(any(Issue.class));
+    sonarComponents.addIssue(new File("."), expectedCheck, 42, "message on line", 1.0);
+    sonarComponents.addIssue(new File("unknown_file"), expectedCheck, 42, "message on line", 1.0);
+    sonarComponents.reportIssue(new AnalyzerMessage(expectedCheck, file, 35, "other message", 0));
+    verify(issuable, times(3)).addIssue(any(Issue.class));
+
+    try {
+      sonarComponents.addIssue(file, new CustomCheckWithSqaleLinear(), 42, "message on line", null);
+      fail("IllegalStateException expected");
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).isEqualTo("A check annotated with a linear sqale function should provide an effort to fix");
+    }
+
+    try {
+      sonarComponents.addIssue(file, new CustomCheckWithSqaleOffset(), 42, "message on line", null);
+      fail("IllegalStateException expected");
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).isEqualTo("A check annotated with a linear sqale function should provide an effort to fix");
+    }
+
+    try {
+      sonarComponents.reportIssueAfterSQ52(mock(AnalyzerMessage.class), RuleKey.of("squid", "S109"), inputFile, null);
+      fail("NoClassDefFoundError expected");
+    } catch (NoClassDefFoundError e) {
+      assertThat(e.getMessage()).isEqualTo("org/sonar/api/batch/fs/InputComponent");
+    }
   }
 
