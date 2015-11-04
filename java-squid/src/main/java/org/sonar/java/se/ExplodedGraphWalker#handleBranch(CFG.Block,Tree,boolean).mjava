@@ -1,21 +1,20 @@
   private void handleBranch(CFG.Block programPosition, Tree condition, boolean checkPath) {
-    Pair<ProgramState, ProgramState> pair = constraintManager.assumeDual(programState);
-    if (pair.a != null) {
+    Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
+    for (ProgramState state : pair.a) {
       // enqueue false-branch, if feasible
-      ProgramState ps = ProgramState.stackValue(pair.a, SymbolicValue.FALSE_LITERAL);
+      ProgramState ps = ProgramState.stackValue(state, SymbolicValue.FALSE_LITERAL);
       enqueue(new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0), ps);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToFalse(condition);
       }
     }
-    if (pair.b != null) {
-      ProgramState ps = ProgramState.stackValue(pair.b, SymbolicValue.TRUE_LITERAL);
+    for (ProgramState state : pair.b) {
+      ProgramState ps = ProgramState.stackValue(state, SymbolicValue.TRUE_LITERAL);
       // enqueue true-branch, if feasible
       enqueue(new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0), ps);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToTrue(condition);
       }
     }
-
   }
 

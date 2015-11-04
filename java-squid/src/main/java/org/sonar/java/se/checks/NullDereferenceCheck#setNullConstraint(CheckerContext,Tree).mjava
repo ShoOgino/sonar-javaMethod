@@ -5,10 +5,10 @@
       assert val != null && val.equals(SymbolicValue.NULL_LITERAL);
     } else if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       if (isAnnotatedCheckForNull((MethodInvocationTree) syntaxNode)) {
-        return Lists.newArrayList(
-            val.setConstraint(context.getState(), ConstraintManager.NullConstraint.NULL),
-            val.setConstraint(context.getState(), ConstraintManager.NullConstraint.NOT_NULL)
-        );
+        List<ProgramState> states = new ArrayList<>();
+        states.addAll(val.setConstraint(context.getState(), ConstraintManager.NullConstraint.NULL));
+        states.addAll(val.setConstraint(context.getState(), ConstraintManager.NullConstraint.NOT_NULL));
+        return states;
       }
     }
     return Lists.newArrayList(context.getState());

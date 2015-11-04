@@ -1,5 +1,5 @@
     @Override
-    public ProgramState setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+    public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
       Object data = programState.constraints.get(this);
       // update program state only for a different constraint
       if (data instanceof BooleanConstraint) {
@@ -7,7 +7,7 @@
         if ((BooleanConstraint.TRUE.equals(booleanConstraint) && BooleanConstraint.FALSE.equals(bc)) ||
           (BooleanConstraint.TRUE.equals(bc) && BooleanConstraint.FALSE.equals(booleanConstraint))) {
           // setting null where value is known to be non null or the contrary
-          return null;
+          return ImmutableList.of();
         }
       }
       if (data == null || !data.equals(booleanConstraint)) {
@@ -16,9 +16,9 @@
         if (programState.values.containsValue(this)) {
           Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
           temp.put(this, booleanConstraint);
-          return new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack);
+          return ImmutableList.of(new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack));
         }
       }
-      return programState;
+      return ImmutableList.of(programState);
     }
 

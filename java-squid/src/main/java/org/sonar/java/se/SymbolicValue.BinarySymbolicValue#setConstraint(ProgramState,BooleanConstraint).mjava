@@ -1,20 +1,27 @@
     @Override
-    public ProgramState setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
-      ProgramState result = programState;
+    public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
       if (leftOp.equals(rightOp)) {
-        return shouldNotInverse().equals(booleanConstraint) ? programState : null;
+        if (shouldNotInverse().equals(booleanConstraint)) {
+          return ImmutableList.of(programState);
+        }
+        return ImmutableList.of();
       }
-      result = copyConstraint(leftOp, rightOp, result, booleanConstraint);
-      if (result == null) {
-        return null;
+      List<ProgramState> result = copyConstraint(leftOp, rightOp, programState, booleanConstraint);
+      if (result.isEmpty()) {
+        return ImmutableList.of();
       }
-      result = copyConstraint(rightOp, leftOp, result, booleanConstraint);
-      if(result == programState) {
-        Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
-        temp.put(this, booleanConstraint);
-        return new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack);
+      List<ProgramState> reversedResult = new ArrayList<>();
+      for (ProgramState ps : result) {
+        List<ProgramState> reversedStates = copyConstraint(rightOp, leftOp, ps, booleanConstraint);
+        if (reversedStates.size() == 1 && reversedStates.get(0) == programState) {
+          Map<SymbolicValue, Object> newConstraints = Maps.newHashMap(programState.constraints);
+          newConstraints.put(this, booleanConstraint);
+          reversedResult.add(new ProgramState(programState.values, newConstraints, programState.visitedPoints, programState.stack));
+        } else {
+          reversedResult.addAll(reversedStates);
+        }
       }
-      return result;
+      return reversedResult;
 
     }
 
