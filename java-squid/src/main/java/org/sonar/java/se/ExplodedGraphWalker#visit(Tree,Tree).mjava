@@ -39,6 +39,15 @@
           programState = ProgramState.put(programState, variableTree.symbol(), unstack.b.get(0));
         }
         break;
+      case TYPE_CAST:
+        TypeCastTree typeCast = (TypeCastTree) tree;
+        Type type = typeCast.type().symbolType();
+        if (type.isPrimitive()) {
+          Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 1);
+          programState = unstack.a;
+          programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(typeCast.expression()));
+        }
+        break;
       case ASSIGNMENT:
         AssignmentExpressionTree assignmentExpressionTree = ((AssignmentExpressionTree) tree);
         // FIXME restricted to identifiers for now.
