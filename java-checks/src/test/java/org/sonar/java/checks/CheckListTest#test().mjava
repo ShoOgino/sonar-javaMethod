@@ -13,23 +13,25 @@
 
     Set<String> keys = Sets.newHashSet();
     Set<String> names = Sets.newHashSet();
-    List<Rule> rules = new AnnotationRuleParser().parse("repositoryKey", checks);
-    for (Rule rule : rules) {
-      assertThat(keys).as("Duplicate key " + rule.getKey()).excludes(rule.getKey());
-      assertThat(names).as("Duplicate name "+rule.getKey()+" : " + rule.getName()).excludes(rule.getName());
-      keys.add(rule.getKey());
-      names.add(rule.getName());
+    CustomRulesDefinition definition = new CustomRulesDefinition();
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    definition.define(context);
+    List<RulesDefinition.Rule> rules = context.repository(CheckList.REPOSITORY_KEY).rules();
+    for (RulesDefinition.Rule rule : rules) {
+      assertThat(keys).as("Duplicate key " + rule.key()).excludes(rule.key());
+      assertThat(names).as("Duplicate name " + rule.key() + " : " + rule.name()).excludes(rule.name());
+      keys.add(rule.key());
+      names.add(rule.name());
 
-      assertThat(getClass().getResource("/org/sonar/l10n/java/rules/" + CheckList.REPOSITORY_KEY + "/" + rule.getKey() + ".html"))
-        .overridingErrorMessage("No description for " + rule.getKey())
+      assertThat(getClass().getResource("/org/sonar/l10n/java/rules/" + CheckList.REPOSITORY_KEY + "/" + rule.key() + ".html"))
+        .overridingErrorMessage("No description for " + rule.key())
         .isNotNull();
 
-      assertThat(rule.getDescription())
-        .overridingErrorMessage("Description of " + rule.getKey() + " should be in separate file")
-        .isNull();
+      assertThat(rule.htmlDescription()).isNull();
+      assertThat(rule.markdownDescription()).isEqualTo(ARTIFICIAL_DESCRIPTION);
 
-      for (RuleParam param : rule.getParams()) {
-        assertThat(param.getDescription()).overridingErrorMessage(rule.getKey() +" missing description for param "+ param.getKey()).isNotEmpty();
+      for (RulesDefinition.Param param : rule.params()) {
+        assertThat(param.description()).overridingErrorMessage(rule.key() + " missing description for param " + param.key()).isNotEmpty();
       }
     }
   }

@@ -1,0 +1,21 @@
+    @Override
+    public void define(Context context) {
+      String language = "java";
+      NewRepository repository = context
+        .createRepository(CheckList.REPOSITORY_KEY, language)
+        .setName("SonarQube");
+
+      List<Class> checks = CheckList.getChecks();
+      new RulesDefinitionAnnotationLoader().load(repository, checks.toArray(new Class[checks.size()]));
+
+      for (NewRule rule : repository.rules()) {
+        try {
+          rule.setMarkdownDescription(ARTIFICIAL_DESCRIPTION);
+        } catch (IllegalStateException e) {
+          // it means that the html description was already set in Rule annotation
+          fail("Description of " + rule.key() + " should be in separate file");
+        }
+      }
+      repository.done();
+    }
+
