@@ -1,7 +1,10 @@
   @Override
   public void visitUnionType(UnionTypeTree tree) {
-    resolveAs((List<? extends Tree>) tree.typeAlternatives(), JavaSymbol.TYP);
-    //TODO compute type of union type: lub(alternatives) cf JLS8 14.20
-    registerType(tree, Symbols.unknownType);
+    resolveAs((List<TypeTree>) tree.typeAlternatives(), JavaSymbol.TYP);
+    ImmutableList.Builder<Type> uniontype = ImmutableList.builder();
+    for (TypeTree typeTree : tree.typeAlternatives()) {
+      uniontype.add(typeTree.symbolType());
+    }
+    registerType(tree, (JavaType) resolve.leastUpperBound(uniontype.build()));
   }
 

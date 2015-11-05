@@ -1,0 +1,10 @@
+  private static CompilationUnitTree treeOf(String... lines) {
+    StringBuilder builder = new StringBuilder();
+    for (String line : lines) {
+      builder.append(line).append(System.lineSeparator());
+    }
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser(Charsets.UTF_8).parse(builder.toString());
+    SemanticModel.createFor(cut, Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
+    return cut;
+  }
+

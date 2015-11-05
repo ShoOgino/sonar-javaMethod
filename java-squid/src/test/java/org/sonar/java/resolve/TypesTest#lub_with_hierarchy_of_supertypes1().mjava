@@ -1,0 +1,16 @@
+  @Test
+  public void lub_with_hierarchy_of_supertypes1() {
+    List<Type> typesFromInput = declaredTypes(
+      "class A extends Exception {}",
+      "class B extends A {}");
+    Type a = typesFromInput.get(0);
+    Type b = typesFromInput.get(1);
+    Type lub = types.leastUpperBound(Lists.newArrayList(a, b));
+
+    assertThat(lub).isSameAs(a);
+
+    lub = types.leastUpperBound(Lists.newArrayList(b, a));
+
+    assertThat(lub).isSameAs(a);
+  }
+

@@ -1,0 +1,15 @@
+  private static Type best(List<Type> minimalCandidates) {
+    Type result = Symbols.unknownType;
+    for (Type type : minimalCandidates) {
+      if (!type.symbol().isInterface()) {
+        // first type which is not a interface
+        return type;
+      } else if (result.isUnknown()) {
+        // save first interface
+        result = type;
+      }
+    }
+    // huge approximation: should be the bound of all the minimalCandidates, not only the first type
+    return result;
+  }
+

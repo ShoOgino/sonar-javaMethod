@@ -1,0 +1,19 @@
+  @Test
+  public void lub_ignores_generics() {
+    List<Type> typesFromInput = typesOfVariables(
+      "import java.util.List;",
+      "class A {",
+      "  List<String> a;",
+      "  List<String> b;",
+      "}");
+    Type a = typesFromInput.get(0);
+    Type b = typesFromInput.get(1);
+    try {
+      types.leastUpperBound(Lists.newArrayList(a, b));
+      Fail.fail("should have failed");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IllegalArgumentException.class);
+      assertThat(e.getMessage()).isEqualTo("Generics are not handled");
+    }
+  }
+

@@ -1,0 +1,18 @@
+  private static List<Type> typesOfVariables(String... lines) {
+    CompilationUnitTree tree = treeOf(lines);
+    List<Tree> members = ((ClassTree) tree.types().get(0)).members();
+    CollectionUtils.filter(members, new Predicate() {
+      @Override
+      public boolean evaluate(Object object) {
+        Tree tree = (Tree) object;
+        return tree.is(Tree.Kind.VARIABLE);
+      }
+    });
+    List<Type> results = Lists.newLinkedList();
+    for (Tree member : members) {
+      Type type = ((VariableTree) member).type().symbolType();
+      results.add(type);
+    }
+    return results;
+  }
+
