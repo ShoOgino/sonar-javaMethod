@@ -1,21 +1,21 @@
   /**
-   * @param symbol    candidate
+   * @param candidate    candidate
    * @param bestSoFar previously found best match
    */
-  private JavaSymbol selectBest(Env env, JavaSymbol.TypeJavaSymbol site, List<JavaType> argTypes, JavaSymbol symbol, JavaSymbol bestSoFar, boolean autoboxing) {
+  private JavaSymbol selectBest(Env env, JavaSymbol.TypeJavaSymbol site, List<JavaType> argTypes, JavaSymbol candidate, JavaSymbol bestSoFar, boolean autoboxing) {
     // TODO get rid of null check
-    if (symbol.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(symbol, site) || symbol.type == null) {
+    if (candidate.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(candidate, site) || candidate.type == null) {
       return bestSoFar;
     }
-    boolean isVarArgs = ((JavaSymbol.MethodJavaSymbol) symbol).isVarArgs();
-    if (!isArgumentsAcceptable(argTypes, ((JavaType.MethodJavaType) symbol.type).argTypes, isVarArgs, autoboxing)) {
+    boolean isVarArgs = ((JavaSymbol.MethodJavaSymbol) candidate).isVarArgs();
+    if (!isArgumentsAcceptable(argTypes, ((JavaType.MethodJavaType) candidate.type).argTypes, isVarArgs, autoboxing)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...
-    if (!isAccessible(env, site, symbol)) {
-      return new AccessErrorJavaSymbol(symbol, Symbols.unknownType);
+    if (!isAccessible(env, site, candidate)) {
+      return new AccessErrorJavaSymbol(candidate, Symbols.unknownType);
     }
-    JavaSymbol mostSpecific = selectMostSpecific(symbol, bestSoFar);
+    JavaSymbol mostSpecific = selectMostSpecific(candidate, bestSoFar);
     if (mostSpecific.isKind(JavaSymbol.AMBIGUOUS)) {
       // same signature, we keep the first symbol found (overrides the other one).
       mostSpecific = bestSoFar;

@@ -2,11 +2,11 @@
    * Is class accessible in given environment?
    */
   @VisibleForTesting
-  boolean isAccessible(Env env, JavaSymbol.TypeJavaSymbol c) {
+  static boolean isAccessible(Env env, JavaSymbol.TypeJavaSymbol c) {
     final boolean result;
     switch (c.flags() & Flags.ACCESS_FLAGS) {
       case Flags.PRIVATE:
-        result = env.enclosingClass.outermostClass() == c.owner().outermostClass();
+        result = sameOutermostClass(env.enclosingClass, c.owner());
         break;
       case 0:
         result = env.packge == c.packge();

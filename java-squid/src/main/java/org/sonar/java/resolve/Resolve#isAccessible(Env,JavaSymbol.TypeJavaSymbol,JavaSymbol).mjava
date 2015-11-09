@@ -3,12 +3,12 @@
    * <p/>
    * Symbol is accessible only if not overridden by another symbol. If overridden, then strictly speaking it is not a member.
    */
-  private boolean isAccessible(Env env, JavaSymbol.TypeJavaSymbol site, JavaSymbol symbol) {
+  private static boolean isAccessible(Env env, JavaSymbol.TypeJavaSymbol site, JavaSymbol symbol) {
     switch (symbol.flags() & Flags.ACCESS_FLAGS) {
       case Flags.PRIVATE:
         //if enclosing class is null, we are checking accessibility for imports so we return false.
         // no check of overriding, because private members cannot be overridden
-        return env.enclosingClass != null && (env.enclosingClass.outermostClass() == symbol.owner().outermostClass())
+        return env.enclosingClass != null && sameOutermostClass(env.enclosingClass, symbol.owner())
             && isInheritedIn(symbol, site);
       case 0:
         return (env.packge == symbol.packge())

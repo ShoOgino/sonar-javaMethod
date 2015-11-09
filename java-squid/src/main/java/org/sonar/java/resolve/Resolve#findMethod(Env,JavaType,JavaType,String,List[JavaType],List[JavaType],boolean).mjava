@@ -1,5 +1,16 @@
   private Resolution findMethod(Env env, JavaType callSite, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams, boolean autoboxing) {
+    JavaType superclass = site.getSymbol().getSuperclass();
     Resolution bestSoFar = unresolved();
+    // handle constructors
+    if ("this".equals(name)) {
+      return findConstructor(env, site, argTypes, typeParams, autoboxing);
+    } else if ("super".equals(name)) {
+      if (superclass == null) {
+        return bestSoFar;
+      }
+      return findConstructor(env, superclass, argTypes, typeParams, autoboxing);
+    }
+    // look in site members
     for (JavaSymbol symbol : site.getSymbol().members().lookup(name)) {
       if (symbol.kind == JavaSymbol.MTH) {
         JavaSymbol best = selectBest(env, callSite.symbol, argTypes, symbol, bestSoFar.symbol, autoboxing);
@@ -12,7 +23,6 @@
       }
     }
     //look in supertypes for more specialized method (overloading).
-    JavaType superclass = site.getSymbol().getSuperclass();
     if (superclass != null) {
       Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams);
       method.type = resolveTypeSubstitution(resolveTypeSubstitution(method.type, superclass), site);
