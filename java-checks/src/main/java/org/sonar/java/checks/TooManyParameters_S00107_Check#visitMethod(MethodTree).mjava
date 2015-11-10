@@ -1,5 +1,9 @@
   @Override
   public void visitMethod(MethodTree tree) {
+    super.visitMethod(tree);
+    if (Boolean.TRUE.equals(((MethodTreeImpl) tree).isOverriding())) {
+      return;
+    }
     int max;
     String partialMessage;
     if (tree.is(Tree.Kind.CONSTRUCTOR)) {
@@ -11,8 +15,7 @@
     }
     int size = tree.parameters().size();
     if (size > max) {
-      context.addIssue(tree, this, partialMessage + " has " + size + " parameters, which is greater than " + max + " authorized.");
+      context.reportIssue(this, tree.simpleName(), partialMessage + " has " + size + " parameters, which is greater than " + max + " authorized.");
     }
-    super.visitMethod(tree);
   }
 
