@@ -6,11 +6,11 @@
     }
     Multiset<ExplodedGraph.ProgramPoint> visitedPoints = HashMultiset.create(programState.visitedPoints);
     visitedPoints.add(programPoint);
-    ExplodedGraph.Node node = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints, programState.stack));
-    if (!node.isNew) {
+    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints, programState.stack));
+    if (!cachedNode.isNew) {
       // has been enqueued earlier
       return;
     }
-    workList.addFirst(node);
+    workList.addFirst(cachedNode);
   }
 

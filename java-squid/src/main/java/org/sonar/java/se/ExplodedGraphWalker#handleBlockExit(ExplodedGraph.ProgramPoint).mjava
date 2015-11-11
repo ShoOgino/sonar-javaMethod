@@ -1,31 +1,35 @@
   private void handleBlockExit(ExplodedGraph.ProgramPoint programPosition) {
     CFG.Block block = programPosition.block;
-    if (block.terminator() != null) {
-      switch (block.terminator().kind()) {
+    Tree terminator = block.terminator();
+    if (terminator != null) {
+      switch (terminator.kind()) {
         case IF_STATEMENT:
-          handleBranch(block, ((IfStatementTree) block.terminator()).condition());
+          handleBranch(block, ((IfStatementTree) terminator).condition());
           return;
         case CONDITIONAL_OR:
         case CONDITIONAL_AND:
-          handleBranch(block, ((BinaryExpressionTree) block.terminator()).leftOperand());
+          handleBranch(block, ((BinaryExpressionTree) terminator).leftOperand());
           return;
         case CONDITIONAL_EXPRESSION:
-          handleBranch(block, ((ConditionalExpressionTree) block.terminator()).condition());
+          handleBranch(block, ((ConditionalExpressionTree) terminator).condition());
           return;
         case FOR_STATEMENT:
-          ForStatementTree forStatement = (ForStatementTree) block.terminator();
-          if (forStatement.condition() != null) {
-            handleBranch(block, forStatement.condition(), false);
+          ForStatementTree forStatement = (ForStatementTree) terminator;
+          ExpressionTree condition = forStatement.condition();
+          if (condition != null) {
+            handleBranch(block, condition, false);
             return;
           }
           break;
         case WHILE_STATEMENT:
-          ExpressionTree condition = ((WhileStatementTree) block.terminator()).condition();
-          handleBranch(block, condition, !condition.is(Tree.Kind.BOOLEAN_LITERAL));
+          ExpressionTree whileCondition = ((WhileStatementTree) terminator).condition();
+          handleBranch(block, whileCondition, !whileCondition.is(Tree.Kind.BOOLEAN_LITERAL));
           return;
         case SYNCHRONIZED_STATEMENT:
-          resetFieldValues(null);
+          resetFieldValues();
           break;
+        default:
+          // do nothing by default.
       }
     }
     // unconditional jumps, for-statement, switch-statement, synchronized:

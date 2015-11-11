@@ -1,4 +1,4 @@
-  private void visit(Tree tree, Tree terminator) {
+  private void visit(Tree tree, @Nullable Tree terminator) {
     LOG.debug("visiting node " + tree.kind().name() + " at line " + ((JavaTree) tree).getLine());
     if (!checkerDispatcher.executeCheckPreStatement(tree)) {
       // Some of the check pre statement sink the execution on this node.
@@ -8,7 +8,7 @@
       case METHOD_INVOCATION:
         MethodInvocationTree mit = (MethodInvocationTree) tree;
         setSymbolicValueOnFields(mit);
-        //unstack arguments and method identifier
+        // unstack arguments and method identifier
         programState = ProgramState.unstack(programState, mit.arguments().size() + 1).a;
         logState(mit);
         programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(mit));
@@ -49,19 +49,19 @@
         }
         break;
       case ASSIGNMENT:
-        AssignmentExpressionTree assignmentExpressionTree = ((AssignmentExpressionTree) tree);
-        // FIXME restricted to identifiers for now.
-        if (assignmentExpressionTree.variable().is(Tree.Kind.IDENTIFIER)) {
+        ExpressionTree variable = ((AssignmentExpressionTree) tree).variable();
+        if (variable.is(Tree.Kind.IDENTIFIER)) {
+          // FIXME restricted to identifiers for now.
           Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 2);
           SymbolicValue value = unstack.b.get(1);
           programState = unstack.a;
-          programState = ProgramState.put(programState, ((IdentifierTree) assignmentExpressionTree.variable()).symbol(), value);
+          programState = ProgramState.put(programState, ((IdentifierTree) variable).symbol(), value);
           programState = ProgramState.stackValue(programState, value);
         }
         break;
       case ARRAY_ACCESS_EXPRESSION:
         ArrayAccessExpressionTree arrayAccessExpressionTree = (ArrayAccessExpressionTree) tree;
-        //unstack expression and dimension
+        // unstack expression and dimension
         Pair<ProgramState, List<SymbolicValue>> unstack = ProgramState.unstack(programState, 2);
         programState = unstack.a;
         programState = ProgramState.stackValue(programState, constraintManager.createSymbolicValue(arrayAccessExpressionTree));
@@ -135,8 +135,8 @@
           Pair<ProgramState, List<SymbolicValue>> unstackMSE = ProgramState.unstack(programState, 1);
           programState = unstackMSE.a;
         }
-        SymbolicValue MSEValue = constraintManager.createSymbolicValue(tree);
-        programState = ProgramState.stackValue(programState, MSEValue);
+        SymbolicValue mseValue = constraintManager.createSymbolicValue(tree);
+        programState = ProgramState.stackValue(programState, mseValue);
         break;
       case INT_LITERAL:
       case LONG_LITERAL:

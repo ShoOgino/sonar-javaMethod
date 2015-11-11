@@ -4,20 +4,16 @@
       // update program state only for a different constraint
       if (data instanceof BooleanConstraint) {
         BooleanConstraint bc = (BooleanConstraint) data;
-        if ((BooleanConstraint.TRUE.equals(booleanConstraint) && BooleanConstraint.FALSE.equals(bc)) ||
-          (BooleanConstraint.TRUE.equals(bc) && BooleanConstraint.FALSE.equals(booleanConstraint))) {
+        if (!bc.equals(booleanConstraint)) {
           // setting null where value is known to be non null or the contrary
           return ImmutableList.of();
         }
       }
-      if (data == null || !data.equals(booleanConstraint)) {
-
+      if ((data == null || !data.equals(booleanConstraint)) && programState.values.containsValue(this)) {
         // store constraint only if symbolic value can be reached by a symbol.
-        if (programState.values.containsValue(this)) {
-          Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
-          temp.put(this, booleanConstraint);
-          return ImmutableList.of(new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack));
-        }
+        Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
+        temp.put(this, booleanConstraint);
+        return ImmutableList.of(new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack));
       }
       return ImmutableList.of(programState);
     }
