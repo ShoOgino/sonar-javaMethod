@@ -1,5 +1,8 @@
   @Override
   public void visitMethod(MethodTree methodTree) {
+    if (ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.ABSTRACT)) {
+      return;
+    }
     boolean isUnitTest = isUnitTest(methodTree);
     inUnitTest.push(isUnitTest);
     methodContainsAssertion.push(false);
@@ -15,7 +18,7 @@
     if (isUnitTest &&
         !expectAssertion(methodTree) &&
         (!containsAssertion || badSoftAssertionUsage(containsSoftAssertionDecl, containsAssertjAssertAll, containsJunitSoftAssertionUsage))) {
-      context.addIssue(methodTree, this, "Add at least one assertion to this test case.");
+      context.reportIssue(this, methodTree.simpleName(), "Add at least one assertion to this test case.");
     }
   }
 
