@@ -2,13 +2,11 @@
     public void visitNode(Tree tree) {
       int line = ((JavaTree) tree).getLine();
       JavaSymbol.MethodJavaSymbol symbol = (JavaSymbol.MethodJavaSymbol) ((MethodTree) tree).symbol();
-      BooleanAssert assertion = assertThat(symbol.isOverriden()).as("Method at line "+line);
-      if (overriden.contains(line)) {
-        assertion.isTrue();
-      } else if (undecidable.contains(line)) {
-        assertion.isNull();
+      ObjectAssert assertion = assertThat(symbol.overriddenSymbol()).as("Method at line " + line);
+      if (overrides.contains(line)) {
+        assertion.isNotNull();
       } else {
-        assertion.isFalse();
+        assertion.isNull();
       }
     }
 
