@@ -1,6 +1,7 @@
   @Override
   protected void init() {
     if (!initialized) {
+      TimeProfiler profiler = new TimeProfiler(getClass()).start("JavaClasspath initialization");
       initialized = true;
       validateLibraries = project.getModules().isEmpty();
       binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES);
@@ -15,6 +16,7 @@
       if (useDeprecatedProperties && !elements.isEmpty()) {
         LOG.warn("sonar.binaries and sonar.libraries are deprecated since version 2.5 of sonar-java-plugin, please use sonar.java.binaries and sonar.java.libraries instead");
       }
+      profiler.stop();
     }
   }
 

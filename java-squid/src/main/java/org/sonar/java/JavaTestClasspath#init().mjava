@@ -1,12 +1,14 @@
   @Override
   protected void init() {
     if (!initialized) {
+      TimeProfiler profiler = new TimeProfiler(getClass()).start("JavaTestClasspath initialization");
       initialized = true;
       validateLibraries = project.getModules().isEmpty();
       binaries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_TEST_BINARIES);
       List<File> libraries = getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_TEST_LIBRARIES);
       elements = Lists.newArrayList(binaries);
       elements.addAll(libraries);
+      profiler.stop();
     }
   }
 
