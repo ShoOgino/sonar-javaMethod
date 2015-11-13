@@ -4,6 +4,10 @@
       debugPrint(programState);
       return;
     }
+    if (isExplodedGraphTooBig(programState)) {
+      throw new ExplodedGraphTooBigException("Program state constraints are too big : stopping Symbolic Execution for method "
+        + methodTree.simpleName().name() + "in class " + methodTree.symbol().owner().name());
+    }
     Multiset<ExplodedGraph.ProgramPoint> visitedPoints = HashMultiset.create(programState.visitedPoints);
     visitedPoints.add(programPoint);
     ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints, programState.stack));
