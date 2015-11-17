@@ -1,0 +1,8 @@
+  @Test
+  public void analysis_cancelled_on_InterruptedException() {
+    String className = "com.pack.MyClass";
+    bytecodeScanner.accept(new CheckThrowingException(new RuntimeException("", new InterruptedException())));
+    thrown.expectMessage("Analysis cancelled");
+    bytecodeScanner.scanClasses(Lists.newArrayList(className), asmProvider);
+  }
+
