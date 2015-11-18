@@ -1,6 +1,10 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    if(mit.symbol().owner().type().isSubtypeOf(GENERIC_ASSERT) && !FEST_AS_METHOD.matches(mit)) {
+    Symbol symbol = mit.symbol();
+    if (symbol.owner().type().isSubtypeOf(GENERIC_ASSERT) && !FEST_AS_METHOD.matches(mit)) {
+      if (isConstructor(symbol)) {
+        return;
+      }
       FestVisitor visitor = new FestVisitor();
       mit.methodSelect().accept(visitor);
       if(!visitor.useDescription) {
