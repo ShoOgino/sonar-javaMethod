@@ -1,0 +1,17 @@
+  private void simpleScan(File file, VisitorContext context) {
+    context.setFile(file);
+    try {
+      Tree ast = parser.parse(file);
+      visitor.visitFile(ast);
+    } catch (RecognitionException e) {
+      checkInterrrupted(e);
+      LOG.error("Unable to parse source file : " + file.getAbsolutePath());
+      LOG.error(e.getMessage());
+
+      parseErrorWalkAndVisit(e, file);
+    } catch (Exception e) {
+      checkInterrrupted(e);
+      throw new AnalysisException(getAnalyisExceptionMessage(file), e);
+    }
+  }
+

@@ -1,30 +1,11 @@
   @Test
   public void should_propagate_visitor_exception_when_no_parse_error() {
-    JavaAstScanner scanner = new JavaAstScanner(new ActionParser<Tree>(Charsets.UTF_8, FakeLexer.builder(), FakeGrammar.class, new FakeTreeFactory(), new JavaNodeBuilder(), FakeLexer.ROOT));
-    scanner.setVisitorBridge(new VisitorsBridge(new JavaFileScanner() {
-
-      @Override
-      public void scanFile(JavaFileScannerContext context) {
-        throw new NullPointerException("foo");
-      }
-    }));
-
+    JavaAstScanner scanner = defaultJavaAstScanner();
+    scanner.setVisitorBridge(new VisitorsBridge(new CheckThrowingException(new NullPointerException("foo"))));
 
     thrown.expectMessage("SonarQube is unable to analyze file");
-    thrown.expect(new BaseMatcher() {
+    thrown.expect(new AnalysisExceptionBaseMatcher(NullPointerException.class, "instanceof AnalysisException with NullPointerException cause"));
 
-      @Override
-      public boolean matches(Object item) {
-        return item instanceof AnalysisException &&
-          ((AnalysisException) item).getCause() instanceof NullPointerException;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-        description.appendText("instanceof AnalysisException with NullPointerException cause");
-      }
-
-    });
     scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerNoParseError.txt")));
   }
 
