@@ -5,23 +5,6 @@
     for (StatementTree statementTree : Lists.reverse(tree.body())) {
       build(statementTree);
     }
-
-    for (Block b : gotos) {
-      assert b.successors.isEmpty();
-      Tree s = b.terminator;
-      assert s != null;
-      String label;
-      if (s.is(Tree.Kind.BREAK_STATEMENT)) {
-        label = ((BreakStatementTree) s).label().name();
-      } else {
-        label = ((ContinueStatementTree) s).label().name();
-      }
-      Block target = labels.get(label);
-      if (target == null) {
-        throw new IllegalStateException("Undeclared label: " + label);
-      }
-      b.successors.add(target);
-    }
     prune();
     computePredecessors(blocks);
   }
