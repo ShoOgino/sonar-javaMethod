@@ -1,0 +1,17 @@
+    @Override
+    public void visitReturnStatement(ReturnStatementTree syntaxNode) {
+      SymbolicValue currentVal = programState.peekValue();
+      if (currentVal != null) {
+        final ExpressionTree expression = syntaxNode.expression();
+        if (expression != null) {
+          if (expression.is(Tree.Kind.IDENTIFIER)) {
+            final IdentifierTree identifier = (IdentifierTree) expression;
+            currentVal = programState.getValue(identifier.symbol());
+          } else {
+            currentVal = programState.peekValue();
+          }
+          programState = closeResource(programState, currentVal);
+        }
+      }
+    }
+

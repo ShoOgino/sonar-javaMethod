@@ -1,13 +1,14 @@
   @Override
-  public void checkPostStatement(CheckerContext context, Tree syntaxNode) {
+  public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
     if (context.isNull(context.getState().peekValue()) && syntaxNode.is(Tree.Kind.SWITCH_STATEMENT)) {
       context.reportIssue(syntaxNode, this, "NullPointerException might be thrown as '" + getName(syntaxNode) + "' is nullable here");
       context.createSink();
-      return;
+      return context.getState();
     }
     List<ProgramState> programStates = setNullConstraint(context, syntaxNode);
     for (ProgramState programState : programStates) {
       context.addTransition(programState);
     }
+    return context.getState();
   }
 

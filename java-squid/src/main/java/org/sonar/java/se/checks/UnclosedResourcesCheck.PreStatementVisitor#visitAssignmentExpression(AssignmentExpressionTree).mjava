@@ -1,0 +1,12 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree syntaxNode) {
+      final ExpressionTree variable = syntaxNode.variable();
+      if (variable.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
+        List<SymbolicValue> stackedValues = programState.peekValues(2);
+        SymbolicValue value = stackedValues.get(1);
+        if (isOpened(programState, value)) {
+          programState = closeResource(programState, value);
+        }
+      }
+    }
+

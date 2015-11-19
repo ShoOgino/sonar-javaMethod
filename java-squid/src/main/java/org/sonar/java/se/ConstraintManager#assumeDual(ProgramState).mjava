@@ -1,9 +1,9 @@
   public Pair<List<ProgramState>, List<ProgramState>> assumeDual(ProgramState programState) {
 
-    Pair<ProgramState, List<SymbolicValue>> unstack = programState.unstackValue(1);
-    SymbolicValue sv = unstack.b.get(0);
-    final List<ProgramState> falseConstraint = sv.setConstraint(unstack.a, BooleanConstraint.FALSE);
-    final List<ProgramState> trueConstraint = sv.setConstraint(unstack.a, BooleanConstraint.TRUE);
+    ProgramState.Pop unstack = programState.unstackValue(1);
+    SymbolicValue sv = unstack.values.get(0);
+    final List<ProgramState> falseConstraint = sv.setConstraint(unstack.state, BooleanConstraint.FALSE);
+    final List<ProgramState> trueConstraint = sv.setConstraint(unstack.state, BooleanConstraint.TRUE);
     return new Pair<>(falseConstraint, trueConstraint);
   }
 

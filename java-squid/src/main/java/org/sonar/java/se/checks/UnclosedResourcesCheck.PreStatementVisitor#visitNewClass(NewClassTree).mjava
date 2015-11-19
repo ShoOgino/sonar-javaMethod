@@ -1,0 +1,19 @@
+    @Override
+    public void visitNewClass(NewClassTree syntaxNode) {
+      final List<SymbolicValue> arguments = programState.peekValues(syntaxNode.arguments().size());
+      if (isOpeningResource(syntaxNode)) {
+        Iterator<SymbolicValue> iterator = arguments.iterator();
+        for (ExpressionTree argument : syntaxNode.arguments()) {
+          if (!iterator.hasNext()) {
+            throw new IllegalStateException("Mismatch between declared constructor arguments and argument values!");
+          }
+          final Type type = argument.symbolType();
+          final SymbolicValue value = iterator.next();
+          if (isCloseable(type)) {
+            constraintManager.setWrappedValue(value);
+            break;
+          }
+        }
+      }
+    }
+

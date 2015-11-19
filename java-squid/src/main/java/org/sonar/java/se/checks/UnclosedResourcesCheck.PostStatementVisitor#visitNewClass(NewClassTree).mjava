@@ -1,0 +1,8 @@
+    @Override
+    public void visitNewClass(NewClassTree syntaxNode) {
+      if (isOpeningResource(syntaxNode)) {
+        final SymbolicValue instanceValue = programState.peekValue();
+        programState = programState.addConstraint(instanceValue, NullConstraint.OPENED);
+      }
+    }
+

@@ -1,0 +1,10 @@
+  public void wrongLoopHandling() {
+    int i = 0;
+    FileInputStream stream = new FileInputStream("WhileFile"); // Noncompliant {{Close this "FileInputStream".}}
+    while(needsMore()) {
+      i += 1;
+      stream = new FileInputStream("WhileFile"+i); // Noncompliant {{Close this "FileInputStream".}}
+    }
+    stream.close();
+  }
+

@@ -6,17 +6,17 @@
     fis.available();
     myMethod(fis);
 
-    br = new BufferedReader(new FileReader("")); // Compliant - only look at local variables
+    br = new BufferedReader(new FileReader("")); // Noncompliant {{Close this "FileReader".}}
 
     BufferedWriter bw = new BufferedWriter(new FileWriter("")); // Compliant - closeable state is lost
     Object o = getObject(bw);
 
-    closeable = new FileReader(""); // Compliant - responsability of closing the variable is not in the method
+    closeable = new FileReader(""); // Noncompliant {{Close this "FileReader".}}
 
     OutputStream ubaos = new UnsyncByteArrayOutputStream(); // Compliant - UnsyncByteArrayOutputStream does not implements close()
     ubaos.write(0);
 
-    Reader reader = new BufferedReader(br); // Compliant - uses a field
+    Reader reader = new BufferedReader(br); // Noncompliant {{Close this "BufferedReader".}}
 
     RandomAccessFile raf = new RandomAccessFile("", "r"); // Compliant - Closeable is returned so its state is unknown
     return (Closeable) raf;

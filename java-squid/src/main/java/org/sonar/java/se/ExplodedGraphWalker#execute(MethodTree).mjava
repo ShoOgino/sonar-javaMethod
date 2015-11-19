@@ -19,10 +19,12 @@
       // LIFO:
       node = workList.removeFirst();
       programPosition = node.programPoint;
+      programState = node.programState;
       if (programPosition.block.successors().isEmpty()) {
+        checkerDispatcher.executeCheckEndOfExecutionPath(tree, constraintManager);
+        LOG.debug("End of potential path reached!");
         continue;
       }
-      programState = node.programState;
       if (programPosition.i < programPosition.block.elements().size()) {
         // process block element
         visit(programPosition.block.elements().get(programPosition.i), programPosition.block.terminator());
@@ -34,6 +36,8 @@
         checkerDispatcher.executeCheckPostStatement(programPosition.block.terminator());
       } else {
         // process branch
+        // process block exist, which is conditional jump such as if-statement
+        checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
         handleBlockExit(programPosition);
       }
     }

@@ -1,0 +1,10 @@
+  @Override
+  public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
+    final List<Tree> openedResources = context.getState().getConstrainedSyntaxNodes(NullConstraint.OPENED);
+    for (Tree syntaxNode : openedResources) {
+      if (syntaxNode instanceof NewClassTree) {
+        context.reportIssue(syntaxNode, this, "Close this \"" + ((NewClassTree) syntaxNode).identifier() + "\".");
+      }
+    }
+  }
+
