@@ -1,0 +1,29 @@
+  void foo() {
+    List<Object> myList;
+    myList = new ArrayList<>(); // Compliant
+    myList = new ArrayList<Object>(); // Noncompliant [[sc=27;ec=35]]
+
+    List<String> strings1 = new ArrayList<>(); // Compliant
+    List<String> strings2 = new ArrayList<String>(); // Noncompliant [[sc=42;ec=50]]
+    Map<String,List<Integer>> map1 = new HashMap<>(); // Compliant
+    Map<String,List<Integer>> map2 = new HashMap<String,List<Integer>>(); // Noncompliant [[sc=49;ec=71]]
+
+    List myOtherList = new ArrayList<Object>(); // Compliant
+    new A().myList1 = new ArrayList<>(); // Compliant
+    new A().myList1 = new ArrayList<Object>(); // Noncompliant [[sc=36;ec=44]]
+
+    List<Object>[] myArrayOfList = new List[10];
+    myArrayOfList[0] = new ArrayList<>(); // Compliant
+    myArrayOfList[1] = new ArrayList<Object>(); // Noncompliant [[sc=37;ec=45]]
+
+    new ArrayList<Object>().add(new Object()); // Compliant
+
+    ((List<Object>) new ArrayList<Object>()).isEmpty(); // Noncompliant [[sc=34;ec=42]]
+    ((List<Object>) new ArrayList<>()).isEmpty(); // Compliant
+
+    Iterator<Object> iterator = new Iterator<Object>() { // Compliant - anonymous classes requires to be typed
+    };
+
+    MyUnknownVariable = new ArrayList<Object>(); // Compliant
+  }
+
