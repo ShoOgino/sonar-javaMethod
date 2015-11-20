@@ -8,9 +8,8 @@
       throw new ExplodedGraphTooBigException("Program state constraints are too big : stopping Symbolic Execution for method "
         + methodTree.simpleName().name() + "in class " + methodTree.symbol().owner().name());
     }
-    Multiset<ExplodedGraph.ProgramPoint> visitedPoints = HashMultiset.create(programState.visitedPoints);
-    visitedPoints.add(programPoint);
-    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, new ProgramState(programState.values, programState.constraints, visitedPoints, programState.stack));
+    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint,
+        new ProgramState(programState.values, programState.constraints, programState.visitedPoints.put(programPoint, nbOfExecution+1), programState.stack));
     if (!cachedNode.isNew) {
       // has been enqueued earlier
       return;

@@ -1,0 +1,22 @@
+  @Test
+  public void test_one_element() {
+    AVLTree<String, String> t0 = AVLTree.create();
+    AVLTree<String, String> t1 = t0.put("1", "a");
+    AVLTree<String, String> t2 = t0.put("2", "b");
+
+    assertThat(t0).isNotSameAs(t1).isNotSameAs(t2);
+    assertThat(t1).isNotSameAs(t2);
+
+    assertThat(t0.get("1")).isNull();
+    assertThat(t0.get("2")).isNull();
+    assertThat(t0.get("3")).isNull();
+
+    assertThat(t1.get("1")).isEqualTo("a");
+    assertThat(t1.get("2")).isNull();
+    assertThat(t2.get("3")).isNull();
+
+    assertThat(t2.get("1")).isNull();
+    assertThat(t2.get("2")).isEqualTo("b");
+    assertThat(t2.get("3")).isNull();
+  }
+

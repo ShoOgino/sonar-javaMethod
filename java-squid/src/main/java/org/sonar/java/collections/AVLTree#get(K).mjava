@@ -1,0 +1,19 @@
+  @SuppressWarnings("unchecked")
+  @Nullable
+  @Override
+  public V get(K key) {
+    Preconditions.checkNotNull(key);
+    AVLTree t = this;
+    while (!t.isEmpty()) {
+      int c = KEY_COMPARATOR.compare(key, t.key());
+      if (c == 0) {
+        return (V) t.value();
+      } else if (c < 0) {
+        t = t.left();
+      } else {
+        t = t.right();
+      }
+    }
+    return null;
+  }
+

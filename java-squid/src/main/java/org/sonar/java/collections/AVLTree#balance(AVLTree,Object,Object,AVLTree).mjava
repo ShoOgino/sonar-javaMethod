@@ -1,0 +1,28 @@
+  private static AVLTree balance(AVLTree l, Object key, Object value, AVLTree r) {
+    if (l.height() > r.height() + 2) {
+      assert !l.isEmpty();
+      AVLTree ll = l.left();
+      AVLTree lr = l.right();
+      if (ll.height() >= lr.height()) {
+        return createNode(ll, l, createNode(lr, key, value, r));
+      }
+      assert !lr.isEmpty();
+      AVLTree lrl = lr.left();
+      AVLTree lrr = lr.right();
+      return createNode(createNode(ll, l, lrl), lr, createNode(lrr, key, value, r));
+    }
+    if (r.height() > l.height() + 2) {
+      assert !r.isEmpty();
+      AVLTree rl = r.left();
+      AVLTree rr = r.right();
+      if (rr.height() >= rl.height()) {
+        return createNode(createNode(l, key, value, rl), r, rr);
+      }
+      assert !rl.isEmpty();
+      AVLTree rll = rl.left();
+      AVLTree rlr = rl.right();
+      return createNode(createNode(l, key, value, rll), rl, createNode(rlr, r, rr));
+    }
+    return createNode(l, key, value, r);
+  }
+

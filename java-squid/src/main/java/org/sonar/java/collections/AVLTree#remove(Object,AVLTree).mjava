@@ -1,0 +1,22 @@
+  private static AVLTree remove(Object key, AVLTree t) {
+    if (t.isEmpty()) {
+      return t;
+    }
+    int result = KEY_COMPARATOR.compare(key, t.key());
+    if (result == 0) {
+      return combineTrees(t.left(), t.right());
+    } else if (result < 0) {
+      AVLTree left = remove(key, t.left());
+      if (left == t.left()) {
+        return t;
+      }
+      return balance(left, t.key(), t.value(), t.right());
+    } else {
+      AVLTree right = remove(key, t.right());
+      if (right == t.right()) {
+        return t;
+      }
+      return balance(t.left(), t.key(), t.value(), right);
+    }
+  }
+

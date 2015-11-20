@@ -1,0 +1,25 @@
+  private static AVLTree put(Object key, Object value, AVLTree t) {
+    if (t.isEmpty()) {
+      return createNode(t, key, value, t);
+    }
+    int result = KEY_COMPARATOR.compare(key, t.key());
+    if (result == 0) {
+      if (value.equals(t.value())) {
+        return t;
+      }
+      return createNode(t.left(), key, value, t.right());
+    } else if (result < 0) {
+      AVLTree left = put(key, value, t.left());
+      if (left == t.left()) {
+        return t;
+      }
+      return balance(left, t.key(), t.value(), t.right());
+    } else {
+      AVLTree right = put(key, value, t.right());
+      if (right == t.right()) {
+        return t;
+      }
+      return balance(t.left(), t.key(), t.value(), right);
+    }
+  }
+
