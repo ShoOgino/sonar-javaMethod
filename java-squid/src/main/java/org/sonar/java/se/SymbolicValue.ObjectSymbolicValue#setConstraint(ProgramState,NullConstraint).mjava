@@ -1,6 +1,6 @@
     @Override
     public List<ProgramState> setConstraint(ProgramState programState, NullConstraint nullConstraint) {
-      Object data = programState.constraints.get(this);
+      Object data = programState.getConstraint(this);
       if (data instanceof NullConstraint) {
         NullConstraint nc = (NullConstraint) data;
         if (!nc.equals(nullConstraint)) {
@@ -9,9 +9,7 @@
         }
       }
       if (data == null || !data.equals(nullConstraint)) {
-        Map<SymbolicValue, Object> temp = Maps.newHashMap(programState.constraints);
-        temp.put(this, nullConstraint);
-        return ImmutableList.of(new ProgramState(programState.values, temp, programState.visitedPoints, programState.stack));
+        return ImmutableList.of(programState.addConstraint(this, nullConstraint));
       }
       return ImmutableList.of(programState);
     }

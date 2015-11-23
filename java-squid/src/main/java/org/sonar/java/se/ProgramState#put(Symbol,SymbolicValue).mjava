@@ -1,0 +1,11 @@
+  ProgramState put(Symbol symbol, SymbolicValue value) {
+    if (symbol.isUnknown()) {
+      return this;
+    }
+    PMap<Symbol, SymbolicValue> newValues = values.put(symbol, value);
+    if (newValues != values) {
+      return new ProgramState(newValues, constraints, visitedPoints, stack);
+    }
+    return this;
+  }
+

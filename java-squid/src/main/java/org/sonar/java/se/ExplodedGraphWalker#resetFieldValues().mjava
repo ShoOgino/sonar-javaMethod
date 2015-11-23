@@ -1,19 +1,4 @@
   private void resetFieldValues() {
-    boolean changed = false;
-    Map<Symbol, SymbolicValue> values = Maps.newHashMap(programState.values);
-    for (Map.Entry<Symbol, SymbolicValue> entry : values.entrySet()) {
-      Symbol symbol = entry.getKey();
-      if (isField(symbol)) {
-        VariableTree variable = ((Symbol.VariableSymbol) symbol).declaration();
-        if (variable != null) {
-          changed = true;
-          SymbolicValue nonNullValue = constraintManager.supersedeSymbolicValue(variable);
-          values.put(symbol, nonNullValue);
-        }
-      }
-    }
-    if (changed) {
-      programState = new ProgramState(values, programState.constraints, programState.visitedPoints, programState.stack);
-    }
+    programState = programState.resetFieldValues(constraintManager);
   }
 

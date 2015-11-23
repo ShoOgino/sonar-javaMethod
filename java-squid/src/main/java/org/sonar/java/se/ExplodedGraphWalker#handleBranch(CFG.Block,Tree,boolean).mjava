@@ -2,14 +2,14 @@
     Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
     for (ProgramState state : pair.a) {
       // enqueue false-branch, if feasible
-      ProgramState ps = ProgramState.stackValue(state, SymbolicValue.FALSE_LITERAL);
+      ProgramState ps = state.stackValue(SymbolicValue.FALSE_LITERAL);
       enqueue(new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0), ps);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToFalse(condition);
       }
     }
     for (ProgramState state : pair.b) {
-      ProgramState ps = ProgramState.stackValue(state, SymbolicValue.TRUE_LITERAL);
+      ProgramState ps = state.stackValue(SymbolicValue.TRUE_LITERAL);
       // enqueue true-branch, if feasible
       enqueue(new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0), ps);
       if (checkPath) {

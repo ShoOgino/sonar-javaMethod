@@ -1,0 +1,23 @@
+  public ProgramState resetFieldValues(ConstraintManager constraintManager) {
+    final List<VariableTree> variableTrees = new ArrayList<>();
+    values.forEach(new PMap.Consumer<Symbol, SymbolicValue>() {
+      @Override
+      public void accept(Symbol symbol, SymbolicValue value) {
+        if (isField(symbol)) {
+          VariableTree variable = ((Symbol.VariableSymbol) symbol).declaration();
+          if (variable != null) {
+            variableTrees.add(variable);
+          }
+        }
+      }
+    });
+    if (variableTrees.isEmpty()) {
+      return this;
+    }
+    PMap<Symbol, SymbolicValue> newValues = values;
+    for (VariableTree variableTree : variableTrees) {
+      newValues = newValues.put(variableTree.symbol(), constraintManager.createSymbolicValue(variableTree));
+    }
+    return new ProgramState(newValues, constraints, visitedPoints, stack);
+  }
+
