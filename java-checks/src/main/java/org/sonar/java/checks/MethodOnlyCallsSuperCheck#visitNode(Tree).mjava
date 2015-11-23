@@ -1,5 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
     MethodTree methodTree = (MethodTree) tree;
     if (isSingleStatementMethod(methodTree) && isUselessSuperCall(methodTree)
       && !hasAnnotationDifferentFromOverride(methodTree.modifiers().annotations()) && !isFinalObjectMethod(methodTree)) {
