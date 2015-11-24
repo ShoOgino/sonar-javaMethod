@@ -4,6 +4,7 @@
       @Override
       public void scanFile(JavaFileScannerContext context) {
         assertThat(context.getSemanticModel() == null).isTrue();
+        assertThat(context.fileParsed()).isTrue();
       }
     }), Lists.<File>newArrayList(), null);
     visitorsBridgeWithoutSemantic.setContext(context);
@@ -23,6 +24,7 @@
       @Override
       public void scanFile(JavaFileScannerContext context) {
         assertThat(context.getSemanticModel()).isNotNull();
+        assertThat(context.fileParsed()).isTrue();
         super.scanFile(context);
       }
 
@@ -40,5 +42,19 @@
     checkFile(contstructFileName("java", "lang", "annotation", "Foo.java"), "package java.lang.annotation; class Annotation {}", visitorsBridgeWithSemantic);
     checkFile(contstructFileName("java", "io", "File.java"), "package java.io; class A {}", visitorsBridgeWithSemantic);
     checkFile(contstructFileName("src", "foo", "bar", "java", "lang", "someFile.java"), "package foo.bar.java.lang; class A { void method() { ; } }", visitorsBridgeWithSemantic);
+
+    InternalVisitorsBridge visitorsBridgeWithParsingIssue = new InternalVisitorsBridge(Collections.singletonList(new IssuableSubscriptionVisitor() {
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        assertThat(context.fileParsed()).isFalse();
+      }
+
+      @Override
+      public List<Kind> nodesToVisit() {
+        return ImmutableList.of(Tree.Kind.METHOD);
+      }
+    }), Lists.<File>newArrayList(), null);
+    visitorsBridgeWithParsingIssue.setContext(context);
+    checkFile(contstructFileName("org", "foo", "bar", "Foo.java"), "class Foo { arrrrrrgh", visitorsBridgeWithParsingIssue);
   }
 
