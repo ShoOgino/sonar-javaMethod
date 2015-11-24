@@ -1,0 +1,9 @@
+  private void executeBinaryExpression(Tree tree) {
+    // Consume two and produce one SV.
+    Pair<ProgramState, List<SymbolicValue>> unstackBinary = programState.unstackValue(2);
+    programState = unstackBinary.a;
+    SymbolicValue symbolicValue = constraintManager.createSymbolicValue(tree);
+    symbolicValue.computedFrom(unstackBinary.b);
+    programState = programState.stackValue(symbolicValue);
+  }
+

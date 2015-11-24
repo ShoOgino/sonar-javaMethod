@@ -1,0 +1,21 @@
+  private void executeVariable(VariableTree variableTree, @Nullable Tree terminator) {
+    ExpressionTree initializer = variableTree.initializer();
+    if (initializer == null) {
+      SymbolicValue sv = null;
+      if (terminator != null && terminator.is(Tree.Kind.FOR_EACH_STATEMENT)) {
+        sv = constraintManager.createSymbolicValue(variableTree);
+      } else if (variableTree.type().symbolType().is("boolean")) {
+        sv = SymbolicValue.FALSE_LITERAL;
+      } else if (!variableTree.type().symbolType().isPrimitive()) {
+        sv = SymbolicValue.NULL_LITERAL;
+      }
+      if (sv != null) {
+        programState = programState.put(variableTree.symbol(), sv);
+      }
+    } else {
+      Pair<ProgramState, List<SymbolicValue>> unstack = programState.unstackValue(1);
+      programState = unstack.a;
+      programState = programState.put(variableTree.symbol(), unstack.b.get(0));
+    }
+  }
+

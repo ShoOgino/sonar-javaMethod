@@ -1,0 +1,12 @@
+  private void executeAssignement(AssignmentExpressionTree tree) {
+    ExpressionTree variable = tree.variable();
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      // FIXME restricted to identifiers for now.
+      Pair<ProgramState, List<SymbolicValue>> unstack = programState.unstackValue(2);
+      SymbolicValue value = unstack.b.get(1);
+      programState = unstack.a;
+      programState = programState.put(((IdentifierTree) variable).symbol(), value);
+      programState = programState.stackValue(value);
+    }
+  }
+

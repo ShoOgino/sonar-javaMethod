@@ -1,0 +1,9 @@
+  private void executeUnaryExpression(Tree tree) {
+    // consume one and produce one
+    Pair<ProgramState, List<SymbolicValue>> unstackUnary = programState.unstackValue(1);
+    programState = unstackUnary.a;
+    SymbolicValue unarySymbolicValue = constraintManager.createSymbolicValue(tree);
+    unarySymbolicValue.computedFrom(unstackUnary.b);
+    programState = programState.stackValue(unarySymbolicValue);
+  }
+

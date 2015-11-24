@@ -1,0 +1,8 @@
+  private void executeNewClass(NewClassTree tree) {
+    NewClassTree newClassTree = tree;
+    programState = programState.unstackValue(newClassTree.arguments().size()).a;
+    SymbolicValue svNewClass = constraintManager.createSymbolicValue(newClassTree);
+    programState = programState.stackValue(svNewClass);
+    programState = svNewClass.setSingleConstraint(programState, NullConstraint.NOT_NULL);
+  }
+

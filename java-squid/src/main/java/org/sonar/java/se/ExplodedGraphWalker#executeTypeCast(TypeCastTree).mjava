@@ -1,0 +1,9 @@
+  private void executeTypeCast(TypeCastTree typeCast) {
+    Type type = typeCast.type().symbolType();
+    if (type.isPrimitive()) {
+      Pair<ProgramState, List<SymbolicValue>> unstack = programState.unstackValue(1);
+      programState = unstack.a;
+      programState = programState.stackValue(constraintManager.createSymbolicValue(typeCast.expression()));
+    }
+  }
+

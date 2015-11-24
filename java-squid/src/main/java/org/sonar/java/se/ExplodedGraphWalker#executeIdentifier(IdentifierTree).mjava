@@ -1,0 +1,10 @@
+  private void executeIdentifier(IdentifierTree tree) {
+    Symbol symbol = tree.symbol();
+    SymbolicValue value = programState.getValue(symbol);
+    if (value == null) {
+      value = constraintManager.createSymbolicValue(tree);
+      programState = programState.put(symbol, value);
+    }
+    programState = programState.stackValue(value);
+  }
+
