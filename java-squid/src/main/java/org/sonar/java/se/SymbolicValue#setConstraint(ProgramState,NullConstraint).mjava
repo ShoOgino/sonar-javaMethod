@@ -1,2 +1,15 @@
-  List<ProgramState> setConstraint(ProgramState programState, NullConstraint nullConstraint);
+  public List<ProgramState> setConstraint(ProgramState programState, NullConstraint nullConstraint) {
+    Object data = programState.getConstraint(this);
+    if (data instanceof NullConstraint) {
+      NullConstraint nc = (NullConstraint) data;
+      if (!nc.equals(nullConstraint)) {
+        // setting null where value is known to be non null or the contrary
+        return ImmutableList.of();
+      }
+    }
+    if (data == null || !data.equals(nullConstraint)) {
+      return ImmutableList.of(programState.addConstraint(this, nullConstraint));
+    }
+    return ImmutableList.of(programState);
+  }
 
