@@ -1,12 +1,23 @@
   private void buildTryStatement(TryStatementTree tryStatementTree) {
     // FIXME only path with no failure constructed for now, (not taking try with resources into consideration).
     currentBlock = createBlock(currentBlock);
-    BlockTree finallyBlock = tryStatementTree.finallyBlock();
-    if (finallyBlock != null) {
-      build(finallyBlock);
+    BlockTree finallyBlockTree = tryStatementTree.finallyBlock();
+    if (finallyBlockTree != null) {
+      build(finallyBlockTree);
     }
-    currentBlock = createBlock(currentBlock);
+    Block finallyOrEndBlock = currentBlock;
+    Block beforeFinally = createBlock(currentBlock);
+    List<Block> catches = new ArrayList<>();
+    for (CatchTree catchTree : tryStatementTree.catches()) {
+      currentBlock = createBlock(finallyOrEndBlock);
+      build(catchTree.block());
+      catches.add(currentBlock);
+    }
+    currentBlock = beforeFinally;
     build(tryStatementTree.block());
+    for (Block catchBlock : catches) {
+      currentBlock.addSuccessor(catchBlock);
+    }
     build((List<? extends Tree>) tryStatementTree.resources());
     currentBlock = createBlock(currentBlock);
     currentBlock.elements.add(tryStatementTree);
