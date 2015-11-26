@@ -1,11 +1,9 @@
   private void buildConditionalOr(BinaryExpressionTree tree) {
-    // process RHS
     Block trueBlock = currentBlock;
     currentBlock = createBlock(trueBlock);
+    // process RHS
     build(tree.rightOperand());
-    Block falseBlock = currentBlock;
     // process LHS
-    currentBlock = createBranch(tree, trueBlock.branchingBlock(), falseBlock);
-    build(tree.leftOperand());
+    buildConditionalBinaryLHS(tree, trueBlock, currentBlock);
   }
 

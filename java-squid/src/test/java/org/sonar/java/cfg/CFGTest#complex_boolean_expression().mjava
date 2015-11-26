@@ -1,0 +1,19 @@
+  @Test
+  public void complex_boolean_expression() throws Exception {
+    final CFG cfg = buildCFG(" private boolean fun(boolean bool, boolean a, boolean b) {\n" +
+        "    return (!bool && a) || (bool && b);\n" +
+        "  }");
+    final CFGChecker cfgChecker = checker(
+        block(
+            element(Kind.IDENTIFIER, "bool"),
+            element(Kind.LOGICAL_COMPLEMENT)
+        ).terminator(Kind.CONDITIONAL_AND).ifTrue(5).ifFalse(4),
+        block(element(Kind.IDENTIFIER, "a")).successors(4),
+        terminator(Kind.CONDITIONAL_OR).ifTrue(1).ifFalse(3),
+        block(element(Kind.IDENTIFIER, "bool")).terminator(Kind.CONDITIONAL_AND).ifTrue(2).ifFalse(1),
+        block(element(Kind.IDENTIFIER, "b")).successors(1),
+        terminator(Kind.RETURN_STATEMENT).successors(0));
+    cfgChecker.check(cfg);
+
+  }
+
