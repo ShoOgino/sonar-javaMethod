@@ -1,0 +1,13 @@
+  public static JavaVersion fromString(String javaVersion) {
+    if (javaVersion != null) {
+      try {
+        return new JavaVersionImpl(Integer.parseInt(javaVersion.replaceAll("1.", "")));
+      } catch (NumberFormatException e) {
+        LOG.warn("Invalid java version (got \"" + javaVersion + "\"). "
+          + "The version will be ignored. Accepted formats are \"1.X\", or simply \"X\" "
+          + "(for instance: \"1.5\" or \"5\", \"1.6\" or \"6\", \"1.7\" or \"7\", etc.)");
+      }
+    }
+    return new JavaVersionImpl();
+  }
+

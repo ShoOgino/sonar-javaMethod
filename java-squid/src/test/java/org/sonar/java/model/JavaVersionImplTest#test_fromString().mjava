@@ -1,0 +1,20 @@
+  @Test
+  public void test_fromString() throws Exception {
+    JavaVersion version;
+    version = JavaVersionImpl.fromString(null);
+    assertThat(version.isNotSet()).isTrue();
+    assertThat(version.asInt()).isEqualTo(-1);
+
+    version = JavaVersionImpl.fromString("jdk1.6");
+    assertThat(version.isNotSet()).isTrue();
+    assertThat(version.asInt()).isEqualTo(-1);
+
+    version = JavaVersionImpl.fromString("1.6");
+    assertThat(version.isNotSet()).isFalse();
+    assertThat(version.asInt()).isEqualTo(6);
+
+    version = JavaVersionImpl.fromString("7");
+    assertThat(version.isNotSet()).isFalse();
+    assertThat(version.asInt()).isEqualTo(7);
+  }
+

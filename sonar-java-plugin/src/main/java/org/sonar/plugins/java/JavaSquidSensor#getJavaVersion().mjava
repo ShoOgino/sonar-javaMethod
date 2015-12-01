@@ -1,14 +1,4 @@
-  @CheckForNull
-  private Integer getJavaVersion() {
-    String javaVersion = settings.getString(Java.SOURCE_VERSION);
-    if (javaVersion != null) {
-      try {
-        return Integer.parseInt(javaVersion.replaceAll("1.", ""));
-      } catch (NumberFormatException e) {
-        LOG.warn("Invalid Java version set for property \"sonar.java.source\" (got \"" + javaVersion + "\"). "
-          + "The property will be ignored. Accepted formats are \"1.X\", or simply \"X\" (for instance: \"1.5\" or \"5\", \"1.6\" or \"6\", \"1.7\" or \"7\", etc.)");
-      }
-    }
-    return null;
+  private JavaVersion getJavaVersion() {
+    return JavaVersionImpl.fromString(settings.getString(Java.SOURCE_VERSION));
   }
 
