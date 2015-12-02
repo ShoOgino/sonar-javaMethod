@@ -1,9 +1,0 @@
-  @Override
-  protected void onAssignment(ExecutionState executionState, Tree tree, Symbol variable, ExpressionTree expression) {
-    // check first usage of closeables in order to manage use of same symbol
-    ignoreClosableSymbols(executionState, expression);
-    if ((tree.is(Tree.Kind.VARIABLE) || isVariableIdentifierOrMemberSelect((AssignmentExpressionTree) tree)) && isCloseableOrAutoCloseableSubtype(variable.type())) {
-      executionState.markValueAs(variable, getCloseableStateFromExpression(executionState, variable, expression));
-    }
-  }
-
