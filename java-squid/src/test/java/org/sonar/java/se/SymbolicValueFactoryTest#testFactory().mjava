@@ -1,0 +1,22 @@
+  @Test
+  public void testFactory() {
+    final IdentifierTree tree = new IdentifierTreeImpl(new InternalSyntaxToken(1, 1, "id", Collections.<SyntaxTrivia>emptyList(), 0, 0, false));
+    final ConstraintManager manager = new ConstraintManager();
+    SymbolicValue symbolicValue = manager.createSymbolicValue(tree);
+    assertThat(symbolicValue.getClass()).as("Created without factory").isSameAs(SymbolicValue.class);
+    manager.setValueFactory(new TestSymbolicValueFactory());
+    symbolicValue = manager.createSymbolicValue(tree);
+    assertThat(symbolicValue.getClass()).as("Created with factory").isSameAs(TestSymbolicValue.class);
+    manager.setValueFactory(new TestSymbolicValueFactory());
+    try {
+      manager.setValueFactory(new TestSymbolicValueFactory());
+      fail("Able to add a second factory to the contraints manager");
+    } catch (IllegalStateException e) {
+      assertThat(e.getMessage()).as("Exception message").isEqualTo("The symbolic value factory has already been defined by another checker!");
+    }
+    symbolicValue = manager.createSymbolicValue(tree);
+    assertThat(symbolicValue.getClass()).as("Created with first factory").isSameAs(TestSymbolicValue.class);
+    symbolicValue = manager.createSymbolicValue(tree);
+    assertThat(symbolicValue.getClass()).as("Created after factory usage").isSameAs(SymbolicValue.class);
+  }
+

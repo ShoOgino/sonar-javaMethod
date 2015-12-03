@@ -1,0 +1,12 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
+      if (syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) syntaxNode.methodSelect();
+        final ExpressionTree expression = memberSelect.expression();
+        if (expression.is(Tree.Kind.IDENTIFIER) && expression.symbolType().isSubtypeOf(LOCK)) {
+          final String methodName = memberSelect.identifier().name();
+          visitMethodInvocationWithIdentifierTarget(methodName, (IdentifierTree) expression);
+        }
+      }
+    }
+

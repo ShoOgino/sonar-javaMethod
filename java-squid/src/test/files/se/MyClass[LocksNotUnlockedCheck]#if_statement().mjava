@@ -1,26 +1,10 @@
   public void if_statement() {
     Lock lock = new ReentrantLock();
-    boolean a;
-    lock.tryLock();
+    boolean a = lock.tryLock(); // Compliant
     if(a) {
       lock.unlock();
     } else {
-      lock.unlock();
-    }
-    lock = new ReentrantLock();
-    lock.tryLock(); // Noncompliant
-    if(a) {
-      //lock not unlocked.
-    } else {
-      lock.unlock();
-    }
-
-    Lock l1 = new ReentrantLock();
-    l1.lock(); // Noncompliant
-    if(a){
-      l1 = new ReentrantLock();
-    } else {
-      l1.unlock();
+      System.out.println("Lock was not granted!");
     }
   }
 

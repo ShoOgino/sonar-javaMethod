@@ -1,0 +1,9 @@
+  @Override
+  public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
+    final List<ObjectConstraint> constraints = context.getState().getFieldConstraints(Status.LOCKED);
+    for (ObjectConstraint constraint : constraints) {
+      Tree syntaxNode = constraint.syntaxNode();
+      context.reportIssue(syntaxNode, this, "Unlock \"" + syntaxNode.toString() + "\" along all executions paths of this method.");
+    }
+  }
+
