@@ -1,12 +1,12 @@
     @Override
     public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
       if (BooleanConstraint.TRUE.equals(booleanConstraint)) {
-        if (NullConstraint.NULL.equals(programState.getConstraint(operand))) {
+        if (ObjectConstraint.NULL.equals(programState.getConstraint(operand))) {
           // irrealizable constraint : instance of true if operand is null
           return ImmutableList.of();
         }
         // if instanceof is true then we know for sure that expression is not null.
-        List<ProgramState> ps = operand.setConstraint(programState, NullConstraint.NOT_NULL);
+        List<ProgramState> ps = operand.setConstraint(programState, ObjectConstraint.NOT_NULL);
         if (ps.size() == 1 && ps.get(0).equals(programState)) {
           // FIXME we already know that operand is NOT NULL, so we add a different constraint to distinguish program state. Typed Constraint
           // should store the deduced type.

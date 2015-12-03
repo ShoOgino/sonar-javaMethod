@@ -2,7 +2,9 @@
     public void visitNewClass(NewClassTree syntaxNode) {
       if (isOpeningResource(syntaxNode)) {
         final SymbolicValue instanceValue = programState.peekValue();
-        programState = programState.addConstraint(instanceValue, NullConstraint.OPENED);
+        if (instanceValue.wrappedValue() == instanceValue) {
+          programState = programState.addConstraint(instanceValue, new ObjectConstraint(syntaxNode, States.OPENED));
+        }
       }
     }
 

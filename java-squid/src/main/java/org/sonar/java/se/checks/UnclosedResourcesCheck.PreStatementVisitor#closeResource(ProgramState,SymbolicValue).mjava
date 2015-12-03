@@ -1,6 +1,9 @@
     private static ProgramState closeResource(ProgramState programState, final SymbolicValue target) {
-      if (target != null && isOpened(programState, target)) {
-        return programState.addConstraint(target.wrappedValue(), NullConstraint.CLOSED);
+      if (target != null) {
+        ObjectConstraint oConstraint = openedConstraint(programState, target);
+        if (oConstraint != null) {
+          return programState.addConstraint(target.wrappedValue(), oConstraint.inState(States.CLOSED));
+        }
       }
       return programState;
     }

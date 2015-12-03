@@ -1,0 +1,13 @@
+  public void while_statement() {
+    Lock lock = new ReentrantLock();
+    while (foo) {
+      lock.tryLock();
+    }
+    lock.unlock();
+    while (foo) {
+      lock.tryLock(); // Noncompliant
+      lock =  new ReentrantLock();
+    }
+    lock.unlock();
+  }
+
