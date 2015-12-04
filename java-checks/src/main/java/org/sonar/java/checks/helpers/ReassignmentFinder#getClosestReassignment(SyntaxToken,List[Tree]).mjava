@@ -5,7 +5,10 @@
       SyntaxToken reassignmentFirstToken = FirstSyntaxTokenFinder.firstSyntaxToken(reassignment);
       int reassignmentLine = reassignmentFirstToken.line();
       int startLine = startToken.line();
-      if (startLine > reassignmentLine || (startLine == reassignmentLine && startToken.column() > reassignmentFirstToken.column())) {
+      if (startLine > reassignmentLine ||
+          (startLine == reassignmentLine &&
+              startToken.column() > reassignmentFirstToken.column() &&
+              !isInAssignedExpression(startToken, reassignment))) {
         result = reassignment;
       }
     }
