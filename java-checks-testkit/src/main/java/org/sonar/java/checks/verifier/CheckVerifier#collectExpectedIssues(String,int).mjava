@@ -1,6 +1,7 @@
-  private void collectExpectedIssues(String comment, int line) {
-    if (comment.startsWith(TRIGGER)) {
-      String cleanedComment = StringUtils.remove(comment, TRIGGER);
+  protected void collectExpectedIssues(String comment, int line) {
+    String expectedStart = getExpectedIssueTrigger();
+    if (comment.startsWith(expectedStart)) {
+      String cleanedComment = StringUtils.remove(comment, expectedStart);
 
       EnumMap<IssueAttribute, String> attr = new EnumMap<>(IssueAttribute.class);
       String expectedMessage = StringUtils.substringBetween(cleanedComment, "{{", "}}");
