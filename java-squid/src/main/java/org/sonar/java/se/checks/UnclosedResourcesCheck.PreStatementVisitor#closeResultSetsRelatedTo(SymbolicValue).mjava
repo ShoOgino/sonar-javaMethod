@@ -1,0 +1,12 @@
+    private void closeResultSetsRelatedTo(SymbolicValue value) {
+      final List<ConstrainedValue> constrainedValues = programState.getValuesWithConstraints(Status.OPENED);
+      for (ConstrainedValue constrainedValue : constrainedValues) {
+        if (constrainedValue.value instanceof ResourceWrapperSymbolicValue) {
+          ResourceWrapperSymbolicValue rValue = (ResourceWrapperSymbolicValue) constrainedValue.value;
+          if (value.equals(rValue.dependent)) {
+            programState = programState.addConstraint(rValue, constrainedValue.constraint.withStatus(Status.CLOSED));
+          }
+        }
+      }
+    }
+

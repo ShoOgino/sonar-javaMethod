@@ -1,10 +1,12 @@
   @Override
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
-    final List<ObjectConstraint> constraints = context.getState().getFieldConstraints(States.OPENED);
+    final List<ObjectConstraint> constraints = context.getState().getFieldConstraints(Status.OPENED);
     for (ObjectConstraint constraint : constraints) {
       Tree syntaxNode = constraint.syntaxNode();
-      if (syntaxNode instanceof NewClassTree) {
+      if (syntaxNode.is(Tree.Kind.NEW_CLASS)) {
         context.reportIssue(syntaxNode, this, "Close this \"" + ((NewClassTree) syntaxNode).identifier() + "\".");
+      } else if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
+        context.reportIssue(syntaxNode, this, "Close this \"" + toString((MethodInvocationTree) syntaxNode) + "\".");
       }
     }
   }

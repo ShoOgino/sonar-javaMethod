@@ -1,0 +1,16 @@
+  public void adequateHandling(String url, String query) {
+    try (Connection connection = DriverManager.getConnection(url);) {
+      Statement statement = connection.createStatement();
+      try {
+        ResultSet result = statement.executeQuery(query);
+        try {
+          String name = result.getString(0);
+        } finally {
+          result.close();
+        }
+      } finally {
+        statement.close();
+      }
+    }
+  }
+

@@ -1,0 +1,16 @@
+  public List<ConstrainedValue> getValuesWithConstraints(final Object state) {
+    final List<ConstrainedValue> result = new ArrayList<>();
+    constraints.forEach(new PMap.Consumer<SymbolicValue, Object>() {
+      @Override
+      public void accept(SymbolicValue value, Object valueConstraint) {
+        if (valueConstraint instanceof ObjectConstraint) {
+          ObjectConstraint constraint = (ObjectConstraint) valueConstraint;
+          if (constraint.hasStatus(state)) {
+            result.add(new ConstrainedValue(value, constraint));
+          }
+        }
+      }
+    });
+    return result;
+  }
+
