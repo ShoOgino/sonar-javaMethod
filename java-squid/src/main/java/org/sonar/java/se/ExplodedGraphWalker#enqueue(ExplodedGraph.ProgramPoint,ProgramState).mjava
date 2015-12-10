@@ -1,18 +1,4 @@
   public void enqueue(ExplodedGraph.ProgramPoint programPoint, ProgramState programState) {
-    int nbOfExecution = programState.numberOfTimeVisited(programPoint);
-    if (nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
-      debugPrint(programState);
-      return;
-    }
-    if (isExplodedGraphTooBig(programState)) {
-      throw new ExplodedGraphTooBigException("Program state constraints are too big : stopping Symbolic Execution for method "
-        + methodTree.simpleName().name() + " in class " + methodTree.symbol().owner().name());
-    }
-    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, programState.visitedPoint(programPoint, nbOfExecution + 1));
-    if (!cachedNode.isNew) {
-      // has been enqueued earlier
-      return;
-    }
-    workList.addFirst(cachedNode);
+    enqueue(programPoint, programState, false);
   }
 

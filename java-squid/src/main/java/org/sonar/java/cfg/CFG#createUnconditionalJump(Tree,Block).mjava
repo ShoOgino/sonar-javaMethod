@@ -2,7 +2,11 @@
     Block result = createBlock();
     result.terminator = terminator;
     if (target != null) {
-      result.addSuccessor(target);
+      if (target == exitBlock()) {
+        result.addExitSuccessor(target);
+      } else {
+        result.addSuccessor(target);
+      }
     }
     return result;
   }
