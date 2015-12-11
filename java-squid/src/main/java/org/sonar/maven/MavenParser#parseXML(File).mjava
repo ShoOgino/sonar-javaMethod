@@ -1,0 +1,19 @@
+  @CheckForNull
+  public static MavenProject parseXML(File file) {
+    try (FileInputStream is = new FileInputStream(file)) {
+      JAXBContext context = JAXBContext.newInstance("org.sonar.maven.model.maven2");
+      XMLInputFactory factory = XMLInputFactory.newInstance();
+      XMLStreamReader reader = factory.createXMLStreamReader(is);
+      StreamListener streamListener = new StreamListener(reader);
+      Unmarshaller unmarshaller = context.createUnmarshaller();
+      unmarshaller.setListener(streamListener);
+
+      unmarshaller.setAdapter(new LocatedAttributeAdapter(reader));
+
+      return unmarshaller.unmarshal(reader, MavenProject.class).getValue();
+    } catch (JAXBException | XMLStreamException | IOException e) {
+      LOG.error("Unable to parse pom file " + file.getPath(), e);
+    }
+    return null;
+  }
+
