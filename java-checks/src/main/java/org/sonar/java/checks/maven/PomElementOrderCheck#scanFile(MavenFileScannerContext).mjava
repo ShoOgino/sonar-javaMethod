@@ -1,0 +1,36 @@
+  @Override
+  public void scanFile(MavenFileScannerContext context) {
+    MavenProject project = context.getMavenProject();
+    boolean correctOrder = checkPositions(project.startLocation(),
+      project.getModelVersion(),
+      project.getParent(),
+      project.getGroupId(),
+      project.getArtifactId(),
+      project.getVersion(),
+      project.getPackaging(),
+      project.getInceptionYear(),
+      project.getOrganization(),
+      project.getLicenses(),
+      project.getDevelopers(),
+      project.getContributors(),
+      project.getPrerequisites(),
+      project.getModules(),
+      project.getScm(),
+      project.getIssueManagement(),
+      project.getCiManagement(),
+      project.getDistributionManagement(),
+      project.getProperties(),
+      project.getDependencyManagement(),
+      project.getDependencies(),
+      project.getRepositories(),
+      project.getPluginRepositories(),
+      project.getBuild(),
+      project.getReporting(),
+      project.getProfiles()
+      );
+
+    if (!correctOrder) {
+      context.reportIssue(this, project.startLocation().line(), "Reorder the elements of this pom to match the recommended order.");
+    }
+  }
+
