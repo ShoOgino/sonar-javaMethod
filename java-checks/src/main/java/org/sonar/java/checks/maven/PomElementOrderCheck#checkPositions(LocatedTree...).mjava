@@ -1,0 +1,16 @@
+  private static List<Location> checkPositions(LocatedTree... trees) {
+    List<Location> issues = new LinkedList<>();
+    List<LocatedTree> expectedOrder = getNonNullTrees(trees);
+    List<LocatedTree> observedOrder = sortByLine(expectedOrder);
+
+    for (int index = 0; index < expectedOrder.size(); index++) {
+      LocatedTree expected = expectedOrder.get(index);
+      int indexObserved = observedOrder.indexOf(expected);
+      if (!issues.isEmpty() || index != indexObserved) {
+        issues.add(new Location("Expected position: " + (index + 1), expected));
+      }
+    }
+
+    return issues;
+  }
+
