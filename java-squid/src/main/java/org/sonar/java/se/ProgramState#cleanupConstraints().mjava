@@ -1,0 +1,18 @@
+  public ProgramState cleanupConstraints() {
+    PMap<SymbolicValue, Object> newConstraints = constraints;
+    PMap<SymbolicValue, Integer> newReferences = references;
+    boolean newProgramState = false;
+    for (Iterator<Map.Entry<SymbolicValue, Object>> iter = newConstraints.entriesIterator(); iter.hasNext();) {
+      Map.Entry<SymbolicValue, Object> next = iter.next();
+      SymbolicValue symbolicValue = next.getKey();
+      if (!isReachable(symbolicValue, newReferences) && isDisposable(symbolicValue, next.getValue()) && !inStack(stack, symbolicValue)) {
+        if (!newProgramState) {
+          newProgramState = true;
+        }
+        newConstraints = newConstraints.remove(symbolicValue);
+        newReferences = newReferences.remove(symbolicValue);
+      }
+    }
+    return newProgramState ? new ProgramState(values, newReferences, newConstraints, visitedPoints, stack) : this;
+  }
+

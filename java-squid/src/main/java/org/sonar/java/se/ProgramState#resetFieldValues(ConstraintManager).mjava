@@ -15,9 +15,17 @@
       return this;
     }
     PMap<Symbol, SymbolicValue> newValues = values;
+    PMap<SymbolicValue, Integer> newReferences = references;
     for (VariableTree variableTree : variableTrees) {
-      newValues = newValues.put(variableTree.symbol(), constraintManager.createSymbolicValue(variableTree));
+      Symbol symbol = variableTree.symbol();
+      SymbolicValue oldValue = newValues.get(symbol);
+      if (oldValue != null) {
+        newReferences = decreaseReference(newReferences, oldValue);
+      }
+      SymbolicValue newValue = constraintManager.createSymbolicValue(variableTree);
+      newValues = newValues.put(symbol, newValue);
+      newReferences = increaseReference(newReferences, newValue);
     }
-    return new ProgramState(newValues, constraints, visitedPoints, stack);
+    return new ProgramState(newValues, newReferences, constraints, visitedPoints, stack);
   }
 

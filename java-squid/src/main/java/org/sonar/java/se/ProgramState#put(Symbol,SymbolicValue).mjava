@@ -2,9 +2,15 @@
     if (symbol.isUnknown()) {
       return this;
     }
-    PMap<Symbol, SymbolicValue> newValues = values.put(symbol, value);
-    if (newValues != values) {
-      return new ProgramState(newValues, constraints, visitedPoints, stack);
+    SymbolicValue oldValue = values.get(symbol);
+    if (oldValue == null || oldValue != value) {
+      PMap<SymbolicValue, Integer> newReferences = references;
+      if (oldValue != null) {
+        newReferences = decreaseReference(newReferences, oldValue);
+      }
+      newReferences = increaseReference(newReferences, value);
+      PMap<Symbol, SymbolicValue> newValues = values.put(symbol, value);
+      return new ProgramState(newValues, newReferences, constraints, visitedPoints, stack);
     }
     return this;
   }
