@@ -1,0 +1,10 @@
+  @Override
+  public void reportIssue(MavenCheck check, int line, String message, List<Location> secondary) {
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(check, file, line, message, 0);
+    for (Location location : secondary) {
+      AnalyzerMessage secondaryLocation = getSecondaryAnalyzerMessage(check, location);
+      analyzerMessage.secondaryLocations.add(secondaryLocation);
+    }
+    sonarComponents.reportIssue(analyzerMessage);
+  }
+

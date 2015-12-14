@@ -1,0 +1,10 @@
+  @Test
+  public void should_report_issue_on_lines_of_all_locations() {
+    ArrayList<Location> secondaries = new ArrayList<Location>();
+    secondaries.add(new Location("msg1", fakeLocatedTree(LINE, 42)));
+    // ignore unknown column
+    secondaries.add(new Location("msg2", fakeLocatedTreeWithUnknownColumn(LINE)));
+    context.reportIssue(CHECK, LINE, "message", secondaries);
+    assertThat(reportedMessage).isEqualTo("analyzerMessage:message;msg1;msg2");
+  }
+

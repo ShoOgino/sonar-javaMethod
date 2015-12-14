@@ -14,6 +14,17 @@
         return null;
       }
     }).when(sonarComponents).addIssue(any(File.class), eq(CHECK), eq(-1), anyString(), eq((Double) null));
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        AnalyzerMessage analyzerMessage = (AnalyzerMessage) invocation.getArguments()[0];
+        reportedMessage = "analyzerMessage:" + analyzerMessage.getMessage();
+        for (AnalyzerMessage secondary : analyzerMessage.secondaryLocations) {
+          reportedMessage += ";" + secondary.getMessage();
+        }
+        return null;
+      }
+    }).when(sonarComponents).reportIssue(any(AnalyzerMessage.class));
 
     return sonarComponents;
   }
