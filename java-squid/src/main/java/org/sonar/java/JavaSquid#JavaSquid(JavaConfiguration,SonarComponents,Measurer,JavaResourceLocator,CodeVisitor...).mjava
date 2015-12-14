@@ -25,7 +25,8 @@
 
     //AstScanner for main files
     astScanner = new JavaAstScanner(JavaParser.createParser(conf.getCharset()));
-    astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, conf, sonarComponents, true));
+    boolean enableSymbolicExecution = hasASymbolicExecutionCheck(visitors);
+    astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, conf, sonarComponents, enableSymbolicExecution));
 
     //AstScanner for test files
     astScannerForTests = new JavaAstScanner(astScanner);
