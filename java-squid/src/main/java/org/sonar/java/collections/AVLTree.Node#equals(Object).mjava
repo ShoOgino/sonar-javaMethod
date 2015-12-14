@@ -5,10 +5,16 @@
       }
       if (obj instanceof Node) {
         Node other = (Node) obj;
-        return Objects.equals(this.key, other.key)
-          && Objects.equals(this.value, other.value)
-          && Objects.equals(this.left, other.left)
-          && Objects.equals(this.right, other.right);
+        int c = 0;
+        for (Iterator<Map.Entry> iter = entriesIterator(); iter.hasNext();) {
+          Map.Entry next = iter.next();
+          Object otherValue = other.get(next.getKey());
+          if (otherValue == null || !Objects.equals(next.getValue(), otherValue)) {
+            return false;
+          }
+          c++;
+        }
+        return c == Iterators.size(other.entriesIterator());
       }
       return false;
     }

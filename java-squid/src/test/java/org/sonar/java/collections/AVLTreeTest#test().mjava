@@ -13,9 +13,17 @@
     }
     assertThat(Counter.countSet(t)).isEqualTo(100);
     assertThat(Counter.countMap(t)).isEqualTo(100);
+    assertThat(t.entriesIterator()).hasSize(100);
     assertThat(t.height())
       .isGreaterThanOrEqualTo(8)
       .isLessThanOrEqualTo(10);
+    AVLTree<Integer, Object> t1 = t;
+    t = t.remove(45);
+    t = t.remove(21);
+    t = t.add(21);
+    t = t.add(45);
+    assertThat(t).isEqualTo(t1);
+    assertThat(t.hashCode()).isEqualTo(t1.hashCode());
 
     for (Integer key : keys) {
       assertThat(t.contains(key)).isTrue();

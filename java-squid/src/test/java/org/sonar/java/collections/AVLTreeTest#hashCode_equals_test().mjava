@@ -1,0 +1,28 @@
+  @Test
+  public void hashCode_equals_test() {
+    AVLTree<Integer, Object> t = AVLTree.create();
+    t = t.add(1);
+    t = t.add(2);
+    AVLTree<Integer, Object> t2 = AVLTree.create();
+    t2 = t2.add(2);
+    t2 = t2.add(1);
+    assertThat(t).isEqualTo(t2);
+    assertThat(t.hashCode()).isEqualTo(t2.hashCode());
+    assertThat(t.entriesIterator()).hasSize(2);
+    assertTrue(Iterators.elementsEqual(t.entriesIterator(), t2.entriesIterator()));
+    assertThat(t.entriesIterator()).containsOnly(new AbstractMap.SimpleImmutableEntry(1, 1), new AbstractMap.SimpleImmutableEntry(2, 2));
+    t2 = t2.add(3);
+    assertThat(t.hashCode()).isNotEqualTo(t2.hashCode());
+    assertThat(t).isNotEqualTo(t2);
+    assertThat(t2.entriesIterator()).hasSize(3);
+    t = t.put(3, 33);
+    assertThat(t).isNotEqualTo(t2);
+    t = t.add(3);
+    assertThat(t).isEqualTo(t2);
+    t = t.add(4);
+    assertThat(t).isNotEqualTo(t2);
+    assertThat(t.entriesIterator()).hasSize(4);
+    assertThat(t).isEqualTo(t);
+    assertThat(t).isNotEqualTo(new Object());
+  }
+
