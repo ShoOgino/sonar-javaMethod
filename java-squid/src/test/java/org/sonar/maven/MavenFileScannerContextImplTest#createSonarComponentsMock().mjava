@@ -1,0 +1,20 @@
+  private static SonarComponents createSonarComponentsMock() {
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        reportedMessage = "onLine:" + (String) invocation.getArguments()[3];
+        return null;
+      }
+    }).when(sonarComponents).addIssue(any(File.class), eq(CHECK), eq(LINE), anyString(), eq((Double) null));
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        reportedMessage = "onFile:" + (String) invocation.getArguments()[3];
+        return null;
+      }
+    }).when(sonarComponents).addIssue(any(File.class), eq(CHECK), eq(-1), anyString(), eq((Double) null));
+
+    return sonarComponents;
+  }
+

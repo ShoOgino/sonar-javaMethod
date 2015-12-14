@@ -1,0 +1,10 @@
+  private void simpleScan(File file) {
+    MavenProject project = MavenParser.parseXML(file);
+    if (project != null) {
+      MavenFileScannerContext scannerContext = new MavenFileScannerContextImpl(project, file, sonarComponents);
+      for (MavenFileScanner mavenFileScanner : scanners) {
+        mavenFileScanner.scanFile(scannerContext);
+      }
+    }
+  }
+

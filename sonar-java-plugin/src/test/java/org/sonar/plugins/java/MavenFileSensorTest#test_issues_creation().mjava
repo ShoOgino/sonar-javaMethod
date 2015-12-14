@@ -1,0 +1,18 @@
+  @Test
+  public void test_issues_creation() throws Exception {
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    File file = new File("src/test/files/maven/pom.xml");
+    fs.add(new DefaultInputFile(file.getPath()).setFile(file).setLanguage(Java.KEY));
+    CodeVisitor mavenCheck = new PomElementOrderCheck();
+    CodeVisitor javaCheck = new BadMethodName_S00100_Check();
+    SonarComponents sonarComponents = createSonarComponentsMock(fs, mavenCheck, javaCheck);
+    MavenFileSensor mps = new MavenFileSensor(sonarComponents, fs);
+
+    SensorContext context = mock(SensorContext.class);
+    when(context.getResource(any(InputPath.class))).thenReturn(org.sonar.api.resources.File.create("src/test/files/maven/pom.xml"));
+
+    mps.analyse(mock(Project.class), context);
+
+    verify(sonarComponents, times(1)).addIssue(eq(file.getAbsoluteFile()), any(MavenCheck.class), any(Integer.class), anyString(), isNull(Double.class));
+  }
+

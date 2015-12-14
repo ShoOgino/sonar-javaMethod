@@ -1,0 +1,13 @@
+  private static SonarComponents createSonarComponentsMock(DefaultFileSystem fs, CodeVisitor... codeVisitor) {
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    when(sonarComponents.checkClasses()).thenReturn(codeVisitor);
+
+    when(sonarComponents.getFileSystem()).thenReturn(fs);
+
+    Checks<JavaCheck> checks = mock(Checks.class);
+    when(checks.ruleKey(any(JavaCheck.class))).thenReturn(RuleKey.of("squid", RuleAnnotationUtils.getRuleKey(PomElementOrderCheck.class)));
+    when(sonarComponents.checks()).thenReturn(Lists.<Checks<JavaCheck>>newArrayList(checks));
+
+    return sonarComponents;
+  }
+
