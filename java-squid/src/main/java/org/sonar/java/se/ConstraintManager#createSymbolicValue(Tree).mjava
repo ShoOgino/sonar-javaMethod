@@ -25,9 +25,14 @@
       case INSTANCE_OF:
         result = new SymbolicValue.InstanceOfSymbolicValue(counter);
         break;
+      case MEMBER_SELECT:
+        result = createIdentifierSymbolicValue(((MemberSelectExpressionTree) syntaxNode).identifier());
+        break;
+      case IDENTIFIER:
+        result = createIdentifierSymbolicValue((IdentifierTree) syntaxNode);
+        break;
       default:
-        result = symbolicValueFactory == null ? new SymbolicValue(counter) : symbolicValueFactory.createSymbolicValue(counter, syntaxNode);
-        symbolicValueFactory = null;
+        result = createDefaultSymbolicValue(syntaxNode);
     }
     counter++;
     return result;
