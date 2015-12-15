@@ -1,0 +1,13 @@
+  private void executeLogicalAssignement(AssignmentExpressionTree tree) {
+    ExpressionTree variable = tree.variable();
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      ProgramState.Pop unstack = programState.unstackValue(2);
+      SymbolicValue value = unstack.values.get(1);
+      programState = unstack.state;
+      SymbolicValue symbolicValue = constraintManager.createSymbolicValue(tree);
+      symbolicValue.computedFrom(ImmutableList.of(programState.getValue(((IdentifierTree) variable).symbol()), value));
+      programState = programState.put(((IdentifierTree) variable).symbol(), symbolicValue);
+      programState = programState.stackValue(symbolicValue);
+    }
+  }
+
