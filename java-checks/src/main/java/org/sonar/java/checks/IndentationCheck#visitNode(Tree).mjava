@@ -5,7 +5,7 @@
       // Exclude anonymous classes
       isInAnonymousClass.push(classTree.simpleName() == null);
       if (!isInAnonymousClass.peek()) {
-        checkIndentation(Lists.newArrayList(classTree));
+        checkIndentation(Collections.singletonList(classTree));
       }
     }
     expectedLevel += indentationLevel;
@@ -30,7 +30,13 @@
       checkIndentation(((CaseGroupTree) tree).body());
     }
     if (tree.is(Kind.BLOCK)) {
+      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
+        expectedLevel += indentationLevel;
+      }
       checkIndentation(((BlockTree) tree).body());
+      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
+        expectedLevel -= indentationLevel;
+      }
     }
   }
 
