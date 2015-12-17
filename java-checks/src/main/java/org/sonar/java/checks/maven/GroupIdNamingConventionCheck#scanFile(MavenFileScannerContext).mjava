@@ -1,0 +1,15 @@
+  @Override
+  public void scanFile(MavenFileScannerContext context) {
+    if (pattern == null) {
+      try {
+        pattern = Pattern.compile(regex, Pattern.DOTALL);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("[S3419] Unable to compile the regular expression: " + regex, e);
+      }
+    }
+    LocatedAttribute groupId = context.getMavenProject().getGroupId();
+    if (groupId != null && !pattern.matcher(groupId.getValue()).matches()) {
+      context.reportIssue(this, groupId, "Update this \"groupId\" to match the provided regular expression: '" + regex + "'");
+    }
+  }
+
