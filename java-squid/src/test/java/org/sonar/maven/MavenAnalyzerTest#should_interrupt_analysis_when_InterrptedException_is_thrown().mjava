@@ -1,0 +1,16 @@
+  @Test
+  public void should_interrupt_analysis_when_InterrptedException_is_thrown() {
+
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    File pomFile = new File(SIMPLE_POM);
+    fs.add(new DefaultInputFile(pomFile.getAbsolutePath()).setFile(pomFile).setLanguage("xml"));
+    MavenCheckThrowingException check = new MavenCheckThrowingException(new RuntimeException("Analysis cancelled"));
+    SonarComponents sonarComponents = createSonarComponentsMock(fs, check);
+
+    thrown.expectMessage("Analysis cancelled");
+    thrown.expect(RuntimeException.class);
+
+    MavenAnalyzer analyzer = new MavenAnalyzer(sonarComponents, check);
+    analyzer.scan(Lists.newArrayList(pomFile));
+  }
+

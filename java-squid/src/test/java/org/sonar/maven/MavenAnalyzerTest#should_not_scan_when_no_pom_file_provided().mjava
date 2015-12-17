@@ -1,0 +1,12 @@
+  @Test
+  public void should_not_scan_when_no_pom_file_provided() {
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    SonarComponents sonarComponents = createSonarComponentsMock(fs, MAVEN_CHECK);
+
+    MavenAnalyzer analyzer = new MavenAnalyzer(sonarComponents, MAVEN_CHECK);
+    analyzer.scan(new ArrayList<File>());
+
+    verify(sonarComponents, never()).addIssue(any(File.class), any(MavenCheck.class), any(Integer.class), anyString(), isNull(Double.class));
+    verify(sonarComponents, never()).reportIssue(any(AnalyzerMessage.class));
+  }
+

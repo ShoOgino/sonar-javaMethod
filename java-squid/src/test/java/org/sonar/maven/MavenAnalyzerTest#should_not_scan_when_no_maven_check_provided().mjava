@@ -1,0 +1,14 @@
+  @Test
+  public void should_not_scan_when_no_maven_check_provided() {
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    File pomFile = new File(SIMPLE_POM);
+    fs.add(new DefaultInputFile(pomFile.getAbsolutePath()).setFile(pomFile).setLanguage("xml"));
+    SonarComponents sonarComponents = createSonarComponentsMock(fs, JAVA_CHECK);
+
+    MavenAnalyzer analyzer = new MavenAnalyzer(sonarComponents, JAVA_CHECK);
+    analyzer.scan(Lists.newArrayList(pomFile));
+
+    verify(sonarComponents, never()).addIssue(any(File.class), any(MavenCheck.class), any(Integer.class), anyString(), isNull(Double.class));
+    verify(sonarComponents, never()).reportIssue(any(AnalyzerMessage.class));
+  }
+
