@@ -1,0 +1,15 @@
+  @Override
+  public void scanFile(MavenFileScannerContext context) {
+    if (pattern == null) {
+      try {
+        pattern = Pattern.compile(regex, Pattern.DOTALL);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("[S3420] Unable to compile the regular expression: " + regex, e);
+      }
+    }
+    LocatedAttribute artifactId = context.getMavenProject().getArtifactId();
+    if (artifactId != null && !pattern.matcher(artifactId.getValue()).matches()) {
+      context.reportIssue(this, artifactId, "Update this \"artifactId\" to match the provided regular expression: '" + regex + "'");
+    }
+  }
+
