@@ -1,0 +1,8 @@
+  @Test
+  public void testMethodInvocationOnOtherInvocation() {
+    final MethodTree tree = buildSyntaxTree("public void test() {int i = checkForNullMethod().length();}");
+    final BlockTree block = tree.block();
+    final StatementTree statementTree = block.body().get(0);
+    assertThat(SyntaxTreeNameFinder.getName(statementTree)).isEqualTo("checkForNullMethod");
+  }
+

@@ -1,0 +1,9 @@
+  @Test
+  public void testClassCast() {
+    final MethodTree tree = buildSyntaxTree("public boolean equals(Object obj) {((String) obj).toString();}");
+    final BlockTree block = tree.block();
+    final StatementTree statementTree = block.body().get(0);
+    final MethodInvocationTree methodInvocation = (MethodInvocationTree) ((ExpressionStatementTree) statementTree).expression();
+    assertThat(SyntaxTreeNameFinder.getName(methodInvocation)).isEqualTo("obj");
+  }
+
