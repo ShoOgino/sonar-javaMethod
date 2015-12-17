@@ -1,26 +1,14 @@
   @Override
   public void visitNode(Tree tree) {
-    Symbol symbol;
-    if (tree.is(Tree.Kind.NEW_CLASS)) {
-      symbol = ((NewClassTree) tree).constructorSymbol();
-    } else {
-      symbol = ((MethodInvocationTree) tree).symbol();
-    }
+    Symbol symbol = ((IdentifierTree) tree).symbol();
     if (symbol.metadata().isAnnotatedWith("java.lang.Deprecated")) {
-      String name = symbol.name();
-      String message;
-      if ("<init>".equals(name)) {
-        message = "Constructor '" + symbol.owner().name() + "(...)' is deprecated.";
+      String name;
+      if (symbol.isMethodSymbol() && "<init>".equals(symbol.name())) {
+        name = symbol.owner().name();
       } else {
-        message = "Method '" + symbol.owner().name() + "." + name + "(...)' is deprecated.";
+        name = symbol.name();
       }
-      Tree reported;
-      if (tree.is(Tree.Kind.NEW_CLASS)) {
-        reported = ((NewClassTree) tree).identifier();
-      } else {
-        reported = MethodsHelper.methodName((MethodInvocationTree) tree);
-      }
-      reportIssue(reported, message);
+      reportIssue(tree, "Remove this use of \"" + name + "\"; it is deprecated.");
     }
   }
 
