@@ -1,5 +1,6 @@
   private Iterable<ProgramState> startingStates(MethodTree tree, ProgramState ps) {
     Iterable<ProgramState> startingStates = Lists.newArrayList(ps);
+    boolean isEqualsMethod = EQUALS_METHOD_NAME.equals(tree.simpleName().name()) && tree.parameters().size() == 1;
     for (final VariableTree variableTree : tree.parameters()) {
       // create
       final SymbolicValue sv = constraintManager.createSymbolicValue(variableTree);
@@ -10,8 +11,7 @@
         }
       });
 
-      if (variableTree.symbol().metadata().isAnnotatedWith("javax.annotation.CheckForNull")
-        || variableTree.symbol().metadata().isAnnotatedWith("javax.annotation.Nullable")) {
+      if (isEqualsMethod || parameterCanBeNull(variableTree)) {
         startingStates = Iterables.concat(Iterables.transform(startingStates, new Function<ProgramState, List<ProgramState>>() {
           @Override
           public List<ProgramState> apply(ProgramState input) {
