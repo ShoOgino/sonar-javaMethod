@@ -1,0 +1,14 @@
+  private void checkClass(ClassTree classTree) {
+    if (!ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.ABSTRACT)) {
+      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) classTree.symbol();
+      Iterable<Symbol> members = getAllMembers(symbol);
+      IdentifierTree simpleName = classTree.simpleName();
+      if (classTree.symbol().metadata().isAnnotatedWith("org.testng.annotations.Test")) {
+        checkTestNGmembers(simpleName, members);
+      } else {
+        checkJunit3TestClass(simpleName, symbol, members);
+        checkJunit4TestClass(simpleName, symbol, members);
+      }
+    }
+  }
+
