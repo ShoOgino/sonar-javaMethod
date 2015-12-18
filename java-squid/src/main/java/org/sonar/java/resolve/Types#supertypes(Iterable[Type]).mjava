@@ -1,15 +1,19 @@
   private static List<Set<Type>> supertypes(Iterable<Type> types) {
-    List<Set<Type>> results = new LinkedList<>();
-    for (Type type : types) {
-      checkParametrizedType(type);
-      Set<Type> supertypes = new LinkedHashSet<>();
-      supertypes.add(type);
-      for (Type supertype : ((JavaType) type).symbol.superTypes()) {
-        checkParametrizedType(supertype);
-        supertypes.add(supertype);
+    try {
+      List<Set<Type>> results = new LinkedList<>();
+      for (Type type : types) {
+        checkParametrizedType(type);
+        Set<Type> supertypes = new LinkedHashSet<>();
+        supertypes.add(type);
+        for (Type supertype : ((JavaType) type).symbol.superTypes()) {
+          checkParametrizedType(supertype);
+          supertypes.add(supertype);
+        }
+        results.add(supertypes);
       }
-      results.add(supertypes);
+      return results;
+    } catch (UnsupportedOperationException e) {
+      return Collections.emptyList();
     }
-    return results;
   }
 
