@@ -1,14 +1,19 @@
   @Override
   public void visitNode(Tree tree) {
-    Symbol symbol = ((IdentifierTree) tree).symbol();
-    if (symbol.metadata().isAnnotatedWith("java.lang.Deprecated")) {
-      String name;
-      if (symbol.isMethodSymbol() && "<init>".equals(symbol.name())) {
-        name = symbol.owner().name();
-      } else {
-        name = symbol.name();
+    if (tree.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) tree).symbol();
+      if (symbol.isDeprecated() && nestedDeprecationLevel == 0) {
+        String name;
+        if (isConstructor(symbol)) {
+          name = symbol.owner().name();
+        } else {
+          name = symbol.name();
+        }
+        reportIssue(tree, "Remove this use of \"" + name + "\"; it is deprecated.");
       }
-      reportIssue(tree, "Remove this use of \"" + name + "\"; it is deprecated.");
+    } else if (isDeprecatedMethod(tree) || isDeprecatedClassTree(tree)) {
+      nestedDeprecationLevel++;
     }
+
   }
 
