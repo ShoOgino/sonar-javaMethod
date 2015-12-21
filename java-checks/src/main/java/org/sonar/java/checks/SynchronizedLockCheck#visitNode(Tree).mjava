@@ -1,8 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
-    Type syncArgumentType = ((SynchronizedStatementTree) tree).expression().symbolType();
-    if (syncArgumentType.isSubtypeOf("java.util.concurrent.locks.Lock")) {
-      addIssue(tree, "Synchronize on this \"Lock\" object using \"acquire/release\".");
+    ExpressionTree expression = ((SynchronizedStatementTree) tree).expression();
+    if (expression.symbolType().isSubtypeOf("java.util.concurrent.locks.Lock")) {
+      reportIssue(expression, "Synchronize on this \"Lock\" object using \"acquire/release\".");
     }
   }
 

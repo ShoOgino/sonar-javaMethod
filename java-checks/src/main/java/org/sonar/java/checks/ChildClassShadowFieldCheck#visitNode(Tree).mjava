@@ -5,9 +5,10 @@
       Symbol.TypeSymbol superclassSymbol = classTree.superClass().symbolType().symbol();
       for (Tree member : classTree.members()) {
         if (member.is(Tree.Kind.VARIABLE)) {
-          String fieldName = ((VariableTree) member).simpleName().name();
+          VariableTree variableTree = (VariableTree) member;
+          String fieldName = variableTree.simpleName().name();
           if (!IGNORED_FIELDS.contains(fieldName)) {
-            checkForIssue(superclassSymbol, member, fieldName);
+            checkForIssue(superclassSymbol, variableTree, fieldName);
           }
         }
       }

@@ -3,7 +3,7 @@
     if (tree.is(Tree.Kind.SWITCH_STATEMENT)) {
       SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
       if (switchStatementTree.cases().isEmpty()) {
-        addIssue(switchStatementTree, "Either remove or fill this block of code.");
+        reportIssue(switchStatementTree.openBraceToken(), MESSAGE);
       }
     } else if (tree.is(Tree.Kind.METHOD) || tree.is(Tree.Kind.CONSTRUCTOR)) {
       isMethodBlock = true;
@@ -11,7 +11,7 @@
       if (isMethodBlock) {
         isMethodBlock = false;
       } else if (!hasStatements((BlockTree) tree) && !hasCommentInside((BlockTree) tree)) {
-        addIssue(tree, "Either remove or fill this block of code.");
+        reportIssue(((BlockTree) tree).openBraceToken(), MESSAGE);
       }
     }
   }
