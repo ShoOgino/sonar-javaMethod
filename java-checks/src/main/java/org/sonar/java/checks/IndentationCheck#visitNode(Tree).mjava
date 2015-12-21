@@ -10,33 +10,8 @@
     }
     expectedLevel += indentationLevel;
     isBlockAlreadyReported = false;
-
-    if (tree.is(Kind.CASE_GROUP)) {
-      List<CaseLabelTree> labels = ((CaseGroupTree) tree).labels();
-      if (labels.size() >= 2) {
-        CaseLabelTree previousCaseLabelTree = labels.get(labels.size() - 2);
-        lastCheckedLine = LastSyntaxTokenFinder.lastSyntaxToken(previousCaseLabelTree).line();
-      }
-    }
-
-    if (isClassTree(tree)) {
-      ClassTree classTree = (ClassTree) tree;
-      // Exclude anonymous classes
-      if (classTree.simpleName() != null) {
-        checkIndentation(classTree.members());
-      }
-    }
-    if (tree.is(Kind.CASE_GROUP)) {
-      checkIndentation(((CaseGroupTree) tree).body());
-    }
-    if (tree.is(Kind.BLOCK)) {
-      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
-        expectedLevel += indentationLevel;
-      }
-      checkIndentation(((BlockTree) tree).body());
-      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
-        expectedLevel -= indentationLevel;
-      }
-    }
+    checkCaseGroup(tree);
+    checkClassTree(tree);
+    checkBlock(tree);
   }
 

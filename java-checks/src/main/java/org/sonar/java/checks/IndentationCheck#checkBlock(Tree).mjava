@@ -1,0 +1,12 @@
+  private void checkBlock(Tree tree) {
+    if (tree.is(Kind.BLOCK)) {
+      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
+        expectedLevel += indentationLevel;
+      }
+      checkIndentation(((BlockTree) tree).body());
+      if (tree.parent().is(Kind.LAMBDA_EXPRESSION)) {
+        expectedLevel -= indentationLevel;
+      }
+    }
+  }
+
