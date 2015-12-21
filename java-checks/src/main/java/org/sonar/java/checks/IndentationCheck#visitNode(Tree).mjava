@@ -10,8 +10,22 @@
     }
     expectedLevel += indentationLevel;
     isBlockAlreadyReported = false;
-    checkCaseGroup(tree);
-    checkClassTree(tree);
-    checkBlock(tree);
+
+    switch (tree.kind()) {
+      case CLASS:
+      case ENUM:
+      case INTERFACE:
+      case ANNOTATION_TYPE:
+        checkClass((ClassTree) tree);
+        break;
+      case CASE_GROUP:
+        checkCaseGroup((CaseGroupTree) tree);
+        break;
+      case BLOCK:
+        checkBlock((BlockTree) tree);
+        break;
+      default:
+        break;
+    }
   }
 

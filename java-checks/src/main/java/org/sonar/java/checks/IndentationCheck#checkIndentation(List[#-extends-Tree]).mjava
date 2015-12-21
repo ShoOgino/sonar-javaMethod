@@ -1,11 +1,6 @@
   private void checkIndentation(List<? extends Tree> trees) {
     for (Tree tree : trees) {
-      SyntaxToken firstSyntaxToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
-      if (firstSyntaxToken.column() != expectedLevel && !isExcluded(tree, firstSyntaxToken.line())) {
-        addIssue(tree, "Make this line start at column " + (expectedLevel + 1) + ".");
-        isBlockAlreadyReported = true;
-      }
-      lastCheckedLine = LastSyntaxTokenFinder.lastSyntaxToken(tree).line();
+      checkIndentation(tree, expectedLevel);
     }
   }
 
