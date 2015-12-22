@@ -1,0 +1,15 @@
+  @Override
+  public boolean matches(@Nullable LocatedAttribute attribute) {
+    if (attribute == null) {
+      return false;
+    }
+    ArtifactVersion dependencyVersion = getVersionSilently(attribute.getValue());
+    if (dependencyVersion == null) {
+      // unable to parse version, ignore this dependency
+      return false;
+    }
+    boolean matchesLowerBound = lowerBound == null || dependencyVersion.isAfterOrEqual(lowerBound);
+    boolean matchesUpperBound = upperBound == null || upperBound.isAfterOrEqual(dependencyVersion);
+    return matchesLowerBound && matchesUpperBound;
+  }
+

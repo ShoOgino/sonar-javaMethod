@@ -1,0 +1,17 @@
+    public boolean isAfterOrEqual(ArtifactVersion v, int i) {
+      if (i >= HANDLED_VERSIONS) {
+        return true;
+      }
+      Integer local = versions[i];
+      Integer target = v.versions[i];
+
+      if (target == null) {
+        return true;
+      } else if (local == null) {
+        return false;
+      }
+
+      int compare = local.compareTo(target);
+      return (compare > 0) || (compare == 0 && isAfterOrEqual(v, i + 1));
+    }
+
