@@ -1,11 +1,15 @@
-  private void leaveLoop(Tree tree) {
-    int count = 0;
+  private void leaveLoop(Tree primaryLocationTree) {
+    List<Tree> breakAndContinues = new ArrayList<>();
     if (!breakAndContinueCounter.isEmpty()) {
-      count = breakAndContinueCounter.pop();
+      breakAndContinues = breakAndContinueCounter.pop();
     }
-    if (count > 1) {
-      double effortToFix = count - 1.0;
-      context.addIssue(tree, this, "Reduce the total number of break and continue statements in this loop to use at most one.", effortToFix);
+    if (breakAndContinues.size() > 1) {
+      int effortToFix = breakAndContinues.size() - 1;
+      List<JavaFileScannerContext.Location> locations = new ArrayList<>();
+      for (Tree breakAndContinue : breakAndContinues) {
+        locations.add(new JavaFileScannerContext.Location("", breakAndContinue));
+      }
+      context.reportIssue(this, primaryLocationTree, "Reduce the total number of break and continue statements in this loop to use at most one.", locations, effortToFix);
     }
     loopCount--;
     currentScopeIsSwitch.pop();
