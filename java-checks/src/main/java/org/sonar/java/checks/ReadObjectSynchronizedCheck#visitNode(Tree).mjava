@@ -1,12 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      ClassTree classTree = (ClassTree) tree;
-      if (implementsSerializable(classTree)) {
-        for (Tree member : classTree.members()) {
-          if (member.is(Tree.Kind.METHOD) && isSynchronized((MethodTree) member) && isReadObject((MethodTree) member)) {
-            addIssue(member, "Remove the \"synchronized\" keyword from this method.");
-          }
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    if (implementsSerializable(classTree)) {
+      for (Tree member : classTree.members()) {
+        if (member.is(Tree.Kind.METHOD)) {
+          checkMember((MethodTree) member);
         }
       }
     }

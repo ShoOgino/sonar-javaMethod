@@ -5,12 +5,12 @@
         return "System".equals(((IdentifierTree) mset.expression()).name());
       } else if (mset.expression().is(Tree.Kind.METHOD_INVOCATION)) {
         MethodInvocationTree mit = (MethodInvocationTree) mset.expression();
-        if(mit.arguments().isEmpty() && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        if (mit.arguments().isEmpty() && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
           MemberSelectExpressionTree subMset = (MemberSelectExpressionTree) mit.methodSelect();
           //detect call to Runtime.getRuntime().gc()
           return "getRuntime".equals(subMset.identifier().name())
-              && subMset.expression().is(Tree.Kind.IDENTIFIER)
-              && "Runtime".equals(((IdentifierTree) subMset.expression()).name());
+            && subMset.expression().is(Tree.Kind.IDENTIFIER)
+            && "Runtime".equals(((IdentifierTree) subMset.expression()).name());
         }
       }
     }

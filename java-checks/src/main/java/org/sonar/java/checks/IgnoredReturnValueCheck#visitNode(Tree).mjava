@@ -5,7 +5,8 @@
       MethodInvocationTree mit = (MethodInvocationTree) est.expression();
       Type methodType = mit.symbolType();
       if (!returnsVoid(methodType) && isCheckedType(mit)) {
-        addIssue(tree, "The return value of \"" + methodName(mit) + "\" must be used.");
+        IdentifierTree methodName = MethodsHelper.methodName(mit);
+        reportIssue(methodName, "The return value of \"" + methodName.name() + "\" must be used.");
       }
     }
   }

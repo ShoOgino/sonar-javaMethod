@@ -2,12 +2,11 @@
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree firstArg = mit.arguments().get(0);
     ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(firstArg);
-    if (defaultPropertyValue != null) {
-      firstArg = defaultPropertyValue;
+    if (defaultPropertyValue == null) {
+      defaultPropertyValue = firstArg;
     }
-    if (firstArg != null && firstArg.is(Tree.Kind.STRING_LITERAL)) {
-      String algo = LiteralUtils.trimQuotes(((LiteralTree) firstArg).value());
-      checkIssue(mit, algo);
+    if (defaultPropertyValue != null && defaultPropertyValue.is(Tree.Kind.STRING_LITERAL)) {
+      checkIssue(firstArg, (LiteralTree) defaultPropertyValue);
     }
   }
 
