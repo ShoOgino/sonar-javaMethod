@@ -1,6 +1,6 @@
   @Test
   public void test_semantic_exclusions() {
-    InternalVisitorsBridge visitorsBridgeWithoutSemantic = new InternalVisitorsBridge(Collections.singletonList(new JavaFileScanner() {
+    VisitorsBridge visitorsBridgeWithoutSemantic = new VisitorsBridge(Collections.singletonList(new JavaFileScanner() {
       @Override
       public void scanFile(JavaFileScannerContext context) {
         assertThat(context.getSemanticModel() == null).isTrue();
@@ -14,7 +14,7 @@
     checkFile(contstructFileName("java", "io", "Serializable.java"), "package java.io; class A {}", visitorsBridgeWithoutSemantic);
     checkFile(contstructFileName("java", "lang", "annotation", "Annotation.java"), "package java.lang.annotation; class Annotation {}", visitorsBridgeWithoutSemantic);
 
-    InternalVisitorsBridge visitorsBridgeWithParsingIssue = new InternalVisitorsBridge(Collections.singletonList(new IssuableSubscriptionVisitor() {
+    VisitorsBridge visitorsBridgeWithParsingIssue = new VisitorsBridge(Collections.singletonList(new IssuableSubscriptionVisitor() {
       @Override
       public void scanFile(JavaFileScannerContext context) {
         assertThat(context.fileParsed()).isFalse();

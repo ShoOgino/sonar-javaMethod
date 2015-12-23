@@ -1,8 +1,13 @@
-  @Override
-  protected JavaFileScannerContext createScannerContext(CompilationUnitTree tree, SemanticModel semanticModel, boolean analyseAccessors, SonarComponents sonarComponents,
-    boolean failedParsing) {
-    testContext = new TestJavaFileScannerContext(tree, (SourceFile) getContext().peekSourceCode(), getContext().getFile(), semanticModel, analyseAccessors, sonarComponents,
-      getJavaVersion(), failedParsing);
-    return testContext;
+  protected JavaFileScannerContext createScannerContext(
+    CompilationUnitTree tree, SemanticModel semanticModel, boolean analyseAccessors, SonarComponents sonarComponents, boolean fileParsed) {
+    return new DefaultJavaFileScannerContext(
+      tree,
+      (SourceFile) getContext().peekSourceCode(),
+      getContext().getFile(),
+      semanticModel,
+      analyseAccessors,
+      sonarComponents,
+      javaVersion,
+      fileParsed);
   }
 
