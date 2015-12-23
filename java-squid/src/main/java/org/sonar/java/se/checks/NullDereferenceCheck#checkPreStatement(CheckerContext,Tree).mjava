@@ -5,14 +5,13 @@
       // stack is empty, nothing to do.
       return context.getState();
     }
-    if (syntaxNode.is(Tree.Kind.MEMBER_SELECT)) {
-      return checkMemberSelect(context, (MemberSelectExpressionTree) syntaxNode, currentVal);
-    }
+    Tree toCheck = syntaxNode;
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree methodInvocation = (MethodInvocationTree) syntaxNode;
-      if (methodInvocation.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-        return checkMemberSelect(context, (MemberSelectExpressionTree) methodInvocation.methodSelect(), currentVal);
-      }
+      toCheck = methodInvocation.methodSelect();
+    }
+    if (toCheck.is(Tree.Kind.MEMBER_SELECT)) {
+      return checkMemberSelect(context, (MemberSelectExpressionTree) toCheck, currentVal);
     }
     return context.getState();
   }
