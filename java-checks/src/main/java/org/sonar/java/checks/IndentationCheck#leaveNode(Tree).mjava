@@ -1,6 +1,9 @@
   @Override
   public void leaveNode(Tree tree) {
-    if (tree.is(Kind.BLOCK)) {
+    if (tree.is(Kind.METHOD_INVOCATION)) {
+      restoreMethodInvocation((MethodInvocationTree) tree);
+      return;
+    } else if (tree.is(Kind.BLOCK)) {
       restoreBlockForExceptionalParents(tree.parent());
     }
     expectedLevel -= indentationLevel;

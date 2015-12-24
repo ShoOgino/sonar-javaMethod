@@ -1,0 +1,10 @@
+  public static boolean showJobDifferences(final String name, final JobsDifference.JobDifference diff, boolean onlyOkButton) {
+    FutureTask<Boolean> task = new FutureTask<>(() -> {
+      Optional<ButtonType> result = new DifferenceDialog(name, diff, onlyOkButton).showAndWait();
+      if (result.isPresent() && (result.get() == DifferenceDialog.ACTION_YES_ALL || result.get() == DifferenceDialog.ACTION_OK_ALL)) {
+        skipDialog = true;
+      }
+      return result.get() == DifferenceDialog.ACTION_YES || result.get() == DifferenceDialog.ACTION_YES_ALL;
+    });
+  }
+
