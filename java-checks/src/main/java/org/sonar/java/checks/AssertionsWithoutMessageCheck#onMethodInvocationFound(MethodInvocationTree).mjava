@@ -7,13 +7,11 @@
       }
       FestVisitor visitor = new FestVisitor();
       mit.methodSelect().accept(visitor);
-      if(!visitor.useDescription) {
-        addIssue(mit, "Add a message to this assertion.");
+      if (!visitor.useDescription) {
+        reportIssue(mit, "Add a message to this assertion.");
       }
-    } else {
-      if(mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
-        addIssue(mit, "Add a message to this assertion.");
-      }
+    } else if (mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
+      reportIssue(mit, "Add a message to this assertion.");
     }
   }
 

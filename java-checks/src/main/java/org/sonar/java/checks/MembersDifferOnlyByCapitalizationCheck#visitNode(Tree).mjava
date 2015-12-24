@@ -8,9 +8,11 @@
     Multimap<String, Symbol> membersByName = sortByName(allMembers);
     for (Tree member : classTree.members()) {
       if (member.is(Tree.Kind.METHOD)) {
-        checkForIssue(((MethodTree) member).symbol(), membersByName);
+        MethodTree methodTree = (MethodTree) member;
+        checkForIssue(methodTree.symbol(), methodTree.simpleName(), membersByName);
       } else if (member.is(Tree.Kind.VARIABLE)) {
-        checkForIssue(((VariableTree) member).symbol(), membersByName);
+        VariableTree variableTree = (VariableTree) member;
+        checkForIssue(variableTree.symbol(), variableTree.simpleName(), membersByName);
       }
     }
   }

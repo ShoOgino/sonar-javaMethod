@@ -2,10 +2,10 @@
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
     if (hasOneAbstractMethod(classTree) && !isAnnotated(classTree)) {
-      addIssue(
-        tree,
-        "Annotate the \"" + classTree.simpleName().name() + "\" interface with the @FunctionalInterface annotation" +
-          context.getJavaVersion().java8CompatibilityMessage());
+      IdentifierTree simpleName = classTree.simpleName();
+      reportIssue(
+        simpleName,
+        "Annotate the \"" + simpleName.name() + "\" interface with the @FunctionalInterface annotation" + context.getJavaVersion().java8CompatibilityMessage());
     }
   }
 

@@ -1,14 +1,8 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     if (!inWhileLoop.peek()) {
-      String methodName;
-      if(mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
-        methodName = mse.identifier().name();
-      } else {
-        methodName = ((IdentifierTree)mit.methodSelect()).name();
-      }
-      addIssue(mit, "Remove this call to \""+methodName+"\" or move it into a \"while\" loop.");
+      IdentifierTree identifierTree = MethodsHelper.methodName(mit);
+      reportIssue(identifierTree, "Remove this call to \"" + identifierTree.name() + "\" or move it into a \"while\" loop.");
     }
   }
 

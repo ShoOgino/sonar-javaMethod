@@ -1,12 +1,4 @@
   private static boolean isEmpty(ClassTree tree) {
-    if(!tree.modifiers().annotations().isEmpty()) {
-      return false;
-    }
-    for (Tree member : tree.members()) {
-      if (!member.is(Tree.Kind.EMPTY_STATEMENT)) {
-        return false;
-      }
-    }
-    return true;
+    return tree.modifiers().annotations().isEmpty() && Iterables.all(tree.members(), SyntaxNodePredicates.kind(Tree.Kind.EMPTY_STATEMENT));
   }
 

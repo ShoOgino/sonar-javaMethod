@@ -1,13 +1,13 @@
   private void checkSetupTearDownSignature(MethodTree methodTree) {
     Symbol.MethodSymbol symbol = methodTree.symbol();
     if (!symbol.isPublic()) {
-      addIssue(methodTree, "Make this method \"public\".");
+      reportIssue(methodTree, "Make this method \"public\".");
     } else if (!methodTree.parameters().isEmpty()) {
-      addIssue(methodTree, "This method does not accept parameters.");
+      reportIssue(methodTree, "This method does not accept parameters.");
     } else {
       TypeTree returnType = methodTree.returnType();
       if (returnType != null && !returnType.symbolType().isVoid()) {
-        addIssue(methodTree, "Make this method return \"void\".");
+        reportIssue(methodTree, "Make this method return \"void\".");
       }
     }
   }

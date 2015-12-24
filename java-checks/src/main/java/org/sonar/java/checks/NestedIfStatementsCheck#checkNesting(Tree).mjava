@@ -1,6 +1,11 @@
   private void checkNesting(Tree tree) {
-    if (nestingLevel == max + 1) {
-      context.addIssue(tree, this, "Refactor this code to not nest more than " + max + " if/for/while/switch/try statements.");
+    int size = nestingLevel.size();
+    if (size == max) {
+      List<JavaFileScannerContext.Location> secondary = new ArrayList<>(size);
+      for (Tree element : nestingLevel) {
+        secondary.add(new JavaFileScannerContext.Location("Nesting + 1", element));
+      }
+      context.reportIssue(this, tree, "Refactor this code to not nest more than " + max + " if/for/while/switch/try statements.", secondary, null);
     }
   }
 

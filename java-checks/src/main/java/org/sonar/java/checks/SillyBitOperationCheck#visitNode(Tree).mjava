@@ -1,9 +1,19 @@
   @Override
   public void visitNode(Tree tree) {
-    Long identityElement = getBitwiseOperationIdentityElement(tree);
-    Long evaluatedExpression = LiteralUtils.longLiteralValue(getExpression(tree));
-    if (evaluatedExpression != null && identityElement.equals(evaluatedExpression)) {
-      addIssue(tree, "Remove this silly bit operation.");
+    ExpressionTree expression;
+    SyntaxToken operatorToken;
+    if (tree.is(Kind.OR, Kind.XOR, Kind.AND)) {
+      BinaryExpressionTree binary = (BinaryExpressionTree) tree;
+      expression = binary.rightOperand();
+      operatorToken = binary.operatorToken();
+    } else {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
+      expression = assignment.expression();
+      operatorToken = assignment.operatorToken();
+    }
+    Long evaluatedExpression = LiteralUtils.longLiteralValue(expression);
+    if (evaluatedExpression != null && getBitwiseOperationIdentityElement(tree).equals(evaluatedExpression)) {
+      reportIssue(operatorToken, "Remove this silly bit operation.");
     }
   }
 

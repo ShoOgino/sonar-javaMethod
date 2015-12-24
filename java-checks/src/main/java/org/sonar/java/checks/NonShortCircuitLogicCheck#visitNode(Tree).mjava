@@ -1,10 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
     BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
-    if (isBoolean(binaryExpressionTree.leftOperand())) {
+    if (isBoolean(binaryExpressionTree.leftOperand().symbolType())) {
       String operator = binaryExpressionTree.operatorToken().text();
       String replacement = REPLACEMENTS.get(operator);
-      addIssue(tree, "Correct this \"" + operator + "\" to \"" + replacement + "\".");
+      reportIssue(binaryExpressionTree.operatorToken(), "Correct this \"" + operator + "\" to \"" + replacement + "\".");
     }
   }
 

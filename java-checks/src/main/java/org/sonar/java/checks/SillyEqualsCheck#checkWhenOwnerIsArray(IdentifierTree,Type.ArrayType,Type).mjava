@@ -1,0 +1,12 @@
+  private void checkWhenOwnerIsArray(IdentifierTree methodInvocationName, Type.ArrayType ownerType, Type argumentType) {
+    if (argumentType.isArray()) {
+      if (areNotRelated(ownerType.elementType(), ((Type.ArrayType) argumentType).elementType())) {
+        reportIssue(methodInvocationName, "Remove this call to \"equals\"; comparisons between unrelated arrays always return false.");
+      } else {
+        reportIssue(methodInvocationName, "Use \"Arrays.equals(array1, array2)\" or the \"==\" operator instead of using the \"Object.equals(Object obj)\" method.");
+      }
+    } else if (!argumentType.is(JAVA_LANG_OBJECT)) {
+      reportIssue(methodInvocationName, "Remove this call to \"equals\"; comparisons between an array and a type always return false.");
+    }
+  }
+

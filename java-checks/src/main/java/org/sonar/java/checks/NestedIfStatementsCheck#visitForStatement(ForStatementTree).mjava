@@ -1,8 +1,9 @@
   @Override
   public void visitForStatement(ForStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken forKeyword = tree.forKeyword();
+    checkNesting(forKeyword);
+    nestingLevel.push(forKeyword);
     super.visitForStatement(tree);
-    nestingLevel--;
+    nestingLevel.pop();
   }
 

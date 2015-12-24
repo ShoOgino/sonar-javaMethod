@@ -1,8 +1,9 @@
   @Override
   public void visitDoWhileStatement(DoWhileStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken doKeyword = tree.doKeyword();
+    checkNesting(doKeyword);
+    nestingLevel.push(doKeyword);
     super.visitDoWhileStatement(tree);
-    nestingLevel--;
+    nestingLevel.pop();
   }
 

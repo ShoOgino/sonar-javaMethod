@@ -2,21 +2,23 @@
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
       for (MethodMatcher matcher : CHECKED_METHODS) {
-        Symbol symbol = isTreeMethodInvocation(((ExpressionStatementTree) tree).expression(), matcher);
-        if (symbol != null) {
-          raiseIssue(tree, symbol.name());
+        MethodInvocationTree mit = isTreeMethodInvocation(((ExpressionStatementTree) tree).expression(), matcher);
+        if (mit != null) {
+          raiseIssue(MethodsHelper.methodName(mit));
         }
       }
     } else {
       BinaryExpressionTree expressionTree = (BinaryExpressionTree) tree;
+      ExpressionTree leftOperand = expressionTree.leftOperand();
+      ExpressionTree rightOperand = expressionTree.rightOperand();
       for (MethodMatcher matcher : CHECKED_METHODS) {
-        Symbol leftSymbol = isTreeMethodInvocation(expressionTree.leftOperand(), matcher);
-        if (leftSymbol != null && isTreeLiteralNull(expressionTree.rightOperand())) {
-          raiseIssue(tree, leftSymbol.name());
+        MethodInvocationTree leftMit = isTreeMethodInvocation(leftOperand, matcher);
+        if (leftMit != null && isTreeLiteralNull(rightOperand)) {
+          raiseIssue(MethodsHelper.methodName(leftMit));
         }
-        Symbol rightSymbol = isTreeMethodInvocation(expressionTree.rightOperand(), matcher);
-        if (rightSymbol != null && isTreeLiteralNull(expressionTree.leftOperand())) {
-          raiseIssue(tree, rightSymbol.name());
+        MethodInvocationTree rightMit = isTreeMethodInvocation(rightOperand, matcher);
+        if (rightMit != null && isTreeLiteralNull(leftOperand)) {
+          raiseIssue(MethodsHelper.methodName(rightMit));
         }
       }
     }

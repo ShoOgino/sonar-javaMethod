@@ -3,12 +3,12 @@
       Symbol identifierSymbol = ((MemberSelectExpressionTree) tree).identifier().symbol();
       Type ownerType = identifierSymbol.owner().type();
       if ("MIN_VALUE".equals(identifierSymbol.name()) && (ownerType.is("java.lang.Integer") || ownerType.is("java.lang.Long"))) {
-        addIssue(tree, "Use the original value instead.");
+        reportIssue(tree, "Use the original value instead.");
       }
     } else {
       MethodInvocationTree nestedTree = extractMethodInvocation(tree);
       if (nestedTree != null && NEGATIVE_METHODS.anyMatch(nestedTree)) {
-        addIssue(nestedTree, "Use the original value instead.");
+        reportIssue(nestedTree, "Use the original value instead.");
       }
     }
   }

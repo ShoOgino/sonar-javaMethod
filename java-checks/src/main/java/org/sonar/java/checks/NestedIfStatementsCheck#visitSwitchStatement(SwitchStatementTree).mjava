@@ -1,8 +1,9 @@
   @Override
   public void visitSwitchStatement(SwitchStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken switchKeyword = tree.switchKeyword();
+    checkNesting(switchKeyword);
+    nestingLevel.push(switchKeyword);
     super.visitSwitchStatement(tree);
-    nestingLevel--;
+    nestingLevel.pop();
   }
 

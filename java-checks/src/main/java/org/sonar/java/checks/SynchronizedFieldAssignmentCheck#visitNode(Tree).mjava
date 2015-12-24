@@ -1,13 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
-    SynchronizedStatementTree sst = (SynchronizedStatementTree) tree;
-    ExpressionTree synchronizedExpression = sst.expression();
-    Symbol field = getField(synchronizedExpression);
-    if (field != null) {
-      sst.block().accept(new AssignmentVisitor(field, tree));
+    if (hasSemantic()) {
+      SynchronizedStatementTree sst = (SynchronizedStatementTree) tree;
+      Symbol field = getField(sst.expression());
+      if (field != null) {
+        sst.block().accept(new AssignmentVisitor(field, sst.expression()));
+      }
     }
   }
 

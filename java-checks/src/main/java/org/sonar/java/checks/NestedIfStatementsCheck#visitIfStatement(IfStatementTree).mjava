@@ -1,8 +1,9 @@
   @Override
   public void visitIfStatement(IfStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken ifKeyword = tree.ifKeyword();
+    checkNesting(ifKeyword);
+    nestingLevel.push(ifKeyword);
     visit(tree);
-    nestingLevel--;
+    nestingLevel.pop();
   }
 

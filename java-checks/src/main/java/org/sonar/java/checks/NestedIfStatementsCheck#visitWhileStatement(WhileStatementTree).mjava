@@ -1,8 +1,9 @@
   @Override
   public void visitWhileStatement(WhileStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken whileKeyword = tree.whileKeyword();
+    checkNesting(whileKeyword);
+    nestingLevel.push(whileKeyword);
     super.visitWhileStatement(tree);
-    nestingLevel--;
+    nestingLevel.pop();
   }
 

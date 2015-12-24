@@ -3,8 +3,9 @@
     ClassTree classTree = (ClassTree) tree;
     if (hasSemantic() && isNotSerializable(classTree.symbol())) {
       for (Tree member : classTree.members()) {
-        if (isTransient(member)) {
-          addIssue(member, "Remove the \"transient\" modifier from this field.");
+        ModifierKeywordTree transientModifier = isTransient(member);
+        if (transientModifier != null) {
+          reportIssue(transientModifier, "Remove the \"transient\" modifier from this field.");
         }
       }
     }

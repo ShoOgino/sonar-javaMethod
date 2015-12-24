@@ -4,12 +4,12 @@
       if (tree.is(Tree.Kind.REMAINDER)) {
         BinaryExpressionTree remainderTree = (BinaryExpressionTree) tree;
         if (isIntegralOne(remainderTree.rightOperand())) {
-          addIssue(tree, "Remove this computation of % 1, which always evaluates to zero.");
+          reportIssue(remainderTree.operatorToken(), "Remove this computation of % 1, which always evaluates to zero.");
         }
       } else {
-        MethodInvocationTree methodTree = (MethodInvocationTree) tree;
-        if (isConstantWithLiteral(methodTree) || isTruncation(methodTree) || isConstantWithZero(methodTree) || isConstantWithZeroOrOne(methodTree)) {
-          addIssue(tree, String.format("Remove this silly call to \"Math.%s\"", methodTree.symbol().name()));
+        MethodInvocationTree mit = (MethodInvocationTree) tree;
+        if (isConstantWithLiteral(mit) || isTruncation(mit) || isConstantWithZero(mit) || isConstantWithZeroOrOne(mit)) {
+          reportIssue(mit.methodSelect(), String.format("Remove this silly call to \"Math.%s\"", mit.symbol().name()));
         }
       }
     }

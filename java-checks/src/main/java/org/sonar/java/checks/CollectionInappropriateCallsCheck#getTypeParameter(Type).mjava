@@ -1,7 +1,11 @@
   @Nullable
   private static Type getTypeParameter(Type collectionType) {
     if (collectionType instanceof ParametrizedTypeJavaType) {
-      return getFirstTypeParameter((ParametrizedTypeJavaType) collectionType);
+      ParametrizedTypeJavaType parametrizedType = (ParametrizedTypeJavaType) collectionType;
+      JavaType.TypeVariableJavaType first = Iterables.getFirst(parametrizedType.typeParameters(), null);
+      if (first != null) {
+        return parametrizedType.substitution(first);
+      }
     }
     return null;
   }

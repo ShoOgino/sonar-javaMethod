@@ -1,6 +1,7 @@
   private void checkRedundantModifier(ModifiersTree modifiersTree, Modifier modifier) {
-    if (ModifiersUtils.hasModifier(modifiersTree, modifier)) {
-      addIssue(modifiersTree, "\"" + modifier.toString().toLowerCase() + "\" is redundant in this context.");
+    ModifierKeywordTree foundModifier = ModifiersUtils.getModifier(modifiersTree, modifier);
+    if (foundModifier != null) {
+      reportIssue(foundModifier, "\"" + modifier.toString().toLowerCase() + "\" is redundant in this context.");
     }
   }
 

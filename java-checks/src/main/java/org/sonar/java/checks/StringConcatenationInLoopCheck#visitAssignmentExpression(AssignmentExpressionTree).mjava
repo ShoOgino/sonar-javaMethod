@@ -1,7 +1,7 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
     if (!loopLevel.isEmpty() && isStringConcatenation(tree) && isNotLoopLocalVar(tree)) {
-      context.addIssue(tree, this, "Use a StringBuilder instead.");
+      context.reportIssue(this, tree.variable(), "Use a StringBuilder instead.");
     }
     super.visitAssignmentExpression(tree);
   }

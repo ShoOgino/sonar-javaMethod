@@ -1,7 +1,15 @@
   @Override
   public void visitNode(Tree tree) {
-    if (isMathRandom(tree) || isJavaUtilRandom((ExpressionTree) tree)) {
-      addIssue(tree, "Use a cryptographically strong random number generator (RNG) like \"java.security.SecureRandom\" in place of this PRNG");
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if (MATH_RANDOM_MATCHER.matches(mit)) {
+        reportIssue(MethodsHelper.methodName(mit), MESSAGE);
+      }
+    } else {
+      NewClassTree newClass = (NewClassTree) tree;
+      if (newClass.symbolType().is("java.util.Random")) {
+        reportIssue(newClass.identifier(), MESSAGE);
+      }
     }
   }
 

@@ -5,7 +5,7 @@
 
     if (isJavaLangSuppressWarnings(annotationTree)) {
       if (ruleWarnings.isEmpty()) {
-        addIssue(annotationTree, "Suppressing warnings is not allowed");
+        reportIssue(annotationTree.annotationType(), "Suppressing warnings is not allowed");
       } else {
         List<String> suppressedWarnings = getSuppressedWarnings(annotationTree.arguments().get(0));
         List<String> issues = Lists.newArrayList();
@@ -17,7 +17,7 @@
         if (!issues.isEmpty()) {
           StringBuilder sb = new StringBuilder("Suppressing the '").append(Joiner.on(", ").join(issues))
             .append("' warning").append(issues.size() > 1 ? "s" : "").append(" is not allowed");
-          addIssue(annotationTree, sb.toString());
+          reportIssue(annotationTree.annotationType(), sb.toString());
         }
       }
     }

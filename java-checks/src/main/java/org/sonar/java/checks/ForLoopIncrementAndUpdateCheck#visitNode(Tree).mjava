@@ -7,8 +7,8 @@
         ConditionVisitor conditionVisitor = new ConditionVisitor(updateSymbols);
         forStatementTree.accept(conditionVisitor);
         if (conditionVisitor.shouldRaiseIssue) {
-          addIssue(tree, "This loop's stop condition tests \"" + Joiner.on(", ").join(conditionVisitor.conditionNames)
-              + "\" but the incrementer updates \"" + getSymbols(updateSymbols) + "\".");
+          reportIssue(forStatementTree.forKeyword(), "This loop's stop condition tests \"" + Joiner.on(", ").join(conditionVisitor.conditionNames)
+            + "\" but the incrementer updates \"" + getSymbols(updateSymbols) + "\".");
         }
       }
     }

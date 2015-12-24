@@ -1,10 +1,10 @@
   @Override
   protected void onConstructorFound(NewClassTree newClassTree) {
     Symbol symbol = newClassTree.constructorSymbol();
-    if(symbol.isMethodSymbol()) {
+    if (symbol.isMethodSymbol()) {
       Symbol.MethodSymbol constructor = (Symbol.MethodSymbol) symbol;
       String signature = constructor.owner().name() + "(" + Joiner.on(',').join(constructor.parameterTypes()) + ")";
-      addIssue(newClassTree, "Remove this use of constructor \"" + signature + "\"");
+      reportIssue(newClassTree.identifier(), "Remove this use of constructor \"" + signature + "\"");
     }
   }
 

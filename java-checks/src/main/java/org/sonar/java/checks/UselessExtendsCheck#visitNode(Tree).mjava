@@ -3,7 +3,7 @@
     ClassTree classTree = (ClassTree) tree;
     TypeTree superClassTree = classTree.superClass();
     if (superClassTree != null && superClassTree.symbolType().is("java.lang.Object")) {
-      addIssue(superClassTree, "\"Object\" should not be explicitly extended.");
+      reportIssue(superClassTree, "\"Object\" should not be explicitly extended.");
     }
     Set<Type> interfaces = new HashSet<>();
     for (TypeTree superInterfaceTree : classTree.superInterfaces()) {
@@ -11,7 +11,7 @@
       if (interfaceType.isClass()) {
         String interfaceName = interfaceType.fullyQualifiedName();
         if (interfaces.contains(interfaceType)) {
-          addIssue(superInterfaceTree, String.format(ERROR_MESSAGE, interfaceName));
+          reportIssue(superInterfaceTree, String.format(ERROR_MESSAGE, interfaceName));
         } else {
           checkExtending(classTree, interfaceType, interfaceName);
         }

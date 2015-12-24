@@ -2,17 +2,20 @@
   public void visitBlock(BlockTree tree) {
     super.visitBlock(tree);
     List<StatementTree> statements = tree.body();
-    if (statements.size() > 1) {
-      StatementTree lastSatement = statements.get(statements.size() - 1);
-      String lastStatementIdentifier = getReturnOrThrowIdentifier(lastSatement);
-      if (StringUtils.isNotEmpty(lastStatementIdentifier)) {
-
-        StatementTree butLastSatement = statements.get(statements.size() - 2);
-        String identifier = getVariableDeclarationIdentifier(butLastSatement);
-
+    int size = statements.size();
+    if (size < 2) {
+      return;
+    }
+    StatementTree butLastStatement = statements.get(size - 2);
+    if (butLastStatement.is(Kind.VARIABLE)) {
+      VariableTree variableTree = (VariableTree) butLastStatement;
+      StatementTree lastStatement = statements.get(size - 1);
+      String lastStatementIdentifier = getReturnOrThrowIdentifier(lastStatement);
+      if (lastStatementIdentifier != null) {
+        String identifier = variableTree.simpleName().name();
         if (StringUtils.equals(lastStatementIdentifier, identifier)) {
-          context.addIssue(butLastSatement, this, "Immediately " + lastTypeForMessage + " this expression instead of assigning it to the temporary variable \"" + identifier
-            + "\".");
+          context.reportIssue(
+            this, variableTree.initializer(), "Immediately " + lastTypeForMessage + " this expression instead of assigning it to the temporary variable \"" + identifier + "\".");
         }
       }
     }

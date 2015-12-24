@@ -2,6 +2,7 @@
   public void visitNode(Tree tree) {
     String identifier;
     ExpressionTree shift;
+    SyntaxToken operatorToken;
 
     if (tree.is(Kind.LEFT_SHIFT, Kind.RIGHT_SHIFT)) {
       BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
@@ -11,12 +12,14 @@
       }
       identifier = getIdentifierName(binaryExpressionTree.leftOperand());
       shift = binaryExpressionTree.rightOperand();
+      operatorToken = binaryExpressionTree.operatorToken();
     } else {
       AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) tree;
       identifier = getIdentifierName(assignmentExpressionTree.variable());
       shift = assignmentExpressionTree.expression();
+      operatorToken = assignmentExpressionTree.operatorToken();
     }
 
-    checkShift((ExpressionTree) tree, shift, identifier);
+    checkShift((ExpressionTree) tree, shift, identifier, operatorToken);
   }
 

@@ -1,12 +1,12 @@
     private void checkSymbolAssignment(Tree variable) {
       if (variable.is(Kind.IDENTIFIER)) {
-        Symbol variableSymbol = ((IdentifierTree) variable).symbol();
-        if (field.equals(variableSymbol)) {
-          addIssue(synchronizedStatement, getMessage(variable));
+        if (field.equals(((IdentifierTree) variable).symbol())) {
+          reportIssue(
+            synchronizedStatement,
+            String.format("Don't synchronize on \"%s\" or remove its reassignment on line %d.", field.name(), FirstSyntaxTokenFinder.firstSyntaxToken(variable).line()));
         }
       } else if (variable.is(Kind.MEMBER_SELECT)) {
-        MemberSelectExpressionTree mse = (MemberSelectExpressionTree) variable;
-        checkSymbolAssignment(mse.identifier());
+        checkSymbolAssignment(((MemberSelectExpressionTree) variable).identifier());
       }
     }
 

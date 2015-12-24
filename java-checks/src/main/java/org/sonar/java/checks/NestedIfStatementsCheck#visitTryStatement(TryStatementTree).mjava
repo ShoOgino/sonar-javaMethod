@@ -1,9 +1,10 @@
   @Override
   public void visitTryStatement(TryStatementTree tree) {
-    nestingLevel++;
-    checkNesting(tree);
+    SyntaxToken tryKeyword = tree.tryKeyword();
+    checkNesting(tryKeyword);
+    nestingLevel.push(tryKeyword);
     scan(tree.block());
-    nestingLevel--;
+    nestingLevel.pop();
     scan(tree.resources());
     scan(tree.catches());
     scan(tree.finallyBlock());
