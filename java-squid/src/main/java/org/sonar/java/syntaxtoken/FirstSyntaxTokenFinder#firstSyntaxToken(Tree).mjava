@@ -1,18 +1,16 @@
-  /**
-   * @param tree the tree to visit to get the first syntax token
-   * @return the first syntax token of the tree, or null if the provided tree is:
-   * <ul>
-   *   <li>Empty list of modifiers ({@link org.sonar.plugins.java.api.tree.ModifiersTree})</li>
-   *   <li>Any tree of Kind "OTHER" ({@link org.sonar.plugins.java.api.tree.Tree.Kind.OTHER})</li>
-   * </ul>
-   */
   @Nullable
-  public static SyntaxToken firstSyntaxToken(Tree tree) {
-    if (tree.is(Tree.Kind.TOKEN)) {
+  public static SyntaxToken firstSyntaxToken(@Nullable Tree tree) {
+    if (tree == null || tree.is(Tree.Kind.INFERED_TYPE)) {
+      return null;
+    } else if (tree.is(Tree.Kind.TOKEN)) {
       return (SyntaxToken) tree;
     }
-    FirstSyntaxTokenFinder visitor = new FirstSyntaxTokenFinder();
-    tree.accept(visitor);
-    return visitor.firstSyntaxToken;
+    for (Tree next : ((JavaTree) tree).children()) {
+      SyntaxToken syntaxToken = firstSyntaxToken(next);
+      if (syntaxToken != null) {
+        return syntaxToken;
+      }
+    }
+    return null;
   }
 
