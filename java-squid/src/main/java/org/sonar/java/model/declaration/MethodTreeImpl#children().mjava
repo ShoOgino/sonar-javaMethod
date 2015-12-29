@@ -1,0 +1,25 @@
+  @Override
+  public Iterable<Tree> children() {
+    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.builder();
+    iteratorBuilder.add(modifiers, typeParameters);
+    if (returnType != null) {
+      iteratorBuilder.add(returnType);
+    }
+    iteratorBuilder.add(simpleName, openParenToken);
+    iteratorBuilder.addAll(parameters.iterator());
+    iteratorBuilder.add(closeParenToken);
+    if (throwsToken != null) {
+      iteratorBuilder.add(throwsToken);
+      iteratorBuilder.add(throwsClauses);
+    }
+    if (defaultToken != null) {
+      iteratorBuilder.add(defaultToken, defaultValue);
+    }
+    if (block != null) {
+      iteratorBuilder.add(block);
+    } else {
+      iteratorBuilder.add(semicolonToken);
+    }
+    return iteratorBuilder.build();
+  }
+
