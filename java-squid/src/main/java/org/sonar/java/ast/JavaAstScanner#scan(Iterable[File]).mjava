@@ -1,9 +1,20 @@
   public void scan(Iterable<File> files) {
-    SourceProject project = new SourceProject("Java Project");
-    index.index(project);
-    project.setSourceCodeIndexer(index);
+    ProgressReport progressReport = new ProgressReport("Report about progress of Java AST analyzer", TimeUnit.SECONDS.toMillis(10));
+    progressReport.start(Lists.newArrayList(files));
 
-    simpleScan(files);
-
+    boolean successfullyCompleted = false;
+    try {
+      for (File file : files) {
+        simpleScan(file);
+        progressReport.nextFile();
+      }
+      successfullyCompleted = true;
+    } finally {
+      if (successfullyCompleted) {
+        progressReport.stop();
+      } else {
+        progressReport.cancel();
+      }
+    }
   }
 
