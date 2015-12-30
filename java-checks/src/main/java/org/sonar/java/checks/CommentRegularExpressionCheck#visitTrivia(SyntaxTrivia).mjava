@@ -1,0 +1,14 @@
+  @Override
+  public void visitTrivia(SyntaxTrivia syntaxTrivia) {
+    if (pattern == null && !Strings.isNullOrEmpty(regularExpression)) {
+      try {
+        pattern = Pattern.compile(regularExpression, Pattern.DOTALL);
+      } catch (RuntimeException e) {
+        throw new IllegalArgumentException("Unable to compile regular expression: " + regularExpression, e);
+      }
+    }
+    if (pattern != null && pattern.matcher(syntaxTrivia.comment()).matches()) {
+      addIssue(syntaxTrivia.startLine(), message);
+    }
+  }
+
