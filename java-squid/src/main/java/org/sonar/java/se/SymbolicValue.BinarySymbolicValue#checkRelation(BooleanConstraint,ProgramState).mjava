@@ -1,0 +1,19 @@
+    private ProgramState checkRelation(BooleanConstraint booleanConstraint, ProgramState initialProgramState) {
+      ProgramState programState = initialProgramState;
+      if (!leftOp.equals(rightOp) && !leftOp.isPredefined() && !rightOp.isPredefined()) {
+        SymbolicValueRelation relationToFulfill = getSymbolicValueRelation();
+        if (relationToFulfill != null) {
+          if (BooleanConstraint.FALSE.equals(booleanConstraint)) {
+            relationToFulfill = relationToFulfill.inverse();
+          }
+          Boolean fulfilled = programState.isFulfilled(relationToFulfill);
+          if (fulfilled == null) {
+            programState = programState.addRelation(relationToFulfill);
+          } else if (!fulfilled.booleanValue()) {
+            return null;
+          }
+        }
+      }
+      return programState;
+    }
+

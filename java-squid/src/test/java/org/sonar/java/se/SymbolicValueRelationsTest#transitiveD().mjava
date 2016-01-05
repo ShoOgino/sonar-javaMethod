@@ -1,0 +1,10 @@
+  @Test
+  public void transitiveD() {
+    final List<SymbolicValueRelation> knownRelations = ImmutableList.of(
+      new EqualRelation(values[0], values[1]), // a==b
+      new NotEqualRelation(values[2], values[1]));// c!=b
+    final SymbolicValueRelation checked = new EqualRelation(values[0], values[2]); // a==c?
+    Boolean result = checked.impliedBy(knownRelations);
+    assertThat(result).as(checked.toString()).isEqualTo(Boolean.FALSE);
+  }
+

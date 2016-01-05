@@ -1,9 +1,14 @@
     @Override
-    public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+    public List<ProgramState> setConstraint(ProgramState initialProgramState, BooleanConstraint booleanConstraint) {
+      ProgramState programState = initialProgramState;
       if (leftOp.equals(rightOp)) {
         if (shouldNotInverse().equals(booleanConstraint)) {
           return ImmutableList.of(programState);
         }
+        return ImmutableList.of();
+      }
+      programState = checkRelation(booleanConstraint, programState);
+      if (programState == null) {
         return ImmutableList.of();
       }
       List<ProgramState> copiedConstraints = copyConstraint(leftOp, rightOp, programState, booleanConstraint);
@@ -20,6 +25,5 @@
         }
       }
       return results;
-
     }
 
