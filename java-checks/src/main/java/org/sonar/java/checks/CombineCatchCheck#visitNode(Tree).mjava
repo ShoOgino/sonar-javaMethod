@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    List<CatchTree> catches = new ArrayList<>();
+    for (CatchTree catchTree : ((TryStatementTree) tree).catches()) {
+      for (CatchTree catchTreeToBeCompared : catches) {
+        if (SyntacticEquivalence.areEquivalent(catchTree.block(), catchTreeToBeCompared.block())) {
+          reportIssue(catchTree, catchTreeToBeCompared);
+          break;
+        }
+      }
+      catches.add(catchTree);
+    }
+  }
+
