@@ -1,19 +1,12 @@
   @Test
   public void testEqualImplies() {
-    SymbolicValue a = values[0];
-    SymbolicValue b = values[1];
-    SymbolicValueRelation hypothesis = new EqualRelation(a, b);
-    SymbolicValueRelation checked = new EqualRelation(a, b);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.TRUE);
-    checked = new EqualRelation(b, a);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.TRUE);
-    checked = new NotEqualRelation(a, b);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.FALSE);
-    checked = new NotEqualRelation(b, a);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.FALSE);
-    checked = new MethodEqualsRelation(a, b);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.TRUE);
-    checked = new MethodEqualsRelation(b, a);
-    assertThat(hypothesis.implies(checked)).as(hypothesis.toString() + "=>" + checked.toString()).isEqualTo(Boolean.TRUE);
+    checkImplies(EqualRelation.class, EqualRelation.class, Boolean.TRUE, Boolean.TRUE);
+    checkImplies(EqualRelation.class, NotEqualRelation.class, Boolean.FALSE, Boolean.FALSE);
+    checkImplies(EqualRelation.class, MethodEqualsRelation.class, Boolean.TRUE, Boolean.TRUE);
+    checkImplies(EqualRelation.class, NotMethodEqualsRelation.class, Boolean.FALSE, Boolean.FALSE);
+    checkImplies(EqualRelation.class, GreaterThanRelation.class, Boolean.FALSE, Boolean.FALSE);
+    checkImplies(EqualRelation.class, GreaterThanOrEqualRelation.class, Boolean.TRUE, Boolean.TRUE);
+    checkImplies(EqualRelation.class, LessThanRelation.class, Boolean.FALSE, Boolean.FALSE);
+    checkImplies(EqualRelation.class, LessThanOrEqualRelation.class, Boolean.TRUE, Boolean.TRUE);
   }
 
