@@ -1,0 +1,19 @@
+  private Collection<SymbolicValueRelation> transitiveReduction(Collection<SymbolicValueRelation> knownRelations, Set<SymbolicValueRelation> usedRelations) {
+    boolean changed = false;
+    List<SymbolicValueRelation> result = new ArrayList<>();
+    for (SymbolicValueRelation relation : knownRelations) {
+      boolean used = false;
+      if (v1.equals(relation.v1)) {
+        used = result.addAll(relation.combinedRelations(knownRelations, usedRelations));
+      } else if (v1.equals(relation.v2)) {
+        used = result.addAll(relation.symmetric().combinedRelations(knownRelations, usedRelations));
+      }
+      if (used) {
+        changed = true;
+      } else {
+        result.add(relation);
+      }
+    }
+    return changed ? result : Collections.<SymbolicValueRelation>emptyList();
+  }
+

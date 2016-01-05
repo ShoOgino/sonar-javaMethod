@@ -1,0 +1,11 @@
+  @Test
+  public void endlessCase() {
+    final List<SymbolicValueRelation> knownRelations = ImmutableList.of(
+      new NotEqualRelation(values[0], values[1]), // a!=b
+      new EqualRelation(values[0], values[2]));// a==c
+    final SymbolicValueRelation checked = new NotMethodEqualsRelation(values[1], values[0]); // !b.equals(a)
+    Boolean result = checked.impliedBy(knownRelations);
+    assertThat(result).as(checked.toString()).isNull();
+
+  }
+

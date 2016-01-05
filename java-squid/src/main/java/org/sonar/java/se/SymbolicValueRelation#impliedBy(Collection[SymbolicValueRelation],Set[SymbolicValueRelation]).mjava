@@ -1,0 +1,19 @@
+  @CheckForNull
+  public Boolean impliedBy(Collection<SymbolicValueRelation> knownRelations, Set<SymbolicValueRelation> usedRelations) {
+    if (knownRelations.isEmpty()) {
+      return null;
+    }
+    if (usedRelations.size() > 200) {
+      throw new IllegalStateException();
+    }
+    for (SymbolicValueRelation relation : knownRelations) {
+      Boolean result = relation.implies(this);
+      if (result != null) {
+        return result;
+      }
+      usedRelations.add(relation);
+      usedRelations.add(relation.symmetric());
+    }
+    return impliedBy(transitiveReduction(knownRelations, usedRelations), usedRelations);
+  }
+

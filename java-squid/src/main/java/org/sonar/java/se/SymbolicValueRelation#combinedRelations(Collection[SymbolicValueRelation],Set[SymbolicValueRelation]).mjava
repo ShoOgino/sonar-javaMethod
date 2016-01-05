@@ -1,0 +1,16 @@
+  private Collection<SymbolicValueRelation> combinedRelations(Collection<SymbolicValueRelation> relations, Set<SymbolicValueRelation> usedRelations) {
+    List<SymbolicValueRelation> result = new ArrayList<>();
+    for (SymbolicValueRelation relation : relations) {
+      SymbolicValueRelation combined = null;
+      if (v2.equals(relation.v1) && !v1.equals(relation.v2)) {
+        combined = relation.combinedAfter(this);
+      } else if (v2.equals(relation.v2) && !v1.equals(relation.v2)) {
+        combined = relation.symmetric().combinedAfter(this);
+      }
+      if (combined != null && !usedRelations.contains(combined)) {
+        result.add(combined);
+      }
+    }
+    return result;
+  }
+

@@ -1,10 +1,18 @@
   /**
    * @param a relation between symbolic values
    * @return <ul>
-   * <li>TRUE  if the supplied relation implies that the receiver is true</li>
-   * <li>FALSE if the supplied relation implies that the receiver is false</li>
+   * <li>TRUE  if the receiver implies that the supplied relation is true</li>
+   * <li>FALSE if the receiver implies that the supplied relation is false</li>
    * <li>null  otherwise</li>
    * </ul>
    */
-  protected abstract Boolean implies(SymbolicValueRelation relation);
+  @CheckForNull
+  protected Boolean implies(SymbolicValueRelation relation) {
+    if (v1.equals(relation.v1) && v2.equals(relation.v2)) {
+      return relation.isImpliedBy(this);
+    } else if (v1.equals(relation.v2) && v2.equals(relation.v1)) {
+      return relation.isImpliedBy(symmetric());
+    }
+    return null;
+  }
 
