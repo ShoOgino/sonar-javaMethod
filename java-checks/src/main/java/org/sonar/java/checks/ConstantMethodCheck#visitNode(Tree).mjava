@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTreeImpl methodTree = (MethodTreeImpl) tree;
+    BlockTree body = methodTree.block();
+    if (BooleanUtils.isFalse(methodTree.isOverriding()) && body != null && body.body().size() == 1) {
+      StatementTree uniqueStatement = body.body().get(0);
+      if (uniqueStatement.is(Kind.RETURN_STATEMENT)) {
+        ExpressionTree returnedExpression = ((ReturnStatementTree) uniqueStatement).expression();
+        if (isConstant(returnedExpression)) {
+          reportIssue(returnedExpression, "Remove this method and declare a constant for this value.");
+        }
+      }
+    }
+  }
+
