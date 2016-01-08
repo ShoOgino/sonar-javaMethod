@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    List<VariableTree> parameters = ((MethodTree) tree).parameters();
+    if(!parameters.isEmpty()) {
+      TypeTree lastParam = parameters.get(parameters.size() - 1).type();
+      if(lastParam.is(Tree.Kind.ARRAY_TYPE)) {
+        SyntaxToken ellipsisToken = ((ArrayTypeTree) lastParam).ellipsisToken();
+        if(ellipsisToken != null) {
+          reportIssue(ellipsisToken, "Do not use varargs.");
+        }
+      }
+    }
+  }
+
