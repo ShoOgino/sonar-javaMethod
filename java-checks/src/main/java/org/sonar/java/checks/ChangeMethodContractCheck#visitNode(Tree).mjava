@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTreeImpl methodTree = (MethodTreeImpl) tree;
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+    JavaSymbol.MethodJavaSymbol overridee = ((JavaSymbol.MethodJavaSymbol) methodSymbol).overriddenSymbol();
+    if (overridee != null && overridee.isMethodSymbol()) {
+      checkContractChange(methodTree, overridee);
+    }
+  }
+
