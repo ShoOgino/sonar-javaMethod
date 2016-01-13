@@ -6,8 +6,12 @@
       if (classTree.symbol().metadata().isAnnotatedWith("org.testng.annotations.Test")) {
         checkTestNGmembers(simpleName, members);
       } else {
-        checkJunit3TestClass(simpleName, symbol, members);
-        checkJunit4TestClass(simpleName, symbol, members);
+        boolean isJunit3TestClass = symbol.type().isSubtypeOf("junit.framework.TestCase");
+        if (isJunit3TestClass) {
+          checkJunit3TestClass(simpleName, members);
+        } else {
+          checkJunit4TestClass(simpleName, symbol, members);
+        }
       }
     }
   }
