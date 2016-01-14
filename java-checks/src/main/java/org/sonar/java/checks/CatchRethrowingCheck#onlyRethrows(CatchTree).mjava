@@ -1,0 +1,8 @@
+  private static boolean onlyRethrows(CatchTree catchTree) {
+    List<StatementTree> catchBody = catchTree.block().body();
+    if (catchBody.size() == 1) {
+      return catchBody.get(0).is(Tree.Kind.THROW_STATEMENT) && catchTree.parameter().symbol().usages().contains(((ThrowStatementTree) catchBody.get(0)).expression());
+    }
+    return false;
+  }
+

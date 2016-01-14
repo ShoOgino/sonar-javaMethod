@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    TryStatementTree tst = (TryStatementTree) tree;
+    if (tst.catches().size() == 1) {
+      CatchTree catchTree = tst.catches().get(0);
+      if (onlyRethrows(catchTree)) {
+        reportIssue(catchTree.block().body().get(0), "Add logic to this catch clause or eliminate it and rethrow the exception automatically.");
+      }
+    }
+  }
+
