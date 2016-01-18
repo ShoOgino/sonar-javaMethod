@@ -1,0 +1,14 @@
+  @Override
+  public void scanFile(XmlCheckContext context) {
+    if (!"ejb-jar.xml".equalsIgnoreCase(context.getFile().getName())) {
+      try {
+        NodeList interceptorBindings = context.evaluateXPathExpression("ejb-jar/assembly-descriptor/interceptor-binding[ejb-name=\"*\"]");
+        for (int i = 0; i < interceptorBindings.getLength(); i++) {
+          reportOnClasses(context, interceptorBindings.item(i));
+        }
+      } catch (XPathExpressionException e) {
+        throw new IllegalArgumentException("[S3281] Unable evaluate xpath expression for file " + context.getFile().getAbsolutePath(), e);
+      }
+    }
+  }
+
