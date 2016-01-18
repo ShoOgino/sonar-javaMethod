@@ -1,19 +1,8 @@
   private static void test_project(String projectKey, @Nullable String path, String projectName) throws IOException {
     String pomLocation = "../sources/" + (path != null ? path + "/" : "") + projectName + "/pom.xml";
     File pomFile = FileLocation.of(pomLocation).getFile();
-    orchestrator.getServer().provisionProject(projectKey, projectName);
-    orchestrator.getServer().associateProjectToQualityProfile(projectKey, "java", "rules");
-    MavenBuild mavenBuild = MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests")
-      .setProperty("sonar.cpd.skip", "true")
-      .setProperty("sonar.import_unknown_files", "true")
-      .setProperty("sonar.skipPackageDesign", "true")
-      .setProperty("sonar.analysis.mode", "preview")
-      .setProperty("sonar.issuesReport.html.enable", "true")
-      .setProperty("sonar.issuesReport.html.location", htmlReportPath(projectName))
-      .setProperty("dump.old", FileLocation.of("src/test/resources/" + projectName).getFile().getAbsolutePath())
-      .setProperty("dump.new", FileLocation.of("target/actual/" + projectName).getFile().getAbsolutePath())
-      .setProperty("lits.differences", litsDifferencesPath(projectName));
-    orchestrator.executeBuild(mavenBuild);
-    assertNoDifferences(projectName);
+    prepareProject(projectKey, projectName);
+    MavenBuild mavenBuild = MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests");
+    executeBuildWithCommonProperties(mavenBuild, projectName);
   }
 
