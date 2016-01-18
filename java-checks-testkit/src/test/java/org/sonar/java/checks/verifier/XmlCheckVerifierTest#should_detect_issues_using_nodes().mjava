@@ -1,0 +1,15 @@
+  @Test
+  public void should_detect_issues_using_nodes() {
+    XmlCheckVerifier.verify(XML_WITH_ISSUES, new XmlCheck() {
+      @Override
+      public void scanFile(XmlCheckContext context) {
+        try {
+          context.reportIssue(this, context.evaluateXPathExpression("//test2").item(0), "Message1");
+          context.reportIssue(this, context.evaluateXPathExpression("//test4").item(0), "Message2");
+        } catch (Exception e) {
+          Fail.fail();
+        }
+      }
+    });
+  }
+

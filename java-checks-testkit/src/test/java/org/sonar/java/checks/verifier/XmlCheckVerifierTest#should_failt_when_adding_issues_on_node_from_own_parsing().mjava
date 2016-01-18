@@ -1,0 +1,20 @@
+  @Test
+  public void should_failt_when_adding_issues_on_node_from_own_parsing() {
+    try {
+      XmlCheckVerifier.verify(XML_WITH_ISSUES, new XmlCheck() {
+        @Override
+        public void scanFile(XmlCheckContext context) {
+          try {
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(context.getFile());
+            Node node = ((NodeList) XPathFactory.newInstance().newXPath().compile("//test2").evaluate(doc, XPathConstants.NODESET)).item(0);
+            context.reportIssue(this, node, "Message1");
+          } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
+            Fail.fail();
+          }
+        }
+      });
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("The provided node does not have line attribute 'start_column'");
+    }
+  }
+

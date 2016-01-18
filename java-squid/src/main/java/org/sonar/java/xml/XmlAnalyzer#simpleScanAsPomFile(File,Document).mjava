@@ -1,0 +1,10 @@
+  private void simpleScanAsPomFile(File file, Document document) {
+    MavenProject project = PomParser.parseXML(file);
+    if (project != null) {
+      PomCheckContext context = new PomCheckContextImpl(project, document, file, sonarComponents);
+      for (PomCheck check : pomChecks) {
+        check.scanFile(context);
+      }
+    }
+  }
+

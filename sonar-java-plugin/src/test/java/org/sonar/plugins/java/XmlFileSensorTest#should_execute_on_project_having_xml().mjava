@@ -1,0 +1,13 @@
+  @Test
+  public void should_execute_on_project_having_xml() {
+    Project project = mock(Project.class);
+    fileSystem.add(new DefaultInputFile("fake.java").setLanguage(Java.KEY));
+    assertThat(sensor.shouldExecuteOnProject(project)).isFalse();
+
+    fileSystem.add(new DefaultInputFile("fake.xml"));
+    assertThat(sensor.shouldExecuteOnProject(project)).isTrue();
+
+    fileSystem.add(new DefaultInputFile("myModule/pom.xml"));
+    assertThat(sensor.shouldExecuteOnProject(project)).isTrue();
+  }
+

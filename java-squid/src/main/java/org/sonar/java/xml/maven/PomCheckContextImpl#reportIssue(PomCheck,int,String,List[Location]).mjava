@@ -1,0 +1,11 @@
+  @Override
+  public void reportIssue(PomCheck check, int line, String message, List<Location> secondary) {
+    File file = getFile();
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(check, file, line, message, 0);
+    for (Location location : secondary) {
+      AnalyzerMessage secondaryLocation = getSecondaryAnalyzerMessage(check, file, location);
+      analyzerMessage.secondaryLocations.add(secondaryLocation);
+    }
+    getSonarComponents().reportIssue(analyzerMessage);
+  }
+

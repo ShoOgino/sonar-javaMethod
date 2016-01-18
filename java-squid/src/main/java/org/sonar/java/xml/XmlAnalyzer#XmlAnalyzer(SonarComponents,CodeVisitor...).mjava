@@ -1,0 +1,16 @@
+  public XmlAnalyzer(SonarComponents sonarComponents, CodeVisitor... visitors) {
+    ImmutableList.Builder<XmlCheck> xmlChecksBuilder = ImmutableList.builder();
+    ImmutableList.Builder<PomCheck> pomChecksBuilder = ImmutableList.builder();
+    for (CodeVisitor visitor : visitors) {
+      if (visitor instanceof XmlCheck) {
+        xmlChecksBuilder.add((XmlCheck) visitor);
+      }
+      if (visitor instanceof PomCheck) {
+        pomChecksBuilder.add((PomCheck) visitor);
+      }
+    }
+    this.xmlChecks = xmlChecksBuilder.build();
+    this.pomChecks = pomChecksBuilder.build();
+    this.sonarComponents = sonarComponents;
+  }
+

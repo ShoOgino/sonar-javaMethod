@@ -1,0 +1,11 @@
+    @Override
+    public void reportIssue(JavaCheck check, Node node, String message) {
+      Node lineAttribute = node.getAttributes().getNamedItem(XmlParser.START_LINE_ATTRIBUTE);
+      if (lineAttribute != null) {
+        Integer line = Integer.valueOf(lineAttribute.getNodeValue());
+        reportIssue(check, line, message);
+      } else {
+        Fail.fail("The provided node does not have line attribute '" + XmlParser.START_COLUMN_ATTRIBUTE + "'");
+      }
+    }
+

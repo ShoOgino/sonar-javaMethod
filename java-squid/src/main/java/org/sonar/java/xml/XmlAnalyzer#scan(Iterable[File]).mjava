@@ -1,0 +1,26 @@
+  public void scan(Iterable<File> files) {
+    boolean hasChecks = !xmlChecks.isEmpty() || !pomChecks.isEmpty();
+    if (hasChecks && Iterables.isEmpty(files)) {
+      LOG.warn("No 'xml' file have been indexed.");
+      return;
+    }
+
+    ProgressReport progressReport = new ProgressReport("Report about progress of Xml analyzer", TimeUnit.SECONDS.toMillis(10));
+    progressReport.start(Lists.newArrayList(files));
+
+    boolean successfulyCompleted = false;
+    try {
+      for (File file : files) {
+        simpleScan(file);
+        progressReport.nextFile();
+      }
+      successfulyCompleted = true;
+    } finally {
+      if (successfulyCompleted) {
+        progressReport.stop();
+      } else {
+        progressReport.cancel();
+      }
+    }
+  }
+

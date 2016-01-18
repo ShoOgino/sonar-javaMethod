@@ -1,0 +1,14 @@
+  @Test
+  public void should_scan_xml_file_provided() {
+    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    File xmlFile = new File(VALID_POM);
+    fs.add(new DefaultInputFile(xmlFile.getAbsolutePath()).setFile(xmlFile));
+    SonarComponents sonarComponents = createSonarComponentsMock(fs, XML_CHECK, POM_CHECK);
+
+    XmlAnalyzer analyzer = new XmlAnalyzer(sonarComponents, XML_CHECK, POM_CHECK);
+    analyzer.scan(Lists.newArrayList(xmlFile));
+
+    verify(sonarComponents, times(2)).addIssue(any(File.class), any(JavaCheck.class), any(Integer.class), anyString(), isNull(Double.class));
+    verify(sonarComponents, never()).reportIssue(any(AnalyzerMessage.class));
+  }
+

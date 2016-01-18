@@ -1,0 +1,13 @@
+  @Override
+  public void reportIssue(JavaCheck check, Node node, String message) {
+    NamedNodeMap attributes = node.getAttributes();
+    if (attributes == null) {
+      return;
+    }
+    Node lineAttribute = attributes.getNamedItem(XmlParser.START_LINE_ATTRIBUTE);
+    if (lineAttribute != null) {
+      Integer line = Integer.valueOf(lineAttribute.getNodeValue());
+      sonarComponents.addIssue(file, check, line, message, null);
+    }
+  }
+

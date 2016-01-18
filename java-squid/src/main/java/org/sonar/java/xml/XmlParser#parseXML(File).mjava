@@ -1,0 +1,16 @@
+  public static Document parseXML(File file) {
+    try {
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      SAXParser parser = factory.newSAXParser();
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      Document document = docBuilder.newDocument();
+      LocationHandler locationHandler = new LocationHandler(document);
+      parser.parse(file, locationHandler);
+      return document;
+    } catch (ParserConfigurationException | SAXException | IOException e) {
+      LOG.error("Unable to parse xml file " + file.getPath(), e);
+    }
+    return null;
+  }
+

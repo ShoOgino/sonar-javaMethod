@@ -1,0 +1,17 @@
+  @Test
+  public void should_report_issue_on_node() throws Exception {
+    Node node = context.evaluateXPathExpression("//exclude-default-interceptors").item(0);
+    int expectedLine = Integer.valueOf(node.getAttributes().getNamedItem(XmlParser.START_LINE_ATTRIBUTE).getNodeValue());
+
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        reportedMessage = "onNode:" + (String) invocation.getArguments()[3];
+        return null;
+      }
+    }).when(sonarComponents).addIssue(any(File.class), eq(CHECK), eq(expectedLine), anyString(), eq((Double) null));
+
+    context.reportIssue(CHECK, node, "message");
+    assertThat(reportedMessage).isEqualTo("onNode:message");
+  }
+

@@ -1,0 +1,13 @@
+  @VisibleForTesting
+  static AnalyzerMessage getSecondaryAnalyzerMessage(JavaCheck check, File file, Location location) {
+    XmlLocation startLocation = location.tree.startLocation();
+    int startLine = startLocation.line();
+    int startColumn = startLocation.column();
+    if (startColumn == -1) {
+      // in case of unknown start column
+      startColumn = 0;
+    }
+    TextSpan ts = new TextSpan(startLine, startColumn, startLine, startColumn);
+    return new AnalyzerMessage(check, file, ts, location.msg, 0);
+  }
+

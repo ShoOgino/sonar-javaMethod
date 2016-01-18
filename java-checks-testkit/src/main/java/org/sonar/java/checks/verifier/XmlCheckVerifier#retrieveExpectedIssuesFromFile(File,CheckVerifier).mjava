@@ -1,0 +1,18 @@
+  protected static void retrieveExpectedIssuesFromFile(File xmlFile, CheckVerifier checkVerifier) {
+    try (FileInputStream is = new FileInputStream(xmlFile)) {
+      XMLInputFactory factory = XMLInputFactory.newInstance();
+      XMLStreamReader reader = factory.createXMLStreamReader(is);
+
+      while (reader.hasNext()) {
+        int line = reader.getLocation().getLineNumber();
+        reader.next();
+        if (reader.getEventType() == XMLStreamReader.COMMENT) {
+          String text = reader.getText().trim();
+          checkVerifier.collectExpectedIssues(text, line);
+        }
+      }
+    } catch (XMLStreamException | IOException e) {
+      Fail.fail("The test file can not be parsed to retrieve comments", e);
+    }
+  }
+
