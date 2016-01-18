@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    Symbol.TypeSymbol classSymbol = classTree.symbol();
+    if (isInnerClass(classSymbol)) {
+      MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor(classSymbol);
+      classTree.accept(methodInvocationVisitor);
+      methodInvocationVisitor.checkUsages();
+    }
+  }
+

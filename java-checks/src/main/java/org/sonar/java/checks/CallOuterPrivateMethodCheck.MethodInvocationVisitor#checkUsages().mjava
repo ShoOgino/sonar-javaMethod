@@ -1,0 +1,11 @@
+    public void checkUsages() {
+      for (Symbol methodUsed : usages.elementSet()) {
+        if (methodUsed.usages().size() == usages.count(methodUsed)) {
+          MethodTree declaration = (MethodTree) methodUsed.declaration();
+          if (declaration != null) {
+            reportIssue(declaration.simpleName(), "Move this method into \"" + classSymbol.name() + "\".");
+          }
+        }
+      }
+    }
+
