@@ -1,0 +1,21 @@
+  @Test
+  public void init_should_be_called_before_scan() throws Exception {
+    XmlCheck check = new XPathInitializedXmlCheck() {
+      private boolean initialized = false;
+      private boolean scanned = false;
+
+      @Override
+      public void scanFileWithXPathExpressions(XmlCheckContext context) throws XPathExpressionException {
+        assertThat(initialized).isTrue();
+        scanned = true;
+      }
+
+      @Override
+      public void initXPathExpressions(XmlCheckContext context) throws XPathExpressionException {
+        assertThat(scanned).isFalse();
+        initialized = true;
+      }
+    };
+    check.scanFile(context);
+  }
+

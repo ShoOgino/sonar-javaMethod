@@ -1,0 +1,18 @@
+  @Test()
+  public void should_fail_when_initialiation_fail() throws Exception {
+    XmlCheck check = new XPathInitializedXmlCheck() {
+      @Override
+      public void initXPathExpressions(XmlCheckContext context) throws XPathExpressionException {
+        throw new XPathExpressionException("");
+      }
+
+      @Override
+      public void scanFileWithXPathExpressions(XmlCheckContext context) throws XPathExpressionException {
+      }
+    };
+    thrown.expect(AnalysisException.class);
+    thrown.expectMessage("Unable perform analysis on file 'path'");
+
+    check.scanFile(context);
+  }
+
