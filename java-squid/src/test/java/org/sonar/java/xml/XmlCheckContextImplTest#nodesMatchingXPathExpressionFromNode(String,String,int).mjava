@@ -1,5 +1,5 @@
-  private void nodesMatchingXPathExpressionFromNode(String expression1, String expression2, int expectedChildren) throws Exception {
-    Node node = context.evaluateXPathExpression(expression1).item(0);
-    assertThat(context.evaluateXPathExpressionFromNode(node, expression2).getLength()).isEqualTo(expectedChildren);
+  private void nodesMatchingXPathExpressionFromNode(String expressionOnDocument, String expressionOnNode, int expectedChildren) throws Exception {
+    XPathExpression xPathExprOnNode = context.compile(expressionOnNode);
+    assertThat(context.evaluate(xPathExprOnNode, firstNode(context, expressionOnDocument))).hasSize(expectedChildren);
   }
 
