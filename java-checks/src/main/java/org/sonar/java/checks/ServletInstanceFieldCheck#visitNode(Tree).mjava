@@ -1,8 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
-    VariableTree variable = (VariableTree) tree;
-    if (hasSemantic() && isOwnedByAServlet(variable) && !isStaticOrFinal(variable)) {
-      reportIssue(variable.simpleName(), "Remove this misleading mutable servlet instance fields or make it \"static\" and/or \"final\"");
+    if (tree.is(Kind.METHOD) && isServletInit((MethodTree) tree)) {
+      tree.accept(new AssignmentVisitor());
+    } else if (tree.is(Kind.VARIABLE)) {
+      VariableTree variable = (VariableTree) tree;
+      if (isOwnedByAServlet(variable) && !isStaticOrFinal(variable)) {
+        issuableVariables.add(variable);
+
+      }
     }
   }
 

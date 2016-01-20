@@ -1,0 +1,10 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      if (tree.variable().is(Kind.IDENTIFIER)) {
+        Tree declaration = ((IdentifierTree) tree.variable()).symbol().declaration();
+        if (declaration != null && declaration.is(Kind.VARIABLE)) {
+          excludedVariables.add((VariableTree) declaration);
+        }
+      }
+    }
+
