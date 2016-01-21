@@ -1,5 +1,12 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    Tree parent = mit.parent();
+    while (parent != null && !parent.is(Tree.Kind.METHOD)) {
+      parent = parent.parent();
+    }
+    if (parent != null && RUNNABLE_RUN_METHOD_MATCHER.matches((MethodTree) parent)) {
+      return;
+    }
     reportIssue(MethodsHelper.methodName(mit), "Call the method Thread.start() to execute the content of the run() method in a dedicated thread.");
   }
 
