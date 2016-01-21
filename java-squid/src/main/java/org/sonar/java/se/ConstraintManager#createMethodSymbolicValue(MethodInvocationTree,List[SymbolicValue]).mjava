@@ -1,8 +1,10 @@
   public SymbolicValue createMethodSymbolicValue(MethodInvocationTree syntaxNode, List<SymbolicValue> values) {
     SymbolicValue result;
     if (isEqualsMethod(syntaxNode)) {
-      result = new SymbolicValue.MethodEqualsToSymbolicValue(counter);
-      result.computedFrom(values);
+      result = new RelationalSymbolicValue(counter, RelationalSymbolicValue.Kind.METHOD_EQUALS);
+      SymbolicValue leftOp = values.get(0);
+      SymbolicValue rightOp = values.get(1);
+      result.computedFrom(ImmutableList.of(rightOp, leftOp));
     } else {
       result = createDefaultSymbolicValue(syntaxNode);
     }

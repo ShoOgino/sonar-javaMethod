@@ -1,0 +1,18 @@
+  private void checkTransitive(Class<? extends BinaryRelation> hClass1, Class<? extends BinaryRelation> hClass2, Class<? extends BinaryRelation> checkedClass,
+    RelationState directResult) {
+    SymbolicValue a = values[0];
+    SymbolicValue b = values[1];
+    SymbolicValue c = values[2];
+    try {
+      BinaryRelation hypothesis1 = createRelation(hClass1, a, b);
+      BinaryRelation hypothesis2 = createRelation(hClass2, b, c);
+      BinaryRelation checked = createRelation(checkedClass, a, c);
+      checkTransitive(hypothesis1, hypothesis2, checked, directResult);
+      checkTransitive(hypothesis1.symmetric(), hypothesis2, checked, directResult);
+      checkTransitive(hypothesis1, hypothesis2.symmetric(), checked, directResult);
+      checkTransitive(hypothesis1, hypothesis2, checked.symmetric(), directResult);
+    } catch (Exception e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+

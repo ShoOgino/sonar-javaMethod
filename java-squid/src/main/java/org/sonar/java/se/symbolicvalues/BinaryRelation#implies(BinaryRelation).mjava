@@ -1,0 +1,18 @@
+  /**
+   * @param a relation between symbolic values
+   * @return a RelationState<ul>
+   * <li>FULFILLED  if the receiver implies that the supplied relation is true</li>
+   * <li>UNFULFILLED if the receiver implies that the supplied relation is false</li>
+   * <li>UNDETERMINED  otherwise</li>
+   * </ul>
+   * @see RelationState
+   */
+  protected RelationState implies(BinaryRelation relation) {
+    if (leftOp.equals(relation.leftOp) && rightOp.equals(relation.rightOp)) {
+      return relation.isImpliedBy(this);
+    } else if (leftOp.equals(relation.rightOp) && rightOp.equals(relation.leftOp)) {
+      return relation.symmetric().isImpliedBy(this);
+    }
+    return RelationState.UNDETERMINED;
+  }
+

@@ -1,0 +1,14 @@
+  private void checkInverse(Class<? extends BinaryRelation> relationClass) {
+    SymbolicValue a = values[0];
+    SymbolicValue b = values[1];
+    try {
+      BinaryRelation relation = createRelation(relationClass, a, b);
+      BinaryRelation inverseOfInverse = relation.inverse().inverse();
+      assertThat(relation.getClass()).isEqualTo(inverseOfInverse.getClass());
+      assertThat(relation.leftOp).isEqualTo(inverseOfInverse.leftOp);
+      assertThat(relation.rightOp).isEqualTo(inverseOfInverse.rightOp);
+    } catch (Exception e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+

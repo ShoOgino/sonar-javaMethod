@@ -1,0 +1,9 @@
+  @Override
+  protected List<ProgramState> copyConstraint(SymbolicValue from, SymbolicValue to, ProgramState programState, BooleanConstraint booleanConstraint) {
+    ProgramState newState = programState;
+    if (programState.canReach(from) || programState.canReach(to)) {
+      newState = programState.addConstraint(this, booleanConstraint);
+    }
+    return super.copyConstraint(from, to, newState, booleanConstraint);
+  }
+

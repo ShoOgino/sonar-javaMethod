@@ -1,0 +1,14 @@
+  @Override
+  protected BinaryRelation conjunction(BinaryRelation relation) {
+    Preconditions.checkArgument(leftOp.equals(relation.leftOp) && rightOp.equals(relation.rightOp), "Conjunction condition not matched!");
+    switch (relation.kind) {
+      case NOT_EQUAL:
+      case NOT_METHOD_EQUALS:
+        return new LessThanRelation(leftOp, rightOp);
+      case GREATER_THAN_OR_EQUAL:
+        return new EqualRelation(leftOp, rightOp);
+      default:
+        return super.conjunction(relation);
+    }
+  }
+

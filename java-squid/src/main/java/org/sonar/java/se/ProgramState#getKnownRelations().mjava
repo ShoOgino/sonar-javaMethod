@@ -1,0 +1,18 @@
+  public List<BinaryRelation> getKnownRelations() {
+    final List<BinaryRelation> knownRelations = new ArrayList<>();
+    constraints.forEach(new PMap.Consumer<SymbolicValue, Object>() {
+      @Override
+      public void accept(SymbolicValue value, Object constraint) {
+        BinaryRelation relation = value.binaryRelation();
+        if (relation != null) {
+          if (BooleanConstraint.TRUE.equals(constraint)) {
+            knownRelations.add(relation);
+          } else if (BooleanConstraint.FALSE.equals(constraint)) {
+            knownRelations.add(relation.inverse());
+          }
+        }
+      }
+    });
+    return knownRelations;
+  }
+

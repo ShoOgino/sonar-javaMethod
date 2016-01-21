@@ -1,0 +1,15 @@
+  private void checkImplies(Class<? extends BinaryRelation> hypothesisClass, Class<? extends BinaryRelation> checkedClass, RelationState directResult,
+    RelationState transposedResult) {
+    SymbolicValue a = values[0];
+    SymbolicValue b = values[1];
+    try {
+      BinaryRelation hypothesis = createRelation(hypothesisClass, a, b);
+      BinaryRelation checked = createRelation(checkedClass, a, b);
+      checkImplies(hypothesis, checked, directResult);
+      checked = createRelation(checkedClass, b, a);
+      checkImplies(hypothesis, checked, transposedResult);
+    } catch (Exception e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+

@@ -1,0 +1,27 @@
+  @Test
+  public void testEqualChained() {
+    List<BinaryRelation> constraints = new ArrayList<>();
+    constraints.add(new EqualRelation(values[0], values[1]));
+    constraints.add(new EqualRelation(values[1], values[2]));
+    constraints.add(new EqualRelation(values[2], values[3]));
+    constraints.add(new EqualRelation(values[3], values[4]));
+    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
+      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
+        if (i != j) {
+          final EqualRelation relation = new EqualRelation(values[i], values[j]);
+          RelationState result = relation.resolveState(constraints);
+          assertThat(result).as(relation.toString()).isEqualTo(RelationState.FULFILLED);
+        }
+      }
+    }
+    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
+      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
+        if (i != j) {
+          final NotEqualRelation relation = new NotEqualRelation(values[i], values[j]);
+          RelationState result = relation.resolveState(constraints);
+          assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNFULFILLED);
+        }
+      }
+    }
+  }
+

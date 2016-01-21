@@ -1,0 +1,36 @@
+  @Test
+  public void testNotEqual() {
+    List<BinaryRelation> constraints = new ArrayList<>();
+    constraints.add(new NotEqualRelation(values[0], values[1]));
+    constraints.add(new NotEqualRelation(values[0], values[2]));
+    constraints.add(new NotEqualRelation(values[0], values[3]));
+    constraints.add(new NotEqualRelation(values[0], values[4]));
+    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
+      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
+        if (i != j) {
+          final NotEqualRelation relation = new NotEqualRelation(values[i], values[j]);
+          RelationState result = relation.resolveState(constraints);
+          if (i == 0 || j == 0) {
+            assertThat(result).as(relation.toString()).isEqualTo(RelationState.FULFILLED);
+          } else {
+            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNDETERMINED);
+          }
+        }
+      }
+    }
+    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
+      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
+        if (i != j) {
+          final EqualRelation relation = new EqualRelation(values[i], values[j]);
+          RelationState result = relation.resolveState(constraints);
+          if (i == 0 || j == 0) {
+            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNFULFILLED);
+          } else {
+            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNDETERMINED);
+            ;
+          }
+        }
+      }
+    }
+  }
+
