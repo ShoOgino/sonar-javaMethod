@@ -1,14 +1,10 @@
   @Override
   public void scanFile(XmlCheckContext context) {
     this.context = context;
-    try {
-      if (!initialized) {
-        precompileXPathExpressions(context);
-        initialized = true;
-      }
-      scanFileWithXPathExpressions(context);
-    } catch (XPathExpressionException e) {
-      throw new AnalysisException("Unable perform analysis on file " + context.getFile().getAbsolutePath(), e);
+    if (!initialized) {
+      precompileXPathExpressions(context);
+      initialized = true;
     }
+    scanFileWithXPathExpressions(context);
   }
 
