@@ -1,8 +1,10 @@
-  private File[] getReports(File dir) {
+  private File[] getReports(File dir, boolean reportDirSetByUser) {
     if (dir == null) {
       return new File[0];
     } else if (!dir.isDirectory()) {
-      LOGGER.error("Reports path not found or is not a directory: " + dir.getAbsolutePath());
+      if(reportDirSetByUser) {
+        LOGGER.error("Reports path not found or is not a directory: " + dir.getAbsolutePath());
+      }
       return new File[0];
     }
     File[] unitTestResultFiles = findXMLFilesStartingWith(dir, "TEST-");
