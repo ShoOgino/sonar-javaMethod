@@ -1,0 +1,11 @@
+  public static AnalyzerMessage buildAnalyzerMessage(JavaCheck check, String message, Integer line, Iterable<XmlDocumentLocation> secondary, @Nullable Integer cost, File file) {
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(check, file, line, message, cost != null ? cost.intValue() : 0);
+    for (XmlDocumentLocation location : secondary) {
+      AnalyzerMessage secondaryLocation = getSecondaryAnalyzerMessage(check, file, location);
+      if (secondaryLocation != null) {
+        analyzerMessage.secondaryLocations.add(secondaryLocation);
+      }
+    }
+    return analyzerMessage;
+  }
+

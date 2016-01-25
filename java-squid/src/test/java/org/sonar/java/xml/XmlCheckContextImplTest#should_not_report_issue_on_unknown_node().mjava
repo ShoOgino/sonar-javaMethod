@@ -1,8 +1,10 @@
   @Test
   public void should_not_report_issue_on_unknown_node() throws Exception {
+    // manual parsing
     Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(context.getFile());
 
-    Node node = ((NodeList) XPathFactory.newInstance().newXPath().compile("//exclude-default-interceptors").evaluate(doc, XPathConstants.NODESET)).item(0);
+    // uses document with recorded lines
+    Node node = Iterables.get(context.evaluate(context.compile("//exclude-default-interceptors"), doc), 0);
 
     context.reportIssue(CHECK, node, "message");
     verify(sonarComponents, never()).addIssue(any(File.class), any(JavaCheck.class), anyInt(), anyString(), anyDouble());
