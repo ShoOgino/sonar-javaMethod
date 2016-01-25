@@ -1,0 +1,9 @@
+    @Override
+    public void visitThrowStatement(ThrowStatementTree tree) {
+      if(tree.expression().is(Tree.Kind.IDENTIFIER) && ((IdentifierTree) tree.expression()).symbol().equals(catchedException)) {
+        threadInterrupted = true;
+        return;
+      }
+      super.visitThrowStatement(tree);
+    }
+

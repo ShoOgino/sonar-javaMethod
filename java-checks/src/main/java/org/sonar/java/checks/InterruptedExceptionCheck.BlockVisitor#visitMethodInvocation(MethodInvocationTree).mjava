@@ -1,0 +1,9 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if(tree.symbol().owner().type().isSubtypeOf("java.lang.Thread") && "interrupt".equals(tree.symbol().name()) && tree.arguments().isEmpty()) {
+        threadInterrupted = true;
+        return;
+      }
+      super.visitMethodInvocation(tree);
+    }
+
