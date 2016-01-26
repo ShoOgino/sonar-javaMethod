@@ -38,7 +38,14 @@
     }
     // unconditional jumps, for-statement, switch-statement, synchronized:
     if(node.exitPath) {
-      enqueue(new ExplodedGraph.ProgramPoint(block.exitBlock(), 0), programState, true);
+      if(block.exitBlock() != null) {
+        enqueue(new ExplodedGraph.ProgramPoint(block.exitBlock(), 0), programState, true);
+      } else {
+        for (CFG.Block successor : block.successors()) {
+          enqueue(new ExplodedGraph.ProgramPoint(successor, 0), programState, true);
+        }
+      }
+
     } else {
       for (CFG.Block successor : block.successors()) {
         if (!block.isFinallyBlock() || successor != block.exitBlock()) {
