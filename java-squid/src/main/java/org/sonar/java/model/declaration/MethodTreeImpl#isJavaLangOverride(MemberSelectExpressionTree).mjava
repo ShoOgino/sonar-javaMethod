@@ -1,0 +1,9 @@
+  private static boolean isJavaLangOverride(MemberSelectExpressionTree annotationType) {
+    MemberSelectExpressionTree mse = annotationType;
+    if(isOverride(mse.identifier()) && mse.expression().is(Kind.MEMBER_SELECT)) {
+      mse = (MemberSelectExpressionTree) mse.expression();
+      return "lang".equals(mse.identifier().name()) && mse.expression().is(Kind.IDENTIFIER) && "java".equals(((IdentifierTree) mse.expression()).name());
+    }
+    return false;
+  }
+
