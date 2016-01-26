@@ -8,7 +8,7 @@
     lineByImportReference.clear();
     pendingImports.clear();
 
-    currentPackage = concatenate(packageName);
+    currentPackage = ExpressionsHelper.concatenate(packageName);
     for (ImportClauseTree importClauseTree : cut.imports()) {
       ImportTree importTree = null;
 
@@ -17,7 +17,7 @@
       }
 
       if (importTree != null && !importTree.isStatic()) {
-        String importName = concatenate((ExpressionTree) importTree.qualifiedIdentifier());
+        String importName = ExpressionsHelper.concatenate((ExpressionTree) importTree.qualifiedIdentifier());
         if ("java.lang.*".equals(importName)) {
           context.reportIssue(this, importTree, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
         } else if (isImportFromSamePackage(importName)) {
