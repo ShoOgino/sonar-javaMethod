@@ -5,6 +5,14 @@
       SymbolicValue leftOp = values.get(0);
       SymbolicValue rightOp = values.get(1);
       result.computedFrom(ImmutableList.of(rightOp, leftOp));
+    } else if (ExplodedGraphWalker.isObjectsMethod(syntaxNode, "isNull", 1)) {
+      result = new NullCheckSymbolicValue(counter, true);
+      SymbolicValue operand = values.get(1);
+      result.computedFrom(ImmutableList.of(operand));
+    } else if (ExplodedGraphWalker.isObjectsMethod(syntaxNode, "nonNull", 1)) {
+      result = new NullCheckSymbolicValue(counter, false);
+      SymbolicValue operand = values.get(1);
+      result.computedFrom(ImmutableList.of(operand));
     } else {
       result = createDefaultSymbolicValue(syntaxNode);
     }

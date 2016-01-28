@@ -1,0 +1,11 @@
+  @Override
+  public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+    final ObjectConstraint constraint;
+    if (BooleanConstraint.TRUE.equals(booleanConstraint)) {
+      constraint = isNull ? ObjectConstraint.NULL : ObjectConstraint.NOT_NULL;
+    } else {
+      constraint = isNull ? ObjectConstraint.NOT_NULL : ObjectConstraint.NULL;
+    }
+    return ImmutableList.of(programState.addConstraint(operand, constraint));
+  }
+
