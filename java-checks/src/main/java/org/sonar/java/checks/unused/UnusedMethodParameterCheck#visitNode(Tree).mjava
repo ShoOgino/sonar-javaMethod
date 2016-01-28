@@ -4,7 +4,8 @@
     if (hasSemantic() && methodTree.block() != null && !isExcluded(methodTree)) {
       List<IdentifierTree> unused = Lists.newArrayList();
       for (VariableTree var : methodTree.parameters()) {
-        if (var.symbol().usages().isEmpty()) {
+        Symbol symbol = var.symbol();
+        if (symbol.usages().isEmpty() && !symbol.metadata().isAnnotatedWith(AUTHORIZED_ANNOTATION)) {
           unused.add(var.simpleName());
         }
       }
