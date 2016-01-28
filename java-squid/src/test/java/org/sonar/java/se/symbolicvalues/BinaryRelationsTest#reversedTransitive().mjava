@@ -1,11 +1,10 @@
   @Test
   public void reversedTransitive() {
-    final List<BinaryRelation> knownRelations = ImmutableList.of(
-      (BinaryRelation) new EqualRelation(values[0], values[1]), // a==b
-      (BinaryRelation) new EqualRelation(values[0], values[2]), // a==c
-      (BinaryRelation) new EqualRelation(values[0], values[3]));// a==d
-    final BinaryRelation checked = new EqualRelation(values[1], values[3]); // b==d?
-    RelationState result = checked.resolveState(knownRelations);
-    assertThat(result).as(checked.toString()).isEqualTo(RelationState.FULFILLED);
+    List<BinaryRelation> knownRelations = ImmutableList.of(
+      relation(EQUAL, SVa, SVb), // a==b
+      relation(EQUAL, SVa, SVc), // a==c
+      relation(EQUAL, SVa, values[3]));// a==d
+    BinaryRelation checked = relation(EQUAL, SVb, values[3]); // b==d?
+    assertRelationHasState(checked, knownRelations, FULFILLED);
   }
 

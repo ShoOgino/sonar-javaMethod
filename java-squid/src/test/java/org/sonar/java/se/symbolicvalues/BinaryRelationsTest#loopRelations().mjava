@@ -1,11 +1,10 @@
   @Test
   public void loopRelations() {
-    final List<BinaryRelation> knownRelations = ImmutableList.of(
-      (BinaryRelation) new NotEqualRelation(values[0], values[1]),
-      (BinaryRelation) new NotEqualRelation(values[1], values[2]),
-      (BinaryRelation) new NotEqualRelation(values[2], values[3]));
-    final BinaryRelation checked = new NotEqualRelation(values[0], values[3]);
-    RelationState result = checked.resolveState(knownRelations);
-    assertThat(result).as(checked.toString()).isEqualTo(RelationState.UNDETERMINED);
+    List<BinaryRelation> knownRelations = ImmutableList.of(
+      relation(NOT_EQUAL, SVa, SVb),
+      relation(NOT_EQUAL, SVb, SVc),
+      relation(NOT_EQUAL, SVc, values[3]));
+    BinaryRelation checked = relation(NOT_EQUAL, SVa, values[3]);
+    assertRelationHasState(checked, knownRelations, UNDETERMINED);
   }
 

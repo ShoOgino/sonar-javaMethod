@@ -1,10 +1,9 @@
   @Test
   public void transitiveC() {
-    final List<BinaryRelation> knownRelations = ImmutableList.of(
-      new EqualRelation(values[0], values[1]), // a==b
-      new NotEqualRelation(values[1], values[2]));// b!=c
-    final BinaryRelation checked = new EqualRelation(values[0], values[2]); // a==c?
-    RelationState result = checked.resolveState(knownRelations);
-    assertThat(result).as(checked.toString()).isEqualTo(RelationState.UNFULFILLED);
+    List<BinaryRelation> knownRelations = ImmutableList.of(
+      relation(EQUAL, SVa, SVb), // a==b
+      relation(NOT_EQUAL, SVb, SVc));// b!=c
+    BinaryRelation checked = relation(EQUAL, SVa, SVc); // a==c?
+    assertRelationHasState(checked, knownRelations, UNFULFILLED);
   }
 

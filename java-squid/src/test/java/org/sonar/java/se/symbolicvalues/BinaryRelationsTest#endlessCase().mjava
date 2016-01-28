@@ -1,10 +1,9 @@
   @Test
   public void endlessCase() {
-    final List<BinaryRelation> knownRelations = ImmutableList.of(
-      new NotEqualRelation(values[0], values[1]), // a!=b
-      new EqualRelation(values[0], values[2]));// a==c
-    final BinaryRelation checked = new NotMethodEqualsRelation(values[1], values[0]); // !b.equals(a)
-    RelationState result = checked.resolveState(knownRelations);
-    assertThat(result).as(checked.toString()).isEqualTo(RelationState.UNDETERMINED);
+    List<BinaryRelation> knownRelations = ImmutableList.of(
+      relation(NOT_EQUAL, SVa, SVb), // a!=b
+      relation(EQUAL, SVa, SVc));// a==c
+    BinaryRelation checked = new NotMethodEqualsRelation(SVb, SVa); // !b.equals(a)
+    assertRelationHasState(checked, knownRelations, UNDETERMINED);
   }
 

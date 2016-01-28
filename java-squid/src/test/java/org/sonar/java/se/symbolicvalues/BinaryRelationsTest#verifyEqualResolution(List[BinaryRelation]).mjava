@@ -1,0 +1,13 @@
+  private void verifyEqualResolution(List<BinaryRelation> constraints) {
+    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
+      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
+        if (i != j) {
+          BinaryRelation equalRelation = relation(EQUAL, values[i], values[j]);
+          assertThat(equalRelation.resolveState(constraints)).as(equalRelation.toString()).isEqualTo(FULFILLED);
+          BinaryRelation notEqualRelation = relation(NOT_EQUAL, values[i], values[j]);
+          assertThat(notEqualRelation.resolveState(constraints)).as(notEqualRelation.toString()).isEqualTo(UNFULFILLED);
+        }
+      }
+    }
+  }
+

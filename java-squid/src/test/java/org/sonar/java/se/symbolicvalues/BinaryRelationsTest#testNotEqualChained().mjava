@@ -1,34 +1,19 @@
   @Test
   public void testNotEqualChained() {
-    List<BinaryRelation> constraints = new ArrayList<>();
-    constraints.add(new NotEqualRelation(values[0], values[1]));
-    constraints.add(new NotEqualRelation(values[1], values[2]));
-    constraints.add(new NotEqualRelation(values[2], values[3]));
-    constraints.add(new NotEqualRelation(values[3], values[4]));
+    List<BinaryRelation> constraints = relationsBetweenValue(NOT_EQUAL);
     for (int i = 0; i < NUMBER_OF_VALUES; i++) {
       for (int j = 0; j < NUMBER_OF_VALUES; j++) {
         if (i != j) {
-          final NotEqualRelation relation = new NotEqualRelation(values[i], values[j]);
-          RelationState result = relation.resolveState(constraints);
+          BinaryRelation notEqualRelation = relation(NOT_EQUAL, values[i], values[j]);
+          RelationState notEqualResult = notEqualRelation.resolveState(constraints);
+          BinaryRelation equalRelation = relation(EQUAL, values[i], values[j]);
+          RelationState equalResult = equalRelation.resolveState(constraints);
           if (Math.abs(j - i) == 1) {
-            assertThat(result).as(relation.toString()).isEqualTo(RelationState.FULFILLED);
+            assertThat(notEqualResult).as(notEqualRelation.toString()).isEqualTo(FULFILLED);
+            assertThat(equalResult).as(equalRelation.toString()).isEqualTo(UNFULFILLED);
           } else {
-            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNDETERMINED);
-            ;
-          }
-        }
-      }
-    }
-    for (int i = 0; i < NUMBER_OF_VALUES; i++) {
-      for (int j = 0; j < NUMBER_OF_VALUES; j++) {
-        if (i != j) {
-          final EqualRelation relation = new EqualRelation(values[i], values[j]);
-          RelationState result = relation.resolveState(constraints);
-          if (Math.abs(j - i) == 1) {
-            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNFULFILLED);
-          } else {
-            assertThat(result).as(relation.toString()).isEqualTo(RelationState.UNDETERMINED);
-            ;
+            assertThat(notEqualResult).as(notEqualRelation.toString()).isEqualTo(UNDETERMINED);
+            assertThat(equalResult).as(equalRelation.toString()).isEqualTo(UNDETERMINED);
           }
         }
       }

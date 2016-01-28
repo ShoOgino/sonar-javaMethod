@@ -9,13 +9,13 @@
       if (first == null) {
         first = last;
       } else if (previous != null) {
-        relations.add(new EqualRelation(previous, last));
+        relations.add(relation(EQUAL, previous, last));
       }
       previous = last;
     }
     try {
-      new EqualRelation(first, last).resolveState(relations);
-      Assert.fail("Transitive limit was exceeded, but not detected!");
+      relation(EQUAL, first, last).resolveState(relations);
+      fail("Transitive limit was exceeded, but not detected!");
     } catch (IllegalStateException e) {
       assertThat(e.getMessage()).isEqualTo(BinaryRelation.TRANSITIVE_RELATIONS_EXCEEDED);
     }
