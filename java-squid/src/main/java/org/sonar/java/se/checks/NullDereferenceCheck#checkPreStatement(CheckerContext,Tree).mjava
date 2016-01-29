@@ -9,13 +9,10 @@
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree methodInvocation = (MethodInvocationTree) syntaxNode;
       toCheck = methodInvocation.methodSelect();
-      if (ExplodedGraphWalker.isObjectsMethod(methodInvocation, REQUIRE_NON_NULL_METHOD_NAME, 1)) {
-        final List<SymbolicValue> values = context.getState().peekValues(2);
-        return context.getState().addConstraint(values.get(1), ObjectConstraint.NOT_NULL);
-      } else if (ExplodedGraphWalker.isObjectsMethod(methodInvocation, REQUIRE_NON_NULL_METHOD_NAME, 2)
-        || ExplodedGraphWalker.isObjectsMethod(methodInvocation, REQUIRE_NON_NULL_METHOD_NAME, 2)) {
-        final List<SymbolicValue> values = context.getState().peekValues(3);
-        return context.getState().addConstraint(values.get(2), ObjectConstraint.NOT_NULL);
+      if (isObjectsRequireNonNullMethod(methodInvocation.symbol())) {
+        int numberArguments = methodInvocation.arguments().size();
+        List<SymbolicValue> values = context.getState().peekValues(numberArguments + 1);
+        return context.getState().addConstraint(values.get(numberArguments), ObjectConstraint.NOT_NULL);
       }
     }
     if (toCheck.is(Tree.Kind.MEMBER_SELECT)) {
