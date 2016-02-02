@@ -1,0 +1,12 @@
+    @Override
+    public boolean isSubtypeOf(Type superType) {
+      if (erasure().isSubtypeOf(superType.erasure())) {
+        boolean superTypeIsParametrizedJavaType = superType instanceof ParametrizedTypeJavaType;
+        if (superTypeIsParametrizedJavaType) {
+          return checkSubstitutedTypesCompatibility((ParametrizedTypeJavaType) superType);
+        }
+        return !superTypeIsParametrizedJavaType;
+      }
+      return false;
+    }
+

@@ -7,8 +7,10 @@
     if (candidate.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(candidate, site) || candidate.type == null) {
       return bestSoFar;
     }
-    boolean isVarArgs = ((JavaSymbol.MethodJavaSymbol) candidate).isVarArgs();
-    if (!isArgumentsAcceptable(argTypes, ((JavaType.MethodJavaType) candidate.type).argTypes, isVarArgs, autoboxing)) {
+    JavaSymbol.MethodJavaSymbol methodJavaSymbol = (JavaSymbol.MethodJavaSymbol) candidate;
+    boolean isVarArgs = methodJavaSymbol.isVarArgs();
+    boolean usesTypeParameter = usesTypeParameter(methodJavaSymbol);
+    if (!isArgumentsAcceptable(argTypes, ((JavaType.MethodJavaType) candidate.type).argTypes, isVarArgs, autoboxing, usesTypeParameter)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...

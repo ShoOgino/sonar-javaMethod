@@ -1,0 +1,18 @@
+  @Test
+  public void testTypeHierarchyWithGenericClasses() {
+    List<Type> elementTypes = declaredTypesOfVariablesFromLastClass(
+      "interface Predicate<T> {}",
+      "class ObjectPredicate implements Predicate<Object> {}",
+
+      "class Test<X> {",
+      "Predicate<X> myPredicate;",
+      "ObjectPredicate objectPredicate;",
+      "}");
+    Type xPredicateType = elementTypes.get(0);
+    Type objectPredicateType = elementTypes.get(1);
+
+    SubtypeAssert.assertThat(xPredicateType).isNotSubtypeOf(objectPredicateType);
+    // FIXME SONARJAVA-1514
+    SubtypeAssert.assertThat(objectPredicateType).isSubtypeOf(xPredicateType);
+  }
+

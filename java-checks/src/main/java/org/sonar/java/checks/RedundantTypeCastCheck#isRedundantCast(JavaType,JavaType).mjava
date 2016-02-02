@@ -3,6 +3,12 @@
     if(erasedExpressionType.isTagged(JavaType.TYPEVAR)) {
       erasedExpressionType = erasedExpressionType.erasure();
     }
-    return erasedExpressionType.equals(cast) || (!(cast instanceof JavaType.ParametrizedTypeJavaType) && !cast.isNumerical() && erasedExpressionType.isSubtypeOf(cast));
+    if (isParametrizedType(cast) ^ isParametrizedType(expressionType)) {
+      return false;
+    }
+    if (isParametrizedType(cast) && isParametrizedType(expressionType)) {
+      return expressionType.isSubtypeOf(cast);
+    }
+    return erasedExpressionType.equals(cast) || (!cast.isNumerical() && erasedExpressionType.isSubtypeOf(cast));
   }
 

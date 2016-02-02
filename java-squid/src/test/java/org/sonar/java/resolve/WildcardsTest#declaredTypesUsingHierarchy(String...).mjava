@@ -1,0 +1,29 @@
+  /**
+   * Used hierarchy:
+   * <pre>
+   *   interface A<T> {}
+   *   interface B<T> extends A<T> {}
+   *   interface C<T> {}
+   *   class Animal {}
+   *   class Cat extends Animal {}
+   *   class Test<T, U, V> {}
+   * </pre>
+   * @param types
+   * @return
+   */
+  private static List<Type> declaredTypesUsingHierarchy(String... types) {
+    String[] linesBefore = new String[] {
+      "interface A<T> {}",
+      "interface B<T> extends A<T> {}",
+      "interface C<T> {}",
+      "class Animal {}",
+      "class Cat extends Animal {}",
+      "class Test<T,U,V> {"};
+    String[] linesAfter = new String[] {"}"};
+    String[] variables = new String[types.length];
+    for (int i = 0; i < types.length; i++) {
+      variables[i] = types[i] + " o" + i + ";";
+    }
+    return declaredTypesOfVariablesFromLastClass((String[]) ArrayUtils.addAll(ArrayUtils.addAll(linesBefore, variables), linesAfter));
+  }
+

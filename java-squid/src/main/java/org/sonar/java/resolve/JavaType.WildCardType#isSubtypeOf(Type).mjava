@@ -1,0 +1,15 @@
+    @Override
+    public boolean isSubtypeOf(Type superType) {
+      if (((JavaType) superType).isTagged(WILDCARD)) {
+        WildCardType superTypeWildcard = (WildCardType) superType;
+        if (superTypeWildcard.boundType == BoundType.UNBOUNDED) {
+          return true;
+        }
+        if ((boundType == BoundType.UNBOUNDED || boundType == BoundType.EXTENDS) && superTypeWildcard.boundType == BoundType.EXTENDS) {
+          return bound.isSubtypeOf(superTypeWildcard.bound);
+        }
+        return boundType == BoundType.SUPER && superTypeWildcard.boundType == BoundType.SUPER && superTypeWildcard.bound.isSubtypeOf(bound);
+      }
+      return false;
+    }
+
