@@ -6,11 +6,12 @@
       Symbol symbol;
       switch (element.kind()) {
         case ASSIGNMENT:
-          ExpressionTree lhs = ExpressionsHelper.skipParentheses(((AssignmentExpressionTree) element).variable());
+          AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
+          ExpressionTree lhs = ExpressionsHelper.skipParentheses(assignmentExpressionTree.variable());
           if (lhs.is(Tree.Kind.IDENTIFIER)) {
             symbol = ((IdentifierTree) lhs).symbol();
             if (isLocalVariable(symbol) && !out.contains(symbol)) {
-              createIssue(lhs, symbol);
+              createIssue(assignmentExpressionTree.operatorToken(), assignmentExpressionTree.expression(), symbol);
             }
             assignmentLHS.add(lhs);
             out.remove(symbol);
