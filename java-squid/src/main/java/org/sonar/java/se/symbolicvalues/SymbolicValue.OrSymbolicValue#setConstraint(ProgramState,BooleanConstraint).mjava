@@ -1,21 +1,16 @@
     @Override
     public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
-      final List<ProgramState> states = new ArrayList<>();
-      if (BooleanConstraint.TRUE.equals(booleanConstraint)) {
+      List<ProgramState> states = new ArrayList<>();
+      if (booleanConstraint.isTrue()) {
         List<ProgramState> trueFirstOp = leftOp.setConstraint(programState, BooleanConstraint.TRUE);
-        List<ProgramState> falseFirstOp = leftOp.setConstraint(programState, BooleanConstraint.FALSE);
         for (ProgramState ps : trueFirstOp) {
           states.addAll(rightOp.setConstraint(ps, BooleanConstraint.TRUE));
           states.addAll(rightOp.setConstraint(ps, BooleanConstraint.FALSE));
         }
-        for (ProgramState ps : falseFirstOp) {
-          states.addAll(rightOp.setConstraint(ps, BooleanConstraint.TRUE));
-        }
-      } else {
-        List<ProgramState> falseFirstOp = leftOp.setConstraint(programState, BooleanConstraint.FALSE);
-        for (ProgramState ps : falseFirstOp) {
-          states.addAll(rightOp.setConstraint(ps, BooleanConstraint.FALSE));
-        }
+      }
+      List<ProgramState> falseFirstOp = leftOp.setConstraint(programState, BooleanConstraint.FALSE);
+      for (ProgramState ps : falseFirstOp) {
+        states.addAll(rightOp.setConstraint(ps, booleanConstraint));
       }
       return states;
     }
