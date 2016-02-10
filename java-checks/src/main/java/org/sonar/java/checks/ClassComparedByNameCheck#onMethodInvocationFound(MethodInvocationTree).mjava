@@ -1,9 +1,17 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    reportTree = mit;
+    List<ExpressionTree> expressionsToCheck = new ArrayList<>(2);
     if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      ((MemberSelectExpressionTree) mit.methodSelect()).expression().accept(classGetNameDetector);
+      expressionsToCheck.add(((MemberSelectExpressionTree) mit.methodSelect()).expression());
     }
-    mit.arguments().get(0).accept(classGetNameDetector);
+    expressionsToCheck.add(mit.arguments().get(0));
+
+    ClassGetNameDetector visitor = new ClassGetNameDetector();
+    for (ExpressionTree expression : expressionsToCheck) {
+      expression.accept(visitor);
+    }
+    if (visitor.useClassGetName && !visitor.useStackTraceElementGetClassName) {
+      reportIssue(mit, "Use an \"instanceof\" comparison instead.");
+    }
   }
 

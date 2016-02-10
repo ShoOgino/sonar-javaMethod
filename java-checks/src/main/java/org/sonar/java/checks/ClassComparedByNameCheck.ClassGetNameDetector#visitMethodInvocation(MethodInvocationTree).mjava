@@ -1,7 +1,9 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       if (methodMatchers.anyMatch(tree)) {
-        reportIssue(reportTree, "Use an \"instanceof\" comparison instead.");
+        useClassGetName = true;
+      } else if (stackTraceElementMatcher.matches(tree)) {
+        useStackTraceElementGetClassName = true;
       }
       scan(tree.methodSelect());
     }
