@@ -1,10 +1,12 @@
     public boolean isSubtypeOfBound(JavaType type) {
-      if (isUnbounded()) {
-        return true;
-      }
-      if (boundType == BoundType.EXTENDS) {
+      switch (boundType) {
+        case SUPER:
+          return bound.isSubtypeOf(type);
+        case EXTENDS:
         return type.isSubtypeOf(bound);
+        case UNBOUNDED:
+        default:
+          return true;
       }
-      return bound.isSubtypeOf(type);
     }
 
