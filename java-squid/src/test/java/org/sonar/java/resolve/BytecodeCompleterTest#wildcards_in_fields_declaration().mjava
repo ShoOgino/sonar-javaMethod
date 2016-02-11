@@ -1,0 +1,12 @@
+  @Test
+  public void wildcards_in_fields_declaration() {
+    JavaSymbol.TypeJavaSymbol clazz = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.Wildcards");
+    JavaSymbol.VariableJavaSymbol unboudedItems = (JavaSymbol.VariableJavaSymbol) clazz.members().lookup("unboudedItems").get(0);
+    JavaSymbol.VariableJavaSymbol extendsItems = (JavaSymbol.VariableJavaSymbol) clazz.members().lookup("extendsItems").get(0);
+    JavaSymbol.VariableJavaSymbol superItems = (JavaSymbol.VariableJavaSymbol) clazz.members().lookup("superItems").get(0);
+
+    assertThatWildcardIs(unboudedItems, JavaType.WildCardType.BoundType.UNBOUNDED, "java.lang.Object");
+    assertThatWildcardIs(extendsItems, JavaType.WildCardType.BoundType.EXTENDS, "java.lang.String");
+    assertThatWildcardIs(superItems, JavaType.WildCardType.BoundType.SUPER, "java.lang.Number");
+  }
+

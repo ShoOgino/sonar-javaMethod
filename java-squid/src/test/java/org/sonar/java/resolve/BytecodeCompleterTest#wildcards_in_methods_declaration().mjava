@@ -1,0 +1,16 @@
+  @Test
+  public void wildcards_in_methods_declaration() {
+    JavaSymbol.TypeJavaSymbol clazz = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.Wildcards");
+    JavaSymbol.MethodJavaSymbol returnsUnboundedItems = (JavaSymbol.MethodJavaSymbol) clazz.members().lookup("returnsUnboundedItems").get(0);
+    JavaSymbol.MethodJavaSymbol returnsExtendsItems = (JavaSymbol.MethodJavaSymbol) clazz.members().lookup("returnsExtendsItems").get(0);
+    JavaSymbol.MethodJavaSymbol returnsSuperItems = (JavaSymbol.MethodJavaSymbol) clazz.members().lookup("returnsSuperItems").get(0);
+
+    assertThatWildcardIs(returnsUnboundedItems, JavaType.WildCardType.BoundType.UNBOUNDED, "java.lang.Object");
+    assertThatWildcardIs(returnsExtendsItems, JavaType.WildCardType.BoundType.EXTENDS, "java.lang.String");
+    assertThatWildcardIs(returnsSuperItems, JavaType.WildCardType.BoundType.SUPER, "java.lang.Number");
+
+    assertThatWildcardInFirstParamIs(returnsUnboundedItems, JavaType.WildCardType.BoundType.UNBOUNDED, "java.lang.Object");
+    assertThatWildcardInFirstParamIs(returnsExtendsItems, JavaType.WildCardType.BoundType.EXTENDS, "java.lang.String");
+    assertThatWildcardInFirstParamIs(returnsSuperItems, JavaType.WildCardType.BoundType.SUPER, "java.lang.Number");
+  }
+
