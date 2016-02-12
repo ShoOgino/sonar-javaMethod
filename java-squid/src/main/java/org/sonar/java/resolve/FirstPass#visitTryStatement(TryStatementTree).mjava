@@ -1,0 +1,15 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    if (tree.resources().isEmpty()) {
+      super.visitTryStatement(tree);
+    } else {
+      //Declare scope for resources
+      createNewEnvironment(tree.resources());
+      scan(tree.resources());
+      scan(tree.block());
+      restoreEnvironment(tree.resources());
+      scan(tree.catches());
+      scan(tree.finallyBlock());
+    }
+  }
+
