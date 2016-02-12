@@ -1,8 +1,8 @@
-  private static boolean usesWildcard(JavaType type) {
+  private static boolean usesWildcardWithoutTypeSubstitution(JavaType type) {
     if (type instanceof JavaType.ParametrizedTypeJavaType) {
       JavaType.ParametrizedTypeJavaType parametrizedType = (JavaType.ParametrizedTypeJavaType) type;
       for (JavaType substitution : parametrizedType.typeSubstitution.substitutedTypes()) {
-        if (substitution.isTagged(JavaType.WILDCARD)) {
+        if (substitution.isTagged(JavaType.WILDCARD) && !((JavaType.WildCardType) substitution).bound.isTagged(JavaType.TYPEVAR)) {
           return true;
         }
       }
