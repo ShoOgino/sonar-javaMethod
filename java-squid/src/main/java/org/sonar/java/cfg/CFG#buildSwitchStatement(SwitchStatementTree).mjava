@@ -5,6 +5,7 @@
     currentBlock.terminator = switchStatementTree;
     switches.addLast(currentBlock);
     build(switchStatementTree.expression());
+    Block conditionBlock = currentBlock;
     // process body
     currentBlock = createBlock(switchSuccessor);
     breakTargets.addLast(switchSuccessor);
@@ -29,5 +30,6 @@
     if (!hasDefaultCase) {
       currentBlock.addSuccessor(switchSuccessor);
     }
+    currentBlock = conditionBlock;
   }
 
