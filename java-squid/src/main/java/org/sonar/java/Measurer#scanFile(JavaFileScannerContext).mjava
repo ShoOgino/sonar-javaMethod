@@ -12,9 +12,7 @@
     }
     publicApiChecker.scan(context.getTree());
     methodComplexityDistribution = new RangeDistributionBuilder(CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION, LIMITS_COMPLEXITY_METHODS);
-    CommentLinesVisitor commentLinesVisitor = new CommentLinesVisitor();
-    commentLinesVisitor.analyzeCommentLines(context.getTree());
-    noSonarFilter.addComponent(sensorContext.getResource(sonarFile).getEffectiveKey(), commentLinesVisitor.noSonarLines());
+    CommentLinesVisitor commentLinesVisitor = createCommentLineVisitorAndFindNoSonar(context);
     super.scanFile(context);
     //leave file.
     int fileComplexity = context.getComplexityNodes(context.getTree()).size();
