@@ -1,0 +1,18 @@
+  @Test
+  public void report_issue_on_tree_with_secondary() {
+    ClassTree tree = (ClassTree) compilationUnitTree.types().get(0);
+    Tree firstMember = tree.members().get(0);
+
+    ArrayList<Location> secondary = new ArrayList<JavaFileScannerContext.Location>();
+    secondary.add(new JavaFileScannerContext.Location("secondary", firstMember));
+
+    context.reportIssue(CHECK, tree.simpleName(), "msg", secondary, null);
+
+    assertThat(reportedMessage.getMessage()).isEqualTo("msg");
+    assertThat(reportedMessage.getCost()).isNull();
+    assertThat(reportedMessage.secondaryLocations).hasSize(1);
+
+    assertMessagePosition(reportedMessage, 1, 6, 1, 7);
+    assertMessagePosition(reportedMessage.secondaryLocations.get(0), 2, 2, 2, 13);
+  }
+

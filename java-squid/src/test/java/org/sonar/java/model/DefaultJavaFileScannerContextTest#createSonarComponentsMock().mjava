@@ -1,0 +1,13 @@
+  private static SonarComponents createSonarComponentsMock() {
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        reportedMessage = (AnalyzerMessage) invocation.getArguments()[0];
+        return null;
+      }
+    }).when(sonarComponents).reportIssue(any(AnalyzerMessage.class));
+
+    return sonarComponents;
+  }
+

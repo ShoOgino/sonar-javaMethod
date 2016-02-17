@@ -1,0 +1,13 @@
+  @Test
+  public void report_issue_on_tree_with_cost() {
+    ClassTree tree = (ClassTree) compilationUnitTree.types().get(0);
+
+    context.reportIssue(CHECK, tree.simpleName(), "msg", new ArrayList<JavaFileScannerContext.Location>(), COST);
+
+    assertThat(reportedMessage.getMessage()).isEqualTo("msg");
+    assertThat(reportedMessage.getCost()).isEqualTo(COST);
+    assertThat(reportedMessage.secondaryLocations).isEmpty();
+
+    assertMessagePosition(reportedMessage, 1, 6, 1, 7);
+  }
+
