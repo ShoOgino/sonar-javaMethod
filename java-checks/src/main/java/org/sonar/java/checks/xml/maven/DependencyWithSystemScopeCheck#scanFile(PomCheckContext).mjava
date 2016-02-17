@@ -4,11 +4,13 @@
     for (Dependency dependency : dependencies) {
       LocatedAttribute scope = dependency.getScope();
       if (scope != null && "system".equalsIgnoreCase(scope.getValue())) {
-        context.reportIssue(
-          this,
-          scope.startLocation().line(),
-          "Update this scope and remove the \"systemPath\".",
-          Lists.newArrayList(new PomCheckContext.Location("Remove this", dependency.getSystemPath())));
+        String message = "Update this scope.";
+        LocatedAttribute systemPath = dependency.getSystemPath();
+        List<PomCheckContext.Location> secondaries = getSecondary(systemPath);
+        if (systemPath != null) {
+          message = "Update this scope and remove the \"systemPath\".";
+        }
+        context.reportIssue(this, scope.startLocation().line(), message, secondaries);
       }
     }
   }
