@@ -3,7 +3,12 @@
     ClassTree classTree = (ClassTree) tree;
     Symbol.TypeSymbol classSymbol = classTree.symbol();
     if (classSymbol != null && isDirectSubtypeOfThread(classSymbol) && !overridesRunMethod(classSymbol)) {
-      addIssue(tree, "Stop extending the Thread class as the \"run\" method is not overridden");
+      Tree report = classTree.simpleName();
+      Tree parent = classTree.parent();
+      if(parent.is(Tree.Kind.NEW_CLASS)) {
+        report = ((NewClassTree) parent).identifier();
+      }
+      reportIssue(report, "Stop extending the Thread class as the \"run\" method is not overridden");
     }
   }
 
