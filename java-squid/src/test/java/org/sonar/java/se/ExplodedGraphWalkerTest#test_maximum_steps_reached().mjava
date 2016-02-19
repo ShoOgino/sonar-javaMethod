@@ -1,0 +1,15 @@
+  @Test
+  public void test_maximum_steps_reached() throws Exception {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxSteps.java", new SymbolicExecutionVisitor() {
+      @Override
+      public void visitNode(Tree tree) {
+        try {
+          tree.accept(new ExplodedGraphWalker(context));
+          fail("Too many states were processed !");
+        } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
+          assertThat(exception.getMessage()).endsWith("while enqueuing program states.");
+        }
+      }
+    });
+  }
+
