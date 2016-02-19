@@ -1,15 +1,15 @@
-  private void visitNode(Tree tree) {
+  private void visitNode(Tree tree, Tree reportTree) {
     if (!isExcluded(tree)) {
       String javadoc = PublicApiChecker.getApiJavadoc(tree);
       if (javadoc == null || isEmptyJavadoc(javadoc)) {
-        context.addIssue(tree, this, "Document this public " + getType(tree) + ".");
+        context.reportIssue(this, reportTree, "Document this public " + getType(tree) + ".");
       } else if (!javadoc.contains("{@inheritDoc}")) {
         List<String> undocumentedParameters = getUndocumentedParameters(javadoc, getParameters(tree));
         if (!undocumentedParameters.isEmpty()) {
-          context.addIssue(tree, this, "Document the parameter(s): " + Joiner.on(", ").join(undocumentedParameters));
+          context.reportIssue(this, reportTree, "Document the parameter(s): " + Joiner.on(", ").join(undocumentedParameters));
         }
         if (hasNonVoidReturnType(tree) && !hasReturnJavadoc(javadoc)) {
-          context.addIssue(tree, this, "Document this method return value.");
+          context.reportIssue(this, reportTree, "Document this method return value.");
         }
       }
     }
