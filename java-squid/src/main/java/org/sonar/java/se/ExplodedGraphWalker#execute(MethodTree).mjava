@@ -26,20 +26,25 @@
         LOG.debug("End of potential path reached!");
         continue;
       }
-      if (programPosition.i < programPosition.block.elements().size()) {
-        // process block element
-        visit(programPosition.block.elements().get(programPosition.i), programPosition.block.terminator());
-      } else if (programPosition.block.terminator() == null) {
-        // process block exit, which is unconditional jump such as goto-statement or return-statement
-        handleBlockExit(programPosition);
-      } else if (programPosition.i == programPosition.block.elements().size()) {
-        // process block exist, which is conditional jump such as if-statement
-        checkerDispatcher.executeCheckPostStatement(programPosition.block.terminator());
-      } else {
-        // process branch
-        // process block exist, which is conditional jump such as if-statement
-        checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
-        handleBlockExit(programPosition);
+      try {
+        if (programPosition.i < programPosition.block.elements().size()) {
+          // process block element
+          visit(programPosition.block.elements().get(programPosition.i), programPosition.block.terminator());
+        } else if (programPosition.block.terminator() == null) {
+          // process block exit, which is unconditional jump such as goto-statement or return-statement
+          handleBlockExit(programPosition);
+        } else if (programPosition.i == programPosition.block.elements().size()) {
+          // process block exist, which is conditional jump such as if-statement
+          checkerDispatcher.executeCheckPostStatement(programPosition.block.terminator());
+        } else {
+          // process branch
+          // process block exist, which is conditional jump such as if-statement
+          checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
+          handleBlockExit(programPosition);
+        }
+      } catch (ExplodedGraphWalker.TooManyNestedBooleanStatesException e) {
+        throw new MaximumStepsReachedException(
+          "reached maximum number of " + MAX_NESTED_BOOLEAN_STATES + " branched states for method " + tree.simpleName().name() + " in class " + tree.symbol().owner().name(), e);
       }
     }
 
