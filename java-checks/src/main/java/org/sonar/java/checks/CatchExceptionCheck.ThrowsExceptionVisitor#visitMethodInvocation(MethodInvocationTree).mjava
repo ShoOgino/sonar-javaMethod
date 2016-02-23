@@ -4,12 +4,14 @@
         return;
       }
       Symbol symbol = tree.symbol();
-      if (symbol.isMethodSymbol()) {
-        for (Type type : ((Symbol.MethodSymbol) symbol).thrownTypes()) {
-          if (isJavaLangException(type)) {
-            containsExplicitThrowsException = true;
-            return;
-          }
+      if (symbol.isUnknown()) {
+        containsExplicitThrowsException = true;
+        return;
+      }
+      for (Type type : ((Symbol.MethodSymbol) symbol).thrownTypes()) {
+        if (isJavaLangException(type)) {
+          containsExplicitThrowsException = true;
+          return;
         }
       }
       super.visitMethodInvocation(tree);
