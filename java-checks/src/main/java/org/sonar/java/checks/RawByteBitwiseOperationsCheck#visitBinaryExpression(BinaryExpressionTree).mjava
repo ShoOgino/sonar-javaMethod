@@ -1,0 +1,19 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    super.visitBinaryExpression(tree);
+    if (isShifting(tree)) {
+      shifts.add(tree);
+      return;
+    }
+    if (isSecuringByte(tree)) {
+      byteContainments.add(tree);
+      return;
+    }
+    if (isIntegerOrLongExpected(tree.symbolType())) {
+      ExpressionTree leftOperand = ExpressionsHelper.skipParentheses(tree.leftOperand());
+      ExpressionTree rightOperand = ExpressionsHelper.skipParentheses(tree.rightOperand());
+      checkShiftWithoutByteSecuring(leftOperand, rightOperand);
+      checkShiftWithoutByteSecuring(rightOperand, leftOperand);
+    }
+  }
+
