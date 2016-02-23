@@ -4,15 +4,11 @@
       return;
     }
     Symbol.MethodSymbol symbol = tree.symbol();
-    if (outerClasses.size() > 1 && !outerClasses.peek().isStatic()) {
-      return;
-    }
-    atLeastOneReference.push(Boolean.FALSE);
-    currentMethod.push(symbol);
+    methodReferences.push(new MethodReference(symbol));
+    scan(tree.parameters());
     scan(tree.block());
-    Boolean oneReference = atLeastOneReference.pop();
-    currentMethod.pop();
-    if (symbol.isPrivate() && !symbol.isStatic() && !oneReference) {
+    MethodReference reference = methodReferences.pop();
+    if (symbol.isPrivate() && !symbol.isStatic() && !reference.hasNonStaticReference()) {
       context.reportIssue(this, tree.simpleName(), "Make \"" + symbol.name() + "\" a \"static\" method.");
     }
   }

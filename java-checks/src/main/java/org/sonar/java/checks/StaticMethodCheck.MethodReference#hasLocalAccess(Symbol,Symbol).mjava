@@ -1,0 +1,18 @@
+    private static boolean hasLocalAccess(Symbol scope, Symbol symbol) {
+      if (scope.equals(symbol)) {
+        return true;
+      }
+      if (scope.isTypeSymbol() && symbol.isTypeSymbol()) {
+        // FIXME use erasure until Parameterized types are correctly supported!
+        Type scopeType = scope.type().erasure();
+        Type symbolType = symbol.type().erasure();
+        if (scopeType.isSubtypeOf(symbolType)) {
+          return true;
+        }
+        if (!scope.isStatic()) {
+          return hasLocalAccess(scope.owner(), symbol);
+        }
+      }
+      return false;
+    }
+

@@ -1,10 +1,17 @@
   @Override
   public void visitIdentifier(IdentifierTree tree) {
     super.visitIdentifier(tree);
+    if ("class".equals(tree.name()) || methodReferences.isEmpty()) {
+      return;
+    }
     Symbol symbol = tree.symbol();
-    if (!atLeastOneReference.isEmpty() && !atLeastOneReference.peek() && !currentMethod.peek().equals(symbol)  && referenceInstance(symbol)) {
-      atLeastOneReference.pop();
-      atLeastOneReference.push(Boolean.TRUE);
+    MethodReference currentMethod = methodReferences.peek();
+    if (symbol.isUnknown()) {
+      currentMethod.setNonStaticReference();
+      return;
+    }
+    for (MethodReference methodReference : methodReferences) {
+      methodReference.checkSymbol(symbol);
     }
   }
 

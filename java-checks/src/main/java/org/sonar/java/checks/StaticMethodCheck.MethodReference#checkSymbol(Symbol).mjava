@@ -1,0 +1,12 @@
+    void checkSymbol(Symbol symbol) {
+      if (nonStaticReference || methodSymbol.equals(symbol) || symbol.isStatic()) {
+        return;
+      }
+      Symbol scopeOwner = symbol.owner();
+      if (isConstructor(symbol)) {
+        checkConstructor(scopeOwner);
+      } else if (scopeOwner != null) {
+        checkNonConstructor(scopeOwner);
+      }
+    }
+

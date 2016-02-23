@@ -1,0 +1,17 @@
+  @Override
+  public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+    if (tree.expression().is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifier = (IdentifierTree) tree.expression();
+      Symbol owner = identifier.symbol().owner();
+      if (owner != null && owner.isMethodSymbol()) {
+        // No need to investigate selection on local symbols
+        return;
+      }
+    }
+    if (tree.expression().symbolType().isSubtypeOf("java.lang.Class")) {
+      // No need to investigate selection on a Class object
+      return;
+    }
+    super.visitMemberSelectExpression(tree);
+  }
+
