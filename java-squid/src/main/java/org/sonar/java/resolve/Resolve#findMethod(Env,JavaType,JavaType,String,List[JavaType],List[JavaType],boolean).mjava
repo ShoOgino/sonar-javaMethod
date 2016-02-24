@@ -13,7 +13,7 @@
     // look in site members
     for (JavaSymbol symbol : site.getSymbol().members().lookup(name)) {
       if (symbol.kind == JavaSymbol.MTH) {
-        JavaSymbol best = selectBest(env, callSite.symbol, argTypes, symbol, bestSoFar.symbol, autoboxing);
+        JavaSymbol best = selectBest(env, callSite, argTypes, symbol, bestSoFar.symbol, autoboxing);
         if(best == symbol) {
           bestSoFar = Resolution.resolution(best);
           bestSoFar.type = resolveTypeSubstitution(((JavaType.MethodJavaType) best.type).resultType, site);
@@ -26,7 +26,7 @@
     if (superclass != null) {
       Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams);
       method.type = resolveTypeSubstitution(resolveTypeSubstitution(method.type, superclass), site);
-      JavaSymbol best = selectBest(env, callSite.symbol, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      JavaSymbol best = selectBest(env, callSite, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }
@@ -34,7 +34,7 @@
     for (JavaType interfaceType : site.getSymbol().getInterfaces()) {
       Resolution method = findMethod(env, callSite, interfaceType, name, argTypes, typeParams);
       method.type = resolveTypeSubstitution(resolveTypeSubstitution(method.type, interfaceType), site);
-      JavaSymbol best = selectBest(env, callSite.symbol, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      JavaSymbol best = selectBest(env, callSite, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }

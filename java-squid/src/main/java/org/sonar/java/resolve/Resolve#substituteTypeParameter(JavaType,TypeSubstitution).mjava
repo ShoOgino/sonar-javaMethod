@@ -11,6 +11,13 @@
       }
       return parametrizedTypeCache.getParametrizedTypeType(ptt.rawType.getSymbol(), newSubstitution);
     }
+    if (type instanceof JavaType.WildCardType) {
+      JavaType.WildCardType wildCardType = (JavaType.WildCardType) type;
+      substitutedType = substitution.substitutedType(wildCardType.bound);
+      if (substitutedType != null) {
+        return parametrizedTypeCache.getWildcardType(substitutedType, wildCardType.boundType);
+      }
+    }
     return type;
   }
 
