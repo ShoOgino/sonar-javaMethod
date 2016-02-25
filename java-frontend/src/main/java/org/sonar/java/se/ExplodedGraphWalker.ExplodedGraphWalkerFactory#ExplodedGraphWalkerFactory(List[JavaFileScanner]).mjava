@@ -1,0 +1,16 @@
+    public ExplodedGraphWalkerFactory(List<JavaFileScanner> scanners) {
+      List<SECheck> seChecks = new ArrayList<>();
+      for (JavaFileScanner scanner : scanners) {
+        if (scanner instanceof SECheck) {
+          seChecks.add((SECheck) scanner);
+        }
+      }
+      alwaysTrueOrFalseChecker = removeOrDefault(seChecks, new ConditionAlwaysTrueOrFalseCheck());
+      // This order of the mandatory SE checks is required by the ExplodedGraphWalker
+      this.seChecks.add(alwaysTrueOrFalseChecker);
+      this.seChecks.add(removeOrDefault(seChecks, new NullDereferenceCheck()));
+      this.seChecks.add(removeOrDefault(seChecks, new UnclosedResourcesCheck()));
+      this.seChecks.add(removeOrDefault(seChecks, new LocksNotUnlockedCheck()));
+      this.seChecks.addAll(seChecks);
+    }
+

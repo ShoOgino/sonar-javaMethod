@@ -1,15 +1,15 @@
   @Test
   public void test_cleanup_state() {
     final int[] steps = new int[2];
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor() {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor(Collections.<JavaFileScanner>emptyList()) {
       @Override
       public void visitNode(Tree tree) {
-          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(context, false);
-          tree.accept(explodedGraphWalker);
+        ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(context, false);
+        tree.accept(explodedGraphWalker);
         steps[0] += explodedGraphWalker.steps;
       }
     });
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor() {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor(Collections.<JavaFileScanner>emptyList()) {
       @Override
       public void visitNode(Tree tree) {
         ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(context);

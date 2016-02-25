@@ -1,0 +1,13 @@
+    protected boolean checkArguments(Arguments constructorArguments) {
+      if (arguments != null) {
+        Iterator<String> iterator = arguments.iterator();
+        for (ExpressionTree expressionTree : constructorArguments) {
+          Type argumentType = expressionTree.symbolType();
+          if (!(iterator.hasNext() && argumentType.isSubtypeOf(iterator.next()))) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+

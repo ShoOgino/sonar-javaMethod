@@ -1,0 +1,9 @@
+    boolean matches(MethodInvocationTree syntaxNode) {
+      Symbol symbol = syntaxNode.symbol();
+      if (syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        Type type = ((MemberSelectExpressionTree) syntaxNode.methodSelect()).expression().symbolType();
+        return methodName.equals(symbol.name()) && checkType(type) && checkArguments(syntaxNode.arguments());
+      }
+      return false;
+    }
+

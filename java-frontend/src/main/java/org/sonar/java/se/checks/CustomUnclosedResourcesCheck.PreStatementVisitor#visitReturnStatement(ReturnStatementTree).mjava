@@ -1,0 +1,13 @@
+    @Override
+    public void visitReturnStatement(ReturnStatementTree syntaxNode) {
+      final ExpressionTree expression = syntaxNode.expression();
+      if (expression != null) {
+        SymbolicValue currentVal = programState.peekValue();
+        if (expression.is(Tree.Kind.IDENTIFIER)) {
+          final IdentifierTree identifier = (IdentifierTree) expression;
+          currentVal = programState.getValue(identifier.symbol());
+        }
+        closeResource(currentVal);
+      }
+    }
+
