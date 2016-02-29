@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    VariableTree variableTree = (VariableTree) tree;
+    Type variableType = variableTree.symbol().type();
+    ExpressionTree initializer = variableTree.initializer();
+    boolean reportIssueOnInitializer = false;
+    if (initializer != null) {
+      reportIssueOnInitializer = reportIssueOnType(initializer.symbolType(), initializer) || initializer.symbolType().isSubtypeOf("java.util.EnumSet");
+    }
+    if (!reportIssueOnInitializer) {
+      reportIssueOnType(variableType, variableTree.type());
+    }
+
+  }
+

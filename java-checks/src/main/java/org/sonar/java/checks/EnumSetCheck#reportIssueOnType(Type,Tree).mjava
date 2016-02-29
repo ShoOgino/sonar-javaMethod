@@ -1,0 +1,15 @@
+  private boolean reportIssueOnType(Type type, Tree reportTree) {
+    if (type.isSubtypeOf("java.util.Set") && !type.isSubtypeOf("java.util.EnumSet") && type instanceof JavaType.ParametrizedTypeJavaType) {
+      JavaType.ParametrizedTypeJavaType parametrizedType = (JavaType.ParametrizedTypeJavaType) type;
+      List<JavaType.TypeVariableJavaType> typeParameters = parametrizedType.typeParameters();
+      if(!typeParameters.isEmpty()) {
+        Type typeParameter = parametrizedType.substitution(typeParameters.get(0));
+        if (typeParameter != null && typeParameter.symbol().isEnum()) {
+          reportIssue(reportTree, "Convert this Set to an EnumSet.");
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
