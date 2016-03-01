@@ -1,0 +1,8 @@
+  private static boolean isSetter(MethodTree methodTree) {
+    TypeTree returnType = methodTree.returnType();
+    BlockTree block = methodTree.block();
+    boolean returnsVoid = returnType.is(Tree.Kind.PRIMITIVE_TYPE) && "void".equals(((PrimitiveTypeTree) returnType).keyword().text());
+    boolean hasAtLeastOneStatement = block == null || !block.body().isEmpty();
+    return methodTree.simpleName().name().startsWith("set") && methodTree.parameters().size() == 1 && returnsVoid && hasAtLeastOneStatement;
+  }
+

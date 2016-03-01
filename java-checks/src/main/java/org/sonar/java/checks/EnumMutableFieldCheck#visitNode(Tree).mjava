@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree enumTree = (ClassTree) tree;
+    for (Tree member : enumTree.members()) {
+      if (member.is(Tree.Kind.VARIABLE)) {
+        VariableTree variableTree = (VariableTree) member;
+        ModifierKeywordTree publicModifier = ModifiersUtils.getModifier(variableTree.modifiers(), Modifier.PUBLIC);
+        if (publicModifier != null && !ModifiersUtils.hasModifier(variableTree.modifiers(), Modifier.STATIC)) {
+          reportIssue(publicModifier, "Lower the visibility of this field.");
+        }
+      } else if (member.is(Tree.Kind.METHOD)) {
+        MethodTree methodTree = (MethodTree) member;
+        ModifierKeywordTree publicModifier = ModifiersUtils.getModifier(methodTree.modifiers(), Modifier.PUBLIC);
+        if (publicModifier != null && isSetter(methodTree)) {
+          reportIssue(publicModifier, "Lower the visibility of this setter or remove it altogether.");
+        }
+      }
+    }
+  }
+
