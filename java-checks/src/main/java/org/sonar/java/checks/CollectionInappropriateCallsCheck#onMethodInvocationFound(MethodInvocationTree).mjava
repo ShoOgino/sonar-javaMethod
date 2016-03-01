@@ -1,11 +1,18 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree tree) {
-    Type argumentType = tree.arguments().get(0).symbolType();
+    ExpressionTree firstArgument = tree.arguments().get(0);
+    Type argumentType = firstArgument.symbolType();
     Type collectionType = getMethodOwner(tree);
     // can be null when using raw types
     Type collectionParameterType = getTypeParameter(collectionType);
 
-    if (collectionParameterType != null && !collectionParameterType.isUnknown() && !isArgumentCompatible(argumentType, collectionParameterType)) {
+    // FIXME remove this variable when SONARJAVA-1298 is fixed
+    boolean isCallToParametrizedMethod = isCallToParametrizedMethod(firstArgument);
+    if (!isCallToParametrizedMethod && tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      isCallToParametrizedMethod = isCallToParametrizedMethod(((MemberSelectExpressionTree) tree.methodSelect()).expression());
+    }
+
+    if (collectionParameterType != null && !collectionParameterType.isUnknown() && !isCallToParametrizedMethod && !isArgumentCompatible(argumentType, collectionParameterType)) {
       reportIssue(MethodsHelper.methodName(tree), MessageFormat.format("A \"{0}<{1}>\" cannot contain a \"{2}\"", collectionType, collectionParameterType, argumentType));
     }
   }

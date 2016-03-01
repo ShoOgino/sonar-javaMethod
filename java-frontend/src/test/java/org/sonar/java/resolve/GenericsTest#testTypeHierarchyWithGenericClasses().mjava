@@ -5,14 +5,18 @@
       "class ObjectPredicate implements Predicate<Object> {}",
 
       "class Test<X> {",
-      "Predicate<X> myPredicate;",
-      "ObjectPredicate objectPredicate;",
+      "  Predicate<X> myPredicate;",
+      "  ObjectPredicate objectPredicate;",
+      "  Predicate<Object> oPredicate;",
       "}");
     Type xPredicateType = elementTypes.get(0);
     Type objectPredicateType = elementTypes.get(1);
+    Type oPredicateType = elementTypes.get(2);
+
+    SubtypeAssert.assertThat(objectPredicateType).isSubtypeOf(oPredicateType);
+    SubtypeAssert.assertThat(oPredicateType).isNotSubtypeOf(objectPredicateType);
 
     SubtypeAssert.assertThat(xPredicateType).isNotSubtypeOf(objectPredicateType);
-    // FIXME SONARJAVA-1514
-    SubtypeAssert.assertThat(objectPredicateType).isSubtypeOf(xPredicateType);
+    SubtypeAssert.assertThat(objectPredicateType).isNotSubtypeOf(xPredicateType);
   }
 
