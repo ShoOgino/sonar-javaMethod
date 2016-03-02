@@ -1,15 +1,19 @@
-  private boolean reportIssueOnType(Type type, Tree reportTree) {
+  private void checkIssue(Type type, Tree reportTree, TypeTree typeTree) {
     if (type.isSubtypeOf("java.util.Set") && !type.isSubtypeOf("java.util.EnumSet") && type instanceof JavaType.ParametrizedTypeJavaType) {
       JavaType.ParametrizedTypeJavaType parametrizedType = (JavaType.ParametrizedTypeJavaType) type;
       List<JavaType.TypeVariableJavaType> typeParameters = parametrizedType.typeParameters();
+      Type variableType = typeTree.symbolType();
+      if(typeParameters.isEmpty() && variableType instanceof JavaType.ParametrizedTypeJavaType) {
+        // for java 7 diamond operator lookup declaration.
+        parametrizedType = (JavaType.ParametrizedTypeJavaType) variableType;
+        typeParameters = parametrizedType.typeParameters();
+      }
       if(!typeParameters.isEmpty()) {
         Type typeParameter = parametrizedType.substitution(typeParameters.get(0));
         if (typeParameter != null && typeParameter.symbol().isEnum()) {
           reportIssue(reportTree, "Convert this Set to an EnumSet.");
-          return true;
         }
       }
     }
-    return false;
   }
 

@@ -4,15 +4,9 @@
       return;
     }
     VariableTree variableTree = (VariableTree) tree;
-    Type variableType = variableTree.symbol().type();
     ExpressionTree initializer = variableTree.initializer();
-    boolean reportIssueOnInitializer = false;
     if (initializer != null) {
-      reportIssueOnInitializer = reportIssueOnType(initializer.symbolType(), initializer) || initializer.symbolType().isSubtypeOf("java.util.EnumSet");
+      checkIssue(initializer.symbolType(), initializer, variableTree.type());
     }
-    if (!reportIssueOnInitializer) {
-      reportIssueOnType(variableType, variableTree.type());
-    }
-
   }
 
