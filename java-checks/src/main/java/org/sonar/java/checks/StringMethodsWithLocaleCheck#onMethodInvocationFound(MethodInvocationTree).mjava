@@ -1,0 +1,9 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    Tree report = mit.methodSelect();
+    if(report.is(Tree.Kind.MEMBER_SELECT)) {
+      report = ((MemberSelectExpressionTree) report).identifier();
+    }
+    reportIssue(report, "Define the locale to be used in this String operation.");
+  }
+
