@@ -1,10 +1,4 @@
   private static void scanFile(String filename, JavaFileScanner check, JavaCheckVerifier javaCheckVerifier, Collection<File> classpath) {
-    JavaFileScanner expectedIssueCollector = new ExpectedIssueCollector(javaCheckVerifier);
-    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(Lists.newArrayList(check, expectedIssueCollector), Lists.newArrayList(classpath), null);
-    JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
-    conf.setJavaVersion(javaCheckVerifier.javaVersion);
-    JavaAstScanner.scanSingleFileForTests(new File(filename), visitorsBridge, conf);
-    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
-    javaCheckVerifier.checkIssues(testJavaFileScannerContext.getIssues(), javaCheckVerifier.providedJavaVersion);
+    scanFile(filename, check, javaCheckVerifier, classpath, true);
   }
 

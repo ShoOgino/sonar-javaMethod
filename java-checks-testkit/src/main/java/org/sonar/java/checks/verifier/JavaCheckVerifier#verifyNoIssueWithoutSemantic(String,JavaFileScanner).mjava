@@ -1,0 +1,11 @@
+  public static void verifyNoIssueWithoutSemantic(String filename, JavaFileScanner check) {
+    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier() {
+      @Override
+      public String getExpectedIssueTrigger() {
+        return "// NOSEMANTIC_ISSUE";
+      }
+    };
+    javaCheckVerifier.expectNoIssues();
+    scanFile(filename, check, javaCheckVerifier, Collections.<File>emptyList(), false);
+  }
+
