@@ -1,0 +1,19 @@
+  private void checkClassTree(ClassTree tree) {
+    IdentifierTree simpleName = tree.simpleName();
+    if (simpleName != null && !ModifiersUtils.hasModifier(tree.modifiers(), Modifier.ABSTRACT)) {
+      boolean hasPrivateMember = false;
+      for (Tree member : tree.members()) {
+        if (member.is(Kind.CONSTRUCTOR)) {
+          return;
+        } else if (member.is(Kind.VARIABLE)) {
+          VariableTree variable = (VariableTree) member;
+          Symbol symbol = variable.symbol();
+          hasPrivateMember |= variable.initializer() == null && symbol.isPrivate() && !symbol.isStatic();
+        }
+      }
+      if (hasPrivateMember) {
+        reportIssue(simpleName, "Add a constructor to the " + tree.declarationKeyword().text() + ".");
+      }
+    }
+  }
+
