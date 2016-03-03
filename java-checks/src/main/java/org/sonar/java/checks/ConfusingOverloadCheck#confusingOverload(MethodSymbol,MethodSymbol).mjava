@@ -1,0 +1,17 @@
+  private static boolean confusingOverload(MethodSymbol methodSymbol, MethodSymbol methodWithSameName) {
+    if (methodSymbol.isStatic()) {
+      return false;
+    }
+    List<Type> argTypes = methodSymbol.parameterTypes();
+    List<Type> parameterTypes = methodWithSameName.parameterTypes();
+    if (argTypes.size() != parameterTypes.size()) {
+      return false;
+    }
+    for (int i = 0; i < argTypes.size(); i++) {
+      if (!argTypes.get(i).name().equals(parameterTypes.get(i).name())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
