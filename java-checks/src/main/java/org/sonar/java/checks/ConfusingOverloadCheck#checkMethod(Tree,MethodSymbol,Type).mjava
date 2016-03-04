@@ -1,8 +1,10 @@
-  private void checkMethod(Tree reportTree, MethodSymbol methodSymbol, Type superClass) {
+  private boolean checkMethod(Tree reportTree, MethodSymbol methodSymbol, Type superClass) {
+    boolean reportStaticIssue = false;
     for (Symbol methodWithSameName : superClass.symbol().lookupSymbols(methodSymbol.name())) {
       if (methodWithSameName.isMethodSymbol()) {
         if (hideStaticMethod(methodSymbol, superClass, methodWithSameName)) {
           reportIssue(reportTree, "Rename this method or make it \"static\".");
+          reportStaticIssue = true;
         } else if (confusingOverload(methodSymbol, (MethodSymbol) methodWithSameName)) {
           String message = "Rename this method or correct the type of the argument(s) to override the parent class method.";
           if(methodWithSameName.isPrivate()) {
@@ -12,5 +14,6 @@
         }
       }
     }
+    return reportStaticIssue;
   }
 
