@@ -1,0 +1,15 @@
+  private static boolean isValidSubstitution(TypeSubstitution candidate, JavaType.TypeVariableJavaType typeVar, JavaType typeParam) {
+    for (JavaType bound : typeVar.bounds) {
+      while (bound.isTagged(JavaType.TYPEVAR)) {
+        bound = candidate.substitutedType(bound);
+        if (bound == null) {
+          return false;
+        }
+      }
+      if (!typeParam.isSubtypeOf(bound)) {
+        return false;
+      }
+    }
+    return true;
+  }
+

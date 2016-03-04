@@ -1,14 +1,14 @@
   /**
    * @return true, if signature of m1 is more specific than signature of m2
    */
-  private boolean isSignatureMoreSpecific(JavaSymbol m1, JavaSymbol m2) {
+  private boolean isSignatureMoreSpecific(JavaSymbol m1, JavaSymbol m2, TypeSubstitution substitution) {
     List<JavaType> m1ArgTypes = ((JavaType.MethodJavaType) m1.type).argTypes;
     List<JavaType> m2ArgTypes = ((JavaType.MethodJavaType) m2.type).argTypes;
     JavaSymbol.MethodJavaSymbol methodJavaSymbol = (JavaSymbol.MethodJavaSymbol) m1;
     if (methodJavaSymbol.isVarArgs()) {
       m1ArgTypes = expandVarArgsToFitSize(m1ArgTypes, m2ArgTypes.size());
     }
-    boolean usesTypeParameter = usesTypeParameter(methodJavaSymbol);
-    return isArgumentsAcceptable(m1ArgTypes, m2ArgTypes, ((JavaSymbol.MethodJavaSymbol) m2).isVarArgs(), false, usesTypeParameter);
+    m1ArgTypes = applySubstitution(m1ArgTypes, substitution);
+    return isArgumentsAcceptable(m1ArgTypes, m2ArgTypes, ((JavaSymbol.MethodJavaSymbol) m2).isVarArgs(), false);
   }
 

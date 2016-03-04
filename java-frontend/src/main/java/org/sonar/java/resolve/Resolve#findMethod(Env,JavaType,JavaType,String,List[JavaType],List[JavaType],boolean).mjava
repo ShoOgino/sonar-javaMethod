@@ -13,12 +13,12 @@
     // look in site members
     for (JavaSymbol symbol : site.getSymbol().members().lookup(name)) {
       if (symbol.kind == JavaSymbol.MTH) {
-        JavaSymbol best = selectBest(env, callSite, argTypes, symbol, bestSoFar.symbol, autoboxing);
+        JavaSymbol best = selectBest(env, callSite, argTypes, typeParams, symbol, bestSoFar.symbol, autoboxing);
         if(best == symbol) {
           bestSoFar = Resolution.resolution(best);
           bestSoFar.type = resolveTypeSubstitution(((JavaType.MethodJavaType) best.type).resultType, site);
           JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) best;
-          bestSoFar.type = handleTypeArguments(typeParams, bestSoFar.type, methodSymbol);
+          bestSoFar.type = substituteTypeParameter(bestSoFar.type, getSubstitutionFromTypeParams(methodSymbol.typeVariableTypes, typeParams));
         }
       }
     }
@@ -26,7 +26,7 @@
     if (superclass != null) {
       Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams);
       method.type = resolveTypeSubstitution(resolveTypeSubstitution(method.type, superclass), site);
-      JavaSymbol best = selectBest(env, callSite, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      JavaSymbol best = selectBest(env, callSite, argTypes, typeParams, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }
@@ -34,7 +34,7 @@
     for (JavaType interfaceType : site.getSymbol().getInterfaces()) {
       Resolution method = findMethod(env, callSite, interfaceType, name, argTypes, typeParams);
       method.type = resolveTypeSubstitution(resolveTypeSubstitution(method.type, interfaceType), site);
-      JavaSymbol best = selectBest(env, callSite, argTypes, method.symbol, bestSoFar.symbol, autoboxing);
+      JavaSymbol best = selectBest(env, callSite, argTypes, typeParams, method.symbol, bestSoFar.symbol, autoboxing);
       if(best == method.symbol) {
         bestSoFar = method;
       }

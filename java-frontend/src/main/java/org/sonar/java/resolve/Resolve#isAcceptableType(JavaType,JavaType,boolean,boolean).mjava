@@ -1,9 +1,0 @@
-  private boolean isAcceptableType(JavaType arg, JavaType formal, boolean autoboxing, boolean isParameterized) {
-    // FIXME SONARJAVA-1298 type parameters should be handled in formal arguments prior to the call to this method
-    if (!isParameterized && (isParametrizedType(arg) || isParametrizedType(formal) || isWilcardType(arg) || isWilcardType(formal))) {
-      return types.isSubtype(arg, formal);
-    }
-    // fall back to behavior based on erasure
-    return types.isSubtype(arg.erasure(), formal.erasure()) || (autoboxing && isAcceptableByAutoboxing(arg, formal.erasure()));
-  }
-
