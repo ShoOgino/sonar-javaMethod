@@ -7,9 +7,13 @@
     if (StringUtils.isNotEmpty(className)) {
       invocationMatcher.typeDefinition(className);
     }
-    String[] args = StringUtils.split(argumentTypes, ",");
-    for (String arg : args) {
-      invocationMatcher.addParameter(StringUtils.trim(arg));
+    if (allOverloads) {
+      invocationMatcher.withNoParameterConstraint();
+    } else {
+      String[] args = StringUtils.split(argumentTypes, ",");
+      for (String arg : args) {
+          invocationMatcher.addParameter(StringUtils.trim(arg));
+      }
     }
     return ImmutableList.of(invocationMatcher);
   }
