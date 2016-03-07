@@ -1,4 +1,9 @@
   public void enter(JavaSymbol symbol) {
+    if(!symbol.isMethodSymbol() && symbols.containsKey(symbol.name)) {
+      for (JavaSymbol symInScope : symbols.get(symbol.name)) {
+        Preconditions.checkState(symInScope.kind != symbol.kind, "Registering symbol: '"+ symbol.name +"' twice in the same scope");
+      }
+    }
     symbols.put(symbol.name, symbol);
     scopeSymbols.add(symbol);
   }
