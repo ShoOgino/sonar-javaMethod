@@ -5,12 +5,9 @@
       if (tree.is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
         if (JavaKeyword.CLASS.getValue().equals(mse.identifier().name())) {
-          resolveAs(mse.expression(), JavaSymbol.TYP, resolveEnv);
-          // member select ending with .class
-          registerType(tree, symbols.classType);
-          return symbols.classType.symbol;
+          // resolve type of expression xxx.class
+          return resolveClassType(tree, resolveEnv, mse);
         }
-
         identifierTree = mse.identifier();
         Resolve.Resolution res = getSymbolOfMemberSelectExpression(mse, kind, resolveEnv);
         resolvedSymbol = res.symbol();

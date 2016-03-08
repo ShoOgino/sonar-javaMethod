@@ -11,8 +11,8 @@
     assertThat(typeOfExpression("var[42]")).isSameAs(((JavaType.ArrayJavaType) variableSymbol.type).elementType);
 
     // qualified_identifier[].class
-    assertThat(typeOfExpression("id[].class")).isSameAs(symbols.classType);
-    assertThat(typeOfExpression("id[][].class")).isSameAs(symbols.classType);
+    assertThat(typeOfExpression("id[].class").erasure()).isSameAs(symbols.classType);
+    assertThat(typeOfExpression("id[][].class").erasure()).isSameAs(symbols.classType);
 
     // qualified_identifier(arguments)
     assertThat(typeOf("argMethod(1)")).isSameAs(symbols.intType);
@@ -20,8 +20,11 @@
     assertThat(typeOf("MyClass.var2.method()")).isSameAs(symbols.intType);
 
     // qualified_identifier.class
-    assertThat(typeOfExpression("id.class")).isSameAs(symbols.classType);
-
+    JavaType idClassType = typeOfExpression("id.class");
+    assertThat(idClassType.erasure()).isSameAs(symbols.classType);
+    assertThat(idClassType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    JavaType.ParametrizedTypeJavaType idClassTypeParameterized = (JavaType.ParametrizedTypeJavaType) idClassType;
+    assertThat(idClassTypeParameterized.typeSubstitution.substitutedType(idClassTypeParameterized.typeParameters().get(0))).isSameAs(Symbols.unknownType);
     // TODO id.<...>...
     assertThat(typeOfExpression("MyClass.this")).isSameAs(classSymbol.type);
     assertThat(typeOf("id.super(arguments)")).isSameAs(symbols.unknownType);
