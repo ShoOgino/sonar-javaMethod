@@ -1,0 +1,39 @@
+  void foo() {
+    try {
+      AccessController.doPrivileged(new B());
+    } catch (Exception e) { // Noncompliant
+    }
+
+    try {
+      java.security.AccessController.doPrivileged(
+        new java.security.PrivilegedAction() {
+          @Override
+          public Object run() {
+            return null;
+          }
+        });
+    } catch (Exception e) { // Noncompliant
+    }
+
+    try {
+      java.security.AccessController.doPrivileged(new C());
+    } catch (Exception e) { // Noncompliant
+    }
+
+    try {
+      java.security.AccessController.doPrivileged(new C());
+    } catch (PrivilegedActionException e) { // Compliant
+    }
+
+    try {
+      java.security.AccessController.doPrivileged(
+        new java.security.PrivilegedExceptionAction() {
+          @Override
+          public Object run() {
+            return null;
+          }
+        });
+    } catch (Exception e) { // Noncompliant
+    }
+  }
+

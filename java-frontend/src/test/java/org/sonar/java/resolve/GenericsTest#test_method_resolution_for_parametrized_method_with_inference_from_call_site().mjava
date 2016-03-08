@@ -1,0 +1,18 @@
+  @Test
+  public void test_method_resolution_for_parametrized_method_with_inference_from_call_site() {
+    List<Type> elementTypes = declaredTypes(
+      "class A<E> {"
+        + "  static <T> A<T> foo() { return new A<T>(); }"
+
+        + "  void tst() {"
+        // call to method not recognized
+        + "    A<String> a = A.foo();"
+        + "  }"
+        + "}");
+
+    JavaType type = (JavaType) elementTypes.get(0);
+    JavaSymbol.MethodJavaSymbol methodSymbol = getMethodSymbol(type, "foo");
+    // FIXME SONARJAVA-1581 should be 1
+    assertThat(methodSymbol.usages()).hasSize(0);
+  }
+

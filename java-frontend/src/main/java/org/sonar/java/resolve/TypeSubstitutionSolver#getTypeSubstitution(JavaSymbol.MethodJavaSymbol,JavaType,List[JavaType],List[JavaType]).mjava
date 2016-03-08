@@ -1,0 +1,19 @@
+  @CheckForNull
+  TypeSubstitution getTypeSubstitution(JavaSymbol.MethodJavaSymbol method, JavaType site, List<JavaType> typeParams, List<JavaType> argTypes) {
+    List<JavaType> formals = ((JavaType.MethodJavaType) method.type).argTypes;
+    TypeSubstitution substitution = new TypeSubstitution();
+    if (method.isParametrized()) {
+      if (!typeParams.isEmpty()) {
+        substitution = getSubstitutionFromTypeParams(method.typeVariableTypes, typeParams);
+      } else {
+        formals = applySiteSubstitutionToFormalParameters(formals, site);
+        substitution = inferTypeSubstitution(method, formals, argTypes);
+      }
+      if (substitution.size() == 0 || !isValidSubtitution(substitution, site)) {
+        // substitution discarded
+        return null;
+      }
+    }
+    return substitution;
+  }
+
