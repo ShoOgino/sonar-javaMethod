@@ -1,0 +1,39 @@
+  @Test
+  public void methodFactoryMatching() {
+    MethodMatcher anyArg = MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match");
+    MethodMatcher stringOnly = MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(java.lang.String)");
+    MethodMatcher stringInt = MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(java.lang.String,int)");
+    MethodMatcher intInt = MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(int,int)");
+    MethodMatcher onlyBoolean = MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(java.lang.Boolean)");
+
+    MethodVisitor visitor = new MethodVisitor();
+    visitor.add(anyArg);
+    visitor.add(stringOnly);
+    visitor.add(stringInt);
+    visitor.add(intInt);
+    visitor.add(onlyBoolean);
+
+    File testFile = buildTestFile( //
+      "package org.sonar.test;", //
+      "private class Test {", //
+      "   private void match(String a) {}", //
+      "   private void match(String a, int b) {}", //
+      "   private void match(int a, int b) {}", //
+      "   private void caller() {", //
+      "      match(new String());", //
+      "      match(new String(), 0);", //
+      "      match(new String(), 1);", //
+      "      match(0, 1);", //
+      "      match(1, 2);", //
+      "      match(3, 5);", //
+      "   }", //
+      "}");
+    JavaAstScanner.scanSingleFileForTests(testFile, new VisitorsBridge(visitor));
+
+    assertThat(visitor.count(anyArg)).isEqualTo(6);
+    assertThat(visitor.count(stringOnly)).isEqualTo(1);
+    assertThat(visitor.count(stringInt)).isEqualTo(2);
+    assertThat(visitor.count(intInt)).isEqualTo(3);
+    assertThat(visitor.count(onlyBoolean)).isEqualTo(0);
+  }
+

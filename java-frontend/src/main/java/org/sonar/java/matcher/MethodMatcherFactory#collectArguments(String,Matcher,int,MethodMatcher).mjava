@@ -1,0 +1,17 @@
+  public static void collectArguments(String descriptor, Matcher initialMatcher, final int groupOffset, MethodMatcher constructorMatcher) {
+    if ("(".equals(initialMatcher.group(groupOffset))) {
+      String remainder = descriptor.substring(initialMatcher.group().length());
+      if (!")".equals(remainder)) {
+        Matcher matcher = ARGUMENT_PATTERN.matcher(remainder);
+        while (matcher.find()) {
+          constructorMatcher.addParameter(matcher.group(1));
+        }
+        if (!matcher.hitEnd()) {
+          throw new IllegalArgumentException("Illegal method or constructor arguments specification: " + descriptor);
+        }
+      }
+    } else {
+      constructorMatcher.withNoParameterConstraint();
+    }
+  }
+

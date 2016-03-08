@@ -1,0 +1,31 @@
+  @Test
+  public void constructorFactoryMatching() {
+    MethodMatcher anyArg = MethodMatcherFactory.constructorMatcher("java.lang.String");
+    MethodMatcher noArg = MethodMatcherFactory.constructorMatcher("java.lang.String()");
+    MethodMatcher stringBuilder = MethodMatcherFactory.constructorMatcher("java.lang.String(java.lang.StringBuilder)");
+    MethodMatcher stringBytes = MethodMatcherFactory.constructorMatcher("java.lang.String(byte[],int,int)");
+    MethodVisitor visitor = new MethodVisitor();
+    visitor.add(anyArg);
+    visitor.add(noArg);
+    visitor.add(stringBuilder);
+    visitor.add(stringBytes);
+
+    File testFile = buildTestFile( //
+      "package org.sonar.test;", //
+      "private class Test {", //
+      "   private void caller() {", //
+      "      byte[] bytes = \"Hello world!\".getBytes();", //
+      "      new String();", //
+      "      new String(new StringBuilder());", //
+      "      new String(bytes, 6, 5);", //
+      "      new String(bytes, 0, 5);", //
+      "   }", //
+      "}");
+    JavaAstScanner.scanSingleFileForTests(testFile, new VisitorsBridge(visitor));
+
+    assertThat(visitor.count(anyArg)).isEqualTo(4);
+    assertThat(visitor.count(noArg)).isEqualTo(1);
+    assertThat(visitor.count(stringBuilder)).isEqualTo(1);
+    assertThat(visitor.count(stringBytes)).isEqualTo(2);
+  }
+
