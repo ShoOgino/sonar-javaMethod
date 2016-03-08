@@ -1,0 +1,12 @@
+  private void visitTerminalIdentifier(IdentifierTree tree) {
+    Symbol symbol = tree.symbol();
+    MethodReference currentMethod = methodReferences.peek();
+    if (symbol.isUnknown()) {
+      currentMethod.setNonStaticReference();
+      return;
+    }
+    for (MethodReference methodReference : methodReferences) {
+      methodReference.checkSymbol(symbol);
+    }
+  }
+
