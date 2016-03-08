@@ -1,0 +1,20 @@
+  @CheckForNull
+  TypeInference inferTypes(JavaSymbol.MethodJavaSymbol method, JavaType site, List<JavaType> typeParams) {
+    List<JavaType> inferedTypes = ((JavaType.MethodJavaType) method.type).argTypes;
+    TypeSubstitution substitution = new TypeSubstitution();
+    if (!inferedTypes.isEmpty()) {
+      if (isParametrizedType(site)) {
+        inferedTypes = applySubstitution(inferedTypes, ((JavaType.ParametrizedTypeJavaType) site).typeSubstitution);
+      }
+      if (method.isParametrized() && !typeParams.isEmpty()) {
+        substitution = getSubstitutionFromTypeParams(method.typeVariableTypes, typeParams);
+        if (substitution.size() == 0) {
+          // no substitution possible
+          return null;
+        }
+        inferedTypes = applySubstitution(inferedTypes, substitution);
+      }
+    }
+    return new TypeInference(inferedTypes, substitution);
+  }
+

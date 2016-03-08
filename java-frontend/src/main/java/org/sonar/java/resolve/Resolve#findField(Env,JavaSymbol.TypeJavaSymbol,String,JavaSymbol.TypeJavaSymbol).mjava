@@ -8,7 +8,7 @@
       if (symbol.kind == JavaSymbol.VAR) {
         if(isAccessible(env, site, symbol)) {
           resolution.symbol = symbol;
-          resolution.type = resolveTypeSubstitution(symbol.type, c.type);
+          resolution.type = typeInferenceSolver.applySubstitution(symbol.type, c.type);
           return resolution;
         } else {
           return Resolution.resolution(new AccessErrorJavaSymbol(symbol, Symbols.unknownType));
@@ -18,7 +18,7 @@
     if (c.getSuperclass() != null) {
       resolution = findField(env, site, name, c.getSuperclass().symbol);
       if (resolution.symbol.kind < bestSoFar.symbol.kind) {
-        resolution.type = resolveTypeSubstitution(resolution.symbol.type, c.getSuperclass());
+        resolution.type = typeInferenceSolver.applySubstitution(resolution.symbol.type, c.getSuperclass());
         bestSoFar = resolution;
       }
     }
