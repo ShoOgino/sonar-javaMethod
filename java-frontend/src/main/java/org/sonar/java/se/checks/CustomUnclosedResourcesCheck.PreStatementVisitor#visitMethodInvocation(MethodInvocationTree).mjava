@@ -1,8 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
       if (isOpeningResource(syntaxNode)) {
-        final SymbolicValue instanceValue = programState.peekValue();
-        programState = programState.addConstraint(instanceValue, new ObjectConstraint(false, false, syntaxNode, Status.OPENED));
+        openResource(syntaxNode);
       } else {
         closeArguments(syntaxNode.arguments(), 1);
       }

@@ -1,16 +1,15 @@
     @Override
-    public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
-      if (isClosingResource(syntaxNode)) {
-        final ExpressionTree targetExpression = ((MemberSelectExpressionTree) syntaxNode.methodSelect()).expression();
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+      if (isClosingResource(mit)) {
+        ExpressionTree targetExpression = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
         if (targetExpression.is(Tree.Kind.IDENTIFIER)) {
-          final IdentifierTree identifier = (IdentifierTree) targetExpression;
+          IdentifierTree identifier = (IdentifierTree) targetExpression;
           closeResource(programState.getValue(identifier.symbol()));
         } else {
           closeResource(programState.peekValue());
         }
-      } else if (isCreatingResource(syntaxNode)) {
-        final SymbolicValue instanceValue = programState.peekValue();
-        programState = programState.addConstraint(instanceValue, new ObjectConstraint(false, false, syntaxNode, Status.OPENED));
+      } else if (isCreatingResource(mit)) {
+        openResource(mit);
       }
     }
 
