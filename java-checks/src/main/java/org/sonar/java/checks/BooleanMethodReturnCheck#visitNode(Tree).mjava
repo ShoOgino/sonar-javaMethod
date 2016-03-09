@@ -1,7 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
+    if(!hasSemantic()) {
+      return;
+    }
     MethodTree methodTree = (MethodTree) tree;
-    if (returnsBoolean(methodTree)) {
+    if (!isAnnotatedWithCheckForNull(methodTree) && returnsBoolean(methodTree)) {
       methodTree.accept(new ReturnStatementVisitor());
     }
   }
