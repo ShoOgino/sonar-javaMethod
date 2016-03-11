@@ -1,14 +1,6 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
-      if (isClosingResource(mit)) {
-        ExpressionTree targetExpression = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
-        if (targetExpression.is(Tree.Kind.IDENTIFIER)) {
-          IdentifierTree identifier = (IdentifierTree) targetExpression;
-          closeResource(programState.getValue(identifier.symbol()));
-        } else {
-          closeResource(programState.peekValue());
-        }
-      } else if (isCreatingResource(mit)) {
+      if (isCreatingResource(mit)) {
         openResource(mit);
       }
     }

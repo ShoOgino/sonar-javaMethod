@@ -1,9 +1,11 @@
     @Override
-    public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
-      if (isOpeningResource(syntaxNode)) {
-        openResource(syntaxNode);
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+      if (isOpeningResource(mit)) {
+        openResource(mit);
+      } else if (isClosingResource(mit)) {
+        closeResource(programState.peekValue());
       } else {
-        closeArguments(syntaxNode.arguments(), 1);
+        closeArguments(mit.arguments(), 1);
       }
     }
 

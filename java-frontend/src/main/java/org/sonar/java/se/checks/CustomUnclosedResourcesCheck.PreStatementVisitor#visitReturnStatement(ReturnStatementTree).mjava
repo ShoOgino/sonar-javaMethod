@@ -2,12 +2,7 @@
     public void visitReturnStatement(ReturnStatementTree syntaxNode) {
       ExpressionTree expression = syntaxNode.expression();
       if (expression != null) {
-        SymbolicValue currentVal = programState.peekValue();
-        if (expression.is(Tree.Kind.IDENTIFIER)) {
-          IdentifierTree identifier = (IdentifierTree) expression;
-          currentVal = programState.getValue(identifier.symbol());
-        }
-        closeResource(currentVal);
+        closeResource(programState.peekValue());
       }
     }
 
