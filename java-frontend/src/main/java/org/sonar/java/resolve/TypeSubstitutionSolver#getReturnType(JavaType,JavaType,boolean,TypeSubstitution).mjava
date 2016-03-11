@@ -1,0 +1,13 @@
+  JavaType getReturnType(@Nullable JavaType returnType, JavaType site, boolean parametrizedMethodCall, TypeSubstitution substitution) {
+    if (returnType == null) {
+      // case of constructors
+      return returnType;
+    }
+    JavaType resultType = applySiteSubstitution(returnType, site);
+    if (isRawTypeOfParametrizedType(site) && !parametrizedMethodCall) {
+      // JLS8 5.1.9 + JLS8 15.12.2.6
+      return resultType.erasure();
+    }
+    return applySubstitution(resultType, substitution);
+  }
+

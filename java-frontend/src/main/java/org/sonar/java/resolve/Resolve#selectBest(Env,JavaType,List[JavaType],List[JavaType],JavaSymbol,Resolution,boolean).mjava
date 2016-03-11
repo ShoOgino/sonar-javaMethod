@@ -2,7 +2,7 @@
    * @param candidate    candidate
    * @param bestSoFar previously found best match
    */
-  private JavaSymbol selectBest(Env env, JavaType site, List<JavaType> argTypes, List<JavaType> typeParams, JavaSymbol candidate, JavaSymbol bestSoFar, boolean autoboxing) {
+  private Resolution selectBest(Env env, JavaType site, List<JavaType> argTypes, List<JavaType> typeParams, JavaSymbol candidate, Resolution bestSoFar, boolean autoboxing) {
     JavaSymbol.TypeJavaSymbol siteSymbol = site.symbol;
     // TODO get rid of null check
     if (candidate.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(candidate, siteSymbol) || candidate.type == null) {
@@ -12,25 +12,32 @@
     if(!hasCompatibleArity(methodJavaSymbol.parameterTypes().size(), argTypes.size(), methodJavaSymbol.isVarArgs())) {
       return bestSoFar;
     }
-    List<JavaType> formals = ((JavaType.MethodJavaType) methodJavaSymbol.type).argTypes;
-    formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, site);
     TypeSubstitution substitution = typeSubstitutionSolver.getTypeSubstitution(methodJavaSymbol, site, typeParams, argTypes);
     if (substitution == null) {
       return bestSoFar;
     }
+    List<JavaType> formals = ((JavaType.MethodJavaType) methodJavaSymbol.type).argTypes;
+    formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, site);
     formals = typeSubstitutionSolver.applySubstitutionToFormalParameters(formals, substitution);
     if (!isArgumentsAcceptable(argTypes, formals, methodJavaSymbol.isVarArgs(), autoboxing)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...
     if (!isAccessible(env, siteSymbol, candidate)) {
-      return new AccessErrorJavaSymbol(candidate, Symbols.unknownType);
+      Resolution resolution = new Resolution(new AccessErrorJavaSymbol(candidate, Symbols.unknownType));
+      resolution.type = Symbols.unknownType;
+      return resolution;
     }
-    JavaSymbol mostSpecific = selectMostSpecific(candidate, bestSoFar, substitution);
+    JavaSymbol mostSpecific = selectMostSpecific(candidate, bestSoFar.symbol, substitution);
     if (mostSpecific.isKind(JavaSymbol.AMBIGUOUS)) {
       // same signature, we keep the first symbol found (overrides the other one).
-      mostSpecific = bestSoFar;
+      return bestSoFar;
     }
-    return mostSpecific;
+
+    Resolution resolution = new Resolution(mostSpecific);
+    JavaType resturnType = ((JavaType.MethodJavaType) ((JavaSymbol.MethodJavaSymbol) mostSpecific).type).resultType;
+    resolution.type = typeSubstitutionSolver.getReturnType(resturnType, site, !typeParams.isEmpty(), substitution);
+
+    return resolution;
   }
 
