@@ -9,6 +9,9 @@
       return bestSoFar;
     }
     JavaSymbol.MethodJavaSymbol methodJavaSymbol = (JavaSymbol.MethodJavaSymbol) candidate;
+    if(!hasCompatibleArity(methodJavaSymbol.parameterTypes().size(), argTypes.size(), methodJavaSymbol.isVarArgs())) {
+      return bestSoFar;
+    }
     List<JavaType> formals = ((JavaType.MethodJavaType) methodJavaSymbol.type).argTypes;
     formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, site);
     TypeSubstitution substitution = typeSubstitutionSolver.getTypeSubstitution(methodJavaSymbol, site, typeParams, argTypes);

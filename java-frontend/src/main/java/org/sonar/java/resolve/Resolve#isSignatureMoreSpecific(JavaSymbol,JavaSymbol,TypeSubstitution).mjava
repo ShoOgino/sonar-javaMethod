@@ -8,6 +8,9 @@
     if (methodJavaSymbol.isVarArgs()) {
       m1ArgTypes = expandVarArgsToFitSize(m1ArgTypes, m2ArgTypes.size());
     }
+    if(!hasCompatibleArity(m1ArgTypes.size(), m2ArgTypes.size(), ((JavaSymbol.MethodJavaSymbol) m2).isVarArgs())) {
+      return false;
+    }
     m1ArgTypes = typeSubstitutionSolver.applySubstitutionToFormalParameters(m1ArgTypes, substitution);
     return isArgumentsAcceptable(m1ArgTypes, m2ArgTypes, ((JavaSymbol.MethodJavaSymbol) m2).isVarArgs(), false);
   }
