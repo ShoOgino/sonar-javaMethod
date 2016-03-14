@@ -1,0 +1,12 @@
+  @Test
+  public void test_only_one_execution_of_post_statement_by_check() {
+    List<SECheck> checks = Lists.newArrayList(new NullDereferenceCheck(), new CheckTest(), new CheckTest(), new CheckTest());
+    CheckerDispatcher checkerDispatcher = new CheckerDispatcher(mockExplodedGraphWalker(), mock(JavaFileScannerContext.class), checks);
+    checkerDispatcher.executeCheckPostStatement(mock(Tree.class));
+    for (SECheck check : checks) {
+      if(check instanceof CheckTest) {
+        assertThat(((CheckTest) check).postStatementExecution).isEqualTo(1);
+      }
+    }
+  }
+
