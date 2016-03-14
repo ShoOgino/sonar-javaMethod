@@ -1,0 +1,13 @@
+  private void checkCollectionAssignments(List<IdentifierTree> usages) {
+    for (IdentifierTree usage : usages) {
+      Tree parentTree = usage.parent();
+      if (parentTree.is(Tree.Kind.ASSIGNMENT)) {
+        AssignmentExpressionTree assignment = (AssignmentExpressionTree) parentTree;
+        ExpressionTree expression = assignment.expression();
+        if (usage.equals(assignment.variable()) && !expression.is(Tree.Kind.NULL_LITERAL) && isUnserializableCollection(expression.symbolType())) {
+          reportIssue(usage);
+        }
+      }
+    }
+  }
+

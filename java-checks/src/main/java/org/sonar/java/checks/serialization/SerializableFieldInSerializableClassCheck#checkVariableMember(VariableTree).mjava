@@ -1,7 +1,17 @@
   private void checkVariableMember(VariableTree variableTree) {
     if (!isExcluded(variableTree)) {
       IdentifierTree simpleName = variableTree.simpleName();
-      reportIssue(simpleName, "Make \"" + simpleName.name() + "\" transient or serializable.");
+      if (isCollectionOfSerializable(variableTree.type())) {
+        if (!ModifiersUtils.hasModifier(variableTree.modifiers(), Modifier.PRIVATE)) {
+          reportIssue(simpleName, "Make \"" + simpleName.name() + "\" private or transient.");
+        } else if (isUnserializableCollection(variableTree.type().symbolType())
+          || initializerIsUnserializableCollection(variableTree.initializer())) {
+          reportIssue(simpleName);
+        }
+        checkCollectionAssignments(variableTree.symbol().usages());
+      } else {
+        reportIssue(simpleName);
+      }
     }
   }
 
