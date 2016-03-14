@@ -6,7 +6,12 @@
     }
     switch (tree.kind()) {
       case METHOD_INVOCATION:
-        executeMethodInvocation((MethodInvocationTree) tree);
+        MethodInvocationTree mit = (MethodInvocationTree) tree;
+        if(SYSTEM_EXIT_MATCHER.matches(mit)) {
+          //System exit is a sink of execution
+          return;
+        }
+        executeMethodInvocation(mit);
         break;
       case LABELED_STATEMENT:
       case SWITCH_STATEMENT:
