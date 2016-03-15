@@ -1,20 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD_INVOCATION, Tree.Kind.NEW_CLASS)) {
-      addArgsToExclusion(tree);
-    } else {
-      TypeCastTree typeCastTree = (TypeCastTree) tree;
-      JavaType cast = (JavaType) typeCastTree.type().symbolType();
-      ExpressionTree expression = typeCastTree.expression();
-      if (isChainedCastWithWildcard(typeCastTree)) {
-        excluded.add(expression);
-      }
-      if (!excluded.contains(tree)) {
-        JavaType expressionType = (JavaType) expression.symbolType();
-        if (!isExcluded(cast) && (isRedundantNumericalCast(cast, expressionType) || isRedundantCast(cast, expressionType))) {
-          reportIssue(typeCastTree.type(), "Remove this unnecessary cast to \"" + cast + "\".");
-        }
-      }
+    if(!hasSemantic()) {
+      return;
+    }
+    TypeCastTree typeCastTree = (TypeCastTree) tree;
+    Type cast = typeCastTree.type().symbolType();
+    Type target = targetType(tree);
+    if(target != null && (isRedundantNumericalCast(cast, typeCastTree.expression().symbolType()) || isSubtype(typeCastTree.expression().symbolType(), target))) {
+      reportIssue(typeCastTree.type(), "Remove this unnecessary cast to \"" + cast + "\".");
     }
   }
 

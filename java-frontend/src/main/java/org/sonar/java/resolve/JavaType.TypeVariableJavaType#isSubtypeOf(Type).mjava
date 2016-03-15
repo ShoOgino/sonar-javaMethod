@@ -1,0 +1,17 @@
+    @Override
+    public boolean isSubtypeOf(Type superType) {
+      JavaType supType = (JavaType) superType;
+      if (supType.isTagged(WILDCARD)) {
+        return ((WildCardType) supType).isSubtypeOfBound(this);
+      }
+      if(supType == this) {
+        return true;
+      }
+      for (JavaType bound : bounds()) {
+        if(bound.isSubtypeOf(supType)) {
+          return true;
+        }
+      }
+      return false;
+    }
+

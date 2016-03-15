@@ -1,5 +1,8 @@
     @Override
     public boolean isSubtypeOf(Type superType) {
+      if(((JavaType) superType).isTagged(TYPEVAR)) {
+        return false;
+      }
       if (erasure().isSubtypeOf(superType.erasure())) {
         boolean superTypeIsParametrizedJavaType = superType instanceof ParametrizedTypeJavaType;
         if (superTypeIsParametrizedJavaType) {
