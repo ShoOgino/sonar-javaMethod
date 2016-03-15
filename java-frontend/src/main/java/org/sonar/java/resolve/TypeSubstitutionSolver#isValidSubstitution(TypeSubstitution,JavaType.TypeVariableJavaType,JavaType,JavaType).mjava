@@ -1,6 +1,6 @@
-  private static boolean isValidSubstitution(TypeSubstitution candidate, JavaType.TypeVariableJavaType typeVar, JavaType typeParam, JavaType site) {
+  private boolean isValidSubstitution(TypeSubstitution candidate, JavaType.TypeVariableJavaType typeVar, JavaType typeParam, JavaType site) {
     for (JavaType bound : typeVar.bounds) {
-      JavaType currentBound = bound;
+      JavaType currentBound = applySubstitution(bound, candidate);
       while (currentBound.isTagged(JavaType.TYPEVAR)) {
         JavaType newBound = candidate.substitutedType(currentBound);
         if (newBound == null && isParametrizedType(site)) {
