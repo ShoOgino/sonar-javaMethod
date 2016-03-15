@@ -1,10 +1,14 @@
   @Override
   public void visitMethod(MethodTree tree) {
-    if ((tree.is(Tree.Kind.CONSTRUCTOR) || isNotOverriden(tree)) && !((MethodTreeImpl) tree).isMainMethod()) {
+    super.visitMethod(tree);
+    if ((tree.is(Tree.Kind.CONSTRUCTOR) || isNotOverriden(tree)) && isNotMainMethod(tree)) {
       for (TypeTree throwClause : tree.throwsClauses()) {
-        checkExceptionAndRaiseIssue(throwClause);
+        Type exceptionType = throwClause.symbolType();
+        if (isRawException(exceptionType) && !exceptionsThrownByMethodInvocations.contains(exceptionType)) {
+          reportIssue(throwClause);
+        }
       }
     }
-    super.visitMethod(tree);
+    exceptionsThrownByMethodInvocations.clear();
   }
 

@@ -1,7 +1,10 @@
   @Override
   public void visitThrowStatement(ThrowStatementTree tree) {
     if (tree.expression().is(Tree.Kind.NEW_CLASS)) {
-      checkExceptionAndRaiseIssue(((NewClassTree) tree.expression()).identifier());
+      TypeTree exception = ((NewClassTree) tree.expression()).identifier();
+      if (isRawException(exception.symbolType())) {
+        reportIssue(exception);
+      }
     }
     super.visitThrowStatement(tree);
   }
