@@ -1,0 +1,12 @@
+  @Override
+  public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
+    if (methodTree.is(Tree.Kind.CONSTRUCTOR)) {
+      ClassTree classTree = (ClassTree) methodTree.parent();
+      for (Tree member : classTree.members()) {
+        if (member.is(Tree.Kind.VARIABLE)) {
+          checkVariable(context, methodTree, ((VariableTree) member).symbol());
+        }
+      }
+    }
+  }
+

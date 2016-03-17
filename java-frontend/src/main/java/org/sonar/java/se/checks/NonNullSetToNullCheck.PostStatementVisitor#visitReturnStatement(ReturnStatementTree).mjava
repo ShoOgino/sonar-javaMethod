@@ -1,0 +1,17 @@
+    @Override
+    public void visitReturnStatement(ReturnStatementTree tree) {
+      Tree parent = tree.parent();
+      while (!parent.is(Tree.Kind.METHOD)) {
+        parent = parent.parent();
+        if (parent == null) {
+          // This occurs when the return statement is within a constructor
+          return;
+        }
+      }
+      MethodTree mTree = (MethodTree) parent;
+      String nonNullAnnotation = nonNullAnnotation(mTree.symbol());
+      if (nonNullAnnotation != null && isLocalExpression(tree.expression())) {
+        checkReturnedValue(tree, nonNullAnnotation);
+      }
+    }
+

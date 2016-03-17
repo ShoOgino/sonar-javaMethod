@@ -1,0 +1,11 @@
+    @Override
+    public void visitNewClass(NewClassTree syntaxTree) {
+      Symbol symbol = syntaxTree.constructorSymbol();
+      if (symbol.isMethodSymbol()) {
+        List<SymbolicValue> argumentValues = programState.peekValues(syntaxTree.arguments().size());
+        JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) symbol;
+        checkNullArguments(syntaxTree, methodSymbol.getParameters(),
+          argumentValues, "Parameter {0} to this constructor is marked \"{1}\" but null is passed.");
+      }
+    }
+

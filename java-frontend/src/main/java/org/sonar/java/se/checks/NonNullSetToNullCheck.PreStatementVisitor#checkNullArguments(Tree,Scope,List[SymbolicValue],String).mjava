@@ -1,0 +1,14 @@
+    protected void checkNullArguments(Tree syntaxTree, Scope parameters, List<SymbolicValue> argumentValues, String message) {
+      if (parameters != null) {
+        List<JavaSymbol> scopeSymbols = parameters.scopeSymbols();
+        int parametersToTest = argumentValues.size();
+        if (scopeSymbols.size() < parametersToTest) {
+          // The last parameter is a variable length argument: the non-null condition does not apply to its values
+          parametersToTest = scopeSymbols.size() - 1;
+        }
+        for (int i = 0; i < parametersToTest; i++) {
+          checkNullArgument(syntaxTree, message, scopeSymbols, argumentValues, i);
+        }
+      }
+    }
+
