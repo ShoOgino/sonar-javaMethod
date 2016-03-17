@@ -1,0 +1,22 @@
+  private static boolean onlySynchronizedUsages(Symbol.VariableSymbol variable) {
+    List<IdentifierTree> usages = variable.usages();
+    if (usages.isEmpty()) {
+      return false;
+    }
+    for (IdentifierTree usage : usages) {
+      SynchronizedStatementTree synchronizedStatementTree = getParentSynchronizedStatement(usage);
+      if (synchronizedStatementTree == null) {
+        // used outside a synchronized statement
+        return false;
+      } else {
+        ExpressionTree expression = synchronizedStatementTree.expression();
+        if (!expression.is(Tree.Kind.IDENTIFIER) || !variable.equals(((IdentifierTree) expression).symbol())) {
+          // variable is not the expression synchronized
+          return false;
+        }
+        // check other usages
+      }
+    }
+    return true;
+  }
+

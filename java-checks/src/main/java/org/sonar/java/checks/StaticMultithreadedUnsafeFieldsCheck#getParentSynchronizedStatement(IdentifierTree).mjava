@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static SynchronizedStatementTree getParentSynchronizedStatement(IdentifierTree usage) {
+    Tree parent = usage.parent();
+    while (parent != null && !parent.is(Tree.Kind.SYNCHRONIZED_STATEMENT)) {
+      parent = parent.parent();
+    }
+    if (parent == null) {
+      return null;
+    }
+    return (SynchronizedStatementTree) parent;
+  }
+
