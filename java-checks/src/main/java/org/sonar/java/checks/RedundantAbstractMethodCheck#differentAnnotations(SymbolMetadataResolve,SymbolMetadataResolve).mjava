@@ -1,0 +1,10 @@
+  private static boolean differentAnnotations(SymbolMetadataResolve methodMetadata, SymbolMetadataResolve overrideeMetadata) {
+    for (AnnotationInstance annotation : methodMetadata.annotations()) {
+      Type type = annotation.symbol().type();
+      if (!type.is("java.lang.Override") && !overrideeMetadata.isAnnotatedWith(type.fullyQualifiedName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
