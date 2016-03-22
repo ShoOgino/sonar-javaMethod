@@ -1,0 +1,15 @@
+  public void unlockingInTryCatchButMissed() {
+    Lock lock = new ReentrantLock();
+    try {
+      lock.lock(); // Noncompliant
+    } finally {
+      try {
+        lock.unlock();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      } finally {
+        cleanUp();
+      }
+    }
+  }
+
