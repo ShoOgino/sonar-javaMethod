@@ -8,6 +8,8 @@
     programState = programState.stackValue(resultValue);
     if (isNonNullMethod(mit.symbol())) {
       programState = programState.addConstraint(resultValue, ObjectConstraint.NOT_NULL);
+    } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
+      programState = programState.resetFieldValues(constraintManager);
     }
   }
 
