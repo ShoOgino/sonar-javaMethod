@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    List<Tree> members = ((ClassTree) tree).members();
+    List<MethodTree> constructors = filterByKind(members, Tree.Kind.CONSTRUCTOR);
+    for (MethodTree constructor : constructors) {
+      if (isPrivateConstructor(constructor)) {
+        return;
+      }
+    }
+    List<VariableTree> fields = filterByKind(members, Tree.Kind.VARIABLE);
+    for (VariableTree field : fields) {
+      if (isAnnotatedWithInject(field)) {
+        reportIssue(field.simpleName(), "Use constructor injection for this field.");
+      }
+    }
+  }
+
