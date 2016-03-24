@@ -1,0 +1,13 @@
+  public static void verifyNoIssueWithoutSemantic(String filename, JavaFileScanner check, int javaVersion) {
+    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier() {
+      @Override
+      public String getExpectedIssueTrigger() {
+        return "// NOSEMANTIC_ISSUE";
+      }
+    };
+    javaCheckVerifier.expectNoIssues();
+    javaCheckVerifier.providedJavaVersion = true;
+    javaCheckVerifier.javaVersion = new JavaVersionImpl(javaVersion);
+    scanFile(filename, check, javaCheckVerifier, Collections.<File>emptyList(), false);
+  }
+
