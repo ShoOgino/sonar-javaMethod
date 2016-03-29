@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    ListTree<TypeTree> superInterfaces = classTree.superInterfaces();
+    if (superInterfaces.isEmpty()) {
+      return;
+    }
+
+    Set<JavaType.ClassJavaType> superTypes = ((JavaSymbol.TypeJavaSymbol) classTree.symbol()).superTypes();
+    List<Type> superInterfacesTypes = getTypes(superInterfaces);
+    for (TypeTree superInterface : superInterfaces) {
+      if (!superInterface.symbolType().isUnknown()) {
+        checkRedundancy(superInterface, superInterfacesTypes, superTypes);
+      }
+    }
+  }
+
