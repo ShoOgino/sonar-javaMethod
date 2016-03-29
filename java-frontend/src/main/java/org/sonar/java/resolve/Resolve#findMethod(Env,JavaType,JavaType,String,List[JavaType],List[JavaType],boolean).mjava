@@ -10,15 +10,8 @@
       }
       return findConstructor(env, superclass, argTypes, typeParams, autoboxing);
     }
-    // look in site members
-    for (JavaSymbol symbol : site.getSymbol().members().lookup(name)) {
-      if (symbol.kind == JavaSymbol.MTH) {
-        Resolution best = selectBest(env, site, callSite, argTypes, typeParams, symbol, bestSoFar, autoboxing);
-        if (best.symbol == symbol) {
-          bestSoFar = best;
-        }
-      }
-    }
+    bestSoFar = lookupInScope(env, callSite, site, name, argTypes, typeParams, autoboxing, site.getSymbol().members(), bestSoFar);
+
     //look in supertypes for more specialized method (overloading).
     if (superclass != null) {
       Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams);

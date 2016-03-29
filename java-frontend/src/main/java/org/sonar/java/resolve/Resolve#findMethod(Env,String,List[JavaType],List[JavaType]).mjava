@@ -14,12 +14,12 @@
       }
       env1 = env1.outer;
     }
-    JavaSymbol sym = findInStaticImport(env, name, JavaSymbol.MTH);
-    if (sym.kind < JavaSymbol.ERRONEOUS) {
+    Resolution res = findMethodInStaticImport(env, name, argTypes, typeParamTypes);
+    if (res.symbol.kind < JavaSymbol.ERRONEOUS) {
       // symbol exists
-      return Resolution.resolution(sym);
-    } else if (sym.kind < bestSoFar.symbol.kind) {
-      bestSoFar = Resolution.resolution(sym);
+      return res;
+    } else if (res.symbol.kind < bestSoFar.symbol.kind) {
+      bestSoFar = res;
     }
     return bestSoFar;
   }
