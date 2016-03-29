@@ -5,8 +5,9 @@
     }
     TypeCastTree typeCastTree = (TypeCastTree) tree;
     Type cast = typeCastTree.type().symbolType();
-    Type target = targetType(tree);
-    if(target != null && (isRedundantNumericalCast(cast, typeCastTree.expression().symbolType()) || isSubtype(typeCastTree.expression().symbolType(), target))) {
+    Type target = targetType(typeCastTree);
+    Type expressionType = typeCastTree.expression().symbolType();
+    if(target != null && (isRedundantNumericalCast(cast, expressionType) || isSubtype(expressionType, target))) {
       reportIssue(typeCastTree.type(), "Remove this unnecessary cast to \"" + cast + "\".");
     }
   }
