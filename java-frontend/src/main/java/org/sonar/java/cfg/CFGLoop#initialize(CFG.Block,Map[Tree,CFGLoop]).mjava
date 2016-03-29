@@ -1,0 +1,12 @@
+  private void initialize(CFG.Block block, Map<Tree, CFGLoop> container) {
+    Block loopFirstBlock = block.trueBlock();
+    if (loopFirstBlock == null) {
+      // Special case where no condition is given in FOR loop: only one successor specified
+      loopFirstBlock = block.successors().iterator().next();
+    }
+    collectBlocks(loopFirstBlock, container);
+    successors.addAll(block.successors());
+    successors.remove(block.falseBlock());
+    collectWaysOut(container);
+  }
+

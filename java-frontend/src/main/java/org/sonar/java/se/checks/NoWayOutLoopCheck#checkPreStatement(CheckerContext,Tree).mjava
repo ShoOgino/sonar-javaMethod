@@ -1,0 +1,11 @@
+  @Override
+  public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    if (threadRunMethod) {
+      // It is OK to have an endless Thread run method
+      return context.getState();
+    }
+    final PreStatementVisitor visitor = new PreStatementVisitor(context);
+    syntaxNode.accept(visitor);
+    return visitor.programState;
+  }
+

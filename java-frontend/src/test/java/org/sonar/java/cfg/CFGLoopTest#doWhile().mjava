@@ -1,0 +1,11 @@
+  @Test
+  public void doWhile() {
+    final CFG cfg = buildCFG("doWhile");
+    Map<Tree, CFGLoop> loops = CFGLoop.getCFGLoops(cfg);
+    assertThat(loops).hasSize(1);
+    List<Block> blocks = sorted(cfg.blocks());
+    CFGLoop loop = loops.values().iterator().next();
+    assertThat(loop.startingBlock()).isSameAs(blocks.get(1));
+    assertThat(loop.blocks()).containsOnly(blocks.get(2));
+  }
+

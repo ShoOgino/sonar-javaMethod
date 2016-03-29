@@ -1,0 +1,20 @@
+  public MethodTree getMethod(String className, String methodName) {
+    for (Tree type : compiledTest.types()) {
+      if (type.is(Tree.Kind.CLASS)) {
+        ClassTree classTree = (ClassTree) type;
+        if (className.equals(classTree.simpleName().name())) {
+          for (Tree member : classTree.members()) {
+            if (member.is(Tree.Kind.METHOD)) {
+              MethodTree method = (MethodTree) member;
+              if (methodName.equals(method.simpleName().name())) {
+                return method;
+              }
+            }
+          }
+        }
+      }
+    }
+    Assert.fail("Method " + methodName + " of class " + className + " not found!");
+    return null;
+  }
+

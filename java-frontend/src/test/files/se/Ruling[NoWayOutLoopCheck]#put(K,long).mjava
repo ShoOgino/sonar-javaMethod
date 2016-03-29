@@ -1,0 +1,18 @@
+  public long put(K key, long newValue) {
+    outer: for (;;) {
+      AtomicLong atomic = map.get(key);
+      if (atomic == null) {
+        return 0L;
+      }
+      for (;;) {
+        long oldValue = atomic.get();
+        if (oldValue == 0L) {
+          if (map.replace(key, atomic, new Long(newValue))) { 
+            return 0L;
+          }
+          continue outer;
+        }
+      }
+    }
+  }
+

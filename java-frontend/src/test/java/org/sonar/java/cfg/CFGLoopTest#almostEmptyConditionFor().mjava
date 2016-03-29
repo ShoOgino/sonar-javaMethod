@@ -1,0 +1,11 @@
+  @Test
+  public void almostEmptyConditionFor() {
+    final CFG cfg = buildCFG("almostEmptyConditionFor");
+    Map<Tree, CFGLoop> loops = CFGLoop.getCFGLoops(cfg);
+    assertThat(loops).hasSize(1);
+    List<Block> blocks = sorted(cfg.blocks());
+    CFGLoop loop = loops.values().iterator().next();
+    assertThat(loop.blocks()).containsOnly(blocks.get(1));
+    assertThat(loop.hasNoWayOut()).isTrue();
+  }
+

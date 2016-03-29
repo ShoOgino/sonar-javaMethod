@@ -1,0 +1,14 @@
+  @Test
+  public void embeddedLoopsReturnInInnermost() {
+    final CFG cfg = buildCFG("embeddedLoopsReturnInInnermost");
+    Map<Tree, CFGLoop> loops = CFGLoop.getCFGLoops(cfg);
+    assertThat(loops).hasSize(2);
+    List<Block> blocks = sorted(cfg.blocks());
+    CFGLoop loop = loops.get(blocks.get(5).terminator());
+    assertThat(loop.blocks()).containsOnly(blocks.get(4), blocks.get(3));
+    assertThat(loop.successors()).containsOnly(blocks.get(1));
+    loop = loops.get(blocks.get(3).terminator());
+    assertThat(loop.blocks()).containsOnly(blocks.get(2));
+    assertThat(loop.successors()).containsOnly(blocks.get(1));
+  }
+

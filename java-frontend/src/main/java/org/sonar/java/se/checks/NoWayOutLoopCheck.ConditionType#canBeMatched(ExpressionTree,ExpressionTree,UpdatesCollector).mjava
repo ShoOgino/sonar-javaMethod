@@ -1,0 +1,19 @@
+    protected boolean canBeMatched(ExpressionTree leftOperand, ExpressionTree rightOperand, UpdatesCollector collector) {
+      boolean matchFound = false;
+      for (Update update : collector) {
+        if (update.concerns(leftOperand)) {
+          if (!UpdateType.DECREMENT.equals(update.type())) {
+            return true;
+          }
+          matchFound = true;
+        }
+        if (update.concerns(rightOperand)) {
+          if (!UpdateType.INCREMENT.equals(update.type())) {
+            return true;
+          }
+          matchFound = true;
+        }
+      }
+      return !matchFound;
+    }
+

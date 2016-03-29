@@ -1,0 +1,14 @@
+  private boolean collectBlocks(CFG.Block block, Map<Tree, CFGLoop> container, Set<CFG.Block> visitedBlocks) {
+    if (blocks.contains(block)) {
+      return true;
+    }
+    if (block.id() == startingBlock.id() || !visitedBlocks.add(block)) {
+      return false;
+    }
+    boolean answer = returnsToStart(block, container, visitedBlocks);
+    if (answer || isBreak(block)) {
+      blocks.add(block);
+    }
+    return answer;
+  }
+

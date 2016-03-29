@@ -1,0 +1,13 @@
+  private void collectWaysOut(Map<Tree, CFGLoop> container) {
+    for (CFG.Block block : blocks) {
+      if (isStarting(block)) {
+        CFGLoop innerLoop = container.get(block.terminator());
+        successors.addAll(innerLoop.successors());
+      } else {
+        successors.addAll(block.successors());
+      }
+    }
+    successors.removeAll(blocks);
+    successors.remove(startingBlock);
+  }
+

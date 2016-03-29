@@ -1,0 +1,14 @@
+  public void mixedWithForEach() {
+    Lock lock = new ReentrantLock();
+    for (int i = 0; i < 10; i++) {
+      lock.tryLock();
+      lock = new ReentrantLock();
+    }
+    lock.unlock();
+    for (Foo foo : foos) {
+      lock.tryLock();
+      lock = new ReentrantLock();
+    }
+    lock.unlock();
+  }
+

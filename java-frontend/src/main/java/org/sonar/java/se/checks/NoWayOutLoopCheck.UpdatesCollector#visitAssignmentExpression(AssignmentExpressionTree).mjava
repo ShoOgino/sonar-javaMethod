@@ -1,0 +1,20 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      ExpressionTree assign = tree.variable();
+      if (assign.is(Tree.Kind.IDENTIFIER)) {
+        UpdateType type;
+        if (tree.is(Tree.Kind.PLUS_ASSIGNMENT)) {
+          // Will not work if the target is negative
+          type = UpdateType.INCREMENT;
+        } else if (tree.is(Tree.Kind.MINUS_ASSIGNMENT)) {
+          // Will not work if the target is negative
+          type = UpdateType.DECREMENT;
+        } else {
+          // Other assignments are to complex to decide between increment or decrement
+          type = UpdateType.INDETERMINATE;
+        }
+        updates.add(new Update(((IdentifierTree) assign).symbol(), type));
+      }
+      super.visitAssignmentExpression(tree);
+    }
+

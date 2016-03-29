@@ -1,0 +1,19 @@
+  @CheckForNull
+  private static Set<Block> localSuccessors(CFG.Block block, Map<Tree, CFGLoop> container) {
+    if (isStarting(block)) {
+      CFGLoop loop = container.get(block.terminator());
+      if (loop == null) {
+        loop = create(block, container);
+      }
+      Set<Block> loopSuccessors = new HashSet<>(loop.successors);
+      if (block.trueBlock() == null) {
+        // Special case where no condition is given in FOR loop: only one successor specified
+        return null;
+      } else {
+        loopSuccessors.add(block.falseBlock());
+      }
+      return loopSuccessors;
+    }
+    return block.successors();
+  }
+

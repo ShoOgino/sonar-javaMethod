@@ -1,0 +1,16 @@
+  @Test
+  public void embeddedMixedLoops() {
+    final CFG cfg = buildCFG("embeddedMixedLoops");
+    Map<Tree, CFGLoop> loops = CFGLoop.getCFGLoops(cfg);
+    assertThat(loops).hasSize(2);
+    List<Block> blocks = sorted(cfg.blocks());
+    CFGLoop loop = loops.get(blocks.get(11).terminator());
+    assertThat(loop.startingBlock()).isSameAs(blocks.get(11));
+    assertThat(loop.blocks()).containsOnly(blocks.get(10), blocks.get(9), blocks.get(4), blocks.get(3), blocks.get(2), blocks.get(1));
+    assertThat(loop.hasNoWayOut()).isTrue();
+    loop = loops.get(blocks.get(9).terminator());
+    assertThat(loop.startingBlock()).isSameAs(blocks.get(9));
+    assertThat(loop.blocks()).containsOnly(blocks.get(8), blocks.get(7), blocks.get(6), blocks.get(5));
+    assertThat(loop.hasNoWayOut()).isTrue();
+  }
+

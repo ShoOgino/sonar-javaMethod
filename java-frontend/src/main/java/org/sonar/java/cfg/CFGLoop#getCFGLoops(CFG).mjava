@@ -1,0 +1,13 @@
+  public static Map<Tree, CFGLoop> getCFGLoops(CFG cfg) {
+    Map<Tree, CFGLoop> cfgLoops = new HashMap<>();
+    for (CFG.Block block : cfg.blocks()) {
+      if (CFGLoop.isStarting(block)) {
+        Tree terminator = block.terminator();
+        if (!cfgLoops.containsKey(terminator)) {
+          create(block, cfgLoops);
+        }
+      }
+    }
+    return cfgLoops;
+  }
+

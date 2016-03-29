@@ -1,0 +1,12 @@
+  @Test
+  public void simpleForLoop() {
+    final CFG cfg = buildCFG("simpleForLoop");
+    Map<Tree, CFGLoop> loops = CFGLoop.getCFGLoops(cfg);
+    assertThat(loops).hasSize(1);
+    CFGLoop loop = loops.values().iterator().next();
+    List<Block> blocks = sorted(cfg.blocks());
+    assertThat(loop.startingBlock()).isSameAs(blocks.get(3));
+    assertThat(loop.blocks()).containsOnly(blocks.get(1), blocks.get(2));
+    assertThat(loop.hasNoWayOut()).isTrue();
+  }
+

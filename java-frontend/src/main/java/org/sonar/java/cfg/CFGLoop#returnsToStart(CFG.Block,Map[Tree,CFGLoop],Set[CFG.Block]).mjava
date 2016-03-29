@@ -1,0 +1,16 @@
+  private boolean returnsToStart(CFG.Block block, Map<Tree, CFGLoop> container, Set<CFG.Block> visitedBlocks) {
+    Set<Block> localSuccessors = localSuccessors(block, container);
+    if (localSuccessors == null) {
+      return true;
+    }
+    boolean answer = false;
+    for (CFG.Block successor : localSuccessors) {
+      if (startingBlock.id() == successor.id()) {
+        answer = true;
+      } else {
+        answer |= collectBlocks(successor, container, visitedBlocks);
+      }
+    }
+    return answer;
+  }
+

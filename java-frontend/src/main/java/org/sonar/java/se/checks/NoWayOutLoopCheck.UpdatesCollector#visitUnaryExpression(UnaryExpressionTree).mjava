@@ -1,0 +1,14 @@
+    @Override
+    public void visitUnaryExpression(UnaryExpressionTree expression) {
+      ExpressionTree unary = expression.expression();
+      if (unary.is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) unary).symbol();
+        if (expression.is(Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_INCREMENT)) {
+          updates.add(new Update(symbol, UpdateType.INCREMENT));
+        } else if (expression.is(Tree.Kind.POSTFIX_DECREMENT, Tree.Kind.PREFIX_DECREMENT)) {
+          updates.add(new Update(symbol, UpdateType.DECREMENT));
+        }
+      }
+      super.visitUnaryExpression(expression);
+    }
+
