@@ -1,4 +1,8 @@
   private boolean isAcceptableType(JavaType arg, JavaType formal, boolean autoboxing) {
+    if(formal.isTagged(JavaType.TYPEVAR) && !arg.isTagged(JavaType.TYPEVAR)) {
+      return subtypeOfTypeVar(arg, ((JavaType.TypeVariableJavaType) formal));
+    }
+
     if (isParametrizedType(arg) || isParametrizedType(formal) || isWilcardType(arg) || isWilcardType(formal)) {
       return types.isSubtype(arg, formal) || isAcceptableByAutoboxing(arg, formal.erasure());
     }
