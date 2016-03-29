@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    if (!isAnonymous(classTree) && implementsExternalizable(classTree)) {
+      Collection<Symbol> constructors = classTree.symbol().lookupSymbols("<init>");
+      boolean hasNoArgConstructor = constructors.isEmpty();
+      for (Symbol constructor : constructors) {
+        if (isNoArgConstructor(constructor)) {
+          hasNoArgConstructor = true;
+          break;
+        }
+      }
+      if (!hasNoArgConstructor) {
+        reportIssue(classTree.simpleName(), "Add a no-arg constructor to this class.");
+      }
+    }
+  }
+
