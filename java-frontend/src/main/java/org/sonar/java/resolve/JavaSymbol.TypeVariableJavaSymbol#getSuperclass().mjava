@@ -1,7 +1,10 @@
     @Override
     @Nullable
     public JavaType getSuperclass() {
-      // FIXME : should return upper bound or Object if no bound defined.
-      return null;
+      JavaType firstBound = bounds().get(0);
+      if (!firstBound.symbol().isInterface()) {
+        return firstBound;
+      }
+      return getObjectType(firstBound);
     }
 
