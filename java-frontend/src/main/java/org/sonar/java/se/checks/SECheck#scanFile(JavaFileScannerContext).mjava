@@ -1,9 +1,8 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    Multimap<Tree, DefaultJavaFileScannerContext.SEIssue> issues = ((DefaultJavaFileScannerContext) context).getSEIssues(getClass());
-    for (Map.Entry<Tree, DefaultJavaFileScannerContext.SEIssue> issue : issues.entries()) {
-      DefaultJavaFileScannerContext.SEIssue seIssue = issue.getValue();
+    for (SEIssue seIssue : issues) {
       context.reportIssue(this, seIssue.getTree(), seIssue.getMessage(), seIssue.getSecondary(), null);
     }
+    issues.clear();
   }
 

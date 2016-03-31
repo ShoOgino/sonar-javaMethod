@@ -1,0 +1,9 @@
+  private static void scanFile(String filename, JavaFileScanner[] checks, JavaCheckVerifier javaCheckVerifier, Collection<File> classpath) {
+    List<JavaFileScanner> visitors = new ArrayList<>(Arrays.asList(checks));
+    visitors.add(javaCheckVerifier);
+    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, Lists.newArrayList(classpath), null);
+    JavaAstScanner.scanSingleFileForTests(new File(filename), visitorsBridge);
+    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
+    checkIssues(testJavaFileScannerContext.getIssues(), javaCheckVerifier);
+  }
+
