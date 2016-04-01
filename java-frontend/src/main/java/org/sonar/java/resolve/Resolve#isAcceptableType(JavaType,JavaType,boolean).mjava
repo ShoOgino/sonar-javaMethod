@@ -2,8 +2,14 @@
     if(formal.isTagged(JavaType.TYPEVAR) && !arg.isTagged(JavaType.TYPEVAR)) {
       return subtypeOfTypeVar(arg, (JavaType.TypeVariableJavaType) formal);
     }
+    if (formal.isArray() && arg.isArray()) {
+      return isAcceptableType(((JavaType.ArrayJavaType) arg).elementType(), ((JavaType.ArrayJavaType) formal).elementType(), autoboxing);
+    }
 
     if (isParametrizedType(arg) || isParametrizedType(formal) || isWilcardType(arg) || isWilcardType(formal)) {
+      if (callWithRawType(arg, formal)) {
+        return true;
+      }
       return types.isSubtype(arg, formal) || isAcceptableByAutoboxing(arg, formal.erasure());
     }
     // fall back to behavior based on erasure
