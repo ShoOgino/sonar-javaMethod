@@ -1,7 +1,11 @@
   private static String getDefinitionPlace(Symbol symbol, Symbol knownMemberSymbol) {
     if (sameOwner(symbol, knownMemberSymbol)) {
-      return "on line " + getDeclarationLine(knownMemberSymbol);
+      int declarationLine = getDeclarationLine(knownMemberSymbol);
+      if (declarationLine == -1) {
+        return "";
+      }
+      return " defined on line " + declarationLine;
     }
-    return "in " + (knownMemberSymbol.owner().isInterface() ? "interface" : "superclass") + " \"" + knownMemberSymbol.owner().type().fullyQualifiedName() + "\"";
+    return " defined in " + (knownMemberSymbol.owner().isInterface() ? "interface" : "superclass") + " \"" + knownMemberSymbol.owner().type().fullyQualifiedName() + "\"";
   }
 

@@ -1,4 +1,8 @@
   private static boolean isOverriding(Symbol symbol) {
-    return symbol.isMethodSymbol() && BooleanUtils.isTrue(((MethodTreeImpl) symbol.declaration()).isOverriding());
+    if (symbol.isMethodSymbol()) {
+      MethodTreeImpl methodDeclaration = (MethodTreeImpl) symbol.declaration();
+      return methodDeclaration != null && BooleanUtils.isTrue(methodDeclaration.isOverriding());
+    }
+    return false;
   }
 
