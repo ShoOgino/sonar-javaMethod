@@ -1,23 +1,27 @@
   @Override
   public void visitNode(Tree tree) {
-    ClassTree classTree = (ClassTree) tree;
-    TypeTree superClassTree = classTree.superClass();
-    if (superClassTree != null && superClassTree.symbolType().is("java.lang.Object")) {
-      reportIssue(superClassTree, "\"Object\" should not be explicitly extended.");
+    if (!hasSemantic()) {
+      return;
     }
-    Set<Type> interfaces = new HashSet<>();
-    for (TypeTree superInterfaceTree : classTree.superInterfaces()) {
-      Type interfaceType = superInterfaceTree.symbolType();
-      if (interfaceType.isClass()) {
-        String interfaceName = interfaceType.fullyQualifiedName();
-        if (interfaces.contains(interfaceType)) {
-          reportIssue(superInterfaceTree, String.format(ERROR_MESSAGE, interfaceName));
-        } else {
-          checkExtending(classTree, interfaceType, interfaceName);
-        }
-        interfaces.add(interfaceType);
-      } else {
-        checkExtending(classTree, superInterfaceTree);
+    ClassTree classTree = (ClassTree) tree;
+    checkExtendsObject(classTree);
+
+    ListTree<TypeTree> superInterfaces = classTree.superInterfaces();
+    if (superInterfaces.isEmpty()) {
+      return;
+    }
+
+    Set<JavaType.ClassJavaType> superTypes = ((JavaSymbol.TypeJavaSymbol) classTree.symbol()).superTypes();
+    List<Type> superInterfacesTypes = getTypes(superInterfaces);
+    Set<String> reportedNames = new HashSet<>();
+    for (TypeTree superInterface : superInterfaces) {
+      String superInterfaceName = extractInterfaceName(superInterface);
+      if (isDuplicate(superInterfaces, superInterface) && !reportedNames.add(superInterfaceName)) {
+        // add an issue on a duplicated interface the second time it is encountered
+        reportIssue(superInterface, "\"" + superInterfaceName + "\" is listed multiple times.");
+      }
+      if (!superInterface.symbolType().isUnknown()) {
+        checkRedundancy(superInterface, superInterfacesTypes, superTypes);
       }
     }
   }
