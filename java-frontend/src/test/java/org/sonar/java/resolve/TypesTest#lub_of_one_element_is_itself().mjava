@@ -1,0 +1,10 @@
+  @Test
+  public void lub_of_one_element_is_itself() {
+    CompilationUnitTree cut = treeOf("class A<T> { A<String> var; }");
+    ClassTree classA = (ClassTree) cut.types().get(0);
+    Type varType = ((VariableTree) classA.members().get(0)).type().symbolType();
+    Type a = classA.symbol().type();
+    assertThat(types.leastUpperBound(Lists.newArrayList(a))).isSameAs(a);
+    assertThat(types.leastUpperBound(Lists.newArrayList(varType))).isSameAs(varType);
+  }
+
