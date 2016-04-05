@@ -1,15 +1,11 @@
-  private static Type best(List<Type> minimalCandidates) {
-    Type result = Symbols.unknownType;
-    for (Type type : minimalCandidates) {
-      if (!type.symbol().isInterface()) {
-        // first type which is not a interface
-        return type;
-      } else if (result.isUnknown()) {
-        // save first interface
-        result = type;
+  private Type best(List<Type> minimalCandidates) {
+    Collections.sort(minimalCandidates, new Comparator<Type>() {
+      // Sort minimal candidates to guarantee always the same type is returned when approximated.
+      @Override
+      public int compare(Type type, Type t1) {
+        return type.name().compareTo(t1.name());
       }
-    }
-    // huge approximation: should be the bound of all the minimalCandidates, not only the first type
-    return result;
+    });
+    return minimalCandidates.get(0);
   }
 
