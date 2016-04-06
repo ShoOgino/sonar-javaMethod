@@ -1,14 +1,18 @@
-  private TypeSubstitution inferTypeSubstitution(JavaSymbol.MethodJavaSymbol method, TypeSubstitution currentSubstitution, boolean isLastParam, JavaType formalType,
-    JavaType argType) {
+  private TypeSubstitution inferTypeSubstitution(JavaSymbol.MethodJavaSymbol method, TypeSubstitution currentSubstitution, JavaType formalType, JavaType argType,
+    boolean variableArity, List<JavaType> remainingArgTypes) {
     if (formalType.isTagged(JavaType.TYPEVAR)) {
       completeSubstitution(currentSubstitution, formalType, argType);
     } else if (formalType.isArray()) {
-      JavaType formalElementType = ((JavaType.ArrayJavaType) formalType).elementType;
+      JavaType newArgType = null;
       if (argType.isArray()) {
-        TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, isLastParam, formalElementType, ((JavaType.ArrayJavaType) argType).elementType);
+        newArgType = ((JavaType.ArrayJavaType) argType).elementType;
+      } else if (variableArity) {
+        newArgType = leastUpperBound(remainingArgTypes);
+      }
+      if (newArgType != null) {
+        JavaType formalElementType = ((JavaType.ArrayJavaType) formalType).elementType;
+        TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, formalElementType, newArgType, variableArity, remainingArgTypes);
         return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
-      } else if (method.isVarArgs() && isLastParam) {
-        completeSubstitution(currentSubstitution, formalElementType, argType);
       }
     } else if (isParametrizedType(formalType)) {
       List<JavaType> formalTypeSubstitutedTypes = ((JavaType.ParametrizedTypeJavaType) formalType).typeSubstitution.substitutedTypes();
@@ -26,12 +30,13 @@
       } else if (argType.isSubtypeOf(formalType.erasure()) && argType.isClass()) {
         for (JavaType superType : ((JavaType.ClassJavaType) argType).symbol.superTypes()) {
           if (sameErasure(formalType, superType)) {
-            return inferTypeSubstitution(method, currentSubstitution, isLastParam, formalType, superType);
+            return inferTypeSubstitution(method, currentSubstitution, formalType, superType, variableArity, remainingArgTypes);
           }
         }
       }
     } else if (formalType.isTagged(JavaType.WILDCARD)) {
-      TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, isLastParam, ((JavaType.WildCardType) formalType).bound, argType);
+      TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, ((JavaType.WildCardType) formalType).bound, argType, variableArity,
+        remainingArgTypes);
       return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
     } else {
       // nothing to infer for simple class types or primitive types

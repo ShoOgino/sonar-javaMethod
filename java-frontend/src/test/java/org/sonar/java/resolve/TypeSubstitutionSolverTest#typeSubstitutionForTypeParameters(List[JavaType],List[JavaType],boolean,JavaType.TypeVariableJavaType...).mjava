@@ -1,0 +1,13 @@
+  private TypeSubstitution typeSubstitutionForTypeParameters(List<JavaType> formals, List<JavaType> args, boolean varargs, JavaType.TypeVariableJavaType... typeParameters) {
+    JavaType.MethodJavaType methodType = new JavaType.MethodJavaType(formals, symbols.voidType, ImmutableList.<JavaType>of(), symbols.objectType.symbol);
+    int flags = Flags.PUBLIC;
+    if (varargs) {
+      flags |= Flags.VARARGS;
+    }
+    JavaSymbol.MethodJavaSymbol methodSymbol = new JavaSymbol.MethodJavaSymbol(flags, "foo", methodType, symbols.objectType.symbol);
+    for (JavaType.TypeVariableJavaType typeParameter : typeParameters) {
+      methodSymbol.addTypeParameter(typeParameter);
+    }
+    return typeSubstitutionSolver.getTypeSubstitution(methodSymbol, symbols.objectType, ImmutableList.<JavaType>of(), args);
+  }
+

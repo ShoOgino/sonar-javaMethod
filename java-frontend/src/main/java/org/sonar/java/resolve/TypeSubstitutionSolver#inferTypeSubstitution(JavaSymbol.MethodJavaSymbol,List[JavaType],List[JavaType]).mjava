@@ -1,11 +1,23 @@
   private TypeSubstitution inferTypeSubstitution(JavaSymbol.MethodJavaSymbol method, List<JavaType> formals, List<JavaType> argTypes) {
+    boolean isVarArgs = method.isVarArgs();
+    int numberFormals = formals.size();
+    int numberArgs = argTypes.size();
+    int numberParamToCheck = Math.min(numberFormals, numberArgs);
+    List<JavaType> newArgTypes = new ArrayList<>(argTypes);
     TypeSubstitution substitution = new TypeSubstitution();
-    for (int i = 0; i < Math.min(formals.size(), argTypes.size()); i++) {
-      JavaType formalType = formals.get(i);
-      JavaType argType = argTypes.get(i);
-      boolean isLastParam = i == formals.size() - 1;
 
-      substitution = inferTypeSubstitution(method, substitution, isLastParam, formalType, argType);
+    // method is varargs but parameter is not provided
+    if (isVarArgs && numberFormals == numberArgs + 1) {
+      numberParamToCheck += 1;
+      newArgTypes.add(symbols.objectType);
+    }
+    for (int i = 0; i < numberParamToCheck; i++) {
+      JavaType formalType = formals.get(i);
+      JavaType argType = newArgTypes.get(i);
+      boolean variableArity = isVarArgs && i == (numberFormals - 1);
+      List<JavaType> remainingArgTypes = new ArrayList<>(newArgTypes.subList(i, newArgTypes.size()));
+
+      substitution = inferTypeSubstitution(method, substitution, formalType, argType, variableArity, remainingArgTypes);
 
       if (substitution.typeVariables().containsAll(method.typeVariableTypes)) {
         // we found all the substitution
