@@ -5,7 +5,8 @@
     } else if (formalType.isArray()) {
       JavaType formalElementType = ((JavaType.ArrayJavaType) formalType).elementType;
       if (argType.isArray()) {
-        completeSubstitution(currentSubstitution, formalElementType, ((JavaType.ArrayJavaType) argType).elementType);
+        TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, isLastParam, formalElementType, ((JavaType.ArrayJavaType) argType).elementType);
+        return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
       } else if (method.isVarArgs() && isLastParam) {
         completeSubstitution(currentSubstitution, formalElementType, argType);
       }
