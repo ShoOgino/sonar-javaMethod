@@ -1,0 +1,29 @@
+  @Test
+  public void getTypeSubstitution_varargs_and_generics() {
+    JavaType.TypeVariableJavaType X = getTypeVariable("X");
+    JavaSymbol.TypeJavaSymbol aSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "A", symbols.defaultPackage);
+    JavaType.ClassJavaType aType = (ClassJavaType) aSymbol.type;
+    aType.interfaces = ImmutableList.of();
+    aType.supertype = symbols.objectType;
+
+    // A<{X=X}>
+    JavaType aXType = parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, X));
+    // A
+    JavaType aRawType = aXType.erasure();
+    // A<{X=? extends T}>
+    JavaType aWCextendsTType = parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, new JavaType.WildCardType(T, BoundType.EXTENDS)));
+
+    // A<{X=? extends T}>[]
+    List<JavaType> formals = Lists.<JavaType>newArrayList(new JavaType.ArrayJavaType(aWCextendsTType, symbols.arrayClass));
+
+    // only raw types
+    List<JavaType> args = Lists.<JavaType>newArrayList(aRawType, aRawType);
+    TypeSubstitution substitution = typeSubstitutionForTypeParametersWithVarargs(formals, args, T);
+    assertThat(substitution.substitutedType(T)).isSameAs(symbols.objectType);
+
+    // raw type with generic type
+    args = Lists.<JavaType>newArrayList(aRawType, parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, symbols.stringType)));
+    substitution = typeSubstitutionForTypeParametersWithVarargs(formals, args, T);
+    assertThat(substitution.substitutedType(T)).isSameAs(symbols.objectType);
+  }
+

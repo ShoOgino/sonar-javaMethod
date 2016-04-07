@@ -7,7 +7,7 @@
     Type a = typesFromInput.get(0);
     Type b = typesFromInput.get(1);
 
-    Type lub = types.leastUpperBound(Sets.newHashSet(a, b));
+    Type lub = Types.leastUpperBound(Sets.newHashSet(a, b));
     assertThat(lub).isSameAs(a.symbol().superClass());
 
     typesFromInput = declaredTypes(
@@ -15,11 +15,10 @@
       "class B extends A<String> {}");
     a = typesFromInput.get(0);
     b = typesFromInput.get(1);
-    lub = types.leastUpperBound(Sets.newHashSet(a, b));
+    lub = Types.leastUpperBound(Sets.newHashSet(a, b));
     assertThat(lub).isSameAs(a);
     // FIXME : should be the other way around but we don't care about type parameter in lub for now.
     assertThat(lub).isSameAs(b.symbol().superClass().erasure());
     assertThat(lub).isNotSameAs(b.symbol().superClass());
-
   }
 

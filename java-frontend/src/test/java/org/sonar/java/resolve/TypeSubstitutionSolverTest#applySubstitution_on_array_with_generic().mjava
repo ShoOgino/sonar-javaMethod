@@ -1,0 +1,33 @@
+  @Test
+  public void applySubstitution_on_array_with_generic() {
+    JavaType.TypeVariableJavaType X = getTypeVariable("X");
+    JavaSymbol.TypeJavaSymbol aSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "A", symbols.defaultPackage);
+    JavaType.ClassJavaType aType = (ClassJavaType) aSymbol.type;
+    // aType.interfaces = ImmutableList.of();
+    // aType.supertype = symbols.objectType;
+
+    // A<{X=T}>
+    JavaType aXT = parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, T));
+    // A<T>[]
+    JavaType formal1 = new JavaType.ArrayJavaType(aXT, symbols.arrayClass);
+    // A<T>[][]
+    JavaType formal2 = new JavaType.ArrayJavaType(new JavaType.ArrayJavaType(aXT, symbols.arrayClass), symbols.arrayClass);
+
+    List<JavaType> substitutedTypes = typeSubstitutionSolver.applySubstitutionToFormalParameters(ImmutableList.of(formal1, formal2),
+      new TypeSubstitution().add(T, symbols.stringType));
+
+    JavaType substituted1 = substitutedTypes.get(0);
+    assertThat(substituted1).isInstanceOf(JavaType.ArrayJavaType.class);
+    JavaType elementType = ((JavaType.ArrayJavaType) substituted1).elementType;
+    assertThat(elementType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    JavaType.ParametrizedTypeJavaType ptt = (JavaType.ParametrizedTypeJavaType) elementType;
+    assertThat(ptt.substitution(X)).isSameAs(symbols.stringType);
+
+    JavaType substituted2 = substitutedTypes.get(1);
+    assertThat(substituted2).isInstanceOf(JavaType.ArrayJavaType.class);
+    elementType = ((JavaType.ArrayJavaType) ((JavaType.ArrayJavaType) substituted2).elementType).elementType;
+    assertThat(elementType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
+    ptt = (JavaType.ParametrizedTypeJavaType) elementType;
+    assertThat(ptt.substitution(X)).isSameAs(symbols.stringType);
+  }
+
