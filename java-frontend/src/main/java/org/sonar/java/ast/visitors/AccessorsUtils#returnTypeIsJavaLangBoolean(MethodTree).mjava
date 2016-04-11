@@ -1,0 +1,18 @@
+  private static boolean returnTypeIsJavaLangBoolean(MethodTree methodTree) {
+    TypeTree returnType = methodTree.returnType();
+    if (returnType != null) {
+      if (isIdentifierWithValue(returnType, "Boolean")) {
+        return true;
+      } else if (returnType.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) returnType;
+        ExpressionTree expression = mset.expression();
+        return isIdentifierWithValue(mset.identifier(), "Boolean")
+          && expression.is(Tree.Kind.MEMBER_SELECT)
+          && isIdentifierWithValue(((MemberSelectExpressionTree) expression).expression(), "java")
+          && isIdentifierWithValue(((MemberSelectExpressionTree) expression).identifier(), "lang");
+
+      }
+    }
+    return false;
+  }
+

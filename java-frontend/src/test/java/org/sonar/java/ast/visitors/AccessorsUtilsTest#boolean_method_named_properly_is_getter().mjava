@@ -1,5 +1,15 @@
   @Test
   public void boolean_method_named_properly_is_getter() {
-    assertThat(isAccessor("class T { private  boolean a; public boolean isA() { return a; } }")).isTrue();
+    assertThat(isAccessor("class T { private boolean a; public boolean isA() { return a; } }")).isTrue();
+    assertThat(isAccessor("class T { private Boolean a; public Boolean isA() { return a; } }")).isTrue();
+    assertThat(isAccessor("class T { private Boolean a; public java.lang.Boolean isA() { return a; } }")).isTrue();
+
+    assertThat(isAccessor("class T { private Boolean a; public foo.Boolean isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Boolean a; public org.foo.Boolean isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Integer a; public java.lang.Integer isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Boolean a; public org.lang.Boolean isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Boolean a; public java.foo.Boolean isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Boolean a; public Boolean<Integer> isA() { return a; } }")).isFalse();
+    assertThat(isAccessor("class T { private Boolean a; public void isA() { return a; } }")).isFalse();
   }
 
