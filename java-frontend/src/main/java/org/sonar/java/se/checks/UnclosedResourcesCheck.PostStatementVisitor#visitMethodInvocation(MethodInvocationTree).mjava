@@ -1,5 +1,10 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
+      for (MethodMatcher matcher : CLOSEABLE_EXCEPTIONS) {
+        if (matcher.matches(syntaxNode)) {
+          return;
+        }
+      }
       if (syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT) && needsClosing(syntaxNode.symbolType())) {
         final ExpressionTree targetExpression = ((MemberSelectExpressionTree) syntaxNode.methodSelect()).expression();
         if (targetExpression.is(Tree.Kind.IDENTIFIER) && !isWithinTryHeader(syntaxNode)
