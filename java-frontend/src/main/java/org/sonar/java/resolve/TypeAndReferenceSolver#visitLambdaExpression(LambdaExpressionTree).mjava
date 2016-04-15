@@ -1,7 +1,11 @@
   @Override
   public void visitLambdaExpression(LambdaExpressionTree tree) {
-    //TODO resolve variables
-    super.visitLambdaExpression(tree);
-    registerType(tree, Symbols.unknownType);
+    LambdaExpressionTreeImpl lambdaExpressionTree = (LambdaExpressionTreeImpl) tree;
+    if(lambdaExpressionTree.isTypeSet()) {
+      //FIXME Based on set type get correct type of lambda var if required.
+      super.visitLambdaExpression(tree);
+    } else {
+      registerType(tree, symbols.deferedType(lambdaExpressionTree));
+    }
   }
 
