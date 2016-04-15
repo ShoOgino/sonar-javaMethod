@@ -1,0 +1,12 @@
+  private static Set<JavaCheck> instantiateRules(Set<Class<? extends JavaCheck>> filteredRules) {
+    Set<JavaCheck> rules = new HashSet<>();
+    for (Class<? extends JavaCheck> rule : filteredRules) {
+      try {
+        rules.add(rule.newInstance());
+      } catch (InstantiationException | IllegalAccessException e) {
+        Fail.fail("Unable to instantiate rule " + rule.getCanonicalName());
+      }
+    }
+    return rules;
+  }
+

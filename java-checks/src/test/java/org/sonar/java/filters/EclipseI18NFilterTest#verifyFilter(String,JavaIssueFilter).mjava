@@ -1,0 +1,30 @@
+  private static void verifyFilter(String filename, JavaIssueFilter filter) {
+    // set the component to the filter
+    filter.setComponentKey(filename);
+
+    NoIssueCollector noIssueCollector = new NoIssueCollector();
+    ArrayList<CodeVisitor> codeVisitors = Lists.<CodeVisitor>newArrayList(filter, noIssueCollector);
+
+    // instantiate the rules filtered by the filter
+    codeVisitors.addAll(instantiateRules(filter.filteredRules()));
+
+    Collection<File> classpath = FileUtils.listFiles(new File("target/test-jars"), new String[] {"jar", "zip"}, true);
+    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(codeVisitors, Lists.newArrayList(classpath), null);
+    JavaAstScanner.scanSingleFileForTests(new File(filename), visitorsBridge, new JavaConfiguration(Charset.forName("UTF-8")));
+    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
+
+    for (AnalyzerMessage analyzerMessage : testJavaFileScannerContext.getIssues()) {
+      Rule ruleAnnotation = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class);
+      Issue issue = new DefaultIssue()
+        .setRuleKey(RuleKey.of("repo", ruleAnnotation.key()))
+        .setComponentKey(filename)
+        .setLine(analyzerMessage.getLine());
+
+      if (noIssueCollector.lines.contains(analyzerMessage.getLine())) {
+        assertThat(filter.accept(issue)).isFalse();
+      } else {
+        assertThat(filter.accept(issue)).isTrue();
+      }
+    }
+  }
+

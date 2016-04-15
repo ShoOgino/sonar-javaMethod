@@ -1,0 +1,13 @@
+  public void ignoreIssuesInTree(Tree tree, Class<? extends JavaCheck> filteredRule) {
+    SyntaxToken firstSyntaxToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
+    SyntaxToken lastSyntaxToken = LastSyntaxTokenFinder.lastSyntaxToken(tree);
+    if (firstSyntaxToken != null && lastSyntaxToken != null) {
+      if (!ignoredLinesByComponentAndRule.containsKey(componentKey)) {
+        ignoredLinesByComponentAndRule.put(componentKey, HashMultimap.<String, Integer>create());
+      }
+      Set<Integer> filteredlines = Sets.newHashSet(Ranges.closed(firstSyntaxToken.line(), lastSyntaxToken.line()).asSet(DiscreteDomains.integers()));
+      String ruleKey = rulesKeysByRulesClass.get(filteredRule);
+      ignoredLinesByComponentAndRule.get(componentKey).putAll(ruleKey, filteredlines);
+    }
+  }
+
