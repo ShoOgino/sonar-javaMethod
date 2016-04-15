@@ -1,8 +1,9 @@
   private void assertMultipleIssue(Set<AnalyzerMessage> issues) throws AssertionError {
     Preconditions.checkState(!issues.isEmpty(), "At least one issue expected");
     List<Integer> unexpectedLines = Lists.newLinkedList();
+    boolean isLinear = isLinear(issues.iterator().next());
     for (AnalyzerMessage issue : issues) {
-      validateIssue(expected, unexpectedLines, issue);
+      validateIssue(expected, unexpectedLines, issue, isLinear);
     }
     if (!expected.isEmpty() || !unexpectedLines.isEmpty()) {
       Collections.sort(unexpectedLines);

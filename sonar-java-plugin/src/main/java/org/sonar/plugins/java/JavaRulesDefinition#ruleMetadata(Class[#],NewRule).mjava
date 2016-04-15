@@ -1,0 +1,12 @@
+  private void ruleMetadata(Class<?> ruleClass, NewRule rule) {
+    String metadataKey = rule.key();
+    org.sonar.java.RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.java.RspecKey.class);
+    if (rspecKeyAnnotation != null) {
+      metadataKey = rspecKeyAnnotation.value();
+      rule.setInternalKey(metadataKey);
+    }
+    addHtmlDescription(rule, metadataKey);
+    addMetadata(rule, metadataKey);
+
+  }
+

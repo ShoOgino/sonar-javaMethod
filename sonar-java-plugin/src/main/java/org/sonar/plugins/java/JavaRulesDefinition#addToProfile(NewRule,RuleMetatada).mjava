@@ -1,0 +1,11 @@
+  private void addToProfile(NewRule rule, RuleMetatada metatada) {
+    for (String profileName : metatada.profiles) {
+      RulesProfile rulesProfile = profiles.get(profileName);
+      if(rulesProfile == null) {
+        rulesProfile = RulesProfile.create(profileName, Java.KEY);
+        profiles.put(profileName, rulesProfile);
+      }
+      rulesProfile.activateRule(org.sonar.api.rules.Rule.create(CheckList.REPOSITORY_KEY, rule.key()), null);
+    }
+  }
+

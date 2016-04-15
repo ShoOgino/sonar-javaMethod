@@ -1,0 +1,17 @@
+  private static boolean isLinear(AnalyzerMessage issue) {
+    String ruleKey;
+    RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), RspecKey.class);
+    if(rspecKeyAnnotation != null) {
+      ruleKey = rspecKeyAnnotation.value();
+    } else {
+      ruleKey = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), Rule.class).key();
+    }
+    try {
+      String json = Resources.toString(CheckVerifier.class.getResource("/org/sonar/l10n/java/rules/squid/" + ruleKey + "_java.json"), Charsets.UTF_8);
+      return LINEAR_FUNC_PATTERN.matcher(json).find();
+    } catch (IOException e) {
+      Fail.fail("Failed to open json file for rule "+ruleKey+" ", e);
+    }
+    return false;
+  }
+

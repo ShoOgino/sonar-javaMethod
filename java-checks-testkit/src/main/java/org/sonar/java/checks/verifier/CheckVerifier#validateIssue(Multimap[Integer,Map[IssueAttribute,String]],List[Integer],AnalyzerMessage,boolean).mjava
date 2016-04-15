@@ -1,4 +1,4 @@
-  private static void validateIssue(Multimap<Integer, Map<IssueAttribute, String>> expected, List<Integer> unexpectedLines, AnalyzerMessage issue) {
+  private static void validateIssue(Multimap<Integer, Map<IssueAttribute, String>> expected, List<Integer> unexpectedLines, AnalyzerMessage issue, boolean isLinear) {
     int line = issue.getLine();
     if (expected.containsKey(line)) {
       Map<IssueAttribute, String> attrs = Iterables.getLast(expected.get(line));
@@ -6,6 +6,8 @@
       Double cost = issue.getCost();
       if (cost != null) {
         assertEquals(Integer.toString(cost.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
+      } else if(isLinear){
+        Fail.fail("A cost should be provided for a rule with linear remediation function");
       }
       validateAnalyzerMessage(attrs, issue);
       expected.remove(line, attrs);

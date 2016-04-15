@@ -31,20 +31,6 @@
     verify(issuable, times(3)).addIssue(any(Issue.class));
 
     try {
-      sonarComponents.addIssue(file, new CustomCheckWithSqaleLinear(), 42, "message on line", null);
-      fail("IllegalStateException expected");
-    } catch (IllegalStateException e) {
-      assertThat(e.getMessage()).isEqualTo("A check annotated with a linear sqale function should provide an effort to fix");
-    }
-
-    try {
-      sonarComponents.addIssue(file, new CustomCheckWithSqaleOffset(), 42, "message on line", null);
-      fail("IllegalStateException expected");
-    } catch (IllegalStateException e) {
-      assertThat(e.getMessage()).isEqualTo("A check annotated with a linear sqale function should provide an effort to fix");
-    }
-
-    try {
       sonarComponents.reportIssueAfterSQ52(mock(AnalyzerMessage.class), RuleKey.of("squid", "S109"), inputFile, null);
       fail("NoClassDefFoundError expected");
     } catch (NoClassDefFoundError e) {
