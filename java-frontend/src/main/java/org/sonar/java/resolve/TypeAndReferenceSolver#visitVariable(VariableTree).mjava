@@ -3,8 +3,12 @@
     scan(tree.modifiers());
     completeMetadata(((VariableTreeImpl) tree).getSymbol(), tree.modifiers().annotations());
     //skip type, it has been resolved in second pass
-    if (tree.initializer() != null) {
-      resolveAs(tree.initializer(), JavaSymbol.VAR);
+    ExpressionTree initializer = tree.initializer();
+    if (initializer != null) {
+      resolveAs(initializer, JavaSymbol.VAR);
+      if(((JavaType) initializer.symbolType()).isTagged(JavaType.DEFERRED)) {
+        setInferedType(tree.type().symbolType(), (DeferredType) initializer.symbolType());
+      }
     }
   }
 

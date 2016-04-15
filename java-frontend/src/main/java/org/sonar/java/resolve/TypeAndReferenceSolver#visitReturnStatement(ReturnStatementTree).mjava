@@ -11,15 +11,13 @@
           throw new IllegalStateException("Return statement was unexpected here");
         }
       }
-      Type infered = null;
+      Type infered;
       if(parent.is(Tree.Kind.METHOD)) {
         infered = ((MethodTree) parent).returnType().symbolType();
       } else {
         infered = ((LambdaExpressionTree) parent).symbolType();
       }
-      AbstractTypedTree inferedExpression = ((DeferredType) expression.symbolType()).tree();
-      inferedExpression.setInferedType(infered);
-      inferedExpression.accept(this);
+      setInferedType(infered, (DeferredType) expression.symbolType());
     }
   }
 
