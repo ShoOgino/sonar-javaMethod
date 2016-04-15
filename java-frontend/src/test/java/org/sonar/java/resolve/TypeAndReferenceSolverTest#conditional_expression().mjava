@@ -16,13 +16,13 @@
     assertThat(typeOf("true ? new MyClass() : null")).isSameAs(classType);
     assertThat(typeOf("true ? new MyClass() : new Object()")).isSameAs(symbols.objectType);
     assertThat(typeOf("true ? new Object() : new MyClass()")).isSameAs(symbols.objectType);
-    JavaType.ParametrizedTypeJavaType expectedType = (JavaType.ParametrizedTypeJavaType) typeOf("new java.util.ArrayList<? extends String>()");
+    ParametrizedTypeJavaType expectedType = (ParametrizedTypeJavaType) typeOf("new java.util.ArrayList<? extends String>()");
     JavaType testedType = typeOf("true ? new java.util.ArrayList<? extends String>() : new java.util.ArrayList<String>()");
-    assertThat(testedType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
-    assertThat(((JavaType.ParametrizedTypeJavaType) testedType).typeSubstitution).isEqualTo(expectedType.typeSubstitution);
+    assertThat(testedType).isInstanceOf(ParametrizedTypeJavaType.class);
+    assertThat(((ParametrizedTypeJavaType) testedType).typeSubstitution).isEqualTo(expectedType.typeSubstitution);
 
     testedType = typeOf("true ? new java.util.ArrayList<Integer>() : new java.util.ArrayList<String>()");
-    assertThat(testedType).isInstanceOf(JavaType.ClassJavaType.class);
+    assertThat(testedType).isInstanceOf(ClassJavaType.class);
     assertThat(testedType.is("java.util.ArrayList")).isTrue();
   }
 

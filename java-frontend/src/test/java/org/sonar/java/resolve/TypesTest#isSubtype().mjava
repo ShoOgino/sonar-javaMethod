@@ -28,17 +28,17 @@
     // TODO test void
 
     // null
-    JavaType.ArrayJavaType arrayTypeInt = new JavaType.ArrayJavaType(symbols.intType, symbols.arrayClass);
-    JavaType.ArrayJavaType arrayTypeShort = new JavaType.ArrayJavaType(symbols.shortType, symbols.arrayClass);
+    ArrayJavaType arrayTypeInt = new ArrayJavaType(symbols.intType, symbols.arrayClass);
+    ArrayJavaType arrayTypeShort = new ArrayJavaType(symbols.shortType, symbols.arrayClass);
     shouldBeSubtype(arrayTypeShort, Arrays.<JavaType>asList(arrayTypeShort, arrayTypeInt));
     shouldNotBeSubtype(symbols.nullType, Arrays.asList(symbols.booleanType, symbols.byteType, symbols.charType, symbols.shortType, symbols.intType, symbols.longType, symbols.floatType, symbols.doubleType));
     shouldBeSubtype(symbols.nullType, Arrays.asList(symbols.nullType, arrayTypeInt, symbols.objectType));
     shouldBeSubtype(arrayTypeInt, Arrays.asList(symbols.objectType));
     JavaSymbol.TypeJavaSymbol typeSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyType", symbols.defaultPackage);
-    JavaType.ClassJavaType classType = (JavaType.ClassJavaType) typeSymbol.type;
+    ClassJavaType classType = (ClassJavaType) typeSymbol.type;
     classType.interfaces = Lists.newArrayList();
     JavaSymbol.TypeJavaSymbol subtypeSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MySubtype", symbols.defaultPackage);
-    JavaType.ClassJavaType subClassType = (JavaType.ClassJavaType) subtypeSymbol.type;
+    ClassJavaType subClassType = (ClassJavaType) subtypeSymbol.type;
     subClassType.supertype = classType;
     subClassType.interfaces = Lists.newArrayList();
     shouldBeSubtype(subClassType, Arrays.<JavaType>asList(classType, subClassType));

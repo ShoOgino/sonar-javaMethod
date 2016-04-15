@@ -13,26 +13,26 @@
     assertThat(result.reference(13, 5)).isSameAs(result.symbol("foo", 9));
 
     // Check erasure
-    JavaType.TypeVariableJavaType STypeVariableType = (JavaType.TypeVariableJavaType) typeSymbol.typeParameters.lookup("S").get(0).type;
+    TypeVariableJavaType STypeVariableType = (TypeVariableJavaType) typeSymbol.typeParameters.lookup("S").get(0).type;
     assertThat(STypeVariableType.erasure().getSymbol().getName()).isEqualTo("CharSequence");
     JavaType arrayErasure = typeSymbol.members().lookup("arrayErasure").get(0).type;
     assertThat(arrayErasure.isTagged(JavaType.ARRAY)).isTrue();
     assertThat(arrayErasure.erasure().isTagged(JavaType.ARRAY)).isTrue();
-    assertThat(((JavaType.ArrayJavaType) arrayErasure.erasure()).elementType().symbol.getName()).isEqualTo("CharSequence");
+    assertThat(((ArrayJavaType) arrayErasure.erasure()).elementType().symbol.getName()).isEqualTo("CharSequence");
 
     IdentifierTree tree = result.referenceTree(20, 7);
     JavaType symbolType = (JavaType) tree.symbolType();
-    assertThat(symbolType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
-    JavaType.ParametrizedTypeJavaType ptt = (JavaType.ParametrizedTypeJavaType) symbolType;
+    assertThat(symbolType).isInstanceOf(ParametrizedTypeJavaType.class);
+    ParametrizedTypeJavaType ptt = (ParametrizedTypeJavaType) symbolType;
     assertThat(ptt.symbol.getName()).isEqualTo("C");
     assertThat(ptt.typeSubstitution.size()).isEqualTo(1);
     assertThat(ptt.typeSubstitution.substitutedType(ptt.typeSubstitution.typeVariables().iterator().next()).symbol.getName()).isEqualTo("String");
 
     JavaSymbol.MethodJavaSymbol method1 = (JavaSymbol.MethodJavaSymbol) typeSymbol.members().lookup("method1").get(0);
-    assertThat(((JavaType.MethodJavaType) method1.type).resultType).isSameAs(STypeVariableType);
+    assertThat(((MethodJavaType) method1.type).resultType).isSameAs(STypeVariableType);
 
     JavaSymbol.MethodJavaSymbol method2 = (JavaSymbol.MethodJavaSymbol) typeSymbol.members().lookup("method2").get(0);
-    JavaType.TypeVariableJavaType PTypeVariableType = (JavaType.TypeVariableJavaType) method2.typeParameters().lookup("P").get(0).type;
+    TypeVariableJavaType PTypeVariableType = (TypeVariableJavaType) method2.typeParameters().lookup("P").get(0).type;
     assertThat(method2.getReturnType().type).isSameAs(PTypeVariableType);
     assertThat(method2.parameterTypes().get(0)).isSameAs(PTypeVariableType);
 

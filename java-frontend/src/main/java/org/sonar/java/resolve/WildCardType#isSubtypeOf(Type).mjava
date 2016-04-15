@@ -1,0 +1,17 @@
+  @Override
+  public boolean isSubtypeOf(Type superType) {
+    if (((JavaType) superType).isTagged(WILDCARD)) {
+      org.sonar.java.resolve.WildCardType superTypeWildcard = (org.sonar.java.resolve.WildCardType) superType;
+      JavaType superTypeBound = superTypeWildcard.bound;
+      switch (superTypeWildcard.boundType) {
+        case UNBOUNDED:
+          return true;
+        case SUPER:
+          return boundType == BoundType.SUPER && superTypeBound.isSubtypeOf(bound);
+        case EXTENDS:
+          return boundType != BoundType.SUPER && bound.isSubtypeOf(superTypeBound);
+      }
+    }
+    return "java.lang.Object".equals(superType.fullyQualifiedName()) || (boundType == BoundType.EXTENDS && bound.isSubtypeOf(superType));
+  }
+

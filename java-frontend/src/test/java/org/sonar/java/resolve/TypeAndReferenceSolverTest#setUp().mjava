@@ -7,14 +7,14 @@
     p.members = new Scope(p);
     // class MyClass
     classSymbol = new JavaSymbol.TypeJavaSymbol(0, "MyClass", p);
-    classType = (JavaType.ClassJavaType) classSymbol.type;
+    classType = (ClassJavaType) classSymbol.type;
     classType.supertype = symbols.objectType;
     classType.interfaces = ImmutableList.of();
     classSymbol.members = new Scope(classSymbol);
     p.members.enter(classSymbol);
     // int[][] var;
     variableSymbol = new JavaSymbol.VariableJavaSymbol(0, "var", classSymbol);
-    variableSymbol.type = new JavaType.ArrayJavaType(new JavaType.ArrayJavaType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
+    variableSymbol.type = new ArrayJavaType(new ArrayJavaType(symbols.intType, symbols.arrayClass), symbols.arrayClass);
     classSymbol.members.enter(variableSymbol);
 
     // MyClass var2;
@@ -22,12 +22,12 @@
 
     // int method()
     methodSymbol = new JavaSymbol.MethodJavaSymbol(0, "method", classSymbol);
-    ((JavaSymbol.MethodJavaSymbol)methodSymbol).setMethodType(new JavaType.MethodJavaType(ImmutableList.<JavaType>of(), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
+    ((JavaSymbol.MethodJavaSymbol)methodSymbol).setMethodType(new MethodJavaType(ImmutableList.<JavaType>of(), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
     classSymbol.members.enter(methodSymbol);
 
     // int method()
     argMethodSymbol = new JavaSymbol.MethodJavaSymbol(0, "argMethod", classSymbol);
-    ((JavaSymbol.MethodJavaSymbol)argMethodSymbol).setMethodType(new JavaType.MethodJavaType(ImmutableList.of(symbols.intType), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
+    ((JavaSymbol.MethodJavaSymbol)argMethodSymbol).setMethodType(new MethodJavaType(ImmutableList.of(symbols.intType), symbols.intType, ImmutableList.<JavaType>of(), classSymbol));
     classSymbol.members.enter(argMethodSymbol);
 
     classSymbol.members.enter(new JavaSymbol.VariableJavaSymbol(0, "this", classType, classSymbol));

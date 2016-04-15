@@ -1,8 +1,8 @@
   @Test
   public void getTypeSubstitution_varargs_and_generics() {
-    JavaType.TypeVariableJavaType X = getTypeVariable("X");
+    TypeVariableJavaType X = getTypeVariable("X");
     JavaSymbol.TypeJavaSymbol aSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "A", symbols.defaultPackage);
-    JavaType.ClassJavaType aType = (ClassJavaType) aSymbol.type;
+    ClassJavaType aType = (ClassJavaType) aSymbol.type;
     aType.interfaces = ImmutableList.of();
     aType.supertype = symbols.objectType;
 
@@ -11,10 +11,10 @@
     // A
     JavaType aRawType = aXType.erasure();
     // A<{X=? extends T}>
-    JavaType aWCextendsTType = parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, new JavaType.WildCardType(T, BoundType.EXTENDS)));
+    JavaType aWCextendsTType = parametrizedTypeCache.getParametrizedTypeType(aSymbol, new TypeSubstitution().add(X, new WildCardType(T, BoundType.EXTENDS)));
 
     // A<{X=? extends T}>[]
-    List<JavaType> formals = Lists.<JavaType>newArrayList(new JavaType.ArrayJavaType(aWCextendsTType, symbols.arrayClass));
+    List<JavaType> formals = Lists.<JavaType>newArrayList(new ArrayJavaType(aWCextendsTType, symbols.arrayClass));
 
     // only raw types
     List<JavaType> args = Lists.<JavaType>newArrayList(aRawType, aRawType);

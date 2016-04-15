@@ -7,8 +7,8 @@
     assertThat(typeOfExpression("MyClass.var")).isSameAs(variableSymbol.type);
 
     // qualified_identifier[expression]
-    assertThat(typeOf("var[42] = 12")).isSameAs(((JavaType.ArrayJavaType) variableSymbol.type).elementType);
-    assertThat(typeOfExpression("var[42]")).isSameAs(((JavaType.ArrayJavaType) variableSymbol.type).elementType);
+    assertThat(typeOf("var[42] = 12")).isSameAs(((ArrayJavaType) variableSymbol.type).elementType);
+    assertThat(typeOfExpression("var[42]")).isSameAs(((ArrayJavaType) variableSymbol.type).elementType);
 
     // qualified_identifier[].class
     assertThat(typeOfExpression("id[].class").erasure()).isSameAs(symbols.classType);
@@ -22,8 +22,8 @@
     // qualified_identifier.class
     JavaType idClassType = typeOfExpression("id.class");
     assertThat(idClassType.erasure()).isSameAs(symbols.classType);
-    assertThat(idClassType).isInstanceOf(JavaType.ParametrizedTypeJavaType.class);
-    JavaType.ParametrizedTypeJavaType idClassTypeParameterized = (JavaType.ParametrizedTypeJavaType) idClassType;
+    assertThat(idClassType).isInstanceOf(ParametrizedTypeJavaType.class);
+    ParametrizedTypeJavaType idClassTypeParameterized = (ParametrizedTypeJavaType) idClassType;
     assertThat(idClassTypeParameterized.typeSubstitution.substitutedType(idClassTypeParameterized.typeParameters().get(0))).isSameAs(Symbols.unknownType);
     // TODO id.<...>...
     assertThat(typeOfExpression("MyClass.this")).isSameAs(classSymbol.type);

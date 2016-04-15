@@ -3,7 +3,7 @@
 
     predefClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "", rootPackage);
     predefClass.members = new Scope(predefClass);
-    ((JavaType.ClassJavaType) predefClass.type).interfaces = ImmutableList.of();
+    ((ClassJavaType) predefClass.type).interfaces = ImmutableList.of();
 
     // TODO should have type "noType":
     noSymbol = new JavaSymbol.TypeJavaSymbol(0, "", rootPackage);
@@ -38,7 +38,7 @@
     annotationType = bytecodeCompleter.loadClass("java.lang.annotation.Annotation").type;
     enumType = bytecodeCompleter.loadClass("java.lang.Enum").type;
 
-    unboundedWildcard = new JavaType.WildCardType(objectType, JavaType.WildCardType.BoundType.UNBOUNDED);
+    unboundedWildcard = new WildCardType(objectType, WildCardType.BoundType.UNBOUNDED);
 
     // Associate boxed types
     boxedTypes = HashBiMap.create();
@@ -58,7 +58,7 @@
 
     // TODO comment me
     arrayClass = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "Array", noSymbol);
-    JavaType.ClassJavaType arrayClassType = (JavaType.ClassJavaType) arrayClass.type;
+    ClassJavaType arrayClassType = (ClassJavaType) arrayClass.type;
     arrayClassType.supertype = objectType;
     arrayClassType.interfaces = ImmutableList.of(cloneableType, serializableType);
     arrayClass.members = new Scope(arrayClass);

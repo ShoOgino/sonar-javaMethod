@@ -1,0 +1,23 @@
+  private boolean isValidSubstitution(TypeSubstitution candidate, TypeVariableJavaType typeVar, JavaType typeParam, JavaType site) {
+    for (JavaType bound : typeVar.bounds) {
+      JavaType currentBound = applySubstitution(bound, candidate);
+      while (currentBound.isTagged(JavaType.TYPEVAR)) {
+        JavaType newBound = candidate.substitutedType(currentBound);
+        if (currentBound.equals(newBound)) {
+          break;
+        }
+        if (newBound == null && isParametrizedType(site)) {
+          newBound = ((ParametrizedTypeJavaType) site).typeSubstitution.substitutedType(currentBound);
+        }
+        if (newBound == null) {
+          return ((JavaSymbol.TypeJavaSymbol) site.symbol()).typeVariableTypes.contains(currentBound);
+        }
+        currentBound = newBound;
+      }
+      if (!typeParam.isSubtypeOf(currentBound)) {
+        return false;
+      }
+    }
+    return true;
+  }
+

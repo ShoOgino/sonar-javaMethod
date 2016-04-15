@@ -6,13 +6,13 @@
     assertThat(enumSymbol.owner()).isSameAs(result.symbol("EnumDeclaration"));
     assertThat(enumSymbol.flags()).isEqualTo(Flags.PRIVATE | Flags.ENUM | Flags.STATIC);
 
-    JavaType.ParametrizedTypeJavaType superType = (JavaType.ParametrizedTypeJavaType) enumSymbol.getSuperclass();
+    ParametrizedTypeJavaType superType = (ParametrizedTypeJavaType) enumSymbol.getSuperclass();
     JavaSymbol.TypeJavaSymbol superclass = superType.symbol;
     assertThat(superclass.getName()).isEqualTo("Enum");
     assertThat(superclass.owner).isInstanceOf(JavaSymbol.PackageJavaSymbol.class);
     assertThat(superclass.owner.getName()).isEqualTo("java.lang");
     assertThat(superType.typeSubstitution.size()).isEqualTo(1);
-    Map.Entry<JavaType.TypeVariableJavaType, JavaType> entry = superType.typeSubstitution.substitutionEntries().iterator().next();
+    Map.Entry<TypeVariableJavaType, JavaType> entry = superType.typeSubstitution.substitutionEntries().iterator().next();
     assertThat(entry.getKey()).isSameAs(superclass.typeParameters.lookup("E").get(0).type);
     assertThat(entry.getValue()).isSameAs(enumSymbol.type);
     assertThat(enumSymbol.superClass()).isSameAs(result.symbol("parameterizedDeclaration").type);

@@ -5,19 +5,19 @@
     } else if (formalType.isArray()) {
       JavaType newArgType = null;
       if (argType.isArray()) {
-        newArgType = ((JavaType.ArrayJavaType) argType).elementType;
+        newArgType = ((ArrayJavaType) argType).elementType;
       } else if (variableArity) {
         newArgType = leastUpperBound(remainingArgTypes);
       }
       if (newArgType != null) {
-        JavaType formalElementType = ((JavaType.ArrayJavaType) formalType).elementType;
+        JavaType formalElementType = ((ArrayJavaType) formalType).elementType;
         TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, formalElementType, newArgType, variableArity, remainingArgTypes);
         return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
       }
     } else if (isParametrizedType(formalType)) {
-      List<JavaType> formalTypeSubstitutedTypes = ((JavaType.ParametrizedTypeJavaType) formalType).typeSubstitution.substitutedTypes();
+      List<JavaType> formalTypeSubstitutedTypes = ((ParametrizedTypeJavaType) formalType).typeSubstitution.substitutedTypes();
       if (isParametrizedType(argType)) {
-        List<JavaType> argTypeSubstitutedTypes = ((JavaType.ParametrizedTypeJavaType) argType).typeSubstitution.substitutedTypes();
+        List<JavaType> argTypeSubstitutedTypes = ((ParametrizedTypeJavaType) argType).typeSubstitution.substitutedTypes();
         TypeSubstitution newSubstitution = inferTypeSubstitution(method, formalTypeSubstitutedTypes, argTypeSubstitutedTypes);
         return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
       } else if (isRawTypeOfType(argType, formalType) || isNullType(argType)) {
@@ -28,14 +28,14 @@
         TypeSubstitution newSubstitution = inferTypeSubstitution(method, formalTypeSubstitutedTypes, fakeTypes);
         return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
       } else if (argType.isSubtypeOf(formalType.erasure()) && argType.isClass()) {
-        for (JavaType superType : ((JavaType.ClassJavaType) argType).symbol.superTypes()) {
+        for (JavaType superType : ((ClassJavaType) argType).symbol.superTypes()) {
           if (sameErasure(formalType, superType)) {
             return inferTypeSubstitution(method, currentSubstitution, formalType, superType, variableArity, remainingArgTypes);
           }
         }
       }
     } else if (formalType.isTagged(JavaType.WILDCARD)) {
-      TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, ((JavaType.WildCardType) formalType).bound, argType, variableArity,
+      TypeSubstitution newSubstitution = inferTypeSubstitution(method, currentSubstitution, ((WildCardType) formalType).bound, argType, variableArity,
         remainingArgTypes);
       return mergeTypeSubstitutions(currentSubstitution, newSubstitution);
     } else {

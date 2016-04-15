@@ -17,7 +17,7 @@
     if (substitution == null) {
       return bestSoFar;
     }
-    List<JavaType> formals = ((JavaType.MethodJavaType) methodJavaSymbol.type).argTypes;
+    List<JavaType> formals = ((MethodJavaType) methodJavaSymbol.type).argTypes;
     formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, callSite);
     if(defSite != callSite) {
       formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, defSite);
@@ -39,7 +39,7 @@
     }
 
     Resolution resolution = new Resolution(mostSpecific);
-    JavaType returnType = ((JavaType.MethodJavaType) ((JavaSymbol.MethodJavaSymbol) mostSpecific).type).resultType;
+    JavaType returnType = ((MethodJavaType) ((JavaSymbol.MethodJavaSymbol) mostSpecific).type).resultType;
     resolution.type = typeSubstitutionSolver.getReturnType(returnType, defSite, callSite, !typeParams.isEmpty(), substitution);
 
     return resolution;

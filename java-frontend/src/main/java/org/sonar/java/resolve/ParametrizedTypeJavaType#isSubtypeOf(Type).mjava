@@ -1,0 +1,18 @@
+  @Override
+  public boolean isSubtypeOf(Type superType) {
+    if (((JavaType) superType).isTagged(TYPEVAR)) {
+      return false;
+    }
+    if (erasure().isSubtypeOf(superType.erasure())) {
+      boolean superTypeIsParametrizedJavaType = superType instanceof org.sonar.java.resolve.ParametrizedTypeJavaType;
+      if (superTypeIsParametrizedJavaType) {
+        return checkSubstitutedTypesCompatibility((org.sonar.java.resolve.ParametrizedTypeJavaType) superType);
+      }
+      return !superTypeIsParametrizedJavaType;
+    }
+    if (((JavaType) superType).isTagged(WILDCARD)) {
+      return ((WildCardType) superType).isSubtypeOfBound(this);
+    }
+    return false;
+  }
+
