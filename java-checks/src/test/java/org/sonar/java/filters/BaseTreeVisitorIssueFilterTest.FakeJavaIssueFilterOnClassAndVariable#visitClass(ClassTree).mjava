@@ -3,7 +3,11 @@
       IdentifierTree simpleName = tree.simpleName();
       if (simpleName == null) {
         // force check on null tree
-        ignoreIssuesInTree(simpleName, FakeRuleWithoutKey.class);
+        excludeLines(simpleName, FakeRuleWithoutKey.class);
+      } else if ("AllowedClassName".equals(simpleName.name())) {
+        acceptLines(simpleName, FakeRule.class);
+      } else {
+        excludeLines(simpleName, FakeRule.class);
       }
       super.visitClass(tree);
     }

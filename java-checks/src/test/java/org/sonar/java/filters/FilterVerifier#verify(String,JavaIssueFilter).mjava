@@ -1,0 +1,51 @@
+  public static void verify(String filename, JavaIssueFilter filter) {
+    // set the component to the filter
+    filter.setComponentKey(filename);
+
+    IssueCollector issueCollector = new IssueCollector();
+    ArrayList<CodeVisitor> codeVisitors = Lists.<CodeVisitor>newArrayList(filter, issueCollector);
+
+    // instantiate the rules filtered by the filter
+    codeVisitors.addAll(instantiateRules(filter.filteredRules()));
+
+    Collection<File> classpath = FileUtils.listFiles(new File("target/test-jars"), new String[] {"jar", "zip"}, true);
+    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(codeVisitors, Lists.newArrayList(classpath), null);
+    JavaAstScanner.scanSingleFileForTests(new File(filename), visitorsBridge, new JavaConfiguration(Charset.forName("UTF-8")));
+    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
+
+    Multimap<Integer, String> issuesByLines = HashMultimap.create();
+    for (AnalyzerMessage analyzerMessage : testJavaFileScannerContext.getIssues()) {
+      Integer issueLine = analyzerMessage.getLine();
+      String ruleKey = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
+      Issue issue = new DefaultIssue()
+        .setRuleKey(RuleKey.of("repo", ruleKey))
+        .setComponentKey(filename)
+        .setLine(issueLine);
+
+      if (issueCollector.rejectedIssuesLines.contains(issueLine)) {
+
+        assertThat(filter.accept(issue))
+          .overridingErrorMessage("Line #" + issueLine + " has been marked with 'NoIssue' but issue of rule '" + ruleKey + "' has been accepted!")
+          .isFalse();
+      } else if (issueCollector.acceptedIssuesLines.contains(issueLine)) {
+        // force check on accepted issues
+        assertThat(filter.accept(issue))
+          .overridingErrorMessage("Line #" + issueLine + " has been marked with 'WithIssue' but no issue have been raised!")
+          .isTrue();
+      } else {
+        issuesByLines.put(issueLine, ruleKey);
+      }
+    }
+
+    if (!issuesByLines.isEmpty()) {
+      List<Integer> lines = Lists.newArrayList(issuesByLines.keySet());
+      Collections.sort(lines);
+      StringBuilder builder = new StringBuilder();
+      for (Integer line : lines) {
+        builder.append("\n#" + line + ": " + issuesByLines.get(line).toString());
+      }
+
+      Fail.fail("The following lines have not been marked with 'WithIssue' or 'NoIssue' and raised issues:" + builder.toString());
+    }
+  }
+
