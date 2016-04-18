@@ -1,0 +1,17 @@
+  @Test
+  public void excluded_lines_by_rule_never_returns_null() {
+    // no effect filter
+    filter = new BaseTreeVisitorIssueFilter() {
+      @Override
+      public Set<Class<? extends JavaCheck>> filteredRules() {
+        return ImmutableSet.of();
+      }
+    };
+    // no component is set
+    scanFile(filter);
+
+    Multimap<String, Integer> excludedLinesByRule = filter.excludedLinesByRule();
+    assertThat(excludedLinesByRule).isNotNull();
+    assertThat(excludedLinesByRule.isEmpty()).isTrue();
+  }
+

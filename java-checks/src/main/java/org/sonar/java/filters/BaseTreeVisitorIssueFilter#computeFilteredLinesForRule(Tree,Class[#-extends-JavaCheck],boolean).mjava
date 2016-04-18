@@ -2,17 +2,8 @@
     SyntaxToken firstSyntaxToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
     SyntaxToken lastSyntaxToken = LastSyntaxTokenFinder.lastSyntaxToken(tree);
     if (firstSyntaxToken != null && lastSyntaxToken != null) {
-      if (!ignoredLinesByComponentAndRule.containsKey(componentKey)) {
-        ignoredLinesByComponentAndRule.put(componentKey, HashMultimap.<String, Integer>create());
-      }
       Set<Integer> filteredlines = Sets.newHashSet(Ranges.closed(firstSyntaxToken.line(), lastSyntaxToken.line()).asSet(DiscreteDomains.integers()));
-      String ruleKey = rulesKeysByRulesClass.get(filteredRule);
-      Multimap<String, Integer> excludedLinesByRule = ignoredLinesByComponentAndRule.get(componentKey);
-      if (excludeLine) {
-        excludedLinesByRule.putAll(ruleKey, filteredlines);
-      } else {
-        excludedLinesByRule.get(ruleKey).removeAll(filteredlines);
-      }
+      computeFilteredLinesForRule(filteredlines, rulesKeysByRulesClass.get(filteredRule), excludeLine);
     }
   }
 
