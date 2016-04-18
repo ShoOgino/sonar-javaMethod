@@ -1,0 +1,27 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    boolean generatesEquals = usesAnnotation(tree, GENERATE_EQUALS);
+
+    if (generatesEquals || usesAnnotation(tree, GENERATE_UNUSED_FIELD_RELATED_METHODS)) {
+      excludeLines(tree, UnusedPrivateFieldCheck.class);
+    } else {
+      acceptLines(tree, UnusedPrivateFieldCheck.class);
+    }
+
+    if (generatesEquals) {
+      excludeLines(tree, EqualsNotOverriddenInSubclassCheck.class);
+      excludeLines(tree, EqualsNotOverridenWithCompareToCheck.class);
+    } else {
+      acceptLines(tree, EqualsNotOverriddenInSubclassCheck.class);
+      acceptLines(tree, EqualsNotOverridenWithCompareToCheck.class);
+    }
+
+    if (usesAnnotation(tree, GENERATE_PRIVATE_CONSTRUCTOR)) {
+      excludeLines(tree, UtilityClassWithPublicConstructorCheck.class);
+    } else {
+      acceptLines(tree, UtilityClassWithPublicConstructorCheck.class);
+    }
+
+    super.visitClass(tree);
+  }
+
