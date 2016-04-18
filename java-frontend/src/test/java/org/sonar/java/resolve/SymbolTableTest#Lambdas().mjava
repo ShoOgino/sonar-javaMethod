@@ -4,7 +4,8 @@
     JavaSymbol barMethod = result.symbol("bar");
     assertThat(barMethod.usages()).hasSize(1);
     MethodTree methodTree = (MethodTree) barMethod.declaration();
-    assertThat(((ReturnStatementTree) methodTree.block().body().get(0)).expression().symbolType()).isSameAs(result.symbol("F").type());
+    Type Ftype = result.symbol("F").type();
+    assertThat(((ReturnStatementTree) methodTree.block().body().get(0)).expression().symbolType()).isSameAs(Ftype);
 
     JavaSymbol qixMethod = result.symbol("qix");
     LambdaExpressionTree lamdba = ((LambdaExpressionTree) ((ReturnStatementTree) ((MethodTree) qixMethod.declaration()).block().body().get(0)).expression());
@@ -16,7 +17,12 @@
     assertThat(((AssignmentExpressionTree) fieldSymbol.usages().get(0).parent()).expression().symbolType()).isSameAs(fieldSymbol.type());
 
     JavaSymbol bSymbol = result.symbol("b");
-    assertThat(((NewClassTree) ((VariableTree) bSymbol.declaration()).initializer()).arguments().get(0).symbolType()).isSameAs(result.symbol("F").type());
+    assertThat(((NewClassTree) ((VariableTree) bSymbol.declaration()).initializer()).arguments().get(0).symbolType()).isSameAs(Ftype);
+
+    JavaSymbol condMethod = result.symbol("cond");
+    ConditionalExpressionTree conditionalExpression = (ConditionalExpressionTree) ((ReturnStatementTree) ((MethodTree) condMethod.declaration()).block().body().get(0)).expression();
+    assertThat(conditionalExpression.symbolType()).isSameAs(Ftype);
+
 
     JavaSymbol sym = result.symbol("o");
     assertThat(sym.type.toString()).isEqualTo("!unknown!");

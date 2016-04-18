@@ -1,4 +1,7 @@
-  public JavaType conditionalExpressionType(JavaType trueType, JavaType falseType) {
+  public JavaType conditionalExpressionType(ConditionalExpressionTree tree, JavaType trueType, JavaType falseType) {
+    if (trueType.isTagged(JavaType.DEFERRED) || falseType.isTagged(JavaType.DEFERRED)) {
+      return symbols.deferedType((ConditionalExpressionTreeImpl) tree);
+    }
     if (trueType == falseType) {
       return trueType;
     }
