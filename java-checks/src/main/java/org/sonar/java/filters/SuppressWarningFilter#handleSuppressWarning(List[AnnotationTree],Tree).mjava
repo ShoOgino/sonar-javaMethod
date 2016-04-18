@@ -1,0 +1,20 @@
+  private void handleSuppressWarning(List<AnnotationTree> annotationTrees, Tree tree) {
+    int startLine = -1;
+    List<String> rules = Lists.newArrayList();
+    for (AnnotationTree annotationTree : annotationTrees) {
+      if (isSuppressWarningsAnnotation(annotationTree)) {
+        startLine = ((JavaTree) annotationTree).getLine();
+        rules.addAll(getRules(annotationTree));
+        break;
+      }
+    }
+
+    if (startLine != -1) {
+      int endLine = LastSyntaxTokenFinder.lastSyntaxToken(tree).line();
+      Set<Integer> filteredlines = Sets.newHashSet(Ranges.closed(startLine, endLine).asSet(DiscreteDomains.integers()));
+      for (String rule : rules) {
+        excludeLines(filteredlines, rule);
+      }
+    }
+  }
+
