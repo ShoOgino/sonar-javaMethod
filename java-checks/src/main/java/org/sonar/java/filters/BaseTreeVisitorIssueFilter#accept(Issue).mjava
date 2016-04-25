@@ -1,9 +1,5 @@
   @Override
   public boolean accept(Issue issue) {
-    String ruleKey = issue.ruleKey().rule();
-    if (filteredRulesKeys.contains(ruleKey) && isIgnoredLine(issue.componentKey(), ruleKey, issue.line())) {
-      return false;
-    }
-    return true;
+    return !(issue.componentKey().equals(componentKey) && excludedLinesByRule.get(issue.ruleKey().rule()).contains(issue.line()));
   }
 
