@@ -1,0 +1,16 @@
+  JavaType getReturnType(@Nullable JavaType returnType, JavaType defSite, JavaType callSite, TypeSubstitution substitution, List<TypeVariableJavaType> typeVariableTypes) {
+    if (returnType == null) {
+      // case of constructors
+      return returnType;
+    }
+    JavaType resultType = applySiteSubstitution(returnType, defSite);
+    if (callSite != defSite) {
+      resultType = applySiteSubstitution(resultType, callSite);
+    }
+    resultType = applySubstitution(resultType, substitution);
+    if(!isReturnTypeCompletelySubstituted(resultType, typeVariableTypes)) {
+      resultType = symbols.deferedType();
+    }
+    return resultType;
+  }
+

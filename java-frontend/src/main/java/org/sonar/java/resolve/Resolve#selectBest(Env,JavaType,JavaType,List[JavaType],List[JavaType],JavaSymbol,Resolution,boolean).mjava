@@ -40,13 +40,11 @@
 
     Resolution resolution = new Resolution(mostSpecific);
     JavaSymbol.MethodJavaSymbol mostSpecificMethod = (JavaSymbol.MethodJavaSymbol) mostSpecific;
-    if(substitution.isComplete(mostSpecificMethod)) {
-      JavaType returnType = ((MethodJavaType) mostSpecificMethod.type).resultType;
-      resolution.type = typeSubstitutionSolver.getReturnType(returnType, defSite, callSite, !typeParams.isEmpty(), substitution);
-    } else {
-      resolution.type = symbols.deferedType();
+    JavaType returnType = ((MethodJavaType) mostSpecificMethod.type).resultType;
+    resolution.type = typeSubstitutionSolver.getReturnType(returnType, defSite, callSite, substitution, mostSpecificMethod.typeVariableTypes);
+    if(applicableWithUncheckedConversion(mostSpecificMethod, callSite, typeParams) && returnType != null) {
+      resolution.type = returnType.erasure();
     }
-
     return resolution;
   }
 
