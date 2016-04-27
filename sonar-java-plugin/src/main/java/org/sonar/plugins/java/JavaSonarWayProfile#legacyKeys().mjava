@@ -1,0 +1,15 @@
+  private static Map<String, String> legacyKeys() {
+    Map<String, String> result = new HashMap<>();
+    for (Class checkClass : CheckList.getChecks()) {
+      org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(checkClass, org.sonar.check.Rule.class);
+      String key = ruleAnnotation.key();
+      org.sonar.java.RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(checkClass, org.sonar.java.RspecKey.class);
+      if(rspecKeyAnnotation == null) {
+        result.put(key, key);
+      } else {
+        result.put(rspecKeyAnnotation.value(), key);
+      }
+    }
+    return result;
+  }
+

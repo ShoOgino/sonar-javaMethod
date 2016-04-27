@@ -1,5 +1,12 @@
   @Override
   public RulesProfile createProfile(ValidationMessages messages) {
-    return rulesDefinition.getProfile("Sonar way");
+    RulesProfile profile = RulesProfile.create("Sonar way", Java.KEY);
+    URL resource = JavaRulesDefinition.class.getResource("/org/sonar/l10n/java/rules/squid/Sonar_way_profile.json");
+    Profile jsonProfile = gson.fromJson(readResource(resource), Profile.class);
+    Map<String, String> keys = legacyKeys();
+    for (String key : jsonProfile.ruleKeys) {
+      profile.activateRule(Rule.create(CheckList.REPOSITORY_KEY, keys.get(key)), null);
+    }
+    return profile;
   }
 
