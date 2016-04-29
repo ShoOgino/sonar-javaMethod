@@ -40,11 +40,19 @@
 
     Resolution resolution = new Resolution(mostSpecific);
     JavaSymbol.MethodJavaSymbol mostSpecificMethod = (JavaSymbol.MethodJavaSymbol) mostSpecific;
+    List<JavaType> thrownTypes = ((MethodJavaType) mostSpecific.type).thrown;
     JavaType returnType = ((MethodJavaType) mostSpecificMethod.type).resultType;
-    resolution.type = typeSubstitutionSolver.getReturnType(returnType, defSite, callSite, substitution, mostSpecificMethod.typeVariableTypes);
     if(applicableWithUncheckedConversion(mostSpecificMethod, callSite, typeParams) && returnType != null) {
-      resolution.type = returnType.erasure();
+      returnType = returnType.erasure();
+      List<JavaType> erasedThrown = new ArrayList<>();
+      for (JavaType thrownType : thrownTypes) {
+        erasedThrown.add(thrownType.erasure());
+      }
+      thrownTypes = erasedThrown;
+    } else {
+      returnType = typeSubstitutionSolver.getReturnType(returnType, defSite, callSite, substitution, mostSpecificMethod.typeVariableTypes);
     }
+    resolution.type = new MethodJavaType(formals, returnType, thrownTypes, defSite.symbol);
     return resolution;
   }
 

@@ -17,10 +17,15 @@
     Resolve.Resolution resolution = resolveMethodSymbol(methodSelect, methodEnv, argTypes, typeParamTypes);
     JavaSymbol symbol = resolution.symbol();
     mit.setSymbol(symbol);
-    if(resolution.type() != null && resolution.type().isTagged(JavaType.DEFERRED)) {
-      ((DeferredType) resolution.type()).setTree(mit);
+    JavaType returnType = resolution.type();
+    if(resolution.symbol().isMethodSymbol()) {
+      MethodJavaType methodType = (MethodJavaType) resolution.type();
+      returnType = methodType.resultType;
     }
-    registerType(tree, resolution.type());
-    inferArgumentTypes(argTypes, symbol);
+    if(returnType != null && returnType.isTagged(JavaType.DEFERRED)) {
+      ((DeferredType) returnType).setTree(mit);
+    }
+    registerType(tree, returnType);
+    inferArgumentTypes(argTypes, resolution);
   }
 

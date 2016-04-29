@@ -1,6 +1,7 @@
   private JavaSymbol resolveConstructorSymbol(IdentifierTree identifier, Type type, Resolve.Env methodEnv, List<JavaType> argTypes) {
-    JavaSymbol symbol = resolve.findMethod(methodEnv, (JavaType) type, "<init>", argTypes).symbol();
-    inferArgumentTypes(argTypes, symbol);
+    Resolve.Resolution resolution = resolve.findMethod(methodEnv, (JavaType) type, "<init>", argTypes);
+    JavaSymbol symbol = resolution.symbol();
+    inferArgumentTypes(argTypes, resolution);
     associateReference(identifier, symbol);
     return symbol;
   }
