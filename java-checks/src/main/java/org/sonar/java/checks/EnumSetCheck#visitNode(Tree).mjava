@@ -6,6 +6,9 @@
     VariableTree variableTree = (VariableTree) tree;
     ExpressionTree initializer = variableTree.initializer();
     if (initializer != null) {
+      if(initializer.is(Kind.METHOD_INVOCATION) && COLLECTIONS_UNMODIFIABLE.matches((MethodInvocationTree) initializer)) {
+        initializer = ((MethodInvocationTree) initializer).arguments().get(0);
+      }
       checkIssue(initializer.symbolType(), initializer, variableTree.type());
     }
   }
