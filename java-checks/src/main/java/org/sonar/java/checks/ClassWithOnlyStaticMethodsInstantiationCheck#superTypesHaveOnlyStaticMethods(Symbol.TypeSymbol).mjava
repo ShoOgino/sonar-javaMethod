@@ -1,0 +1,13 @@
+  private static boolean superTypesHaveOnlyStaticMethods(Symbol.TypeSymbol newClassTypeSymbol) {
+    Type superClass = newClassTypeSymbol.superClass();
+    if (superClass != null && !superClass.is("java.lang.Object") && !hasOnlyStaticMethodsAndFields(superClass.symbol())) {
+      return false;
+    }
+    for (Type superInterface : newClassTypeSymbol.interfaces()) {
+      if (!hasOnlyStaticMethodsAndFields(superInterface.symbol())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
