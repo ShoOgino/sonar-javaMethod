@@ -1,0 +1,9 @@
+  public JavaType resolveTypeSubstitutionWithDiamondOperator(ParametrizedTypeJavaType type, JavaType definition) {
+    ParametrizedTypeJavaType result = type;
+    if (isParametrizedType(definition)) {
+      TypeSubstitution substitution = TypeSubstitutionSolver.substitutionFromSuperType(type, (ParametrizedTypeJavaType) definition);
+      result = (ParametrizedTypeJavaType) typeSubstitutionSolver.applySubstitution(type, substitution);
+    }
+    return typeSubstitutionSolver.erasureSubstitution(result);
+  }
+

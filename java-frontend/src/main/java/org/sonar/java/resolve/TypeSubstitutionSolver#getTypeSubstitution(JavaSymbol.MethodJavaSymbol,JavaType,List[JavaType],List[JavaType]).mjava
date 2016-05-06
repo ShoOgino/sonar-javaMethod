@@ -2,7 +2,7 @@
   TypeSubstitution getTypeSubstitution(JavaSymbol.MethodJavaSymbol method, JavaType site, List<JavaType> typeParams, List<JavaType> argTypes) {
     List<JavaType> formals = ((MethodJavaType) method.type).argTypes;
     TypeSubstitution substitution = new TypeSubstitution();
-    if (method.isParametrized()) {
+    if (method.isParametrized() || constructParametrizedTypeWithoutSubstitution(method, site)) {
       if (!typeParams.isEmpty()) {
         substitution = getSubstitutionFromTypeParams(method.typeVariableTypes, typeParams);
       } else if (formals.isEmpty()) {
