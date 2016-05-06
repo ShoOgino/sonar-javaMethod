@@ -1,13 +1,13 @@
   /**
    * JLS7 15.12.2.5. Choosing the Most Specific Method
    */
-  private JavaSymbol selectMostSpecific(JavaSymbol m1, JavaSymbol m2, TypeSubstitution substitution) {
+  private JavaSymbol selectMostSpecific(JavaSymbol m1, JavaSymbol m2, List<JavaType> argTypes, TypeSubstitution substitution) {
     // FIXME get rig of null check
     if (m2.type == null || !m2.isKind(JavaSymbol.MTH)) {
       return m1;
     }
-    boolean m1SignatureMoreSpecific = isSignatureMoreSpecific(m1, m2, substitution);
-    boolean m2SignatureMoreSpecific = isSignatureMoreSpecific(m2, m1, substitution);
+    boolean m1SignatureMoreSpecific = isSignatureMoreSpecific(m1, m2, argTypes, substitution);
+    boolean m2SignatureMoreSpecific = isSignatureMoreSpecific(m2, m1, argTypes, substitution);
     if (m1SignatureMoreSpecific && m2SignatureMoreSpecific) {
       return new AmbiguityErrorJavaSymbol();
     } else if (m1SignatureMoreSpecific) {
