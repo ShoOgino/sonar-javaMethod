@@ -1,4 +1,5 @@
-  private void newRule(Class<?> ruleClass, NewRepository repository) {
+  @VisibleForTesting
+  protected void newRule(Class<?> ruleClass, NewRepository repository) {
 
     org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.check.Rule.class);
     if (ruleAnnotation == null) {
@@ -10,11 +11,11 @@
     }
     NewRule rule = repository.rule(ruleKey);
     if (rule == null) {
-      throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository);
+      throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
     rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
     if (ruleAnnotation.cardinality() == Cardinality.MULTIPLE) {
-      throw new IllegalArgumentException("Cardinality is not supported, use the RuleTemplate annotation instead");
+      throw new IllegalArgumentException("Cardinality is not supported, use the RuleTemplate annotation instead for " + ruleClass);
     }
     ruleMetadata(ruleClass, rule);
   }
