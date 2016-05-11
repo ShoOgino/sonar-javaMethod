@@ -3,14 +3,6 @@
     resolveAs(tree.type(), JavaSymbol.TYP);
     resolveAs((List<Tree>) tree.typeArguments(), JavaSymbol.TYP);
 
-    JavaType type = getType(tree.type());
-    //Type substitution for parametrized type.
-    TypeSubstitution typeSubstitution = new TypeSubstitution();
-    if (tree.typeArguments().size() <= type.getSymbol().typeVariableTypes.size()) {
-      for (int i = 0; i < tree.typeArguments().size(); i++) {
-        typeSubstitution.add(type.getSymbol().typeVariableTypes.get(i), getType(tree.typeArguments().get(i)));
-      }
-    }
-    registerType(tree, parametrizedTypeCache.getParametrizedTypeType(type.getSymbol(), typeSubstitution));
+    registerType(tree, parametrizedTypeWithTypeArguments(getType(tree.type()).getSymbol(), tree.typeArguments()));
   }
 
