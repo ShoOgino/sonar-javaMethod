@@ -11,15 +11,21 @@
     }
 
     JavaType returnType = null;
+    List<JavaType> argTypes = Lists.newArrayList();
     // no return type for constructor
-    if (!"<init>".equals(symbol.name)) {
+    if (!CONSTRUCTOR_NAME.equals(symbol.name)) {
       returnType = resolveType(env, methodTree.returnType());
       if (returnType != null) {
         symbol.returnType = returnType.symbol;
       }
+    } else if (!symbol.enclosingClass().isStatic()) {
+      JavaSymbol owner = symbol.enclosingClass().owner();
+      if (!owner.isPackageSymbol()) {
+        // JLS8 - 8.8.1 & 8.8.9 : constructors of inner class have an implicit first arg of its directly enclosing class type
+        argTypes.add(owner.enclosingClass().type);
+      }
     }
     List<VariableTree> parametersTree = methodTree.parameters();
-    List<JavaType> argTypes = Lists.newArrayList();
     List<JavaSymbol> scopeSymbols = symbol.parameters.scopeSymbols();
     for(int i = 0; i < parametersTree.size(); i += 1) {
       VariableTree variableTree = parametersTree.get(i);
