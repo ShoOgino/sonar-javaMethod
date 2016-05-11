@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    Type type = ((NewClassTree) tree).symbolType();
+    if (type instanceof ParametrizedTypeJavaType && useHashDataStructure(type)) {
+      ParametrizedTypeJavaType ptt = (ParametrizedTypeJavaType) type;
+      Symbol.TypeSymbol symbol = ptt.substitution(ptt.typeParameters().get(0)).symbol();
+      if (implementsEquals(symbol) && !implementsHashCode(symbol)) {
+        reportIssue(tree, "Add a \"hashCode()\" method to \"" + symbol.name() + "\" or remove it from this hash.");
+      }
+    }
+  }
+
