@@ -1,0 +1,15 @@
+  private TypeSubstitution inferTypeSubstitutionInArrayType(MethodJavaSymbol method, TypeSubstitution substitution, ArrayJavaType formalType, JavaType argType,
+    boolean variableArity, List<JavaType> remainingArgTypes) {
+    JavaType newArgType = null;
+    if (argType.isArray()) {
+      newArgType = ((ArrayJavaType) argType).elementType;
+    } else if (variableArity) {
+      newArgType = leastUpperBound(remainingArgTypes);
+    }
+    if (newArgType != null) {
+      TypeSubstitution newSubstitution = inferTypeSubstitution(method, substitution, formalType.elementType, newArgType, variableArity, remainingArgTypes);
+      return mergeTypeSubstitutions(substitution, newSubstitution);
+    }
+    return substitution;
+  }
+

@@ -1,6 +1,6 @@
   JavaType getReturnType(@Nullable JavaType returnType, JavaType defSite, JavaType callSite, TypeSubstitution substitution, JavaSymbol.MethodJavaSymbol method) {
     JavaType resultType = returnType;
-    if (isConstructor(method)) {
+    if (method.isConstructor()) {
       if (constructParametrizedTypeWithoutSubstitution(method, defSite)) {
         resultType = applySubstitution(defSite, substitution);
       } else {
@@ -13,7 +13,7 @@
     }
     resultType = applySubstitution(resultType, substitution);
     if (!isReturnTypeCompletelySubstituted(resultType, method.typeVariableTypes)
-      || (isConstructor(method) && !isReturnTypeCompletelySubstituted(resultType, defSite.symbol.typeVariableTypes))) {
+      || (method.isConstructor() && !isReturnTypeCompletelySubstituted(resultType, defSite.symbol.typeVariableTypes))) {
       resultType = symbols.deferedType(resultType.erasure());
     }
     return resultType;

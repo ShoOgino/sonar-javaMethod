@@ -3,12 +3,12 @@
     if (target.rawType != source.rawType) {
       TypeJavaSymbol targetSymbol = target.symbol;
       Type superClass = targetSymbol.superClass();
-      if (superClass != null && isParametrizedType(superClass)) {
+      if (superClass != null && ((JavaType) superClass).isParameterized()) {
         TypeSubstitution newSub = substitutionFromSuperType((ParametrizedTypeJavaType) superClass, source);
         result = result.combine(newSub);
       }
       for (Type superInterface : targetSymbol.interfaces()) {
-        if (isParametrizedType(superInterface)) {
+        if (((JavaType) superInterface).isParameterized()) {
           TypeSubstitution newSub = substitutionFromSuperType((ParametrizedTypeJavaType) superInterface, source);
           result = result.combine(newSub);
         }

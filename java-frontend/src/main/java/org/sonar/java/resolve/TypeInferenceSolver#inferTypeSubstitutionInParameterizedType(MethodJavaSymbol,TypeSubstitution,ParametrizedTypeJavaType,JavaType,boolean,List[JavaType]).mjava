@@ -1,0 +1,24 @@
+  private TypeSubstitution inferTypeSubstitutionInParameterizedType(MethodJavaSymbol method, TypeSubstitution substitution, ParametrizedTypeJavaType formalType, JavaType argType,
+    boolean variableArity, List<JavaType> remainingArgTypes) {
+    List<JavaType> formalTypeSubstitutedTypes = formalType.typeSubstitution.substitutedTypes();
+    TypeSubstitution result = substitution;
+    if (argType.isParameterized()) {
+      List<JavaType> argTypeSubstitutedTypes = ((ParametrizedTypeJavaType) argType).typeSubstitution.substitutedTypes();
+      TypeSubstitution newSubstitution = inferTypeSubstitution(method, formalTypeSubstitutedTypes, argTypeSubstitutedTypes);
+      result = mergeTypeSubstitutions(substitution, newSubstitution);
+    } else if (isRawTypeOfType(argType, formalType) || isNullType(argType)) {
+      List<JavaType> objectTypes = listOfTypes(symbols.objectType, formalTypeSubstitutedTypes.size());
+      TypeSubstitution newSubstitution = inferTypeSubstitution(method, formalTypeSubstitutedTypes, objectTypes);
+      result = mergeTypeSubstitutions(substitution, newSubstitution);
+    } else if (argType.isSubtypeOf(formalType.erasure()) && argType.isClass()) {
+      for (JavaType superType : ((ClassJavaType) argType).symbol.superTypes()) {
+        if (sameErasure(formalType, superType)) {
+          TypeSubstitution newSubstitution = inferTypeSubstitution(method, substitution, formalType, superType, variableArity, remainingArgTypes);
+          result = mergeTypeSubstitutions(substitution, newSubstitution);
+          break;
+        }
+      }
+    }
+    return result;
+  }
+

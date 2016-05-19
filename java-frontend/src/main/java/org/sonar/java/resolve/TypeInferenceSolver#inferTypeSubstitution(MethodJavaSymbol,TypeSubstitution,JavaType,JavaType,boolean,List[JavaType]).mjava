@@ -1,0 +1,21 @@
+  private TypeSubstitution inferTypeSubstitution(MethodJavaSymbol method, TypeSubstitution substitution, JavaType formalType, JavaType argumentType,
+    boolean variableArity, List<JavaType> remainingArgTypes) {
+    JavaType argType = argumentType;
+    if (argType.isTagged(JavaType.DEFERRED) && ((DeferredType) argType).getUninferedType() != null) {
+      argType = ((DeferredType) argType).getUninferedType();
+    }
+    TypeSubstitution result = substitution;
+    if (formalType.isTagged(JavaType.TYPEVAR)) {
+      result = completeSubstitution(substitution, formalType, argType);
+    } else if (formalType.isArray()) {
+      result = inferTypeSubstitutionInArrayType(method, substitution, (ArrayJavaType) formalType, argType, variableArity, remainingArgTypes);
+    } else if (formalType.isParameterized()) {
+      result = inferTypeSubstitutionInParameterizedType(method, substitution, (ParametrizedTypeJavaType) formalType, argType, variableArity, remainingArgTypes);
+    } else if (formalType.isTagged(JavaType.WILDCARD)) {
+      result = inferTypeSubstitutionInWildcardType(method, substitution, (WildCardType) formalType, argType, variableArity, remainingArgTypes);
+    } else {
+      // nothing to infer for simple class types or primitive types
+    }
+    return result;
+  }
+

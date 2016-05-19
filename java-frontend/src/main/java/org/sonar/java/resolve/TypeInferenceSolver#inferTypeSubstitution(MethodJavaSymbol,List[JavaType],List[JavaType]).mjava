@@ -1,4 +1,4 @@
-  private TypeSubstitution inferTypeSubstitution(JavaSymbol.MethodJavaSymbol method, List<JavaType> formals, List<JavaType> argTypes) {
+  TypeSubstitution inferTypeSubstitution(MethodJavaSymbol method, List<JavaType> formals, List<JavaType> argTypes) {
     boolean isVarArgs = method.isVarArgs();
     int numberFormals = formals.size();
     int numberArgs = argTypes.size();
@@ -19,7 +19,7 @@
 
       substitution = inferTypeSubstitution(method, substitution, formalType, argType, variableArity, remainingArgTypes);
 
-      if (!isConstructor(method) && substitution.typeVariables().containsAll(method.typeVariableTypes)) {
+      if (!method.isConstructor() && substitution.typeVariables().containsAll(method.typeVariableTypes)) {
         // we found all the substitution
         break;
       }
