@@ -2,12 +2,12 @@
   public void visitReturnStatement(ReturnStatementTree tree) {
     super.visitReturnStatement(tree);
     ExpressionTree expressionTree = tree.expression();
-    if (expressionTree == null || !isMutableType(expressionTree.symbolType())) {
+    if (expressionTree == null || !isMutableType(expressionTree)) {
       return;
     }
     if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
       IdentifierTree identifierTree = (IdentifierTree) expressionTree;
-      if (identifierTree.symbol().isPrivate()) {
+      if (identifierTree.symbol().isPrivate() && !isImmutableConstant((Symbol.VariableSymbol) identifierTree.symbol())) {
         context.reportIssue(this, identifierTree, "Return a copy of \"" + identifierTree.name() + "\".");
       }
     }

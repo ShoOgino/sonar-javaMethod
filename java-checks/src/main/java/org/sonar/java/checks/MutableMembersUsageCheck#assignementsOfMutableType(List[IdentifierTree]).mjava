@@ -1,0 +1,21 @@
+  private static boolean assignementsOfMutableType(List<IdentifierTree> usages) {
+    for (IdentifierTree usage : usages) {
+      Tree current = usage;
+      Tree parent = usage.parent();
+      do {
+        if (parent.is(Tree.Kind.ASSIGNMENT)) {
+          break;
+        }
+        current = parent;
+        parent = current.parent();
+      } while (parent != null);
+      if (parent != null) {
+        AssignmentExpressionTree assignment = (AssignmentExpressionTree) parent;
+        if (assignment.variable().equals(current) && isMutableType(assignment.expression())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

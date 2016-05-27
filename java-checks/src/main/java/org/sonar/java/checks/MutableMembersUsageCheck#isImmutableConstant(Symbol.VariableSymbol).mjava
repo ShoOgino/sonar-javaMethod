@@ -1,0 +1,13 @@
+  private static boolean isImmutableConstant(Symbol.VariableSymbol symbol) {
+    if (symbol.isStatic() && symbol.isFinal()) {
+      VariableTree declaration = symbol.declaration();
+      // symbol is private, so declaration can only be null if assignment is done in static block
+      if (declaration.initializer() != null) {
+        return !isMutableType(declaration.initializer());
+      }
+      return !assignementsOfMutableType(symbol.usages());
+    }
+
+    return false;
+  }
+
