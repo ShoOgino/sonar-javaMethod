@@ -1,0 +1,17 @@
+  private static boolean methodThrows(MethodTree methodTree, String... throwClauseFullyQualifiedNames) {
+    List<Type> thrownTypes = methodTree.symbol().thrownTypes();
+    if (thrownTypes.isEmpty() || thrownTypes.size() != throwClauseFullyQualifiedNames.length) {
+      return false;
+    }
+    for (Type thrownType : thrownTypes) {
+      boolean match = false;
+      for (String fullyQualifiedName : throwClauseFullyQualifiedNames) {
+        match |= thrownType.is(fullyQualifiedName);
+      }
+      if (!match) {
+        return false;
+      }
+    }
+    return true;
+  }
+

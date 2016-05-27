@@ -1,0 +1,15 @@
+  private static boolean isCollectionOfSerializable(Tree tree) {
+    if (tree.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      ParameterizedTypeTree typeTree = (ParameterizedTypeTree) tree;
+      if (isSubtypeOfCollectionApi(typeTree.symbolType())) {
+        for (Tree t : typeTree.typeArguments()) {
+          if (!isCollectionOfSerializable(t)) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return isSerializable(tree);
+  }
+
