@@ -4,17 +4,13 @@
       return;
     }
     List<Tree> members = ((ClassTree) tree).members();
-    List<MethodTree> constructors = filterByKind(members, Tree.Kind.CONSTRUCTOR);
-    for (MethodTree constructor : constructors) {
-      if (isPrivateConstructor(constructor)) {
-        return;
-      }
+    Optional<Tree> first = members.stream().filter(t -> t.is(Tree.Kind.CONSTRUCTOR) && isPrivateConstructor((MethodTree) t)).findFirst();
+    if(first.isPresent()) {
+      return;
     }
-    List<VariableTree> fields = filterByKind(members, Tree.Kind.VARIABLE);
-    for (VariableTree field : fields) {
-      if (isAnnotatedWithInject(field)) {
-        reportIssue(field.simpleName(), "Use constructor injection for this field.");
-      }
-    }
+    members.stream()
+      .filter(t -> t.is(Tree.Kind.VARIABLE) && isAnnotatedWithInject((VariableTree) t))
+      .forEach(field -> reportIssue(((VariableTree) field).simpleName(), "Use constructor injection for this field.")
+    );
   }
 

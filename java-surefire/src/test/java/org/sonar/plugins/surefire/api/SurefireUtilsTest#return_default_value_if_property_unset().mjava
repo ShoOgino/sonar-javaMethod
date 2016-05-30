@@ -1,8 +1,7 @@
   @Test
   public void return_default_value_if_property_unset() throws Exception {
     Settings settings = mock(Settings.class);
-    Project project = MavenTestUtils.loadProjectFromPom(getClass(), "shouldGetReportsFromProperty/pom.xml");
-    DefaultFileSystem fs = new DefaultFileSystem(project.getFileSystem().getBasedir());
+    DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources/org/sonar/plugins/surefire/api/SurefireUtilsTest/shouldGetReportsFromProperty"));
     PathResolver pathResolver = new PathResolver();
     File directory = SurefireUtils.getReportsDirectory(settings, fs, pathResolver);
     assertThat(directory.getCanonicalPath()).endsWith("target"+File.separator+"surefire-reports");

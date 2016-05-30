@@ -21,10 +21,10 @@
     for (AnalyzerMessage analyzerMessage : testJavaFileScannerContext.getIssues()) {
       Integer issueLine = analyzerMessage.getLine();
       String ruleKey = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
-      Issue issue = new DefaultIssue()
-        .setRuleKey(RuleKey.of("repo", ruleKey))
-        .setComponentKey(filename)
-        .setLine(issueLine);
+      Issue issue = mock(Issue.class);
+      when(issue.ruleKey()).thenReturn(RuleKey.of("repo", ruleKey));
+      when(issue.componentKey()).thenReturn(filename);
+      when(issue.line()).thenReturn(issueLine);
 
       if (issueCollector.rejectedIssuesLines.contains(issueLine)) {
 

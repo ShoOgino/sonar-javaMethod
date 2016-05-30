@@ -2,15 +2,10 @@
   public void creation_of_both_types_test_checks() {
     JavaCheck expectedCheck = new CustomCheck();
     JavaCheck expectedTestCheck = new CustomTestCheck();
-    CheckRegistrar expectedRegistrar = new CheckRegistrar() {
-      @Override
-      public void register(RegistrarContext registrarContext) {
-        registrarContext.registerClassesForRepository(
-          REPOSITORY_NAME,
-          Lists.<Class<? extends JavaCheck>>newArrayList(CustomCheck.class),
-          Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class));
-      }
-    };
+    CheckRegistrar expectedRegistrar = registrarContext -> registrarContext.registerClassesForRepository(
+      REPOSITORY_NAME,
+      Lists.<Class<? extends JavaCheck>>newArrayList(CustomCheck.class),
+      Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class));
 
     when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(Lists.newArrayList(expectedTestCheck));
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, null, null, null, checkFactory, context, new CheckRegistrar[] {

@@ -5,21 +5,30 @@
 
     DefaultFileSystem fileSystem = new DefaultFileSystem(new File(""));
     File file = new File("file.java");
-    InputFile inputFile = new DefaultInputFile("file.java");
+    DefaultInputFile inputFile = new DefaultInputFile("", "file.java");
+    inputFile.setLines(45);
+    int[] linesOffset = new int[45];
+    linesOffset[35] = 12;
+    linesOffset[42] = 1;
+    inputFile.setOriginalLineOffsets(linesOffset);
+    inputFile.setLastValidOffset(420);
     fileSystem.add(inputFile);
+    context = mock(SensorContext.class);
+    NewIssue newIssue = mock(NewIssue.class);
+    when(newIssue.forRule(any(RuleKey.class))).thenReturn(newIssue);
+    when(newIssue.gap(anyDouble())).thenReturn(newIssue);
+    when(context.newIssue()).thenReturn(newIssue);
 
-    Issuable issuable = mock(Issuable.class);
-    Issuable.IssueBuilder issueBuilder = mock(Issuable.IssueBuilder.class);
-    when(issuable.newIssueBuilder()).thenReturn(issueBuilder);
-    when(issueBuilder.ruleKey(any(RuleKey.class))).thenReturn(issueBuilder);
-    when(issueBuilder.message(anyString())).thenReturn(issueBuilder);
-    when(issueBuilder.line(anyInt())).thenReturn(issueBuilder);
-    when(issueBuilder.effortToFix(anyDouble())).thenReturn(issueBuilder);
-    when(resourcePerspectives.as(eq(Issuable.class), any(InputFile.class))).thenReturn(issuable);
-    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<JavaCheck>());
+    NewIssueLocation newIssueLocation = mock(NewIssueLocation.class);
+    when(newIssue.newLocation()).thenReturn(newIssueLocation);
+    when(newIssueLocation.at(any(TextRange.class))).thenReturn(newIssueLocation);
+    when(newIssueLocation.on(any(InputComponent.class))).thenReturn(newIssueLocation);
+
+
+    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<>());
     when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));
 
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fileSystem, null, null, checkFactory, context, new CheckRegistrar[] {
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fileSystem, null, null, checkFactory, context, new CheckRegistrar[]{
       expectedRegistrar
     });
 
@@ -28,13 +37,6 @@
     sonarComponents.addIssue(new File("."), expectedCheck, 42, "message on line", 1.0);
     sonarComponents.addIssue(new File("unknown_file"), expectedCheck, 42, "message on line", 1.0);
     sonarComponents.reportIssue(new AnalyzerMessage(expectedCheck, file, 35, "other message", 0));
-    verify(issuable, times(3)).addIssue(any(Issue.class));
-
-    try {
-      sonarComponents.reportIssueAfterSQ52(mock(AnalyzerMessage.class), RuleKey.of("squid", "S109"), inputFile, null);
-      fail("NoClassDefFoundError expected");
-    } catch (NoClassDefFoundError e) {
-      assertThat(e.getMessage()).isEqualTo("org/sonar/api/batch/fs/InputComponent");
-    }
+    verify(context, times(3)).newIssue();
   }
 
