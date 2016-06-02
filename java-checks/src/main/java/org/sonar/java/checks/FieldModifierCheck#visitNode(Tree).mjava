@@ -1,11 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
-    for (Tree member : classTree.members()) {
-      if (member.is(Tree.Kind.VARIABLE) && hasNoVisibilityModifier((VariableTree) member)) {
+    classTree.members().stream()
+      .filter(FieldModifierCheck::isConsentWithCheck)
+      .forEach(member -> {
         IdentifierTree simpleName = ((VariableTree) member).simpleName();
         reportIssue(simpleName, "Explicitly declare the visibility for \"" + simpleName.name() + "\".");
-      }
-    }
+      });
   }
 
