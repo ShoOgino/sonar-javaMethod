@@ -1,6 +1,6 @@
   public void saveDesign(Project sonarProject) {
     Collection<Resource> directories = resourceMapping.directories();
-    TimeProfiler profiler = new TimeProfiler(LOG).start("Package design analysis");
+    Profiler profiler = Profiler.create(LOG).startInfo("Package design analysis");
     LOG.debug("{} packages to analyze", directories.size());
 
     IncrementalCyclesAndFESSolver<Resource> cyclesAndFESSolver = new IncrementalCyclesAndFESSolver<>(graph, directories);
@@ -21,7 +21,7 @@
     Measure dsmMeasure = new Measure(CoreMetrics.DEPENDENCY_MATRIX, dsmJson).setPersistenceMode(PersistenceMode.DATABASE);
     context.saveMeasure(sonarProject, dsmMeasure);
 
-    profiler.stop();
+    profiler.stopInfo();
 
     for (Resource sonarPackage : directories) {
       onPackage(sonarPackage);

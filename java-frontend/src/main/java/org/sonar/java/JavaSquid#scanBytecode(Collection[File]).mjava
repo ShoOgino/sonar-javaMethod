@@ -1,10 +1,10 @@
   private void scanBytecode(Collection<File> bytecodeFilesOrDirectories) {
     if (hasBytecode(bytecodeFilesOrDirectories)) {
-      TimeProfiler profiler = new TimeProfiler(getClass()).start("Java bytecode scan");
+      Profiler profiler = Profiler.create(LOG).startInfo("Java bytecode scan");
 
       bytecodeScanner.scan(bytecodeFilesOrDirectories);
       bytecodeScanned = true;
-      profiler.stop();
+      profiler.stopInfo();
     } else {
       LOG.warn("Java bytecode has not been made available to the analyzer. The " + Joiner.on(", ").join(bytecodeScanner.getVisitors()) + " are disabled.");
       bytecodeScanned = false;
