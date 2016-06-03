@@ -1,11 +1,7 @@
   @Test
   public void parent_module_should_not_validate_sonar_libraries() {
-    when(project.getModules()).thenReturn(Lists.newArrayList(mock(Project.class)));
     settings.setProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES, "non-existing.jar");
     javaClasspath = createJavaClasspath();
-    assertThat(javaClasspath.getElements()).isEmpty();
-
-    when(project.getModules()).thenReturn(Lists.<Project>newArrayList());
     checkIllegalStateException("No files nor directories matching 'non-existing.jar'");
   }
 
