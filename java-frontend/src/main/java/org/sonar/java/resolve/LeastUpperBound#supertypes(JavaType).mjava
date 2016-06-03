@@ -1,0 +1,25 @@
+  @VisibleForTesting
+  Set<Type> supertypes(JavaType type) {
+    List<Type> result = new ArrayList<>();
+    result.add(type);
+
+    Symbol.TypeSymbol symbol = type.symbol();
+    TypeSubstitution substitution = getTypeSubstitution(type);
+
+    result.addAll(interfacesWithSubstitution(symbol, substitution));
+
+    Type superClass = symbol.superClass();
+    while (superClass != null) {
+      JavaType substitutedSuperClass = applySubstitution(superClass, substitution);
+
+      result.add(substitutedSuperClass);
+      substitution = getTypeSubstitution(substitutedSuperClass);
+
+      JavaSymbol.TypeJavaSymbol superClassSymbol = substitutedSuperClass.getSymbol();
+      result.addAll(interfacesWithSubstitution(superClassSymbol, substitution));
+
+      superClass = superClassSymbol.superClass();
+    }
+    return new LinkedHashSet<>(result);
+  }
+

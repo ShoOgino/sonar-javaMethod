@@ -22,7 +22,11 @@
     assertThat(((ParametrizedTypeJavaType) testedType).typeSubstitution).isEqualTo(expectedType.typeSubstitution);
 
     testedType = typeOf("true ? new java.util.ArrayList<Integer>() : new java.util.ArrayList<String>()");
-    assertThat(testedType).isInstanceOf(ClassJavaType.class);
+    assertThat(testedType).isInstanceOf(ParametrizedTypeJavaType.class);
     assertThat(testedType.is("java.util.ArrayList")).isTrue();
+
+    testedType = typeOf("true ? ((Iterable<Class<? extends String>>) new java.util.ArrayList<Class<? extends String>>()) : new java.util.ArrayList<Class<? extends String>>()");
+    assertThat(testedType).isInstanceOf(ParametrizedTypeJavaType.class);
+    assertThat(testedType.is("java.lang.Iterable")).isTrue();
   }
 
