@@ -1,0 +1,11 @@
+  protected static AnalyzerMessage createAnalyzerMessage(File file, JavaCheck javaCheck, Tree startTree, @Nullable Tree endTree, String message, List<Location> secondary,
+    @Nullable Integer cost) {
+    AnalyzerMessage.TextSpan textSpan = endTree != null ? AnalyzerMessage.textSpanBetween(startTree, endTree) : AnalyzerMessage.textSpanFor(startTree);
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(javaCheck, file, textSpan, message, cost != null ? cost : 0);
+    for (Location location : secondary) {
+      AnalyzerMessage secondaryLocation = new AnalyzerMessage(javaCheck, file, AnalyzerMessage.textSpanFor(location.syntaxNode), location.msg, 0);
+      analyzerMessage.secondaryLocations.add(secondaryLocation);
+    }
+    return analyzerMessage;
+  }
+
