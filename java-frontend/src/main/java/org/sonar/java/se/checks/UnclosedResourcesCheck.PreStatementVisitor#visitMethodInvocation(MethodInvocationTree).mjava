@@ -1,26 +1,18 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
-      final ExpressionTree methodSelect = syntaxNode.methodSelect();
-      if (isClosingResource(syntaxNode.symbol())) {
-        if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
-          final ExpressionTree targetExpression = ((MemberSelectExpressionTree) methodSelect).expression();
-          if (targetExpression.is(Tree.Kind.IDENTIFIER)) {
-            final IdentifierTree identifier = (IdentifierTree) targetExpression;
-            closeResource(programState.getValue(identifier.symbol()));
-          } else {
-            closeResource(programState.peekValue());
-          }
-        }
-      } else if (syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT) && isOpeningResultSet(syntaxNode.symbol())) {
-        final SymbolicValue value = getTargetValue(syntaxNode);
-        constraintManager.setValueFactory(new WrappedValueFactory(value));
-      } else if (isClosingResultSets(syntaxNode.symbol())) {
-        if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
-          final SymbolicValue value = getTargetValue(syntaxNode);
+      Symbol symbol = syntaxNode.symbol();
+      if (symbol.isMethodSymbol() && syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        String methodName = symbol.name();
+        SymbolicValue value = getTargetValue(syntaxNode);
+        if (CLOSE.equals(methodName)) {
+          closeResource(value);
+        } else if (GET_MORE_RESULTS.equals(methodName)) {
           closeResultSetsRelatedTo(value);
+        } else if (GET_RESULT_SET.equals(methodName)) {
+          constraintManager.setValueFactory(new WrappedValueFactory(value));
         }
-      } else {
-        closeArguments(syntaxNode.arguments(), 1);
       }
+      // close any resource used as argument, even for unknown methods
+      closeArguments(syntaxNode.arguments(), 1);
     }
 
