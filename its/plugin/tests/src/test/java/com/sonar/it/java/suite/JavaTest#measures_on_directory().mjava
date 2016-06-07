@@ -4,15 +4,7 @@
       .setPom(TestUtils.projectPom("measures-on-directory"))
       .setCleanPackageSonarGoals();
     BuildResult result = orchestrator.executeBuildQuietly(build);
-    Version version = orchestrator.getConfiguration().getPluginVersion("java");
-    if (version.isGreaterThan("2.1") && !version.isGreaterThanOrEquals("2.4")) {
-      assertThat(result.getStatus()).overridingErrorMessage("build of project measures-on-directory should have failed and have a status different than 0")
-        .isGreaterThan(0);
-      assertThat(result.getLogs()).contains("Directory contains files belonging to different packages - some metrics could be reported incorrectly: "
-        + new File(TestUtils.projectPom("measures-on-directory").getParentFile(), "src/main/java/org"));
-    } else {
-      // sonar-java 2.1 does not fail if multiple package in same directory.
-      assertThat(result.getStatus()).isEqualTo(0);
-    }
+    //since sonar-java 2.1 does not fail if multiple package in same directory.
+    assertThat(result.getStatus()).isEqualTo(0);
   }
 

@@ -1,6 +1,6 @@
   @Test
   public void support_change_of_extension_property() {
-    SonarRunner scan = SonarRunner.create(TestUtils.projectDir("jav-file-extension"))
+    SonarScanner scan = SonarScanner.create(TestUtils.projectDir("jav-file-extension"))
       .setProperty("sonar.projectKey", "jav-file-extension")
       .setProperty("sonar.projectName", "jav-file-extension")
       .setProperty("sonar.projectVersion", "1.0-SNAPSHOT")
@@ -8,8 +8,7 @@
       .setProperty("sonar.sources", "src");
     orchestrator.executeBuild(scan);
 
-    Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("jav-file-extension",
-      "files", "ncloc"));
+    Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("jav-file-extension", "files", "ncloc"));
     assertThat(project.getMeasureIntValue("files")).isEqualTo(2);
     assertThat(project.getMeasureIntValue("ncloc")).isGreaterThan(0);
   }

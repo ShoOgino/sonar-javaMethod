@@ -5,8 +5,7 @@
   public void suppressWarnings_nosonar() throws Exception {
     MavenBuild build = MavenBuild.create(TestUtils.projectPom("suppress-warnings"))
       .setCleanSonarGoals()
-      .setProperty("sonar.profile", "suppress-warnings")
-      .setProperty("sonar.dynamicAnalysis", "false");
+      .setProperty("sonar.profile", "suppress-warnings");
     orchestrator.executeBuild(build);
 
     assertThat(getMeasure("org.example:example", "violations").getValue()).isEqualTo(2);
