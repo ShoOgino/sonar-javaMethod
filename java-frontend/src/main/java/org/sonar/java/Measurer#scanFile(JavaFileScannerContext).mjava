@@ -11,7 +11,7 @@
       publicApiChecker = PublicApiChecker.newInstanceWithAccessorsSeparatedFromMethods();
     }
     publicApiChecker.scan(context.getTree());
-    methodComplexityDistribution = new RangeDistributionBuilder(CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION, LIMITS_COMPLEXITY_METHODS);
+    methodComplexityDistribution = new RangeDistributionBuilder(LIMITS_COMPLEXITY_METHODS); //CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION,
     CommentLinesVisitor commentLinesVisitor = createCommentLineVisitorAndFindNoSonar(context);
     super.scanFile(context);
     //leave file.
@@ -28,11 +28,10 @@
     saveMetricOnFile(CoreMetrics.COMMENT_LINES, commentLinesVisitor.commentLinesMetric());
     saveMetricOnFile(CoreMetrics.STATEMENTS, new StatementVisitor().numberOfStatements(context.getTree()));
     saveMetricOnFile(CoreMetrics.NCLOC, new LinesOfCodeVisitor().linesOfCode(context.getTree()));
+    saveMetricOnFile(CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION, methodComplexityDistribution.build());
 
-    sensorContext.saveMeasure(sonarFile, methodComplexityDistribution.build(true).setPersistenceMode(PersistenceMode.MEMORY));
-
-    RangeDistributionBuilder fileComplexityDistribution = new RangeDistributionBuilder(CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, LIMITS_COMPLEXITY_FILES);
-    sensorContext.saveMeasure(sonarFile, fileComplexityDistribution.add(fileComplexity).build(true).setPersistenceMode(PersistenceMode.MEMORY));
+    RangeDistributionBuilder fileComplexityDistribution = new RangeDistributionBuilder(LIMITS_COMPLEXITY_FILES);
+    saveMetricOnFile(CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, fileComplexityDistribution.add(fileComplexity).build());
     saveLinesMetric();
 
   }

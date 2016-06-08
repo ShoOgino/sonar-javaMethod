@@ -5,9 +5,8 @@
 
     JavaConfiguration conf = new JavaConfiguration(Charsets.UTF_8);
     conf.setSeparateAccessorsFromMethods(separateAccessorsFromMethods);
-    context = mock(SensorContext.class);
-    when(context.getResource(any(InputPath.class))).thenReturn(mock(Resource.class));
-    DefaultFileSystem fs = new DefaultFileSystem(srcDir);
+    context = SensorContextTester.create(srcDir);
+    DefaultFileSystem fs = context.fileSystem();
     Collection<File> files = FileUtils.listFiles(srcDir, new String[]{"java"}, true);
     for (File file : files) {
       fs.add(new DefaultInputFile("", file.getPath()));

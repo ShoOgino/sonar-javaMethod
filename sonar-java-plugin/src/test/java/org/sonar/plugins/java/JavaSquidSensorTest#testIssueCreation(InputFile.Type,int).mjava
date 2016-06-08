@@ -1,34 +1,34 @@
   private void testIssueCreation(InputFile.Type onType, int expectedIssues) {
     Settings settings = new Settings();
-    DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/java/"));
+    SensorContextTester context = SensorContextTester.create(new File("src/test/java/"));
+    DefaultFileSystem fs = context.fileSystem();
+
     String effectiveKey = "org/sonar/plugins/java/JavaSquidSensorTest.java";
     File file = new File(effectiveKey);
-    fs.add(new DefaultInputFile("", file.getPath()).setLanguage("java").setType(onType));
+    DefaultInputFile inputFile = new DefaultInputFile("", file.getPath()).setLanguage("java").setType(onType);
+    fs.add(inputFile);
     JavaClasspath javaClasspath = new JavaClasspath(settings, fs);
 
     SonarComponents sonarComponents = createSonarComponentsMock(fs);
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, javaClasspath);
     NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
     JavaSquidSensor jss = new JavaSquidSensor(javaClasspath, sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, new PostAnalysisIssueFilter());
-    SensorContext context = mock(SensorContext.class);
+
     org.sonar.api.resources.File resource = org.sonar.api.resources.File.create(effectiveKey);
     resource.setEffectiveKey(effectiveKey);
-    when(context.getResource(any(InputPath.class))).thenReturn(resource);
-
-    Project project = mock(Project.class);
-    jss.analyse(project, context);
+    jss.execute(context);
 
     String message = "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.";
-    verify(noSonarFilter, times(1)).addComponent(effectiveKey, Sets.newHashSet(87));
+    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(74));
     verify(sonarComponents, times(expectedIssues)).reportIssue(any(AnalyzerMessage.class));
 
     settings.setProperty(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY, true);
-    jss.analyse(project, context);
+    jss.execute(context);
 
     settings.setProperty(Java.SOURCE_VERSION, "wrongFormat");
-    jss.analyse(project, context);
+    jss.execute(context);
 
     settings.setProperty(Java.SOURCE_VERSION, "1.7");
-    jss.analyse(project, context);
+    jss.execute(context);
   }
 

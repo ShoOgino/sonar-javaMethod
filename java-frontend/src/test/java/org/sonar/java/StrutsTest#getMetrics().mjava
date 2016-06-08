@@ -1,13 +1,20 @@
   private Map<String, Double> getMetrics() {
-    ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
-    verify(context, atLeastOnce()).saveMeasure(any(InputFile.class), captor.capture());
     Map<String, Double> metrics = new HashMap<>();
-    for (Measure measure : captor.getAllValues()) {
-      if (measure.getValue() != null) {
-        if (metrics.get(measure.getMetricKey()) == null) {
-          metrics.put(measure.getMetricKey(), measure.getValue());
-        } else {
-          metrics.put(measure.getMetricKey(), metrics.get(measure.getMetricKey()) + measure.getValue());
+    for (InputFile inputFile : context.fileSystem().inputFiles()) {
+      for (Measure measure : context.measures(inputFile.key())) {
+        if (measure.value() != null) {
+          String key = measure.metric().key();
+          double value = 0;
+          try {
+            value = Double.parseDouble("" + measure.value());
+          } catch (NumberFormatException nfe) {
+            //do nothing
+          }
+          if (metrics.get(key) == null) {
+            metrics.put(key, value);
+          } else {
+            metrics.put(key, metrics.get(key) + value);
+          }
         }
       }
     }
