@@ -1,13 +1,15 @@
   @Test
   public void measuresShouldNotIncludeSkippedTests() throws URISyntaxException {
-    SensorContext context = mockContext();
+    SensorContextTester context = SensorContextTester.create(new File(""));
+    context.fileSystem()
+      .add(resource("org.sonar.Foo"));
     surefireSensor.collect(context, new File(getClass().getResource(
         "/org/sonar/plugins/surefire/SurefireSensorTest/measuresShouldNotIncludeSkippedTests/").toURI()));
 
-    verify(context).saveMeasure(eq(resource("org.sonar.Foo")), eq(CoreMetrics.TESTS), eq(2d));
-    verify(context).saveMeasure(eq(resource("org.sonar.Foo")), eq(CoreMetrics.TEST_FAILURES), eq(1d));
-    verify(context).saveMeasure(eq(resource("org.sonar.Foo")), eq(CoreMetrics.TEST_ERRORS), eq(0d));
-    verify(context).saveMeasure(eq(resource("org.sonar.Foo")), eq(CoreMetrics.SKIPPED_TESTS), eq(1d));
-    verify(context).saveMeasure(eq(resource("org.sonar.Foo")), eq(CoreMetrics.TEST_SUCCESS_DENSITY), eq(50d));
+    assertThat(context.measure(":org.sonar.Foo", CoreMetrics.TESTS).value()).isEqualTo(2);
+    assertThat(context.measure(":org.sonar.Foo", CoreMetrics.TEST_FAILURES).value()).isEqualTo(1);
+    assertThat(context.measure(":org.sonar.Foo", CoreMetrics.TEST_ERRORS).value()).isEqualTo(0);
+    assertThat(context.measure(":org.sonar.Foo", CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(1);
+    assertThat(context.measure(":org.sonar.Foo", CoreMetrics.TEST_SUCCESS_DENSITY).value()).isEqualTo(50d);
   }
 

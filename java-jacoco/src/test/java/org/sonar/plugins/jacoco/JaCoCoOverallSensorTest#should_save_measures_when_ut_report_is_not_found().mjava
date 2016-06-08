@@ -1,9 +1,8 @@
   @Test
   public void should_save_measures_when_ut_report_is_not_found() throws IOException {
-    Resource resource = analyseReports("ut.not.found.exec", "it.exec");
-    verifyOverallMetrics(resource);
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_LINES, 5.0)));
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_COVERAGE_LINE_HITS_DATA, "3=1;6=0;7=0;10=1;11=1;14=1;15=0;17=1;18=1;20=1;23=0;24=0")));
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_CONDITIONS, 1.0)));
+    InputFile resource = analyseReports("ut.not.found.exec", "it.exec");
+    int[] oneHitlines = new int[] {3, 10, 11, 14, 17, 18, 20};
+    int[] zeroHitlines = new int[] {6, 7, 15, 23, 24};
+    verifyOverallMetrics(resource, zeroHitlines, oneHitlines, 1);
   }
 

@@ -4,13 +4,12 @@
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
     InputFile inputFile = fs.inputFile(fs.predicates().is(context.getFile()));
-    org.sonar.api.resources.File currentResource = (org.sonar.api.resources.File) sensorContext.getResource(inputFile);
-    if (currentResource == null) {
+    if (inputFile == null) {
       throw new IllegalStateException("resource not found : " + context.getFileKey());
     }
-    resourceMapping.addResource(currentResource, context.getFileKey());
+    resourceMapping.addResource(inputFile.key(), context.getFileKey());
     for (Map.Entry<String, File> classIOFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      resourcesByClass.put(classIOFileEntry.getKey(), currentResource);
+      resourcesByClass.put(classIOFileEntry.getKey(), inputFile);
       if (context.getFileKey() != null) {
         sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
       }

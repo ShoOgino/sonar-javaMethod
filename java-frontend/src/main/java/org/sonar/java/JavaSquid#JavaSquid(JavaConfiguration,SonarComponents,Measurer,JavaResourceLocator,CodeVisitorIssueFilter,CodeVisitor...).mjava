@@ -8,7 +8,7 @@
     }
 
     Iterable<CodeVisitor> codeVisitors = Iterables.concat(commonVisitors, Arrays.asList(visitors));
-    Collection<CodeVisitor> testCodeVisitors = Lists.<CodeVisitor>newArrayList(commonVisitors);
+    Collection<CodeVisitor> testCodeVisitors = Lists.newArrayList(commonVisitors);
     if (measurer != null) {
       Iterable<CodeVisitor> measurers = Collections.singletonList((CodeVisitor) measurer);
       codeVisitors = Iterables.concat(measurers, codeVisitors);
@@ -42,8 +42,6 @@
     //Bytecode scanner
     BytecodeContext bytecodeContext = new DefaultBytecodeContext(sonarComponents, javaResourceLocator);
     bytecodeScanner = new BytecodeScanner(bytecodeContext);
-    DependenciesVisitor dependenciesVisitor = new DependenciesVisitor(bytecodeContext, graph);
-    bytecodeScanner.accept(dependenciesVisitor);
     for (CodeVisitor visitor : visitors) {
       bytecodeScanner.accept(visitor);
     }

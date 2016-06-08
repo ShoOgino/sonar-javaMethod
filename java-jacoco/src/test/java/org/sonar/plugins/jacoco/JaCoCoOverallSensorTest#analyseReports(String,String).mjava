@@ -1,10 +1,10 @@
-  private Resource analyseReports(String utReport, String itReport) throws IOException {
+  private InputFile analyseReports(String utReport, String itReport) throws IOException {
     File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
     File to = new File(outputDir, "HelloWorld.class");
     Files.copy(TestUtils.getResource("HelloWorld.class.toCopy"), to);
-    org.sonar.api.resources.File resource = mock(org.sonar.api.resources.File.class);
+    DefaultInputFile resource = new DefaultInputFile("", "");
+    resource.setLines(25);
 
-    when(context.getResource(any(Resource.class))).thenReturn(resource);
     when(javaResourceLocator.findResourceByClassName("com/sonar/coverages/HelloWorld")).thenReturn(resource);
     when(configuration.getReportPath()).thenReturn(utReport);
     when(configuration.getItReportPath()).thenReturn(itReport);
@@ -13,7 +13,7 @@
     when(pathResolver.relativeFile(any(File.class), eq(itReport))).thenReturn(new File(outputDir, itReport));
     when(pathResolver.relativeFile(any(File.class), eq(new File("target/sonar/jacoco-overall.exec").getAbsolutePath()))).thenReturn(new File("target/sonar/jacoco-overall.exec"));
 
-    sensor.analyse(project, context);
+    sensor.execute(context);
     return resource;
   }
 

@@ -1,0 +1,10 @@
+  @VisibleForTesting
+  boolean shouldExecuteOnProject() {
+    File report = pathResolver.relativeFile(fileSystem.baseDir(), configuration.getReportPath());
+    boolean foundReport = report.isFile();
+    if(!foundReport) {
+      JaCoCoExtensions.LOG.info("JaCoCoSensor: JaCoCo report not found : "+report.getPath());
+    }
+    return configuration.shouldExecuteOnProject(foundReport);
+  }
+

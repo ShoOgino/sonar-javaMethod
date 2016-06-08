@@ -5,7 +5,7 @@
     }
     String testClassName = sessionId.substring(0, i);
     String testName = sessionId.substring(i + 1);
-    Resource testResource = context.getResource(javaResourceLocator.findResourceByClassName(testClassName));
+    InputFile testResource = javaResourceLocator.findResourceByClassName(testClassName);
     if (testResource == null) {
       // No such test class
       return false;
@@ -14,10 +14,11 @@
     boolean result = false;
     CoverageBuilder coverageBuilder = jacocoReportReader.analyzeFiles(executionDataStore, classFilesOfStore(executionDataStore));
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
-      Resource resource = getResource(coverage, context);
+      InputFile resource = getResource(coverage);
       if (resource != null) {
-        CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
-        List<Integer> coveredLines = getCoveredLines(builder);
+        NewCoverage newCoverage = context.newCoverage().onFile(resource).ofType(coverageType());
+        List<Integer> coveredLines =  analyzeFile(newCoverage, resource, coverage);
+        newCoverage.save();
         if (!coveredLines.isEmpty() && addCoverage(resource, testResource, testName, coveredLines)) {
           result = true;
         }

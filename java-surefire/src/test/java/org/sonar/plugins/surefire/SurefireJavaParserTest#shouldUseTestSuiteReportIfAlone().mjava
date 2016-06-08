@@ -1,11 +1,10 @@
   // SONAR-2841: if there's only a test suite report, then it should be read.
   @Test
   public void shouldUseTestSuiteReportIfAlone() throws URISyntaxException {
-    SensorContext context = mockContext();
+    SensorContextTester context = mockContext();
 
     parser.collect(context, getDir("onlyTestSuiteReport"), true);
-
-    verify(context, times(2)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.FILE)), eq(CoreMetrics.TESTS), anyDouble());
-    verify(context, times(2)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.FILE)), eq(CoreMetrics.TEST_ERRORS), anyDouble());
+    assertThat(context.measures(":org.sonar.SecondTest")).hasSize(6);
+    assertThat(context.measures(":org.sonar.JavaNCSSCollectorTest")).hasSize(6);
   }
 

@@ -2,13 +2,14 @@
     outputDir = TestUtils.getResource(path);
     jacocoExecutionData = new File(outputDir, "jacoco.exec");
 
-    org.sonar.api.resources.File resource = mock(org.sonar.api.resources.File.class);
-    when(context.getResource(any(Resource.class))).thenReturn(resource);
+    DefaultInputFile resource = new DefaultInputFile("", "");
+    resource.setLines(25);
+    when(javaResourceLocator.findResourceByClassName(anyString())).thenReturn(resource);
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
     when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     MutableTestable testAbleFile = mock(MutableTestable.class);
-    when(perspectives.as(eq(MutableTestable.class), any(org.sonar.api.resources.File.class))).thenReturn(testAbleFile);
+    when(perspectives.as(eq(MutableTestable.class), eq(resource))).thenReturn(testAbleFile);
 
     MutableTestCase testCase = mock(MutableTestCase.class);
     when(testCase.name()).thenReturn("test");
@@ -16,9 +17,9 @@
     when(testPlan.testCasesByName("testBoth")).thenReturn(newArrayList(testCase));
     when(testPlan.testCasesByName("testFoo")).thenReturn(newArrayList(testCase));
 
-    when(perspectives.as(eq(MutableTestPlan.class), any(Resource.class))).thenReturn(testPlan);
+    when(perspectives.as(eq(MutableTestPlan.class), eq(resource))).thenReturn(testPlan);
 
-    sensor.analyse(project, context);
+    sensor.execute(context);
     verify(testCase).setCoverageBlock(testAbleFile, linesExpected);
   }
 

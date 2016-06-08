@@ -11,10 +11,11 @@
     CoverageBuilder coverageBuilder = jacocoReportReader.analyzeFiles(executionDataVisitor.getMerged(), classFilesCache.values());
     int analyzedResources = 0;
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
-      Resource resource = getResource(coverage, context);
-      if (resource != null) {
-        CoverageMeasuresBuilder builder = analyzeFile(resource, coverage);
-        saveMeasures(context, resource, builder.createMeasures());
+      InputFile inputFile = getResource(coverage);
+      if (inputFile != null) {
+        NewCoverage newCoverage = context.newCoverage().onFile(inputFile).ofType(coverageType());
+        analyzeFile(newCoverage, inputFile, coverage);
+        newCoverage.save();
         analyzedResources++;
       }
     }

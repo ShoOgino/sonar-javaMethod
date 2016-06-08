@@ -1,9 +1,8 @@
   @Test
   public void should_save_measures() throws IOException {
-    Resource resource = analyseReports("ut.exec", "it.exec");
-    verifyOverallMetrics(resource);
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_LINES, 2.0)));
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_COVERAGE_LINE_HITS_DATA, "3=1;6=1;7=1;10=1;11=1;14=1;15=1;17=1;18=1;20=1;23=0;24=0")));
-    verify(context).saveMeasure(eq(resource), argThat(new IsMeasure(CoreMetrics.OVERALL_UNCOVERED_CONDITIONS, 0.0)));
+    InputFile resource = analyseReports("ut.exec", "it.exec");
+    int[] oneHitlines = new int[] {3, 6, 7, 10, 11, 14, 15, 17, 18, 20};
+    int[] zeroHitlines = new int[] {23, 24};
+    verifyOverallMetrics(resource, zeroHitlines, oneHitlines, 2);
   }
 

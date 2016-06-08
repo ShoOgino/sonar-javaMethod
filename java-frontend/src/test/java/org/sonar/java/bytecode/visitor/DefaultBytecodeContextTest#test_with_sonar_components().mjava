@@ -8,9 +8,9 @@
     String message = "msg";
     int line = 42;
     JavaCheck javaCheck = mock(JavaCheck.class);
-    Resource resource = mock(Resource.class);
     String name = "name";
-    when(resource.getPath()).thenReturn(name);
+    DefaultInputFile resource = new DefaultInputFile("moduleKey", name);
+    resource.setModuleBaseDir(new File("").toPath());
     context.reportIssue(javaCheck, resource, message, line);
     verify(sonarComponents).addIssue(new File(name), javaCheck, line, message, null);
   }

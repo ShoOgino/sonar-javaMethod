@@ -1,6 +1,8 @@
   @Test
   public void should_execute_if_filesystem_contains_java_files() {
     surefireSensor = new SurefireSensor(new SurefireJavaParser(perspectives, javaResourceLocator), mock(Settings.class), fs, pathResolver);
-    Assertions.assertThat(surefireSensor.shouldExecuteOnProject(project)).isTrue();
+    DefaultSensorDescriptor defaultSensorDescriptor = new DefaultSensorDescriptor();
+    surefireSensor.describe(defaultSensorDescriptor);
+    assertThat(defaultSensorDescriptor.languages()).containsOnly("java");
   }
 

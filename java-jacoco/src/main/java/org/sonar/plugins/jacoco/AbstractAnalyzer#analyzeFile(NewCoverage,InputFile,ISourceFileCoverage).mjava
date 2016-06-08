@@ -1,0 +1,34 @@
+  private static List<Integer> analyzeFile(NewCoverage newCoverage, InputFile resource, ISourceFileCoverage coverage) {
+    List<Integer> coveredLines = new ArrayList<>();
+    for (int lineId = coverage.getFirstLine(); lineId <= coverage.getLastLine(); lineId++) {
+      final int hits;
+      ILine line = coverage.getLine(lineId);
+      switch (line.getInstructionCounter().getStatus()) {
+        case ICounter.FULLY_COVERED:
+        case ICounter.PARTLY_COVERED:
+          hits = 1;
+          break;
+        case ICounter.NOT_COVERED:
+          hits = 0;
+          break;
+        case ICounter.EMPTY:
+          continue;
+        default:
+          JaCoCoExtensions.LOG.warn("Unknown status for line {} in {}", lineId, resource);
+          continue;
+      }
+      newCoverage.lineHits(lineId, hits);
+      if(hits > 0) {
+        coveredLines.add(lineId);
+      }
+
+      ICounter branchCounter = line.getBranchCounter();
+      int conditions = branchCounter.getTotalCount();
+      if (conditions > 0) {
+        int coveredConditions = branchCounter.getCoveredCount();
+        newCoverage.conditions(lineId, conditions, coveredConditions);
+      }
+    }
+    return coveredLines;
+  }
+

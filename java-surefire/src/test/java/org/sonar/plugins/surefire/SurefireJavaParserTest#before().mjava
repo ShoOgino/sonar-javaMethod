@@ -3,12 +3,7 @@
     perspectives = mock(ResourcePerspectives.class);
 
     javaResourceLocator = mock(JavaResourceLocator.class);
-    when(javaResourceLocator.findResourceByClassName(anyString())).thenAnswer(new Answer<Resource>() {
-      @Override
-      public Resource answer(InvocationOnMock invocation) throws Throwable {
-        return File.create((String) invocation.getArguments()[0]);
-      }
-    });
+    when(javaResourceLocator.findResourceByClassName(anyString())).thenAnswer(invocation -> new DefaultInputFile("", (String) invocation.getArguments()[0]));
 
     parser = new SurefireJavaParser(perspectives, javaResourceLocator);
   }

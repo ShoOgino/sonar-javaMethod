@@ -1,11 +1,10 @@
   @Test
   public void execute_when_ut_report_does_not_exists() {
-    Project project = mock(Project.class);
     File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
     when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.not.found.exec"));
     when(pathResolver.relativeFile(any(File.class), eq("it.exec"))).thenReturn(new File(outputDir, "it.exec"));
     when(configuration.getItReportPath()).thenReturn("it.exec");
     when(configuration.getReportPath()).thenReturn("ut.exec");
-    assertThat(sensor.shouldExecuteOnProject(project)).isTrue();
+    org.fest.assertions.Assertions.assertThat(sensor.shouldExecuteOnProject()).isTrue();
   }
 

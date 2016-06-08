@@ -1,36 +1,34 @@
   @Test
   public void shouldHandleTestSuiteDetails() throws URISyntaxException {
-    SensorContext context = mockContext();
-
+    SensorContextTester context = SensorContextTester.create(new File(""));
+    context.fileSystem()
+      .add(resource("org.sonar.core.ExtensionsFinderTest"))
+      .add(resource("org.sonar.core.ExtensionsFinderTest2"))
+      .add(resource("org.sonar.core.ExtensionsFinderTest3"));
     surefireSensor.collect(context, new File(getClass().getResource(
         "/org/sonar/plugins/surefire/SurefireSensorTest/shouldHandleTestSuiteDetails/").toURI()));
 
-    // 3 classes, 6 measures by class
-    verify(context, times(3)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        eq(CoreMetrics.SKIPPED_TESTS), anyDouble());
-    verify(context, times(3)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        eq(CoreMetrics.TESTS), anyDouble());
-    verify(context, times(18)).saveMeasure(argThat(new IsResource(Scopes.FILE, Qualifiers.UNIT_TEST_FILE)),
-        any(Metric.class), anyDouble());
+    assertThat(context.measures(":org.sonar.core.ExtensionsFinderTest")).hasSize(6);
+    assertThat(context.measures(":org.sonar.core.ExtensionsFinderTest2")).hasSize(6);
+    assertThat(context.measures(":org.sonar.core.ExtensionsFinderTest3")).hasSize(6);
 
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest")), eq(CoreMetrics.TESTS), eq(4d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest")), eq(CoreMetrics.TEST_EXECUTION_TIME),
-        eq(111d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest")), eq(CoreMetrics.TEST_FAILURES), eq(1d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest")), eq(CoreMetrics.TEST_ERRORS), eq(1d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest")), eq(CoreMetrics.SKIPPED_TESTS), eq(0d));
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest", CoreMetrics.TESTS).value()).isEqualTo(4);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest", CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(111L);
 
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest2")), eq(CoreMetrics.TESTS), eq(2d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest2")), eq(CoreMetrics.TEST_EXECUTION_TIME), eq(2d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest2")), eq(CoreMetrics.TEST_FAILURES), eq(0d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest2")), eq(CoreMetrics.TEST_ERRORS), eq(0d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest2")), eq(CoreMetrics.SKIPPED_TESTS), eq(0d));
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest", CoreMetrics.TEST_FAILURES).value()).isEqualTo(1);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest", CoreMetrics.TEST_ERRORS).value()).isEqualTo(1);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest", CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(0);
 
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest3")), eq(CoreMetrics.TESTS), eq(1d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest3")), eq(CoreMetrics.TEST_EXECUTION_TIME),
-        eq(16d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest3")), eq(CoreMetrics.TEST_FAILURES), eq(0d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest3")), eq(CoreMetrics.TEST_ERRORS), eq(0d));
-    verify(context).saveMeasure(eq(resource("org.sonar.core.ExtensionsFinderTest3")), eq(CoreMetrics.SKIPPED_TESTS), eq(1d));
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest2", CoreMetrics.TESTS).value()).isEqualTo(2);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest2", CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(2);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest2", CoreMetrics.TEST_FAILURES).value()).isEqualTo(0);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest2", CoreMetrics.TEST_ERRORS).value()).isEqualTo(0);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest2", CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(0);
+
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest3", CoreMetrics.TESTS).value()).isEqualTo(1);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest3", CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(16);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest3", CoreMetrics.TEST_FAILURES).value()).isEqualTo(0);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest3", CoreMetrics.TEST_ERRORS).value()).isEqualTo(0);
+    assertThat(context.measure(":org.sonar.core.ExtensionsFinderTest3", CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(1);
   }
 

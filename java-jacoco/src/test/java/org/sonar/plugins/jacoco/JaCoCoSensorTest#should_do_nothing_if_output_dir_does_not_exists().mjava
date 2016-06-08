@@ -1,8 +1,9 @@
   @Test
   public void should_do_nothing_if_output_dir_does_not_exists() {
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(new File("nowhere")));
-
-    sensor.analyse(project, context);
+    when(pathResolver.relativeFile(any(File.class), anyString())).thenReturn(jacocoExecutionData);
+    SensorContext context = mock(SensorContext.class);
+    sensor.execute(context);
 
     verifyZeroInteractions(context);
   }
