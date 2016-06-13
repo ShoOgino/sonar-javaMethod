@@ -1,12 +1,7 @@
   private static boolean isServletOrEjb(Symbol symbol) {
-    if (Iterables.any(SERVLET_AND_EJB_CLASSES, SyntaxNodePredicates.isSubtypeOf(symbol.type()))) {
+    if (SERVLET_AND_EJB_CLASSES.stream().anyMatch(symbol.type()::isSubtypeOf)) {
       return true;
     }
-    for (SymbolMetadata.AnnotationInstance annotation : symbol.metadata().annotations()) {
-      if (annotation.symbol().type().fullyQualifiedName().startsWith("javax.ejb.")) {
-        return true;
-      }
-    }
-    return false;
+    return symbol.metadata().annotations().stream().anyMatch(annotation -> annotation.symbol().type().fullyQualifiedName().startsWith("javax.ejb."));
   }
 

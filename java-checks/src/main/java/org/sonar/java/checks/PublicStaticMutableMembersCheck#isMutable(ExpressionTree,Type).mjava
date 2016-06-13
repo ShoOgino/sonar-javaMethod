@@ -1,6 +1,6 @@
   static boolean isMutable(@Nullable ExpressionTree initializer, Type type) {
     if (initializer == null) {
-      return Iterables.any(ALWAYS_MUTABLE_TYPES, SyntaxNodePredicates.isSubtypeOf(type));
+      return ALWAYS_MUTABLE_TYPES.stream().anyMatch(type::isSubtypeOf);
     }
     ExpressionTree expression = ExpressionsHelper.skipParentheses(initializer);
     if (expression.is(Tree.Kind.METHOD_INVOCATION)) {

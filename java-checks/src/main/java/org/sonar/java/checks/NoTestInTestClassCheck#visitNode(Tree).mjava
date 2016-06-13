@@ -2,11 +2,7 @@
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
       CompilationUnitTree cut = (CompilationUnitTree) tree;
-      for (Tree typeTree : cut.types()) {
-        if (typeTree.is(Kind.CLASS)) {
-          checkClass((ClassTree) typeTree);
-        }
-      }
+      cut.types().stream().filter(typeTree -> typeTree.is(Kind.CLASS)).forEach(typeTree -> checkClass((ClassTree) typeTree));
     }
   }
 
