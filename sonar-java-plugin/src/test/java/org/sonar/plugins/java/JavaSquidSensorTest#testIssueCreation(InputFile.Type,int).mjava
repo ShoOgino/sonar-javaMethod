@@ -12,14 +12,15 @@
     SonarComponents sonarComponents = createSonarComponentsMock(fs);
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, javaClasspath);
     NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
-    JavaSquidSensor jss = new JavaSquidSensor(javaClasspath, sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, new PostAnalysisIssueFilter());
+    PostAnalysisIssueFilter postAnalysisIssueFilter = new PostAnalysisIssueFilter(fs);
+    JavaSquidSensor jss = new JavaSquidSensor(javaClasspath, sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, postAnalysisIssueFilter);
 
     org.sonar.api.resources.File resource = org.sonar.api.resources.File.create(effectiveKey);
     resource.setEffectiveKey(effectiveKey);
     jss.execute(context);
 
     String message = "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.";
-    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(74));
+    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(75));
     verify(sonarComponents, times(expectedIssues)).reportIssue(any(AnalyzerMessage.class));
 
     settings.setProperty(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY, true);

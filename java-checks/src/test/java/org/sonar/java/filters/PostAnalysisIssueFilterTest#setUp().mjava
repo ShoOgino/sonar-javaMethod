@@ -1,11 +1,14 @@
   @Before
   public void setUp() {
-    postAnalysisIssueFilter = new PostAnalysisIssueFilter();
-    ResourceMapping resourceMapping = mock(ResourceMapping.class);
-    when(resourceMapping.getComponentKeyByFileKey(anyString())).thenReturn(COMPONENT_KEY);
-    postAnalysisIssueFilter.setResourceMapping(resourceMapping);
+    DefaultFileSystem fileSystem = new DefaultFileSystem(new File("src/test/files/filters"));
+    DefaultInputFile inputFile = new DefaultInputFile("", FILE_KEY);
+    inputFile.setLanguage("java");
+    inputFile.setType(InputFile.Type.MAIN);
+    fileSystem.add(inputFile);
+    postAnalysisIssueFilter = new PostAnalysisIssueFilter(fileSystem);
 
     context = mock(JavaFileScannerContext.class);
-    when(context.getFileKey()).thenReturn(FILE_KEY);
+    when(context.getFile()).thenReturn(inputFile.file());
+    when(context.getFileKey()).thenReturn(inputFile.key());
   }
 
