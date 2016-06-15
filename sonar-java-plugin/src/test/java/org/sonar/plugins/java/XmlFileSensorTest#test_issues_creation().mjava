@@ -1,15 +1,13 @@
   @Test
   public void test_issues_creation() throws Exception {
-    DefaultFileSystem fs = new DefaultFileSystem(new File(""));
+    SensorContextTester context = SensorContextTester.create(new File("src/test/files/maven/"));
+    DefaultFileSystem fs = context.fileSystem();
     final File file = new File("src/test/files/maven/pom.xml");
-    fs.add(new DefaultInputFile("", file.getPath()));
+    fs.add(new DefaultInputFile("", "pom.xml"));
     SonarComponents sonarComponents = createSonarComponentsMock(fs);
     XmlFileSensor sensor = new XmlFileSensor(sonarComponents, fs);
 
-    SensorContext context = mock(SensorContext.class);
-    when(context.getResource(any(InputPath.class))).thenReturn(org.sonar.api.resources.File.create("src/test/files/maven/pom.xml"));
-
-    sensor.analyse(mock(Project.class), context);
+    sensor.execute(context);
 
     verify(sonarComponents, times(1)).reportIssue(Mockito.argThat(new ArgumentMatcher<AnalyzerMessage>() {
       @Override
