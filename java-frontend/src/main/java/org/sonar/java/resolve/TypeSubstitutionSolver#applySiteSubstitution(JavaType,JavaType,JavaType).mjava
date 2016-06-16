@@ -6,10 +6,7 @@
     if(resolvedType.isTagged(JavaType.METHOD)) {
       MethodJavaType methodType = (MethodJavaType) resolvedType;
       JavaType resultType = applySiteSubstitution(methodType.resultType, callSite, resolvedTypeDefinition);
-      List<JavaType> argTypes = Lists.newArrayList();
-      for (JavaType argType : methodType.argTypes) {
-        argTypes.add(applySiteSubstitution(argType, callSite, resolvedTypeDefinition));
-      }
+      List<JavaType> argTypes = methodType.argTypes.stream().map(argType -> applySiteSubstitution(argType, callSite, resolvedTypeDefinition)).collect(Collectors.toList());
       return new MethodJavaType(argTypes, resultType, methodType.thrown, methodType.symbol);
     }
 

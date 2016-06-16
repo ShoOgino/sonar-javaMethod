@@ -6,9 +6,14 @@
       List<JavaType> samMethodArgs = resolve.findSamMethodArgs(lambdaExpressionTree.symbolType());
       for (int i = 0; i < samMethodArgs.size(); i++) {
         VariableTree param = lambdaExpressionTree.parameters().get(i);
-        if (param.type().is(Tree.Kind.INFERED_TYPE) && ((JavaType) param.type().symbolType()).isTagged(JavaType.DEFERRED)) {
-          ((AbstractTypedTree) param.type()).setInferedType(samMethodArgs.get(i));
-          ((JavaSymbol.VariableJavaSymbol) param.symbol()).type = samMethodArgs.get(i);
+        if (param.type().is(Tree.Kind.INFERED_TYPE)) {
+          JavaType inferedType = samMethodArgs.get(i);
+          if(inferedType.isTagged(JavaType.WILDCARD)) {
+            // JLS8 18.5.3
+            inferedType = ((WildCardType) inferedType).bound;
+          }
+          ((AbstractTypedTree) param.type()).setInferedType(inferedType);
+          ((JavaSymbol.VariableJavaSymbol) param.symbol()).type = inferedType;
         }
       }
       super.visitLambdaExpression(tree);

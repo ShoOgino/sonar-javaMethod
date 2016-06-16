@@ -1,8 +1,21 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree) {
     MethodInvocationTreeImpl mit = (MethodInvocationTreeImpl) tree;
-    if(mit.isTypeSet()) {
-      // nothing special to deduce once we have set type of expression
+    if(mit.isTypeSet() && mit.symbol().isMethodSymbol()) {
+      TypeSubstitution typeSubstitution = inferedSubstitution(mit);
+      List<JavaType> argTypes = getParameterTypes(tree.arguments());
+      JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) mit.symbol();
+      List<JavaType> inferedArgTypes = resolve.resolveTypeSubstitution(methodSymbol.parameterTypes().stream().map(t -> (JavaType) t).collect(Collectors.toList()), typeSubstitution);
+      for (int i = 0; i < argTypes.size(); i++) {
+        JavaType arg = argTypes.get(i);
+        int size = inferedArgTypes.size();
+        Type formal = inferedArgTypes.get((i < size) ? i : (size - 1));
+        if (formal != arg) {
+          AbstractTypedTree argTree = (AbstractTypedTree) mit.arguments().get(i);
+          argTree.setInferedType(formal);
+          argTree.accept(this);
+        }
+      }
       return;
     }
     Tree methodSelect = tree.methodSelect();
