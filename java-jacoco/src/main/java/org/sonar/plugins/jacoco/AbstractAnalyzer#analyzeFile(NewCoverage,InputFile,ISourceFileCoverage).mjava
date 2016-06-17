@@ -1,5 +1,4 @@
-  private static List<Integer> analyzeFile(NewCoverage newCoverage, InputFile resource, ISourceFileCoverage coverage) {
-    List<Integer> coveredLines = new ArrayList<>();
+  private static void analyzeFile(NewCoverage newCoverage, InputFile resource, ISourceFileCoverage coverage) {
     for (int lineId = coverage.getFirstLine(); lineId <= coverage.getLastLine(); lineId++) {
       final int hits;
       ILine line = coverage.getLine(lineId);
@@ -18,10 +17,6 @@
           continue;
       }
       newCoverage.lineHits(lineId, hits);
-      if(hits > 0) {
-        coveredLines.add(lineId);
-      }
-
       ICounter branchCounter = line.getBranchCounter();
       int conditions = branchCounter.getTotalCount();
       if (conditions > 0) {
@@ -29,6 +24,5 @@
         newCoverage.conditions(lineId, conditions, coveredConditions);
       }
     }
-    return coveredLines;
   }
 

@@ -19,8 +19,9 @@
     when(testPlan.testCasesByName("test")).thenReturn(newArrayList(testCase));
 
     when(perspectives.as(eq(MutableTestPlan.class), eq(resource))).thenReturn(testPlan);
-
-    sensor.execute(context);
+    SensorContextTester spy = Mockito.spy(context);
+    sensor.execute(spy);
+    verify(spy, times(1)).newCoverage();
 
     verify(testCase).setCoverageBlock(testAbleFile, newArrayList(3, 6));
   }

@@ -1,16 +1,5 @@
   @Test
   public void test_error_thrown() {
-    SonarClient sonarClient = orchestrator.getServer().adminWsClient();
-    String json = sonarClient.get("api/updatecenter/installed_plugins");
-    Plugin[] plugins = new Gson().fromJson(json, Plugin[].class);
-    String javaVersion = "";
-    for (Plugin plugin : plugins) {
-      if(plugin.key.equals("java")) {
-        javaVersion = plugin.version;
-        break;
-      }
-    }
-    assertThat(javaVersion).isNotEmpty();
     // We build the project with JunitListeners to get coverage but with no jacoco agent to let JaCoCoController throw NoClassDefFoundError
     MavenBuild build = MavenBuild.create(TestUtils.projectPom("coverage_error"))
       .setProperty("skipTests", "false")

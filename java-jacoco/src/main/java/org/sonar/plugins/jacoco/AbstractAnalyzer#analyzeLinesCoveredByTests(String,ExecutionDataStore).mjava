@@ -1,4 +1,4 @@
-  private boolean analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore, SensorContext context) {
+  private boolean analyzeLinesCoveredByTests(String sessionId, ExecutionDataStore executionDataStore) {
     int i = sessionId.indexOf(' ');
     if (i < 0) {
       return false;
@@ -16,9 +16,7 @@
     for (ISourceFileCoverage coverage : coverageBuilder.getSourceFiles()) {
       InputFile resource = getResource(coverage);
       if (resource != null) {
-        NewCoverage newCoverage = context.newCoverage().onFile(resource).ofType(coverageType());
-        List<Integer> coveredLines =  analyzeFile(newCoverage, resource, coverage);
-        newCoverage.save();
+        List<Integer> coveredLines =  coveredLines(coverage);
         if (!coveredLines.isEmpty() && addCoverage(resource, testResource, testName, coveredLines)) {
           result = true;
         }
