@@ -5,6 +5,15 @@
     } else if (tree.is(Tree.Kind.TOKEN)) {
       return (SyntaxToken) tree;
     }
+    if(tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if(mit.typeArguments() !=null && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        SyntaxToken syntaxToken = firstSyntaxToken(((MemberSelectExpressionTree) mit.methodSelect()).expression());
+        if (syntaxToken != null) {
+          return syntaxToken;
+        }
+      }
+    }
     for (Tree next : ((JavaTree) tree).children()) {
       SyntaxToken syntaxToken = firstSyntaxToken(next);
       if (syntaxToken != null) {
