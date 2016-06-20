@@ -1,14 +1,11 @@
   public List<ObjectConstraint> getFieldConstraints(final Object state) {
     final Set<SymbolicValue> valuesAssignedToFields = getFieldValues();
     final List<ObjectConstraint> result = new ArrayList<>();
-    constraints.forEach(new PMap.Consumer<SymbolicValue, Constraint>() {
-      @Override
-      public void accept(SymbolicValue value, Constraint valueConstraint) {
-        if (valueConstraint instanceof ObjectConstraint && !valuesAssignedToFields.contains(value)) {
-          ObjectConstraint constraint = (ObjectConstraint) valueConstraint;
-          if (constraint.hasStatus(state)) {
-            result.add(constraint);
-          }
+    constraints.forEach((symbolicValue, valueConstraint) -> {
+      if (valueConstraint instanceof ObjectConstraint && !valuesAssignedToFields.contains(symbolicValue)) {
+        ObjectConstraint constraint = (ObjectConstraint) valueConstraint;
+        if (constraint.hasStatus(state)) {
+          result.add(constraint);
         }
       }
     });
