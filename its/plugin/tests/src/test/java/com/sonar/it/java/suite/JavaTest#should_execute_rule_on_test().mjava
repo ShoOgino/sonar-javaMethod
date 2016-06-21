@@ -3,11 +3,11 @@
     MavenLocation junit_4_11 = MavenLocation.of("junit", "junit", "4.11");
     new MavenLocator(orchestrator.getConfiguration()).copyToDirectory(junit_4_11, tmp.getRoot());
     MavenBuild build = MavenBuild.create()
-        .setPom(TestUtils.projectPom("java-inner-classes"))
-        .setProperty("sonar.profile", "ignored-test-check")
-        .setProperty("sonar.java.test.binaries", "target/test-classes")
-        .setProperty("sonar.java.test.libraries", new File(tmp.getRoot(), junit_4_11.getFilename()).getAbsolutePath())
-        .setCleanPackageSonarGoals();
+      .setPom(TestUtils.projectPom("java-inner-classes"))
+      .setProperty("sonar.profile", "ignored-test-check")
+      .setProperty("sonar.java.test.binaries", "target/test-classes")
+      .setProperty("sonar.java.test.libraries", new File(tmp.getRoot(), junit_4_11.getFilename()).getAbsolutePath())
+      .setCleanPackageSonarGoals();
 
     orchestrator.executeBuild(build);
     Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("com.sonarsource.it.samples:java-inner-classes", "violations"));

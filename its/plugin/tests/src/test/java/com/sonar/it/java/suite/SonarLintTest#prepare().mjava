@@ -1,0 +1,17 @@
+  @BeforeClass
+  public static void prepare() throws Exception {
+    StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
+      .addPlugin(JavaTestSuite.JAVA_PLUGIN_LOCATION.getFile().toURI().toURL())
+      .setSonarLintUserHome(temp.newFolder().toPath())
+      .setLogOutput(new LogOutput() {
+
+        @Override
+        public void log(String formattedMessage, Level level) {
+          // Don't pollute logs
+        }
+      })
+      .build();
+    sonarlintEngine = new StandaloneSonarLintEngineImpl(config);
+    baseDir = temp.newFolder();
+  }
+
