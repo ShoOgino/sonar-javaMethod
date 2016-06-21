@@ -4,9 +4,10 @@
     CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
 
     when(checks.all()).thenReturn(new ArrayList<JavaCheck>()).thenReturn(Lists.newArrayList(expectedCheck));
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, null, null, null, checkFactory, context, new CheckRegistrar[] {
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, null, null, null, checkFactory, new CheckRegistrar[] {
       expectedRegistrar
     });
+    sonarComponents.setSensorContext(context);
 
     CodeVisitor[] visitors = sonarComponents.checkClasses();
     assertThat(visitors).hasSize(0);

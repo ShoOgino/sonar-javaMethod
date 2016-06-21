@@ -14,7 +14,8 @@
     FileLinesContext fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, null, javaTestClasspath, sensorContextTester, checkFactory);
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, null, javaTestClasspath, checkFactory);
+    sonarComponents.setSensorContext(sensorContextTester);
 
     CodeVisitor[] visitors = sonarComponents.checkClasses();
     assertThat(visitors).hasSize(0);
@@ -30,9 +31,9 @@
     assertThat(sonarComponents.fileLinesContextFor(file)).isEqualTo(fileLinesContext);
 
     JavaClasspath javaClasspath = mock(JavaClasspath.class);
-    List<File> list = (List<File>) mock(List.class);
+    List<File> list = mock(List.class);
     when(javaClasspath.getElements()).thenReturn(list);
-    sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, javaClasspath, javaTestClasspath, null, checkFactory);
+    sonarComponents = new SonarComponents(fileLinesContextFactory, resourcePerspectives, fs, javaClasspath, javaTestClasspath, checkFactory);
     assertThat(sonarComponents.getJavaClasspath()).isEqualTo(list);
   }
 
