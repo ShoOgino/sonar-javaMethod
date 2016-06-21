@@ -1,11 +1,10 @@
   @Test
   public void parse_error() throws Exception {
+    SensorContextTester spy = spy(context);
     File file = temp.newFile();
     Files.write("ParseError", file, Charsets.UTF_8);
+    fs.add(new DefaultInputFile("", file.getName()));
     scan(file);
-    Mockito.verify(highlightable, times(1)).newHighlighting();
-    Mockito.verify(highlighting, never()).highlight(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString());
-    assertThat(highlighting.done).isTrue();
-    assertThat(highlighting.entries).isEmpty();
+    verify(spy, never()).newHighlighting();
   }
 

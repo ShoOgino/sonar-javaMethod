@@ -1,15 +1,15 @@
-  private void testIssueCreation(InputFile.Type onType, int expectedIssues) {
+  private void testIssueCreation(InputFile.Type onType, int expectedIssues) throws IOException {
     Settings settings = new Settings();
     SensorContextTester context = SensorContextTester.create(new File("src/test/java/"));
     DefaultFileSystem fs = context.fileSystem();
 
     String effectiveKey = "org/sonar/plugins/java/JavaSquidSensorTest.java";
-    File file = new File(effectiveKey);
-    DefaultInputFile inputFile = new DefaultInputFile("", file.getPath()).setLanguage("java").setType(onType);
+    File file = new File(fs.baseDir(), effectiveKey);
+    DefaultInputFile inputFile = new DefaultInputFile("", effectiveKey).setLanguage("java").setType(onType).initMetadata(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
     fs.add(inputFile);
     JavaClasspath javaClasspath = new JavaClasspath(settings, fs);
 
-    SonarComponents sonarComponents = createSonarComponentsMock(fs);
+    SonarComponents sonarComponents = createSonarComponentsMock(context);
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, javaClasspath);
     NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
     PostAnalysisIssueFilter postAnalysisIssueFilter = new PostAnalysisIssueFilter(fs);
@@ -20,7 +20,7 @@
     jss.execute(context);
 
     String message = "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.";
-    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(75));
+    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(83));
     verify(sonarComponents, times(expectedIssues)).reportIssue(any(AnalyzerMessage.class));
 
     settings.setProperty(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY, true);

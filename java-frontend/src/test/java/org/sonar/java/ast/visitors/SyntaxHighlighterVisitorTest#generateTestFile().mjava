@@ -1,6 +1,9 @@
   private File generateTestFile() throws IOException {
     File file = temp.newFile();
     Files.write(Files.toString(new File("src/test/files/highlighter/Example.java"), Charsets.UTF_8).replaceAll("\\r\\n", "\n").replaceAll("\\n", eol), file, Charsets.UTF_8);
+    lines = Files.readLines(file, Charsets.UTF_8);
+    String content  = Joiner.on(eol).join(lines);
+    fs.add(new DefaultInputFile("", file.getName()).initMetadata(content));
     return file;
   }
 

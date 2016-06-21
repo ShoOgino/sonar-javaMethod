@@ -1,6 +1,9 @@
   @Before
   public void setUp() throws Exception {
-    when(sonarComponents.highlightableFor(Mockito.any(File.class))).thenReturn(highlightable);
-    when(highlightable.newHighlighting()).thenReturn(highlighting);
+    context = SensorContextTester.create(temp.getRoot());
+    fs = context.fileSystem();
+    sonarComponents = new SonarComponents(mock(FileLinesContextFactory.class), mock(ResourcePerspectives.class), fs,
+      mock(JavaClasspath.class), mock(JavaTestClasspath.class), context, mock(CheckFactory.class));
+    syntaxHighlighterVisitor = new SyntaxHighlighterVisitor(sonarComponents, Charsets.UTF_8);
   }
 
