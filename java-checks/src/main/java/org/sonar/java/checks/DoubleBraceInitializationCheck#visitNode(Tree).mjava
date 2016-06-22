@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classBody = ((NewClassTree) tree).classBody();
+    if (classBody != null) {
+      List<Tree> members = classBody.members();
+      if (members.size() == 1 && members.get(0).is(Tree.Kind.INITIALIZER)) {
+        reportIssue(classBody, "Replace this syntax with a different type initialization.");
+      }
+    }
+  }
+
