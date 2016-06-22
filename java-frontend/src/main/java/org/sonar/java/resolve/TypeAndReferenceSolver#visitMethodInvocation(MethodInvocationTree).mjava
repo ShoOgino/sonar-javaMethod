@@ -28,10 +28,17 @@
       typeParamTypes = getParameterTypes(tree.typeArguments());
     }
     Resolve.Resolution resolution = resolveMethodSymbol(methodSelect, methodEnv, argTypes, typeParamTypes);
-    JavaSymbol symbol = resolution.symbol();
+    JavaSymbol symbol;
+    JavaType returnType;
+    if(resolution == null) {
+      returnType = symbols.deferedType(mit);
+      symbol = Symbols.unknownSymbol;
+    } else {
+      symbol = resolution.symbol();
+      returnType = resolution.type();
+    }
     mit.setSymbol(symbol);
-    JavaType returnType = resolution.type();
-    if(resolution.symbol().isMethodSymbol()) {
+    if(symbol.isMethodSymbol()) {
       MethodJavaType methodType = (MethodJavaType) resolution.type();
       returnType = methodType.resultType;
     }
@@ -39,6 +46,8 @@
       ((DeferredType) returnType).setTree(mit);
     }
     registerType(tree, returnType);
-    inferArgumentTypes(argTypes, resolution);
+    if(resolution != null) {
+      inferArgumentTypes(argTypes, resolution);
+    }
   }
 

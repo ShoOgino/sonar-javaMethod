@@ -1,3 +1,4 @@
+  @CheckForNull
   private Resolve.Resolution resolveMethodSymbol(Tree methodSelect, Resolve.Env methodEnv, List<JavaType> argTypes, List<JavaType> typeParamTypes) {
     Resolve.Resolution resolution;
     IdentifierTree identifier;
@@ -5,6 +6,9 @@
       MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodSelect;
       resolveAs(mset.expression(), JavaSymbol.TYP | JavaSymbol.VAR);
       JavaType type = getType(mset.expression());
+      if(type.isTagged(JavaType.DEFERRED)) {
+        return null;
+      }
       identifier = mset.identifier();
       resolution = resolve.findMethod(methodEnv, type, identifier.name(), argTypes, typeParamTypes);
     } else if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
