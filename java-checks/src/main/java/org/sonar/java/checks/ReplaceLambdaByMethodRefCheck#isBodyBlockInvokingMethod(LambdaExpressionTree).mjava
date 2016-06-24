@@ -1,0 +1,9 @@
+  private static boolean isBodyBlockInvokingMethod(LambdaExpressionTree lambdaTree) {
+    Tree lambdaBody = lambdaTree.body();
+    if (isBlockWithOneStatement(lambdaBody)) {
+      Tree statement = ((BlockTree) lambdaBody).body().get(0);
+      return isExpressionStatementInvokingMethod(statement, lambdaTree) || isReturnStatementInvokingMethod(statement, lambdaTree);
+    }
+    return false;
+  }
+
