@@ -1,10 +1,4 @@
   private static boolean isAnnotated(ClassTree tree) {
-    for (AnnotationTree annotationTree : tree.modifiers().annotations()) {
-      Tree annotationType = annotationTree.annotationType();
-      if (annotationType.is(Tree.Kind.IDENTIFIER) && "FunctionalInterface".equals(((IdentifierTree) annotationType).name())) {
-        return true;
-      }
-    }
-    return false;
+    return tree.symbol().metadata().isAnnotatedWith("java.lang.FunctionalInterface");
   }
 

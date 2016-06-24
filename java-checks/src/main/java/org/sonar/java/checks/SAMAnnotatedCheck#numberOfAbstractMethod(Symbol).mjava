@@ -1,0 +1,15 @@
+  private static long numberOfAbstractMethod(Symbol symbol) {
+    if (!symbol.isTypeSymbol()) {
+      // unknown interface
+      return Integer.MAX_VALUE;
+    }
+
+    Symbol.TypeSymbol interfaceSymbol = (Symbol.TypeSymbol) symbol;
+    return interfaceSymbol.memberSymbols().stream()
+      .filter(member -> member.isMethodSymbol())
+      .filter(member -> {
+        Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) member;
+        return isNotObjectMethod(methodSymbol) && isNonStaticNonDefaultMethod(methodSymbol);
+      }).count();
+  }
+
