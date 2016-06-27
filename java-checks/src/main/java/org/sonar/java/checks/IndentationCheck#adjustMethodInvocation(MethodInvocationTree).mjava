@@ -1,7 +1,8 @@
   private void adjustMethodInvocation(MethodInvocationTree tree) {
-    int startLine = FirstSyntaxTokenFinder.firstSyntaxToken(tree).line();
+    SyntaxToken firstToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
+    methodInvocationFirstToken.push(firstToken);
     int parenthesisLine = tree.arguments().openParenToken().line();
-    if (startLine != parenthesisLine) {
+    if (firstToken.line() != parenthesisLine) {
       expectedLevel += indentationLevel;
     }
   }

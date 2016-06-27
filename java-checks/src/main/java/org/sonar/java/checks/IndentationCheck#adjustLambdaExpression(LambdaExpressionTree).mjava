@@ -1,0 +1,14 @@
+  private void adjustLambdaExpression(LambdaExpressionTree lambda) {
+    SyntaxToken previousToken = getPreviousToken(lambda);
+    lambdaPreviousToken.push(previousToken);
+    int lambdaFirstTokenLine = FirstSyntaxTokenFinder.firstSyntaxToken(lambda).line();
+    if (previousToken.line() != lambdaFirstTokenLine) {
+      expectedLevel += indentationLevel;
+    }
+    Tree body = lambda.body();
+    if (partOfChainedMethodInvocations(lambda) && body.is(Kind.BLOCK)) {
+      // compensates block and method invocation
+      expectedLevel -= indentationLevel;
+    }
+  }
+
