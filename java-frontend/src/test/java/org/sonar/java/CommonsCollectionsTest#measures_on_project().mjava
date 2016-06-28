@@ -1,4 +1,8 @@
-  private void verifySameResults(Map<String, Double> metrics) {
+  @Test
+  public void measures_on_project() throws Exception {
+    initAndScan();
+    Map<String, Double> metrics = getMetrics();
+
     assertThat(metrics.get("classes").intValue()).isEqualTo(412);
     assertThat(metrics.get("lines").intValue()).isEqualTo(64125);
     assertThat(metrics.get("ncloc").intValue()).isEqualTo(26323);
@@ -9,5 +13,9 @@
       density = (metrics.get("public_api") - metrics.get("public_undocumented_api")) / metrics.get("public_api");
     }
     assertThat(density).isEqualTo(0.64, Delta.delta(0.01));
+
+    assertThat(metrics.get("functions").intValue()).isEqualTo(3762);
+    assertThat(metrics.get("public_api").intValue()).isEqualTo(3221 - 23);
+    assertThat(metrics.get("complexity").intValue()).isEqualTo(8462);
   }
 

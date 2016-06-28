@@ -1,20 +1,17 @@
   @Test
   public void size_metrics() {
-    setCurrentProjectWithAccessors();
+    setCurrentProject();
     assertThat(getProjectMeasure("files").getIntValue()).isEqualTo(320);
     assertThat(getPackageMeasure("files").getIntValue()).isEqualTo(21);
     assertThat(getFileMeasure("files").getIntValue()).isEqualTo(1);
     assertThat(getProjectMeasure("lines").getIntValue()).isEqualTo(65059);
     assertThat(getProjectMeasure("ncloc").getIntValue()).isEqualTo(27577);
-    // Compute accessors based on Syntax Tree
-    assertThat(getProjectMeasure("functions").getIntValue()).isEqualTo(2730);
-    assertThat(getProjectMeasure("accessors").getIntValue()).isEqualTo(208);
+    // 208 getter/setter
+    assertThat(getProjectMeasure("functions").getIntValue()).isEqualTo(2730 + 208);
+
     assertThat(getProjectMeasure("classes").getIntValue()).isEqualTo(337);
     assertThat(getCoreModuleMeasure("files").getIntValue()).isEqualTo(134);
 
-    assertThat(getCoreModuleMeasure("comment_lines").getIntValue()).isEqualTo(7605);
-
-    int expected_public_api = 2846 - 208 - 15;
-    assertThat(getProjectMeasure("public_api").getIntValue()).isEqualTo(expected_public_api);
+    assertThat(getProjectMeasure("public_api").getIntValue()).isEqualTo(2846 - 15);
   }
 
