@@ -1,7 +1,9 @@
   private void createSymbol(IdentifierTree declaration, List<IdentifierTree> usages) {
-    Symbol symbol = symbolTableBuilder.newSymbol(startOffsetFor(declaration), endOffsetFor(declaration));
+    SyntaxToken syntaxToken = declaration.identifierToken();
+    NewSymbol newSymbol = newSymbolTable.newSymbol(syntaxToken.line(), syntaxToken.column(), syntaxToken.line(), syntaxToken.text().length() + syntaxToken.column());
     for (IdentifierTree usage : usages) {
-      symbolTableBuilder.newReference(symbol, startOffsetFor(usage));
+      syntaxToken = usage.identifierToken();
+      newSymbol.newReference(syntaxToken.line(), syntaxToken.column(), syntaxToken.line(), syntaxToken.text().length() + syntaxToken.column());
     }
   }
 

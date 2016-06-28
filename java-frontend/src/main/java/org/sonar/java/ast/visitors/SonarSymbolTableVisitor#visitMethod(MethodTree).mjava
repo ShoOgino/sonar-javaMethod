@@ -1,20 +1,7 @@
   @Override
   public void visitMethod(MethodTree tree) {
     List<IdentifierTree> usages = tree.symbol().usages();
-    if (tree.symbol().returnType() == null) {
-      if (tree.symbol().owner().isEnum()) {
-        // as long as SONAR-5894 is not fixed, do not provide references to enum constructors
-        createSymbol(tree.simpleName(), Lists.<IdentifierTree>newArrayList());
-      } else {
-        // as long as SONAR-5894 is not fixed, only provides references to constructors using direct call (with same name), and consequently
-        // discard usages of this()/super()
-        String constructorName = tree.simpleName().name();
-        ArrayList<IdentifierTree> filteredUsages = Lists.newArrayList(Iterables.filter(usages, new SameNameFilter(constructorName)));
-        createSymbol(tree.simpleName(), filteredUsages);
-      }
-    } else {
-      createSymbol(tree.simpleName(), usages);
-    }
+    createSymbol(tree.simpleName(), usages);
     for (TypeParameterTree typeParameterTree : tree.typeParameters()) {
       createSymbol(typeParameterTree.identifier(), typeParameterTree);
     }
