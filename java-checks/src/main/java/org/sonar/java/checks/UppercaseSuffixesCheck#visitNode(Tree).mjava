@@ -2,8 +2,17 @@
   public void visitNode(Tree tree) {
     String value = ((LiteralTree) tree).value();
     char suffix = value.charAt(value.length() - 1);
-    if (LITERAL_SUFFIXES.contains(suffix)) {
-      reportIssue(tree, "Upper-case this literal \"" + suffix + "\" suffix.");
+    switch (suffix) {
+      case DOUBLE:
+      case FLOAT:
+        if (checkOnlyLong) {
+          return;
+        }
+      case LONG:
+        reportIssue(tree, "Upper-case this literal \"" + suffix + "\" suffix.");
+        break;
+      default:
+        // do nothing
     }
   }
 
