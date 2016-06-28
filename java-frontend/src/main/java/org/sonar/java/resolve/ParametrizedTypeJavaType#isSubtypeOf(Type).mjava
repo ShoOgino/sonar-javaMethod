@@ -3,29 +3,12 @@
     if (((JavaType) superType).isTagged(TYPEVAR)) {
       return false;
     }
-    if(erasure() == superType.erasure()) {
-      if (((JavaType) superType).isParameterized()) {
-        return checkSubstitutedTypesCompatibility((ParametrizedTypeJavaType) superType);
-      }
+    if (erasure() == superType.erasure()) {
+      return !((JavaType) superType).isParameterized() || checkSubstitutedTypesCompatibility((ParametrizedTypeJavaType) superType);
+    }
+    if (verifySuperTypes(superType)) {
       return true;
     }
-
-    JavaType superclass = symbol.getSuperclass();
-    if(superclass != null) {
-      superclass = typeSubstitutionSolver.applySubstitution(superclass, this.typeSubstitution);
-      if(superclass.isSubtypeOf(superType)) {
-        return true;
-      }
-    }
-    for (JavaType superInterface : symbol.getInterfaces()) {
-      superclass = typeSubstitutionSolver.applySubstitution(superInterface, this.typeSubstitution);
-      if(superclass.isSubtypeOf(superType)) {
-        return true;
-      }
-    }
-    if (((JavaType) superType).isTagged(WILDCARD)) {
-      return ((WildCardType) superType).isSubtypeOfBound(this);
-    }
-    return false;
+    return ((JavaType) superType).isTagged(WILDCARD) && ((WildCardType) superType).isSubtypeOfBound(this);
   }
 
