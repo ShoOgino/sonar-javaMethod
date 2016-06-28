@@ -1,4 +1,5 @@
-  private void check(IdentifierTree tree) {
+  @Override
+  public void visitIdentifier(IdentifierTree tree) {
     String shouldCheckId = shouldCheck.peekFirst();
     if (shouldCheckId == null) {
       return;
@@ -10,7 +11,7 @@
         String fullyQualifiedName = type.fullyQualifiedName();
         Set<String> currentIssues = issues.peekFirst();
         if (!currentIssues.contains(fullyQualifiedName) && WildcardPattern.match(getToPatterns(), fullyQualifiedName)) {
-          reportIssue(tree, shouldCheckId + " must not use " + fullyQualifiedName);
+          context.reportIssue(this, tree, shouldCheckId + " must not use " + fullyQualifiedName);
           currentIssues.add(fullyQualifiedName);
         }
       }
