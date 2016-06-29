@@ -7,16 +7,18 @@
       JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) mit.symbol();
       List<JavaType> formals = methodSymbol.parameterTypes().stream().map(t -> (JavaType) t).collect(Collectors.toList());
       List<JavaType> inferedArgTypes = resolve.resolveTypeSubstitution(formals, typeSubstitution);
-      for (int i = 0; i < argTypes.size(); i++) {
-        JavaType arg = argTypes.get(i);
-        int size = inferedArgTypes.size();
-        Type formal = inferedArgTypes.get((i < size) ? i : (size - 1));
-        if (formal != arg) {
-          AbstractTypedTree argTree = (AbstractTypedTree) mit.arguments().get(i);
-          argTree.setInferedType(formal);
-          argTree.accept(this);
+      int size = inferedArgTypes.size();
+      IntStream.range(0, argTypes.size()).forEach(
+        i -> {
+          JavaType arg = argTypes.get(i);
+          Type formal = inferedArgTypes.get(Math.min(i, size - 1));
+          if (formal != arg) {
+            AbstractTypedTree argTree = (AbstractTypedTree) mit.arguments().get(i);
+            argTree.setInferedType(formal);
+            argTree.accept(this);
+          }
         }
-      }
+      );
       return;
     }
     Tree methodSelect = tree.methodSelect();
@@ -24,10 +26,7 @@
     scan(tree.arguments());
     scan(tree.typeArguments());
     List<JavaType> argTypes = getParameterTypes(tree.arguments());
-    List<JavaType> typeParamTypes = Lists.newArrayList();
-    if(tree.typeArguments() != null ) {
-      typeParamTypes = getParameterTypes(tree.typeArguments());
-    }
+    List<JavaType> typeParamTypes = getParameterTypes(tree.typeArguments());
     Resolve.Resolution resolution = resolveMethodSymbol(methodSelect, methodEnv, argTypes, typeParamTypes);
     JavaSymbol symbol;
     JavaType returnType;
@@ -37,12 +36,12 @@
     } else {
       symbol = resolution.symbol();
       returnType = resolution.type();
+      if(symbol.isMethodSymbol()) {
+        MethodJavaType methodType = (MethodJavaType) resolution.type();
+        returnType = methodType.resultType;
+      }
     }
     mit.setSymbol(symbol);
-    if(symbol.isMethodSymbol()) {
-      MethodJavaType methodType = (MethodJavaType) resolution.type();
-      returnType = methodType.resultType;
-    }
     if(returnType != null && returnType.isTagged(JavaType.DEFERRED)) {
       ((DeferredType) returnType).setTree(mit);
     }

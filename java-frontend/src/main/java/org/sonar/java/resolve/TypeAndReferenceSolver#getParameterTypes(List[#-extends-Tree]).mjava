@@ -1,12 +1,9 @@
-  private static List<JavaType> getParameterTypes(List<? extends Tree> args) {
-    ImmutableList.Builder<JavaType> builder = ImmutableList.builder();
-    for (Tree expressionTree : args) {
-      JavaType symbolType = Symbols.unknownType;
-      if (((AbstractTypedTree) expressionTree).isTypeSet()) {
-        symbolType = (JavaType) ((AbstractTypedTree) expressionTree).symbolType();
-      }
-      builder.add(symbolType);
+  private static List<JavaType> getParameterTypes(@Nullable List<? extends Tree> args) {
+    if(args == null) {
+      return new ArrayList<>();
     }
-    return builder.build();
+    return args.stream().map(e ->
+      ((AbstractTypedTree) e).isTypeSet() ?
+        (JavaType) ((AbstractTypedTree) e).symbolType() : Symbols.unknownType).collect(Collectors.toList());
   }
 
