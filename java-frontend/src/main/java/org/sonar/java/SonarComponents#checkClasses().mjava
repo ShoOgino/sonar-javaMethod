@@ -1,11 +1,4 @@
   public CodeVisitor[] checkClasses() {
-    List<CodeVisitor> visitors = Lists.newArrayList();
-    for (Checks<JavaCheck> checksElement : checks) {
-      Collection<JavaCheck> checksCollection = checksElement.all();
-      if (!checksCollection.isEmpty()) {
-        visitors.addAll(checksCollection);
-      }
-    }
-    return visitors.toArray(new CodeVisitor[visitors.size()]);
+    return checks.stream().flatMap(ce -> ce.all().stream()).toArray(CodeVisitor[]::new);
   }
 
