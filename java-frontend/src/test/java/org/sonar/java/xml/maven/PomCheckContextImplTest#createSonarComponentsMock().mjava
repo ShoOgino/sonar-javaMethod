@@ -20,7 +20,10 @@
         AnalyzerMessage analyzerMessage = (AnalyzerMessage) invocation.getArguments()[0];
         reportedMessage = "analyzerMessage:" + analyzerMessage.getMessage();
         for (AnalyzerMessage secondary : analyzerMessage.secondaryLocations) {
-          reportedMessage += ";" + secondary.getMessage();
+          TextSpan location = secondary.primaryLocation();
+          reportedMessage += ";" + secondary.getMessage() + "[" +
+            location.startLine + ";" + location.startCharacter + "/" +
+            location.endLine + ";" + location.endCharacter + "]";
         }
         return null;
       }
