@@ -1,6 +1,9 @@
-  private void computeFilteredLinesForRule(Tree tree, Class<? extends JavaCheck> filteredRule, boolean excludeLine) {
-    SyntaxToken firstSyntaxToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
-    SyntaxToken lastSyntaxToken = LastSyntaxTokenFinder.lastSyntaxToken(tree);
+  private void computeFilteredLinesForRule(@Nullable Tree tree, Class<? extends JavaCheck> filteredRule, boolean excludeLine) {
+    if (tree == null) {
+      return;
+    }
+    SyntaxToken firstSyntaxToken = tree.firstToken();
+    SyntaxToken lastSyntaxToken = tree.lastToken();
     if (firstSyntaxToken != null && lastSyntaxToken != null) {
       Set<Integer> filteredlines = ContiguousSet.create(Range.closed(firstSyntaxToken.line(), lastSyntaxToken.line()), DiscreteDomain.integers());
       computeFilteredLinesForRule(filteredlines, rulesKeysByRulesClass.get(filteredRule), excludeLine);

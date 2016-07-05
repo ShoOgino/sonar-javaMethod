@@ -1,0 +1,14 @@
+  @Test
+  public void first_token() {
+    CompilationUnitTree cut = createTree("class A {\n"
+      + "  void bar(){\n"
+      + "    foo();\n"
+      + "  }"
+      + "}");
+
+    ClassTree classTree = (ClassTree) cut.types().get(0);
+    MethodInvocationTree mit = (MethodInvocationTree) ((ExpressionStatementTree) ((MethodTree) (classTree.members().get(0))).block().body().get(0)).expression();
+    SyntaxToken firstToken = mit.firstToken();
+    assertThat(firstToken.text()).isEqualTo("foo");
+  }
+

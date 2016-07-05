@@ -1,9 +1,9 @@
   private void checkIndentation(Tree tree, int expectedLevel) {
-    SyntaxToken firstSyntaxToken = FirstSyntaxTokenFinder.firstSyntaxToken(tree);
+    SyntaxToken firstSyntaxToken = tree.firstToken();
     if (firstSyntaxToken.column() != expectedLevel && !isExcluded(tree, firstSyntaxToken.line())) {
       addIssue(((JavaTree) tree).getLine(), "Make this line start at column " + (expectedLevel + 1) + ".");
       isBlockAlreadyReported = true;
     }
-    lastCheckedLine = LastSyntaxTokenFinder.lastSyntaxToken(tree).line();
+    lastCheckedLine = tree.lastToken().line();
   }
 

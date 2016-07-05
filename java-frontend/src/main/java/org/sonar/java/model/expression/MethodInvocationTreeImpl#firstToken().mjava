@@ -1,0 +1,12 @@
+  @Override
+  public SyntaxToken firstToken() {
+    if (typeArguments() != null && methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      SyntaxToken firstToken = expression.firstToken();
+      if (firstToken != null) {
+        return firstToken;
+      }
+    }
+    return super.firstToken();
+  }
+
