@@ -1,0 +1,9 @@
+    @Override
+    public void visitLiteral(LiteralTree tree) {
+      if (tree.is(Tree.Kind.INT_LITERAL, Tree.Kind.LONG_LITERAL, Tree.Kind.DOUBLE_LITERAL, Tree.Kind.FLOAT_LITERAL, Tree.Kind.CHAR_LITERAL)) {
+        SymbolicValue sv = programState.peekValue();
+        ZeroConstraint constraint = isNumberZero(tree.value()) ? new ZeroConstraint(tree, Status.ZERO) : new ZeroConstraint(tree, Status.NON_ZERO);
+        programState = programState.addConstraint(sv, constraint);
+      }
+    }
+

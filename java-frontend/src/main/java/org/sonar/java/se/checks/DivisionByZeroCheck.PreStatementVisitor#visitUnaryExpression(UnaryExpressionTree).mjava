@@ -1,0 +1,16 @@
+    @Override
+    public void visitUnaryExpression(UnaryExpressionTree tree) {
+      if (!tree.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+        SymbolicValue sv = programState.peekValue();
+        if (isZero(sv)) {
+          if (tree.is(Tree.Kind.UNARY_MINUS, Tree.Kind.UNARY_PLUS)) {
+            reuseSymbolicValue(sv);
+          } else {
+            deferConstraint(Status.NON_ZERO);
+          }
+        } else {
+          deferConstraint(Status.UNDETERMINED);
+        }
+      }
+    }
+

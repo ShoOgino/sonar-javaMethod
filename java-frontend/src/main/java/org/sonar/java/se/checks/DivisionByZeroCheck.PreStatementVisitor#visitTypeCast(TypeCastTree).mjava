@@ -1,0 +1,13 @@
+    @Override
+    public void visitTypeCast(TypeCastTree tree) {
+      Type type = tree.type().symbolType();
+      if (type.isPrimitive()) {
+        SymbolicValue sv = programState.peekValue();
+        if (isZero(sv)) {
+          reuseSymbolicValue(sv);
+        } else if (isNonZero(sv)) {
+          deferConstraint(Status.NON_ZERO);
+        }
+      }
+    }
+
