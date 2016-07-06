@@ -1,4 +1,5 @@
   private static boolean isAnnotated(MethodTree tree) {
-    return !tree.modifiers().annotations().isEmpty();
+    // If any annotation doesn't match the @SuppressWarning then mark the method as annotated.
+    return tree.modifiers().annotations().stream().anyMatch(annotation -> !isExcludedLiteral(annotation));
   }
 
