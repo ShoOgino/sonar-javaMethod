@@ -1,8 +1,8 @@
-  private static List<Symbol> getUsedVariables(@Nullable Tree syntaxNode, Symbol.MethodSymbol owner) {
+  private Set<Symbol> getUsedVariables(@Nullable Tree syntaxNode, Symbol.MethodSymbol owner) {
     if(syntaxNode == null) {
-      return Collections.emptyList();
+      return Collections.emptySet();
     }
-    LocalVariableReadExtractor extractorFromClass = new LocalVariableReadExtractor(owner);
+    VariableReadExtractor extractorFromClass = new VariableReadExtractor(owner, includeFields);
     syntaxNode.accept(extractorFromClass);
     return extractorFromClass.usedVariables();
   }

@@ -1,0 +1,10 @@
+  @Test
+  public void should_extract_fields_read() {
+    MethodTree methodTree = buildMethodTree("void foo(boolean a) { bar(p -> { System.out.println(a + field1); foo(this.field2); }); }");
+    StatementTree statementTree = methodTree.block().body().get(0);
+    VariableReadExtractor extractor = new VariableReadExtractor(methodTree.symbol(), true);
+    statementTree.accept(extractor);
+    // local variable "a" and fields "field1" and "field2"
+    assertThat(extractor.usedVariables()).hasSize(3);
+  }
+

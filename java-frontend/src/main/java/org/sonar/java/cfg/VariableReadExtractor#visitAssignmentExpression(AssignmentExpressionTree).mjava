@@ -1,7 +1,7 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
-    //skip writing to a variable.
-    if(!tree.variable().is(Tree.Kind.IDENTIFIER)) {
+    //skip writing to a variable or field.
+    if(!tree.variable().is(Tree.Kind.IDENTIFIER) && !tree.variable().is(Kind.MEMBER_SELECT)) {
       scan(tree.variable());
     }
     scan(tree.expression());

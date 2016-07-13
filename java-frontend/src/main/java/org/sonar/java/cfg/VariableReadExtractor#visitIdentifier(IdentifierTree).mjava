@@ -1,0 +1,9 @@
+  @Override
+  public void visitIdentifier(IdentifierTree tree) {
+    Symbol owner = tree.symbol().owner();
+    if(methodSymbol.equals(owner) || (includeFields && isField(tree.symbol(), methodSymbol.owner()))) {
+      used.add(tree.symbol());
+    }
+    super.visitIdentifier(tree);
+  }
+

@@ -2,7 +2,7 @@
   public void should_extract_local_vars_read() {
     MethodTree methodTree = buildMethodTree("void foo(boolean a) { new Object() { void foo() { System.out.println(a);} };  }");
     StatementTree statementTree = methodTree.block().body().get(0);
-    LocalVariableReadExtractor extractor = new LocalVariableReadExtractor(methodTree.symbol());
+    VariableReadExtractor extractor = new VariableReadExtractor(methodTree.symbol(), false);
     statementTree.accept(extractor);
     assertThat(extractor.usedVariables()).hasSize(1);
   }

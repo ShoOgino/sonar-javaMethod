@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    TypeSymbol classSymbol = ((ClassTree) tree).symbol();
+    initFieldsMetaData(classSymbol);
+
+    classSymbol.memberSymbols().stream()
+      .filter(PrivateFieldUsedLocallyCheck::isPrivateField)
+      .filter(memberSymbol -> !memberSymbol.usages().isEmpty())
+      .filter(memberSymbol -> !isUsedOutsideMethods(memberSymbol, classSymbol))
+      .forEach(this::checkPrivateField);
+
+    fieldsReadOnAnotherInstance.clear();
+    fieldsLiveInMethodEntry.clear();
+  }
+

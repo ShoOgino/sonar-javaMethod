@@ -1,0 +1,17 @@
+  private void processAssignment(AssignmentExpressionTree element, Set<Symbol> blockKill, Set<Symbol> blockGen, Set<Tree> assignmentLHS) {
+    Symbol symbol = null;
+    ExpressionTree lhs = element.variable();
+    if (lhs.is(Kind.IDENTIFIER)) {
+      symbol = ((IdentifierTree) lhs).symbol();
+
+    } else if (includeFields && lhs.is(Kind.MEMBER_SELECT)) {
+      symbol = getField((MemberSelectExpressionTree) lhs);
+    }
+
+    if (symbol != null && includeSymbol(symbol)) {
+      assignmentLHS.add(lhs);
+      blockGen.remove(symbol);
+      blockKill.add(symbol);
+    }
+  }
+

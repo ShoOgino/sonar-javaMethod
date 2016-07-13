@@ -1,27 +1,7 @@
+  /**
+   * Returns LiveVariables object with information concerning local variables and parameters
+   */
   public static LiveVariables analyze(CFG cfg) {
-    LiveVariables liveVariables = new LiveVariables(cfg);
-    final Map<CFG.Block, Set<Symbol>> in = new HashMap<>();
-    // Generate kill/gen for each block in isolation
-    Map<CFG.Block, Set<Symbol>> kill = new HashMap<>();
-    Map<CFG.Block, Set<Symbol>> gen = new HashMap<>();
-    for (CFG.Block block : liveVariables.cfg.reversedBlocks()) {
-      Set<Symbol> blockKill = new HashSet<>();
-      Set<Symbol> blockGen = new HashSet<>();
-      liveVariables.processBlockElements(block, blockKill, blockGen);
-      kill.put(block, blockKill);
-      gen.put(block, blockGen);
-    }
-    liveVariables.analyzeCFG(in, kill, gen);
-    // out of exit block are empty by definition.
-    if (!liveVariables.out.get(liveVariables.cfg.reversedBlocks().get(0)).isEmpty()) {
-      throw new IllegalStateException("Out of exit block should be empty");
-    }
-
-    // Make things immutable.
-    for (Map.Entry<CFG.Block, Set<Symbol>> blockSetEntry : liveVariables.out.entrySet()) {
-      blockSetEntry.setValue(ImmutableSet.copyOf(blockSetEntry.getValue()));
-    }
-
-    return liveVariables;
+    return analyze(cfg, false);
   }
 

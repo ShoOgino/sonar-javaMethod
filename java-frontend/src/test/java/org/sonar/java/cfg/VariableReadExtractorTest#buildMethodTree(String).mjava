@@ -1,7 +1,6 @@
-  private static CFG buildCFG(String methodCode) {
+  private static MethodTree buildMethodTree(String methodCode) {
     CompilationUnitTree cut = (CompilationUnitTree) PARSER.parse("class A { int field1; int field2; " + methodCode + " }");
     SemanticModel.createFor(cut, Collections.<File>emptyList());
-    MethodTree tree = ((MethodTree) ((ClassTree) cut.types().get(0)).members().get(2));
-    return CFG.build(tree);
+    return (MethodTree) ((ClassTree) cut.types().get(0)).members().get(2);
   }
 

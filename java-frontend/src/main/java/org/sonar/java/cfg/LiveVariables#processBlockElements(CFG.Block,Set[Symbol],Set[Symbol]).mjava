@@ -2,24 +2,15 @@
     // process elements from bottom to top
     Set<Tree> assignmentLHS = new HashSet<>();
     for (Tree element : Lists.reverse(block.elements())) {
-      Symbol symbol;
       switch (element.kind()) {
         case ASSIGNMENT:
-          ExpressionTree lhs = ((AssignmentExpressionTree) element).variable();
-          if (lhs.is(Tree.Kind.IDENTIFIER)) {
-            symbol = ((IdentifierTree) lhs).symbol();
-            if (isLocalVariable(symbol)) {
-              assignmentLHS.add(lhs);
-              blockGen.remove(symbol);
-              blockKill.add(symbol);
-            }
-          }
+          processAssignment((AssignmentExpressionTree) element, blockKill, blockGen, assignmentLHS);
           break;
         case IDENTIFIER:
-          symbol = ((IdentifierTree) element).symbol();
-          if (!assignmentLHS.contains(element) && isLocalVariable(symbol)) {
-            blockGen.add(symbol);
-          }
+          processIdentifier((IdentifierTree) element, blockGen, assignmentLHS);
+          break;
+        case MEMBER_SELECT:
+          processMemberSelect((MemberSelectExpressionTree) element, assignmentLHS, blockGen);
           break;
         case VARIABLE:
           blockKill.add(((VariableTree) element).symbol());

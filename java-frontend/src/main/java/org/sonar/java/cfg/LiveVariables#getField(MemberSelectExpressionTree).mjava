@@ -1,0 +1,14 @@
+  @CheckForNull
+  private static Symbol getField(MemberSelectExpressionTree memberSelect) {
+    if (memberSelect.expression().is(Kind.IDENTIFIER)) {
+      String objectName = ((IdentifierTree) memberSelect.expression()).name();
+      Symbol symbol = memberSelect.identifier().symbol();
+
+      if ((symbol.isStatic() || "this".equals(objectName)) && isField(symbol)) {
+        return symbol;
+      }
+    }
+
+    return null;
+  }
+
