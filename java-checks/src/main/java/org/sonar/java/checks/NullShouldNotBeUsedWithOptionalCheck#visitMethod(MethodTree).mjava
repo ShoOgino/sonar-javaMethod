@@ -1,0 +1,14 @@
+  @Override
+  public void visitMethod(MethodTree method) {
+    if (!method.is(Tree.Kind.CONSTRUCTOR) && returnsOptional(method)) {
+
+      // check that the method is not annotated with @Nullable
+      checkNullableAnnotation(method.modifiers(), "Methods with an \"Optional\" return type should not be \"@Nullable\".");
+
+      // check that the method does not return "null"
+      method.accept(new ReturnNullVisitor());
+    }
+
+    super.visitMethod(method);
+  }
+

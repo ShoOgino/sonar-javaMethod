@@ -1,0 +1,23 @@
+  public int doSomething3(Optional<String> arg) {
+    if (arg == null) { // Noncompliant [[sc=9;ec=20]] {{Remove this null-check of an "Optional".}}
+      return 0;
+    }
+
+    Optional<String> optional = getOptionalOk();
+    if (optional == null) { // Noncompliant [[sc=9;ec=25]] {{Remove this null-check of an "Optional".}}
+      return 0;
+    } else if (null != optional) { // Noncompliant [[sc=16;ec=32]] {{Remove this null-check of an "Optional".}}
+      return 0;
+    }
+
+    Optional<String> optional2 = getOptionalOk();
+    if (optional == optional2) {
+      return 0;
+    } else if (null == null) {
+      return 0;
+    }
+
+    Optional<String> optional3 = getOptionalOk();
+    return optional3 == null ? 0 : 1; // Noncompliant [[sc=12;ec=29]] {{Remove this null-check of an "Optional".}}
+  }
+
