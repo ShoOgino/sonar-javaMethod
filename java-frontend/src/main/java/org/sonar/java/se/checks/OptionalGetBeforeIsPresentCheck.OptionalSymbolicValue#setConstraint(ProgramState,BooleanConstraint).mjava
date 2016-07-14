@@ -1,0 +1,16 @@
+    /**
+     * Will be called only after calling optional.isPresent()
+     */
+    @Override
+    public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
+      ObjectConstraint optionalConstraint = (ObjectConstraint) programState.getConstraint(optionalSV);
+      if (optionalConstraint == null || isImpossibleState(booleanConstraint, optionalConstraint)) {
+        return ImmutableList.of();
+      }
+      if (optionalConstraint.hasStatus(Status.NOT_PRESENT) || optionalConstraint.hasStatus(Status.PRESENT)) {
+        return ImmutableList.of(programState);
+      }
+      ObjectConstraint newConstraint = booleanConstraint.isTrue() ? optionalConstraint.withStatus(Status.PRESENT) : optionalConstraint.withStatus(Status.NOT_PRESENT);
+      return ImmutableList.of(programState.addConstraint(optionalSV, newConstraint));
+    }
+
