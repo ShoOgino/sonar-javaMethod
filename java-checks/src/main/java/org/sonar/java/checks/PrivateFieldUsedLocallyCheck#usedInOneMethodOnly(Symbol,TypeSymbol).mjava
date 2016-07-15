@@ -1,0 +1,24 @@
+  /**
+   * If private field used in several methods then returns null, otherwise returns the method where it's used
+   */
+  @CheckForNull
+  private static MethodTree usedInOneMethodOnly(Symbol privateFieldSymbol, TypeSymbol classSymbol) {
+    MethodTree method = null;
+
+    for (IdentifierTree usageIdentifier : privateFieldSymbol.usages()) {
+      Tree containingClassOrMethod = containingClassOrMethod(usageIdentifier);
+
+      if (containingClassOrMethod.is(Kind.CLASS)
+        || !((MethodTree) containingClassOrMethod).symbol().owner().equals(classSymbol)
+        || (method != null && !method.equals(containingClassOrMethod))) {
+        return null;
+
+      } else {
+        method = (MethodTree)containingClassOrMethod;
+
+      }
+    }
+
+    return method;
+  }
+

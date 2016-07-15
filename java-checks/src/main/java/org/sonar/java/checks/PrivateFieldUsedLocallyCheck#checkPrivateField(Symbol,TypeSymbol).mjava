@@ -1,0 +1,10 @@
+  private void checkPrivateField(Symbol privateFieldSymbol, TypeSymbol classSymbol) {
+    MethodTree methodWhereUsed = usedInOneMethodOnly(privateFieldSymbol, classSymbol);
+
+    if (methodWhereUsed != null && !isLiveInMethodEntry(privateFieldSymbol, methodWhereUsed)) {
+      IdentifierTree declarationIdentifier = ((VariableTree) privateFieldSymbol.declaration()).simpleName();
+      String message = String.format(MESSAGE, privateFieldSymbol.name());
+      reportIssue(declarationIdentifier, message);
+    }
+  }
+
