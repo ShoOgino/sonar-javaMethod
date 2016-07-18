@@ -1,0 +1,10 @@
+  private void checkImportedSymbol(Symbol symbol) {
+    for (IdentifierTree usageIdentifier : symbol.usages()) {
+      Tree parent = usageIdentifier.parent();
+
+      if (parent.is(Kind.MEMBER_SELECT) && ((MemberSelectExpressionTree) parent).expression().is(Kind.MEMBER_SELECT)) {
+        reportIssue(parent, String.format(MESSAGE, symbol.name()));
+      }
+    }
+  }
+

@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    ImportTree importTree = (ImportTree)tree;
+
+    if (importTree.qualifiedIdentifier().is(Kind.MEMBER_SELECT)) {
+
+      IdentifierTree identifier = ((MemberSelectExpressionTree) importTree.qualifiedIdentifier()).identifier();
+      if ("*".equals(identifier.name())) {
+        fileContainsStarImport = true;
+        return;
+      }
+    }
+
+    importTrees.add(importTree);
+  }
+
