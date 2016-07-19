@@ -4,6 +4,8 @@
     ProgramState.Pop unstack = programState.unstackValue(mit.arguments().size() + 1);
     programState = unstack.state;
     logState(mit);
+    // Enqueue exceptional paths
+    node.programPoint.block.exceptions().forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), programState, !b.isCatchBlock()));
     final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.values);
     programState = programState.stackValue(resultValue);
     if (isNonNullMethod(mit.symbol())) {

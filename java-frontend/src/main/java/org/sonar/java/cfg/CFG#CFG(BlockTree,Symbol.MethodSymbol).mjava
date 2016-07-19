@@ -2,9 +2,11 @@
     methodSymbol = symbol;
     exitBlocks.add(createBlock());
     currentBlock = createBlock(exitBlock());
-    for (StatementTree statementTree : Lists.reverse(tree.body())) {
-      build(statementTree);
-    }
+    outerTry = new TryStatement();
+    outerTry.successorBlock = exitBlocks.peek();
+    enclosingTry.add(outerTry);
+    enclosedByCatch.push(false);
+    build(tree.body());
     prune();
     computePredecessors(blocks);
   }

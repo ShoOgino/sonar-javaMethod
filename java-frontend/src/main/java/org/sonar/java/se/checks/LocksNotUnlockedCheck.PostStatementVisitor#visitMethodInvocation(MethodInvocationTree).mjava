@@ -5,11 +5,7 @@
         final ExpressionTree expression = memberSelect.expression();
         if (expression.is(Tree.Kind.IDENTIFIER) && expression.symbolType().isSubtypeOf(LOCK)) {
           final String methodName = memberSelect.identifier().name();
-          IdentifierTree target = (IdentifierTree) expression;
-          if (!isMemberSelectActingOnField(target) && TRY_LOCK_METHOD_NAME.equals(methodName)) {
-            final SymbolicValue symbolicValue = programState.getValue(target.symbol());
-            constraintManager.setValueFactory(new TryLockSymbolicValueFactory(symbolicValue));
-          }
+          visitMethodInvocationWithIdentifierTarget(methodName, (IdentifierTree) expression);
         }
       }
     }

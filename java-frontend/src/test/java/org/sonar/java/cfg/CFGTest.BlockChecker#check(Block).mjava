@@ -24,6 +24,7 @@
         Arrays.sort(actualSuccessorIDs);
         assertThat(actualSuccessorIDs).as("Expected successors in block " + block.id()).isEqualTo(successorIDs);
       }
+      assertThat(block.exceptions().stream().mapToInt(Block::id).sorted().toArray()).as("Expected exceptions in block " + block.id()).isEqualTo(exceptionsIDs);
       if (terminatorChecker != null) {
         terminatorChecker.check(block.terminator());
       }

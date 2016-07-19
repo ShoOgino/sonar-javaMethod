@@ -11,26 +11,27 @@
     }
     Block finallyOrEndBlock = currentBlock;
     Block beforeFinally = createBlock(currentBlock);
-    List<Block> catches = new ArrayList<>();
+    TryStatement tryStatement = new TryStatement();
+    tryStatement.successorBlock = finallyOrEndBlock;
+    enclosingTry.push(tryStatement);
+    enclosedByCatch.push(false);
     for (CatchTree catchTree : tryStatementTree.catches()) {
       currentBlock = createBlock(finallyOrEndBlock);
+      currentBlock.isCatchBlock = true;
+      enclosedByCatch.push(true);
       build(catchTree.block());
-      catches.add(currentBlock);
+      enclosedByCatch.pop();
+      tryStatement.addCatch(catchTree.parameter().type().symbolType(), currentBlock);
     }
     currentBlock = beforeFinally;
     build(tryStatementTree.block());
-    linkToCatchBlocks(beforeFinally, catches);
     build((List<? extends Tree>) tryStatementTree.resources());
+    enclosingTry.pop();
+    enclosedByCatch.pop();
     currentBlock = createBlock(currentBlock);
     currentBlock.elements.add(tryStatementTree);
     if (finallyBlockTree != null) {
       exitBlocks.pop();
-      if (catches.isEmpty()) {
-        currentBlock.addExitSuccessor(finallyOrEndBlock);
-      }
-    }
-    for (Block catchBlock : catches) {
-      currentBlock.addSuccessor(catchBlock);
     }
   }
 

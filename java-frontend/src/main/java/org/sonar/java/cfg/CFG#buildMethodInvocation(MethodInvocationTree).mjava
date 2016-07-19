@@ -1,4 +1,5 @@
   private void buildMethodInvocation(MethodInvocationTree mit) {
+    handleExceptionalPaths(mit.symbol());
     currentBlock.elements.add(mit);
     if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
       MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) mit.methodSelect();
@@ -6,8 +7,6 @@
     } else {
       build(mit.methodSelect());
     }
-    for (ExpressionTree arg : Lists.reverse(mit.arguments())) {
-      build(arg);
-    }
+    build(mit.arguments());
   }
 

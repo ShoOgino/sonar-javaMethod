@@ -1,0 +1,14 @@
+  @Test
+  public void test_try_finally_liveness() throws Exception {
+    CFG cfg = buildCFG("void foo() {   Object object = null;\n" +
+      "    try {\n" +
+      "      object = new Object();\n" +
+      "    } catch (Exception e) {\n" +
+      "      object.hashCode(); // Noncompliant\n" +
+      "    } finally {\n" +
+      "      object.hashCode();// Noncompliant\n" +
+      "    } }");
+    LiveVariables liveVariables = LiveVariables.analyze(cfg);
+    cfg.reversedBlocks().stream().filter(block -> block.id() > 1).forEach(block -> assertThat(liveVariables.getOut(block)).as("Issue with block B" + block.id()).hasSize(1));
+  }
+

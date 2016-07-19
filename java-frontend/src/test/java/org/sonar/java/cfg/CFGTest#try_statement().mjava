@@ -4,13 +4,13 @@
     CFGChecker cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
-        ).successors(1, 2).exit(1),
+        ).successors(2),
         block(
             element(Tree.Kind.CHAR_LITERAL, "''"),
             element(Tree.Kind.IDENTIFIER, "System"),
             element(Tree.Kind.MEMBER_SELECT),
             element(Tree.Kind.METHOD_INVOCATION)
-        ).successors(1),
+        ).successors(1).exceptions(1),
         block(
             element(Tree.Kind.CHAR_LITERAL, "''"),
             element(Tree.Kind.IDENTIFIER, "System"),
@@ -23,23 +23,23 @@
     cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
-        ).successors(2, 3, 4),
-        block(
-            element(Tree.Kind.CHAR_LITERAL, "'e'"),
-            element(Tree.Kind.IDENTIFIER, "foo"),
-            element(Tree.Kind.METHOD_INVOCATION)
-        ).successors(1),
-        block(
-            element(Tree.Kind.CHAR_LITERAL, "'iae'"),
-            element(Tree.Kind.IDENTIFIER, "foo"),
-            element(Tree.Kind.METHOD_INVOCATION)
-        ).successors(1),
-        block(
-            element(Tree.Kind.CHAR_LITERAL, "''"),
-            element(Tree.Kind.IDENTIFIER, "System"),
-            element(Tree.Kind.MEMBER_SELECT),
-            element(Tree.Kind.METHOD_INVOCATION)
-        ).successors(1, 3, 4),
+        ).successors(4),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.IDENTIFIER, "System"),
+        element(Tree.Kind.MEMBER_SELECT),
+        element(Tree.Kind.METHOD_INVOCATION)
+      ).successors(1).exceptions(1, 2, 3),
+      block(
+        element(Tree.Kind.CHAR_LITERAL, "'e'"),
+          element(Tree.Kind.IDENTIFIER, "foo"),
+          element(Tree.Kind.METHOD_INVOCATION)
+          ).successors(1).exceptions(1),
+      block(
+          element(Tree.Kind.CHAR_LITERAL, "'iae'"),
+          element(Tree.Kind.IDENTIFIER, "foo"),
+          element(Tree.Kind.METHOD_INVOCATION)
+          ).successors(1).exceptions(1),
         block(
             element(Tree.Kind.CHAR_LITERAL, "'finally'"),
             element(Tree.Kind.IDENTIFIER, "System"),
@@ -57,12 +57,11 @@
     cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
-        ).successors(1, 2),
+        ).successors(0),
         block(
             element(Tree.Kind.IDENTIFIER, "e"),
             element(Tree.Kind.INSTANCE_OF)
-        ).terminator(Tree.Kind.IF_STATEMENT).ifTrue(0).ifFalse(0),
-        new BlockChecker(0, 2) // particular case of a block with multiple successors but no instructions.
+        ).terminator(Tree.Kind.IF_STATEMENT).ifTrue(0).ifFalse(0)
     );
     cfgChecker.check(cfg);
     cfg = buildCFG(
@@ -73,7 +72,7 @@
     cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
-        ).successors(2, 3).exit(2),
+        ).successors(3),
         terminator(Kind.RETURN_STATEMENT).successors(2).exit(2),
         block(
             element(Tree.Kind.IDENTIFIER, "foo"),
