@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+
+    if (classTree.is(Tree.Kind.ANNOTATION_TYPE)) {
+      classTree.members().stream()
+        .map(member -> (MethodTree) member)
+        .filter(meth -> isReturnTypeValueBased(meth))
+        .forEach(meth -> reportIssue(meth.simpleName(), MESSAGE));
+    } else if (isSerializable(classTree) && !SerializableContract.hasSpecialHandlingSerializationMethods(classTree)) {
+      classTree.members().stream()
+        .filter(ValueBasedObjectsShouldNotBeSerializedCheck::isVariable)
+        .map(member -> (VariableTree) member)
+        .filter(var -> !isStatic(var))
+        .filter(var -> !isTransient(var))
+        .filter(var -> isVarSerializableAndValueBased(var))
+        .forEach(var -> reportIssue(var.simpleName(), MESSAGE));
+    }
+  }
+
