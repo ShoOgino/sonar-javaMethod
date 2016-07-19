@@ -11,19 +11,10 @@
       false);
 
     final List<Issue> issues = new ArrayList<>();
-    sonarlintEngine.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.<String, String>of()),
-      new IssueListener() {
-
-        @Override
-        public void handle(Issue issue) {
-          issues.add(issue);
-        }
-      });
+    sonarlintEngine.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), ImmutableMap.<String, String>of()), issues::add);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("squid:S106", 4, inputFile.getPath(), "MAJOR"),
-      tuple("squid:UndocumentedApi", 1, inputFile.getPath(), "MINOR"),
-      tuple("squid:UndocumentedApi", 2, inputFile.getPath(), "MINOR"),
       tuple("squid:S1220", null, inputFile.getPath(), "MINOR"),
       tuple("squid:S1481", 3, inputFile.getPath(), "MAJOR"));
   }
