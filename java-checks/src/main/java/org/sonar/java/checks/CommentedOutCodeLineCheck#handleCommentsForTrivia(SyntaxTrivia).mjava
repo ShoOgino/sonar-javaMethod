@@ -1,0 +1,15 @@
+  private List<Integer> handleCommentsForTrivia(SyntaxTrivia syntaxTrivia) {
+    List<Integer> commentedOutCodeLines = new ArrayList<>();
+    String[] lines = syntaxTrivia.comment().split("\r\n?|\n");
+    for (int i = 0; i < lines.length; i++) {
+      if (codeRecognizer.isLineOfCode(lines[i])) {
+        // Mark all remaining lines from this comment as a commented out lines of code
+        for (int j = i; j < lines.length; j++) {
+          commentedOutCodeLines.add(syntaxTrivia.startLine() + j);
+        }
+        break;
+      }
+    }
+    return commentedOutCodeLines;
+  }
+
