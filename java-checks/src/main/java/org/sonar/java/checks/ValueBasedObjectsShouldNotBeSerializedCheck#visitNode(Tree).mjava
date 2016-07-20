@@ -4,6 +4,7 @@
 
     if (classTree.is(Tree.Kind.ANNOTATION_TYPE)) {
       classTree.members().stream()
+        .filter(member -> member.is(Kind.METHOD))
         .map(member -> (MethodTree) member)
         .filter(meth -> isReturnTypeValueBased(meth))
         .forEach(meth -> reportIssue(meth.simpleName(), MESSAGE));
