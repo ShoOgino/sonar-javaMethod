@@ -1,0 +1,10 @@
+  private void checkJavaLangNPE(MemberSelectExpressionTree memberSelectTree) {
+    ExpressionTree expression = memberSelectTree.expression();
+    if (expression.is(Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) expression;
+      if ("lang".equals(mse.identifier().name()) && mse.expression().is(Kind.IDENTIFIER) && "java".equals(((IdentifierTree) mse.expression()).name())) {
+        addIssue(memberSelectTree.identifier());
+      }
+    }
+  }
+

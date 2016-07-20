@@ -1,17 +1,17 @@
   @Override
   public void visitNode(Tree tree) {
-    ClassTree classTree = (ClassTree) tree;
-    if (classTree.superClass() != null) {
-      Symbol.TypeSymbol superclassSymbol = classTree.superClass().symbolType().symbol();
-      for (Tree member : classTree.members()) {
-        if (member.is(Tree.Kind.VARIABLE)) {
-          VariableTree variableTree = (VariableTree) member;
-          String fieldName = variableTree.simpleName().name();
+    TypeTree superClass = ((ClassTree) tree).superClass();
+    if (superClass != null) {
+      Symbol.TypeSymbol superclassSymbol = superClass.symbolType().symbol();
+      ((ClassTree) tree).members().stream()
+        .filter(m -> m.is(Kind.VARIABLE))
+        .map(m -> (VariableTree) m)
+        .forEach(v -> {
+          String fieldName = v.simpleName().name();
           if (!IGNORED_FIELDS.contains(fieldName)) {
-            checkForIssue(superclassSymbol, variableTree, fieldName);
+            checkForIssue(superclassSymbol, v, fieldName);
           }
-        }
-      }
+        });
     }
   }
 

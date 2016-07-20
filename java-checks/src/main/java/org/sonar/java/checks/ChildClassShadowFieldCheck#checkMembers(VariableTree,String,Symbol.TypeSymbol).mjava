@@ -1,0 +1,16 @@
+  private boolean checkMembers(VariableTree variableTree, String fieldName, Symbol.TypeSymbol symbol) {
+    for (Symbol member : symbol.memberSymbols()) {
+      if (member.isVariableSymbol() && !member.isPrivate()) {
+        if (member.name().equals(fieldName)) {
+          reportIssue(variableTree.simpleName(), String.format("\"%s\" is the name of a field in \"%s\".", fieldName, symbol.name()));
+          return true;
+        }
+        if (member.name().equalsIgnoreCase(fieldName)) {
+          reportIssue(variableTree.simpleName(), String.format("\"%s\" differs only by case from \"%s\" in \"%s\".", fieldName, member.name(), symbol.name()));
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

@@ -5,10 +5,7 @@
     Tree typeTree = tree.parameter().type();
 
     if (typeTree.is(Kind.UNION_TYPE)) {
-      UnionTypeTree unionTypeTree = (UnionTypeTree) typeTree;
-      for (Tree typeAlternativeTree : unionTypeTree.typeAlternatives()) {
-        checkType(typeAlternativeTree);
-      }
+      ((UnionTypeTree) typeTree).typeAlternatives().forEach(this::checkType);
     } else {
       checkType(typeTree);
     }
