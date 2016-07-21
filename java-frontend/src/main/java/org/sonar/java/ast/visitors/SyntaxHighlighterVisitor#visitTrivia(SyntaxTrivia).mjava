@@ -1,5 +1,14 @@
   @Override
   public void visitTrivia(SyntaxTrivia syntaxTrivia) {
-    highlighting.highlight(start(syntaxTrivia), end(syntaxTrivia), TypeOfText.COMMENT);
+    String comment = syntaxTrivia.comment();
+    int startLine = syntaxTrivia.startLine();
+    int startColumn = syntaxTrivia.column();
+
+    String[] lines = comment.split("\\r\\n|\\n|\\r");
+    int numberLines = lines.length;
+
+    int endLine = startLine + numberLines - 1;
+    int endColumn = numberLines == 1 ? (startColumn + comment.length()) : lines[numberLines - 1].length();
+    highlighting.highlight(startLine, startColumn, endLine, endColumn, TypeOfText.COMMENT);
   }
 
