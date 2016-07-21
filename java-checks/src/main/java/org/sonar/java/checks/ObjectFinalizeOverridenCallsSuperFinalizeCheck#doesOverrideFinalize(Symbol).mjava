@@ -3,10 +3,8 @@
       Type superClassType = ((Symbol.TypeSymbol) classSymbol).superClass();
       while (superClassType != null && !superClassType.is("java.lang.Object")) {
         Symbol.TypeSymbol currentClass = superClassType.symbol();
-        for (Symbol symbol : currentClass.lookupSymbols(FINALIZE)) {
-          if (isFinalize(symbol)) {
-            return true;
-          }
+        if (currentClass.lookupSymbols(FINALIZE).stream().anyMatch(ObjectFinalizeOverridenCallsSuperFinalizeCheck::isFinalize)) {
+          return true;
         }
         superClassType = currentClass.superClass();
       }
