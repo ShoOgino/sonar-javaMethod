@@ -1,15 +1,14 @@
-  static boolean isMutable(@Nullable ExpressionTree initializer, Type type) {
+  static boolean isMutable(@Nullable ExpressionTree initializer, Symbol symbol) {
+    Type type = symbol.type();
     if (initializer == null) {
       return ALWAYS_MUTABLE_TYPES.stream().anyMatch(type::isSubtypeOf);
     }
+    if (symbol.isFinal() && isEmptyArray(initializer)) {
+      return false;
+    }
     ExpressionTree expression = ExpressionsHelper.skipParentheses(initializer);
     if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
-      MethodInvocationTree mit = (MethodInvocationTree) expression;
-      if (isAcceptedTypeOrUnmodifiableMethodCall(mit)) {
-        return false;
-      } else if (ARRAYS_AS_LIST.matches(mit)) {
-        return !mit.arguments().isEmpty();
-      }
+      return returnValueIsMutable((MethodInvocationTree) expression);
     } else if (expression.is(Tree.Kind.NEW_CLASS)) {
       return !isAcceptedType(expression.symbolType(), ACCEPTED_NEW_TYPES);
     }
