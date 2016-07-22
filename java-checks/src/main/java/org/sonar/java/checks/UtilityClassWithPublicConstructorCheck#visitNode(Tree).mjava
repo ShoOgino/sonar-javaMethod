@@ -1,17 +1,18 @@
   @Override
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
-    if (!anonymousClass(classTree) && !extendsAnotherClass(classTree) && hasOnlyStaticMembers(classTree)) {
-      boolean hasImplicitPublicConstructor = true;
-      for (MethodTree explicitConstructor : getExplicitConstructors(classTree)) {
-        hasImplicitPublicConstructor = false;
-        if (isPublicConstructor(explicitConstructor)) {
-          reportIssue(explicitConstructor.simpleName(), "Hide this public constructor.");
-        }
+    if (!hasSemantic() || anonymousClass(classTree) || extendsAnotherClassOrImplementsSerializable(classTree) || !hasOnlyStaticMembers(classTree)) {
+      return;
+    }
+    boolean hasImplicitPublicConstructor = true;
+    for (MethodTree explicitConstructor : getExplicitConstructors(classTree)) {
+      hasImplicitPublicConstructor = false;
+      if (isPublicConstructor(explicitConstructor)) {
+        reportIssue(explicitConstructor.simpleName(), "Hide this public constructor.");
       }
-      if (hasImplicitPublicConstructor) {
-        reportIssue(classTree.simpleName(), "Add a private constructor to hide the implicit public one.");
-      }
+    }
+    if (hasImplicitPublicConstructor) {
+      reportIssue(classTree.simpleName(), "Add a private constructor to hide the implicit public one.");
     }
   }
 
