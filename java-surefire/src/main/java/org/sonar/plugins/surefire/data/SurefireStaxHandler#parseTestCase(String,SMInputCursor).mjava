@@ -1,0 +1,10 @@
+  private void parseTestCase(String testSuiteClassName, SMInputCursor testCase) throws XMLStreamException {
+    for (SMEvent event = testCase.getNext(); event != null; event = testCase.getNext()) {
+      if (event.compareTo(SMEvent.START_ELEMENT) == 0) {
+        String testClassName = getClassname(testCase, testSuiteClassName);
+        UnitTestClassReport classReport = index.index(testClassName);
+        parseTestCase(testCase, classReport);
+      }
+    }
+  }
+
