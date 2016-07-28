@@ -1,0 +1,25 @@
+  /**
+   * Subtraction must not be used for comparison of keys due to possibility of integer overflow,
+   * this for example will be the case for sequence below, which was generated using random number generator.
+   */
+  @Test
+  public void do_not_use_subtraction_for_comparison_of_keys() {
+    Key[] keys = {
+      new Key(2043979982, ""),
+      new Key(-36348207, ""),
+      new Key(-1864559204, ""),
+      new Key(-2018458363, ""),
+      new Key(-152409201, ""),
+      new Key(-1786252453, ""),
+      new Key(-1853960690, "")
+    };
+    AVLTree<Object, Object> t = AVLTree.create();
+    for (Key key : keys) {
+      t = t.add(key);
+    }
+    for (Key key : keys) {
+      assertThat(t.get(key)).as("found").isNotNull();
+      assertThat(t.remove(key)).as("removed").isNotSameAs(t);
+    }
+  }
+

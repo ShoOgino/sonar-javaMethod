@@ -4,17 +4,9 @@
         return true;
       }
       if (obj instanceof Node) {
-        Node other = (Node) obj;
-        int c = 0;
-        for (Iterator<Map.Entry> iter = entriesIterator(); iter.hasNext();) {
-          Map.Entry next = iter.next();
-          Object otherValue = other.get(next.getKey());
-          if (otherValue == null || !Objects.equals(next.getValue(), otherValue)) {
-            return false;
-          }
-          c++;
-        }
-        return c == Iterators.size(other.entriesIterator());
+        final Node other = (Node) obj;
+        return this.hashCode() == other.hashCode()
+          && Equals.compute(this, other);
       }
       return false;
     }

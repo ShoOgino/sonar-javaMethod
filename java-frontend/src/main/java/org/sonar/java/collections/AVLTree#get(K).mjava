@@ -3,12 +3,14 @@
   @Override
   public V get(K key) {
     Preconditions.checkNotNull(key);
+    final int h = key.hashCode();
     AVLTree t = this;
     while (!t.isEmpty()) {
-      int c = KEY_COMPARATOR.compare(key, t.key());
-      if (c == 0) {
-        return (V) t.value();
-      } else if (c < 0) {
+      final int c = t.key().hashCode();
+      if (h == c) {
+        t = searchInBucket(key, t);
+        return t == null ? null : (V) t.value();
+      } else if (h < c) {
         t = t.left();
       } else {
         t = t.right();

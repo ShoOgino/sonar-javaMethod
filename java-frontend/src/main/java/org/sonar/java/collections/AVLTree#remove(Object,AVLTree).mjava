@@ -2,21 +2,33 @@
     if (t.isEmpty()) {
       return t;
     }
-    int result = KEY_COMPARATOR.compare(key, t.key());
-    if (result == 0) {
-      return combineTrees(t.left(), t.right());
-    } else if (result < 0) {
+    final int h = key.hashCode();
+    final int c = t.key().hashCode();
+    if (h == c) {
+      final AVLTree nextInBucket = t.nextInBucket();
+      if (key.equals(t.key())) {
+        if (nextInBucket != null) {
+          return createNode(t.left(), nextInBucket.key(), nextInBucket.value(), nextInBucket.nextInBucket(), t.right());
+        }
+        return combineTrees(t.left(), t.right());
+      }
+      final AVLTree nodeToRemove = searchInBucket(key, nextInBucket);
+      if (nodeToRemove == null) {
+        return t;
+      }
+      return createNode(t.left(), t.key(), t.value(), removeFromBucket(nextInBucket, nodeToRemove), t.right());
+    } else if (h < c) {
       AVLTree left = remove(key, t.left());
       if (left == t.left()) {
         return t;
       }
-      return balance(left, t.key(), t.value(), t.right());
+      return balance(left, t, t.right());
     } else {
       AVLTree right = remove(key, t.right());
       if (right == t.right()) {
         return t;
       }
-      return balance(t.left(), t.key(), t.value(), right);
+      return balance(t.left(), t, right);
     }
   }
 

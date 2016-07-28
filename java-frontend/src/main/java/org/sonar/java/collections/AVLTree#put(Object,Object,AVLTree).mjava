@@ -1,25 +1,34 @@
   private static AVLTree put(Object key, Object value, AVLTree t) {
     if (t.isEmpty()) {
-      return createNode(t, key, value, t);
+      return createNode(t, key, value, null, t);
     }
-    int result = KEY_COMPARATOR.compare(key, t.key());
-    if (result == 0) {
-      if (value.equals(t.value())) {
+    final int h = key.hashCode();
+    final int c = t.key().hashCode();
+    if (h == c) {
+      final AVLTree nextInBucket = t.nextInBucket();
+      if (key.equals(t.key())) {
+        if (value.equals(t.value())) {
+          return t;
+        }
+        return createNode(t.left(), key, value, nextInBucket, t.right());
+      }
+      final AVLTree nodeToReplace = searchInBucket(key, nextInBucket);
+      if (nodeToReplace != null && value.equals(nodeToReplace.value())) {
         return t;
       }
-      return createNode(t.left(), key, value, t.right());
-    } else if (result < 0) {
+      return createNode(t.left(), key, value, createBucket(t.key(), t.value(), removeFromBucket(nextInBucket, nodeToReplace)), t.right());
+    } else if (h < c) {
       AVLTree left = put(key, value, t.left());
       if (left == t.left()) {
         return t;
       }
-      return balance(left, t.key(), t.value(), t.right());
+      return balance(left, t, t.right());
     } else {
       AVLTree right = put(key, value, t.right());
       if (right == t.right()) {
         return t;
       }
-      return balance(t.left(), t.key(), t.value(), right);
+      return balance(t.left(), t, right);
     }
   }
 

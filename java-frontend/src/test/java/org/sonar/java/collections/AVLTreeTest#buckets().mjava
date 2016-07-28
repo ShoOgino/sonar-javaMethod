@@ -1,0 +1,81 @@
+  @Test
+  public void buckets() {
+    Object k1 = new Key(42, "k1");
+    Object k2 = new Key(42, "k2");
+    Object k3 = new Key(42, "k3");
+    AVLTree<Object, Object> t = AVLTree.create()
+      .put(k1, "v1")
+      .put(k2, "v2");
+
+    assertThat(t.toString())
+      .as("should create bucket")
+      .isEqualTo(" k2->v2 k1->v1");
+
+    AVLTree<Object, Object> t2 = AVLTree.create()
+      .put(k2, "v2")
+      .put(k1, "v1");
+    assertThat(t2.toString())
+      .as("toString depends on order of operations")
+      .isEqualTo(" k1->v1 k2->v2");
+
+    assertThat(t.equals(t2))
+      .as("should compare buckets")
+      .isTrue();
+    assertThat(t2.equals(t))
+      .as("should compare buckets")
+      .isTrue();
+
+    assertThat(t.hashCode())
+      .isEqualTo(((31 * k1.hashCode()) ^ "v1".hashCode()) + ((31 * k2.hashCode()) ^ "v2".hashCode()));
+    assertThat(t2.hashCode())
+      .as("hashCode doesn't depend on order of operations")
+      .isEqualTo(t.hashCode());
+
+    assertThat(t.get(k1))
+      .isEqualTo("v1");
+    assertThat(t.get(k2))
+      .isEqualTo("v2");
+    assertThat(t.get(k3))
+      .as("not such key")
+      .isNull();
+
+    assertThat(t.put(k2, "new v2").toString())
+      .as("should replace head of bucket")
+      .isEqualTo(" k2->new v2 k1->v1");
+    assertThat(t.put(k1, "new v1").toString())
+      .as("should replace element of bucket")
+      .isEqualTo(" k1->new v1 k2->v2");
+    assertThat(t.put(k1, "v1"))
+      .as("should not change")
+      .isSameAs(t);
+    assertThat(t.put(k2, "v2"))
+      .as("should not change")
+      .isSameAs(t);
+    assertThat(t.put(k3, "v3").toString())
+      .as("should add to bucket")
+      .isEqualTo(" k3->v3 k2->v2 k1->v1");
+
+    assertThat(t.remove(k2).toString())
+      .as("should remove head of bucket")
+      .isEqualTo(" k1->v1");
+    assertThat(t.remove(k1).toString())
+      .as("should remove element of bucket")
+      .isEqualTo(" k2->v2");
+    assertThat(t.remove(k1).remove(k2).toString())
+      .as("should remove bucket")
+      .isEqualTo("");
+    assertThat(t.remove(k3))
+      .as("should not change")
+      .isSameAs(t);
+
+    HashMap<Object, Object> biConsumer = new HashMap<>();
+    t.forEach((k, v) -> assertThat(biConsumer.put(k, v)).as("unique key-value").isNull());
+    assertThat(biConsumer)
+      .isEqualTo(ImmutableMap.of(k1, "v1", k2, "v2"));
+
+    HashSet<Object> consumer = new HashSet<>();
+    t.forEach(k -> assertThat(consumer.add(k)).as("unique key").isTrue());
+    assertThat(consumer)
+      .containsOnly(k1, k2);
+  }
+

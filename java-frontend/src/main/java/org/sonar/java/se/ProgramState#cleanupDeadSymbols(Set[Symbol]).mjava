@@ -1,24 +1,25 @@
   public ProgramState cleanupDeadSymbols(Set<Symbol> liveVariables) {
-    PMap<Symbol, SymbolicValue> newValues = values;
-    PMap<SymbolicValue, Integer> newReferences = references;
-    PMap<SymbolicValue, Constraint> newConstraints = constraints;
-    boolean newProgramState = false;
-    for (Iterator<Map.Entry<Symbol, SymbolicValue>> iter = newValues.entriesIterator(); iter.hasNext();) {
-      Map.Entry<Symbol, SymbolicValue> next = iter.next();
-      Symbol symbol = next.getKey();
-      if (isLocalVariable(symbol) && !liveVariables.contains(symbol)) {
-        if (!newProgramState) {
+    class CleanAction implements BiConsumer<Symbol, SymbolicValue> {
+      boolean newProgramState = false;
+      PMap<Symbol, SymbolicValue> newValues = values;
+      PMap<SymbolicValue, Integer> newReferences = references;
+      PMap<SymbolicValue, Constraint> newConstraints = constraints;
+
+      @Override
+      public void accept(Symbol symbol, SymbolicValue symbolicValue) {
+        if (isLocalVariable(symbol) && !liveVariables.contains(symbol)) {
           newProgramState = true;
-        }
-        SymbolicValue symbolicValue = next.getValue();
-        newValues = newValues.remove(symbol);
-        newReferences = decreaseReference(newReferences, symbolicValue);
-        if (!isReachable(symbolicValue, newReferences) && isDisposable(symbolicValue, newConstraints.get(symbolicValue)) && !inStack(stack, symbolicValue)) {
-          newConstraints = newConstraints.remove(symbolicValue);
-          newReferences = newReferences.remove(symbolicValue);
+          newValues = newValues.remove(symbol);
+          newReferences = decreaseReference(newReferences, symbolicValue);
+          if (!isReachable(symbolicValue, newReferences) && isDisposable(symbolicValue, newConstraints.get(symbolicValue)) && !inStack(stack, symbolicValue)) {
+            newConstraints = newConstraints.remove(symbolicValue);
+            newReferences = newReferences.remove(symbolicValue);
+          }
         }
       }
     }
-    return newProgramState ? new ProgramState(newValues, newReferences, newConstraints, visitedPoints, stack) : this;
+    CleanAction cleanAction = new CleanAction();
+    values.forEach(cleanAction);
+    return cleanAction.newProgramState ? new ProgramState(cleanAction.newValues, cleanAction.newReferences, cleanAction.newConstraints, visitedPoints, stack) : this;
   }
 

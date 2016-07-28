@@ -1,0 +1,19 @@
+  @Test
+  public void balancing_should_preserve_buckets() {
+    Object k1 = new Key(1, "k1");
+    Object k2 = new Key(2, "k2");
+    Object k3 = new Key(3, "k3");
+    Object k4 = new Key(4, "k4");
+    AVLTree<Object, Object> t = AVLTree.create()
+      .put(k1, "v1")
+      .put(k2, "v2")
+      .put(k3, "v3");
+
+    Object k1_1 = new Key(1, "k1_1");
+    t = t.put(k1_1, "v1_1");
+
+    t = t.put(k4, "v4");
+    assertThat(t.height()).as("height after balancing").isEqualTo(3);
+    assertThat(t.get(k1_1)).isEqualTo("v1_1");
+  }
+

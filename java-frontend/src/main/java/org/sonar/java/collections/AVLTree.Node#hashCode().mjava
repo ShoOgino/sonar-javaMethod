@@ -1,9 +1,8 @@
     @Override
     public int hashCode() {
       if (hashCode == 0) {
-        Hasher hasher = new Hasher();
-        forEach(hasher);
-        hashCode = hasher.result;
+        // the key is multiplied by 31 to avoid K ^ V == 0 when K == V in case of set
+        this.hashCode = left.hashCode() + ((31 * key.hashCode()) ^ value.hashCode()) + right.hashCode() + (nextInBucket == null ? 0 : nextInBucket.hashCode());
       }
       return hashCode;
     }
