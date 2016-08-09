@@ -1,0 +1,17 @@
+  private void learnIdentifierNullConstraints(IdentifierTree tree, SymbolicValue sv) {
+    Tree declaration = tree.symbol().declaration();
+    if (!isFinalField(tree.symbol()) || declaration == null) {
+      return;
+    }
+    ExpressionTree initializer = ((VariableTree) declaration).initializer();
+    if (initializer == null) {
+      return;
+    }
+    // only check final field with an initializer
+    if (initializer.is(Tree.Kind.NULL_LITERAL)) {
+      programState = programState.addConstraint(sv, ObjectConstraint.nullConstraint(initializer));
+    } else if (initializer.is(Tree.Kind.NEW_CLASS) || initializer.is(Tree.Kind.NEW_ARRAY)) {
+      programState = programState.addConstraint(sv, ObjectConstraint.NOT_NULL);
+    }
+  }
+
