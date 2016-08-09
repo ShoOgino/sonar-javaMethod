@@ -1,0 +1,13 @@
+  private static boolean isSerializable(Type type) {
+    if (type.isPrimitive()) {
+      return true;
+    }
+    if (isSerializableArray(type)) {
+      return true;
+    }
+    if (isParametrized(type)) {
+      return isSerializableParametrized((ParametrizedTypeJavaType) type);
+    }
+    return type.isSubtypeOf("java.io.Serializable");
+  }
+

@@ -2,8 +2,9 @@
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree argument = mit.arguments().get(1);
     Type type = argument.symbolType();
-    if (!type.isPrimitive() && !type.isSubtypeOf("java.io.Serializable")) {
-      reportIssue(argument, "Make \"" + type + "\" serializable or don't store it in the session.");
+    if (!isSerializable(type)) {
+      String andParameters = isParametrized(type) ? " and its parameters" : "";
+      reportIssue(argument, "Make \"" + type + "\"" + andParameters + " serializable or don't store it in the session.");
     }
   }
 
