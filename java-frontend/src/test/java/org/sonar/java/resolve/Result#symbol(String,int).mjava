@@ -1,11 +1,11 @@
   public JavaSymbol symbol(String name, int line) {
     Symbol result = null;
-    for (Symbol symbol : semanticModel.getSymbolsTree().values()) {
-      if (name.equals(symbol.name()) && ((JavaTree) semanticModel.getTree(symbol)).getLine() == line) {
+    for (Map.Entry<Tree, Symbol> entry : semanticModel.getSymbolsTree().entrySet()) {
+      if (name.equals(entry.getValue().name()) && ((JavaTree) entry.getKey()).getLine() == line) {
         if (result != null) {
           throw new IllegalArgumentException("Ambiguous coordinates of symbol");
         }
-        result = symbol;
+        result = entry.getValue();
       }
     }
     if (result == null) {
