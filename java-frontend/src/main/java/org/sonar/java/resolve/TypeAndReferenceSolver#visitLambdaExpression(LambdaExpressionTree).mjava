@@ -3,7 +3,8 @@
     LambdaExpressionTreeImpl lambdaExpressionTree = (LambdaExpressionTreeImpl) tree;
     if (lambdaExpressionTree.isTypeSet()) {
       // type should be tied to a SAM interface
-      List<JavaType> samMethodArgs = resolve.findSamMethodArgs(lambdaExpressionTree.symbolType());
+      JavaType lambdaType = (JavaType) lambdaExpressionTree.symbolType();
+      List<JavaType> samMethodArgs = resolve.findSamMethodArgs(lambdaType);
       for (int i = 0; i < samMethodArgs.size(); i++) {
         VariableTree param = lambdaExpressionTree.parameters().get(i);
         if (param.type().is(Tree.Kind.INFERED_TYPE)) {
@@ -17,6 +18,10 @@
         }
       }
       super.visitLambdaExpression(tree);
+      if(lambdaType.isUnknown() || lambdaType.isTagged(JavaType.DEFERRED)) {
+        return;
+      }
+      refineLambdaType(lambdaExpressionTree, lambdaType);
     } else {
       registerType(tree, symbols.deferedType(lambdaExpressionTree));
     }
