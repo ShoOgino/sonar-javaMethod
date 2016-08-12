@@ -1,0 +1,13 @@
+  private void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
+    String newFormatString = cleanupDoubleQuote(formatString);
+    Set<Integer> indexes = getMessageFormatIndexes(newFormatString);
+    if (checkEmptyParams(mit, indexes)
+      || checkArgumentNumber(mit, indexes.size(), args.size())
+      || checkUnbalancedQuotes(mit, newFormatString)
+      || checkUnbalancedBraces(mit, newFormatString)) {
+      return;
+    }
+    checkToStringInvocation(args);
+    verifyParameters(mit, args, indexes);
+  }
+

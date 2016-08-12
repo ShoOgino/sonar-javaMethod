@@ -1,0 +1,15 @@
+  private boolean checkUnbalancedQuotes(MethodInvocationTree mit, String formatString) {
+    String withoutParam = MESSAGE_FORMAT_PATTERN.matcher(formatString).replaceAll("");
+    int numberQuote = 0;
+    for (int i = 0; i < withoutParam.length(); ++i) {
+      if (withoutParam.charAt(i) == '\'') {
+        numberQuote++;
+      }
+    }
+    boolean unbalancedQuotes = (numberQuote % 2) != 0;
+    if (unbalancedQuotes) {
+      reportIssue(mit.arguments().get(0), "Single quote \"'\" must be escaped.");
+    }
+    return unbalancedQuotes;
+  }
+
