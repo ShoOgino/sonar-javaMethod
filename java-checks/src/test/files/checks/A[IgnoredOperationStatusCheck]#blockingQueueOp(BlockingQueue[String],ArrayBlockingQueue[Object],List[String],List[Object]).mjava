@@ -1,0 +1,13 @@
+  boolean blockingQueueOp(BlockingQueue<String> b, ArrayBlockingQueue<Object> a, List<String> l, List<Object> lo) {
+    a.remove("hello"); // Noncompliant
+    b.remove(); // Noncompliant {{Do something with the "String" value returned by "remove".}}
+    b.remove(new Object()); // Noncompliant
+
+    b.drainTo(l); // Noncompliant
+    a.drainTo(lo, 42); // Noncompliant
+
+    a.offer(new Object()); // Noncompliant
+    b.offer("hello", 42L, TimeUnit.SECONDS); // Noncompliant
+    return a.offer(new Object()); // Compliant
+  }
+

@@ -1,0 +1,18 @@
+  boolean fileOp(File f) {
+    f.delete(); // Noncompliant [[sc=5;ec=16]] {{Do something with the "boolean" value returned by "delete".}}
+    boolean b1 = f.delete(); // Noncompliant [[sc=5;ec=29]] {{Do something with the "boolean" value returned by "delete".}}
+    boolean b2 = f.delete(); // Compliant
+    if (b2 || f.delete()) {} // Compliant
+
+    f.exists(); // Noncompliant
+    f.renameTo(new File("")); // Noncompliant
+    f.createNewFile(); // Noncompliant
+    f.mkdir(); // Noncompliant
+
+    f.canWrite(); // Noncompliant
+    f.isHidden(); // Noncompliant
+    f.setLastModified(Long.MAX_VALUE); // Noncompliant
+
+    return f.canExecute();
+  }
+

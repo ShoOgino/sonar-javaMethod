@@ -1,0 +1,10 @@
+  boolean conditionOp(Condition c) {
+    c.awaitNanos(Long.MAX_VALUE); // Noncompliant {{Do something with the "long" value returned by "awaitNanos".}}
+    if (c.await(42, TimeUnit.SECONDS)) { // Compliant
+      return true;
+    }
+    c.await(42, TimeUnit.DAYS); // Noncompliant
+    c.awaitUntil(new Date()); // Noncompliant
+    return false;
+  }
+

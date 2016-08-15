@@ -1,7 +1,30 @@
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
     return ImmutableList.of(
-      MethodMatcher.create().typeDefinition("java.io.File").name("delete"),
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.util.concurrent.locks.Lock")).name("tryLock"));
+      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.util.concurrent.locks.Lock")).name("tryLock"),
+
+      MethodMatcher.create().typeDefinition(FILE).name("delete"),
+      MethodMatcher.create().typeDefinition(FILE).name("exists"),
+      MethodMatcher.create().typeDefinition(FILE).name("createNewFile"),
+      MethodMatcher.create().typeDefinition(FILE).name("mkdir"),
+      MethodMatcher.create().typeDefinition(FILE).name("mkdirs"),
+      MethodMatcher.create().typeDefinition(FILE).name("renameTo").addParameter(FILE),
+      MethodMatcher.create().typeDefinition(FILE).name(NameCriteria.startsWith("can")),
+      MethodMatcher.create().typeDefinition(FILE).name(NameCriteria.startsWith("is")),
+      MethodMatcher.create().typeDefinition(FILE).name(NameCriteria.startsWith("set")).withNoParameterConstraint(),
+
+      MethodMatcher.create().callSite(TypeCriteria.subtypeOf("java.util.Iterator")).name("hasNext"),
+      MethodMatcher.create().callSite(TypeCriteria.subtypeOf("java.util.Enumeration")).name("hasMoreElements"),
+
+      MethodMatcher.create().callSite(SUBTYPE_OF_CONDITION).name("await").addParameter("long").addParameter("java.util.concurrent.TimeUnit"),
+      MethodMatcher.create().callSite(SUBTYPE_OF_CONDITION).name("awaitUntil").addParameter("java.util.Date"),
+      MethodMatcher.create().callSite(SUBTYPE_OF_CONDITION).name("awaitNanos").addParameter("long"),
+
+      MethodMatcher.create().typeDefinition("java.util.concurrent.CountDownLatch").name("await").addParameter("long").addParameter("java.util.concurrent.TimeUnit"),
+      MethodMatcher.create().typeDefinition("java.util.concurrent.Semaphore").name("tryAcquire").withNoParameterConstraint(),
+
+      MethodMatcher.create().callSite(SUBTYPE_OF_BLOCKING_QUEUE).name("offer").withNoParameterConstraint(),
+      MethodMatcher.create().callSite(SUBTYPE_OF_BLOCKING_QUEUE).name("drainTo").withNoParameterConstraint(),
+      MethodMatcher.create().callSite(SUBTYPE_OF_BLOCKING_QUEUE).name("remove").withNoParameterConstraint());
   }
 
