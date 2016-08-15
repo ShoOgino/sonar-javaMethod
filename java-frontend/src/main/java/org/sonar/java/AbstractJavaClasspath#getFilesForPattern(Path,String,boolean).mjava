@@ -1,0 +1,49 @@
+  private static Set<File> getFilesForPattern(Path baseDir, String pathPattern, boolean libraryProperty) {
+
+    try {
+      Path filePath = resolvePath(baseDir, pathPattern);
+
+      if ((pathPattern.endsWith(".jar") || pathPattern.endsWith(".zip")) && Files.isRegularFile(filePath)) {
+        return Collections.singleton(filePath.toFile());
+      }
+      if (Files.isDirectory(filePath)) {
+        return getMatchesInDir(filePath, libraryProperty);
+      }
+    } catch (IOException e) {
+      // continue
+    }
+
+    String dirPath;
+    String fileNamePattern;
+
+    int wildcardIndex = pathPattern.indexOf('*');
+    if (wildcardIndex >= 0) {
+      dirPath = pathPattern.substring(0, wildcardIndex);
+    } else {
+      dirPath = pathPattern;
+    }
+
+    int lastPathSeparator = Math.max(dirPath.lastIndexOf('/'), dirPath.lastIndexOf('\\'));
+    if (lastPathSeparator == -1) {
+      dirPath = ".";
+      fileNamePattern = pathPattern;
+    } else {
+      dirPath = pathPattern.substring(0, lastPathSeparator);
+      fileNamePattern = pathPattern.substring(lastPathSeparator + 1);
+    }
+
+    Path dir = resolvePath(baseDir, dirPath);
+    if (!Files.isDirectory(dir)) {
+      return Collections.emptySet();
+    }
+    try {
+      if (libraryProperty) {
+        return getMatchingLibraries(fileNamePattern, dir);
+      } else {
+        return getMatchingDirs(fileNamePattern, dir);
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+

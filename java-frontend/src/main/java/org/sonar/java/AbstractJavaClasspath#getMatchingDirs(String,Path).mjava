@@ -1,0 +1,11 @@
+  private static Set<File> getMatchingDirs(String pattern, Path dir) throws IOException {
+    if (!StringUtils.isEmpty(pattern)) {
+      // find all dirs and subdirs that match the pattern
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + dir + File.separator + FilenameUtils.separatorsToSystem(pattern));
+      return new DirFinder().find(dir, matcher);
+    } else {
+      // no pattern, so we just return dir
+      return Collections.singleton(dir.toFile());
+    }
+  }
+

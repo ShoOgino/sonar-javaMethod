@@ -1,0 +1,16 @@
+  private static Set<File> getMatchesInDir(Path dirPath, boolean isLibraryProperty) throws IOException {
+    if (isLibraryProperty) {
+      for (Path end : STANDARD_CLASSES_DIRS) {
+        if (dirPath.endsWith(end)) {
+          // don't scan these, as they should only contain .classes with paths starting from the root
+          return Collections.singleton(dirPath.toFile());
+        }
+      }
+      Set<File> matches = new LibraryFinder().find(dirPath, p -> true);
+      matches.add(dirPath.toFile());
+      return matches;
+    } else {
+      return Collections.singleton(dirPath.toFile());
+    }
+  }
+

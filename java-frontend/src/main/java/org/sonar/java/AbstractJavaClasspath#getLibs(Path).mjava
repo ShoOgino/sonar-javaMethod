@@ -1,0 +1,13 @@
+  private static List<File> getLibs(Path dir) throws IOException {
+    Filter<Path> filter = path -> {
+      String name = path.getFileName().toString();
+      return name.endsWith(".jar") || name.endsWith(".zip");
+    };
+
+    List<File> files = new ArrayList<>();
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
+      stream.forEach(p -> files.add(p.toFile()));
+    }
+    return files;
+  }
+
