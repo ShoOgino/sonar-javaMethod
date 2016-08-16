@@ -1,22 +1,15 @@
   private void refineLambdaType(LambdaExpressionTreeImpl lambdaExpressionTree, JavaType lambdaType) {
-    JavaType samReturnType = (JavaType) getSamMethod(lambdaType).returnType().type();
+    JavaSymbol.MethodJavaSymbol samMethod = getSamMethod(lambdaType);
+    if(samMethod == null) {
+      return;
+    }
+    JavaType samReturnType = (JavaType) samMethod.returnType().type();
     JavaType capturedReturnType = resolve.resolveTypeSubstitution(samReturnType, lambdaType);
     if (lambdaExpressionTree.body().is(Tree.Kind.BLOCK) || capturedReturnType.is("void")) {
       // TODO compute return type for lambda with block and return statements
       return;
     }
     JavaType refinedReturnType = (JavaType) ((AbstractTypedTree) lambdaExpressionTree.body()).symbolType();
-    if (refinedReturnType != capturedReturnType && lambdaType.isParameterized()) {
-      // found a lambda return type different from the one infered : update infered type
-      TypeSubstitution typeSubstitution = ((ParametrizedTypeJavaType) lambdaType).typeSubstitution;
-      for (Map.Entry<TypeVariableJavaType, JavaType> entry : typeSubstitution.substitutionEntries()) {
-        if (entry.getValue() == capturedReturnType) {
-          TypeSubstitution refinedSubstitution = new TypeSubstitution(typeSubstitution).add(entry.getKey(), refinedReturnType);
-          JavaType refinedLambdaType = parametrizedTypeCache.getParametrizedTypeType(lambdaType.symbol, refinedSubstitution);
-          lambdaExpressionTree.setType(refinedLambdaType);
-          break;
-        }
-      }
-    }
+    refineType(lambdaExpressionTree, lambdaType, capturedReturnType, refinedReturnType);
   }
 

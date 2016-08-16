@@ -1,9 +1,16 @@
+  @CheckForNull
   private static JavaSymbol.MethodJavaSymbol getSamMethod(JavaType lambdaType) {
     for (Symbol member : lambdaType.symbol().memberSymbols()) {
       if (member.isMethodSymbol() && member.isAbstract()) {
         return (JavaSymbol.MethodJavaSymbol) member;
       }
     }
-    throw new IllegalStateException("Method not found in SAM Interface : "+lambdaType.fullyQualifiedName());
+    for (ClassJavaType type : lambdaType.symbol.superTypes()) {
+      JavaSymbol.MethodJavaSymbol samMethod = getSamMethod(type);
+      if (samMethod != null) {
+        return samMethod;
+      }
+    }
+    return null;
   }
 

@@ -11,8 +11,23 @@
       if("new".equals(methodReferenceTree.method().name())) {
         resolution = resolve.findMethod(methodEnv, getType(methodReferenceTree.expression()), "<init>", samMethodArgs);
         associateReference(methodReferenceTree.method(), resolution.symbol());
-      } else {
-        resolveMethodSymbol(methodReferenceTree.method(), methodEnv, samMethodArgs, ImmutableList.<JavaType>of());
+        return;
+      }
+      resolveMethodSymbol(methodReferenceTree.method(), methodEnv, samMethodArgs, ImmutableList.<JavaType>of());
+      JavaType methodRefType = (JavaType) methodRefTree.symbolType();
+      if (methodRefType.isUnknown() || methodRefType.isTagged(JavaType.DEFERRED)) {
+        return;
+      }
+      JavaSymbol.MethodJavaSymbol samMethod = getSamMethod(methodRefType);
+      if(samMethod == null) {
+        return;
+      }
+      JavaType samReturnType = (JavaType) samMethod.returnType().type();
+      JavaType methodType = (JavaType) methodRefTree.method().symbolType();
+      if(methodType.isTagged(JavaType.METHOD)) {
+        JavaType refinedReturnType = ((MethodJavaType) methodType).resultType;
+        JavaType capturedReturnType = resolve.resolveTypeSubstitution(samReturnType, methodRefType);
+        refineType(methodRefTree, methodRefType, capturedReturnType, refinedReturnType);
       }
     } else {
       registerType(methodRefTree, symbols.deferedType(methodRefTree));
