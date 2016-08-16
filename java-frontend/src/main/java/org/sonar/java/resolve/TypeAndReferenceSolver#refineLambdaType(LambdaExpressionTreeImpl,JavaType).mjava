@@ -5,11 +5,19 @@
     }
     JavaType samReturnType = (JavaType) samMethod.returnType().type();
     JavaType capturedReturnType = resolve.resolveTypeSubstitution(samReturnType, lambdaType);
-    if (lambdaExpressionTree.body().is(Tree.Kind.BLOCK) || capturedReturnType.is("void")) {
-      // TODO compute return type for lambda with block and return statements
+    if (capturedReturnType.is("void") || !lambdaType.isParameterized()) {
       return;
     }
-    JavaType refinedReturnType = (JavaType) ((AbstractTypedTree) lambdaExpressionTree.body()).symbolType();
+    JavaType refinedReturnType = capturedReturnType;
+    if (lambdaExpressionTree.body().is(Tree.Kind.BLOCK)) {
+      LambdaBlockReturnVisitor lambdaBlockReturnVisitor = new LambdaBlockReturnVisitor();
+      lambdaExpressionTree.body().accept(lambdaBlockReturnVisitor);
+      if(!lambdaBlockReturnVisitor.types.isEmpty()) {
+        refinedReturnType = (JavaType) resolve.leastUpperBound(lambdaBlockReturnVisitor.types);
+      }
+    } else {
+      refinedReturnType = (JavaType) ((AbstractTypedTree) lambdaExpressionTree.body()).symbolType();
+    }
     refineType(lambdaExpressionTree, lambdaType, capturedReturnType, refinedReturnType);
   }
 
