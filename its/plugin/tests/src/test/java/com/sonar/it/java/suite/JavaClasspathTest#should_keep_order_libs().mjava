@@ -1,0 +1,19 @@
+  @Test
+  public void should_keep_order_libs() {
+    SonarScanner runner = ditProjectSonarRunner();
+    runner.setProperty("sonar.java.binaries", "target/classes");
+    runner.setProperty("sonar.java.libraries", guavaJarPath + "," + fakeGuavaJarPath);
+    runner.setProperty("sonar.verbose", "true");
+    ORCHESTRATOR.executeBuild(runner);
+    assertThat(getNumberOfViolations()).isEqualTo(2);
+    
+    ORCHESTRATOR.resetData();
+    
+    runner = ditProjectSonarRunner();
+    runner.setProperty("sonar.java.binaries", "target/classes");
+    runner.setProperty("sonar.java.libraries", fakeGuavaJarPath + "," + guavaJarPath);
+    runner.setProperty("sonar.verbose", "true");
+    ORCHESTRATOR.executeBuild(runner);
+    assertThat(getNumberOfViolations()).isEqualTo(1);
+  }
+
