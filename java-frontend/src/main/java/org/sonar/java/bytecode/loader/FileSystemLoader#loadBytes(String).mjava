@@ -1,14 +1,15 @@
   @Override
   public byte[] loadBytes(String name) {
-    if (baseDir == null) {
+    if (baseDirPath == null) {
       throw new IllegalStateException("Loader closed");
     }
-    File file = new File(baseDir, name);
-    if (!file.exists()) {
+    Path filePath = baseDirPath.resolve(name);
+    if (!Files.exists(baseDirPath)) {
       return new byte[0];
     }
-    try (InputStream is = new FileInputStream(file)) {
-      return IOUtils.toByteArray(is);
+
+    try {
+      return Files.readAllBytes(filePath);
     } catch (IOException e) {
       return new byte[0];
     }

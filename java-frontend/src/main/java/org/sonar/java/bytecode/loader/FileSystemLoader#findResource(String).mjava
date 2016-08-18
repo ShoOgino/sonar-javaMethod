@@ -1,12 +1,12 @@
   @Override
   public URL findResource(String name) {
-    if (baseDir == null) {
+    if (baseDirPath == null) {
       throw new IllegalStateException("Loader closed");
     }
-    File file = new File(baseDir, name);
-    if (file.exists() && file.isFile()) {
+    Path filePath = baseDirPath.resolve(name);
+    if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
       try {
-        return file.toURI().toURL();
+        return filePath.toUri().toURL();
       } catch (MalformedURLException e) {
         return null;
       }
