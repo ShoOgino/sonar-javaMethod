@@ -1,0 +1,17 @@
+  @Test
+  public void testLoadBytes() throws Exception {
+    File jar = new File("src/test/files/classpath/lib/oklog-1.0.1.aar");
+    AarLoader loader = new AarLoader(jar);
+
+    assertThat(loader.loadBytes("notfound")).isEmpty();
+
+    byte[] bytes = loader.loadBytes("com/github/simonpercic/oklog/BuildConfig.class");
+    assertThat(bytes).isNotEmpty();
+
+    loader.close();
+
+    thrown.expect(IllegalStateException.class);
+    thrown.expectMessage("zip file closed");
+    loader.loadBytes("com/github/simonpercic/oklog/BuildConfig.class");
+  }
+

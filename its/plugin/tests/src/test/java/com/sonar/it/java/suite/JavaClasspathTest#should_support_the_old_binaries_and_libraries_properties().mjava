@@ -1,9 +1,9 @@
   @Test
   public void should_support_the_old_binaries_and_libraries_properties() {
-    SonarScanner runner = ditProjectSonarRunner();
-    runner.setProperty("sonar.binaries", "target/classes");
-    runner.setProperty("sonar.libraries", guavaJarPath);
-    BuildResult buildResult = ORCHESTRATOR.executeBuildQuietly(runner);
+    SonarScanner scanner = ditProjectSonarScanner();
+    scanner.setProperty("sonar.binaries", "target/classes");
+    scanner.setProperty("sonar.libraries", guavaJarPath);
+    BuildResult buildResult = ORCHESTRATOR.executeBuildQuietly(scanner);
 
     assertThat(buildResult.getLogs()).contains("sonar.binaries and sonar.libraries are not supported since version 4.0 of sonar-java-plugin," +
       " please use sonar.java.binaries and sonar.java.libraries instead");

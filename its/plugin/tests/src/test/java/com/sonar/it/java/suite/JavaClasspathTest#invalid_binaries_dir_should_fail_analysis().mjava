@@ -1,8 +1,8 @@
   @Test
   public void invalid_binaries_dir_should_fail_analysis() {
-    SonarScanner runner = ditProjectSonarRunner();
-    runner.setProperty("sonar.java.binaries", "target/dummy__Dir");
-    BuildResult buildResult = ORCHESTRATOR.executeBuildQuietly(runner);
+    SonarScanner scanner = ditProjectSonarScanner();
+    scanner.setProperty("sonar.java.binaries", "target/dummy__Dir");
+    BuildResult buildResult = ORCHESTRATOR.executeBuildQuietly(scanner);
     assertThat(buildResult.getStatus()).isNotEqualTo(0);
     assertThat(buildResult.getLogs()).contains("No files nor directories matching 'target/dummy__Dir'");
   }
