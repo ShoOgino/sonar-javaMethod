@@ -1,18 +1,4 @@
   public List<JavaType> findSamMethodArgs(Type type) {
-    for (Symbol member : type.symbol().memberSymbols()) {
-      if(member.isMethodSymbol() && member.isAbstract()) {
-        JavaSymbol.MethodJavaSymbol target = (JavaSymbol.MethodJavaSymbol) member;
-        List<JavaType> argTypes = ((MethodJavaType) target.type).argTypes;
-        argTypes = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(argTypes, (JavaType) type);
-        return argTypes.stream().map(argType -> {
-          if (argType.isTagged(JavaType.WILDCARD)) {
-            // JLS8 9.9 Function types : this is approximated for ? extends X types (cf JLS)
-            return ((WildCardType) argType).bound;
-          }
-          return argType;
-        }).collect(Collectors.toList());
-      }
-    }
-    return new ArrayList<>();
+    return findSamMethodArgsRecursively(type).orElse(new ArrayList<>());
   }
 
