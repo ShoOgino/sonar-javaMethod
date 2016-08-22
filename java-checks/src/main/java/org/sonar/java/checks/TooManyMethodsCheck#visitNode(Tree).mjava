@@ -1,30 +1,32 @@
   @Override
   public void visitNode(Tree tree) {
-    List<Tree> count = new ArrayList<>();
+    if (!hasSemantic()) {
+      return;
+    }
     ClassTree classTree = (ClassTree) tree;
-    for (Tree member : classTree.members()) {
-      if (member.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR) && (countNonPublic || ((MethodTree) member).symbol().isPublic())) {
-        count.add(member);
-      }
-    }
-    if (count.size() > maximumMethodThreshold) {
-      List<JavaFileScannerContext.Location> secondary = new ArrayList<>();
-      for (Tree element : count) {
-        secondary.add(new JavaFileScannerContext.Location("Method + 1", element));
-      }
+    List<Tree> methods = classTree.members().stream()
+        .filter(member -> member.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR) && (countNonPublic || ((MethodTree) member).symbol().isPublic()))
+        .collect(Collectors.toList());
 
-      String classDescription;
-      if (classTree.simpleName() == null) {
-        classDescription = "Anonymous class \"" + ((NewClassTree) classTree.parent()).identifier().symbolType().name() + "\"";
-      } else {
-        classDescription = classTree.declarationKeyword().text() + " \"" + classTree.simpleName() + "\"";
-      }
-      reportIssue(
-        ExpressionsHelper.reportOnClassTree(classTree),
-        String.format("%s has %d%s methods, which is greater than the %d authorized. Split it into smaller classes.",
-          classDescription, count.size(), countNonPublic ? "" : " public", maximumMethodThreshold),
-        secondary,
-        null);
+    if(shouldNotReportIssue(classTree, methods)) {
+      return;
     }
+
+    List<JavaFileScannerContext.Location> secondary = methods.stream()
+      .map(element -> new JavaFileScannerContext.Location("Method + 1", element))
+      .collect(Collectors.toList());
+
+    String classDescription;
+    if (classTree.simpleName() == null) {
+      classDescription = "Anonymous class \"" + ((NewClassTree) classTree.parent()).identifier().symbolType().name() + "\"";
+    } else {
+      classDescription = classTree.declarationKeyword().text() + " \"" + classTree.simpleName() + "\"";
+    }
+    reportIssue(
+      ExpressionsHelper.reportOnClassTree(classTree),
+      String.format("%s has %d%s methods, which is greater than the %d authorized. Split it into smaller classes.",
+        classDescription, methods.size(), countNonPublic ? "" : " public", maximumMethodThreshold),
+      secondary,
+      null);
   }
 
