@@ -9,11 +9,8 @@
       } else {
         arguments = ((MethodInvocationTree) tree).arguments();
       }
-      return arguments.size() == lambdaTree.parameters().size() &&
-        IntStream.range(0, arguments.size()).allMatch(i -> {
-          List<IdentifierTree> usages = lambdaTree.parameters().get(i).symbol().usages();
-          return usages.size() == 1 && usages.get(0).equals(arguments.get(i));
-        });
+      List<VariableTree> parameters = lambdaTree.parameters();
+      return matchingParameters(parameters, arguments) || (arguments.isEmpty() && isNoArgMethodInvocationFromLambdaParam(tree, parameters));
     }
     return false;
   }

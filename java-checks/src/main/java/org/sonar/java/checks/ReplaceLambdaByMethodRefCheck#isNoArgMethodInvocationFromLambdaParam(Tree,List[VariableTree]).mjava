@@ -1,0 +1,12 @@
+  private static boolean isNoArgMethodInvocationFromLambdaParam(Tree tree, List<VariableTree> parameters) {
+    if (!tree.is(Tree.Kind.METHOD_INVOCATION) || parameters.size() != 1) {
+      return false;
+    }
+    ExpressionTree methodSelect = ((MethodInvocationTree) tree).methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      return expression.is(Tree.Kind.IDENTIFIER) && parameters.get(0).symbol().equals(((IdentifierTree) expression).symbol());
+    }
+    return false;
+  }
+

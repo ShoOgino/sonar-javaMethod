@@ -1,6 +1,6 @@
   @Override
   public void visitLambdaExpression(LambdaExpressionTree tree) {
-    if (isSingleMethodInvocationUsingLambdaParamAsArg(tree) || isBodyBlockInvokingMethod(tree)) {
+    if (isReplaceableSingleMethodInvocation(tree) || isBodyBlockInvokingMethod(tree)) {
       context.reportIssue(this, tree.arrowToken(), "Replace this lambda with a method reference." + context.getJavaVersion().java8CompatibilityMessage());
     }
     super.visitLambdaExpression(tree);

@@ -1,0 +1,8 @@
+  private static boolean matchingParameters(List<VariableTree> parameters, Arguments arguments) {
+    return arguments.size() == parameters.size() &&
+      IntStream.range(0, arguments.size()).allMatch(i -> {
+        List<IdentifierTree> usages = parameters.get(i).symbol().usages();
+        return usages.size() == 1 && usages.get(0).equals(arguments.get(i));
+      });
+  }
+
