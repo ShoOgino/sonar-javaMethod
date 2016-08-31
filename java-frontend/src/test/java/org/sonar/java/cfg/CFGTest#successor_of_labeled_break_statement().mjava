@@ -1,0 +1,40 @@
+  @Test
+  public void successor_of_labeled_break_statement() throws Exception {
+    CFG cfg = buildCFG("private static void test(long toRevision, boolean inverted, Object visitor) {\n" +
+      "\n" +
+      "    testBlock: {\n" +
+      "      if (inverted) \n" +
+      "        break testBlock;\n" +
+      "      test(0, false ? inverted : !inverted, visitor);\n" +
+      "    }\n" +
+      "  }");
+    CFGChecker cfgChecker = checker(
+      block(
+        element(Kind.IDENTIFIER, "inverted")
+      ).terminator(Kind.IF_STATEMENT)
+        .ifTrue(5)
+        .ifFalse(4),
+      terminator(Kind.BREAK_STATEMENT).successors(0),
+      block(
+        element(INT_LITERAL, 0),
+        element(Kind.BOOLEAN_LITERAL, "false")
+        ).terminator(Kind.CONDITIONAL_EXPRESSION)
+        .ifTrue(3)
+        .ifFalse(2),
+      block(
+        element(Kind.IDENTIFIER, "inverted")
+      ).successors(1),
+      block(
+        element(Kind.IDENTIFIER, "inverted"),
+        element(Kind.LOGICAL_COMPLEMENT)
+      ).successors(1),
+      block(
+        element(Kind.IDENTIFIER, "visitor"),
+        element(Kind.IDENTIFIER, "test"),
+        element(Kind.METHOD_INVOCATION)
+      ).successors(0)
+    );
+    cfgChecker.check(cfg);
+
+  }
+

@@ -3,19 +3,19 @@
     final CFG cfg = buildCFG("void fun() {int i = 0; while(i < 10) {i++; if(i == 5) continue; } }");
     final CFGChecker cfgChecker = checker(
       block(
-        element(Tree.Kind.INT_LITERAL, 0),
+        element(INT_LITERAL, 0),
         element(Tree.Kind.VARIABLE, "i")
         ).successors(3),
       block(
         element(Tree.Kind.IDENTIFIER, "i"),
-        element(Tree.Kind.INT_LITERAL, 10),
+        element(INT_LITERAL, 10),
         element(Tree.Kind.LESS_THAN)
         ).terminator(Tree.Kind.WHILE_STATEMENT).successors(0, 2),
       block(
         element(Tree.Kind.IDENTIFIER, "i"),
         element(Tree.Kind.POSTFIX_INCREMENT),
         element(Tree.Kind.IDENTIFIER, "i"),
-        element(Tree.Kind.INT_LITERAL, 5),
+        element(INT_LITERAL, 5),
         element(Tree.Kind.EQUAL_TO)
         ).terminator(Tree.Kind.IF_STATEMENT).successors(1, 3),
       terminator(Tree.Kind.CONTINUE_STATEMENT, 3));
