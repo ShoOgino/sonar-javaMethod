@@ -2,12 +2,13 @@
   public void should_create_sonar_way_profile() {
     ValidationMessages validation = ValidationMessages.create();
 
-    JavaSonarWayProfile profileDef = new JavaSonarWayProfile(ruleFinder());
+    JavaSonarWayProfile profileDef = new JavaSonarWayProfile(ruleFinder(false));
     RulesProfile profile = profileDef.createProfile(validation);
 
     assertThat(profile.getLanguage()).isEqualTo(Java.KEY);
     List<ActiveRule> activeRules = profile.getActiveRulesByRepository(CheckList.REPOSITORY_KEY);
-    assertThat(activeRules.size()).as("Expected number of rules in profile").isGreaterThanOrEqualTo(260);
+    assertThat(profile.getActiveRulesByRepository("common-java")).hasSize(1);
+    assertThat(activeRules.size()).as("Expected number of rules in profile").isGreaterThanOrEqualTo(270);
     assertThat(profile.getName()).isEqualTo("Sonar way");
     Set<String> keys = new HashSet<>();
     for (ActiveRule activeRule : activeRules) {
