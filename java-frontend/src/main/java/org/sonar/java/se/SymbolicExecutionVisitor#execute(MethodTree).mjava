@@ -1,0 +1,17 @@
+  @CheckForNull
+  public MethodBehavior execute(MethodTree methodTree) {
+    try {
+      MethodBehavior methodBehavior = behaviorCache.get(methodTree.symbol());
+      if(methodBehavior == null) {
+        methodBehavior = new MethodBehavior(methodTree.symbol());
+        behaviorCache.put(methodTree.symbol(), methodBehavior);
+        ExplodedGraphWalker walker = egwFactory.createWalker(this);
+        methodBehavior = walker.visitMethod(methodTree, methodBehavior);
+      }
+      return methodBehavior;
+    } catch (ExplodedGraphWalker.MaximumStepsReachedException | ExplodedGraphWalker.ExplodedGraphTooBigException | BinaryRelation.TransitiveRelationExceededException exception) {
+      LOG.debug("Could not complete symbolic execution: ", exception);
+    }
+    return null;
+  }
+

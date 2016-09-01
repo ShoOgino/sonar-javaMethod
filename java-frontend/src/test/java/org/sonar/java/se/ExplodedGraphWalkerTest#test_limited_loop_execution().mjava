@@ -1,10 +1,10 @@
   @Test
   public void test_limited_loop_execution() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCase.java", new SymbolicExecutionVisitor(Collections.<JavaFileScanner>emptyList()) {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCase.java", new SymbolicExecutionVisitor(Collections.emptyList()) {
       @Override
       public void visitNode(Tree tree) {
         try {
-          tree.accept(new ExplodedGraphWalker());
+          new ExplodedGraphWalker().visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
         } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
           fail("loop execution should be limited");
         }

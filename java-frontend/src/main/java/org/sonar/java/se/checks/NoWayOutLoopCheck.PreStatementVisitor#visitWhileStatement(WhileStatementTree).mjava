@@ -1,8 +1,8 @@
     @Override
     public void visitWhileStatement(WhileStatementTree tree) {
       if (isHardCodedTrue(tree.condition())) {
-        CFGLoop loopBlocks = loopStarts.get(tree);
-        if (loopBlocks.hasNoWayOut()) {
+        CFGLoop loopBlocks = contexts.peek().getLoop(tree);
+        if (loopBlocks != null && loopBlocks.hasNoWayOut()) {
           context.reportIssue(tree, NoWayOutLoopCheck.this, "Add an end condition to this loop.");
         }
       }

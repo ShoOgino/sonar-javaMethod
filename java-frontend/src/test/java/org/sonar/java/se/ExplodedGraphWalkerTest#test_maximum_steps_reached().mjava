@@ -1,10 +1,10 @@
   @Test
   public void test_maximum_steps_reached() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxSteps.java", new SymbolicExecutionVisitor(Collections.<JavaFileScanner>emptyList()) {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxSteps.java", new SymbolicExecutionVisitor(Collections.emptyList()) {
       @Override
       public void visitNode(Tree tree) {
         try {
-          tree.accept(new ExplodedGraphWalker());
+          new ExplodedGraphWalker().visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
           fail("Too many states were processed !");
         } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
           assertThat(exception.getMessage()).startsWith("reached limit of 16000 steps for method");

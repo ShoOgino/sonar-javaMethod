@@ -1,7 +1,9 @@
   @VisibleForTesting
   ExplodedGraphWalker() {
     alwaysTrueOrFalseChecker = new ConditionAlwaysTrueOrFalseCheck();
-    this.checkerDispatcher = new CheckerDispatcher(this, Lists.newArrayList(alwaysTrueOrFalseChecker, new NullDereferenceCheck(), new DivisionByZeroCheck(),
-      new UnclosedResourcesCheck(), new LocksNotUnlockedCheck(), new NonNullSetToNullCheck(), new NoWayOutLoopCheck()));
+    List<SECheck> checks = Lists.newArrayList(alwaysTrueOrFalseChecker, new NullDereferenceCheck(), new DivisionByZeroCheck(),
+      new UnclosedResourcesCheck(), new LocksNotUnlockedCheck(), new NonNullSetToNullCheck(), new NoWayOutLoopCheck());
+    this.checkerDispatcher = new CheckerDispatcher(this, checks);
+    symbolicExecutionVisitor = new SymbolicExecutionVisitor((List) checks);
   }
 

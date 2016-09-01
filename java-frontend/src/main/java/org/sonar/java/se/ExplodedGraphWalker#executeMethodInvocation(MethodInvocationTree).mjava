@@ -4,6 +4,16 @@
     ProgramState.Pop unstack = programState.unstackValue(mit.arguments().size() + 1);
     programState = unstack.state;
     logState(mit);
+
+    // get method behavior for method with known declaration (ie: within the same file)
+    Tree declaration = mit.symbol().declaration();
+    if(declaration != null) {
+      // (FIXME) nothing done of the invoked behavior
+      MethodBehavior methodInvokedBehavior = symbolicExecutionVisitor.execute((MethodTree) declaration);
+    }
+
+
+
     // Enqueue exceptional paths
     node.programPoint.block.exceptions().forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), programState, !b.isCatchBlock()));
     final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.values);

@@ -1,8 +1,8 @@
     @Override
     public void visitForStatement(ForStatementTree tree) {
-      CFGLoop loopBlocks = loopStarts.get(tree);
       if (tree.condition() == null) {
-        if (loopBlocks.hasNoWayOut()) {
+        CFGLoop loopBlocks = contexts.peek().getLoop(tree);
+        if (loopBlocks != null && loopBlocks.hasNoWayOut()) {
           context.reportIssue(tree, NoWayOutLoopCheck.this, "Add an end condition to this loop.");
         }
       } else if (isConditionUnreachable(tree)) {

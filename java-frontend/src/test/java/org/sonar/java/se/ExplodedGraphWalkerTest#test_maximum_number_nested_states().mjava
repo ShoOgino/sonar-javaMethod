@@ -1,10 +1,10 @@
   @Test
   public void test_maximum_number_nested_states() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxNestedStates.java", new SymbolicExecutionVisitor(Collections.<JavaFileScanner>emptyList()) {
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxNestedStates.java", new SymbolicExecutionVisitor(Collections.emptyList()) {
       @Override
       public void visitNode(Tree tree) {
         try {
-          tree.accept(new ExplodedGraphWalker());
+          new ExplodedGraphWalker().visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
           fail("Too many states were processed !");
         } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
           assertThat(exception.getMessage()).startsWith("reached maximum number of 10000 branched states");
