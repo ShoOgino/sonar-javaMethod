@@ -1,0 +1,21 @@
+  public void createYield(ProgramState programState) {
+    MethodYield yield = new MethodYield(parameters.size());
+
+    List<SymbolicValue> parameterSymbolicValues = new ArrayList<>(parameters.values());
+
+    for (int i = 0; i < yield.parametersConstraints.length; i++) {
+      yield.parametersConstraints[i] = programState.getConstraint(parameterSymbolicValues.get(i));
+    }
+
+    if (!isConstructor() && !isVoidMethod()) {
+      SymbolicValue resultSV = programState.peekValue();
+      // FIXME Handle exception path
+      if (resultSV != null) {
+        yield.resultIndex = parameterSymbolicValues.indexOf(resultSV);
+        yield.resultConstraint = programState.getConstraint(resultSV);
+      }
+    }
+
+    yields.add(yield);
+  }
+

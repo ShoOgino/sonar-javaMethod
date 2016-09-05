@@ -4,6 +4,7 @@
     for (final VariableTree variableTree : tree.parameters()) {
       // create
       final SymbolicValue sv = constraintManager.createSymbolicValue(variableTree);
+      methodBehavior.addParameter(variableTree.symbol(), sv);
       stateStream = stateStream.map(ps -> ps.put(variableTree.symbol(), sv));
       if (isEqualsMethod || parameterCanBeNull(variableTree)) {
         stateStream = stateStream.flatMap((ProgramState ps) ->
