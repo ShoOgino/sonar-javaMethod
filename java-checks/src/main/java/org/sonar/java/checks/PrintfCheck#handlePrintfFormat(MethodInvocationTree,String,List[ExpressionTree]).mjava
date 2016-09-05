@@ -5,11 +5,15 @@
       return;
     }
     checkLineFeed(formatString, mit);
-    cleanupLineSeparator(params);
-    if (checkEmptyParams(mit, params)
-      || checkArgumentNumber(mit, argIndexes(params).size(), args.size())) {
+    if (checkEmptyParams(mit, params)) {
       return;
     }
-    verifyParameters(mit, args, params);
+    cleanupLineSeparator(params);
+    if (!params.isEmpty()) {
+      if (checkArgumentNumber(mit, argIndexes(params).size(), args.size())) {
+        return;
+      }
+      verifyParameters(mit, args, params);
+    }
   }
 
