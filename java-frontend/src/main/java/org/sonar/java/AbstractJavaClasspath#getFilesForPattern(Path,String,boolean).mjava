@@ -1,10 +1,16 @@
-  private static Set<File> getFilesForPattern(Path baseDir, String pathPattern, boolean libraryProperty) {
+  private Set<File> getFilesForPattern(Path baseDir, String pathPattern, boolean libraryProperty) {
 
     try {
       Path filePath = resolvePath(baseDir, pathPattern);
 
-      if ((pathPattern.endsWith(".jar") || pathPattern.endsWith(".zip") || pathPattern.endsWith(".aar")) && Files.isRegularFile(filePath)) {
-        return Collections.singleton(filePath.toFile());
+      if(Files.isRegularFile(filePath)) {
+        if (pathPattern.endsWith(".jar") || pathPattern.endsWith(".zip") || pathPattern.endsWith(".aar")) {
+          return Collections.singleton(filePath.toFile());
+        } else {
+          LOG.debug("File " + filePath.toFile().getAbsolutePath() + " was ignored from java classpath");
+          validateLibraries = false;
+          return Collections.emptySet();
+        }
       }
       if (Files.isDirectory(filePath)) {
         return getMatchesInDir(filePath, libraryProperty);

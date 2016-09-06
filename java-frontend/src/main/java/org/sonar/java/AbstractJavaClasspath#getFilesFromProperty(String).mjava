@@ -5,6 +5,7 @@
       Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
       File baseDir = fs.baseDir();
       boolean hasJavaSources = hasJavaSources();
+      boolean validateLibs = validateLibraries;
       boolean isLibraryProperty = property.endsWith("libraries");
       for (String pathPattern : fileNames) {
         Set<File> libraryFilesForPattern = getFilesForPattern(baseDir.toPath(), pathPattern, isLibraryProperty);
@@ -13,6 +14,7 @@
           String message = "No files nor directories matching '" + pathPattern + "'";
           throw new IllegalStateException(message);
         }
+        validateLibraries = validateLibs;
         result.addAll(libraryFilesForPattern);
       }
     }
