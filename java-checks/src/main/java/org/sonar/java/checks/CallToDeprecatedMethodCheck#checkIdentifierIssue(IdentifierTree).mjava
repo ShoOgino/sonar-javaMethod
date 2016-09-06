@@ -1,0 +1,13 @@
+  private void checkIdentifierIssue(IdentifierTree identifierTree) {
+    Symbol symbol = identifierTree.symbol();
+    if (isDeprecated(symbol)) {
+      String name;
+      if (isConstructor(symbol)) {
+        name = symbol.owner().name();
+      } else {
+        name = symbol.name();
+      }
+      reportIssue(identifierTree, "Remove this use of \"" + name + "\"; it is deprecated.");
+    }
+  }
+

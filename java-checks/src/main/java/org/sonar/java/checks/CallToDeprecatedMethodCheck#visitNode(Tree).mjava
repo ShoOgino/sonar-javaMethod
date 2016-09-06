@@ -3,20 +3,15 @@
     if(!hasSemantic()) {
       return;
     }
-    if (tree.is(Tree.Kind.IDENTIFIER)) {
-      Symbol symbol = ((IdentifierTree) tree).symbol();
-      if (isDeprecated(symbol) && nestedDeprecationLevel == 0) {
-        String name;
-        if (isConstructor(symbol)) {
-          name = symbol.owner().name(); 
-        } else {
-          name = symbol.name();
-        }
-        reportIssue(tree, "Remove this use of \"" + name + "\"; it is deprecated.");
+    if (nestedDeprecationLevel == 0) {
+      if (tree.is(Tree.Kind.IDENTIFIER)) {
+        checkIdentifierIssue((IdentifierTree) tree);
+      } else if (tree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)) {
+        checkMethodIssue((MethodTree) tree);
       }
-    } else if (isDeprecatedMethod(tree) || isDeprecatedClassTree(tree)) {
+    }
+    if (isDeprecatedMethod(tree) || isDeprecatedClassTree(tree)) {
       nestedDeprecationLevel++;
     }
-
   }
 

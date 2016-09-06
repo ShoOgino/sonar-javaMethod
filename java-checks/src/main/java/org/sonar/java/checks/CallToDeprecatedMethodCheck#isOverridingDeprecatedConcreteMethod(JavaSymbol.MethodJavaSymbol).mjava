@@ -1,0 +1,14 @@
+  private static boolean isOverridingDeprecatedConcreteMethod(JavaSymbol.MethodJavaSymbol symbol) {
+    JavaSymbol.MethodJavaSymbol overriddenMethod = symbol.overriddenSymbol();
+    while(overriddenMethod != null && !overriddenMethod.isUnknown()) {
+      if (overriddenMethod.isAbstract()) {
+        return false;
+      }
+      if (overriddenMethod.isDeprecated()) {
+        return true;
+      }
+      overriddenMethod = overriddenMethod.overriddenSymbol();
+    }
+    return false;
+  }
+
