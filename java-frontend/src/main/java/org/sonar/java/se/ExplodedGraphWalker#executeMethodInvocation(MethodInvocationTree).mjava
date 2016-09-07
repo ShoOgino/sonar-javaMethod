@@ -2,26 +2,44 @@
     setSymbolicValueOnFields(mit);
     // unstack arguments and method identifier
     ProgramState.Pop unstack = programState.unstackValue(mit.arguments().size() + 1);
-    programState = unstack.state;
     logState(mit);
 
-    // get method behavior for method with known declaration (ie: within the same file)
-    Tree declaration = mit.symbol().declaration();
-    if(declaration != null) {
-      // (FIXME) nothing done of the invoked behavior
-      MethodBehavior methodInvokedBehavior = symbolicExecutionVisitor.execute((MethodTree) declaration);
-    }
-
-
-
+    programState = unstack.state;
     // Enqueue exceptional paths
     node.programPoint.block.exceptions().forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), programState, !b.isCatchBlock()));
-    final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.values);
-    programState = programState.stackValue(resultValue);
-    if (isNonNullMethod(mit.symbol())) {
-      programState = programState.addConstraint(resultValue, ObjectConstraint.NOT_NULL);
-    } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
-      programState = programState.resetFieldValues(constraintManager);
+
+    // get method behavior for method with known declaration (ie: within the same file)
+    MethodBehavior methodInvokedBehavior = null;
+    Tree declaration = mit.symbol().declaration();
+    if(declaration != null) {
+      methodInvokedBehavior = symbolicExecutionVisitor.execute((MethodTree) declaration);
+    }
+    if(methodInvokedBehavior != null) {
+      List<SymbolicValue> invocationArguments = invocationArguments(unstack.values);
+      methodInvokedBehavior.yields()
+        .stream()
+        .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, programState, () -> constraintManager.createMethodSymbolicValue(mit, unstack.values)).stream())
+        .forEach(ps -> {
+          ProgramState programState = ps;
+          if (isNonNullMethod(mit.symbol())) {
+            programState = programState.addConstraint(programState.peekValue(), ObjectConstraint.NOT_NULL);
+          } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
+            programState = programState.resetFieldValues(constraintManager);
+          }
+          checkerDispatcher.syntaxNode = mit;
+          checkerDispatcher.addTransition(programState);
+          clearStack(mit);
+        });
+    } else {
+      final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.values);
+      programState = programState.stackValue(resultValue);
+      if (isNonNullMethod(mit.symbol())) {
+        programState = programState.addConstraint(resultValue, ObjectConstraint.NOT_NULL);
+      } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
+        programState = programState.resetFieldValues(constraintManager);
+      }
+      checkerDispatcher.executeCheckPostStatement(mit);
+      clearStack(mit);
     }
   }
 
