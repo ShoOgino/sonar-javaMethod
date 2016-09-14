@@ -1,0 +1,12 @@
+  private static void prepareDumpOldFolder() {
+    Path allRulesFolder = Paths.get("src/test/resources");
+    if (SUBSET_OF_ENABLED_RULES.isEmpty()) {
+      effectiveDumpOldFolder = allRulesFolder.toAbsolutePath();
+    } else {
+      effectiveDumpOldFolder = TMP_DUMP_OLD_FOLDER.getRoot().toPath().toAbsolutePath();
+      Try.of(() -> Files.list(allRulesFolder)).orElseThrow(Throwables::propagate)
+        .filter(Files::isDirectory)
+        .forEach(srcProjectDir -> copyDumpSubset(srcProjectDir, effectiveDumpOldFolder.resolve(srcProjectDir.getFileName())));
+    }
+  }
+

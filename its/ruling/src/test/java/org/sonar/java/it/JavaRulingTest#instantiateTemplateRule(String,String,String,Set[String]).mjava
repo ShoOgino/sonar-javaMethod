@@ -1,4 +1,8 @@
-  private static void instantiateTemplateRule(String ruleTemplateKey, String instantiationKey, String params) {
+  private static void instantiateTemplateRule(String ruleTemplateKey, String instantiationKey, String params, Set<String> activatedRuleKeys) {
+    if (!SUBSET_OF_ENABLED_RULES.isEmpty() && !SUBSET_OF_ENABLED_RULES.contains(instantiationKey)) {
+      return;
+    }
+    activatedRuleKeys.add(instantiationKey);
     SonarClient sonarClient = orchestrator.getServer().adminWsClient();
     sonarClient.post("/api/rules/create", ImmutableMap.<String, Object>builder()
       .put("name", instantiationKey)

@@ -1,4 +1,5 @@
-  static void generate(Orchestrator orchestrator, String language, String repositoryKey, ImmutableMap<String, ImmutableMap<String, String>> rulesParameters, Set<String> excluded) {
+  static void generate(Orchestrator orchestrator, String language, String repositoryKey, ImmutableMap<String, ImmutableMap<String, String>> rulesParameters,
+    Set<String> excluded, Set<String> subsetOfEnabledRules, Set<String> activatedRuleKeys) {
     try {
       StringBuilder sb = new StringBuilder()
         .append("<profile>")
@@ -31,9 +32,10 @@
       }
 
       for (String key : ruleKeys) {
-        if (excluded.contains(key)) {
+        if (excluded.contains(key) || (!subsetOfEnabledRules.isEmpty() && !subsetOfEnabledRules.contains(key))) {
           continue;
         }
+        activatedRuleKeys.add(key);
         sb.append("<rule>")
           .append("<repositoryKey>").append(repositoryKey).append("</repositoryKey>")
           .append("<key>").append(key).append("</key>")
