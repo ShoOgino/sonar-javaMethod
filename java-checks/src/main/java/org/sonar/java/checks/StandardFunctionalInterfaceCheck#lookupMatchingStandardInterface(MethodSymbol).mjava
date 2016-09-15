@@ -1,0 +1,11 @@
+  private static Optional<String> lookupMatchingStandardInterface(MethodSymbol functionalMethod) {
+    MethodTree declaration = functionalMethod.declaration();
+    if (!functionalMethod.thrownTypes().isEmpty() || (declaration != null && !declaration.typeParameters().isEmpty())) {
+      return Optional.empty();
+    }
+    return STD_INTERFACE_BY_PARAMETER_COUNT.getOrDefault(functionalMethod.parameterTypes().size(), Collections.emptyList()).stream()
+        .map(standardInterface -> standardInterface.matchingSpecialization(functionalMethod))
+        .filter(specialization -> specialization != null)
+        .findFirst();
+  }
+

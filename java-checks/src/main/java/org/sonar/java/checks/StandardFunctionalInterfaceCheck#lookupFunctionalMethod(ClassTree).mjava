@@ -1,0 +1,9 @@
+  private static Optional<MethodSymbol> lookupFunctionalMethod(ClassTree interfaceTree) {
+    return interfaceTree.symbol().memberSymbols().stream()
+        .filter(Symbol::isMethodSymbol)
+        .map(MethodSymbol.class::cast)
+        .filter(StandardFunctionalInterfaceCheck::isNonStaticNonDefaultMethod)
+        .filter(StandardFunctionalInterfaceCheck::isNotObjectMethod)
+        .findFirst();
+  }
+

@@ -1,0 +1,25 @@
+    private String buildSpecializationName(Map<String, String> genericTypeMapping) {
+      if (genericTypes.isEmpty()) {
+        return name;
+      }
+      StringBuilder genericName = new StringBuilder();
+      genericName.append(name);
+      genericName.append('<');
+      boolean addComma = false;
+      for (String genericType : genericTypes) {
+        if (addComma) {
+          genericName.append(',');
+        } else {
+          addComma = true;
+        }
+        String typeName = genericTypeMapping.getOrDefault(genericType, genericType);
+        int packageEnd = typeName.lastIndexOf('.');
+        if (packageEnd != -1) {
+          typeName = typeName.substring(packageEnd + 1);
+        }
+        genericName.append(typeName);
+      }
+      genericName.append('>');
+      return genericName.toString();
+    }
+

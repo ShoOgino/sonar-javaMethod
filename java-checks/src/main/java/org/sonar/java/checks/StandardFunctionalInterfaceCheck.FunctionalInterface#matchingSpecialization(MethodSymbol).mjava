@@ -1,0 +1,19 @@
+    @CheckForNull
+    private String matchingSpecialization(MethodSymbol method) {
+      Map<String, String> genericTypeMapping = genericTypes.isEmpty() ? Collections.emptyMap() : new HashMap<>();
+      Type actualReturnType = method.returnType().type();
+      String expectedReturnType = convertGenericType(returnType, actualReturnType, genericTypeMapping);
+      if (!expectedReturnType.equals(actualReturnType.fullyQualifiedName())) {
+        return null;
+      }
+      List<Type> methodParameters = method.parameterTypes();
+      for (int i = 0; i < parameters.size(); i++) {
+        Type actualType = methodParameters.get(i);
+        String expectedType = convertGenericType(parameters.get(i), actualType, genericTypeMapping);
+        if (!expectedType.equals(actualType.fullyQualifiedName())) {
+          return null;
+        }
+      }
+      return buildSpecializationName(genericTypeMapping);
+    }
+

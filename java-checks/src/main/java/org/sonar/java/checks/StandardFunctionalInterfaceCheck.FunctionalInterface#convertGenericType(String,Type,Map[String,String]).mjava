@@ -1,0 +1,15 @@
+    private String convertGenericType(String expectedType, Type actualType, Map<String, String> genericTypeMapping) {
+      if (genericTypes.isEmpty() || !genericTypes.contains(expectedType)) {
+        return expectedType;
+      }
+      String convertedType = genericTypeMapping.get(expectedType);
+      if (convertedType == null) {
+        if (actualType.isPrimitive() || actualType.isVoid() || actualType.isArray() || actualType.isUnknown()) {
+          return "!unknown!";
+        }
+        convertedType = actualType.fullyQualifiedName();
+        genericTypeMapping.put(expectedType, convertedType);
+      }
+      return convertedType;
+    }
+

@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    // classTree.simpleName() never null for Tree.Kind.INTERFACE
+    IdentifierTree issueLocation = classTree.simpleName();
+    // The question "Why we raise issue only for interface annotated with @FunctionalInterface?"
+    // is discussed in comments of https://jira.sonarsource.com/browse/SONARJAVA-504
+    Optional.of(classTree)
+      .filter(StandardFunctionalInterfaceCheck::isFunctionalInterface)
+      .filter(StandardFunctionalInterfaceCheck::isNonStandardFunctionalInterface)
+      .filter(StandardFunctionalInterfaceCheck::hasNoExtension)
+      .flatMap(StandardFunctionalInterfaceCheck::lookupFunctionalMethod)
+      .flatMap(StandardFunctionalInterfaceCheck::lookupMatchingStandardInterface)
+      .ifPresent(standardInterface -> reportIssue(issueLocation, buildIssueMessage(classTree, standardInterface)));
+  }
+
