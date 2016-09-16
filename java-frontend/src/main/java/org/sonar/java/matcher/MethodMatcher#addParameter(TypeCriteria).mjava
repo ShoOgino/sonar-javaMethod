@@ -1,5 +1,10 @@
   public MethodMatcher addParameter(TypeCriteria parameterTypeCriteria) {
-    Preconditions.checkState(parameterTypes != null);
+    if (parameters == null) {
+      parameterTypes = Lists.newArrayList();
+      parameters = ParametersCriteria.of(parameterTypes);
+    } else {
+      Preconditions.checkState(parameterTypes != null, "parameters is already initialized and doesn't support addParameter.");
+    }
     parameterTypes.add(parameterTypeCriteria);
     return this;
   }

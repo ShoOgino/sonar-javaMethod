@@ -1,20 +1,5 @@
   private boolean parametersAcceptable(MethodSymbol methodSymbol) {
-    if (parameterTypes == null) {
-      return true;
-    }
-    List<Type> parametersTypes = methodSymbol.parameterTypes();
-    List<TypeCriteria> arguments = parameterTypes;
-    if (parametersTypes.size() == arguments.size()) {
-      int i = 0;
-      for (Type parameterType : parametersTypes) {
-        if (!arguments.get(i).matches(parameterType)) {
-          return false;
-        }
-        i++;
-      }
-    } else {
-      return false;
-    }
-    return true;
+    Preconditions.checkState(parameters != null);
+    return parameters.matches(methodSymbol.parameterTypes());
   }
 
