@@ -1,0 +1,9 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ListTree<VariableTree> resources = ((TryStatementTree) tree).resources();
+    // need only (resources.size - 1) separators
+    if (!resources.isEmpty() && resources.separators().size() == resources.size()) {
+      reportIssue(Iterables.getLast(resources.separators()), "Remove this extraneous semicolon.");
+    }
+  }
+
