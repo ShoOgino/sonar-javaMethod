@@ -20,15 +20,15 @@
       methodInvokedBehavior.yields()
         .stream()
         .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, programState, () -> constraintManager.createMethodSymbolicValue(mit, unstack.values)).stream())
-        .forEach(ps -> {
-          ProgramState programState = ps;
+        .forEach(psYield -> {
+          ProgramState ps = psYield;
           if (isNonNullMethod(methodSymbol)) {
-            programState = programState.addConstraint(programState.peekValue(), ObjectConstraint.NOT_NULL);
+            ps = ps.addConstraint(ps.peekValue(), ObjectConstraint.NOT_NULL);
           } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
-            programState = programState.resetFieldValues(constraintManager);
+            ps = ps.resetFieldValues(constraintManager);
           }
           checkerDispatcher.syntaxNode = mit;
-          checkerDispatcher.addTransition(programState);
+          checkerDispatcher.addTransition(ps);
           clearStack(mit);
         });
     } else {
