@@ -1,0 +1,24 @@
+  @Test
+  public void method_behavior_handling_finally() {
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/resources/se/ReturnAndFinally.java");
+    assertThat(sev.behaviorCache.entrySet()).hasSize(3);
+
+    MethodBehavior foo = getMethodBehavior(sev, "foo");
+    assertThat(foo.yields()).hasSize(3);
+    assertThat(foo.yields().stream().filter(y -> !y.exception).count()).isEqualTo(2);
+    assertThat(foo.yields().stream().filter(y -> y.exception).count()).isEqualTo(1);
+
+    MethodBehavior qix = getMethodBehavior(sev, "qix");
+    List<MethodYield> qixYield = qix.yields();
+    assertThat(qixYield.stream()
+      .filter(y -> !y.parametersConstraints[0].isNull())
+      .allMatch(y -> y.exception)).isTrue();
+    assertThat(qixYield.stream()
+      .filter(y -> y.parametersConstraints[0].isNull() && y.exception)
+      .count()).isEqualTo(1);
+
+    assertThat(qixYield.stream()
+      .filter(y -> !y.exception)
+      .allMatch(y -> y.parametersConstraints[0].isNull())).isTrue();
+  }
+

@@ -33,6 +33,15 @@
         case SYNCHRONIZED_STATEMENT:
           resetFieldValues();
           break;
+        case RETURN_STATEMENT:
+          ExpressionTree returnExpression = ((ReturnStatementTree) terminator).expression();
+          if (returnExpression != null) {
+            programState.storeReturnValue();
+          }
+          break;
+        case THROW_STATEMENT:
+          programState.clearReturnValue();
+          break;
         default:
           // do nothing by default.
       }
