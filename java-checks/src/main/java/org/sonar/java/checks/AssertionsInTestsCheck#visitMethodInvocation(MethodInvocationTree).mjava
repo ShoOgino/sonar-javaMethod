@@ -1,27 +1,9 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree mit) {
-    if (!inUnitTest()) {
-      return;
-    }
-    checkForAssertjSoftAssertions(mit);
-    if (methodContainsAssertion.peek()) {
-      return;
-    }
-    chainedTo.push(ChainedMethods.NONE);
     super.visitMethodInvocation(mit);
-    ChainedMethods chainedToResult = chainedTo.pop();
-    if (containsAssertion(mit, chainedToResult)) {
+    if (!methodContainsAssertion.peek() && inUnitTest.peek() && ASSERTION_INVOCATION_MATCHERS.anyMatch(mit)) {
       methodContainsAssertion.pop();
-      methodContainsAssertion.push(Boolean.TRUE);
-    }
-    if (!chainedTo.isEmpty()) {
-      if (ChainedMethods.ASSERT_THAT.equals(chainedToResult) || ASSERT_THAT.matches(mit)) {
-        chainedTo.pop();
-        chainedTo.push(ChainedMethods.ASSERT_THAT);
-      } else if (MOCKITO_VERIFY.matches(mit)) {
-        chainedTo.pop();
-        chainedTo.push(ChainedMethods.MOCKITO_VERIFY);
-      }
+      methodContainsAssertion.push(true);
     }
   }
 

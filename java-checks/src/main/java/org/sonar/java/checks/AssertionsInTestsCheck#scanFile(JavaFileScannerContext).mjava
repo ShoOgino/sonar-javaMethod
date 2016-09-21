@@ -1,6 +1,10 @@
   @Override
   public void scanFile(final JavaFileScannerContext context) {
     this.context = context;
+    inUnitTest.push(false);
+    methodContainsAssertion.push(false);
     scan(context.getTree());
+    methodContainsAssertion.pop();
+    inUnitTest.pop();
   }
 

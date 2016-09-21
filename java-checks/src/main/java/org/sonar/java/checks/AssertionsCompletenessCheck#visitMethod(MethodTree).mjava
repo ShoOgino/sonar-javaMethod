@@ -1,0 +1,12 @@
+  @Override
+  public void visitMethod(MethodTree methodTree) {
+    if (ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.ABSTRACT)) {
+      return;
+    }
+    containsAssertThatWithoutAssertAll.push(false);
+    super.visitMethod(methodTree);
+    if (Boolean.TRUE.equals(containsAssertThatWithoutAssertAll.pop())) {
+      context.reportIssue(this, methodTree.block().closeBraceToken(), "Add a call to 'assertAll' after all 'assertThat'.");
+    }
+  }
+
