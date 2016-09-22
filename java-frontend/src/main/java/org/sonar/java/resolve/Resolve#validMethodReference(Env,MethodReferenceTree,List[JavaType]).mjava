@@ -1,0 +1,11 @@
+  private boolean validMethodReference(Env env, MethodReferenceTree tree, List<JavaType> samMethodArgs) {
+    Tree expression = tree.expression();
+    if (expression instanceof AbstractTypedTree) {
+      JavaType type = (JavaType) ((AbstractTypedTree) expression).symbolType();
+      String methodName = tree.method().name();
+      Resolution resolution = findMethod(env, type, "new".equals(methodName) ? "<init>" : methodName, samMethodArgs);
+      return !resolution.symbol.isUnknown();
+    }
+    return false;
+  }
+

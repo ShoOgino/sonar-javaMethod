@@ -23,7 +23,7 @@
       formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, defSite);
     }
     formals = typeSubstitutionSolver.applySubstitutionToFormalParameters(formals, substitution);
-    if (!isArgumentsAcceptable(argTypes, formals, methodJavaSymbol.isVarArgs(), autoboxing)) {
+    if (!isArgumentsAcceptable(env, argTypes, formals, methodJavaSymbol.isVarArgs(), autoboxing)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...
@@ -32,7 +32,7 @@
       resolution.type = Symbols.unknownType;
       return resolution;
     }
-    JavaSymbol mostSpecific = selectMostSpecific(candidate, bestSoFar.symbol, argTypes, substitution, callSite);
+    JavaSymbol mostSpecific = selectMostSpecific(env, candidate, bestSoFar.symbol, argTypes, substitution, callSite);
     if (mostSpecific.isKind(JavaSymbol.AMBIGUOUS)) {
       // same signature, we keep the first symbol found (overrides the other one).
       return bestSoFar;
