@@ -1,8 +1,9 @@
   private void refineType(AbstractTypedTree expression, JavaType expressionType, JavaType capturedReturnType, JavaType refinedReturnType) {
     if (refinedReturnType != capturedReturnType) {
       // found a lambda return type different from the one infered : update infered type
-      TypeSubstitution typeSubstitution = ((ParametrizedTypeJavaType) expressionType).typeSubstitution;
-      typeSubstitution.substitutionEntries().stream()
+      if (expressionType.isTagged(JavaType.PARAMETERIZED)) {
+        TypeSubstitution typeSubstitution = ((ParametrizedTypeJavaType) expressionType).typeSubstitution;
+        typeSubstitution.substitutionEntries().stream()
         .filter(e -> e.getValue() == capturedReturnType)
         .findFirst()
         .ifPresent(e -> {
@@ -10,6 +11,9 @@
           JavaType refinedType = parametrizedTypeCache.getParametrizedTypeType(expressionType.symbol, refinedSubstitution);
           expression.setType(refinedType);
         });
+      } else {
+        expression.setType(refinedReturnType);
+      }
     }
   }
 
