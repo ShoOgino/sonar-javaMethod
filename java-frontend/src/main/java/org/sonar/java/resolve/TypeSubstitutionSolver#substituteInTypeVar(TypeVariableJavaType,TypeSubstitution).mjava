@@ -1,0 +1,15 @@
+  private JavaType substituteInTypeVar(TypeVariableJavaType typevar, TypeSubstitution substitution) {
+    if(typevarExplored.contains(typevar.symbol)) {
+      return typevar;
+    }
+    typevarExplored.push((JavaSymbol.TypeVariableJavaSymbol) typevar.symbol);
+    List<JavaType> subtitutedBounds = typevar.bounds.stream().map(t -> applySubstitution(t, substitution)).collect(Collectors.toList());
+    typevarExplored.pop();
+    if(subtitutedBounds.equals(typevar.bounds)) {
+      return typevar;
+    }
+    TypeVariableJavaType typeVariableJavaType = new TypeVariableJavaType((JavaSymbol.TypeVariableJavaSymbol) typevar.symbol);
+    typeVariableJavaType.bounds = subtitutedBounds;
+    return typeVariableJavaType;
+  }
+
