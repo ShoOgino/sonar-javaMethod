@@ -1,0 +1,12 @@
+  @Test
+  public void infer_method_invocation_return_type() throws Exception {
+    Result result = Result.createFor("CollectorsToList");
+    List<IdentifierTree> usages = result.symbol("foo").usages();
+    assertThat(usages).hasSize(1);
+    ExpressionTree arg = ((MethodInvocationTree) usages.get(0).parent()).arguments().get(0);
+    assertThat(arg.symbolType().is("java.util.List")).isTrue();
+    assertThat(((JavaType) arg.symbolType()).isParameterized()).isTrue();
+    assertThat(((ParametrizedTypeJavaType) arg.symbolType()).typeSubstitution.substitutedTypes()).hasSize(1);
+    assertThat(((ParametrizedTypeJavaType) arg.symbolType()).typeSubstitution.substitutedTypes().get(0).is("java.lang.String")).isTrue();
+  }
+
