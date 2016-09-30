@@ -1,16 +1,15 @@
-  @CheckForNull
-  public JavaSymbol.MethodJavaSymbol getSamMethod(JavaType lambdaType) {
+  public Optional<JavaSymbol.MethodJavaSymbol> getSamMethod(JavaType lambdaType) {
     for (Symbol member : lambdaType.symbol().memberSymbols()) {
       if (isAbstractMethod(member)) {
-        return (JavaSymbol.MethodJavaSymbol) member;
+        return Optional.of((JavaSymbol.MethodJavaSymbol) member);
       }
     }
     for (ClassJavaType type : lambdaType.symbol.superTypes()) {
-      JavaSymbol.MethodJavaSymbol samMethod = getSamMethod(type);
-      if (samMethod != null) {
+      Optional<JavaSymbol.MethodJavaSymbol> samMethod = getSamMethod(type);
+      if (samMethod.isPresent()) {
         return samMethod;
       }
     }
-    return null;
+    return Optional.empty();
   }
 

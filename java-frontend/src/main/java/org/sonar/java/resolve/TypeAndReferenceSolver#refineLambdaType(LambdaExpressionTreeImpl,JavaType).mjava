@@ -1,9 +1,9 @@
   private void refineLambdaType(LambdaExpressionTreeImpl lambdaExpressionTree, JavaType lambdaType) {
-    JavaSymbol.MethodJavaSymbol samMethod = resolve.getSamMethod(lambdaType);
-    if(samMethod == null) {
+    Optional<JavaSymbol.MethodJavaSymbol> samMethod = resolve.getSamMethod(lambdaType);
+    if (!samMethod.isPresent()) {
       return;
     }
-    JavaType samReturnType = (JavaType) samMethod.returnType().type();
+    JavaType samReturnType = (JavaType) samMethod.get().returnType().type();
     JavaType capturedReturnType = resolve.resolveTypeSubstitution(samReturnType, lambdaType);
     if (capturedReturnType.is("void") || !lambdaType.isParameterized()) {
       return;
