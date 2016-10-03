@@ -1,15 +1,27 @@
   @Test
   public void detected() {
     MethodMatcher objectToString = MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.lang.Object")).name("toString").withoutParameter();
+    MethodMatcher objectToStringWithIntParam = MethodMatcher.create().name("toString").parameters("int");
+    MethodMatcher objectToStringWithStringParam = MethodMatcher.create().typeDefinition(TypeCriteria.anyType()).name(NameCriteria.is("toString")).parameters("java.lang.String");
+    MethodMatcher objectToStringWithAnyParam = MethodMatcher.create().typeDefinition(TypeCriteria.is("Test")).name("toString").withAnyParameters();
     MethodMatcher integerToString = MethodMatcher.create().typeDefinition("java.lang.Integer").name("toString").withoutParameter();
+    MethodMatcher callSiteIsTest = MethodMatcher.create().typeDefinition(TypeCriteria.anyType()).name(NameCriteria.any()).withAnyParameters().callSite(TypeCriteria.is("Test"));
 
     Map<MethodMatcher, List<Integer>> matches = new HashMap<>();
-    matches.put(objectToString, new ArrayList<Integer>());
-    matches.put(integerToString, new ArrayList<Integer>());
+    matches.put(objectToString, new ArrayList<>());
+    matches.put(objectToStringWithIntParam, new ArrayList<>());
+    matches.put(objectToStringWithStringParam, new ArrayList<>());
+    matches.put(objectToStringWithAnyParam, new ArrayList<>());
+    matches.put(integerToString, new ArrayList<>());
+    matches.put(callSiteIsTest, new ArrayList<>());
 
     JavaAstScanner.scanSingleFileForTests(new File("src/test/files/matcher/Test.java"), new VisitorsBridge(new Visitor(matches)));
 
-    assertThat(matches.get(objectToString)).containsExactly(6, 14);
-    assertThat(matches.get(integerToString)).containsExactly(14);
+    assertThat(matches.get(objectToString)).containsExactly(6, 19, 27);
+    assertThat(matches.get(objectToStringWithIntParam)).containsExactly(10);
+    assertThat(matches.get(objectToStringWithStringParam)).containsExactly(11, 14);
+    assertThat(matches.get(objectToStringWithAnyParam)).containsExactly(6, 10, 11, 14);
+    assertThat(matches.get(integerToString)).containsExactly(19);
+    assertThat(matches.get(callSiteIsTest)).containsExactly(6, 10, 11, 14, 18, 22);
   }
 

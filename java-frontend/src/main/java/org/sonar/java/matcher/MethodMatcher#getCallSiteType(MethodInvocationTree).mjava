@@ -1,14 +1,11 @@
   private static Type getCallSiteType(MethodInvocationTree mit) {
     ExpressionTree methodSelect = mit.methodSelect();
+    // methodSelect can only be Tree.Kind.IDENTIFIER or Tree.Kind.MEMBER_SELECT
     if (methodSelect.is(Tree.Kind.IDENTIFIER)) {
       Symbol.TypeSymbol enclosingClassSymbol = ((IdentifierTree) methodSelect).symbol().enclosingClass();
-      if (enclosingClassSymbol != null) {
-        return enclosingClassSymbol.type();
-      }
-    } else if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) methodSelect;
-      return memberSelect.expression().symbolType();
+      return enclosingClassSymbol != null ? enclosingClassSymbol.type() : null;
+    } else {
+      return ((MemberSelectExpressionTree) methodSelect).expression().symbolType();
     }
-    return null;
   }
 

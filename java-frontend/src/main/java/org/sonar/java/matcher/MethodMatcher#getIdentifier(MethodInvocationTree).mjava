@@ -1,10 +1,8 @@
   private static IdentifierTree getIdentifier(MethodInvocationTree mit) {
-    IdentifierTree id = null;
+    // methodSelect can only be Tree.Kind.IDENTIFIER or Tree.Kind.MEMBER_SELECT
     if (mit.methodSelect().is(Tree.Kind.IDENTIFIER)) {
-      id = (IdentifierTree) mit.methodSelect();
-    } else if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      id = ((MemberSelectExpressionTree) mit.methodSelect()).identifier();
+      return (IdentifierTree) mit.methodSelect();
     }
-    return id;
+    return ((MemberSelectExpressionTree) mit.methodSelect()).identifier();
   }
 
