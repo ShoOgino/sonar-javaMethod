@@ -1,9 +1,14 @@
   private boolean validMethodReference(Env env, MethodReferenceTree tree, JavaType formal, List<JavaType> samMethodArgs) {
     Tree expression = tree.expression();
     if (expression instanceof AbstractTypedTree) {
+      String searchedMethod = getMethodReferenceMethodName(tree.method().name());
+
       JavaType expressionType = (JavaType) ((AbstractTypedTree) expression).symbolType();
-      String methodName = tree.method().name();
-      String searchedMethod = "new".equals(methodName) ? "<init>" : methodName;
+      if (isArrayConstructor(expressionType, searchedMethod)) {
+        setMethodRefType(tree, formal, expressionType);
+        return true;
+      }
+
       Resolution resolution = findMethod(env, expressionType, searchedMethod, samMethodArgs);
       // JLS §15.13.1
       if (isMethodRefOnType(expression) && firstParamSubtypeOfRefType(expressionType, samMethodArgs) && (resolution.symbol.isUnknown() || !resolution.symbol.isStatic())) {
@@ -13,8 +18,7 @@
       if (!resolution.symbol.isUnknown()) {
         if (tree.method().symbol().isUnknown()) {
           associateReference(tree.method(), (JavaSymbol.MethodJavaSymbol) resolution.symbol);
-          ((AbstractTypedTree) tree.method()).setType(resolution.type);
-          ((AbstractTypedTree) tree).setType(formal);
+          setMethodRefType(tree, formal, resolution.type);
         }
         return true;
       }
