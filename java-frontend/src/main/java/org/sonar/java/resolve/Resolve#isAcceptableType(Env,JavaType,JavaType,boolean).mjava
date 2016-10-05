@@ -1,12 +1,6 @@
   private boolean isAcceptableType(Env env, JavaType arg, JavaType formal, boolean autoboxing) {
     if(arg.isTagged(JavaType.DEFERRED)) {
-      List<JavaType> samMethodArgs = findSamMethodArgs(formal);
-      AbstractTypedTree tree = ((DeferredType) arg).tree();
-      if (tree.is(Tree.Kind.METHOD_REFERENCE)) {
-        return validMethodReference(env, (MethodReferenceTree) tree, formal, samMethodArgs);
-      }
-      // we accept all deferred type as we will resolve this later, but reject lambdas with incorrect arity
-      return !tree.is(Tree.Kind.LAMBDA_EXPRESSION) || ((LambdaExpressionTree) tree).parameters().size() == samMethodArgs.size();
+      return isAcceptableDeferredType(env, (DeferredType) arg, formal);
     }
     if(formal.isTagged(JavaType.TYPEVAR) && !arg.isTagged(JavaType.TYPEVAR)) {
       return subtypeOfTypeVar(arg, (TypeVariableJavaType) formal);
@@ -14,7 +8,6 @@
     if (formal.isArray() && arg.isArray()) {
       return isAcceptableType(env, ((ArrayJavaType) arg).elementType(), ((ArrayJavaType) formal).elementType(), autoboxing);
     }
-
     if (arg.isParameterized() || formal.isParameterized() || isWilcardType(arg) || isWilcardType(formal)) {
       return callWithRawType(arg, formal) || types.isSubtype(arg, formal) || isAcceptableByAutoboxing(arg, formal.erasure());
     }

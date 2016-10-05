@@ -11,7 +11,7 @@
 
       Resolution resolution = findMethod(env, expressionType, searchedMethod, samMethodArgs);
       // JLS §15.13.1
-      if (isMethodRefOnType(expression) && firstParamSubtypeOfRefType(expressionType, samMethodArgs) && (resolution.symbol.isUnknown() || !resolution.symbol.isStatic())) {
+      if (secondSearchRequired(expression, expressionType, resolution.symbol, samMethodArgs)) {
         resolution = findMethod(env, expressionType, searchedMethod, samMethodArgs.stream().skip(1).collect(Collectors.toList()));
       }
 

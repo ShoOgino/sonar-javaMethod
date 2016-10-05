@@ -9,13 +9,9 @@
     }
     handledFormals.put(formalType, argType);
     TypeSubstitution result = substitution;
+
     if (formalType.isTagged(JavaType.TYPEVAR)) {
-      result = completeSubstitution(substitution, formalType, argType);
-      for (JavaType bound : ((TypeVariableJavaType) formalType).bounds) {
-        if(!bound.is("java.lang.Object")) {
-          result = inferTypeSubstitution(method, result, bound, argType, variableArity, remainingArgTypes);
-        }
-      }
+      result = inferTypeSubstitutionInTypeVariable(method, substitution, (TypeVariableJavaType) formalType, argType, variableArity, remainingArgTypes);
     } else if (formalType.isArray()) {
       result = inferTypeSubstitutionInArrayType(method, substitution, (ArrayJavaType) formalType, argType, variableArity, remainingArgTypes);
     } else if (formalType.isParameterized()) {
