@@ -1,0 +1,15 @@
+  private static Set<File> getFilesInDir(Path dir, String fileNamePattern, boolean libraryProperty) {
+    if (!dir.toFile().isDirectory()) {
+      return Collections.emptySet();
+    }
+    try {
+      if (libraryProperty) {
+        return getMatchingLibraries(fileNamePattern, dir);
+      } else {
+        return getMatchingDirs(fileNamePattern, dir);
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
