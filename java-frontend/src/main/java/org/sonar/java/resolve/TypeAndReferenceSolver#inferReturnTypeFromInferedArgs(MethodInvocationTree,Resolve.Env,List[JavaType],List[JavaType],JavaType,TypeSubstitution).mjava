@@ -1,4 +1,5 @@
-  private void inferReturnTypeFromInferedArgs(MethodInvocationTree tree, Resolve.Env methodEnv, List<JavaType> argTypes, List<JavaType> typeParamTypes, JavaType returnType) {
+  private void inferReturnTypeFromInferedArgs(MethodInvocationTree tree, Resolve.Env methodEnv, List<JavaType> argTypes, List<JavaType> typeParamTypes,
+                                              JavaType returnType, TypeSubstitution typeSubstitution) {
     List<JavaType> parameterTypes = getParameterTypes(tree.arguments());
     Resolution resolution = null;
     Tree methodSelect = tree.methodSelect();
@@ -19,9 +20,11 @@
       if(resolution != null && returnType != resolution.type() && resolution.symbol().isMethodSymbol()) {
         MethodJavaType methodType = (MethodJavaType) resolution.type();
         if(!methodType.resultType.isTagged(JavaType.DEFERRED)) {
-          registerType(tree, methodType.resultType);
+          registerType(tree, resolve.applySubstitution(methodType.resultType, typeSubstitution));
         }
       }
+    } else {
+      registerType(tree, resolve.applySubstitution(returnType, typeSubstitution));
     }
   }
 

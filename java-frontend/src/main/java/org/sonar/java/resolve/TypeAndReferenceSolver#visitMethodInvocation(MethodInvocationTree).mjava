@@ -1,6 +1,7 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree) {
     MethodInvocationTreeImpl mit = (MethodInvocationTreeImpl) tree;
+    Resolve.Env methodEnv = semanticModel.getEnv(tree);
     if(mit.isTypeSet() && mit.symbol().isMethodSymbol()) {
       TypeSubstitution typeSubstitution = inferedSubstitution(mit);
       List<JavaType> argTypes = getParameterTypes(tree.arguments());
@@ -19,10 +20,10 @@
           }
         }
       );
-      registerType(mit, resolve.applySubstitution((JavaType) mit.symbolType(), typeSubstitution));
+      List<JavaType> typeParamTypes = getParameterTypes(tree.typeArguments());
+      inferReturnTypeFromInferedArgs(tree, methodEnv, argTypes, typeParamTypes, (JavaType) mit.symbolType(), typeSubstitution);
       return;
     }
-    Resolve.Env methodEnv = semanticModel.getEnv(tree);
     scan(tree.arguments());
     scan(tree.typeArguments());
     List<JavaType> argTypes = getParameterTypes(tree.arguments());
@@ -48,7 +49,7 @@
     registerType(tree, returnType);
     if(resolution != null) {
       inferArgumentTypes(argTypes, resolution);
-      inferReturnTypeFromInferedArgs(tree, methodEnv, argTypes, typeParamTypes, returnType);
+      inferReturnTypeFromInferedArgs(tree, methodEnv, argTypes, typeParamTypes, returnType, new TypeSubstitution());
     }
   }
 

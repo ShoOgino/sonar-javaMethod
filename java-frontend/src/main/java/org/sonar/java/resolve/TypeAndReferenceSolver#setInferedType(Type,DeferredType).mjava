@@ -2,7 +2,10 @@
     AbstractTypedTree inferedExpression = deferredType.tree();
     Type newType = infered;
     if (inferedExpression.is(Tree.Kind.NEW_CLASS)) {
-      newType = resolve.resolveTypeSubstitutionWithDiamondOperator((ParametrizedTypeJavaType) ((NewClassTree) inferedExpression).identifier().symbolType(), (JavaType) infered);
+      Type newClassType = ((NewClassTree) inferedExpression).identifier().symbolType();
+      if(((JavaType) newClassType).isParameterized()) {
+        newType = resolve.resolveTypeSubstitutionWithDiamondOperator((ParametrizedTypeJavaType) newClassType, (JavaType) infered);
+      }
     }
     inferedExpression.setInferedType(newType);
     inferedExpression.accept(this);
