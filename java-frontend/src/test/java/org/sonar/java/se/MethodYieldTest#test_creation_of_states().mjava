@@ -1,0 +1,21 @@
+  @Test
+  public void test_creation_of_states() throws Exception {
+    Map<Symbol.MethodSymbol, MethodBehavior> behaviorCache = createSymbolicExecutionVisitor("src/test/files/se/XProcYields.java").behaviorCache;
+    Symbol.MethodSymbol methodSymbol = behaviorCache.keySet().iterator().next();
+    List<MethodYield> yields =
+      behaviorCache.values().stream().flatMap(mb -> mb.yields().stream()).collect(Collectors.toList());
+
+    ProgramState ps = ProgramState.EMPTY_STATE;
+    SymbolicValue sv1 = new SymbolicValue(41);
+    SymbolicValue sv2 = new SymbolicValue(42);
+    SymbolicValue sv3 = new SymbolicValue(43);
+    Symbol sym = new JavaSymbol.VariableJavaSymbol(0, "myVar", (JavaSymbol) methodSymbol);
+    ps = ps.put(sym, sv1);
+
+    MethodYield methodYield = yields.get(0);
+    Collection<ProgramState> generatedStatesFromFirstYield = methodYield.statesAfterInvocation(Lists.newArrayList(sv1, sv2), ps, () -> sv3);
+    assertThat(generatedStatesFromFirstYield).hasSize(1);
+    assertThat(generatedStatesFromFirstYield.stream().collect(Collectors.toSet())).hasSize(1);
+
+  }
+

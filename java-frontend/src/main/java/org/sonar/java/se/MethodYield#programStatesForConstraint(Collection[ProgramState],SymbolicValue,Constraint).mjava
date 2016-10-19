@@ -1,0 +1,12 @@
+  private static Set<ProgramState> programStatesForConstraint(Collection<ProgramState> states, SymbolicValue invokedArg, Constraint constraint) {
+    Set<ProgramState> programStates = new LinkedHashSet<>();
+    if (constraint instanceof ObjectConstraint) {
+      ObjectConstraint objectConstraint = (ObjectConstraint) constraint;
+      states.forEach(state -> programStates.addAll(invokedArg.setConstraint(state, objectConstraint)));
+    } else if (constraint instanceof BooleanConstraint) {
+      BooleanConstraint booleanConstraint = (BooleanConstraint) constraint;
+      states.forEach(state -> programStates.addAll(invokedArg.setConstraint(state, booleanConstraint)));
+    }
+    return programStates;
+  }
+
