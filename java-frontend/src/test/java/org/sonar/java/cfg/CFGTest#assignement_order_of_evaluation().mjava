@@ -1,0 +1,25 @@
+  @Test
+  public void assignement_order_of_evaluation() throws Exception {
+    CFG cfg = buildCFG("  void foo() {\n" +
+      "    int[] a = {4,4};\n" +
+      "    int b = 1;\n" +
+      "    a[b] = b = 0;\n" +
+      "   }");
+    CFGChecker checker = checker(
+      block(
+        element(Tree.Kind.INT_LITERAL, 4),
+        element(Tree.Kind.INT_LITERAL, 4),
+        element(Tree.Kind.NEW_ARRAY),
+        element(Tree.Kind.VARIABLE, "a"),
+        element(Tree.Kind.INT_LITERAL, 1),
+        element(Tree.Kind.VARIABLE, "b"),
+        element(Tree.Kind.IDENTIFIER, "b"),
+        element(Tree.Kind.IDENTIFIER, "a"),
+        element(Tree.Kind.ARRAY_ACCESS_EXPRESSION),
+        element(Tree.Kind.IDENTIFIER, "b"),
+        element(Tree.Kind.INT_LITERAL, 0),
+        element(Tree.Kind.ASSIGNMENT),
+        element(Tree.Kind.ASSIGNMENT)).successors(0));
+    checker.check(cfg);
+  }
+
