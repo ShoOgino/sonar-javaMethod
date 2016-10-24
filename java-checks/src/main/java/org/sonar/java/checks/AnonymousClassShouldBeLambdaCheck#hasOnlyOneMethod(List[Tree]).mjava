@@ -1,12 +1,17 @@
   private static boolean hasOnlyOneMethod(List<Tree> members) {
-    int methodCounter = 0;
+    MethodTree methodTree = null;
     for (Tree tree : members) {
       if (!tree.is(Tree.Kind.EMPTY_STATEMENT, Tree.Kind.METHOD)) {
         return false;
       } else if (tree.is(Tree.Kind.METHOD)) {
-        methodCounter++;
+        if (methodTree != null) {
+          return false;
+        }
+        methodTree = (MethodTree) tree;
+
       }
     }
-    return methodCounter == 1;
+    // if overriden method declares to throw an exception, refactoring to a lambda might prove tricky
+    return methodTree != null && methodTree.throwsClauses().isEmpty();
   }
 
