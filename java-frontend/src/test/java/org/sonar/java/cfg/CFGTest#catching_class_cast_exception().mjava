@@ -1,0 +1,21 @@
+  @Test
+  public void catching_class_cast_exception() {
+    CFG cfg = buildCFG("void fun(Object a) {try {return (String) a;} catch(ClassCastException cce) { return null;} }");
+    CFGChecker cfgChecker = checker(
+      block(
+        element(TRY_STATEMENT)
+      ),
+      block(
+        element(Tree.Kind.IDENTIFIER, "a"),
+        element(Tree.Kind.TYPE_CAST)
+      ).successors(1, 2),
+      terminator(RETURN_STATEMENT, 0),
+      block(
+        element(Kind.VARIABLE, "cce"),
+        element(NULL_LITERAL)
+      ).successors(0)
+    );
+    cfgChecker.check(cfg);
+
+  }
+
