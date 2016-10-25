@@ -15,6 +15,11 @@
         return context.getState().addConstraint(values.get(numberArguments), ObjectConstraint.NOT_NULL);
       }
     }
+    if(toCheck.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
+      toCheck = ((ArrayAccessExpressionTree) toCheck).expression();
+      currentVal = context.getState().peekValues(2).get(1);
+      return checkConstraint(context, toCheck, currentVal);
+    }
     if (toCheck.is(Tree.Kind.MEMBER_SELECT)) {
       return checkMemberSelect(context, (MemberSelectExpressionTree) toCheck, currentVal);
     }

@@ -1,0 +1,19 @@
+  private ProgramState checkConstraint(CheckerContext context, Tree syntaxNode, SymbolicValue currentVal) {
+    ProgramState programState = context.getState();
+    Constraint constraint = programState.getConstraint(currentVal);
+    if (constraint != null && constraint.isNull()) {
+      List<JavaFileScannerContext.Location> secondary = new ArrayList<>();
+      if(((ObjectConstraint) constraint).syntaxNode() != null ) {
+        secondary.add(new JavaFileScannerContext.Location("", ((ObjectConstraint) constraint).syntaxNode()));
+      }
+      context.reportIssue(syntaxNode, this, "NullPointerException might be thrown as '" + SyntaxTreeNameFinder.getName(syntaxNode) + "' is nullable here", secondary);
+      return null;
+    }
+    constraint = programState.getConstraint(currentVal);
+    if (constraint == null) {
+      // We dereferenced the target value for the member select, so we can assume it is not null when not already known
+      return programState.addConstraint(currentVal, ObjectConstraint.NOT_NULL);
+    }
+    return programState;
+  }
+
