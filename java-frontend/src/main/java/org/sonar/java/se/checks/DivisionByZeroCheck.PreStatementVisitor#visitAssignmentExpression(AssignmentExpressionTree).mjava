@@ -3,8 +3,8 @@
       List<SymbolicValue> symbolicValues;
       SymbolicValue var;
       SymbolicValue expr;
-      if (isSimpleAssignment(tree)) {
-        var = programState.getValue(((IdentifierTree) tree.variable()).symbol());
+      if (ExpressionUtils.isSimpleAssignment(tree)) {
+        var = programState.getValue(((IdentifierTree) ExpressionUtils.skipParentheses(tree.variable())).symbol());
         expr = programState.peekValue();
       } else {
         symbolicValues = programState.peekValues(2);
