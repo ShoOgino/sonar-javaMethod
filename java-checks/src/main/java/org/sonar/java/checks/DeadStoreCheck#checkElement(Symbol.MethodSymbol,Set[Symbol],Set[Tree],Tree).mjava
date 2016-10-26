@@ -15,7 +15,7 @@
       case REMAINDER_ASSIGNMENT:
       case ASSIGNMENT:
         AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
-        ExpressionTree lhs = ExpressionsHelper.skipParentheses(assignmentExpressionTree.variable());
+        ExpressionTree lhs = ExpressionUtils.skipParentheses(assignmentExpressionTree.variable());
         if (lhs.is(Tree.Kind.IDENTIFIER)) {
           symbol = ((IdentifierTree) lhs).symbol();
           if (isLocalVariable(symbol) && !out.contains(symbol) && (assignmentExpressionTree.is(Tree.Kind.ASSIGNMENT) || isParentExpressionStatement(element))) {
@@ -64,7 +64,7 @@
       case PREFIX_DECREMENT:
       case PREFIX_INCREMENT:
         // within each block, each produced value is consumed or by following elements or by terminator
-        ExpressionTree prefixExpression = ExpressionsHelper.skipParentheses(((UnaryExpressionTree) element).expression());
+        ExpressionTree prefixExpression = ExpressionUtils.skipParentheses(((UnaryExpressionTree) element).expression());
         if (isParentExpressionStatement(element) && prefixExpression.is(Tree.Kind.IDENTIFIER)) {
           symbol = ((IdentifierTree) prefixExpression).symbol();
           if (isLocalVariable(symbol) && !out.contains(symbol)) {
@@ -74,7 +74,7 @@
         break;
       case POSTFIX_INCREMENT:
       case POSTFIX_DECREMENT:
-        ExpressionTree expression = ExpressionsHelper.skipParentheses(((UnaryExpressionTree) element).expression());
+        ExpressionTree expression = ExpressionUtils.skipParentheses(((UnaryExpressionTree) element).expression());
         if (expression.is(Tree.Kind.IDENTIFIER)) {
           symbol = ((IdentifierTree) expression).symbol();
           if (isLocalVariable(symbol) && !out.contains(symbol)) {
