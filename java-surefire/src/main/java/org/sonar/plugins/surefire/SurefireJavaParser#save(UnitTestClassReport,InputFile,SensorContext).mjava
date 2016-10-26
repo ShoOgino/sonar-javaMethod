@@ -5,13 +5,6 @@
     saveMeasure(context, inputFile, CoreMetrics.TEST_ERRORS, report.getErrors());
     saveMeasure(context, inputFile, CoreMetrics.TEST_FAILURES, report.getFailures());
     saveMeasure(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, report.getDurationMilliseconds());
-    double passedTests = testsCount - (double) report.getErrors() - report.getFailures();
-    if (testsCount > 0) {
-      double percentage = ParsingUtils.scaleValue(passedTests * 100d / testsCount);
-      if (!Double.isNaN(percentage)) {
-        context.<Double>newMeasure().forMetric(CoreMetrics.TEST_SUCCESS_DENSITY).on(inputFile).withValue(percentage).save();
-      }
-    }
     saveResults(inputFile, report);
   }
 
