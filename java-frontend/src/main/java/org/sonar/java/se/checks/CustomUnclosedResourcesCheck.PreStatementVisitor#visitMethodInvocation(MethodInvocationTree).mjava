@@ -1,11 +1,11 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
       if (isOpeningResource(mit)) {
-        openResource(mit);
+        openResource(getTargetSV(mit), mit);
       } else if (isClosingResource(mit)) {
-        closeResource(programState.peekValue());
+        closeResource(getTargetSV(mit));
       } else {
-        closeArguments(mit.arguments(), 1);
+        programState.peekValues(mit.arguments().size()).forEach(this::closeResource);
       }
     }
 

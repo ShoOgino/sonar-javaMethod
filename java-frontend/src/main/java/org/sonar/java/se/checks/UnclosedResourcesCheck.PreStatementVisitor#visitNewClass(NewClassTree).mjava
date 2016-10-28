@@ -1,6 +1,7 @@
     @Override
     public void visitNewClass(NewClassTree syntaxNode) {
-      final List<SymbolicValue> arguments = programState.peekValues(syntaxNode.arguments().size());
+      List<SymbolicValue> arguments = new ArrayList<>(programState.peekValues(syntaxNode.arguments().size()));
+      Collections.reverse(arguments);
       if (isOpeningResource(syntaxNode)) {
         Iterator<SymbolicValue> iterator = arguments.iterator();
         for (ExpressionTree argument : syntaxNode.arguments()) {
@@ -15,7 +16,7 @@
           }
         }
       } else {
-        closeArguments(syntaxNode.arguments(), 0);
+        closeArguments(syntaxNode.arguments());
       }
     }
 
