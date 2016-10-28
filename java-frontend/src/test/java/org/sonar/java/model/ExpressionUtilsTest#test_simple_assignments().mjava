@@ -1,0 +1,20 @@
+  @Test
+  public void test_simple_assignments() throws Exception {
+    File file = new File("src/test/java/org/sonar/java/model/ExpressionUtilsTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser(StandardCharsets.UTF_8).parse(file);
+    MethodTree methodTree = (MethodTree) ((ClassTree) tree.types().get(0)).members().get(1);
+    List<AssignmentExpressionTree> assignments = methodTree.block().body().stream()
+      .filter(s -> s.is(Tree.Kind.EXPRESSION_STATEMENT))
+      .map(ExpressionStatementTree.class::cast)
+      .map(ExpressionStatementTree::expression)
+      .filter(e -> e instanceof AssignmentExpressionTree)
+      .map(AssignmentExpressionTree.class::cast)
+      .collect(Collectors.toList());
+
+    assertThat(assignments).hasSize(4);
+    assertThat(ExpressionUtils.isSimpleAssignment(assignments.get(0))).isTrue();
+    assertThat(ExpressionUtils.isSimpleAssignment(assignments.get(1))).isTrue();
+    assertThat(ExpressionUtils.isSimpleAssignment(assignments.get(2))).isFalse();
+    assertThat(ExpressionUtils.isSimpleAssignment(assignments.get(3))).isFalse();
+  }
+
