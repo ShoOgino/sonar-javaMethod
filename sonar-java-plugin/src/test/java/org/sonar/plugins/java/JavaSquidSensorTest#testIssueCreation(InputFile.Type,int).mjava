@@ -1,32 +1,33 @@
   private void testIssueCreation(InputFile.Type onType, int expectedIssues) throws IOException {
-    Settings settings = new Settings();
-    SensorContextTester context = SensorContextTester.create(new File("src/test/java/"));
+    Settings settings = new MapSettings();
+    NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
+    SensorContextTester context = createContext(onType);
     DefaultFileSystem fs = context.fileSystem();
-
-    String effectiveKey = "org/sonar/plugins/java/JavaSquidSensorTest.java";
-    File file = new File(fs.baseDir(), effectiveKey);
-    DefaultInputFile inputFile = new DefaultInputFile("", effectiveKey).setLanguage("java").setType(onType).initMetadata(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
-    fs.add(inputFile);
-
     SonarComponents sonarComponents = createSonarComponentsMock(context);
     DefaultJavaResourceLocator javaResourceLocator = new DefaultJavaResourceLocator(fs, new JavaClasspath(settings, fs));
-    NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
     PostAnalysisIssueFilter postAnalysisIssueFilter = new PostAnalysisIssueFilter(fs);
     JavaSquidSensor jss = new JavaSquidSensor(sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, postAnalysisIssueFilter);
 
-    org.sonar.api.resources.File resource = org.sonar.api.resources.File.create(effectiveKey);
-    resource.setEffectiveKey(effectiveKey);
     jss.execute(context);
-
-    String message = "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.";
-    verify(noSonarFilter, times(1)).noSonarInFile(inputFile, Sets.newHashSet(79));
+    verify(noSonarFilter, times(1)).noSonarInFile(fs.inputFiles().iterator().next(), Sets.newHashSet(79));
     verify(sonarComponents, times(expectedIssues)).reportIssue(any(AnalyzerMessage.class));
 
-    settings.setProperty(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY, true);
-    jss.execute(context);
+    context = createContext(onType);
+    fs = context.fileSystem();
+    sonarComponents = createSonarComponentsMock(context);
+    javaResourceLocator = new DefaultJavaResourceLocator(fs, new JavaClasspath(settings, fs));
+    postAnalysisIssueFilter = new PostAnalysisIssueFilter(fs);
+    jss = new JavaSquidSensor(sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, postAnalysisIssueFilter);
 
     settings.setProperty(Java.SOURCE_VERSION, "wrongFormat");
     jss.execute(context);
+
+    context = createContext(onType);
+    fs = context.fileSystem();
+    sonarComponents = createSonarComponentsMock(context);
+    javaResourceLocator = new DefaultJavaResourceLocator(fs, new JavaClasspath(settings, fs));
+    postAnalysisIssueFilter = new PostAnalysisIssueFilter(fs);
+    jss = new JavaSquidSensor(sonarComponents, fs, javaResourceLocator, settings, noSonarFilter, postAnalysisIssueFilter);
 
     settings.setProperty(Java.SOURCE_VERSION, "1.7");
     jss.execute(context);

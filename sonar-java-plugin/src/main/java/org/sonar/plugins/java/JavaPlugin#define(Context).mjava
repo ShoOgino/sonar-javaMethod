@@ -1,8 +1,10 @@
   @Override
   public void define(Context context) {
     ImmutableList.Builder<Object> builder = ImmutableList.builder();
-    builder.addAll(SurefireExtensions.getExtensions());
-    builder.addAll(JaCoCoExtensions.getExtensions());
+    if (!context.getSonarQubeVersion().isGreaterThanOrEqual(SQ_6_0) || context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
+      builder.addAll(SurefireExtensions.getExtensions());
+      builder.addAll(JaCoCoExtensions.getExtensions());
+    }
     builder.addAll(JavaClasspathProperties.getProperties());
     builder.add(
       JavaClasspath.class,
@@ -15,15 +17,6 @@
         .subCategory("General")
         .onQualifiers(Qualifiers.PROJECT)
         .build(),
-      PropertyDefinition.builder(CoreProperties.DESIGN_SKIP_DESIGN_PROPERTY)
-        .defaultValue(Boolean.toString(CoreProperties.DESIGN_SKIP_DESIGN_DEFAULT_VALUE))
-        .category(JAVA_CATEGORY)
-        .subCategory(GENERAL_SUBCATEGORY)
-        .name("Skip design analysis")
-        .type(PropertyType.BOOLEAN)
-        .hidden()
-        .build(),
-
       JavaRulesDefinition.class,
       JavaSonarWayProfile.class,
       SonarComponents.class,

@@ -1,0 +1,11 @@
+  private static SensorContextTester createContext(InputFile.Type onType) throws IOException {
+    SensorContextTester context = SensorContextTester.create(new File("src/test/java/"));
+    DefaultFileSystem fs = context.fileSystem();
+
+    String effectiveKey = "org/sonar/plugins/java/JavaSquidSensorTest.java";
+    File file = new File(fs.baseDir(), effectiveKey);
+    DefaultInputFile inputFile = new DefaultInputFile("", effectiveKey).setLanguage("java").setType(onType).initMetadata(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+    fs.add(inputFile);
+    return context;
+  }
+
