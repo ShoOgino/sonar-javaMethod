@@ -1,4 +1,6 @@
   private void executeNewArray(NewArrayTree newArrayTree) {
+    int numberDimensions = (int) newArrayTree.dimensions().stream().map(ArrayDimensionTree::expression).filter(Objects::nonNull).count();
+    programState = programState.unstackValue(numberDimensions).state;
     programState = programState.unstackValue(newArrayTree.initializers().size()).state;
     SymbolicValue svNewArray = constraintManager.createSymbolicValue(newArrayTree);
     programState = programState.stackValue(svNewArray);
