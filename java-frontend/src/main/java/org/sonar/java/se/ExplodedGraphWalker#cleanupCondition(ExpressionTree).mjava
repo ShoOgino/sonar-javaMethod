@@ -1,0 +1,12 @@
+  /**
+   * Required for accurate reporting.
+   * If condition is && or || expression, then return its right operand.
+   */
+  private static ExpressionTree cleanupCondition(ExpressionTree condition) {
+    ExpressionTree cleanedUpCondition = ExpressionUtils.skipParentheses(condition);
+    if (cleanedUpCondition.is(Tree.Kind.CONDITIONAL_AND, Tree.Kind.CONDITIONAL_OR)) {
+      cleanedUpCondition = cleanupCondition(((BinaryExpressionTree) cleanedUpCondition).rightOperand());
+    }
+    return cleanedUpCondition;
+  }
+
