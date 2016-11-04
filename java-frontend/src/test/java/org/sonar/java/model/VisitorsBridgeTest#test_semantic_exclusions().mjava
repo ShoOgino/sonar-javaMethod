@@ -1,12 +1,9 @@
   @Test
   public void test_semantic_exclusions() {
-    VisitorsBridge visitorsBridgeWithoutSemantic = new VisitorsBridge(Collections.singletonList(new JavaFileScanner() {
-      @Override
-      public void scanFile(JavaFileScannerContext context) {
-        assertThat(context.getSemanticModel() == null).isTrue();
-        assertThat(context.fileParsed()).isTrue();
-      }
-    }), Lists.<File>newArrayList(), null);
+    VisitorsBridge visitorsBridgeWithoutSemantic = new VisitorsBridge(Collections.singletonList((JavaFileScanner) context -> {
+      assertThat(context.getSemanticModel()).isNull();
+      assertThat(context.fileParsed()).isTrue();
+    }), Lists.newArrayList(), null);
     checkFile(contstructFileName("java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
     checkFile(contstructFileName("src", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
     checkFile(contstructFileName("home", "user", "oracleSdk", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
@@ -23,7 +20,7 @@
       public List<Kind> nodesToVisit() {
         return ImmutableList.of(Tree.Kind.METHOD);
       }
-    }), Lists.<File>newArrayList(), null);
+    }), Lists.newArrayList(), null);
     checkFile(contstructFileName("org", "foo", "bar", "Foo.java"), "class Foo { arrrrrrgh", visitorsBridgeWithParsingIssue);
   }
 
