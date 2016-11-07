@@ -1,0 +1,11 @@
+  public UnknownType unknownType() {
+    if (unknownType == null) { // Noncompliant [[sc=5;ec=7;secondary=95]] {{Remove this dangerous instance of double-checked locking.}}
+      synchronized (Helper.class) {
+        if (unknownType == null) {
+          this.unknownType = new UnknownType();
+        }
+      }
+    }
+    return unknownType;
+  }
+

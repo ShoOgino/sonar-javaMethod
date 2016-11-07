@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    if (isIfFieldEqNullTree(tree)) {
+      IfStatementTree ifTree = (IfStatementTree) tree;
+      ifConditionSymbolStack.push(new CheckedLocking(ifTree));
+      visitIfStatement(ifTree);
+    }
+    if (tree.is(SYNCHRONIZED_STATEMENT)) {
+      synchronizedStmtStack.push(tree);
+    }
+  }
+

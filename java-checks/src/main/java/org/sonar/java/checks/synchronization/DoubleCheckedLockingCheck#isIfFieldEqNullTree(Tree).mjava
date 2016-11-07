@@ -1,0 +1,13 @@
+  private static boolean isIfFieldEqNullTree(Tree tree) {
+    if (!tree.is(IF_STATEMENT)) {
+      return false;
+    }
+    IfStatementTree ifTree = (IfStatementTree) tree;
+    if (!ifTree.condition().is(EQUAL_TO)) {
+      return false;
+    }
+    BinaryExpressionTree eqRelation = (BinaryExpressionTree) ifTree.condition();
+    return (isField(eqRelation.leftOperand()) && eqRelation.rightOperand().is(NULL_LITERAL))
+      || (isField(eqRelation.rightOperand()) && eqRelation.leftOperand().is(NULL_LITERAL));
+  }
+
