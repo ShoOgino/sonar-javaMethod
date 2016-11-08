@@ -1,8 +1,10 @@
-  private static List<Tree> getReassignments(@Nullable Tree ownerDeclaration, List<IdentifierTree> usages) {
+  private static List<AssignmentExpressionTree> getReassignments(@Nullable Tree ownerDeclaration, List<IdentifierTree> usages) {
     if (ownerDeclaration != null) {
-      ReassignmentFinder reassignmentFinder = new ReassignmentFinder(usages);
-      ownerDeclaration.accept(reassignmentFinder);
-      return reassignmentFinder.reassignments;
+      List<AssignmentExpressionTree> assignments = new ArrayList<>();
+      for (IdentifierTree usage : usages) {
+        checkAssignment(usage).ifPresent(assignments::add);
+      }
+      return assignments;
     }
     return new ArrayList<>();
   }

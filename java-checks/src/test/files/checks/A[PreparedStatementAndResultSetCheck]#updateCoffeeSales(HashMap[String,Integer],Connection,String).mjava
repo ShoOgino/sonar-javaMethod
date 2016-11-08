@@ -1,32 +1,32 @@
   public void updateCoffeeSales(HashMap<String, Integer> salesForWeek, Connection con, String param) throws SQLException {
 
     String dbName = "doug";
-    
+
     PreparedStatement updateSales = null;
     PreparedStatement updateTotal = null;
     PreparedStatement other = null;
-    
+
     String updateString = "update " + dbName + ".COFFEES set SALES = ?";
-    
+
     String updateStatement =
           "update " + dbName + ".COFFEES " +
                   "set TOTAL = TOTAL + ? " +
                   "where COF_NAME = ?";
-    
+
     try {
       PreparedStatement ps = con.prepareStatement(updateStatement);
       ps.setInt(1, 1); // Compliant
       ps.setString(3, "three"); // Noncompliant
       ps.setString(72, "boom"); // Noncompliant
-      
+
       ps = con.prepareStatement(updateStatement);
       ps.setInt(1, 2); // Compliant
       ps.setString(2, "three"); // Compliant
-      
+
       updateSales = con.prepareStatement(updateString);
       updateTotal = con.prepareStatement(updateStatement);
       other = con.prepareStatement("update " + dbName + ".COFFEES set SALES = ?");
-      
+
       for (Map.Entry<String, Integer> e : salesForWeek.entrySet()) {
         updateSales.setInt(1, e.getValue().intValue()); // Compliant
         updateSales.setString(2, e.getKey());  // Noncompliant
@@ -34,23 +34,21 @@
         updateTotal.setString(2, e.getKey()); // Compliant
         other.setInt(2, getIntValue()); // Noncompliant
       }
-      
+
       updateString = "update " + param + ".COFFEES set SALES = ?";
-      
+
       PreparedStatement testParam = con.prepareStatement(updateString);
       testParam.setInt(3, 0); // Noncompliant
-      
+
       testParam = con.prepareStatement(param + " update");
       testParam.setInt(3, 0); // Noncompliant
-      
+
       testParam = con.prepareStatement(param + param);
       testParam.setInt(3, 0); // Compliant
-      
+
       String[] array = new String[]{""};
       PreparedStatement qix = con.prepareStatement(array[0]);
       qix.setString(3, ""); // Compliant
-      
-      
     } catch(SQLException e) {
     }
   }

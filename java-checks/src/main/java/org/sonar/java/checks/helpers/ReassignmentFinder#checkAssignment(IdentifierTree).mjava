@@ -1,0 +1,18 @@
+  private static Optional<AssignmentExpressionTree> checkAssignment(IdentifierTree usage) {
+    Tree previousTree = usage;
+    Tree nonParenthesisParent = previousTree.parent();
+
+    while (nonParenthesisParent.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      previousTree = nonParenthesisParent;
+      nonParenthesisParent = previousTree.parent();
+    }
+
+    if (nonParenthesisParent instanceof AssignmentExpressionTree) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) nonParenthesisParent;
+      if (assignment.variable().equals(previousTree)) {
+        return Optional.of(assignment);
+      }
+    }
+    return Optional.empty();
+  }
+

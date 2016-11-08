@@ -1,0 +1,14 @@
+  @CheckForNull
+  private static Tree getClosestReassignment(SyntaxToken startToken, List<AssignmentExpressionTree> reassignments) {
+    Tree result = null;
+    List<Tree> assignmentsBeforeStartToken = reassignments.stream()
+      .sorted(ReassignmentFinder::isBefore)
+      .filter(a -> isBefore(startToken, a) > 0)
+      .collect(Collectors.toList());
+
+    if (!assignmentsBeforeStartToken.isEmpty()) {
+      return assignmentsBeforeStartToken.get(assignmentsBeforeStartToken.size() - 1);
+    }
+    return result;
+  }
+
