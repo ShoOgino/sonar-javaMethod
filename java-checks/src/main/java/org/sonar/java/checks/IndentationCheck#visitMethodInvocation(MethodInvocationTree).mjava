@@ -1,0 +1,16 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    SyntaxToken firstToken = tree.firstToken();
+    int parenthesisLine = tree.arguments().openParenToken().line();
+    boolean shouldIndentArgs = firstToken.line() != parenthesisLine;
+    scan(tree.methodSelect());
+    scan(tree.typeArguments());
+    if (shouldIndentArgs) {
+      expectedLevel += indentationLevel;
+    }
+    scan(tree.arguments());
+    if (shouldIndentArgs) {
+      expectedLevel -= indentationLevel;
+    }
+  }
+

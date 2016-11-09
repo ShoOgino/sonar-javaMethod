@@ -1,0 +1,13 @@
+  @Override
+  public void visitSwitchStatement(SwitchStatementTree tree) {
+    newBlock();
+    scan(tree.expression());
+    for (CaseGroupTree caseGroupTree : tree.cases()) {
+      newBlock();
+      checkCaseGroup(caseGroupTree);
+      scan(caseGroupTree);
+      leaveNode(caseGroupTree);
+    }
+    leaveNode(tree);
+  }
+
