@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    long fieldCount = classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE) && shouldBeCounted((VariableTree) member))
+      .count();
+    if (fieldCount > threshold) {
+      String message = String.format("Refactor this class so it has no more than %d %sfields, rather than the %d it currently has.", threshold,
+        countNonPublicFields ? "" : "public ", fieldCount);
+      reportIssue(reportOnClassTree(classTree), message);
+    }
+  }
+
