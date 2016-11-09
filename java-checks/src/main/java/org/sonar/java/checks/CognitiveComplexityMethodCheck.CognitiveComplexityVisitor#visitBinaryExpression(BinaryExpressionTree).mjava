@@ -1,0 +1,16 @@
+    @Override
+    public void visitBinaryExpression(BinaryExpressionTree tree) {
+      if(tree.is(CONDITIONAL_AND, CONDITIONAL_OR)) {
+        increaseComplexityByOne(tree);
+        if(ExpressionUtils.skipParentheses(tree.leftOperand()).kind() == tree.kind()) {
+          ignored.add(tree.leftOperand());
+          complexity--;
+        }
+        if(ExpressionUtils.skipParentheses(tree.rightOperand()).kind() == tree.kind()) {
+          ignored.add(tree.rightOperand());
+          complexity--;
+        }
+      }
+      super.visitBinaryExpression(tree);
+    }
+

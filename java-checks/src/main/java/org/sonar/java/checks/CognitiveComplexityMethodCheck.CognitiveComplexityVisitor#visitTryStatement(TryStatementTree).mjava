@@ -1,0 +1,11 @@
+    @Override
+    public void visitTryStatement(TryStatementTree tree) {
+      scan(tree.resources());
+      scan(tree.block());
+      tree.catches().forEach(c -> increaseComplexityByNesting(c.catchKeyword()));
+      nesting++;
+      scan(tree.catches());
+      nesting--;
+      scan(tree.finallyBlock());
+    }
+
