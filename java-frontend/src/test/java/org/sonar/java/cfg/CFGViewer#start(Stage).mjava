@@ -1,0 +1,20 @@
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    setupLayout();
+
+    primaryStage.setTitle("SonarQube Java Analyzer - CFG Viewer");
+    codeArea.insertText(0, defaultFileContent());
+
+    SplitPane splitPane = new SplitPane();
+    splitPane.getItems().addAll(verticalLayout, webView);
+    webView.getEngine().load(CFGViewer.class.getResource("/cfgviewer/cfg.html").toExternalForm());
+    primaryStage.setScene(new Scene(splitPane, 1200, 800));
+    primaryStage.show();
+
+    Timeline timeline = new Timeline(new KeyFrame(
+      Duration.millis(500),
+      ae -> checkForUpdate()));
+    timeline.setCycleCount(Animation.INDEFINITE);
+    timeline.play();
+  }
+
