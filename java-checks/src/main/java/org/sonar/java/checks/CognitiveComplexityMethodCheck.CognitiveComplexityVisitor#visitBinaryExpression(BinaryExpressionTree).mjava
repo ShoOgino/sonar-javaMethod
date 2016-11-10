@@ -1,13 +1,15 @@
     @Override
     public void visitBinaryExpression(BinaryExpressionTree tree) {
       if(tree.is(CONDITIONAL_AND, CONDITIONAL_OR)) {
-        increaseComplexityByOne(tree);
-        if(ExpressionUtils.skipParentheses(tree.leftOperand()).kind() == tree.kind()) {
-          ignored.add(tree.leftOperand());
+        increaseComplexityByOne(tree.operatorToken());
+        ExpressionTree left = ExpressionUtils.skipParentheses(tree.leftOperand());
+        if(left.kind() == tree.kind()) {
+          ignored.add(((BinaryExpressionTree) left).operatorToken());
           complexity--;
         }
-        if(ExpressionUtils.skipParentheses(tree.rightOperand()).kind() == tree.kind()) {
-          ignored.add(tree.rightOperand());
+        ExpressionTree right = ExpressionUtils.skipParentheses(tree.rightOperand());
+        if(right.kind() == tree.kind()) {
+          ignored.add(((BinaryExpressionTree) right).operatorToken());
           complexity--;
         }
       }
