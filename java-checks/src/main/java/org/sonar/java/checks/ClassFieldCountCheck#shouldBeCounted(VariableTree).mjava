@@ -1,4 +1,8 @@
   private boolean shouldBeCounted(VariableTree variableTree) {
-    return countNonPublicFields || variableTree.symbol().isPublic();
+    Symbol symbol = variableTree.symbol();
+    if (symbol.isStatic() && symbol.isFinal()) {
+      return false;
+    }
+    return countNonPublicFields || symbol.isPublic();
   }
 
