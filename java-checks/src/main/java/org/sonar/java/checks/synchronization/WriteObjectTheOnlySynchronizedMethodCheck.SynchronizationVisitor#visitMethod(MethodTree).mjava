@@ -1,0 +1,12 @@
+    @Override
+    public void visitMethod(MethodTree tree) {
+      if (tree == writeObjectMethodTree || moreThanSingleLock) {
+        return;
+      }
+      if (hasModifier(tree.modifiers(), SYNCHRONIZED)) {
+        moreThanSingleLock = true;
+        return;
+      }
+      super.visitMethod(tree);
+    }
+
