@@ -1,6 +1,6 @@
   @Override
   public void visitAssignmentExpression(AssignmentExpressionTree tree) {
-    if (!loopLevel.isEmpty() && isStringConcatenation(tree) && isNotLoopLocalVar(tree)) {
+    if (!loopLevel.isEmpty() && isStringConcatenation(tree) && isNotLoopLocalVar(tree) && isNotArrayAccess(tree)) {
       context.reportIssue(this, tree.variable(), "Use a StringBuilder instead.");
     }
     super.visitAssignmentExpression(tree);
