@@ -1,0 +1,12 @@
+  @Test
+  public void should_report_analysis_error_in_sonarLint_context_withSQ_6_0() throws Exception {
+    JavaAstScanner scanner = defaultJavaAstScanner();
+    FakeAuditListener listener = spy(new FakeAuditListener());
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    when(sonarComponents.reportAnalysisError(any(RecognitionException.class), any(File.class))).thenReturn(true);
+    scanner.setVisitorBridge(new VisitorsBridge(Lists.newArrayList(listener), Lists.newArrayList(), sonarComponents, false));
+    scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerParseError.txt")));
+    verify(sonarComponents).reportAnalysisError(any(RecognitionException.class), any(File.class));
+    verifyZeroInteractions(listener);
+  }
+

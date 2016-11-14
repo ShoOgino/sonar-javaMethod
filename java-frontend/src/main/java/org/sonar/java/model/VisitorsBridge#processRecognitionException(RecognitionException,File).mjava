@@ -1,0 +1,10 @@
+  public void processRecognitionException(RecognitionException e, File file) {
+    if(sonarComponents == null || !sonarComponents.reportAnalysisError(e, file)) {
+      this.visitFile(null);
+      scanners.stream()
+        .filter(scanner -> scanner instanceof AstScannerExceptionHandler)
+        .forEach(scanner -> ((AstScannerExceptionHandler) scanner).processRecognitionException(e));
+    }
+
+  }
+
