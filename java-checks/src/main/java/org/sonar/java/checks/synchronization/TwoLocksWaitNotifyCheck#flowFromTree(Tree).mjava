@@ -1,0 +1,8 @@
+  private static List<JavaFileScannerContext.Location> flowFromTree(Tree tree) {
+    SynchronizedKeywordVisitor synchronizedKeywordVisitor = new SynchronizedKeywordVisitor();
+    tree.accept(synchronizedKeywordVisitor);
+    return synchronizedKeywordVisitor.stream()
+      .map(t -> new JavaFileScannerContext.Location("locking", t))
+      .collect(Collectors.toList());
+  }
+

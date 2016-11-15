@@ -1,0 +1,7 @@
+  private void findWaitOrNotifyInvocation(MethodTree tree) {
+    findMethodCall(tree, WAIT_MATCHER)
+      .ifPresent(wait -> reportIssue(wait, "Don't use \"wait()\" here; multiple locks are held.", flowFromTree(tree), null));
+    findMethodCall(tree, NOTIFY_MATCHER)
+      .ifPresent(notify -> reportIssue(notify, "Use \"notifyAll()\" here; multiple locks are held.", flowFromTree(tree), null));
+  }
+
