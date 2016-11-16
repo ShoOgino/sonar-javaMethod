@@ -7,8 +7,11 @@
       nesting--;
       boolean elseStatementNotIF = tree.elseStatement() != null && !tree.elseStatement().is(IF_STATEMENT);
       if(elseStatementNotIF) {
-        increaseComplexityByNesting(tree.elseKeyword());
+        increaseComplexityByOne(tree.elseKeyword());
         nesting++;
+      } else if(tree.elseStatement() != null) {
+        // else statement is an if, visiting it will increase complexity by nesting so by one only.
+        complexity -= nesting - 1;
       }
       scan(tree.elseStatement());
       if(elseStatementNotIF) {
