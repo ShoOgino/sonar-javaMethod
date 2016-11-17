@@ -3,11 +3,10 @@
     if (!hasSemantic()) {
       return;
     }
-    if (isIfFieldEqNullTree(tree)) {
-      IfStatementTree ifTree = (IfStatementTree) tree;
-      ifConditionSymbolStack.push(new CheckedLocking(ifTree));
-      visitIfStatement(ifTree);
-    }
+    isIfFieldEqNull(tree).ifPresent(ifFieldEqNull -> {
+      ifConditionSymbolStack.push(ifFieldEqNull);
+      visitIfStatement(ifFieldEqNull.ifTree);
+    });
     if (tree.is(SYNCHRONIZED_STATEMENT)) {
       synchronizedStmtStack.push(tree);
     }

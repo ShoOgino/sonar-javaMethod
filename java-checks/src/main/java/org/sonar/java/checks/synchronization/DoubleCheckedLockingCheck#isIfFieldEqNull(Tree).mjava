@@ -1,0 +1,18 @@
+  private static Optional<IfFieldEqNull> isIfFieldEqNull(Tree tree) {
+    if (!tree.is(IF_STATEMENT)) {
+      return Optional.empty();
+    }
+    IfStatementTree ifTree = (IfStatementTree) tree;
+    if (!ifTree.condition().is(EQUAL_TO)) {
+      return Optional.empty();
+    }
+    BinaryExpressionTree eqRelation = (BinaryExpressionTree) ifTree.condition();
+    if (eqRelation.rightOperand().is(NULL_LITERAL)) {
+      return isField(eqRelation.leftOperand()).map(f -> new IfFieldEqNull(ifTree, f));
+    }
+    if (eqRelation.leftOperand().is(NULL_LITERAL)) {
+      return isField(eqRelation.rightOperand()).map(f -> new IfFieldEqNull(ifTree, f));
+    }
+    return Optional.empty();
+  }
+

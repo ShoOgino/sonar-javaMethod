@@ -1,11 +1,10 @@
-  @CheckForNull
-  private static Symbol symbolFromVariable(ExpressionTree variable) {
+  private static Optional<Symbol> symbolFromVariable(ExpressionTree variable) {
     if (variable.is(IDENTIFIER)) {
-      return ((IdentifierTree) variable).symbol();
+      return Optional.of(((IdentifierTree) variable).symbol());
     }
     if (variable.is(MEMBER_SELECT)) {
-      return ((MemberSelectExpressionTree) variable).identifier().symbol();
+      return Optional.of(((MemberSelectExpressionTree) variable).identifier().symbol());
     }
-    return null;
+    return Optional.empty();
   }
 

@@ -1,9 +1,8 @@
     @Override
     public void visitAssignmentExpression(AssignmentExpressionTree assignmentTree) {
       ExpressionTree variable = assignmentTree.variable();
-      Symbol symbol = symbolFromVariable(variable);
-      if (field == symbol) {
-        assignmentToField = true;
-      }
+      symbolFromVariable(variable)
+        .filter(s -> s == field)
+        .ifPresent(s -> assignmentToField = true);
     }
 
