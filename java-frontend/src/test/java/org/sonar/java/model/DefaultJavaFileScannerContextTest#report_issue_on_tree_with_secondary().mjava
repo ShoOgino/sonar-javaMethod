@@ -10,9 +10,10 @@
 
     assertThat(reportedMessage.getMessage()).isEqualTo("msg");
     assertThat(reportedMessage.getCost()).isNull();
-    assertThat(reportedMessage.secondaryLocations).hasSize(1);
+    assertThat(reportedMessage.flows).hasSize(1);
 
     assertMessagePosition(reportedMessage, 1, 6, 1, 7);
-    assertMessagePosition(reportedMessage.secondaryLocations.get(0), 2, 2, 2, 13);
+    List<AnalyzerMessage> secondaries = reportedMessage.flows.stream().map(flow -> flow.get(0)).collect(Collectors.toList());
+    assertMessagePosition(secondaries.get(0), 2, 2, 2, 13);
   }
 

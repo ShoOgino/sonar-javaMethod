@@ -10,7 +10,7 @@
       public Void answer(InvocationOnMock invocation) throws Throwable {
         AnalyzerMessage analyzerMessage = (AnalyzerMessage) invocation.getArguments()[0];
         reportedMessage = "onNode:" + analyzerMessage.getMessage() + "(" + analyzerMessage.getLine() + ")";
-        for (AnalyzerMessage secondary : analyzerMessage.secondaryLocations) {
+        for (AnalyzerMessage secondary : analyzerMessage.flows.stream().map(l -> l.get(0)).collect(Collectors.toList())) {
           reportedMessage += ";onChild:" + secondary.getMessage() + "(" + secondary.getLine() + ")";
         }
         return null;

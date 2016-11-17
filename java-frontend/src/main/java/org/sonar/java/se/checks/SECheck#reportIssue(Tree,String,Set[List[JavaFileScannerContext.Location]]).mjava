@@ -1,0 +1,11 @@
+  public void reportIssue(Tree tree, String message, Set<List<JavaFileScannerContext.Location>> secondary) {
+    issues.add(issues.stream()
+      .filter(seIssue -> seIssue.tree.equals(tree))
+      .findFirst()
+      .map(seIssue -> {
+        seIssue.flows.addAll(secondary);
+        return seIssue;
+      })
+      .orElse(new SEIssue(tree, message, secondary)));
+  }
+

@@ -1,0 +1,17 @@
+  private static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal) {
+    List<JavaFileScannerContext.Location> flow = new ArrayList<>();
+    ExplodedGraph.Node node = currentNode;
+    while (node != null) {
+      ExplodedGraph.Node finalNode = node;
+      if(finalNode.programPoint.syntaxTree() != null) {
+        node.learnedConstraints.stream()
+          .map(lc->lc.sv)
+          .filter(sv -> sv.equals(currentVal))
+          .findFirst()
+          .ifPresent(sv -> flow.add(new JavaFileScannerContext.Location("", finalNode.programPoint.syntaxTree())));
+      }
+      node = node.parent;
+    }
+    return flow;
+  }
+

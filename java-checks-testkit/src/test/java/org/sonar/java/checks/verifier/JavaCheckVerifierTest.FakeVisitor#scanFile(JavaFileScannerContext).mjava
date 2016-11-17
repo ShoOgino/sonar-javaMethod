@@ -9,10 +9,9 @@
       for (AnalyzerMessage analyzerMessage : preciseIssues.values()) {
         Double messageCost = analyzerMessage.getCost();
         Integer cost = messageCost != null ? messageCost.intValue() : null;
-        List<JavaFileScannerContext.Location> secLocations = new ArrayList<>();
-        for (AnalyzerMessage secondaryLocation : analyzerMessage.secondaryLocations) {
-          secLocations.add(new JavaFileScannerContext.Location("", mockTree(secondaryLocation)));
-        }
+        List<JavaFileScannerContext.Location> secLocations = analyzerMessage.flows.stream()
+          .map(l -> new JavaFileScannerContext.Location("", mockTree(l.get(0))))
+          .collect(Collectors.toList());
         reportIssue(mockTree(analyzerMessage), analyzerMessage.getMessage(), secLocations, cost);
       }
       for (String message : issuesOnFile) {

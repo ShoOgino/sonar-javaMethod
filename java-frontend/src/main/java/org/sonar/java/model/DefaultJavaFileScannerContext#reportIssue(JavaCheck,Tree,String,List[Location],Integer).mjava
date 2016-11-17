@@ -1,5 +1,6 @@
   @Override
   public void reportIssue(JavaCheck javaCheck, Tree syntaxNode, String message, List<Location> secondary, @Nullable Integer cost) {
-    sonarComponents.reportIssue(createAnalyzerMessage(file, javaCheck, syntaxNode, null, message, secondary, cost));
+    List<List<Location>> flows = secondary.isEmpty() ? Collections.emptyList() : Collections.singletonList(secondary);
+    reportIssueWithFlow(javaCheck, syntaxNode, message, flows, cost);
   }
 
