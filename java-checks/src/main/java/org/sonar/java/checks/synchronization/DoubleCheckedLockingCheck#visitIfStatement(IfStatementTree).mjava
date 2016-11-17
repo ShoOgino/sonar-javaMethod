@@ -1,15 +1,7 @@
   private void visitIfStatement(IfStatementTree ifTree) {
     if (insideCriticalSection()) {
-      IfFieldEqNull parentIf = sameFieldAlreadyOnStack(ifConditionSymbolStack.peek());
-      if (parentIf.ifTree == ifTree) {
-        return;
-      }
-      if (thenStmtInitializeField(ifTree.thenStatement(), parentIf.field)
-        && !parentIf.field.isVolatile()
-        && !isAssignedAtomically(parentIf.field)) {
-        ImmutableList<JavaFileScannerContext.Location> flow = ImmutableList.of(new JavaFileScannerContext.Location("Double-checked locking", ifTree.ifKeyword()));
-        reportIssue(parentIf.ifTree.ifKeyword(), "Remove this dangerous instance of double-checked locking.", flow, null);
-      }
+      Optional<IfFieldEqNull> parentIf = sameFieldAlreadyOnStack(ifFieldStack.peek());
+      parentIf.ifPresent(pIf -> ifSynchronizedIfPattern(pIf, ifTree));
     }
   }
 

@@ -4,11 +4,15 @@
       return;
     }
     isIfFieldEqNull(tree).ifPresent(ifFieldEqNull -> {
-      ifConditionSymbolStack.push(ifFieldEqNull);
+      ifFieldStack.push(ifFieldEqNull);
       visitIfStatement(ifFieldEqNull.ifTree);
     });
     if (tree.is(SYNCHRONIZED_STATEMENT)) {
-      synchronizedStmtStack.push(tree);
+      CriticalSection criticalSection = new CriticalSection((SynchronizedStatementTree) tree, ifFieldStack.size());
+      synchronizedStmtStack.push(criticalSection);
+    }
+    if (tree.is(METHOD)) {
+      methodIsSynchronized = ModifiersUtils.hasModifier(((MethodTree) tree).modifiers(), Modifier.SYNCHRONIZED);
     }
   }
 

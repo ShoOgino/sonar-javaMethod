@@ -1,9 +1,9 @@
   public Helper unrelatedNestedIfs() {
-    if (null == helper) { // Noncompliant [[sc=5;ec=7;secondary=142]] {{Remove this dangerous instance of double-checked locking.}}
+    if (null == helper) {
       if (sunIsUp) {
         doSomething();
       }
-      synchronized (this) {
+      synchronized (this) { // Noncompliant [[sc=7;ec=19;secondary=135,142]] {{Remove this dangerous instance of double-checked locking.}}
         if (sunIsDown) {
           doSomethingElse();
           if (null == helper)
