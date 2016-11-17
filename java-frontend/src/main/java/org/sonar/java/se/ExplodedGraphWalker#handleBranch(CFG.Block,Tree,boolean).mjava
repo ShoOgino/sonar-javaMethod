@@ -1,9 +1,14 @@
   private void handleBranch(CFG.Block programPosition, Tree condition, boolean checkPath) {
+    SymbolicValue peek = programState.peekValue();
     Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
     ExplodedGraph.ProgramPoint falseBlockProgramPoint = new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0);
     for (ProgramState state : pair.a) {
+      ProgramState ps = state;
+      if (condition.parent().is(Tree.Kind.CONDITIONAL_AND) && !isPartOfConditionalExpressionCondition(condition)) {
+        // re-push the last value on the top of the stack as it may be required for next expression
+        ps = state.stackValue(peek);
+      }
       // enqueue false-branch, if feasible
-      ProgramState ps = state.stackValue(SymbolicValue.FALSE_LITERAL);
       enqueue(falseBlockProgramPoint, ps, node.exitPath);
       if (checkPath) {
         alwaysTrueOrFalseChecker.evaluatedToFalse(condition);
@@ -11,7 +16,11 @@
     }
     ExplodedGraph.ProgramPoint trueBlockProgramPoint = new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0);
     for (ProgramState state : pair.b) {
-      ProgramState ps = state.stackValue(SymbolicValue.TRUE_LITERAL);
+      ProgramState ps = state;
+      if (condition.parent().is(Tree.Kind.CONDITIONAL_OR) && !isPartOfConditionalExpressionCondition(condition)) {
+        // re-push the last value on the top of the stack as it may be required for next expression
+        ps = state.stackValue(peek);
+      }
       // enqueue true-branch, if feasible
       enqueue(trueBlockProgramPoint, ps, node.exitPath);
       if (checkPath) {

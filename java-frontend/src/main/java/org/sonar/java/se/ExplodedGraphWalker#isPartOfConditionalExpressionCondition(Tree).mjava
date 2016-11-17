@@ -1,0 +1,10 @@
+  private static boolean isPartOfConditionalExpressionCondition(Tree tree) {
+    Tree current;
+    Tree parent = tree;
+    do {
+      current = parent;
+      parent = parent.parent();
+    } while (parent.is(Tree.Kind.PARENTHESIZED_EXPRESSION, Tree.Kind.CONDITIONAL_AND, Tree.Kind.CONDITIONAL_OR));
+    return parent.is(Tree.Kind.CONDITIONAL_EXPRESSION) && current.equals(((ConditionalExpressionTree) parent).condition());
+  }
+
