@@ -1,7 +1,6 @@
   private void ifSynchronizedIfPattern(IfFieldEqNull parentIf, IfStatementTree nestedIf) {
     if (thenStmtInitializeField(nestedIf.thenStatement(), parentIf.field)
       && !parentIf.field.isVolatile()
-      && !isAssignedAtomically(parentIf.field)
       && !methodIsSynchronized) {
       SyntaxToken synchronizedKeyword = synchronizedStmtStack.peek().synchronizedTree.synchronizedKeyword();
       reportIssue(synchronizedKeyword, "Remove this dangerous instance of double-checked locking.", createFlow(parentIf.ifTree, nestedIf), null);
