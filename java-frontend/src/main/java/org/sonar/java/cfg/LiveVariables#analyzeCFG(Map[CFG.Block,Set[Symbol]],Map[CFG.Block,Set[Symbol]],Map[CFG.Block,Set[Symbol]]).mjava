@@ -9,18 +9,8 @@
         blockOut = new HashSet<>();
         out.put(block, blockOut);
       }
-      for (CFG.Block successor : block.successors()) {
-        Set<Symbol> inOfSuccessor = in.get(successor);
-        if (inOfSuccessor != null) {
-          blockOut.addAll(inOfSuccessor);
-        }
-      }
-      for (CFG.Block successor : block.exceptions()) {
-        Set<Symbol> inOfSuccessor = in.get(successor);
-        if (inOfSuccessor != null) {
-          blockOut.addAll(inOfSuccessor);
-        }
-      }
+      block.successors().stream().map(in::get).filter(Objects::nonNull).forEach(blockOut::addAll);
+      block.exceptions().stream().map(in::get).filter(Objects::nonNull).forEach(blockOut::addAll);
       // in = gen and (out - kill)
       Set<Symbol> newIn = new HashSet<>(gen.get(block));
       newIn.addAll(Sets.difference(blockOut, kill.get(block)));
@@ -29,9 +19,7 @@
         continue;
       }
       in.put(block, newIn);
-      for (CFG.Block predecessor : block.predecessors()) {
-        workList.addLast(predecessor);
-      }
+      block.predecessors().forEach(workList::addLast);
     }
   }
 
