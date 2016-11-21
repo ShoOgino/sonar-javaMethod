@@ -1,11 +1,11 @@
-  private static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal) {
+  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal ) {
     List<JavaFileScannerContext.Location> flow = new ArrayList<>();
     ExplodedGraph.Node node = currentNode;
     Symbol lastEvaluated = currentNode.programState.getLastEvaluated();
     while (node != null) {
       ExplodedGraph.Node finalNode = node;
       if(finalNode.programPoint.syntaxTree() != null) {
-        node.learnedConstraints.stream()
+        node.getLearnedConstraints().stream()
           .map(lc->lc.sv)
           .filter(sv -> sv.equals(currentVal))
           .findFirst()
