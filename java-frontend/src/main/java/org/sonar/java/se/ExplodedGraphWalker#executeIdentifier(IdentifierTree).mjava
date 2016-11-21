@@ -3,9 +3,12 @@
     SymbolicValue value = programState.getValue(symbol);
     if (value == null) {
       value = constraintManager.createSymbolicValue(tree);
-      programState = programState.put(symbol, value);
+      programState = programState.stackValue(value);
       learnIdentifierNullConstraints(tree, value);
+      programState = programState.put(symbol, value);
+    } else {
+      programState = programState.stackValue(value);
+      programState = programState.put(symbol, value);
     }
-    programState = programState.stackValue(value);
   }
 

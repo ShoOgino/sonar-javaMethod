@@ -5,7 +5,9 @@
       return;
     }
     checkExplodedGraphTooBig(programState);
-    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, programState.visitedPoint(programPoint, nbOfExecution + 1));
+    ProgramState ps = programState.visitedPoint(programPoint, nbOfExecution + 1);
+    ps.lastEvaluated = programState.getLastEvaluated();
+    ExplodedGraph.Node cachedNode = explodedGraph.getNode(programPoint, ps);
     if (!cachedNode.isNew && exitPath == cachedNode.exitPath) {
       // has been enqueued earlier
       return;
