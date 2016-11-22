@@ -6,9 +6,7 @@
    * @param check The check to be used for the analysis
    */
   public static void verifyIssueOnFile(String filename, String message, JavaFileScanner check) {
-    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier();
-    javaCheckVerifier.expectFileIssue = message;
-    javaCheckVerifier.expectFileIssueOnline = null;
-    scanFile(filename, new JavaFileScanner[] {check}, javaCheckVerifier);
+    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier(new Expectations(false, message, null));
+    javaCheckVerifier.scanFile(filename, new JavaFileScanner[] {check});
   }
 

@@ -1,0 +1,20 @@
+  @Test
+  public void verify_flow_locations() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(11, "NullPointerException might be thrown as 'b' is nullable here", 5, 11, 15)
+        .flow()
+          .flowItem(3, "a is assigned to null here", 6, 20)
+          .flowItem(9, "a is assigned to b here", 7, 12)
+        .flow()
+          .flowItem(7, "b is assigned to null here", 7, 15)
+        .add()
+      .issueWithFlow(20)
+        .flow(17, "msg", 19, null)
+        .add();
+    try {
+      JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor);
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("[attribute mismatch for START_COLUMN: {MESSAGE=a is assigned to null here, START_COLUMN=12, END_COLUMN=20}] expected:<[12]> but was:<[6]>");
+    }
+  }
+

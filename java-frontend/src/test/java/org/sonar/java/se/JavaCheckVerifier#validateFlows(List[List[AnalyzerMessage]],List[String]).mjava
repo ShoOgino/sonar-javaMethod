@@ -1,0 +1,10 @@
+  private void validateFlows(List<List<AnalyzerMessage>> actual, List<String> expectedFlowIds) {
+    Map<String, List<AnalyzerMessage>> foundFlows = new HashMap<>();
+    List<List<AnalyzerMessage>> unexpectedFlows = new ArrayList<>();
+    actual.forEach(f -> validateFlow(f, foundFlows, unexpectedFlows));
+    expectedFlowIds.removeAll(foundFlows.keySet());
+
+    assertExpectedAndMissingFlows(expectedFlowIds, unexpectedFlows);
+    validateFoundFlows(foundFlows);
+  }
+

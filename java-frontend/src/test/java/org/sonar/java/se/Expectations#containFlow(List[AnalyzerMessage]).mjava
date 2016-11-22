@@ -1,0 +1,10 @@
+  Optional<String> containFlow(List<AnalyzerMessage> flow) {
+    if (flowLines == null) {
+      flowLines = computeFlowLines();
+    }
+    ImmutableList<Integer> actualLines = flowToLines(flow, AnalyzerMessage::getLine);
+    Optional<String> flowId = Optional.ofNullable(flowLines.get(actualLines));
+    flowId.ifPresent(id -> seenFlowIds.add(id));
+    return flowId;
+  }
+

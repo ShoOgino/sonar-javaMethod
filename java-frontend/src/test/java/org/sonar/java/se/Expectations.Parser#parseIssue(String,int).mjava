@@ -1,0 +1,17 @@
+    private void parseIssue(String comment, int line) {
+      String cleanedComment = StringUtils.remove(comment, NONCOMPLIANT_COMMENT);
+
+      EnumMap<IssueAttribute, Object> attr = new EnumMap<>(IssueAttribute.class);
+      String expectedMessage = extractMessage(cleanedComment);
+      if (StringUtils.isNotEmpty(expectedMessage)) {
+        attr.put(MESSAGE, expectedMessage);
+      }
+      int expectedLine = line;
+      String attributesSubstr = extractAttributes(comment, attr);
+
+      cleanedComment = StringUtils.stripEnd(StringUtils.remove(StringUtils.remove(cleanedComment, "[[" + attributesSubstr + "]]"), "{{" + expectedMessage + "}}"), " \t");
+      expectedLine = parseLineShifting(cleanedComment, expectedLine);
+      updateEndLine(expectedLine, attr);
+      issues.put(expectedLine, attr);
+    }
+

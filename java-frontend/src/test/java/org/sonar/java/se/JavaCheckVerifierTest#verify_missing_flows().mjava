@@ -1,0 +1,18 @@
+  @Test
+  public void verify_missing_flows() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(11, "NullPointerException might be thrown as 'b' is nullable here", 5, 11, 15)
+        .flow()
+          .flowItem(7, "b is assigned to null here", 7, 15)
+        .add()
+      .issueWithFlow(20)
+        .flow(17, "msg", 19, null)
+        .add();
+
+    try {
+      JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor);
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("Missing flows: npe1.");
+    }
+  }
+

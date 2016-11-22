@@ -10,10 +10,14 @@
         Double messageCost = analyzerMessage.getCost();
         Integer cost = messageCost != null ? messageCost.intValue() : null;
         List<JavaFileScannerContext.Location> secLocations = new ArrayList<>();
-        if(!analyzerMessage.flows.isEmpty()) {
-          secLocations  = analyzerMessage.flows.stream().map(l -> l.get(0)).map(secondaryLocation -> new JavaFileScannerContext.Location("", mockTree(secondaryLocation))).collect(Collectors.toList());
+        if (!analyzerMessage.flows.isEmpty()) {
+          List<List<JavaFileScannerContext.Location>> flows = analyzerMessage.flows.stream()
+            .map(FakeVisitor::messagesToLocations)
+            .collect(toList());
+          context.reportIssueWithFlow(this, mockTree(analyzerMessage), analyzerMessage.getMessage(), flows, null);
+        } else {
+          reportIssue(mockTree(analyzerMessage), analyzerMessage.getMessage(), secLocations, cost);
         }
-        reportIssue(mockTree(analyzerMessage), analyzerMessage.getMessage(), secLocations, cost);
       }
       for (String message : issuesOnFile) {
         addIssueOnFile(message);

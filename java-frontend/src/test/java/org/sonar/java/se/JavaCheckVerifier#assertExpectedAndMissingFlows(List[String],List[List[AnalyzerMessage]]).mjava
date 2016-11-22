@@ -1,0 +1,14 @@
+  private void assertExpectedAndMissingFlows(List<String> expectedFlowIds, List<List<AnalyzerMessage>> unexpectedFlows) {
+    String unexpectedMsg = unexpectedFlows.stream()
+      .map(JavaCheckVerifier::flowToString)
+      .collect(joining("\n"));
+
+    String missingMsg = expectedFlowIds.stream().collect(joining(","));
+
+    if (!unexpectedMsg.isEmpty() || !missingMsg.isEmpty()) {
+      unexpectedMsg = unexpectedMsg.isEmpty() ? "" : String.format("Unexpected flows: %s. ", unexpectedMsg);
+      missingMsg = missingMsg.isEmpty() ? "" : String.format("Missing flows: %s.", missingMsg);
+      Fail.fail(unexpectedMsg + missingMsg);
+    }
+  }
+

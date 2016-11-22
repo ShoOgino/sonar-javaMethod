@@ -1,0 +1,15 @@
+  private void assertIgnoreNull(Collection<?> actualCollection, Collection<?> expectedCollection, String failureMsg) {
+    Iterator<?> actual = actualCollection.iterator();
+    Iterator<?> expected = expectedCollection.iterator();
+    while (actual.hasNext() && expected.hasNext()) {
+      Object act = actual.next();
+      Object exp = expected.next();
+      if (!Objects.equals(act, exp) && act != null && exp != null) {
+        assertThat(actualCollection).as(failureMsg).isEqualTo(expectedCollection);
+      }
+    }
+    if (actual.hasNext() || expected.hasNext()) {
+      assertThat(actualCollection).as(failureMsg).isEqualTo(expectedCollection);
+    }
+  }
+
