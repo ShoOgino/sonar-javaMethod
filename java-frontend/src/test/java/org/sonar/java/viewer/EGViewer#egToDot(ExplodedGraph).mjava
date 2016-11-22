@@ -1,0 +1,15 @@
+  private static String egToDot(ExplodedGraph eg) {
+    String result = "graph ExplodedGraph { ";
+    List<ExplodedGraph.Node> nodes = new ArrayList<>(eg.getNodes().keySet());
+    int index = 0;
+    for (ExplodedGraph.Node node : nodes) {
+      result += index + "[label = \"" + node.programPoint + "\"] ";
+      if(node.parent != null) {
+        result += nodes.indexOf(node.parent) + "->"+index+"[label=\""+node.learnedConstraints().stream().map(ExplodedGraph.Node.LearnedConstraint::toString)
+          .collect(Collectors.joining(","))+"\"] ";
+      }
+      index++;
+    }
+    return result+"}";
+  }
+
