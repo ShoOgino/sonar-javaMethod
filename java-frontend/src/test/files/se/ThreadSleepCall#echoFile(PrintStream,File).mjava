@@ -1,0 +1,15 @@
+  public void echoFile(PrintStream ps, File f) throws IOException, InterruptedException {
+    BufferedReader br = new BufferedReader(new FileReader(f));
+    try {
+      while (okToPrint) {
+        Thread.sleep(1000);
+        ps.println(br.readLine());
+      }
+    } catch (IOException ex) {
+      if (okToPrint) { // compliant
+        throw new RuntimeException("Couldn't read a line", ex);
+      }
+      throw new RuntimeException("Got an error, but it's not OK to print", ex);
+    }
+  }
+
