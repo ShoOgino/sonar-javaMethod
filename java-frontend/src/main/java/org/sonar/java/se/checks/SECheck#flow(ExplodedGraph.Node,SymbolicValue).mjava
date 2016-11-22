@@ -1,5 +1,11 @@
-  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal ) {
+  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal) {
     List<JavaFileScannerContext.Location> flow = new ArrayList<>();
+    if(currentVal instanceof BinarySymbolicValue) {
+      Set<JavaFileScannerContext.Location> locations = Sets.newHashSet();
+      locations.addAll(flow(currentNode.parent, ((BinarySymbolicValue) currentVal).getLeftOp()));
+      locations.addAll(flow(currentNode.parent, ((BinarySymbolicValue) currentVal).getRightOp()));
+      flow.addAll(locations);
+    }
     ExplodedGraph.Node node = currentNode;
     Symbol lastEvaluated = currentNode.programState.getLastEvaluated();
     while (node != null) {
