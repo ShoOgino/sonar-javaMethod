@@ -8,8 +8,14 @@
         result += nodes.indexOf(node.parent) + "->"+index+"[label=\""+node.getLearnedSymbols().stream().map(ExplodedGraph.Node.LearnedValue::toString).collect(Collectors.joining(","))
           + " " +node.getLearnedConstraints().stream().map(ExplodedGraph.Node.LearnedConstraint::toString).collect(Collectors.joining(","))+"\"] ";
       }
+      if (SHOW_CACHE) {
+        for (ExplodedGraph.Node cacheHit : node.cacheHits) {
+          result += nodes.indexOf(cacheHit) + "->" + index + "[label=\"CACHE\", color=\"red\", fontcolor=\"red\"] ";
+        }
+      }
       index++;
     }
-    return result+"}";
+    return result + "}";
+
   }
 
