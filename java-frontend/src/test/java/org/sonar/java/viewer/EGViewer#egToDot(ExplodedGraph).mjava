@@ -3,14 +3,16 @@
     List<ExplodedGraph.Node> nodes = new ArrayList<>(eg.getNodes().keySet());
     int index = 0;
     for (ExplodedGraph.Node node : nodes) {
-      result += index + "[label = \"" + node.programPoint + "\"] ";
-      if(node.parent != null) {
-        result += nodes.indexOf(node.parent) + "->"+index+"[label=\""+node.getLearnedSymbols().stream().map(ExplodedGraph.Node.LearnedValue::toString).collect(Collectors.joining(","))
-          + " " +node.getLearnedConstraints().stream().map(ExplodedGraph.Node.LearnedConstraint::toString).collect(Collectors.joining(","))+"\"] ";
-      }
-      if (SHOW_CACHE) {
-        for (ExplodedGraph.Node cacheHit : node.cacheHits) {
-          result += nodes.indexOf(cacheHit) + "->" + index + "[label=\"CACHE\", color=\"red\", fontcolor=\"red\"] ";
+      result += graphNode(index, node);
+      if (!node.parents.isEmpty()) {
+        ExplodedGraph.Node firstParent = node.parents.get(0);
+        result += parentEdge(nodes.indexOf(firstParent), index, node, firstParent);
+
+        if (SHOW_CACHE && node.parents.size() > 1) {
+          List<ExplodedGraph.Node> cacheHits = node.parents.subList(1, node.parents.size());
+          for (ExplodedGraph.Node cacheHit : cacheHits) {
+            result += cacheEdge(nodes.indexOf(cacheHit), index, cacheHit);
+          }
         }
       }
       index++;

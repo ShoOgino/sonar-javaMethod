@@ -1,16 +1,18 @@
     public void setParent(@Nullable Node parent) {
-      this.parent = parent;
       if (parent != null) {
-        programState.constraints.forEach((sv, c) -> {
-          if (parent.programState.getConstraint(sv) != c) {
-            addConstraint(sv, c);
-          }
-        });
-        programState.values.forEach((s, sv) -> {
-          if (parent.programState.getValue(s) != sv) {
-            learnedSymbols.add(new LearnedValue(sv, s));
-          }
-        });
+        if (parents.isEmpty()) {
+          programState.constraints.forEach((sv, c) -> {
+            if (parent.programState.getConstraint(sv) != c) {
+              addConstraint(sv, c);
+            }
+          });
+          programState.values.forEach((s, sv) -> {
+            if (parent.programState.getValue(s) != sv) {
+              learnedSymbols.add(new LearnedValue(sv, s));
+            }
+          });
+        }
+        parents.add(0, parent);
       }
     }
 
