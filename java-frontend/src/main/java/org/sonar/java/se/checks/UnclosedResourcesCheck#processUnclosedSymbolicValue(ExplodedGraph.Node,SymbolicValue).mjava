@@ -1,0 +1,8 @@
+  private void processUnclosedSymbolicValue(ExplodedGraph.Node node, SymbolicValue sv) {
+    List<JavaFileScannerContext.Location> flow = SECheck.flow(node, sv,
+      constraint -> constraint instanceof ObjectConstraint && ((ObjectConstraint) constraint).hasStatus(Status.OPENED));
+    flow.stream()
+      .filter(loc -> loc.syntaxNode.is(Tree.Kind.NEW_CLASS, Tree.Kind.METHOD_INVOCATION))
+      .forEach(loc -> reportIssue(loc.syntaxNode, String.format("Close this \"%s\".", name(loc.syntaxNode)), Collections.emptySet()));
+  }
+

@@ -1,17 +1,7 @@
   @Override
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
-    final List<ObjectConstraint> constraints = context.getState().getFieldConstraints(Status.OPENED);
-    for (ObjectConstraint constraint : constraints) {
-      Tree syntaxNode = constraint.syntaxNode();
-      String name = null;
-      if (syntaxNode.is(Tree.Kind.NEW_CLASS)) {
-        name = ((NewClassTree) syntaxNode).identifier().symbolType().name();
-      } else if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
-        name = ((MethodInvocationTree) syntaxNode).symbolType().name();
-      }
-      if (name != null) {
-        context.reportIssue(syntaxNode, this, "Close this \"" + name + "\".");
-      }
-    }
+    ExplodedGraph.Node node = context.getNode();
+    context.getState().getValuesWithConstraints(Status.OPENED)
+      .forEach((sv, c) -> processUnclosedSymbolicValue(node, sv));
   }
 
