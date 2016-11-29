@@ -1,35 +1,4 @@
-  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal, Predicate<Constraint> constraintPredicate) {
-    List<JavaFileScannerContext.Location> flow = new ArrayList<>();
-    if (currentVal instanceof BinarySymbolicValue) {
-      Set<JavaFileScannerContext.Location> locations = new HashSet<>();
-      locations.addAll(SECheck.flow(currentNode.parent(), ((BinarySymbolicValue) currentVal).getLeftOp(), constraintPredicate));
-      locations.addAll(SECheck.flow(currentNode.parent(), ((BinarySymbolicValue) currentVal).getRightOp(), constraintPredicate));
-      flow.addAll(locations);
-    }
-    ExplodedGraph.Node node = currentNode;
-    Symbol lastEvaluated = currentNode.programState.getLastEvaluated();
-    while (node != null) {
-      ExplodedGraph.Node finalNode = node;
-      node = node.parent();
-      if (finalNode.programPoint.syntaxTree() == null) {
-        continue;
-      }
-      finalNode.getLearnedConstraints().stream()
-        .filter(lc -> lc.getSv().equals(currentVal) && constraintPredicate.test(lc.getConstraint()))
-        .findFirst()
-        .ifPresent(lc -> flow.add(new JavaFileScannerContext.Location("...", finalNode.parent().programPoint.syntaxTree())));
-      if (lastEvaluated != null) {
-        Symbol finalLastEvaluated = lastEvaluated;
-        Optional<Symbol> learnedSymbol = finalNode.getLearnedSymbols().stream()
-          .map(ExplodedGraph.Node.LearnedValue::getSymbol)
-          .filter(sv -> sv.equals(finalLastEvaluated))
-          .findFirst();
-        if (learnedSymbol.isPresent()) {
-          lastEvaluated = finalNode.parent().programState.getLastEvaluated();
-          flow.add(new JavaFileScannerContext.Location("...", finalNode.parent().programPoint.syntaxTree()));
-        }
-      }
-    }
-    return flow;
+  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, SymbolicValue currentVal, Predicate<Constraint> addToFlow) {
+    return flow(currentNode, currentVal, addToFlow, c -> false);
   }
 
