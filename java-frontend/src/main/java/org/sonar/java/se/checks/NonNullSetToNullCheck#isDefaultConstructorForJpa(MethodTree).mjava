@@ -1,0 +1,10 @@
+  private static boolean isDefaultConstructorForJpa(MethodTree methodTree) {
+    if (!methodTree.block().body().isEmpty()) {
+      // Constructor does something.
+      return false;
+    }
+
+    SymbolMetadata symbolMetadata = ((ClassTree) methodTree.parent()).symbol().metadata();
+    return Stream.of(JPA_ANNOTATIONS).anyMatch(symbolMetadata::isAnnotatedWith);
+  }
+
