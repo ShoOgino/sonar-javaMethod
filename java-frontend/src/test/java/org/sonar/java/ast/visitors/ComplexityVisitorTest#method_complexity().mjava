@@ -1,0 +1,17 @@
+  @Test
+  public void method_complexity() throws Exception {
+    CompilationUnitTree cut = (CompilationUnitTree) p.parse("class A {" +
+        " Object foo(){" +
+        " if(a) { " +
+        "    return new MyClass(){ " +
+        "        void foo(){" +
+        "            if(a) {return;} " +
+        "        } " +
+        "    };" +
+        " } " +
+        "}}");
+    MethodTree methodTree = (MethodTree) ((ClassTree) cut.types().get(0)).members().get(0);
+    List<Tree> nodes = new ComplexityVisitor().getNodes(methodTree);
+    assertThat(nodes).hasSize(2);
+  }
+
