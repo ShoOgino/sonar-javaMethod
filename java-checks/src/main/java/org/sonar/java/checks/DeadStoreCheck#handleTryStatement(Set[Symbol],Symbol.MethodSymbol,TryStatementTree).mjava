@@ -1,0 +1,9 @@
+  private static void handleTryStatement(Set<Symbol> out, Symbol.MethodSymbol methodSymbol, TryStatementTree element) {
+    AssignedLocalVarVisitor visitor = new AssignedLocalVarVisitor();
+    element.block().accept(visitor);
+    out.addAll(visitor.assignedLocalVars);
+    for (CatchTree catchTree : element.catches()) {
+      out.addAll(getUsedLocalVarInSubTree(catchTree, methodSymbol));
+    }
+  }
+

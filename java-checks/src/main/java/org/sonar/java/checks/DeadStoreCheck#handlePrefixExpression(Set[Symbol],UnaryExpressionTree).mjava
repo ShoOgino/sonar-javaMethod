@@ -1,0 +1,11 @@
+  private void handlePrefixExpression(Set<Symbol> out, UnaryExpressionTree element) {
+    // within each block, each produced value is consumed or by following elements or by terminator
+    ExpressionTree expression = element.expression();
+    if (isParentExpressionStatement(element) && expression.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) expression).symbol();
+      if (isLocalVariable(symbol) && !out.contains(symbol)) {
+        createIssue(element, symbol);
+      }
+    }
+  }
+

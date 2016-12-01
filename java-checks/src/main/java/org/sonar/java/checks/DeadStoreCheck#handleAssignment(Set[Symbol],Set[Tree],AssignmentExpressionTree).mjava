@@ -1,0 +1,16 @@
+  private void handleAssignment(Set<Symbol> out, Set<Tree> assignmentLHS, AssignmentExpressionTree element) {
+    ExpressionTree lhs = ExpressionUtils.skipParentheses(element.variable());
+    if (lhs.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) lhs).symbol();
+      if (isLocalVariable(symbol) && !out.contains(symbol) && (element.is(Tree.Kind.ASSIGNMENT) || isParentExpressionStatement(element))) {
+        createIssue(element.operatorToken(), element.expression(), symbol);
+      }
+      assignmentLHS.add(lhs);
+      if (element.is(Tree.Kind.ASSIGNMENT)) {
+        out.remove(symbol);
+      } else {
+        out.add(symbol);
+      }
+    }
+  }
+

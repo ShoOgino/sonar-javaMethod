@@ -1,0 +1,10 @@
+  private void handlePostfixExpression(Set<Symbol> out, UnaryExpressionTree element) {
+    ExpressionTree expression = ExpressionUtils.skipParentheses(element.expression());
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) expression).symbol();
+      if (isLocalVariable(symbol) && !out.contains(symbol)) {
+        createIssue(element, symbol);
+      }
+    }
+  }
+

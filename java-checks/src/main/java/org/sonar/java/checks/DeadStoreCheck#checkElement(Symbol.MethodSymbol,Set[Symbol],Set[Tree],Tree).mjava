@@ -1,6 +1,5 @@
   private Set<Symbol> checkElement(Symbol.MethodSymbol methodSymbol, Set<Symbol> outVar, Set<Tree> assignmentLHS, Tree element) {
     Set<Symbol> out = outVar;
-    Symbol symbol;
     switch (element.kind()) {
       case PLUS_ASSIGNMENT:
       case DIVIDE_ASSIGNMENT:
@@ -14,35 +13,16 @@
       case UNSIGNED_RIGHT_SHIFT_ASSIGNMENT:
       case REMAINDER_ASSIGNMENT:
       case ASSIGNMENT:
-        AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
-        ExpressionTree lhs = ExpressionUtils.skipParentheses(assignmentExpressionTree.variable());
-        if (lhs.is(Tree.Kind.IDENTIFIER)) {
-          symbol = ((IdentifierTree) lhs).symbol();
-          if (isLocalVariable(symbol) && !out.contains(symbol) && (assignmentExpressionTree.is(Tree.Kind.ASSIGNMENT) || isParentExpressionStatement(element))) {
-            createIssue(assignmentExpressionTree.operatorToken(), assignmentExpressionTree.expression(), symbol);
-          }
-          assignmentLHS.add(lhs);
-          if(element.is(Tree.Kind.ASSIGNMENT)) {
-            out.remove(symbol);
-          } else {
-            out.add(symbol);
-          }
-        }
+        handleAssignment(out, assignmentLHS, (AssignmentExpressionTree) element);
         break;
       case IDENTIFIER:
-        symbol = ((IdentifierTree) element).symbol();
-        if (!assignmentLHS.contains(element) && isLocalVariable(symbol)) {
-          out.add(symbol);
-        }
+        handleIdentifier(out, assignmentLHS, (IdentifierTree) element);
         break;
       case VARIABLE:
-        out = handleVariable(out, (VariableTree) element);
+        handleVariable(out, (VariableTree) element);
         break;
       case NEW_CLASS:
-        ClassTree body = ((NewClassTree) element).classBody();
-        if (body != null) {
-          out.addAll(getUsedLocalVarInSubTree(body, methodSymbol));
-        }
+        handleNewClass(out, methodSymbol, (NewClassTree) element);
         break;
       case LAMBDA_EXPRESSION:
         LambdaExpressionTree lambda = (LambdaExpressionTree) element;
@@ -53,34 +33,15 @@
         out.addAll(getUsedLocalVarInSubTree(methodRef.expression(), methodSymbol));
         break;
       case TRY_STATEMENT:
-        TryStatementTree tryStatement = (TryStatementTree) element;
-        AssignedLocalVarVisitor visitor = new AssignedLocalVarVisitor();
-        tryStatement.block().accept(visitor);
-        out.addAll(visitor.assignedLocalVars);
-        for (CatchTree catchTree : tryStatement.catches()) {
-          out.addAll(getUsedLocalVarInSubTree(catchTree, methodSymbol));
-        }
+        handleTryStatement(out, methodSymbol, (TryStatementTree) element);
         break;
       case PREFIX_DECREMENT:
       case PREFIX_INCREMENT:
-        // within each block, each produced value is consumed or by following elements or by terminator
-        ExpressionTree prefixExpression = ExpressionUtils.skipParentheses(((UnaryExpressionTree) element).expression());
-        if (isParentExpressionStatement(element) && prefixExpression.is(Tree.Kind.IDENTIFIER)) {
-          symbol = ((IdentifierTree) prefixExpression).symbol();
-          if (isLocalVariable(symbol) && !out.contains(symbol)) {
-            createIssue(element, symbol);
-          }
-        }
+        handlePrefixExpression(out, (UnaryExpressionTree) element);
         break;
       case POSTFIX_INCREMENT:
       case POSTFIX_DECREMENT:
-        ExpressionTree expression = ExpressionUtils.skipParentheses(((UnaryExpressionTree) element).expression());
-        if (expression.is(Tree.Kind.IDENTIFIER)) {
-          symbol = ((IdentifierTree) expression).symbol();
-          if (isLocalVariable(symbol) && !out.contains(symbol)) {
-            createIssue(element, symbol);
-          }
-        }
+        handlePostfixExpression(out, (UnaryExpressionTree) element);
         break;
       case CLASS:
       case ENUM:
