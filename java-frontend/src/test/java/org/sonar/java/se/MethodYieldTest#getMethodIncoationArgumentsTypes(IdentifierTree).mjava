@@ -1,0 +1,8 @@
+  private static List<Type> getMethodIncoationArgumentsTypes(IdentifierTree identifier) {
+    Tree tree = identifier;
+    while(!tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      tree = tree.parent();
+    }
+    return ((MethodInvocationTree) tree).arguments().stream().map(ExpressionTree::symbolType).collect(Collectors.toList());
+  }
+

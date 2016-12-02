@@ -1,14 +1,14 @@
-  public Collection<ProgramState> statesAfterInvocation(List<SymbolicValue> invocationArguments, ProgramState programState, Supplier<SymbolicValue> svSupplier) {
+  public Collection<ProgramState> statesAfterInvocation(List<SymbolicValue> invocationArguments, List<Type> invocationTypes, ProgramState programState,
+    Supplier<SymbolicValue> svSupplier) {
     Set<ProgramState> results = new LinkedHashSet<>();
     for (int index = 0; index < invocationArguments.size(); index++) {
-      // FIXME : varargs method should be handled
-      SymbolicValue invokedArg = invocationArguments.get(index);
-      Constraint constraint = parametersConstraints[Math.min(index, parametersConstraints.length - 1)];
+      Constraint constraint = getConstraint(index, invocationTypes);
       if (constraint == null) {
         // no constraint on this parameter, let's try next one.
         continue;
       }
 
+      SymbolicValue invokedArg = invocationArguments.get(index);
       Set<ProgramState> programStates = programStatesForConstraint(results.isEmpty() ? Lists.newArrayList(programState) : results, invokedArg, constraint);
       if (programStates.isEmpty()) {
         // constraint can't be satisfied, no need to process things further, this yield is not applicable.
