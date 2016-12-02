@@ -1,0 +1,42 @@
+  @Test
+  public void test_yield_equality() {
+    MethodYield yield = new MethodYield(1, false);
+    MethodYield otherYield;
+
+    assertThat(yield).isNotEqualTo(null);
+    assertThat(yield).isNotEqualTo(new Object());
+
+    // same instance
+    assertThat(yield).isEqualTo(yield);
+
+    // same constraints, same nb of parameters, same exceptional aspect
+    assertThat(yield).isEqualTo(new MethodYield(1, false));
+
+    // arity is taken into account
+    assertThat(yield).isNotEqualTo(new MethodYield(0, false));
+
+    // varargs is taken into account
+    assertThat(yield).isNotEqualTo(new MethodYield(1, true));
+
+    // same arity and constraints but exceptional path
+    otherYield = new MethodYield(1, false);
+    otherYield.exception = true;
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    // same arity and constraints but different return value
+    otherYield = new MethodYield(1, false);
+    otherYield.resultIndex = 0;
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    // same arity but different return constraint
+    otherYield = new MethodYield(1, false);
+    otherYield.resultConstraint = ObjectConstraint.NOT_NULL;
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    // same return constraint
+    yield.resultConstraint = ObjectConstraint.NOT_NULL;
+    otherYield = new MethodYield(1, false);
+    otherYield.resultConstraint = ObjectConstraint.NOT_NULL;
+    assertThat(yield).isEqualTo(otherYield);
+  }
+
