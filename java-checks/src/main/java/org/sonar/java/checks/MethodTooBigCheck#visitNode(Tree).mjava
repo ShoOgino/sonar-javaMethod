@@ -3,9 +3,10 @@
     MethodTree methodTree = (MethodTree) tree;
     BlockTree block = methodTree.block();
     if (block != null) {
-      int lines = getLines(block);
+      int lines = new LinesOfCodeVisitor().linesOfCode(block);
       if (lines > max) {
-        reportIssue(methodTree.simpleName(), "This method has " + lines + " lines, which is greater than the " + max + " lines authorized. Split it into smaller methods.");
+        reportIssue(methodTree.simpleName(),
+          "This method has " + lines + " lines, which is greater than the " + max + " lines authorized. Split it into smaller methods.");
       }
     }
   }
