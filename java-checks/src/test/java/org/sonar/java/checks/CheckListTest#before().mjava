@@ -1,0 +1,10 @@
+  @BeforeClass
+  public static void before() throws Exception {
+    SE_CHEKS = ClassPath.from(CheckListTest.class.getClassLoader())
+      .getTopLevelClasses("org.sonar.java.se.checks")
+      .stream()
+      .map(ClassPath.ClassInfo::getSimpleName)
+      .filter(name -> name.endsWith("Check") && !name.equals(SECheck.class.getSimpleName()))
+      .collect(Collectors.toList());
+  }
+
