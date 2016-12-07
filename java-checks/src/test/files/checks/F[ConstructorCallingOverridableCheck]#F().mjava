@@ -1,0 +1,10 @@
+  public F(){
+    yaml = memoize(() -> loadYamlConfig("_config.yml")); // Compliant
+
+    data = memoize(() -> getResourceList() // Compliant
+      .stream()
+      .filter(path -> path.startsWith("_data/"))
+      .collect(toMap(Site::nameWithoutExtension, this::readYaml))
+    );
+  }
+
