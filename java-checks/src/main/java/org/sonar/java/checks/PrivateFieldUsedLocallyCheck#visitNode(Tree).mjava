@@ -6,7 +6,7 @@
     classSymbol.memberSymbols().stream()
       .filter(PrivateFieldUsedLocallyCheck::isPrivateField)
       .filter(s -> !(s.isFinal() && s.isStatic()))
-      .filter(s -> !useAllowedAnnotation(s))
+      .filter(s -> !hasAnnotation(s))
       .filter(s -> !s.usages().isEmpty())
       .filter(s -> !fieldsReadOnAnotherInstance.contains(s))
       .forEach(s -> checkPrivateField(s, classSymbol));
