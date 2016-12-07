@@ -3,11 +3,10 @@
     ClassTree enumTree = (ClassTree) tree;
     for (Tree member : enumTree.members()) {
       if (member.is(Tree.Kind.VARIABLE)) {
-        ModifiersTree modifiers = ((VariableTree) member).modifiers();
+        VariableTree variableTree = (VariableTree) member;
+        ModifiersTree modifiers = variableTree.modifiers();
         ModifierKeywordTree publicModifier = ModifiersUtils.getModifier(modifiers, Modifier.PUBLIC);
-        if (publicModifier != null && !ModifiersUtils.hasModifier(modifiers, Modifier.STATIC)
-        // FIXME SONARJAVA-1604 final mutable field should raise issues
-          && !ModifiersUtils.hasModifier(modifiers, Modifier.FINAL)) {
+        if (publicModifier != null && (isNotStaticOrFinal(variableTree.modifiers())|| isMutableFinalMember(variableTree))) {
           reportIssue(publicModifier, "Lower the visibility of this field.");
         }
       } else if (member.is(Tree.Kind.METHOD)) {
