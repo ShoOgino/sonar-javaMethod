@@ -1,0 +1,10 @@
+  @Override
+  public void visitNewClass(NewClassTree newClassTree) {
+    String newClassTypeName = newClassTree.identifier().symbolType().fullyQualifiedName();
+    Tree parent = newClassTree.parent();
+    if (parent != null && !parent.is(Tree.Kind.VARIABLE)) {
+      checkIfDisallowed(newClassTypeName, newClassTree);
+    }
+    super.visitNewClass(newClassTree );
+  }
+

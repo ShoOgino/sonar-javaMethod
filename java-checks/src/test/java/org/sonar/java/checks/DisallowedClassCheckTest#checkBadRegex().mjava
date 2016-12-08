@@ -1,0 +1,12 @@
+  @Test(expected = IllegalArgumentException.class)
+  public void checkBadRegex() throws Throwable {
+    DisallowedClassCheck visitor = new DisallowedClassCheck();
+    // bad regex
+    visitor.disallowedClass = "java.lang(";
+      try {
+          JavaCheckVerifier.verify("src/test/files/checks/DisallowedClassCheckRegex.java", visitor);
+      } catch (AnalysisException e) {
+          throw e.getCause();
+      }
+  }
+
