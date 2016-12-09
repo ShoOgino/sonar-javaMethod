@@ -1,0 +1,19 @@
+  private void run(@Nullable final ExplodedGraph.Node currentNode, @Nullable final Symbol trackSymbol) {
+    if (currentNode == null || visited.contains(currentNode)) {
+      return;
+    }
+    visited.add(currentNode);
+
+    Symbol newTrackSymbol = trackSymbol;
+    if (currentNode.programPoint.syntaxTree() != null) {
+      newTrackSymbol = flowFromLearnedSymbols(currentNode, trackSymbol);
+      List<Constraint> learnedConstraints = flowFromLearnedConstraints(currentNode);
+      if (learnedConstraints.stream().anyMatch(terminateTraversal)) {
+        return;
+      }
+    }
+    for (ExplodedGraph.Node parent : currentNode.getParents()) {
+      run(parent, newTrackSymbol);
+    }
+  }
+

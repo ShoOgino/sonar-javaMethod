@@ -1,0 +1,11 @@
+  private Set<JavaFileScannerContext.Location> flowFromBinarySV(ExplodedGraph.Node currentNode, BinarySymbolicValue binarySV, Symbol trackSymbol) {
+    HashSet<JavaFileScannerContext.Location> binSVFlow = new HashSet<>();
+    FlowComputation left = fork(binarySV.getLeftOp());
+    left.run(currentNode.parent(), trackSymbol);
+    binSVFlow.addAll(left.flow);
+    FlowComputation right = fork(binarySV.getRightOp());
+    right.run(currentNode.parent(), trackSymbol);
+    binSVFlow.addAll(right.flow);
+    return binSVFlow;
+  }
+

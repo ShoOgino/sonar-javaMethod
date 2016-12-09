@@ -1,0 +1,17 @@
+  @Nullable
+  private Symbol flowFromLearnedSymbols(ExplodedGraph.Node currentNode, @Nullable Symbol trackSymbol) {
+    ExplodedGraph.Node parent = currentNode.parent();
+    if (trackSymbol == null || parent == null) {
+      return null;
+    }
+    Optional<Symbol> learnedSymbol = currentNode.getLearnedSymbols().stream()
+      .map(ExplodedGraph.Node.LearnedValue::getSymbol)
+      .filter(symbol -> symbol.equals(trackSymbol))
+      .findFirst();
+    if (learnedSymbol.isPresent()) {
+      flow.add(location(parent));
+      return parent.programState.getLastEvaluated();
+    }
+    return trackSymbol;
+  }
+

@@ -6,6 +6,7 @@
     methodTree = tree;
     constraintManager = new ConstraintManager();
     workList = new LinkedList<>();
+    endOfExecutionPath = new HashSet<>();
     if(DEBUG_MODE_ACTIVATED) {
       LOG.debug("Exploring Exploded Graph for method " + tree.simpleName().name() + " at line " + ((JavaTree) tree).getLine());
     }
@@ -17,16 +18,12 @@
     while (!workList.isEmpty()) {
       steps++;
       if (steps > MAX_STEPS) {
-        checkerDispatcher.interruptedExecution();
-        throw new MaximumStepsReachedException("reached limit of " + MAX_STEPS + " steps for method " + tree.simpleName().name()
-          + "#" +tree.simpleName().firstToken().line()+ " in class " + tree.symbol().owner().name());
+        throwMaxSteps(tree);
       }
       // LIFO:
-      node = workList.removeFirst();
-      programPosition = node.programPoint;
-      programState = node.programState;
+      setNode(workList.removeFirst());
       if (programPosition.block.successors().isEmpty()) {
-        handleEndOfExecutionPath();
+        endOfExecutionPath.add(node);
         continue;
       }
       try {
@@ -46,12 +43,11 @@
           handleBlockExit(programPosition);
         }
       } catch (TooManyNestedBooleanStatesException e) {
-        checkerDispatcher.interruptedExecution();
-        throw new MaximumStepsReachedException(
-          "reached maximum number of " + MAX_NESTED_BOOLEAN_STATES + " branched states for method " + tree.simpleName().name() + " in class " + tree.symbol().owner().name(), e);
+        throwTooManyBooleanStates(tree, e);
       }
     }
 
+    handleEndOfExecutionPath();
     checkerDispatcher.executeCheckEndOfExecution();
     // Cleanup:
     workList = null;

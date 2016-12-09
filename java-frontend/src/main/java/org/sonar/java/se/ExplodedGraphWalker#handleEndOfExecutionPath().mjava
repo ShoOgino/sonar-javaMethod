@@ -1,5 +1,10 @@
   private void handleEndOfExecutionPath() {
-    checkerDispatcher.executeCheckEndOfExecutionPath(constraintManager);
-    methodBehavior.createYield(programState, node.happyPath);
+    ExplodedGraph.Node savedNode = node;
+    endOfExecutionPath.forEach(n -> {
+      setNode(n);
+      checkerDispatcher.executeCheckEndOfExecutionPath(constraintManager);
+      methodBehavior.createYield(programState, node.happyPath);
+    });
+    setNode(savedNode);
   }
 

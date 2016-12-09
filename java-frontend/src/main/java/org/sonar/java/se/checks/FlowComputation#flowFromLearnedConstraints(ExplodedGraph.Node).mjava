@@ -1,0 +1,12 @@
+  private List<Constraint> flowFromLearnedConstraints(ExplodedGraph.Node currentNode) {
+    List<Constraint> learnedConstraints = currentNode.getLearnedConstraints().stream()
+      .filter(lc -> lc.getSv().equals(symbolicValue))
+      .map(ExplodedGraph.Node.LearnedConstraint::getConstraint)
+      .collect(Collectors.toList());
+
+    if (learnedConstraints.stream().anyMatch(addToFlow)) {
+      flow.add(location(currentNode.parent()));
+    }
+    return learnedConstraints;
+  }
+
