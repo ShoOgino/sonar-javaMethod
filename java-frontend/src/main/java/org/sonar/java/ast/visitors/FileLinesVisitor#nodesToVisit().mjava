@@ -1,5 +1,13 @@
   @Override
   public List<Tree.Kind> nodesToVisit() {
-    return ImmutableList.of(Tree.Kind.TOKEN);
+    if(sonarComponents.isSQGreaterThan62()) {
+      return ImmutableList.of(TOKEN,
+        METHOD, CONSTRUCTOR,
+        INITIALIZER, STATIC_INITIALIZER,
+        VARIABLE,
+        FOR_EACH_STATEMENT, FOR_STATEMENT, WHILE_STATEMENT, DO_STATEMENT,
+        LAMBDA_EXPRESSION);
+    }
+    return ImmutableList.of(TOKEN);
   }
 

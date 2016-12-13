@@ -1,0 +1,12 @@
+  private List<? extends Tree> visitVariable(VariableTree variableTree) {
+    ExpressionTree initializer = variableTree.initializer();
+    if(initializer != null && !isConstant(variableTree)) {
+      return Lists.newArrayList(initializer);
+    }
+    if(variableTree.parent().is(CATCH)) {
+      // catch variable are counted as executable lines
+      new ExecutableLinesTokenVisitor().scanTree(variableTree);
+    }
+    return Collections.emptyList();
+  }
+

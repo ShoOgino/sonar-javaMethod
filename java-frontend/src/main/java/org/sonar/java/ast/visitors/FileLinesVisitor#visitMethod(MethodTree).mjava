@@ -1,0 +1,13 @@
+  private List<? extends Tree> visitMethod(MethodTree tree) {
+    BlockTree methodBody = tree.block();
+    if(methodBody != null) {
+      // get the last
+      TypeTree returnType = tree.returnType();
+      if(returnType == null || "void".equals(returnType.firstToken().text())) {
+        executableLines.add(methodBody.closeBraceToken().line());
+      }
+      return methodBody.body();
+    }
+    return Collections.emptyList();
+  }
+

@@ -1,22 +1,20 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
     super.scanFile(context);
-
-    FileLinesContext fileLinesContext = sonarComponents.fileLinesContextFor(context.getFile());
-    // TODO minimize access to files, another one in LinesVisitor
-    int fileLength;
-    try {
-      fileLength = Files.readLines(context.getFile(), charset).size();
-    } catch (IOException e) {
-      throw Throwables.propagate(e);
-    }
+    File currentFile = context.getFile();
+    FileLinesContext fileLinesContext = sonarComponents.fileLinesContextFor(currentFile);
+    int fileLength = sonarComponents.fileLength(currentFile);
     for (int line = 1; line <= fileLength; line++) {
       fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, linesOfCode.contains(line) ? 1 : 0);
       fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, linesOfComments.contains(line) ? 1 : 0);
+      if(sonarComponents.isSQGreaterThan62()) {
+        fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, executableLines.contains(line) ? 1 : 0);
+      }
     }
     fileLinesContext.save();
 
     linesOfCode.clear();
     linesOfComments.clear();
+    executableLines.clear();
   }
 

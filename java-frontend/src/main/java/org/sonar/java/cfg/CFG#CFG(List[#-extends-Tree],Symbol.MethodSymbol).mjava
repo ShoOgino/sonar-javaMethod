@@ -1,4 +1,4 @@
-  private CFG(BlockTree tree, Symbol.MethodSymbol symbol) {
+  private CFG(List<? extends Tree> trees, Symbol.MethodSymbol symbol) {
     methodSymbol = symbol;
     exitBlocks.add(createBlock());
     currentBlock = createBlock(exitBlock());
@@ -6,7 +6,7 @@
     outerTry.successorBlock = exitBlocks.peek();
     enclosingTry.add(outerTry);
     enclosedByCatch.push(false);
-    build(tree.body());
+    build(trees);
     prune();
     computePredecessors(blocks);
   }

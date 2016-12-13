@@ -1,0 +1,32 @@
+  @Override
+  public void visitNode(Tree tree) {
+    List<? extends Tree> trees = Collections.emptyList();
+    switch (tree.kind()) {
+      case INITIALIZER:
+      case STATIC_INITIALIZER:
+        trees = ((BlockTree) tree).body();
+        break;
+      case VARIABLE:
+        VariableTree variableTree = (VariableTree) tree;
+        trees = visitVariable(variableTree);
+        break;
+      case LAMBDA_EXPRESSION:
+        LambdaExpressionTree lambda = (LambdaExpressionTree) tree;
+        trees = visitLambda(lambda);
+        break;
+      case METHOD:
+      case CONSTRUCTOR:
+        trees = visitMethod((MethodTree) tree);
+        break;
+      case FOR_STATEMENT:
+      case FOR_EACH_STATEMENT:
+      case WHILE_STATEMENT:
+      case DO_STATEMENT:
+        executableLines.add(tree.lastToken().line());
+        break;
+      default:
+        // Do nothing particular
+    }
+    computeExecutableLines(trees);
+  }
+

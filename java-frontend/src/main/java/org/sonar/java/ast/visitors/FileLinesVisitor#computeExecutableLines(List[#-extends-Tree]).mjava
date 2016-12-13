@@ -1,0 +1,27 @@
+  private void computeExecutableLines(List<? extends Tree> trees) {
+    if(trees.isEmpty()) {
+      return;
+    }
+    // rely on cfg to get every instructions and get most of the token.
+    CFG cfg = CFG.buildCFG(trees);
+    cfg.blocks()
+      .stream()
+      .flatMap(b->b.elements().stream())
+      .forEach(
+        t -> {
+          if (t.is(NEW_CLASS)) {
+            NewClassTree newClassTree = (NewClassTree) t;
+            new ExecutableLinesTokenVisitor().scanTree(newClassTree.identifier());
+            if (newClassTree.newKeyword() != null) {
+              executableLines.add(newClassTree.newKeyword().line());
+            }
+          } else if (t.is(TRY_STATEMENT)) {
+            // add last token of try statements
+            executableLines.add(t.lastToken().line());
+          } else {
+            executableLines.add(t.firstToken().line());
+          }
+        }
+      );
+  }
+
