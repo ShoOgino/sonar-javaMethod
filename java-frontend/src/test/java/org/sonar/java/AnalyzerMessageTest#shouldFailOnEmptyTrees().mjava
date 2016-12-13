@@ -1,0 +1,14 @@
+  @Test
+  public void shouldFailOnEmptyTrees() {
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser(StandardCharsets.UTF_8)
+      .parse("class A {\n}\n");
+
+    try {
+      AnalyzerMessage.textSpanFor(cut.eofToken());
+      Fail.fail("Should have failed on empty issue location");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IllegalStateException.class);
+      assertThat(e.getMessage()).isEqualTo("Invalid issue location: Text span is empty when trying reporting on (l:3, c:0).");
+    }
+  }
+
