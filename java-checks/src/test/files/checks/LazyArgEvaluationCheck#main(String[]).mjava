@@ -1,0 +1,19 @@
+  public static void main(String[] args) {
+    String csvPath = "";
+    String message = "";
+
+    logger.log(Level.SEVERE, message); // Compliant
+
+    logger.log(Level.SEVERE, "Something went wrong: " + message);  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+
+    logger.log(Level.SEVERE, () -> "Something went wrong: " + message); // since Java 8, we can use Supplier , which will be evaluated lazily
+    
+    checkState(System.currentTimeMillis() == new Date().getTime(), "Arg must be positive, but got " + System.currentTimeMillis());  // Noncompliant {{Invoke method(s) only conditionally. Use the built-in formatting to construct this argument.}}
+
+    Preconditions.checkState(System.currentTimeMillis() > 0, formatMessage());  // Noncompliant {{Invoke method(s) only conditionally. }}
+
+    checkState(System.currentTimeMillis() > 0, "message: %s", formatMessage());  // Noncompliant {{Invoke method(s) only conditionally. }}
+
+    checkState(System.currentTimeMillis() > 0, "message: %s", LazyArgEvaluationCheck.formatMessage());  // Noncompliant {{Invoke method(s) only conditionally. }}
+  }
+

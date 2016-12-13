@@ -1,0 +1,10 @@
+  private static Stream<JavaFileScannerContext.Location> checkArgument(ExpressionTree stringArgument) {
+    StringExpressionVisitor visitor = new StringExpressionVisitor();
+    stringArgument.accept(visitor);
+    if (visitor.shouldReport) {
+      return Stream.of(locationFromArg(stringArgument, visitor));
+    } else {
+      return Stream.empty();
+    }
+  }
+

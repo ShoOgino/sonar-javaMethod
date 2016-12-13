@@ -1,0 +1,9 @@
+  private void onMethodInvocationFound(MethodInvocationTree mit) {
+    List<JavaFileScannerContext.Location> flow = findStringArg(mit)
+      .flatMap(LazyArgEvaluationCheck::checkArgument)
+      .collect(Collectors.toList());
+    if (!flow.isEmpty()) {
+      context.reportIssue(this, flow.get(0).syntaxNode, flow.get(0).msg, flow.subList(1, flow.size()), null);
+    }
+  }
+

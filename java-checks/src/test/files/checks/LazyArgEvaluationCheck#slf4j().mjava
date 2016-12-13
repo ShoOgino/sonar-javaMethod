@@ -1,0 +1,38 @@
+  void slf4j() {
+    slf4j.trace("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+    slf4j.debug("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+    slf4j.info("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+    slf4j.warn("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+    slf4j.error("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant {{Use the built-in formatting to construct this argument.}}
+
+    slf4j.error("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant
+    slf4j.error("Unable to open file " + csvPath, new RuntimeException(), 1);  // Noncompliant
+    slf4j.error("Unable to open file " + csvPath, new RuntimeException(), 1, 2);  // Noncompliant
+    slf4j.error("Unable to open file " + csvPath, new RuntimeException(), 1, "vargs", "vargs", "vargs FTW!");  // Noncompliant
+
+    Marker confidentialMarker = MarkerFactory.getMarker("CONFIDENTIAL");
+    slf4j.error(confidentialMarker, "Unable to open file " + csvPath, new RuntimeException());  // Noncompliant
+    slf4j.error(confidentialMarker, "Unable to open file " + csvPath, new RuntimeException(), 1);  // Noncompliant
+    slf4j.error(confidentialMarker, "Unable to open file " + csvPath, new RuntimeException(), 1, 2);  // Noncompliant
+    slf4j.error(confidentialMarker, "Unable to open file " + csvPath, new RuntimeException(), 1, "vargs", "vargs", "vargs FTW!");  // Noncompliant
+
+    if (slf4j.isTraceEnabled()) {
+      slf4j.trace("Unable to open file " + csvPath, new RuntimeException());  // Compliant - inside if test
+    }
+    if (slf4j.isDebugEnabled()) {
+      slf4j.debug("Unable to open file " + csvPath, new RuntimeException());  // Compliant - inside if test
+    }
+    if (slf4j.isInfoEnabled()) {
+      slf4j.info("Unable to open file " + csvPath, new RuntimeException());  // Compliant - inside if test
+    }
+    if (slf4j.isWarnEnabled()) {
+      slf4j.warn("Unable to open file " + csvPath, new RuntimeException());  // Compliant - inside if test
+    }
+    if (slf4j.isErrorEnabled()) {
+      slf4j.error("Unable to open file " + csvPath, new RuntimeException());  // Compliant - inside if test
+    }
+    if (b) {
+      slf4j.error("Unable to open file " + csvPath, new RuntimeException());  // Noncompliant
+    }
+  }
+

@@ -1,0 +1,11 @@
+  @Override
+  public void visitIfStatement(IfStatementTree ifTree) {
+    LevelTestVisitor levelTestVisitor = new LevelTestVisitor();
+    ifTree.condition().accept(levelTestVisitor);
+    if (levelTestVisitor.match) {
+      stackAndContinue(ifTree, super::visitIfStatement);
+    } else {
+      super.visitIfStatement(ifTree);
+    }
+  }
+
