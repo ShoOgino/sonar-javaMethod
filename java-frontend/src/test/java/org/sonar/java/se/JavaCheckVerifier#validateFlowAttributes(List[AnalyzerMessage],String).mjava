@@ -1,8 +1,7 @@
   private void validateFlowAttributes(List<AnalyzerMessage> actual, String flowId) {
-    List<String> actualMessages = actual.stream().map(m -> m.getMessage()).collect(Collectors.toList());
     Collection<Expectations.FlowComment> expected = expectations.flows.get(flowId);
-    List<String> expectedMessages = expected.stream().map(f -> (String) f.get(MESSAGE)).collect(Collectors.toList());
-    assertIgnoreNull(actualMessages, expectedMessages, "Expected messages in flow " + flowId);
+
+    validateFlowMessages(actual, flowId, expected);
 
     Iterator<AnalyzerMessage> actualIterator = actual.iterator();
     Iterator<Expectations.FlowComment> expectedIterator = expected.iterator();

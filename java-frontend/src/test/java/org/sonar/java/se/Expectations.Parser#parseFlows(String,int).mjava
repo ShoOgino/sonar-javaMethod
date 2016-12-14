@@ -1,0 +1,22 @@
+    @VisibleForTesting
+    static Set<FlowComment> parseFlows(@Nullable String comment, int line) {
+      if (comment == null) {
+        return Collections.emptySet();
+      }
+      List<List<String>> flowIds = new ArrayList<>();
+      List<Integer> flowStarts = new ArrayList<>();
+      Matcher matcher = FLOW.matcher(comment);
+      while (matcher.find()) {
+        List<String> ids = Arrays.asList(matcher.group("ids").split(","));
+        flowIds.add(ids);
+        flowStarts.add(matcher.start());
+      }
+      // add one more fake start at the end, so the boundary of comment i is flowStarts[i],flowStarts[i+1] also for the last one
+      flowStarts.add(comment.length());
+
+      return IntStream.range(0, flowIds.size())
+        .mapToObj(i -> createFlows(flowIds.get(i), line, comment.substring(flowStarts.get(i), flowStarts.get(i + 1))))
+        .flatMap(Function.identity())
+        .collect(Collectors.toSet());
+    }
+

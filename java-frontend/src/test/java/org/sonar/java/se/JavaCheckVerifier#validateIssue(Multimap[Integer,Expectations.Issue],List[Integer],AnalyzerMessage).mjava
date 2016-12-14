@@ -1,8 +1,8 @@
-  private void validateIssue(Multimap<Integer, EnumMap<Expectations.IssueAttribute, Object>> expected,
+  private void validateIssue(Multimap<Integer, Expectations.Issue> expected,
     List<Integer> unexpectedLines, AnalyzerMessage issue) {
     int line = issue.getLine();
     if (expected.containsKey(line)) {
-      Map<Expectations.IssueAttribute, Object> attrs = Iterables.getLast(expected.get(line));
+      Expectations.Issue attrs = Iterables.getLast(expected.get(line));
       assertAttributeMatch(issue, attrs, MESSAGE);
       validateAnalyzerMessageAttributes(attrs, issue);
       expected.remove(line, attrs);

@@ -1,0 +1,10 @@
+    private static Map<IssueAttribute, Object> parseAttributes(@Nullable String comment) {
+      comment = StringUtils.substringBetween(comment, "[[", "]]");
+      if (comment == null) {
+        return Collections.emptyMap();
+      }
+      return Arrays.stream(comment.split(";"))
+        .map(Parser::parseAttribute)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
