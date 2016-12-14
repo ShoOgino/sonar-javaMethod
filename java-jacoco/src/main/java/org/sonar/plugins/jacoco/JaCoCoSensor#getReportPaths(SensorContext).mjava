@@ -1,0 +1,35 @@
+  private static Set<File> getReportPaths(SensorContext context) {
+    Set<File> reportPaths = new HashSet<>();
+    Settings settings = context.settings();
+    FileSystem fs = context.fileSystem();
+    for (String reportPath : settings.getStringArray(REPORT_PATHS_PROPERTY)) {
+      File report = fs.resolvePath(reportPath);
+      if (!report.isFile()) {
+        if (settings.hasKey(REPORT_PATHS_PROPERTY)) {
+          LOG.info("JaCoCo report not found: '{}'", reportPath);
+        }
+      } else {
+        reportPaths.add(report);
+      }
+    }
+    if (settings.hasKey(REPORT_PATH_PROPERTY)) {
+      LOG.warn("Property '{}' is deprecated. Please use '{}' instead.", REPORT_PATH_PROPERTY, REPORT_PATHS_PROPERTY);
+      File report = fs.resolvePath(settings.getString(REPORT_PATH_PROPERTY));
+      if (!report.isFile()) {
+        LOG.info("JaCoCo UT report not found: '{}'", settings.getString(REPORT_PATH_PROPERTY));
+      } else {
+        reportPaths.add(report);
+      }
+    }
+    if (settings.hasKey(IT_REPORT_PATH_PROPERTY)) {
+      LOG.warn("Property '{}' is deprecated. Please use '{}' instead.", IT_REPORT_PATH_PROPERTY, REPORT_PATHS_PROPERTY);
+      File report = fs.resolvePath(settings.getString(IT_REPORT_PATH_PROPERTY));
+      if (!report.isFile()) {
+        LOG.info("JaCoCo IT report not found: '{}'", settings.getString(IT_REPORT_PATH_PROPERTY));
+      } else {
+        reportPaths.add(report);
+      }
+    }
+    return reportPaths;
+  }
+
