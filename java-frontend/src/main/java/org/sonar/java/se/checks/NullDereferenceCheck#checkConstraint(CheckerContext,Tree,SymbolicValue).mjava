@@ -2,14 +2,15 @@
     ProgramState programState = context.getState();
     Constraint constraint = programState.getConstraint(currentVal);
     if (constraint != null && constraint.isNull()) {
-      String message = "NullPointerException might be thrown as '" + SyntaxTreeNameFinder.getName(syntaxNode) + "' is nullable here";
-      Set<List<JavaFileScannerContext.Location>> flows = new HashSet<>();
+      String symbolName = SyntaxTreeNameFinder.getName(syntaxNode);
+      String message = "NullPointerException might be thrown as '" + symbolName + "' is nullable here";
       SymbolicValue val = null;
       if (!SymbolicValue.NULL_LITERAL.equals(currentVal)) {
         val = currentVal;
       }
-      flows.add(FlowComputation.flow(context.getNode(), val));
-      context.reportIssue(syntaxNode, this, message, flows);
+      List<JavaFileScannerContext.Location> flow = FlowComputation.flow(context.getNode(), val);
+      addDereferenceMessage(flow, syntaxNode);
+      reportIssue(syntaxNode, message, ImmutableSet.of(flow));
       return null;
     }
     constraint = programState.getConstraint(currentVal);
