@@ -38,5 +38,22 @@
     otherYield = new MethodYield(1, false);
     otherYield.resultConstraint = ObjectConstraint.NOT_NULL;
     assertThat(yield).isEqualTo(otherYield);
+
+    // exceptional yields
+    MethodYield exceptionalYield = new MethodYield(0, false);
+    exceptionalYield.exception = true;
+    otherYield = new MethodYield(0, false);
+
+    otherYield.exception = false;
+    assertThat(exceptionalYield).isNotEqualTo(otherYield);
+
+    otherYield.exception = true;
+    assertThat(exceptionalYield).isEqualTo(otherYield);
+
+    otherYield.exceptionType = "exception";
+    assertThat(exceptionalYield).isNotEqualTo(otherYield);
+
+    exceptionalYield.exceptionType = "exception";
+    assertThat(exceptionalYield).isEqualTo(otherYield);
   }
 

@@ -7,15 +7,13 @@
       return false;
     }
     MethodYield other = (MethodYield) obj;
-    if (!Arrays.equals(parametersConstraints, other.parametersConstraints)
-      || exception != other.exception
-      || resultIndex != other.resultIndex
-      || varArgs != other.varArgs) {
-      return false;
-    }
-    if (resultConstraint != null) {
-      return resultConstraint.equals(other.resultConstraint);
-    }
-    return other.resultConstraint == null;
+    return new EqualsBuilder()
+      .append(parametersConstraints, other.parametersConstraints)
+      .append(varArgs, other.varArgs)
+      .append(resultIndex, other.resultIndex)
+      .append(resultConstraint, other.resultConstraint)
+      .append(exception, other.exception)
+      .append(exceptionType, other.exceptionType)
+      .isEquals();
   }
 

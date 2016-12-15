@@ -36,11 +36,14 @@
         case RETURN_STATEMENT:
           ExpressionTree returnExpression = ((ReturnStatementTree) terminator).expression();
           if (returnExpression != null) {
-            programState.storeReturnValue();
+            programState.storeExitValue();
           }
           break;
         case THROW_STATEMENT:
-          programState.clearReturnValue();
+          ProgramState.Pop unstack = programState.unstackValue(1);
+          // we don't use the SV related to the expression
+          programState = unstack.state.stackValue(constraintManager.createExceptionalSymbolicValue(((ThrowStatementTree) terminator).expression().symbolType()));
+          programState.storeExitValue();
           break;
         default:
           // do nothing by default.
