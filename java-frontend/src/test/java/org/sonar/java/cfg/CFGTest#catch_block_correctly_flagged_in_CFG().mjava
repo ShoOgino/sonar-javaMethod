@@ -1,0 +1,39 @@
+  @Test
+  public void catch_block_correctly_flagged_in_CFG() {
+    CFG cfg = buildCFG(new File("src/test/files/cfg/CFGCatchBlocks.java"));
+
+    CFGChecker cfgChecker = checker(
+      block(
+        element(Tree.Kind.TRY_STATEMENT)).successors(8),
+      block(
+        element(Tree.Kind.IDENTIFIER, "m1"),
+        element(Tree.Kind.IDENTIFIER, "o1"),
+        element(Tree.Kind.IDENTIFIER, "o2"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(1).exceptions(7, 5, 3, 1),
+      block(
+        element(Tree.Kind.VARIABLE, "e"),
+        element(Tree.Kind.IDENTIFIER, "m2"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(6).exceptions(1).isCatchBlock(),
+      block(
+        element(Tree.Kind.IDENTIFIER, "m3"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(1).exceptions(1),
+      block(
+        element(Tree.Kind.VARIABLE, "e"),
+        element(Tree.Kind.IDENTIFIER, "o2"),
+        element(Tree.Kind.NULL_LITERAL),
+        element(Tree.Kind.EQUAL_TO)).terminator(Tree.Kind.IF_STATEMENT).ifTrue(4).ifFalse(1).isCatchBlock(),
+      block(
+        element(Tree.Kind.IDENTIFIER, "m4"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(1).exceptions(1),
+      block(
+        element(Tree.Kind.VARIABLE, "e"),
+        element(Tree.Kind.IDENTIFIER, "m5"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(2).exceptions(1).isCatchBlock(),
+      block(
+        element(Tree.Kind.VARIABLE, "res")).successors(1),
+      block(
+        element(Tree.Kind.IDENTIFIER, "m6"),
+        element(Tree.Kind.METHOD_INVOCATION)).successors(0).isFinallyBlock());
+    cfgChecker.check(cfg);
+  }
+

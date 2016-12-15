@@ -16,7 +16,7 @@
           element(Tree.Kind.MEMBER_SELECT),
           element(Tree.Kind.CHAR_LITERAL, "''"),
           element(Tree.Kind.METHOD_INVOCATION)
-        ).successors(0));
+      ).successors(0).isFinallyBlock());
     cfgChecker.check(cfg);
     cfg = buildCFG("void fun() {try {System.out.println('');} catch(IllegalArgumentException e) { foo('i');} catch(Exception e){bar('e');}" +
         " finally { System.out.println('finally'); }}");
@@ -35,19 +35,19 @@
         element(Tree.Kind.IDENTIFIER, "foo"),
         element(Tree.Kind.CHAR_LITERAL, "'i'"),
         element(Tree.Kind.METHOD_INVOCATION)
-      ).successors(1).exceptions(1),
+      ).successors(1).exceptions(1).isCatchBlock(),
       block(
         element(Kind.VARIABLE, "e"),
         element(Tree.Kind.IDENTIFIER, "bar"),
         element(Tree.Kind.CHAR_LITERAL, "'e'"),
         element(Tree.Kind.METHOD_INVOCATION)
-      ).successors(1).exceptions(1),
+      ).successors(1).exceptions(1).isCatchBlock(),
       block(
         element(Tree.Kind.IDENTIFIER, "System"),
         element(Tree.Kind.MEMBER_SELECT),
         element(Tree.Kind.CHAR_LITERAL, "'finally'"),
         element(Tree.Kind.METHOD_INVOCATION)
-      ).successors(0)
+      ).successors(0).isFinallyBlock()
     );
     cfgChecker.check(cfg);
     cfg = buildCFG(
@@ -64,7 +64,7 @@
           element(Kind.VARIABLE, "e"),
           element(Tree.Kind.IDENTIFIER, "e"),
             element(Tree.Kind.INSTANCE_OF)
-        ).terminator(Tree.Kind.IF_STATEMENT).ifTrue(0).ifFalse(0)
+      ).terminator(Tree.Kind.IF_STATEMENT).ifTrue(0).ifFalse(0).isCatchBlock()
     );
     cfgChecker.check(cfg);
     cfg = buildCFG(
@@ -80,7 +80,7 @@
         block(
             element(Tree.Kind.IDENTIFIER, "foo"),
             element(Kind.METHOD_INVOCATION)
-        ).successors(0, 1).exit(0),
+      ).successors(0, 1).exit(0).isFinallyBlock(),
         block(
             element(Tree.Kind.IDENTIFIER, "bar"),
             element(Kind.METHOD_INVOCATION)
