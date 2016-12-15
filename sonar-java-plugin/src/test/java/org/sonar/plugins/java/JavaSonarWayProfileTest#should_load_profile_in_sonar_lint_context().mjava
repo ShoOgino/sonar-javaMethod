@@ -3,7 +3,7 @@
     ProfileDefinition sonarWay = new JavaSonarWayProfile(ruleFinder(true));
     ValidationMessages validation = ValidationMessages.create();
     RulesProfile profile = sonarWay.createProfile(validation);
-    assertThat(profile.getActiveRules()).onProperty("repositoryKey").containsOnly(CheckList.REPOSITORY_KEY);
+    assertThat(profile.getActiveRules()).extracting("repositoryKey").containsOnly(CheckList.REPOSITORY_KEY);
     assertThat(profile.getActiveRulesByRepository("common-java")).isEmpty();
     assertThat(profile.getActiveRulesByRepository(CheckList.REPOSITORY_KEY).size()).isGreaterThanOrEqualTo(269);
     assertThat(profile.getName()).isEqualTo("Sonar way");
