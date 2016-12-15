@@ -1,5 +1,6 @@
   @Test
   public void try_statement_with_CFG_blocks() {
+    // method invocation after if
     CFG cfg = buildCFG(
       "  private void f(boolean action) {\n" +
         "    try {\n" +
@@ -27,6 +28,8 @@
         element(Tree.Kind.IDENTIFIER, "bar"),
         element(Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);
+
+    // method invocation before if
     cfg = buildCFG(
       "  private void f(boolean action) {\n" +
         "    try {\n" +
@@ -54,6 +57,8 @@
         element(Tree.Kind.IDENTIFIER, "bar"),
         element(Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);
+
+    // finally
     cfg = buildCFG(
       "  private void f(boolean action) {\n" +
         "    try {\n" +
