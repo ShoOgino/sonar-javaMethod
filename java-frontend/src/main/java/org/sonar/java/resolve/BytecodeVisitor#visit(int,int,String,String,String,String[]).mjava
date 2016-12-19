@@ -1,7 +1,7 @@
   @Override
   public void visit(int version, int flags, String name, @Nullable String signature, @Nullable String superName, @Nullable String[] interfaces) {
-    Preconditions.checkState(name.endsWith(classSymbol.name), "Name : '" + name + "' should ends with " + classSymbol.name);
-    Preconditions.checkState(name.endsWith("package-info") || !BytecodeCompleter.isSynthetic(flags), name + " is synthetic");
+    Preconditions.checkState(name.endsWith(classSymbol.name), "Name : '%s' should ends with %s", name, classSymbol.name);
+    Preconditions.checkState(name.endsWith("package-info") || !BytecodeCompleter.isSynthetic(flags), "%s is synthetic", name);
     className = name;
     if (signature != null) {
       SignatureReader signatureReader = new SignatureReader(signature);
@@ -11,7 +11,7 @@
       ((ClassJavaType) classSymbol.type).interfaces = readGenericSignature.interfaces();
     } else {
       if (superName == null) {
-        Preconditions.checkState("java/lang/Object".equals(className), "superName must be null only for java/lang/Object, but not for " + className);
+        Preconditions.checkState("java/lang/Object".equals(className), "superName must be null only for java/lang/Object, but not for %s", className);
         // TODO(Godin): what about interfaces and annotations
       } else {
         ((ClassJavaType) classSymbol.type).supertype = getClassSymbol(superName).type;

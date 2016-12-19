@@ -1,7 +1,8 @@
     @Override
     public void visitFormalTypeParameter(String name) {
       List<JavaSymbol> lookup = classSymbol.typeParameters.lookup(name);
-      Preconditions.checkState(lookup.size() == 1, "found "+lookup.size());
+      int lookupSize = lookup.size();
+      Preconditions.checkState(lookupSize == 1, "found %s instead of 1", lookupSize);
       typeVariableSymbol = (JavaSymbol.TypeVariableJavaSymbol) lookup.iterator().next();
       bounds = ((TypeVariableJavaType) typeVariableSymbol.type).bounds;
     }
