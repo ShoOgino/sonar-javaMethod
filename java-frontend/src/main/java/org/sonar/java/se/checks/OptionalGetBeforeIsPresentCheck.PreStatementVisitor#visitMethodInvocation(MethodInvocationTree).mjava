@@ -3,7 +3,18 @@
       if (OPTIONAL_IS_PRESENT.matches(tree)) {
         constraintManager.setValueFactory(id -> new OptionalSymbolicValue(id, programState.peekValue()));
       } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(programState.peekValue())) {
-        context.reportIssue(tree, check, "Call \"" + getIdentifierPart(tree.methodSelect()) + "isPresent()\" before accessing the value.");
+        String identifier = getIdentifierPart(tree.methodSelect());
+        String issueMsg;
+        String flowMsg;
+        if (identifier.isEmpty()) {
+          issueMsg = "Optional#";
+          flowMsg = "";
+        } else {
+          issueMsg = identifier + ".";
+          flowMsg = identifier + " ";
+        }
+        Set<List<JavaFileScannerContext.Location>> flow = FlowComputation.singleton("Optional " + flowMsg + "is accessed", tree.methodSelect());
+        context.reportIssue(tree, check, "Call \""+ issueMsg + "isPresent()\" before accessing the value.", flow);
         programState = null;
       }
     }
