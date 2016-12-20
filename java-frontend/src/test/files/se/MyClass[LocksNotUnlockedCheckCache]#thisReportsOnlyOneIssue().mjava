@@ -1,10 +1,10 @@
   public void thisReportsOnlyOneIssue() {
     Lock lock = new ReentrantLock();
     if(foo) {
-      lock.lock();// Noncompliant
+      lock.lock();// Noncompliant [[flows=cache1]] {{Unlock this lock along all executions paths of this method.}} flow@cache1 {{Lock 'lock' is never unlocked}}
       ifStmt();
     } else {
-      lock.lock();// Noncompliant
+      lock.lock();// Noncompliant [[flows=cache2]] {{Unlock this lock along all executions paths of this method.}} flow@cache2 {{Lock 'lock' is never unlocked}}
       elseStmt();
     }
     end();

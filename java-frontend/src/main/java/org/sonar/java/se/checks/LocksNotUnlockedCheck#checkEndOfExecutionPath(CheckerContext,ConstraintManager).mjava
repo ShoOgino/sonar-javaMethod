@@ -3,6 +3,6 @@
     ExplodedGraph.Node node = context.getNode();
     context.getState().getValuesWithConstraints(Status.LOCKED).keySet().stream()
       .flatMap(sv -> FlowComputation.flow(node, sv, ObjectConstraint.statusPredicate(Status.LOCKED), ObjectConstraint.statusPredicate(Status.UNLOCKED)).stream())
-      .forEach(loc -> reportIssue(reportOn(loc.syntaxNode), "Unlock this lock along all executions paths of this method.", Collections.emptySet()));
+      .forEach(this::reportIssue);
   }
 

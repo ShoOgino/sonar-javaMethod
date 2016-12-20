@@ -1,6 +1,6 @@
   public void if_statement_overwrite() {
     Lock l1 = new ReentrantLock();
-    l1.lock(); // Noncompliant
+    l1.lock(); // Noncompliant [[flows=ifOverwrite]] {{Unlock this lock along all executions paths of this method.}} flow@ifOverwrite {{Lock 'l1' is never unlocked}}
     if(a){
       l1 = new ReentrantLock();
     } else {

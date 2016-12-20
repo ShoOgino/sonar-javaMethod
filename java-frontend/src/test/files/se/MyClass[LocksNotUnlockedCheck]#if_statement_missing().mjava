@@ -1,8 +1,8 @@
   public void if_statement_missing() {
     Lock lock = new ReentrantLock();
-    lock.lock(); // Noncompliant
+    lock.lock(); // Noncompliant [[flows=ifMissing]] {{Unlock this lock along all executions paths of this method.}} flow@ifMissing {{Lock 'lock' is never unlocked}}
     if(a) {
-      //lock not unlocked.
+      //lock never unlocked.
     } else {
       lock.unlock();
     }

@@ -9,7 +9,7 @@
     }
     lock = new ReentrantLock();
     try {
-      lock.tryLock(); // Noncompliant
+      lock.tryLock(); // Noncompliant [[flows=try]] {{Unlock this lock along all executions paths of this method.}} flow@try {{Lock 'lock' is never unlocked}}
     } catch (MyException e) {
       lock.unlock();
     } catch (MyOtherException e) {
@@ -17,7 +17,7 @@
     }
     lock = new ReentrantLock();
     try {
-      lock.tryLock(); // Noncompliant
+      lock.tryLock(); // Noncompliant [[flows=try2]] {{Unlock this lock along all executions paths of this method.}} flow@try2 {{Lock 'lock' is never unlocked}}
     } catch (MyException e) {
     } catch (MyOtherException e) {
       lock.unlock();
