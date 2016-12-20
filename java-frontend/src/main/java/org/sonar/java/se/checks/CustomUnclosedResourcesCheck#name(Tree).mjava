@@ -2,6 +2,10 @@
     if (tree.is(Tree.Kind.NEW_CLASS)) {
       return ((NewClassTree) tree).symbolType().name();
     }
-    return ((MethodInvocationTree) tree).symbolType().name();
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    if (mit.symbolType().isVoid()) {
+      return mit.symbol().owner().name();
+    }
+    return mit.symbolType().name();
   }
 

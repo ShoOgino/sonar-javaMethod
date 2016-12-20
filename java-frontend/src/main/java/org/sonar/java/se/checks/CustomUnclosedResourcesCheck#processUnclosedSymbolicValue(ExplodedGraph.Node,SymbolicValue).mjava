@@ -1,8 +1,6 @@
   private void processUnclosedSymbolicValue(ExplodedGraph.Node node, SymbolicValue sv) {
-    List<JavaFileScannerContext.Location> flow = FlowComputation.flow(node, sv, ObjectConstraint.statusPredicate(status.OPENED));
-    flow.stream()
-      .filter(loc -> loc.syntaxNode.is(Tree.Kind.NEW_CLASS, Tree.Kind.METHOD_INVOCATION))
-      .findFirst()
-      .ifPresent(loc -> reportIssue(loc.syntaxNode, String.format("Close this \"%s\".", name(loc.syntaxNode)), Collections.emptySet()));
+    FlowComputation.flow(node, sv, ObjectConstraint.statusPredicate(status.OPENED)).stream()
+      .filter(location -> location.syntaxNode.is(Tree.Kind.NEW_CLASS, Tree.Kind.METHOD_INVOCATION))
+      .forEach(this::reportIssue);
   }
 
