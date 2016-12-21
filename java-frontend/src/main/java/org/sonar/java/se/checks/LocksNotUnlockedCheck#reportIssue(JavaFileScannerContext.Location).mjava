@@ -1,6 +1,7 @@
   private void reportIssue(JavaFileScannerContext.Location location) {
-    String flowMsg = "Lock " + quoteOrEmpty(lockName(location.syntaxNode)) + "is never unlocked";
-    Tree tree = issueTree(location.syntaxNode);
+    MethodInvocationTree syntaxNode = (MethodInvocationTree) location.syntaxNode;
+    String flowMsg = "Lock '" + SyntaxTreeNameFinder.getName(syntaxNode.methodSelect()) + "' is never unlocked";
+    Tree tree = issueTree(syntaxNode);
     reportIssue(tree, "Unlock this lock along all executions paths of this method.", FlowComputation.singleton(flowMsg, tree));
   }
 
