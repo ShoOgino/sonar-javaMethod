@@ -13,37 +13,41 @@
     if(declaration != null) {
       methodInvokedBehavior = symbolicExecutionVisitor.execute((MethodTree) declaration);
     }
+
+    // Enqueue additional exceptional paths corresponding to unchecked exceptions, for instance OutOfMemoryError
+    enqueueUncheckedExceptionalPaths();
+
     final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.values);
     if (methodInvokedBehavior != null && methodInvokedBehavior.isComplete() && methodCanNotBeOverriden(methodSymbol)) {
       List<SymbolicValue> invocationArguments = invocationArguments(unstack.values);
       List<Type> invocationTypes = mit.arguments().stream().map(ExpressionTree::symbolType).collect(Collectors.toList());
 
-      methodInvokedBehavior.exceptionalPathYields()
-        .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, invocationTypes, programState, () -> resultValue).stream())
-        .forEach(this::enqueueExceptionalPaths);
+      Map<Type, SymbolicValue.ExceptionalSymbolicValue> thrownExceptionsByExceptionType = new HashMap<>();
 
+      // Enqueue exceptional paths from exceptional yields
+      methodInvokedBehavior.exceptionalPathYields()
+        .flatMap(yield -> yield.statesAfterInvocation(
+          invocationArguments,
+          invocationTypes,
+          programState,
+          () -> thrownExceptionsByExceptionType.computeIfAbsent(yield.exceptionType, constraintManager::createExceptionalSymbolicValue)))
+        .forEach(ps -> enqueueExceptionalPaths(ps.clearStack(), (SymbolicValue.ExceptionalSymbolicValue) ps.peekValue()));
+
+      // Enqueue happy paths
       methodInvokedBehavior.happyPathYields()
-        .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, invocationTypes, programState, () -> resultValue).stream())
+        .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, invocationTypes, programState, () -> resultValue))
+        .map(psYield -> handleSpecialMethods(psYield, mit))
         .forEach(psYield -> {
-          ProgramState ps = psYield;
-          if (isNonNullMethod(methodSymbol)) {
-            ps = ps.addConstraint(ps.peekValue(), ObjectConstraint.notNull());
-          } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
-            ps = ps.resetFieldValues(constraintManager);
-          }
           checkerDispatcher.syntaxNode = mit;
-          checkerDispatcher.addTransition(ps);
+          checkerDispatcher.addTransition(psYield);
           clearStack(mit);
         });
     } else {
-      enqueueExceptionalPaths(programState);
+      // Enqueue exceptional paths from thrown exceptions
+      enqueueThrownExceptionalPaths(methodSymbol);
 
-      programState = programState.stackValue(resultValue);
-      if (isNonNullMethod(methodSymbol)) {
-        programState = programState.addConstraint(resultValue, ObjectConstraint.notNull());
-      } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
-        programState = programState.resetFieldValues(constraintManager);
-      }
+      // Enqueue happy paths
+      programState = handleSpecialMethods(programState.stackValue(resultValue), mit);
       checkerDispatcher.executeCheckPostStatement(mit);
       clearStack(mit);
     }

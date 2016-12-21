@@ -4,18 +4,19 @@
     assertThat(sev.behaviorCache.entrySet()).hasSize(3);
 
     MethodBehavior foo = getMethodBehavior(sev, "foo");
-    assertThat(foo.yields()).hasSize(3);
+    assertThat(foo.yields()).hasSize(4);
     assertThat(foo.yields().stream().filter(y -> !y.exception).count()).isEqualTo(2);
-    assertThat(foo.yields().stream().filter(y -> y.exception).count()).isEqualTo(1);
+    assertThat(foo.yields().stream().filter(y -> y.exception).count()).isEqualTo(2);
 
     MethodBehavior qix = getMethodBehavior(sev, "qix");
     List<MethodYield> qixYield = qix.yields();
     assertThat(qixYield.stream()
       .filter(y -> !y.parametersConstraints[0].isNull())
       .allMatch(y -> y.exception)).isTrue();
+
     assertThat(qixYield.stream()
       .filter(y -> y.parametersConstraints[0].isNull() && y.exception)
-      .count()).isEqualTo(1);
+      .count()).isEqualTo(2);
 
     assertThat(qixYield.stream()
       .filter(y -> !y.exception)

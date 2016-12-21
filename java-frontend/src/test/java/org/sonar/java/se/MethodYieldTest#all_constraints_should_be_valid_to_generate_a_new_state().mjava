@@ -25,7 +25,8 @@
     ps = ps.addConstraint(sv2, new ObjectConstraint(false, false, YieldStatus.A));
 
     // status of sv2 should be changed from A to B
-    Collection<ProgramState> generatedStatesFromFirstYield = trueYield.statesAfterInvocation(Lists.newArrayList(sv1, sv2), Lists.newArrayList(), ps, () -> sv3);
+    Collection<ProgramState> generatedStatesFromFirstYield = trueYield.statesAfterInvocation(Lists.newArrayList(sv1, sv2), Lists.newArrayList(), ps, () -> sv3)
+      .collect(Collectors.toList());
     assertThat(generatedStatesFromFirstYield).hasSize(1);
     assertThat(generatedStatesFromFirstYield.iterator().next().getConstraintWithStatus(sv2, YieldStatus.B)).isNotNull();
   }

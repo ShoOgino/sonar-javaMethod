@@ -1,0 +1,11 @@
+  private void enqueueThrownExceptionalPaths(Symbol symbol) {
+    if (!symbol.isMethodSymbol()) {
+      // do nothing for unknown methods
+      return;
+    }
+    ProgramState ps = programState.clearStack();
+    ((Symbol.MethodSymbol) symbol).thrownTypes().stream()
+      .map(constraintManager::createExceptionalSymbolicValue)
+      .forEach(exceptionSV -> enqueueExceptionalPaths(ps, exceptionSV));
+  }
+
