@@ -1,7 +1,7 @@
     @VisibleForTesting
-    static Set<FlowComment> parseFlows(@Nullable String comment, int line) {
+    static List<FlowComment> parseFlows(@Nullable String comment, int line) {
       if (comment == null) {
-        return Collections.emptySet();
+        return Collections.emptyList();
       }
       List<List<String>> flowIds = new ArrayList<>();
       List<Integer> flowStarts = new ArrayList<>();
@@ -17,6 +17,6 @@
       return IntStream.range(0, flowIds.size())
         .mapToObj(i -> createFlows(flowIds.get(i), line, comment.substring(flowStarts.get(i), flowStarts.get(i + 1))))
         .flatMap(Function.identity())
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
     }
 

@@ -1,0 +1,10 @@
+  public void order() {
+    String foo = getFoo();  // flow@ord [[order=2]] {{foo is assigned null}} flow@ord [[order=1]] {{...}}
+    String bar = foo;
+    boolean cond = (bar == null);
+
+    if (cond) {                     // flow@ord [[order=3]]
+      foo.toCharArray();            // Noncompliant [[flows=ord]] flow@ord [[order=4]]
+    }
+  }
+
