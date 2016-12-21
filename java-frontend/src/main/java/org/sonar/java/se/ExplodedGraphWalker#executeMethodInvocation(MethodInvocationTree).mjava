@@ -27,7 +27,7 @@
         .forEach(psYield -> {
           ProgramState ps = psYield;
           if (isNonNullMethod(methodSymbol)) {
-            ps = ps.addConstraint(ps.peekValue(), ObjectConstraint.NOT_NULL);
+            ps = ps.addConstraint(ps.peekValue(), ObjectConstraint.notNull());
           } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
             ps = ps.resetFieldValues(constraintManager);
           }
@@ -40,7 +40,7 @@
 
       programState = programState.stackValue(resultValue);
       if (isNonNullMethod(methodSymbol)) {
-        programState = programState.addConstraint(resultValue, ObjectConstraint.NOT_NULL);
+        programState = programState.addConstraint(resultValue, ObjectConstraint.notNull());
       } else if (OBJECT_WAIT_MATCHER.matches(mit)) {
         programState = programState.resetFieldValues(constraintManager);
       }

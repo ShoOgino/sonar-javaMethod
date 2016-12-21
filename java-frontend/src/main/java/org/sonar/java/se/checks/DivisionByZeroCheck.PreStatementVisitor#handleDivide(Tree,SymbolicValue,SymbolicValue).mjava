@@ -1,10 +1,10 @@
     private void handleDivide(Tree tree, SymbolicValue leftOp, SymbolicValue rightOp) {
       if (isZero(rightOp)) {
-        reportIssue(tree);
+        reportIssue(tree, rightOp);
       } else if (isZero(leftOp)) {
         reuseSymbolicValue(leftOp);
       } else if (isNonZero(leftOp) && isNonZero(rightOp)) {
-        deferConstraint(tree.is(Tree.Kind.DIVIDE, Tree.Kind.DIVIDE_ASSIGNMENT) ? Status.NON_ZERO : Status.UNDETERMINED);
+        deferConstraint(tree.is(Tree.Kind.DIVIDE, Tree.Kind.DIVIDE_ASSIGNMENT) ? DivByZeroStatus.NON_ZERO : DivByZeroStatus.UNDETERMINED);
       }
     }
 
