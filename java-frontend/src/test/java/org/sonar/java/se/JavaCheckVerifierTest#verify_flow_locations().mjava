@@ -11,10 +11,10 @@
       .issueWithFlow(20)
         .flow(17, "msg", 19, null)
         .add();
-    try {
-      JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor);
-    } catch (AssertionError e) {
-      assertThat(e).hasMessage("[attribute mismatch for START_COLUMN: {MESSAGE=a is assigned to null here, START_COLUMN=12, END_COLUMN=20}] expected:<[12]> but was:<[6]>");
-    }
+    reverseFlows(fakeVisitor);
+    Throwable throwable = catchThrowable(() -> JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor));
+    assertThat(throwable)
+      .isInstanceOf(AssertionError.class)
+      .hasMessage("[attribute mismatch for START_COLUMN: {MESSAGE=a is assigned to null here, START_COLUMN=12, END_COLUMN=20}] expected:<[12]> but was:<[6]>");
   }
 
