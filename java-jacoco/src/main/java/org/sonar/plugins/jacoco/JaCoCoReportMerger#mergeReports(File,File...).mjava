@@ -4,9 +4,8 @@
    * @param reports files to be merged.
    */
   public static void mergeReports(File reportOverall, File... reports) {
-    SessionInfoStore infoStore = new SessionInfoStore();
-    ExecutionDataStore dataStore = new ExecutionDataStore();
-    boolean isCurrentVersionFormat = loadSourceFiles(infoStore, dataStore, reports);
+    ExecutionDataVisitor edv = new ExecutionDataVisitor();
+    boolean isCurrentVersionFormat = loadSourceFiles(edv, reports);
 
     try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(reportOverall))) {
       Object visitor;
@@ -15,8 +14,11 @@
       } else {
         visitor = new org.jacoco.previous.core.data.ExecutionDataWriter(outputStream);
       }
-      infoStore.accept((ISessionInfoVisitor) visitor);
-      dataStore.accept((IExecutionDataVisitor) visitor);
+      for (Map.Entry<String, ExecutionDataStore> entry : edv.getSessions().entrySet()) {
+        SessionInfo sessionInfo = new SessionInfo(entry.getKey(), 0, 0);
+        ((ISessionInfoVisitor) visitor).visitSessionInfo(sessionInfo);
+        entry.getValue().accept((IExecutionDataVisitor) visitor);
+      }
     } catch (IOException e) {
       throw new AnalysisException(String.format("Unable to write overall coverage report %s", reportOverall.getAbsolutePath()), e);
     }
