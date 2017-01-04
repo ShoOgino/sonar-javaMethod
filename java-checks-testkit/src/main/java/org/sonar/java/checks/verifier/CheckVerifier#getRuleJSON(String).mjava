@@ -1,0 +1,10 @@
+  private static RuleJSON getRuleJSON(String ruleKey) throws IOException {
+    String ruleJson = "/org/sonar/l10n/java/rules/squid/" + ruleKey + "_java.json";
+    URL resource = CheckVerifier.class.getResource(ruleJson);
+    if(resource == null) {
+      throw new IOException(ruleJson + " not found");
+    }
+    Gson gson = new Gson();
+    return gson.fromJson(new InputStreamReader(resource.openStream(), "UTF-8"), RuleJSON.class);
+  }
+

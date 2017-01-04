@@ -1,0 +1,11 @@
+  private static String ruleKey(AnalyzerMessage issue) {
+    String ruleKey;
+    RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), RspecKey.class);
+    if(rspecKeyAnnotation != null) {
+      ruleKey = rspecKeyAnnotation.value();
+    } else {
+      ruleKey = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), Rule.class).key();
+    }
+    return ruleKey;
+  }
+
