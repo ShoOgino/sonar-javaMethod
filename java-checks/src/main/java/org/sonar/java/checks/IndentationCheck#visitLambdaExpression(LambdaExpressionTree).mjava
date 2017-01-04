@@ -1,13 +1,16 @@
   @Override
   public void visitLambdaExpression(LambdaExpressionTree lambdaExpressionTree) {
-    int previousTokenLine = getPreviousToken(lambdaExpressionTree).line();
-    int lambdaFirstTokenLine = lambdaExpressionTree.firstToken().line();
-    if (previousTokenLine != lambdaFirstTokenLine) {
-      expectedLevel += indentationLevel;
-    }
-    super.visitLambdaExpression(lambdaExpressionTree);
-    if (previousTokenLine != lambdaFirstTokenLine) {
-      expectedLevel -= indentationLevel;
+    // doesn't scan lambda parameters because there's no indentation check on types and identifiers
+    Tree body = lambdaExpressionTree.body();
+    if (body.is(Kind.BLOCK)) {
+      BlockTree block = (BlockTree) body;
+      excludeIssueAtLine = block.openBraceToken().line();
+      int previousLevel = expectedLevel;
+      expectedLevel = block.closeBraceToken().column();
+      scan(block);
+      expectedLevel = previousLevel;
+    } else {
+      scan(body);
     }
   }
 
