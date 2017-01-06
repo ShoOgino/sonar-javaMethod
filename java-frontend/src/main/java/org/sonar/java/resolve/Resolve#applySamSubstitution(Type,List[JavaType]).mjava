@@ -1,5 +1,9 @@
   private List<JavaType> applySamSubstitution(Type type, List<JavaType> samTypes) {
-    List<JavaType> argTypes = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(samTypes, (JavaType) type);
+    JavaType functionType = (JavaType) type;
+    if(functionType instanceof ParametrizedTypeJavaType) {
+      functionType = typeSubstitutionSolver.functionType((ParametrizedTypeJavaType) functionType);
+    }
+    List<JavaType> argTypes = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(samTypes, functionType);
     return argTypes.stream().map(argType -> {
       if (argType.isTagged(JavaType.WILDCARD)) {
         // JLS8 9.9 Function types : this is approximated for ? extends X types (cf JLS)
