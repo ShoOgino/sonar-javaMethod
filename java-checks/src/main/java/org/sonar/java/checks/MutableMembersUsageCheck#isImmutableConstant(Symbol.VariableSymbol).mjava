@@ -2,8 +2,9 @@
     if (symbol.isStatic() && symbol.isFinal()) {
       VariableTree declaration = symbol.declaration();
       // symbol is private, so declaration can only be null if assignment is done in static block
-      if (declaration.initializer() != null) {
-        return !isMutableType(declaration.initializer());
+      ExpressionTree initializer = declaration.initializer();
+      if (initializer != null) {
+        return !isMutableType(initializer) || isEmptyArray(initializer);
       }
       return !assignementsOfMutableType(symbol.usages());
     }
