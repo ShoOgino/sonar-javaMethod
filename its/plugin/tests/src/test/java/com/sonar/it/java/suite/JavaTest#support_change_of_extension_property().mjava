@@ -8,8 +8,7 @@
       .setProperty("sonar.sources", "src");
     orchestrator.executeBuild(scan);
 
-    Resource project = orchestrator.getServer().getWsClient().find(ResourceQuery.createForMetrics("jav-file-extension", "files", "ncloc"));
-    assertThat(project.getMeasureIntValue("files")).isEqualTo(2);
-    assertThat(project.getMeasureIntValue("ncloc")).isGreaterThan(0);
+    assertThat(getMeasureAsInteger("jav-file-extension", "files")).isEqualTo(2);
+    assertThat(getMeasureAsInteger("jav-file-extension", "ncloc")).isGreaterThan(0);
   }
 

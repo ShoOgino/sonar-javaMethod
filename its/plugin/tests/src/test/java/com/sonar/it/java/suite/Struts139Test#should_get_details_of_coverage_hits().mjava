@@ -1,11 +1,9 @@
   @Test
   public void should_get_details_of_coverage_hits() {
     setCurrentProject();
-    Resource resource = orchestrator.getServer().getWsClient().find(
-      ResourceQuery.createForMetrics(JavaTestSuite.keyFor(MODULE_CORE, "org/apache/struts/action/", "ActionForward.java"), "coverage_line_hits_data"));
-    Measure coverageData = resource.getMeasure("coverage_line_hits_data");
-    assertThat(coverageData).isNotNull();
-    assertThat(coverageData.getData().length()).isGreaterThan(10);
-    assertThat(coverageData.getData()).matches("(\\d+=\\d+;{0,1})+");
+    Measure coverage = getMeasure(JavaTestSuite.keyFor(MODULE_CORE, "org/apache/struts/action/", "ActionForward.java"), "coverage_line_hits_data");
+    assertThat(coverage).isNotNull();
+    assertThat(coverage.getValue().length()).isGreaterThan(10);
+    assertThat(coverage.getValue()).matches("(\\d+=\\d+;{0,1})+");
   }
 

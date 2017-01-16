@@ -8,7 +8,7 @@
       .setProperty("sonar.profile", "filtered-issues");
     orchestrator.executeBuild(build);
 
-    assertThat(getMeasure("org.example:example", "violations").getValue()).isEqualTo(2);
+    assertThat(getMeasureAsInteger("org.example:example", "violations")).isEqualTo(2);
 
     IssueClient issueClient = orchestrator.getServer().wsClient().issueClient();
     List<Issue> issues = issueClient.find(IssueQuery.create().components("org.example:example:src/main/java/EclispeI18NFiltered.java")).list();

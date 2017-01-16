@@ -1,0 +1,10 @@
+  @CheckForNull
+  static Map<String, Measure> getMeasures(String componentKey, String... metricKeys) {
+    return TestUtils.newWsClient(ORCHESTRATOR).measures().component(new ComponentWsRequest()
+      .setComponentKey(componentKey)
+      .setMetricKeys(asList(metricKeys)))
+      .getComponent().getMeasuresList()
+      .stream()
+      .collect(Collectors.toMap(Measure::getMetric, Function.identity()));
+  }
+
