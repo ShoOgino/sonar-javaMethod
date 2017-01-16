@@ -1,0 +1,14 @@
+  public void loops() {
+    int totalGSSEdges = 0;
+    int maxPopped = 0;
+    List<String> strings = Collections.emptyList();
+    for (String gss : strings) { // flow@loop {{...}}
+      String edge = gss; // missing flow message - see SONARJAVA-2049
+      while (edge != null) { // flow@loop {{Implies 'edge' is null}}
+        totalGSSEdges++;
+        edge = edge.substring(1);
+      }
+      maxPopped = Math.max(maxPopped, gss.toUpperCase() == null ? 0 : 1); // Noncompliant [[flows=loop]] flow@loop {{'gss' is dereferenced}}
+    }
+  }
+
