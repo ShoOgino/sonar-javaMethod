@@ -6,6 +6,7 @@
     ProgramState ps = programState.clearStack();
     ((Symbol.MethodSymbol) symbol).thrownTypes().stream()
       .map(constraintManager::createExceptionalSymbolicValue)
-      .forEach(exceptionSV -> enqueueExceptionalPaths(ps, exceptionSV));
+      .map(ps::stackValue)
+      .forEach(this::enqueueExceptionalPaths);
   }
 

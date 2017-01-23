@@ -2,14 +2,15 @@
     ExpressionTree initializer = variableTree.initializer();
     if (initializer == null) {
       SymbolicValue sv = null;
+      Type variableType = variableTree.symbol().type();
       if (terminator != null && terminator.is(Tree.Kind.FOR_EACH_STATEMENT)) {
         sv = constraintManager.createSymbolicValue(variableTree);
-      } else if (variableTree.type().symbolType().is("boolean")) {
+      } else if (variableType.is("boolean")) {
         sv = SymbolicValue.FALSE_LITERAL;
       } else if (variableTree.parent().is(Tree.Kind.CATCH)) {
-        sv = constraintManager.createSymbolicValue(variableTree);
+        sv = getCaughtException(variableType);
         programState = programState.addConstraint(sv, ObjectConstraint.notNull());
-      } else if (!variableTree.type().symbolType().isPrimitive()) {
+      } else if (!variableType.isPrimitive()) {
         sv = SymbolicValue.NULL_LITERAL;
       }
       if (sv != null) {

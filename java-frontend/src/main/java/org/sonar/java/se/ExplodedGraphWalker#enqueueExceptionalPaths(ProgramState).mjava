@@ -1,6 +1,10 @@
-  private void enqueueExceptionalPaths(ProgramState ps, SymbolicValue.ExceptionalSymbolicValue exceptionSV) {
+  private void enqueueExceptionalPaths(ProgramState ps) {
     Set<CFG.Block> exceptionBlocks = node.programPoint.block.exceptions();
     List<CFG.Block> catchBlocks = exceptionBlocks.stream().filter(CFG.Block.IS_CATCH_BLOCK).collect(Collectors.toList());
+    SymbolicValue peekValue = ps.peekValue();
+
+    Preconditions.checkState(peekValue instanceof SymbolicValue.ExceptionalSymbolicValue, "Top of stack should always contains exceptional SV");
+    SymbolicValue.ExceptionalSymbolicValue exceptionSV = (SymbolicValue.ExceptionalSymbolicValue) peekValue;
 
     // only consider the first match, as order of catch block is important
     Optional<CFG.Block> firstMatchingCatchBlock = catchBlocks.stream()
@@ -18,17 +22,16 @@
       .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps));
 
     // store the exception as exit value in case of method exit in next block
-    ProgramState newPs = ps.clearStack().stackValue(exceptionSV);
-    newPs.storeExitValue();
+    ps.storeExitValue();
 
     // use other exceptional blocks, i.e. finally block and exit blocks
     exceptionBlocks.stream()
       .filter(CFG.Block.IS_CATCH_BLOCK.negate())
-      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), newPs, true));
+      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps, true));
 
     // explicitly add the exception if next block is method exit
     node.programPoint.block.successors().stream()
       .filter(CFG.Block::isMethodExitBlock)
-      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), newPs, true));
+      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps, true));
   }
 
