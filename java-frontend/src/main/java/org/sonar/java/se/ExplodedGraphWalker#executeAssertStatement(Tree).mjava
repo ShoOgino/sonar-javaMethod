@@ -1,0 +1,11 @@
+  private void executeAssertStatement(Tree tree) {
+    // After an assert statement we know that the evaluated expression is true.
+    ProgramState.Pop pop = programState.unstackValue(1);
+    pop.values.forEach(v -> v.setConstraint(pop.state, BooleanConstraint.TRUE)
+      .forEach(ps -> {
+        checkerDispatcher.syntaxNode = tree;
+        checkerDispatcher.addTransition(ps);
+        ps.clearStack();
+      }));
+  }
+
