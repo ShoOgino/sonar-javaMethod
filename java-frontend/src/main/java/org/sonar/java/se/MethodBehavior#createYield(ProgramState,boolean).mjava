@@ -1,10 +1,9 @@
   public void createYield(ProgramState programState, boolean happyPathYield) {
     MethodYield yield = new MethodYield(parameters.size(), ((JavaSymbol.MethodJavaSymbol) methodSymbol).isVarArgs());
     yield.exception = !happyPathYield;
-    List<SymbolicValue> parameterSymbolicValues = new ArrayList<>(parameters.values());
 
     for (int i = 0; i < yield.parametersConstraints.length; i++) {
-      yield.parametersConstraints[i] = programState.getConstraint(parameterSymbolicValues.get(i));
+      yield.parametersConstraints[i] = programState.getConstraint(parameters.get(i));
     }
 
     SymbolicValue resultSV = programState.exitValue();
@@ -16,7 +15,7 @@
         // if there is no return value but we are not in a void method or constructor, we are not in a happy path
         yield.exception = true;
       } else {
-        yield.resultIndex = parameterSymbolicValues.indexOf(resultSV);
+        yield.resultIndex = parameters.indexOf(resultSV);
         yield.resultConstraint = programState.getConstraint(resultSV);
       }
     }
