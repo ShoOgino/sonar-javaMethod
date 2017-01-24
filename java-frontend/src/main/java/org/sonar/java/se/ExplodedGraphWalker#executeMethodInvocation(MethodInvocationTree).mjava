@@ -9,9 +9,8 @@
     // get method behavior for method with known declaration (ie: within the same file)
     MethodBehavior methodInvokedBehavior = null;
     Symbol methodSymbol = mit.symbol();
-    Tree declaration = methodSymbol.declaration();
-    if(declaration != null) {
-      methodInvokedBehavior = symbolicExecutionVisitor.execute((MethodTree) declaration);
+    if(methodSymbol.isMethodSymbol()) {
+      methodInvokedBehavior = behaviorCache.get((Symbol.MethodSymbol) methodSymbol);
     }
 
     // Enqueue additional exceptional paths corresponding to unchecked exceptions, for instance OutOfMemoryError

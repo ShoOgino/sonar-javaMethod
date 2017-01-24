@@ -12,10 +12,6 @@
       int numberArguments = methodInvocation.arguments().size();
       List<SymbolicValue> values = context.getState().peekValues(numberArguments + 1);
       currentVal = values.get(numberArguments);
-      if (isObjectsRequireNonNullMethod(methodInvocation.symbol())) {
-        SymbolicValue firstArg = values.get(numberArguments - 1);
-        return context.getState().addConstraint(firstArg, ObjectConstraint.notNull());
-      }
     }
     if(toCheck.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
       toCheck = ((ArrayAccessExpressionTree) toCheck).expression();

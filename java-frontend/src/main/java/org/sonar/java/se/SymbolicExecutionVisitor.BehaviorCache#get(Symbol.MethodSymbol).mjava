@@ -1,0 +1,15 @@
+    @CheckForNull
+    public MethodBehavior get(Symbol.MethodSymbol symbol) {
+      if (!behaviors.containsKey(symbol)) {
+        if (isObjectsRequireNonNullMethod(symbol)) {
+          behaviors.put(symbol, createRequireNonNullBehavior(symbol));
+        } else {
+          MethodTree declaration = symbol.declaration();
+          if (declaration != null) {
+            SymbolicExecutionVisitor.this.execute(declaration);
+          }
+        }
+      }
+      return behaviors.get(symbol);
+    }
+
