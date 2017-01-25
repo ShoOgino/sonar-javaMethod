@@ -1,0 +1,28 @@
+    /**
+     * Create behavior for java.util.Objects.isNull and nonNull methods
+     * @param symbol the symbol of the associated method.
+     * @return the behavior corresponding to the symbol passed as parameter.
+     */
+    private MethodBehavior createIsNullBehavior(Symbol.MethodSymbol symbol) {
+      boolean isNull = "isNull".equals(symbol.name());
+      ObjectConstraint<ObjectConstraint.Status> trueConstraint = isNull ? ObjectConstraint.nullConstraint() : ObjectConstraint.notNull();
+      ObjectConstraint<ObjectConstraint.Status> falseConstraint = isNull ? ObjectConstraint.notNull() : ObjectConstraint.nullConstraint();
+
+      MethodBehavior behavior = new MethodBehavior(symbol);
+
+      MethodYield trueYield = new MethodYield(symbol.parameterTypes().size(), false);
+      trueYield.exception = false;
+      trueYield.parametersConstraints[0] = trueConstraint;
+      trueYield.resultConstraint = BooleanConstraint.TRUE;
+      behavior.addYield(trueYield);
+
+      MethodYield falseYield = new MethodYield(symbol.parameterTypes().size(), false);
+      falseYield.exception = false;
+      falseYield.parametersConstraints[0] = falseConstraint;
+      falseYield.resultConstraint = BooleanConstraint.FALSE;
+      behavior.addYield(falseYield);
+
+      behavior.completed();
+      return behavior;
+    }
+
