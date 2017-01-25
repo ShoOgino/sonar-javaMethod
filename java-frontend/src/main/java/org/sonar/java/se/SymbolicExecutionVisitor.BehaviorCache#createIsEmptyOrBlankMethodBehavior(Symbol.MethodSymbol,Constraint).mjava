@@ -1,0 +1,16 @@
+    private MethodBehavior createIsEmptyOrBlankMethodBehavior(Symbol.MethodSymbol symbol, Constraint constraint) {
+      MethodBehavior behavior;
+      behavior = new MethodBehavior(symbol);
+      MethodYield nullYield = new MethodYield(symbol.parameterTypes().size(), false);
+      nullYield.exception = false;
+      nullYield.parametersConstraints[0] = ObjectConstraint.nullConstraint();
+      nullYield.resultConstraint = constraint;
+      behavior.addYield(nullYield);
+      MethodYield notNullYield = new MethodYield(symbol.parameterTypes().size(), false);
+      notNullYield.exception = false;
+      notNullYield.parametersConstraints[0] = ObjectConstraint.notNull();
+      behavior.addYield(notNullYield);
+      behavior.completed();
+      return behavior;
+    }
+
