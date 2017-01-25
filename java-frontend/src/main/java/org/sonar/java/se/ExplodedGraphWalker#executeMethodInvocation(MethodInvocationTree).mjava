@@ -25,12 +25,12 @@
 
       // Enqueue exceptional paths from exceptional yields
       methodInvokedBehavior.exceptionalPathYields()
-        .flatMap(yield -> yield.statesAfterInvocation(
+        .forEach(yield -> yield.statesAfterInvocation(
           invocationArguments,
           invocationTypes,
           programState,
-          () -> thrownExceptionsByExceptionType.computeIfAbsent(yield.exceptionType, constraintManager::createExceptionalSymbolicValue)))
-        .forEach(this::enqueueExceptionalPaths);
+          () -> thrownExceptionsByExceptionType.computeIfAbsent(yield.exceptionType, constraintManager::createExceptionalSymbolicValue))
+        .forEach(psYield -> enqueueExceptionalPaths(psYield, yield)));
 
       // Enqueue happy paths
       methodInvokedBehavior.happyPathYields()

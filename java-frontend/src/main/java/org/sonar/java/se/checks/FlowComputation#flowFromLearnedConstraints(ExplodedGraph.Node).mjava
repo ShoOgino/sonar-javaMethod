@@ -7,7 +7,16 @@
     final ExplodedGraph.Node parent = currentNode.parent();
     learnedConstraints.stream()
       .filter(addToFlow.and(Objects::nonNull))
-      .forEach(lc -> flow.add(location(parent, learnedConstraintMessage(lc, parent))));
+      .forEach(lc -> {
+        flow.add(location(parent, learnedConstraintMessage(lc, currentNode, parent)));
+        if (parent.programPoint.syntaxTree().is(Tree.Kind.METHOD_INVOCATION)) {
+          MethodYield selectedMethodYields = currentNode.selectedMethodYield(parent);
+          if (selectedMethodYields != null) {
+            flow.addAll(flowFromMethodInvocation(selectedMethodYields, parent));
+          }
+        }
+      });
+
     return learnedConstraints;
   }
 
