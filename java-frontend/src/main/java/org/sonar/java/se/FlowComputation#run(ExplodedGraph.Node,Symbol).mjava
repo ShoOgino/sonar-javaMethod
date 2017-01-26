@@ -6,8 +6,9 @@
 
     Symbol newTrackSymbol = trackSymbol;
     if (currentNode.programPoint.syntaxTree() != null) {
-      newTrackSymbol = flowFromLearnedSymbols(currentNode, trackSymbol);
-      if (flowFromLearnedConstraints(currentNode).anyMatch(terminateTraversal)) {
+      newTrackSymbol = addFlowFromLearnedSymbols(currentNode, trackSymbol);
+      Stream<Constraint> learnedConstraints = addFlowFromLearnedConstraints(currentNode);
+      if (learnedConstraints.anyMatch(terminateTraversal)) {
         return;
       }
     }

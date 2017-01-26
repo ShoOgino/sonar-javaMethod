@@ -1,0 +1,8 @@
+  void exceptions(Object o) {
+     try {
+       throwIfNull(o); // flow@ex {{Implies 'o' is null.}}
+     } catch (IllegalStateException ex) {
+       o.toString(); // Noncompliant [[flows=ex]] {{NullPointerException might be thrown as 'o' is nullable here}} flow@ex {{'o' is dereferenced}}
+     }
+  }
+

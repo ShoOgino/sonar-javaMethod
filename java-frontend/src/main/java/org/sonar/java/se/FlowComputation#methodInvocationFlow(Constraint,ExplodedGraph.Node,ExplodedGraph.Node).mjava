@@ -1,0 +1,23 @@
+  private Stream<JavaFileScannerContext.Location> methodInvocationFlow(Constraint learnedConstraint, ExplodedGraph.Node currentNode, ExplodedGraph.Node parent) {
+    MethodInvocationTree mit = (MethodInvocationTree) parent.programPoint.syntaxTree();
+    Stream.Builder<JavaFileScannerContext.Location> flowBuilder = Stream.builder();
+    if (currentNode.programState.peekValue() == symbolicValue) {
+      flowBuilder.add(location(parent, String.format("'%s()' returns %s.", mit.symbol().name(), learnedConstraint.valueAsString())));
+    }
+    SymbolicValue methodIdentifier = parent.programState.peekValues(mit.arguments().size() + 1).get(mit.arguments().size());
+    if (methodIdentifier == symbolicValue) {
+      flowBuilder.add(location(parent, "..."));
+    }
+    int argIdx = correspondingArgumentIndex(symbolicValue, parent);
+    if (argIdx != -1) {
+      ExpressionTree argTree = mit.arguments().get(argIdx);
+      String message = String.format("Implies '%s' is %s.", SyntaxTreeNameFinder.getName(argTree), learnedConstraint.valueAsString());
+      flowBuilder.add(new JavaFileScannerContext.Location(message, argTree));
+    }
+    MethodYield selectedMethodYield = currentNode.selectedMethodYield(parent);
+    if (selectedMethodYield != null) {
+      selectedMethodYield.flow(argIdx).forEach(flowBuilder::add);
+    }
+    return flowBuilder.build();
+  }
+
