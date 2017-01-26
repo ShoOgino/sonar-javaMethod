@@ -30,17 +30,14 @@
           invocationTypes,
           programState,
           () -> thrownExceptionsByExceptionType.computeIfAbsent(yield.exceptionType, constraintManager::createExceptionalSymbolicValue))
-        .forEach(psYield -> enqueueExceptionalPaths(psYield, yield)));
+          .forEach(psYield -> enqueueExceptionalPaths(psYield, yield)));
 
       // Enqueue happy paths
       methodInvokedBehavior.happyPathYields()
-        .flatMap(yield -> yield.statesAfterInvocation(invocationArguments, invocationTypes, programState, () -> resultValue))
-        .map(psYield -> handleSpecialMethods(psYield, mit))
-        .forEach(psYield -> {
-          checkerDispatcher.syntaxNode = mit;
-          checkerDispatcher.addTransition(psYield);
-          clearStack(mit);
-        });
+        .forEach(yield ->
+          yield.statesAfterInvocation(invocationArguments, invocationTypes, programState, () -> resultValue)
+            .map(psYield -> handleSpecialMethods(psYield, mit))
+            .forEach(psYield -> enqueueHappyPath(psYield, mit,  yield)));
     } else {
       // Enqueue exceptional paths from thrown exceptions
       enqueueThrownExceptionalPaths(methodSymbol);
