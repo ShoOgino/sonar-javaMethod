@@ -3,14 +3,15 @@
     List<ExplodedGraph.Node> nodes = new ArrayList<>(eg.getNodes().keySet());
     int index = 0;
     for (ExplodedGraph.Node node : nodes) {
-      result += graphNode(index, node);
-      if (!node.getParents().isEmpty()) {
+      List<ExplodedGraph.Node> parents = Lists.newArrayList(node.getParents());
+      result += graphNode(index, node, parents);
+      if (!parents.isEmpty()) {
         ExplodedGraph.Node firstParent = node.parent();
         result += parentEdge(nodes.indexOf(firstParent), index, node, firstParent);
 
-        int nbParents = node.getParents().size();
+        int nbParents = parents.size();
         if (SHOW_CACHE && nbParents > 1) {
-          List<ExplodedGraph.Node> cacheHits = node.getParents().subList(1, nbParents);
+          List<ExplodedGraph.Node> cacheHits = parents.subList(1, nbParents);
           for (ExplodedGraph.Node cacheHit : cacheHits) {
             result += cacheEdge(nodes.indexOf(cacheHit), index, node, cacheHit);
           }
