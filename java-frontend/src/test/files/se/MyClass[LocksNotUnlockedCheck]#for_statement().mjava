@@ -1,13 +1,13 @@
   public void for_statement() {
     Lock lock = new ReentrantLock();
     for (int i = 0; i <10; i++) {
-      lock.tryLock(); // Noncompliant [[flows=for]] {{Unlock this lock along all executions paths of this method.}} flow@for {{Lock 'lock' is never unlocked}}
+      lock.tryLock(); // Noncompliant [[flows=for]] {{Unlock this lock along all executions paths of this method.}} flow@for {{Lock 'lock' is never unlocked.}}
       lock =  new ReentrantLock();
     }
     lock.unlock();
 
     for (Foo foo : foos) {
-      lock.tryLock(); // Noncompliant [[flows=foreach]] {{Unlock this lock along all executions paths of this method.}} flow@foreach {{Lock 'lock' is never unlocked}}
+      lock.tryLock(); // Noncompliant [[flows=foreach]] {{Unlock this lock along all executions paths of this method.}} flow@foreach {{Lock 'lock' is never unlocked.}}
       lock =  new ReentrantLock();
     }
     lock.unlock();
