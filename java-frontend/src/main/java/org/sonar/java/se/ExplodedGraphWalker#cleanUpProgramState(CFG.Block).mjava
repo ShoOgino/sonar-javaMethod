@@ -1,6 +1,7 @@
   private void cleanUpProgramState(CFG.Block block) {
     if (cleanup) {
-      programState = programState.cleanupDeadSymbols(liveVariables.getOut(block), methodBehavior.parameters());
+      Collection<SymbolicValue> protectedSymbols = methodBehavior == null ? Collections.emptyList() : methodBehavior.parameters();
+      programState = programState.cleanupDeadSymbols(liveVariables.getOut(block), protectedSymbols);
       programState = programState.cleanupConstraints();
     }
   }
