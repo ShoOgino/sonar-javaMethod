@@ -1,22 +1,12 @@
-  private List<Constraint> flowFromLearnedConstraints(ExplodedGraph.Node currentNode) {
-    List<Constraint> learnedConstraints = currentNode.getLearnedConstraints().stream()
-      .filter(lc -> lc.getSv().equals(symbolicValue))
+  private Stream<Constraint> flowFromLearnedConstraints(ExplodedGraph.Node currentNode) {
+    ExplodedGraph.Node parent = currentNode.parent();
+    if (parent == null) {
+      return Stream.empty();
+    }
+    MethodYield selectedYield = getMethodYieldFromParent(currentNode, parent);
+    return currentNode.getLearnedConstraints().stream()
+      .filter(learnedConstraint -> learnedConstraint.getSv().equals(symbolicValue))
       .map(ExplodedGraph.Node.LearnedConstraint::getConstraint)
-      .collect(Collectors.toList());
-
-    final ExplodedGraph.Node parent = currentNode.parent();
-    learnedConstraints.stream()
-      .filter(addToFlow.and(Objects::nonNull))
-      .forEach(lc -> {
-        flow.add(location(parent, learnedConstraintMessage(lc, currentNode, parent)));
-        if (parent.programPoint.syntaxTree().is(Tree.Kind.METHOD_INVOCATION)) {
-          MethodYield selectedMethodYields = currentNode.selectedMethodYield(parent);
-          if (selectedMethodYields != null) {
-            flow.addAll(flowFromMethodInvocation(selectedMethodYields, parent));
-          }
-        }
-      });
-
-    return learnedConstraints;
+      .peek(constraint -> flowForConstraint(currentNode, parent, constraint, selectedYield));
   }
 
