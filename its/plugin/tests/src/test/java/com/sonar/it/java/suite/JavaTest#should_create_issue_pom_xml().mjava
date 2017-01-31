@@ -1,0 +1,19 @@
+  @Test
+  public void should_create_issue_pom_xml() {
+    assumeTrue(orchestrator.getServer().version().isGreaterThanOrEquals("6.3"));
+    
+    orchestrator.getServer().restoreProfile(FileLocation.ofClasspath("/profile-pom-xml.xml"));
+    orchestrator.getServer().provisionProject("org.sonarsource.java:test-project", "Test Project");
+    orchestrator.getServer().associateProjectToQualityProfile("org.sonarsource.java:test-project", "java", "java-pom-xml");
+
+    MavenBuild build = MavenBuild.create()
+      .setPom(TestUtils.projectPom("pom-xml"))
+      .setCleanPackageSonarGoals();
+    orchestrator.executeBuild(build);
+
+    IssueClient issueClient = orchestrator.getServer().wsClient().issueClient();
+    List<Issue> issues = issueClient.find(IssueQuery.create().components("org.sonarsource.java:test-project:pom.xml")).list();
+    assertThat(issues).hasSize(1);
+    assertThat(issues.iterator().next().ruleKey()).isEqualTo("squid:S3423");
+  }
+
