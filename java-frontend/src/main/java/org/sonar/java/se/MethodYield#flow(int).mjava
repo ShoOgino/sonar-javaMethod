@@ -1,4 +1,10 @@
   public List<JavaFileScannerContext.Location> flow(int parameterIndex) {
-    return flowByParameters.get(parameterIndex + 1);
+    if(node == null || behavior == null) {
+      return Lists.newArrayList();
+    }
+    if(parameterIndex < 0) {
+      return FlowComputation.flow(node, node.programState.exitValue());
+    }
+    return FlowComputation.flow(node, behavior.parameters().get(parameterIndex));
   }
 
