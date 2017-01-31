@@ -1,20 +1,22 @@
   @Override
   public void visitTryStatement(TryStatementTree tree) {
     scan(tree.resources());
+    Deque<Tree> currentNestingLevel = nestingLevel.peek();
+
     if (!tree.catches().isEmpty()) {
-      int size = nestingLevel.size();
+      int size = currentNestingLevel.size();
       if (size > 0) {
         List<JavaFileScannerContext.Location> secondary = new ArrayList<>(size);
-        for (Tree element : nestingLevel) {
+        for (Tree element : currentNestingLevel) {
           secondary.add(new JavaFileScannerContext.Location("Nesting + 1", element));
         }
         context.reportIssue(this, tree.tryKeyword(), "Extract this nested try block into a separate method.", secondary, null);
       }
-      nestingLevel.push(tree.tryKeyword());
+      currentNestingLevel.push(tree.tryKeyword());
     }
     scan(tree.block());
     if (!tree.catches().isEmpty()) {
-      nestingLevel.pop();
+      currentNestingLevel.pop();
     }
     scan(tree.catches());
     scan(tree.finallyBlock());
