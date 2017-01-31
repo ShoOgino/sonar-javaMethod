@@ -1,19 +1,25 @@
-  private void run(@Nullable final ExplodedGraph.Node currentNode, @Nullable final Symbol trackSymbol) {
-    if (currentNode == null || visited.contains(currentNode)) {
-      return;
-    }
-    visited.add(currentNode);
-
-    Symbol newTrackSymbol = trackSymbol;
-    if (currentNode.programPoint.syntaxTree() != null) {
-      newTrackSymbol = addFlowFromLearnedSymbols(currentNode, trackSymbol);
-      Stream<Constraint> learnedConstraints = addFlowFromLearnedConstraints(currentNode);
-      if (learnedConstraints.anyMatch(terminateTraversal)) {
-        return;
+  private void run(@Nullable final ExplodedGraph.Node node, @Nullable final Symbol trackSymbol) {
+    Deque<NodeSymbol> workList = new ArrayDeque<>();
+    workList.add(new NodeSymbol(node, trackSymbol));
+    while (!workList.isEmpty()) {
+      NodeSymbol nodeSymbol = workList.pop();
+      ExplodedGraph.Node currentNode = nodeSymbol.node;
+      if (currentNode == null || visited.contains(currentNode)) {
+        continue;
       }
-    }
-    for (ExplodedGraph.Node parent : currentNode.getParents()) {
-      run(parent, newTrackSymbol);
+      visited.add(currentNode);
+
+      Symbol newTrackSymbol = nodeSymbol.trackSymbol;
+      if (currentNode.programPoint.syntaxTree() != null) {
+        newTrackSymbol = addFlowFromLearnedSymbols(currentNode, newTrackSymbol);
+        Stream<Constraint> learnedConstraints = addFlowFromLearnedConstraints(currentNode);
+        if (learnedConstraints.anyMatch(terminateTraversal)) {
+          continue;
+        }
+      }
+      for (ExplodedGraph.Node parent : currentNode.getParents()) {
+        workList.push(new NodeSymbol(parent, newTrackSymbol));
+      }
     }
   }
 
