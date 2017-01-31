@@ -1,11 +1,11 @@
-  private void handleEndOfExecutionPath() {
+  private void handleEndOfExecutionPath(boolean interrupted) {
     ExplodedGraph.Node savedNode = node;
     endOfExecutionPath.forEach(n -> {
       setNode(n);
       if (!programState.exitingOnRuntimeException()) {
         checkerDispatcher.executeCheckEndOfExecutionPath(constraintManager);
       }
-      if (methodBehavior != null) {
+      if (!interrupted && methodBehavior != null) {
         methodBehavior.createYield(node);
       }
     });
