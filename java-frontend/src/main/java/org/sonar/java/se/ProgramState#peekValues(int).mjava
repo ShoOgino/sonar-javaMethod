@@ -1,7 +1,10 @@
   public List<SymbolicValue> peekValues(int n) {
-    if (n > stack.size()) {
-      throw new IllegalStateException("At least " + n + " values were expected on the stack!");
+    ImmutableList.Builder<SymbolicValue> result = ImmutableList.builder();
+    PStack<SymbolicValue> tmpStack = this.stack;
+    for (int i = 0; i < n; i++) {
+      result.add(tmpStack.peek());
+      tmpStack = tmpStack.pop();
     }
-    return ImmutableList.copyOf(stack).subList(0, n);
+    return result.build();
   }
 

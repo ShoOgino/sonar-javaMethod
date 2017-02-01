@@ -1,0 +1,12 @@
+  @Test
+  public void anyMatch() {
+    PStack<Object> s = PCollections.emptyStack();
+    Object a = new Object();
+    Object b = new Object();
+    assertThat(s.anyMatch(e -> e == a)).isFalse();
+    assertThat(s.push(a).anyMatch(e -> e == a)).isTrue();
+    assertThat(s.push(a).push(b).anyMatch(e -> e == a)).isTrue();
+    Object c = new Object();
+    assertThat(s.push(a).push(b).anyMatch(e -> e == c)).isFalse();
+  }
+

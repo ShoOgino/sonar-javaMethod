@@ -1,12 +1,14 @@
   public Pop unstackValue(int nbElements) {
-    if (nbElements == 0) {
-      return new Pop(this, Collections.<SymbolicValue>emptyList());
+    if (nbElements == 0 || stack.isEmpty()) {
+      return new Pop(this, Collections.emptyList());
     }
-    Preconditions.checkArgument(stack.size() >= nbElements, nbElements);
-    Deque<SymbolicValue> newStack = new LinkedList<>(stack);
+
+    // FIXME can be made more efficient by reusing sub collection of PStack instead of copying to the new list
+    PStack<SymbolicValue> newStack = stack;
     List<SymbolicValue> result = Lists.newArrayList();
-    for (int i = 0; i < nbElements; i++) {
-      result.add(newStack.pop());
+    for (int i = 0; i < nbElements && !newStack.isEmpty(); i++) {
+      result.add(newStack.peek());
+      newStack = newStack.pop();
     }
     return new Pop(new ProgramState(this, newStack), result);
   }

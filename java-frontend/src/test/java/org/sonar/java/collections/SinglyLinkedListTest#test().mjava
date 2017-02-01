@@ -1,0 +1,31 @@
+  @Test
+  public void test() {
+    PStack<Object> empty = PCollections.emptyStack();
+    assertThat(empty.isEmpty()).isTrue();
+    assertThat(empty.toString()).isEqualTo("[]");
+
+    Object a = new Object(){
+      @Override
+      public String toString() {
+        return "a";
+      }
+    };
+    PStack<Object> one = empty.push(a);
+    assertThat(one.toString()).isEqualTo("[a]");
+    assertThat(one.isEmpty()).isFalse();
+    assertThat(one.peek()).isSameAs(a);
+    assertThat(one.pop()).isSameAs(empty);
+
+    Object b = new Object(){
+      @Override
+      public String toString() {
+        return "b";
+      }
+    };
+    PStack<Object> two = one.push(b);
+    assertThat(two.toString()).isEqualTo("[b, a]");
+    assertThat(two.isEmpty()).isFalse();
+    assertThat(two.peek()).isSameAs(b);
+    assertThat(two.pop()).isSameAs(one);
+  }
+
