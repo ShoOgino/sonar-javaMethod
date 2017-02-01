@@ -2,7 +2,7 @@
   public void visitNode(Tree tree) {
     MethodTreeImpl methodTree = (MethodTreeImpl) tree;
     BlockTree body = methodTree.block();
-    if (!methodTree.modifiers().annotations().isEmpty()) {
+    if (!methodTree.modifiers().annotations().isEmpty() || ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.DEFAULT)) {
       return;
     }
     if (BooleanUtils.isFalse(methodTree.isOverriding()) && body != null && body.body().size() == 1) {
