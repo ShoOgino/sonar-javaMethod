@@ -1,0 +1,11 @@
+  Set<LearnedConstraint> learnedConstraints(ProgramState parent) {
+    ImmutableSet.Builder<LearnedConstraint> result = ImmutableSet.builder();
+    constraints.forEach((sv, childConstraint) -> {
+      Constraint parentConstraint = parent.getConstraint(sv);
+      if (parentConstraint == null || !parentConstraint.equals(childConstraint)) {
+        addLearnedConstraint(result, sv, childConstraint);
+      }
+    });
+    return result.build();
+  }
+

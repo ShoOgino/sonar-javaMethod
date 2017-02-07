@@ -1,0 +1,18 @@
+  @Test
+  public void test_learned_constraint_binary_SV() {
+    SymbolicValue sv1 = new SymbolicValue(1);
+    SymbolicValue sv2 = new SymbolicValue(2);
+    RelationalSymbolicValue relation = new RelationalSymbolicValue(3, RelationalSymbolicValue.Kind.EQUAL);
+    relation.computedFrom(ImmutableList.of(sv1, sv2));
+    ProgramState parent = ProgramState.EMPTY_STATE;
+    ProgramState child = ProgramState.EMPTY_STATE.addConstraint(relation, BooleanConstraint.TRUE);
+    Set<LearnedConstraint> learnedConstraints = child.learnedConstraints(parent);
+    assertThat(learnedConstraints).hasSize(3);
+    Constraint relationConstraint = learnedConstraints.stream().filter(lc -> lc.symbolicValue() == relation).findFirst().get().constraint();
+    assertThat(relationConstraint).isEqualTo(BooleanConstraint.TRUE);
+    Constraint sv1Constraint = learnedConstraints.stream().filter(lc -> lc.symbolicValue() == sv1).findFirst().get().constraint();
+    assertThat(sv1Constraint).isNull();
+    Constraint sv2Constraint = learnedConstraints.stream().filter(lc -> lc.symbolicValue() == sv2).findFirst().get().constraint();
+    assertThat(sv2Constraint).isNull();
+  }
+

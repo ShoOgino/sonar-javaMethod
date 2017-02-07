@@ -1,0 +1,19 @@
+  @Test
+  public void test_node_parents() {
+    ExplodedGraph eg = new ExplodedGraph();
+    ExplodedGraph.Node child = eg.node(mockProgramPoint("child"), null);
+    assertThat(child.parent()).isNull();
+
+    ExplodedGraph.Node parent = eg.node(mockProgramPoint("parent"), null);
+    child.addParent(parent, null);
+    assertThat(child.parent()).isEqualTo(parent);
+
+    child.addParent(parent, null);
+    assertThat(child.parents()).hasSize(1);
+    ExplodedGraph.Node parent2 = eg.node(mockProgramPoint("parent2"), null);
+
+    child.addParent(parent2, null);
+    assertThat(child.parents()).hasSize(2);
+    assertThat(child.parents()).contains(parent, parent2);
+  }
+

@@ -1,0 +1,18 @@
+  @Test
+  public void test_learned_associations() throws Exception {
+    ProgramState parent = ProgramState.EMPTY_STATE;
+    ProgramState child = ProgramState.EMPTY_STATE;
+    assertThat(child.learnedAssociations(parent)).isEmpty();
+
+    Symbol symbol = new JavaSymbol.VariableJavaSymbol(0, "symbol", mock(JavaSymbol.MethodJavaSymbol.class));
+    SymbolicValue sv1 = new SymbolicValue(1);
+    child = child.put(symbol, sv1);
+    Set<LearnedAssociation> learnedAssociations = child.learnedAssociations(parent);
+    assertThat(learnedAssociations).hasSize(1);
+    LearnedAssociation learnedAssociation = learnedAssociations.iterator().next();
+    assertThat(learnedAssociation.symbolicValue()).isEqualTo(sv1);
+    assertThat(learnedAssociation.symbol()).isEqualTo(symbol);
+
+    assertThat(child.learnedAssociations(child)).isEmpty();
+  }
+

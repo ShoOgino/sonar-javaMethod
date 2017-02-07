@@ -1,4 +1,10 @@
-    public void addParent(Node node, @Nullable MethodYield methodYield) {
-      parents.putIfAbsent(node, methodYield);
+    public void addParent(@Nullable Node parent, @Nullable MethodYield methodYield) {
+      if (parent == null) {
+        return;
+      }
+      Edge edge = edges.computeIfAbsent(parent, p -> new Edge(this, p));
+      if (methodYield != null) {
+        edge.yields.add(methodYield);
+      }
     }
 

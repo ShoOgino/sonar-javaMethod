@@ -1,0 +1,14 @@
+  @Test
+  public void test_learned_constraint() {
+    ProgramState parent = ProgramState.EMPTY_STATE;
+    ProgramState child = ProgramState.EMPTY_STATE;
+    assertThat(child.learnedConstraints(parent)).isEmpty();
+    SymbolicValue sv = new SymbolicValue(1);
+    child = child.addConstraint(sv, ObjectConstraint.nullConstraint());
+    Set<LearnedConstraint> learnedConstraints = child.learnedConstraints(parent);
+    assertThat(learnedConstraints).hasSize(1);
+    LearnedConstraint lc = learnedConstraints.iterator().next();
+    assertThat(lc.symbolicValue()).isEqualTo(sv);
+    assertThat(lc.constraint()).isEqualTo(ObjectConstraint.nullConstraint());
+  }
+
