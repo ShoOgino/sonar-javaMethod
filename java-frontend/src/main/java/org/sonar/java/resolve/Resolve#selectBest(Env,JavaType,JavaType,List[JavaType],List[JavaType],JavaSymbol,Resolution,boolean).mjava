@@ -3,7 +3,7 @@
    * @param bestSoFar previously found best match
    */
   private Resolution selectBest(Env env, JavaType defSite, JavaType callSite, List<JavaType> argTypes, List<JavaType> typeParams,
-                                JavaSymbol candidate, Resolution bestSoFar, boolean autoboxing) {
+                                JavaSymbol candidate, Resolution bestSoFar, boolean looseInvocation) {
     JavaSymbol.TypeJavaSymbol siteSymbol = callSite.symbol;
     // TODO get rid of null check
     if (candidate.kind >= JavaSymbol.ERRONEOUS || !isInheritedIn(candidate, siteSymbol) || candidate.type == null) {
@@ -23,7 +23,7 @@
       formals = typeSubstitutionSolver.applySiteSubstitutionToFormalParameters(formals, defSite);
     }
     formals = typeSubstitutionSolver.applySubstitutionToFormalParameters(formals, substitution);
-    if (!isArgumentsAcceptable(env, argTypes, formals, methodJavaSymbol.isVarArgs(), autoboxing)) {
+    if (!isArgumentsAcceptable(env, argTypes, formals, methodJavaSymbol.isVarArgs(), looseInvocation)) {
       return bestSoFar;
     }
     // TODO ambiguity, errors, ...
