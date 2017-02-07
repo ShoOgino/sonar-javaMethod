@@ -12,14 +12,14 @@
       .sorted((b1, b2) -> Integer.compare(b2.id(), b1.id()))
       .findFirst();
     if (firstMatchingCatchBlock.isPresent()) {
-      enqueue(new ExplodedGraph.ProgramPoint(firstMatchingCatchBlock.get(), 0), ps, methodYield);
+      enqueue(new ProgramPoint(firstMatchingCatchBlock.get()), ps, methodYield);
       return;
     }
 
     // branch to any unchecked exception catch
     catchBlocks.stream()
       .filter(ExplodedGraphWalker::isCatchingUncheckedException)
-      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps, methodYield));
+      .forEach(b -> enqueue(new ProgramPoint(b), ps, methodYield));
 
     // store the exception as exit value in case of method exit in next block
     ps.storeExitValue();
@@ -27,11 +27,11 @@
     // use other exceptional blocks, i.e. finally block and exit blocks
     exceptionBlocks.stream()
       .filter(CFG.Block.IS_CATCH_BLOCK.negate())
-      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps, true, methodYield));
+      .forEach(b -> enqueue(new ProgramPoint(b), ps, true, methodYield));
 
     // explicitly add the exception if next block is method exit
     node.programPoint.block.successors().stream()
       .filter(CFG.Block::isMethodExitBlock)
-      .forEach(b -> enqueue(new ExplodedGraph.ProgramPoint(b, 0), ps, true, methodYield));
+      .forEach(b -> enqueue(new ProgramPoint(b), ps, true, methodYield));
   }
 

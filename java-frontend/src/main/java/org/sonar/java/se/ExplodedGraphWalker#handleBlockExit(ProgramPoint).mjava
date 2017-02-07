@@ -1,4 +1,4 @@
-  private void handleBlockExit(ExplodedGraph.ProgramPoint programPosition) {
+  private void handleBlockExit(ProgramPoint programPosition) {
     CFG.Block block = programPosition.block;
     Tree terminator = block.terminator();
     cleanUpProgramState(block);
@@ -52,10 +52,10 @@
     // unconditional jumps, for-statement, switch-statement, synchronized:
     if (exitPath) {
       if (block.exitBlock() != null) {
-        enqueue(new ExplodedGraph.ProgramPoint(block.exitBlock(), 0), programState, true);
+        enqueue(new ProgramPoint(block.exitBlock()), programState, true);
       } else {
         for (CFG.Block successor : block.successors()) {
-          enqueue(new ExplodedGraph.ProgramPoint(successor, 0), programState, true);
+          enqueue(new ProgramPoint(successor), programState, true);
         }
       }
 
@@ -63,7 +63,7 @@
       for (CFG.Block successor : block.successors()) {
         if (!block.isFinallyBlock() || isDirectFlowSuccessorOf(successor, block)) {
           node.happyPath = terminator == null || !terminator.is(Tree.Kind.THROW_STATEMENT);
-          enqueue(new ExplodedGraph.ProgramPoint(successor, 0), programState, successor == block.exitBlock());
+          enqueue(new ProgramPoint(successor), programState, successor == block.exitBlock());
         }
       }
     }

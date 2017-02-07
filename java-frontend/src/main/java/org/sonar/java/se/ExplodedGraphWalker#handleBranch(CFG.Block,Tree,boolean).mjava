@@ -1,6 +1,6 @@
   private void handleBranch(CFG.Block programPosition, Tree condition, boolean checkPath) {
     Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
-    ExplodedGraph.ProgramPoint falseBlockProgramPoint = new ExplodedGraph.ProgramPoint(programPosition.falseBlock(), 0);
+    ProgramPoint falseBlockProgramPoint = new ProgramPoint(programPosition.falseBlock());
     for (ProgramState state : pair.a) {
       ProgramState ps = state;
       if (condition.parent().is(Tree.Kind.CONDITIONAL_AND) && !isPartOfConditionalExpressionCondition(condition)) {
@@ -14,7 +14,7 @@
         alwaysTrueOrFalseChecker.evaluatedToFalse(condition, node);
       }
     }
-    ExplodedGraph.ProgramPoint trueBlockProgramPoint = new ExplodedGraph.ProgramPoint(programPosition.trueBlock(), 0);
+    ProgramPoint trueBlockProgramPoint = new ProgramPoint(programPosition.trueBlock());
     for (ProgramState state : pair.b) {
       ProgramState ps = state;
       if (condition.parent().is(Tree.Kind.CONDITIONAL_OR) && !isPartOfConditionalExpressionCondition(condition)) {
