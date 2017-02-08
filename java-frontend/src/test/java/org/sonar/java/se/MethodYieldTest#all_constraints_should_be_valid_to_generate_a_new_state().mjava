@@ -6,10 +6,10 @@
     List<MethodYield> yields = entry.getValue().yields();
 
     MethodYield trueYield = yields.stream()
-      .filter(y -> y.parametersConstraints[0] instanceof BooleanConstraint && ((BooleanConstraint) y.parametersConstraints[0]).isTrue())
+      .filter(y -> y.parameterConstraint(0) instanceof BooleanConstraint && ((BooleanConstraint) y.parameterConstraint(0)).isTrue())
       .findFirst().get();
     // force status of the arg1 to be B
-    trueYield.parametersConstraints[1] = ((ObjectConstraint<YieldStatus>) trueYield.parametersConstraints[1]).withStatus(YieldStatus.B);
+    trueYield.setParameterConstraint(1, ((ObjectConstraint<YieldStatus>) trueYield.parameterConstraint(1)).withStatus(YieldStatus.B));
 
     ProgramState ps = ProgramState.EMPTY_STATE;
     SymbolicValue sv1 = new SymbolicValue(41);

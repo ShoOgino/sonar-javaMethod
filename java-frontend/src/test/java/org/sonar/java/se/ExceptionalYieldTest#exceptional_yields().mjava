@@ -1,0 +1,29 @@
+  @Test
+  public void exceptional_yields() {
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/ExceptionalYields.java");
+
+    MethodBehavior mb = getMethodBehavior(sev, "myMethod");
+    assertThat(mb.yields()).hasSize(4);
+
+    List<ExceptionalYield> exceptionalYields = mb.exceptionalPathYields().collect(Collectors.toList());
+    assertThat(exceptionalYields).hasSize(3);
+
+    // runtime exception
+    Optional<ExceptionalYield> runtimeException = exceptionalYields.stream().filter(y -> y.exceptionType() == null).findFirst();
+    assertThat(runtimeException.isPresent()).isTrue();
+    MethodYield runtimeExceptionYield = runtimeException.get();
+    assertThat(runtimeExceptionYield.parameterConstraint(0)).isEqualTo(BooleanConstraint.FALSE);
+
+    // exception from other method call
+    Optional<ExceptionalYield> implicitException = exceptionalYields.stream().filter(y -> y.exceptionType() != null && y.exceptionType().is("org.foo.MyException2")).findFirst();
+    assertThat(implicitException.isPresent()).isTrue();
+    MethodYield implicitExceptionYield = implicitException.get();
+    assertThat(implicitExceptionYield.parameterConstraint(0)).isEqualTo(BooleanConstraint.FALSE);
+
+    // explicitly thrown exception
+    Optional<ExceptionalYield> explicitException = exceptionalYields.stream().filter(y -> y.exceptionType() != null && y.exceptionType().is("org.foo.MyException1")).findFirst();
+    assertThat(explicitException.isPresent()).isTrue();
+    MethodYield explicitExceptionYield = explicitException.get();
+    assertThat(explicitExceptionYield.parameterConstraint(0)).isEqualTo(BooleanConstraint.TRUE);
+  }
+

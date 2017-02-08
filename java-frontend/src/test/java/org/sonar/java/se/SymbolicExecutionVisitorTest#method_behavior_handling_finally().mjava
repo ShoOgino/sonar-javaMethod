@@ -5,21 +5,21 @@
 
     MethodBehavior foo = getMethodBehavior(sev, "foo");
     assertThat(foo.yields()).hasSize(4);
-    assertThat(foo.yields().stream().filter(y -> !y.exception).count()).isEqualTo(2);
-    assertThat(foo.yields().stream().filter(y -> y.exception).count()).isEqualTo(2);
+    assertThat(foo.happyPathYields().count()).isEqualTo(2);
+    assertThat(foo.exceptionalPathYields().count()).isEqualTo(2);
 
     MethodBehavior qix = getMethodBehavior(sev, "qix");
     List<MethodYield> qixYield = qix.yields();
     assertThat(qixYield.stream()
-      .filter(y -> !y.parametersConstraints[0].isNull())
-      .allMatch(y -> y.exception)).isTrue();
+      .filter(y -> !y.parametersConstraints()[0].isNull())
+      .allMatch(y -> y instanceof ExceptionalYield)).isTrue();
 
     assertThat(qixYield.stream()
-      .filter(y -> y.parametersConstraints[0].isNull() && y.exception)
+      .filter(y -> y.parametersConstraints()[0].isNull() && y instanceof ExceptionalYield)
       .count()).isEqualTo(2);
 
     assertThat(qixYield.stream()
-      .filter(y -> !y.exception)
-      .allMatch(y -> y.parametersConstraints[0].isNull())).isTrue();
+      .filter(y -> y instanceof HappyPathYield)
+      .allMatch(y -> y.parametersConstraints()[0].isNull())).isTrue();
   }
 

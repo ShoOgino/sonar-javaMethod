@@ -5,16 +5,15 @@
      */
     private MethodBehavior createRequireNonNullBehavior(Symbol.MethodSymbol symbol) {
       MethodBehavior behavior = new MethodBehavior(symbol);
-      MethodYield happyYield = new MethodYield(symbol.parameterTypes().size(), false);
-      happyYield.exception = false;
-      happyYield.parametersConstraints[0] = ObjectConstraint.notNull();
-      happyYield.resultIndex = 0;
-      happyYield.resultConstraint = happyYield.parametersConstraints[0];
+      int arity = symbol.parameterTypes().size();
+
+      HappyPathYield happyYield = new HappyPathYield(arity, false);
+      happyYield.setParameterConstraint(0, ObjectConstraint.notNull());
+      happyYield.setResult(0, happyYield.parameterConstraint(0));
       behavior.addYield(happyYield);
 
-      MethodYield exceptionalYield = new MethodYield(symbol.parameterTypes().size(), false);
-      exceptionalYield.exception = true;
-      exceptionalYield.parametersConstraints[0] = ObjectConstraint.nullConstraint();
+      ExceptionalYield exceptionalYield = new ExceptionalYield(arity, false);
+      exceptionalYield.setParameterConstraint(0, ObjectConstraint.nullConstraint());
       behavior.addYield(exceptionalYield);
 
       behavior.completed();

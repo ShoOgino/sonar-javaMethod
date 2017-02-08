@@ -6,14 +6,14 @@
     Symbol.MethodSymbol methodSymbol = entry.getKey();
     List<MethodYield> yields = entry.getValue().yields();
     assertThat(yields).hasSize(3);
-    assertThat(yields.stream().filter(y -> y.exception).count()).isEqualTo(2);
+    assertThat(yields.stream().filter(y -> y instanceof ExceptionalYield).count()).isEqualTo(2);
 
-    MethodYield yield = yields.stream().filter(y -> !y.exception).findFirst().get();
+    MethodYield yield = yields.stream().filter(y -> y instanceof HappyPathYield).findFirst().get();
 
     // check that we have NOT_NULL constraint on the first argument
-    assertThat(yield.parametersConstraints[0].isNull()).isFalse();
+    assertThat(yield.parameterConstraint(0).isNull()).isFalse();
     // check that we have NOT_NULL constraint on the variadic argument
-    assertThat(yield.parametersConstraints[1].isNull()).isFalse();
+    assertThat(yield.parameterConstraint(1).isNull()).isFalse();
 
     List<IdentifierTree> usages = methodSymbol.usages();
     assertThat(usages).hasSize(6);

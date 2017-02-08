@@ -9,17 +9,16 @@
       ObjectConstraint<ObjectConstraint.Status> falseConstraint = isNull ? ObjectConstraint.notNull() : ObjectConstraint.nullConstraint();
 
       MethodBehavior behavior = new MethodBehavior(symbol);
+      int arity = symbol.parameterTypes().size();
 
-      MethodYield trueYield = new MethodYield(symbol.parameterTypes().size(), false);
-      trueYield.exception = false;
-      trueYield.parametersConstraints[0] = trueConstraint;
-      trueYield.resultConstraint = BooleanConstraint.TRUE;
+      HappyPathYield trueYield = new HappyPathYield(arity, false);
+      trueYield.setParameterConstraint(0, trueConstraint);
+      trueYield.setResult(-1, BooleanConstraint.TRUE);
       behavior.addYield(trueYield);
 
-      MethodYield falseYield = new MethodYield(symbol.parameterTypes().size(), false);
-      falseYield.exception = false;
-      falseYield.parametersConstraints[0] = falseConstraint;
-      falseYield.resultConstraint = BooleanConstraint.FALSE;
+      HappyPathYield falseYield = new HappyPathYield(arity, false);
+      falseYield.setParameterConstraint(0, falseConstraint);
+      falseYield.setResult(-1, BooleanConstraint.FALSE);
       behavior.addYield(falseYield);
 
       behavior.completed();

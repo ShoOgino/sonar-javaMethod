@@ -1,6 +1,6 @@
   @Test
   public void test_yield_equality() {
-    MethodYield yield = new MethodYield(1, false);
+    MethodYield yield = new HappyPathYield(1, false);
     MethodYield otherYield;
 
     assertThat(yield).isNotEqualTo(null);
@@ -10,56 +10,20 @@
     assertThat(yield).isEqualTo(yield);
 
     // same constraints, same nb of parameters, same exceptional aspect
-    assertThat(yield).isEqualTo(new MethodYield(1, false));
+    assertThat(yield).isEqualTo(new HappyPathYield(1, false));
 
     // arity is taken into account
-    assertThat(yield).isNotEqualTo(new MethodYield(0, false));
+    assertThat(yield).isNotEqualTo(new HappyPathYield(0, false));
 
     // varargs is taken into account
-    assertThat(yield).isNotEqualTo(new MethodYield(1, true));
+    assertThat(yield).isNotEqualTo(new HappyPathYield(1, true));
 
     // node and behavior are not taken into account
-    otherYield = new MethodYield(1, false, mockNode(), new MethodBehavior(null));
+    otherYield = new HappyPathYield(1, false, mockNode(), new MethodBehavior(null));
     assertThat(yield).isEqualTo(otherYield);
 
-    // same arity and constraints but exceptional path
-    otherYield = new MethodYield(1, false);
-    otherYield.exception = true;
+    // same arity and constraints on parameters but exceptional path
+    otherYield = new ExceptionalYield(1, false);
     assertThat(yield).isNotEqualTo(otherYield);
-
-    // same arity and constraints but different return value
-    otherYield = new MethodYield(1, false);
-    otherYield.resultIndex = 0;
-    assertThat(yield).isNotEqualTo(otherYield);
-
-    // same arity but different return constraint
-    otherYield = new MethodYield(1, false);
-    otherYield.resultConstraint = ObjectConstraint.notNull();
-    assertThat(yield).isNotEqualTo(otherYield);
-
-    // same return constraint
-    yield.resultConstraint = ObjectConstraint.notNull();
-    otherYield = new MethodYield(1, false);
-    otherYield.resultConstraint = ObjectConstraint.notNull();
-    assertThat(yield).isEqualTo(otherYield);
-
-    // exceptional yields
-    MethodYield exceptionalYield = new MethodYield(0, false);
-    exceptionalYield.exception = true;
-    otherYield = new MethodYield(0, false);
-
-    otherYield.exception = false;
-    assertThat(exceptionalYield).isNotEqualTo(otherYield);
-
-    otherYield.exception = true;
-    assertThat(exceptionalYield).isEqualTo(otherYield);
-
-    Type exceptionType = Mockito.mock(Type.class);
-    otherYield.exceptionType = exceptionType;
-    assertThat(exceptionalYield).isNotEqualTo(otherYield);
-
-    exceptionalYield.exceptionType = exceptionType;
-    assertThat(exceptionalYield).isEqualTo(otherYield);
-    assertThat(exceptionalYield.exceptionType()).isEqualTo(otherYield.exceptionType());
   }
 

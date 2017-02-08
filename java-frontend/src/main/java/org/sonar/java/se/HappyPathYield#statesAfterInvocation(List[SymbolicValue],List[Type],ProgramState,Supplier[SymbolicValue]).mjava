@@ -1,0 +1,20 @@
+  @Override
+  public Stream<ProgramState> statesAfterInvocation(List<SymbolicValue> invocationArguments, List<Type> invocationTypes, ProgramState programState,
+    Supplier<SymbolicValue> svSupplier) {
+    Stream<ProgramState> results = parametersAfterInvocation(invocationArguments, invocationTypes, programState);
+
+    // applied all constraints from parameters, stack return value
+    SymbolicValue sv;
+    if (resultIndex < 0) {
+      sv = svSupplier.get();
+    } else {
+      // returned SV is the same as one of the arguments.
+      sv = invocationArguments.get(resultIndex);
+    }
+    results = results.map(s -> s.stackValue(sv));
+    if (resultConstraint != null) {
+      results = results.map(s -> s.addConstraint(sv, resultConstraint));
+    }
+    return results.distinct();
+  }
+

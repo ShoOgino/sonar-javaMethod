@@ -1,0 +1,21 @@
+  @Test
+  public void test_equals() {
+    ExceptionalYield yield = new ExceptionalYield(1, false);
+    ExceptionalYield otherYield = new ExceptionalYield(1, false);
+
+    assertThat(yield).isNotEqualTo(null);
+    assertThat(yield).isEqualTo(yield);
+    assertThat(yield).isEqualTo(otherYield);
+
+    Type exceptionType = Mockito.mock(Type.class);
+    otherYield.setExceptionType(exceptionType);
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    yield.setExceptionType(exceptionType);
+    assertThat(yield).isEqualTo(otherYield);
+    assertThat(yield.exceptionType()).isEqualTo(otherYield.exceptionType());
+
+    // same arity and parameters but happy yield
+    assertThat(yield).isNotEqualTo(new HappyPathYield(1, false));
+  }
+
