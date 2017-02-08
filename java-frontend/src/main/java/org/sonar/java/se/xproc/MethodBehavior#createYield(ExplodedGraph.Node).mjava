@@ -5,7 +5,7 @@
     boolean expectReturnValue = !(isConstructor() || isVoidMethod());
     SymbolicValue resultSV = node.programState.exitValue();
 
-    if (!node.happyPath || (resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
+    if (!node.onHappyPath() || (resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
       ExceptionalYield exceptionalYield = new ExceptionalYield(arity, isVarArgs, node, this);
       if (resultSV != null) {
         exceptionalYield.setExceptionType(((SymbolicValue.ExceptionalSymbolicValue) resultSV).exceptionType());
