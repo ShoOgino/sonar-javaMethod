@@ -1,18 +1,16 @@
   public void createYield(ExplodedGraph.Node node) {
     MethodYield yield;
-    boolean isVarArgs = ((JavaSymbol.MethodJavaSymbol) methodSymbol).isVarArgs();
-    int arity = parameters.size();
     boolean expectReturnValue = !(isConstructor() || isVoidMethod());
     SymbolicValue resultSV = node.programState.exitValue();
 
     if (!node.onHappyPath() || (resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
-      ExceptionalYield exceptionalYield = new ExceptionalYield(arity, isVarArgs, node, this);
+      ExceptionalYield exceptionalYield = new ExceptionalYield(node, this);
       if (resultSV != null) {
         exceptionalYield.setExceptionType(((SymbolicValue.ExceptionalSymbolicValue) resultSV).exceptionType());
       }
       yield = exceptionalYield;
     } else {
-      HappyPathYield happyPathYield = new HappyPathYield(arity, isVarArgs, node, this);
+      HappyPathYield happyPathYield = new HappyPathYield(node, this);
       if (expectReturnValue) {
         happyPathYield.setResult(parameters.indexOf(resultSV), node.programState.getConstraint(resultSV));
       }
@@ -20,7 +18,7 @@
     }
 
     // add the constraints on all the parameters
-    for (int i = 0; i < arity; i++) {
+    for (int i = 0; i < parameters.size(); i++) {
       yield.setParameterConstraint(i, node.programState.getConstraint(parameters.get(i)));
     }
 

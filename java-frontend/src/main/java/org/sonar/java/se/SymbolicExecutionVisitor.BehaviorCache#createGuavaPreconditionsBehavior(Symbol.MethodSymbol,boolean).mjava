@@ -1,7 +1,7 @@
     private MethodBehavior createGuavaPreconditionsBehavior(Symbol.MethodSymbol symbol, boolean isCheckNotNull) {
       MethodBehavior behavior = new MethodBehavior(symbol);
 
-      HappyPathYield happyPathYield = new HappyPathYield(symbol.parameterTypes().size(), ((JavaSymbol.MethodJavaSymbol) symbol).isVarArgs());
+      HappyPathYield happyPathYield = new HappyPathYield(behavior);
       happyPathYield.setParameterConstraint(0, isCheckNotNull ? ObjectConstraint.notNull() : BooleanConstraint.TRUE);
       happyPathYield.setResult(isCheckNotNull ? 0 : -1, isCheckNotNull ? happyPathYield.parameterConstraint(0) : null);
       behavior.addYield(happyPathYield);

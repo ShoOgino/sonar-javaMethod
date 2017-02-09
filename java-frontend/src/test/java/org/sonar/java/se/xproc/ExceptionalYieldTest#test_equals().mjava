@@ -1,7 +1,9 @@
   @Test
   public void test_equals() {
-    ExceptionalYield yield = new ExceptionalYield(1, false);
-    ExceptionalYield otherYield = new ExceptionalYield(1, false);
+    MethodBehavior methodBehavior = mockMethodBehavior();
+
+    ExceptionalYield yield = new ExceptionalYield(methodBehavior);
+    ExceptionalYield otherYield = new ExceptionalYield(methodBehavior);
 
     assertThat(yield).isNotEqualTo(null);
     assertThat(yield).isEqualTo(yield);
@@ -16,6 +18,6 @@
     assertThat(yield.exceptionType()).isEqualTo(otherYield.exceptionType());
 
     // same arity and parameters but happy yield
-    assertThat(yield).isNotEqualTo(new HappyPathYield(1, false));
+    assertThat(yield).isNotEqualTo(new HappyPathYield(methodBehavior));
   }
 

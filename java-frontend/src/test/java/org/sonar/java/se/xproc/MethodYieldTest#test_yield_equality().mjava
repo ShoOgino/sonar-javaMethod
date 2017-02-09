@@ -1,6 +1,7 @@
   @Test
   public void test_yield_equality() {
-    MethodYield yield = new HappyPathYield(1, false);
+    MethodBehavior methodBehavior = mockMethodBehavior(1, false);
+    MethodYield yield = new HappyPathYield(methodBehavior);
     MethodYield otherYield;
 
     assertThat(yield).isNotEqualTo(null);
@@ -9,21 +10,15 @@
     // same instance
     assertThat(yield).isEqualTo(yield);
 
-    // same constraints, same nb of parameters, same exceptional aspect
-    assertThat(yield).isEqualTo(new HappyPathYield(1, false));
-
-    // arity is taken into account
-    assertThat(yield).isNotEqualTo(new HappyPathYield(0, false));
-
-    // varargs is taken into account
-    assertThat(yield).isNotEqualTo(new HappyPathYield(1, true));
+    // same constraints, same number of parameters, same exceptional aspect
+    assertThat(yield).isEqualTo(new HappyPathYield(methodBehavior));
 
     // node and behavior are not taken into account
-    otherYield = new HappyPathYield(1, false, mockNode(), new MethodBehavior(null));
+    otherYield = new HappyPathYield(mockNode(), methodBehavior);
     assertThat(yield).isEqualTo(otherYield);
 
     // same arity and constraints on parameters but exceptional path
-    otherYield = new ExceptionalYield(1, false);
+    otherYield = new ExceptionalYield(methodBehavior);
     assertThat(yield).isNotEqualTo(otherYield);
   }
 

@@ -1,7 +1,9 @@
   @Test
   public void test_equals() {
-    HappyPathYield yield = new HappyPathYield(1, false);
-    HappyPathYield otherYield = new HappyPathYield(1, false);
+    MethodBehavior mb = mockMethodBehavior(1, false);
+
+    HappyPathYield yield = new HappyPathYield(mb);
+    HappyPathYield otherYield = new HappyPathYield(mb);
 
     assertThat(yield).isNotEqualTo(null);
     assertThat(yield).isEqualTo(yield);
@@ -12,17 +14,17 @@
     assertThat(yield).isNotEqualTo(otherYield);
 
     // same arity but different return constraint
-    otherYield = new HappyPathYield(1, false);
+    otherYield = new HappyPathYield(mb);
     otherYield.setResult(yield.resultIndex(), ObjectConstraint.notNull());
     assertThat(yield).isNotEqualTo(otherYield);
 
     // same return constraint
     yield.setResult(-1, ObjectConstraint.notNull());
-    otherYield = new HappyPathYield(1, false);
+    otherYield = new HappyPathYield(mb);
     otherYield.setResult(-1, ObjectConstraint.notNull());
     assertThat(yield).isEqualTo(otherYield);
 
     // same arity and parameters but exceptional yield
-    assertThat(yield).isNotEqualTo(new ExceptionalYield(1, false));
+    assertThat(yield).isNotEqualTo(new ExceptionalYield(mb));
   }
 
