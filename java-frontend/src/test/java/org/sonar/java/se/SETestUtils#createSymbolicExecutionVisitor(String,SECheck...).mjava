@@ -1,8 +1,8 @@
-  private static SymbolicExecutionVisitor createSymbolicExecutionVisitor(String fileName) {
+  public static SymbolicExecutionVisitor createSymbolicExecutionVisitor(String fileName, SECheck... checks) {
     ActionParser<Tree> p = JavaParser.createParser(Charsets.UTF_8);
     CompilationUnitTree cut = (CompilationUnitTree) p.parse(new File(fileName));
-    SemanticModel semanticModel = SemanticModel.createFor(cut, new ArrayList<>());
-    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList(new NullDereferenceCheck()));
+    SemanticModel semanticModel = SemanticModel.createFor(cut, new ArrayList<>(CLASS_PATH));
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList(checks));
     JavaFileScannerContext context = mock(JavaFileScannerContext.class);
     when(context.getTree()).thenReturn(cut);
     when(context.getSemanticModel()).thenReturn(semanticModel);
