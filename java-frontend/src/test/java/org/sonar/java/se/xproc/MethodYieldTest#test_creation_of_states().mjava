@@ -3,7 +3,6 @@
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYields.java");
     Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "foo");
     Symbol.MethodSymbol methodSymbol = entry.getKey();
-    List<MethodYield> yields = entry.getValue().yields();
 
     ProgramState ps = ProgramState.EMPTY_STATE;
     SymbolicValue sv1 = new SymbolicValue(41);
@@ -12,7 +11,7 @@
     Symbol sym = new JavaSymbol.VariableJavaSymbol(0, "myVar", (JavaSymbol) methodSymbol);
     ps = ps.put(sym, sv1);
 
-    MethodYield methodYield = yields.get(0);
+    MethodYield methodYield = entry.getValue().happyPathYields().findFirst().get();
     Stream<ProgramState> generatedStatesFromFirstYield = methodYield.statesAfterInvocation(Lists.newArrayList(sv1, sv2), Lists.newArrayList(), ps, () -> sv3);
     assertThat(generatedStatesFromFirstYield).hasSize(1);
   }

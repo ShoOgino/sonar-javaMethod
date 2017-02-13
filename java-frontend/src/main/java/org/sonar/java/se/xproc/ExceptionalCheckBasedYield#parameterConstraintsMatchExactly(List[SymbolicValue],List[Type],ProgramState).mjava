@@ -1,0 +1,19 @@
+  private boolean parameterConstraintsMatchExactly(List<SymbolicValue> invocationArguments, List<Type> invocationTypes, ProgramState programState) {
+    if (!applicableOnVarArgs(invocationTypes)) {
+      // VarArgs method invoked with the last parameter being not an array, but an item which will be wrapped in the array
+      return false;
+    }
+
+    for (int index = 0; index < parametersConstraints().length; index++) {
+      Constraint yieldConstraint = parameterConstraint(index);
+      Constraint stateConstraint = argumentConstraint(invocationArguments, programState, index);
+      if (yieldConstraint != null && !yieldConstraint.equals(stateConstraint)) {
+        // If there is a constraint on a parameter, we need to have the same constraint in the current program state,
+        // in order to avoid wrongly learning from this yield and thus raising FPs.
+        return false;
+      }
+    }
+
+    return true;
+  }
+

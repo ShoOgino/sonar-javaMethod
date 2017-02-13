@@ -1,0 +1,14 @@
+  @Override
+  public Stream<ProgramState> statesAfterInvocation(List<SymbolicValue> invocationArguments, List<Type> invocationTypes, ProgramState programState,
+    Supplier<SymbolicValue> svSupplier) {
+
+    if (parameterConstraintsMatchExactly(invocationArguments, invocationTypes, programState)) {
+      // Only uses these yields when parameter constraints are matching exactly.
+      // These yields are triggering issues in rules, so we don't want to use them to make the engine learn wrong constraints.
+      // For instance: if a parameter 'a' is required to be NULL to trigger an exception and raise an issue, we can't use the yield
+      // from a program state where there is no constraint on the SV provided as parameter.
+      return super.statesAfterInvocation(invocationArguments, invocationTypes, programState, svSupplier);
+    }
+    return Stream.empty();
+  }
+

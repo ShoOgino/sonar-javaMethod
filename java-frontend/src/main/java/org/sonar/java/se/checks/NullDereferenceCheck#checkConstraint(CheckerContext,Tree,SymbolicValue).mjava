@@ -2,19 +2,17 @@
     ProgramState programState = context.getState();
     Constraint constraint = programState.getConstraint(currentVal);
     if (constraint != null && constraint.isNull()) {
-      String symbolName = SyntaxTreeNameFinder.getName(syntaxNode);
-      String message = "NullPointerException might be thrown as '" + symbolName + "' is nullable here";
-      SymbolicValue val = null;
-      if (!SymbolicValue.NULL_LITERAL.equals(currentVal)) {
-        val = currentVal;
-      }
-      List<JavaFileScannerContext.Location> flow = FlowComputation.flow(context.getNode(), val);
-      addDereferenceMessage(flow, syntaxNode);
-      reportIssue(syntaxNode, message, ImmutableSet.of(flow));
+      reportIssue(currentVal, syntaxNode, context.getNode());
+
+      // we reported the issue and stopped the exploration, but we still need to create a yield for x-procedural calls
+      context.addExceptionalYield(currentVal, programState, JAVA_LANG_NPE, this);
       return null;
     }
     constraint = programState.getConstraint(currentVal);
     if (constraint == null) {
+      // a NPE will be triggered if the current value would have been null
+      context.addExceptionalYield(currentVal, programState.addConstraint(currentVal, ObjectConstraint.nullConstraint()), JAVA_LANG_NPE, this);
+
       // We dereferenced the target value for the member select, so we can assume it is not null when not already known
       return programState.addConstraint(currentVal, ObjectConstraint.notNull());
     }

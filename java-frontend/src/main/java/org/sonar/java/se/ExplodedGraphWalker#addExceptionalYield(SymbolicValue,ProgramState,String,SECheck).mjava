@@ -1,13 +1,9 @@
   public void addExceptionalYield(SymbolicValue target, ProgramState exceptionalState, String exceptionFullyQualifiedName, SECheck check) {
-    if (isPartOfMethodParameters(target)) {
+    if (methodBehavior != null && methodBehavior.parameters().contains(target)) {
       Type exceptionType = semanticModel.getClassType(exceptionFullyQualifiedName);
       ProgramState newExceptionalState = exceptionalState.clearStack().stackValue(constraintManager.createExceptionalSymbolicValue(exceptionType));
-      enqueueExceptionalPaths(newExceptionalState);
-      ExplodedGraph.Node workListFirstNode = workList.peekFirst();
-      if (workListFirstNode.programState.equals(newExceptionalState) && workListFirstNode.programPoint.block.isMethodExitBlock()) {
-        workList.pop();
-        methodBehavior.createExceptionalCheckBasedYield(workListFirstNode, exceptionType, check);
-      }
+      ExplodedGraph.Node exitNode = explodedGraph.node(node.programPoint, newExceptionalState);
+      methodBehavior.createExceptionalCheckBasedYield(exitNode, exceptionType, check);
     }
   }
 

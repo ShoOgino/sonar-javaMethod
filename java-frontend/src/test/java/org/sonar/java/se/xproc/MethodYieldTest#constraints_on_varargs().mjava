@@ -4,11 +4,12 @@
 
     Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "varArgMethod");
     Symbol.MethodSymbol methodSymbol = entry.getKey();
-    List<MethodYield> yields = entry.getValue().yields();
-    assertThat(yields).hasSize(3);
-    assertThat(yields.stream().filter(y -> y instanceof ExceptionalYield).count()).isEqualTo(2);
+    MethodBehavior mb = entry.getValue();
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(5);
+    assertThat(mb.exceptionalPathYields()).hasSize(4);
 
-    MethodYield yield = yields.stream().filter(y -> y instanceof HappyPathYield).findFirst().get();
+    MethodYield yield = mb.happyPathYields().findFirst().get();
 
     // check that we have NOT_NULL constraint on the first argument
     assertThat(yield.parameterConstraint(0).isNull()).isFalse();

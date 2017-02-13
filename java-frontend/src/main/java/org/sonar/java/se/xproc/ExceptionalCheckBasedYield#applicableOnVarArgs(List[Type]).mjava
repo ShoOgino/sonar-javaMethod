@@ -1,0 +1,21 @@
+  private boolean applicableOnVarArgs(List<Type> invocationTypes) {
+    int numberParametersYield = parametersConstraints().length;
+    int numberArgumentsInCall = invocationTypes.size();
+
+    if (numberParametersYield > numberArgumentsInCall) {
+      // VarArgs method called without variadic parameter
+      return true;
+    }
+    if (parameterConstraint(numberParametersYield - 1) == null) {
+      // no constraint on the last parameter on yield side
+      return true;
+    }
+    if (numberParametersYield != numberArgumentsInCall) {
+      // there is a constraint on last parameter, but varArgs method called with multiple arguments in variadic part
+      return false;
+    }
+    // compatible number of parameters, type must be compatible on arguments side
+    Type lastArgumentType = invocationTypes.get(numberArgumentsInCall - 1);
+    return !isMethodVarargs || (lastArgumentType.isArray() || lastArgumentType.is("<nulltype>"));
+  }
+

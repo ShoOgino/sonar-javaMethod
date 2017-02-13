@@ -3,9 +3,9 @@
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYields.java");
     Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "bar");
     Symbol.MethodSymbol methodSymbol = entry.getKey();
-    List<MethodYield> yields = entry.getValue().yields();
+    MethodBehavior mb = entry.getValue();
 
-    MethodYield trueYield = yields.stream()
+    MethodYield trueYield = mb.happyPathYields()
       .filter(y -> y.parameterConstraint(0) instanceof BooleanConstraint && ((BooleanConstraint) y.parameterConstraint(0)).isTrue())
       .findFirst().get();
     // force status of the arg1 to be B

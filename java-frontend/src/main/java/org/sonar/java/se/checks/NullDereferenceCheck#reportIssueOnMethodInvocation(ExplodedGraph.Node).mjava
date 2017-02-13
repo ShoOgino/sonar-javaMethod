@@ -1,0 +1,10 @@
+  private void reportIssueOnMethodInvocation(ExplodedGraph.Node node) {
+    MethodInvocationTree mit = (MethodInvocationTree) node.programPoint.syntaxTree();
+    ExpressionTree methodSelect = mit.methodSelect();
+    Tree reportTree = methodSelect;
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      reportTree = ((MemberSelectExpressionTree) methodSelect).identifier();
+    }
+    reportIssue(reportTree, String.format("NullPointerException will be thrown when invoking method %s()", mit.symbol().name()), ImmutableSet.of());
+  }
+
