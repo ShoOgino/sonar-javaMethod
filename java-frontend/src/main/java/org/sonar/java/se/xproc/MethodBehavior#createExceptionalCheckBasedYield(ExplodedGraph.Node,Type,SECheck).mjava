@@ -1,0 +1,11 @@
+  public void createExceptionalCheckBasedYield(ExplodedGraph.Node node, Type exceptionType, SECheck check) {
+    ExceptionalYield yield = new ExceptionalCheckBasedYield(exceptionType, check.getClass(), node, this);
+
+    // add the constraints on all the parameters
+    for (int i = 0; i < parameters.size(); i++) {
+      yield.setParameterConstraint(i, node.programState.getConstraint(parameters.get(i)));
+    }
+
+    yields.add(yield);
+  }
+

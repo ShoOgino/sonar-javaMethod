@@ -1,0 +1,16 @@
+    @Override
+    public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+      ProgramState state = context.getState();
+      if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION) && MATCHER.matches((MethodInvocationTree) syntaxNode)) {
+        SymbolicValue param = state.peekValue();
+        Constraint paramConstraint = state.getConstraint(param);
+        if (paramConstraint instanceof BooleanConstraint && ((BooleanConstraint) paramConstraint) == BooleanConstraint.TRUE) {
+          // create new yield with the exception
+          context.addExceptionalYield(param, state, "java.lang.UnsupportedOperationException", this);
+          // interrupt exploration (theoretical runtime exception)
+          return null;
+        }
+      }
+      return state;
+    }
+

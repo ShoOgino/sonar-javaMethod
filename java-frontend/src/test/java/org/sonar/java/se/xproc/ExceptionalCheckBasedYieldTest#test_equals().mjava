@@ -1,0 +1,31 @@
+  @Test
+  public void test_equals() {
+    final Class<? extends SECheck> seCheckClass1 = new SECheck() {
+    }.getClass();
+    final Class<? extends SECheck> seCheckClass2 = (new SECheck() {
+    }).getClass();
+
+    MethodBehavior mb = mockMethodBehavior();
+
+    Type mockedExceptionType1 = mock(Type.class);
+
+    ExceptionalCheckBasedYield yield = new ExceptionalCheckBasedYield(mockedExceptionType1, seCheckClass1, null, mb);
+    ExceptionalYield otherYield = new ExceptionalCheckBasedYield(mockedExceptionType1, seCheckClass1, null, mb);
+
+    assertThat(yield).isNotEqualTo(null);
+    assertThat(yield).isEqualTo(yield);
+    assertThat(yield).isEqualTo(otherYield);
+
+    // same exception, but simple exceptional yield
+    otherYield = new ExceptionalYield(null, mb);
+    otherYield.setExceptionType(mockedExceptionType1);
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    // same exception, different check
+    otherYield = new ExceptionalCheckBasedYield(mockedExceptionType1, seCheckClass2, null, mb);
+    assertThat(yield).isNotEqualTo(otherYield);
+
+    // different exception, same check
+    otherYield = new ExceptionalCheckBasedYield(mock(Type.class), seCheckClass1, null, mb);
+  }
+

@@ -1,0 +1,51 @@
+  @Test
+  public void creation_of_new_yield() {
+    String methodName = "method";
+    SymbolicExecutionVisitor sev;
+    MethodBehavior mb;
+
+    sev = createSymbolicExecutionVisitor(FILENAME);
+    mb = getMethodBehavior(sev, methodName);
+
+    // no creation of custom yields, 4 method yields
+    assertThat(mb.yields()).hasSize(4);
+    // 2nd param can never be null
+    assertThat(mb.yields().stream()).allMatch(y -> !y.parameterConstraint(1).isNull());
+
+    assertThat(mb.happyPathYields()).hasSize(2);
+    assertThat(mb.happyPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE)).hasSize(1);
+    assertThat(mb.happyPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+
+    assertThat(mb.exceptionalPathYields()).hasSize(2);
+    assertThat(mb.exceptionalPathYields()).as("All the exceptional yields are runtime exceptions").allMatch(y -> y.exceptionType() == null);
+    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+
+    // new rule discard any call to plantFlowers(true) by creating a new yield
+    sev = createSymbolicExecutionVisitor(FILENAME, new TestSECheck());
+    mb = getMethodBehavior(sev, methodName);
+
+    assertThat(mb.yields()).hasSize(3);
+    // 2nd param can never be null
+    assertThat(mb.yields().stream()).allMatch(y -> !y.parameterConstraint(1).isNull());
+
+    // happyPath with first parameter being true is discarded
+    assertThat(mb.happyPathYields()).hasSize(1);
+    assertThat(mb.happyPathYields()).allMatch(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE);
+
+    // still 2 exceptional path
+    assertThat(mb.exceptionalPathYields()).hasSize(2);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() == null)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() != null)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+
+    ExceptionalYield exceptionalYield = mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE).findFirst().get();
+    assertThat(exceptionalYield).isInstanceOf(ExceptionalCheckBasedYield.class);
+
+    ExceptionalCheckBasedYield seCheckExceptionalYield = (ExceptionalCheckBasedYield) exceptionalYield;
+    assertThat(seCheckExceptionalYield.check()).isEqualTo(TestSECheck.class);
+    assertThat(seCheckExceptionalYield.exceptionType()).isNotNull();
+    assertThat(seCheckExceptionalYield.exceptionType().is("java.lang.UnsupportedOperationException")).isTrue();
+    assertThat(seCheckExceptionalYield.exceptionType().isSubtypeOf("java.lang.RuntimeException")).isTrue();
+  }
+

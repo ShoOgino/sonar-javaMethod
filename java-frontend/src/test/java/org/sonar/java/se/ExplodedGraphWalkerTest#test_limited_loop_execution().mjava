@@ -4,7 +4,8 @@
       @Override
       public void visitNode(Tree tree) {
         try {
-          new ExplodedGraphWalker().visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
+          MethodTree methodTree = (MethodTree) tree;
+          new ExplodedGraphWalker(this.behaviorCache, (SemanticModel) context.getSemanticModel()).visitMethod(methodTree, new MethodBehavior(methodTree.symbol()));
         } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
           fail("loop execution should be limited");
         }

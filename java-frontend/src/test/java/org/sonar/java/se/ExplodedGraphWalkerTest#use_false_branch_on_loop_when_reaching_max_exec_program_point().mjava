@@ -1,34 +1,41 @@
   @Test
   public void use_false_branch_on_loop_when_reaching_max_exec_program_point() {
     ProgramPoint[] programPoints = new ProgramPoint[2];
-    ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker() {
-
-      boolean shouldEnqueueFalseBranch = false;
-
-      @Override
-      public void enqueue(ProgramPoint programPoint, ProgramState programState, boolean exitPath) {
-        int nbOfExecution = programState.numberOfTimeVisited(programPoint);
-        if (nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
-          shouldEnqueueFalseBranch = true;
-          programPoints[0] = programPoint;
-        } else {
-          shouldEnqueueFalseBranch = false;
-        }
-        int workListSize = workList.size();
-
-        super.enqueue(programPoint, programState, exitPath);
-
-        assertThat(workList.size()).isEqualTo(workListSize + 1);
-        if (shouldEnqueueFalseBranch) {
-          assertThat(programPoints[1]).isNull();
-          programPoints[1] = workList.peekFirst().programPoint;
-        }
-      }
-    };
     JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestMaxExecProgramPoint.java", new SymbolicExecutionVisitor(Collections.emptyList()) {
+
+      private ExplodedGraphWalker explodedGraphWalker = null;
+
       @Override
       public void visitNode(Tree tree) {
-        explodedGraphWalker.visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
+        if (explodedGraphWalker == null) {
+          explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (SemanticModel) context.getSemanticModel()) {
+
+            boolean shouldEnqueueFalseBranch = false;
+
+            @Override
+            public void enqueue(ProgramPoint programPoint, ProgramState programState, boolean exitPath) {
+              int nbOfExecution = programState.numberOfTimeVisited(programPoint);
+              if (nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
+                shouldEnqueueFalseBranch = true;
+                programPoints[0] = programPoint;
+              } else {
+                shouldEnqueueFalseBranch = false;
+              }
+              int workListSize = workList.size();
+
+              super.enqueue(programPoint, programState, exitPath);
+
+              assertThat(workList.size()).isEqualTo(workListSize + 1);
+              if (shouldEnqueueFalseBranch) {
+                assertThat(programPoints[1]).isNull();
+                programPoints[1] = workList.peekFirst().programPoint;
+              }
+            }
+          };
+        }
+
+        MethodTree methodTree = (MethodTree) tree;
+        explodedGraphWalker.visitMethod(methodTree, new MethodBehavior(methodTree.symbol()));
       }
     });
 

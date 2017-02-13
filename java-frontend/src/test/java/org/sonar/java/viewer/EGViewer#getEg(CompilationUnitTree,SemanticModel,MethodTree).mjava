@@ -1,0 +1,10 @@
+  private static ExplodedGraph getEg(CompilationUnitTree cut, SemanticModel semanticModel, MethodTree methodTree) {
+    JavaFileScannerContext context = mock(JavaFileScannerContext.class);
+    when(context.getTree()).thenReturn(cut);
+    when(context.getSemanticModel()).thenReturn(semanticModel);
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList());
+    ExplodedGraphWalker walker = new ExplodedGraphWalker(sev.behaviorCache, semanticModel);
+    walker.visitMethod(methodTree, new MethodBehavior(methodTree.symbol()));
+    return walker.getExplodedGraph();
+  }
+
