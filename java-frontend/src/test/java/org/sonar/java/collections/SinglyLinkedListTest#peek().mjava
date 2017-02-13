@@ -1,0 +1,14 @@
+  @Test
+  public void peek() {
+    assertThatThrownBy(() -> PCollections.emptyStack().peek(0)).isInstanceOf(IllegalStateException.class);
+
+    Object a = new Object();
+    PStack<Object> s = PCollections.emptyStack().push(a);
+    assertThat(s.peek(0)).isEqualTo(s.peek());
+    Object b = new Object();
+    s = s.push(b);
+    assertThat(s.peek(1)).isEqualTo(a);
+    PStack<Object> finalS = s;
+    assertThatThrownBy(() -> finalS.peek(2)).isInstanceOf(IllegalStateException.class);
+  }
+

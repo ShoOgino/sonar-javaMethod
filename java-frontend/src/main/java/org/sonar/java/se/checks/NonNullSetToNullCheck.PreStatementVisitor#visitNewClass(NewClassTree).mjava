@@ -3,9 +3,8 @@
       Symbol symbol = syntaxTree.constructorSymbol();
       if (symbol.isMethodSymbol()) {
         int peekSize = syntaxTree.arguments().size();
-        List<SymbolicValue> argumentValues = new ArrayList<>(programState.peekValues(peekSize));
+        List<SymbolicValue> argumentValues = Lists.reverse(programState.peekValues(peekSize));
         JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) symbol;
-        Collections.reverse(argumentValues);
         checkNullArguments(syntaxTree, methodSymbol.getParameters(),
           argumentValues, "Parameter {0} to this constructor is marked \"{1}\" but null is passed.");
       }
