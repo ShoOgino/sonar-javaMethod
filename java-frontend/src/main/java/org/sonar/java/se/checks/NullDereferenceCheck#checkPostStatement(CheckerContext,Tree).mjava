@@ -1,7 +1,8 @@
   @Override
   public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
     if (syntaxNode.is(Tree.Kind.SWITCH_STATEMENT, Tree.Kind.THROW_STATEMENT) && context.getConstraintManager().isNull(context.getState(), context.getState().peekValue())) {
-      context.reportIssue(syntaxNode, this, "NullPointerException might be thrown as '" + SyntaxTreeNameFinder.getName(syntaxNode) + "' is nullable here");
+      NullDereferenceIssue issue = new NullDereferenceIssue(context.getNode(), context.getState().peekValue(), syntaxNode);
+      detectedIssues.peek().add(issue);
       context.createSink();
       return context.getState();
     }

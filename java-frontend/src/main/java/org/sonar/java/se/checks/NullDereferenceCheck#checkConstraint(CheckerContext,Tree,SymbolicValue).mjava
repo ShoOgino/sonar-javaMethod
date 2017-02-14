@@ -2,7 +2,8 @@
     ProgramState programState = context.getState();
     ObjectConstraint constraint = programState.getConstraint(currentVal, ObjectConstraint.class);
     if (constraint != null && constraint.isNull()) {
-      reportIssue(currentVal, syntaxNode, context.getNode());
+      NullDereferenceIssue issue = new NullDereferenceIssue(context.getNode(), currentVal, syntaxNode);
+      detectedIssues.peek().add(issue);
 
       // we reported the issue and stopped the exploration, but we still need to create a yield for x-procedural calls
       context.addExceptionalYield(currentVal, programState, JAVA_LANG_NPE, this);
