@@ -1,4 +1,4 @@
-  public static List<JavaFileScannerContext.Location> flow(ExplodedGraph.Node currentNode, @Nullable SymbolicValue currentVal, Predicate<Constraint> addToFlow,
+  public static Set<List<JavaFileScannerContext.Location>> flow(ExplodedGraph.Node currentNode, @Nullable SymbolicValue currentVal, Predicate<Constraint> addToFlow,
                                                            Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains) {
     FlowComputation flowComputation = new FlowComputation(currentVal, addToFlow, terminateTraversal, domains);
 
@@ -7,7 +7,6 @@
       Set<JavaFileScannerContext.Location> binSVFlow = flowComputation.flowFromBinarySV(currentNode, (BinarySymbolicValue) currentVal, trackSymbol);
       flowComputation.flow.addAll(binSVFlow);
     }
-    flowComputation.run(currentNode, trackSymbol);
-    return flowComputation.flow;
+    return flowComputation.run(currentNode, trackSymbol);
   }
 

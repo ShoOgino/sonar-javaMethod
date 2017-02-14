@@ -16,7 +16,9 @@
     }
     MethodYield selectedMethodYield = currentNode.selectedMethodYield(parent);
     if (selectedMethodYield != null) {
-      selectedMethodYield.flow(argIdx, domains).forEach(flowBuilder::add);
+      Set<List<JavaFileScannerContext.Location>> xProcFlows = selectedMethodYield.flow(argIdx, domains);
+      // FIXME SONARJAVA-2076 consider all flows from yields
+      xProcFlows.stream().findFirst().ifPresent(f -> f.forEach(flowBuilder::add));
     }
     return flowBuilder.build();
   }

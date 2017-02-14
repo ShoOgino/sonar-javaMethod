@@ -6,10 +6,10 @@
     MethodYield methodYield = mb.happyPathYields()
       .filter(y -> y.resultConstraint() != null && y.resultConstraint().get(ObjectConstraint.class) != ObjectConstraint.NULL).findFirst().get();
 
-    List<JavaFileScannerContext.Location> flowReturnValue = methodYield.flow(-1, Lists.newArrayList(ObjectConstraint.class));
-    assertThat(flowReturnValue).isNotEmpty();
+    Set<List<JavaFileScannerContext.Location>> flowReturnValue = methodYield.flow(-1, Lists.newArrayList(ObjectConstraint.class));
+    assertThat(flowReturnValue.iterator().next()).isNotEmpty();
 
-    List<JavaFileScannerContext.Location> flowFirstParam = methodYield.flow(0, Lists.newArrayList(ObjectConstraint.class, BooleanConstraint.class));
-    assertThat(flowFirstParam).isNotEmpty();
+    Set<List<JavaFileScannerContext.Location>> flowFirstParam = methodYield.flow(0, Lists.newArrayList(ObjectConstraint.class, BooleanConstraint.class));
+    assertThat(flowFirstParam.iterator().next()).isNotEmpty();
   }
 

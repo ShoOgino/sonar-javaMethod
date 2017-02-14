@@ -1,7 +1,7 @@
-  private static List<JavaFileScannerContext.Location> flowFromNode(ExplodedGraph.Node node, boolean conditionIsAlwaysTrue) {
+  private static Set<List<JavaFileScannerContext.Location>> flowFromNode(ExplodedGraph.Node node, boolean conditionIsAlwaysTrue) {
     List<Class<? extends Constraint>> domains = Lists.newArrayList(ObjectConstraint.class, BooleanConstraint.class);
-    List<JavaFileScannerContext.Location> flow = FlowComputation.flow(node.parent(), node.programState.peekValue(), domains);
-    flow.add(0, new JavaFileScannerContext.Location("Condition is always " + conditionIsAlwaysTrue + ".", node.programPoint.syntaxTree()));
-    return flow;
+    Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(node.parent(), node.programState.peekValue(), domains);
+    flows.forEach(f -> f.add(0, new JavaFileScannerContext.Location("Condition is always " + conditionIsAlwaysTrue + ".", node.programPoint.syntaxTree())));
+    return flows;
   }
 
