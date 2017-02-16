@@ -1,8 +1,8 @@
   public void whileLoopHandling() {
     FileInputStream stream = new FileInputStream("myFile"); // Noncompliant [[flows=while]] {{Close this "FileInputStream".}} flow@while {{FileInputStream is never closed.}}
     while(needsMore()) {
-      stream = new FileInputStream("myFile");
-      stream.read();
+      stream = new FileInputStream("myFile"); // Noncompliant {{Close this "FileInputStream".}}
+      stream.read(); // can fail
       stream.close();
     }
    return;
