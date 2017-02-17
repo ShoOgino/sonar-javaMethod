@@ -1,0 +1,15 @@
+  public Set<List<JavaFileScannerContext.Location>> flow(List<Integer> parameterIndices, List<Class<? extends Constraint>> domains) {
+    if(node == null || behavior == null) {
+      return Collections.emptySet();
+    }
+    ImmutableSet.Builder<SymbolicValue> parameterSVs = ImmutableSet.builder();
+    for (Integer parameterIndex : parameterIndices) {
+      if (parameterIndex == -1) {
+        parameterSVs.add(node.programState.exitValue());
+      } else {
+        parameterSVs.add(behavior.parameters().get(parameterIndex));
+      }
+    }
+    return FlowComputation.flow(node, parameterSVs.build(), c -> true, c -> false, domains);
+  }
+

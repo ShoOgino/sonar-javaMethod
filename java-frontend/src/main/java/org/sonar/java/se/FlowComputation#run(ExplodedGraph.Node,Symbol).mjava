@@ -1,26 +1,19 @@
-  private Set<List<JavaFileScannerContext.Location>> run(@Nullable final ExplodedGraph.Node node, @Nullable final Symbol trackSymbol) {
-    Deque<NodeSymbol> workList = new ArrayDeque<>();
-    workList.add(new NodeSymbol(node, trackSymbol));
-    while (!workList.isEmpty()) {
-      NodeSymbol nodeSymbol = workList.pop();
-      ExplodedGraph.Node currentNode = nodeSymbol.node;
-      if (currentNode == null || visited.contains(currentNode)) {
-        continue;
-      }
-      visited.add(currentNode);
+  private Set<List<JavaFileScannerContext.Location>> run(final ExplodedGraph.Node node, @Nullable final Symbol trackSymbol) {
+    Set<List<JavaFileScannerContext.Location>> flows = new HashSet<>();
+    Deque<ExecutionPath> workList = new ArrayDeque<>();
 
-      Symbol newTrackSymbol = nodeSymbol.trackSymbol;
-      if (currentNode.programPoint.syntaxTree() != null) {
-        newTrackSymbol = addFlowFromLearnedAssociations(currentNode, newTrackSymbol);
-        Stream<Constraint> learnedConstraints = addFlowFromLearnedConstraints(currentNode);
-        if (learnedConstraints.anyMatch(terminateTraversal)) {
-          continue;
-        }
-      }
-      for (ExplodedGraph.Node parent : currentNode.parents()) {
-        workList.push(new NodeSymbol(parent, newTrackSymbol));
+    node.edges().forEach(e -> workList.push(startPath(e, trackSymbol)));
+    while (!workList.isEmpty()) {
+      ExecutionPath path = workList.pop();
+      if (path.finished) {
+        flows.add(path.flow);
+      } else {
+        path.lastEdge.parent.edges().stream()
+          .filter(path::notVisited)
+          .map(path::addEdge)
+          .forEach(workList::push);
       }
     }
-    return ImmutableSet.of(flow);
+    return flows;
   }
 

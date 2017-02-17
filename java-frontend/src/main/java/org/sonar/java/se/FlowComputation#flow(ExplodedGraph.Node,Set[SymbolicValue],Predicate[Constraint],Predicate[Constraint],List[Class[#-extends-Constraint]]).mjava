@@ -1,0 +1,13 @@
+  public static Set<List<JavaFileScannerContext.Location>> flow(ExplodedGraph.Node currentNode, Set<SymbolicValue> symbolicValues, Predicate<Constraint> addToFlow,
+                                                                Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains) {
+    Set<SymbolicValue> allSymbolicValues = symbolicValues.stream()
+      .map(FlowComputation::computedFrom)
+      .flatMap(Set::stream)
+      .collect(Collectors.toSet());
+
+    FlowComputation flowComputation = new FlowComputation(allSymbolicValues, addToFlow, terminateTraversal, domains);
+    // FIXME SONARJAVA-2049 getLastEvaluated doesn't work with relational SV
+    Symbol trackSymbol = currentNode.programState.getLastEvaluated();
+    return flowComputation.run(currentNode, trackSymbol);
+  }
+

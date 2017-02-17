@@ -1,0 +1,11 @@
+  void f() {
+    Object a;
+    Object b = null; // flow@path2 {{'b' is assigned null.}}
+    if (cond) {
+      a = null; // flow@path1 {{'a' is assigned null.}}
+    } else {
+      a = b; // flow@path2 {{'a' is assigned null.}}
+    }
+    a.toString(); // Noncompliant [[flows=path1,path2]] flow@path1,path2 {{'a' is dereferenced.}}
+  }
+

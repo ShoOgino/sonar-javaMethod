@@ -1,9 +1,7 @@
   private static Set<List<JavaFileScannerContext.Location>> collectFlow(Collection<ExplodedGraph.Node> nodes, boolean conditionIsAlwaysTrue) {
     return nodes.stream()
       .map(node -> flowFromNode(node, conditionIsAlwaysTrue))
-      .reduce(new HashSet<>(), (left, right) -> {
-        left.addAll(right);
-        return left;
-      });
+      .flatMap(Set::stream)
+      .collect(Collectors.toSet());
   }
 

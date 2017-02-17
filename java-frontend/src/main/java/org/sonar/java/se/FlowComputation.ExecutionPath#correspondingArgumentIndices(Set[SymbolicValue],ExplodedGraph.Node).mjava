@@ -1,0 +1,8 @@
+    private List<Integer> correspondingArgumentIndices(Set<SymbolicValue> candidates, ExplodedGraph.Node invocationNode) {
+      MethodInvocationTree mit = (MethodInvocationTree) invocationNode.programPoint.syntaxTree();
+      List<SymbolicValue> arguments = argumentsUsedForMethodInvocation(invocationNode, mit);
+      return IntStream.range(0, arguments.size())
+        .filter(i -> candidates.contains(arguments.get(i)))
+        .boxed().collect(Collectors.toList());
+    }
+

@@ -12,8 +12,12 @@
         flowMessage = "this expression contains division by zero";
       }
       List<Class<? extends Constraint>> domains = Lists.newArrayList(ZeroConstraint.class);
-      Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(context.getNode(), denominator, domains);
-      flows.forEach(f -> f.add(0, new JavaFileScannerContext.Location(flowMessage, tree)));
+      Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(context.getNode(), denominator, domains).stream()
+        .map(f -> ImmutableList.<JavaFileScannerContext.Location>builder()
+          .add(new JavaFileScannerContext.Location(flowMessage, tree))
+          .addAll(f)
+          .build())
+        .collect(Collectors.toSet());
       context.reportIssue(expression, DivisionByZeroCheck.this, "Make sure " + expressionName + " can't be zero before doing this " + operation + ".",
         flows);
     }

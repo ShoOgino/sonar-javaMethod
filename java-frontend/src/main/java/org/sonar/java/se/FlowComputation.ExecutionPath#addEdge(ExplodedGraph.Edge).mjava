@@ -1,0 +1,8 @@
+    ExecutionPath addEdge(ExplodedGraph.Edge edge) {
+      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      flowBuilder.addAll(flow);
+      Symbol newTrackSymbol = addFlowFromLearnedAssociations(edge, flowBuilder);
+      Stream<Constraint> constraintStream = addFlowFromLearnedConstraints(edge, flowBuilder);
+      return new ExecutionPath(edge, visited.add(edge), newTrackSymbol, flowBuilder.build(), visitedAllParents(edge) || constraintStream.anyMatch(terminateTraversal));
+    }
+
