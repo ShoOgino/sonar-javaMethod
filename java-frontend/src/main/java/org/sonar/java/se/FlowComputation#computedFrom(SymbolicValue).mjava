@@ -1,0 +1,10 @@
+  private static Set<SymbolicValue> computedFrom(@Nullable SymbolicValue symbolicValue) {
+    if (symbolicValue == null) {
+      return Collections.emptySet();
+    }
+    HashSet<SymbolicValue> result = new HashSet<>();
+    result.add(symbolicValue);
+    symbolicValue.computedFrom().forEach(sv -> result.addAll(computedFrom(sv)));
+    return result;
+  }
+
