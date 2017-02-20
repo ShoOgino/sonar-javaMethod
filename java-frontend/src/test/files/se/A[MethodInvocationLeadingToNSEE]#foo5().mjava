@@ -1,0 +1,11 @@
+  void foo5() {
+    Optional<String> o = getOptional();
+    Optional<String> o2 = o;
+    try {
+      nseeIfCalled(o); // Noncompliant {{NoSuchElementException will be thrown when invoking method nseeIfCalled() without verifying Optional parameter.}}
+    } catch (MyCheckedException e) {
+      o2 = o;
+    }
+    o2.get(); // Compliant
+  }
+

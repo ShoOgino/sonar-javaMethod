@@ -1,0 +1,11 @@
+  void foo6() {
+    Optional<String> o = getOptional();
+    Optional<String> o2 = o;
+    try {
+      nseeIfCalled(o); // Compliant - Exception is catched
+    } catch (NoSuchElementException e) {
+      o2 = o;
+    }
+    o2.get(); // Noncompliant {{Call "o2.isPresent()" before accessing the value.}}
+  }
+

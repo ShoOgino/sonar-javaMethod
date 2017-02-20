@@ -1,20 +1,11 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
+      SymbolicValue peek = programState.peekValue();
       if (OPTIONAL_IS_PRESENT.matches(tree)) {
-        constraintManager.setValueFactory(id -> new OptionalSymbolicValue(id, programState.peekValue()));
-      } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(programState.peekValue())) {
-        String identifier = getIdentifierPart(tree.methodSelect());
-        String issueMsg;
-        String flowMsg;
-        if (identifier.isEmpty()) {
-          issueMsg = "Optional#";
-          flowMsg = "";
-        } else {
-          issueMsg = identifier + ".";
-          flowMsg = identifier + " ";
-        }
-        Set<List<JavaFileScannerContext.Location>> flow = FlowComputation.singleton("Optional " + flowMsg + "is accessed", tree.methodSelect());
-        context.reportIssue(tree, check, "Call \""+ issueMsg + "isPresent()\" before accessing the value.", flow);
+        constraintManager.setValueFactory(id -> new OptionalSymbolicValue(id, peek));
+      } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(peek)) {
+        context.addExceptionalYield(peek, programState, "java.util.NoSuchElementException", check);
+        reportIssue(tree);
         programState = null;
       }
     }
