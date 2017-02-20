@@ -1,5 +1,6 @@
   private void processUnclosedSymbolicValue(ExplodedGraph.Node node, SymbolicValue sv) {
-    FlowComputation.flow(node, sv, ObjectConstraint.statusPredicate(OPENED)).stream()
+    List<Class<? extends Constraint>> domains = Lists.newArrayList(CustomResourceConstraint.class);
+    FlowComputation.flow(node, sv, OPENED::equals, domains).stream()
       .filter(location -> location.syntaxNode.is(Tree.Kind.NEW_CLASS, Tree.Kind.METHOD_INVOCATION))
       .forEach(this::reportIssue);
   }

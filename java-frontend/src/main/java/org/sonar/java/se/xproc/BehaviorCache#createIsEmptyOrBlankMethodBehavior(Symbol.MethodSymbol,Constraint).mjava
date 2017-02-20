@@ -1,15 +1,12 @@
   private static MethodBehavior createIsEmptyOrBlankMethodBehavior(Symbol.MethodSymbol symbol, Constraint constraint) {
     MethodBehavior behavior = new MethodBehavior(symbol);
-
     HappyPathYield nullYield = new HappyPathYield(behavior);
-    nullYield.setParameterConstraint(0, ObjectConstraint.nullConstraint());
-    nullYield.setResult(-1, constraint);
+    nullYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NULL));
+    nullYield.setResult(-1, pmapForConstraint(constraint));
     behavior.addYield(nullYield);
-
-    HappyPathYield notNullYield = new HappyPathYield(behavior);
-    notNullYield.setParameterConstraint(0, ObjectConstraint.notNull());
+    MethodYield notNullYield = new HappyPathYield(behavior);
+    notNullYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NOT_NULL));
     behavior.addYield(notNullYield);
-
     behavior.completed();
     return behavior;
   }

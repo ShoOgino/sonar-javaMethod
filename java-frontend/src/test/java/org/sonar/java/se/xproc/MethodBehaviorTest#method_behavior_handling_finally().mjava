@@ -11,15 +11,15 @@
     MethodBehavior qix = getMethodBehavior(sev, "qix");
     List<MethodYield> qixYield = qix.yields();
     assertThat(qixYield.stream()
-      .filter(y -> !y.parametersConstraints()[0].isNull())
+      .filter(y ->  y.parametersConstraints.get(0).get(ObjectConstraint.class) != ObjectConstraint.NULL)
       .allMatch(y -> y instanceof ExceptionalYield)).isTrue();
 
     assertThat(qixYield.stream()
-      .filter(y -> y.parametersConstraints()[0].isNull() && y instanceof ExceptionalYield)
+      .filter(y -> y.parametersConstraints.get(0).get(ObjectConstraint.class) == ObjectConstraint.NULL && y instanceof ExceptionalYield)
       .count()).isEqualTo(2);
 
     assertThat(qixYield.stream()
       .filter(y -> y instanceof HappyPathYield)
-      .allMatch(y -> y.parametersConstraints()[0].isNull())).isTrue();
+      .allMatch(y -> y.parametersConstraints.get(0).get(ObjectConstraint.class) == ObjectConstraint.NULL)).isTrue();
   }
 

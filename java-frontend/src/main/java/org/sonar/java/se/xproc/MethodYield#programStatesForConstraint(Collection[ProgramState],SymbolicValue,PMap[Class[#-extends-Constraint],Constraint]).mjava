@@ -1,0 +1,15 @@
+  private static Set<ProgramState> programStatesForConstraint(Collection<ProgramState> states, SymbolicValue invokedArg,
+                                                              PMap<Class<? extends Constraint>, Constraint> constraints) {
+    Set<ProgramState> programStates = new LinkedHashSet<>(states);
+
+    constraints.forEach((d, c) ->  {
+      Set<ProgramState> newPs = new LinkedHashSet<>();
+      for (ProgramState programState : programStates) {
+        newPs.addAll(invokedArg.setConstraint(programState, c));
+      }
+      programStates.clear();
+      programStates.addAll(newPs);
+    });
+    return programStates;
+  }
+

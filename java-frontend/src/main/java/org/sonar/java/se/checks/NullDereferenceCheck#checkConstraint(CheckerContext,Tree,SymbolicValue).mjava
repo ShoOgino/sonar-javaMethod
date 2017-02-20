@@ -1,6 +1,6 @@
   private ProgramState checkConstraint(CheckerContext context, Tree syntaxNode, SymbolicValue currentVal) {
     ProgramState programState = context.getState();
-    Constraint constraint = programState.getConstraint(currentVal);
+    ObjectConstraint constraint = programState.getConstraint(currentVal, ObjectConstraint.class);
     if (constraint != null && constraint.isNull()) {
       reportIssue(currentVal, syntaxNode, context.getNode());
 
@@ -8,13 +8,13 @@
       context.addExceptionalYield(currentVal, programState, JAVA_LANG_NPE, this);
       return null;
     }
-    constraint = programState.getConstraint(currentVal);
+    constraint = programState.getConstraint(currentVal, ObjectConstraint.class);
     if (constraint == null) {
       // a NPE will be triggered if the current value would have been null
-      context.addExceptionalYield(currentVal, programState.addConstraint(currentVal, ObjectConstraint.nullConstraint()), JAVA_LANG_NPE, this);
+      context.addExceptionalYield(currentVal, programState.addConstraint(currentVal, ObjectConstraint.NULL), JAVA_LANG_NPE, this);
 
       // We dereferenced the target value for the member select, so we can assume it is not null when not already known
-      return programState.addConstraint(currentVal, ObjectConstraint.notNull());
+      return programState.addConstraint(currentVal, ObjectConstraint.NOT_NULL);
     }
     return programState;
   }

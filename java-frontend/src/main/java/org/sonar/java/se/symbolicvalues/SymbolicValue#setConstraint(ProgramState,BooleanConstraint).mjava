@@ -1,14 +1,8 @@
   public List<ProgramState> setConstraint(ProgramState programState, BooleanConstraint booleanConstraint) {
-    Object data = programState.getConstraint(this);
-    // update program state only for a different constraint
-    if (data instanceof BooleanConstraint && !data.equals(booleanConstraint)) {
-      // setting null where value is known to be non null or the contrary
+    Constraint cstraint = programState.getConstraint(this, booleanConstraint.getClass());
+    if (!booleanConstraint.isValidWith(cstraint)) {
       return ImmutableList.of();
     }
-    if ((data == null || isNonNullConstraint(data)) && programState.canReach(this)) {
-      // store constraint only if symbolic value can be reached by a symbol.
-      return ImmutableList.of(programState.addConstraint(this, booleanConstraint));
-    }
-    return ImmutableList.of(programState);
+    return ImmutableList.of(programState.addConstraint(this, booleanConstraint));
   }
 

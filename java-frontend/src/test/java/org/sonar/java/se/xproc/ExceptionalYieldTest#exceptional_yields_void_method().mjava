@@ -9,9 +9,9 @@
     assertThat(exceptionalYields.stream().filter(y -> y.exceptionType() == null).count()).isEqualTo(1);
 
     MethodYield explicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType() != null && y.exceptionType().is("org.foo.MyException1")).findAny().get();
-    assertThat(explicitExceptionYield.parameterConstraint(0)).isEqualTo(ObjectConstraint.nullConstraint());
+    assertThat(explicitExceptionYield.parametersConstraints.get(0).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NULL);
 
     MethodYield implicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType() != null && y.exceptionType().is("org.foo.MyException2")).findAny().get();
-    assertThat(implicitExceptionYield.parameterConstraint(0)).isEqualTo(ObjectConstraint.notNull());
+    assertThat(implicitExceptionYield.parametersConstraints.get(0).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
   }
 

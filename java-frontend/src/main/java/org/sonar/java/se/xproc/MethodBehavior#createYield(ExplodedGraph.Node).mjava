@@ -12,16 +12,11 @@
     } else {
       HappyPathYield happyPathYield = new HappyPathYield(node, this);
       if (expectReturnValue) {
-        happyPathYield.setResult(parameters.indexOf(resultSV), node.programState.getConstraint(resultSV));
+        happyPathYield.setResult(parameters.indexOf(resultSV), node.programState.getConstraints(resultSV));
       }
       yield = happyPathYield;
     }
-
-    // add the constraints on all the parameters
-    for (int i = 0; i < parameters.size(); i++) {
-      yield.setParameterConstraint(i, node.programState.getConstraint(parameters.get(i)));
-    }
-
+    addParameterConstraints(node, yield);
     yields.add(yield);
   }
 

@@ -3,12 +3,13 @@
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYieldsFlows.java");
     MethodBehavior mb = getSymbolWithMethodBehavior(sev, "foo").getValue();
 
-    MethodYield methodYield = mb.happyPathYields().filter(y -> y.resultConstraint() != null && !y.resultConstraint().isNull()).findFirst().get();
+    MethodYield methodYield = mb.happyPathYields()
+      .filter(y -> y.resultConstraint() != null && y.resultConstraint().get(ObjectConstraint.class) != ObjectConstraint.NULL).findFirst().get();
 
-    List<JavaFileScannerContext.Location> flowReturnValue = methodYield.flow(-1);
+    List<JavaFileScannerContext.Location> flowReturnValue = methodYield.flow(-1, Lists.newArrayList(ObjectConstraint.class));
     assertThat(flowReturnValue).isNotEmpty();
 
-    List<JavaFileScannerContext.Location> flowFirstParam = methodYield.flow(0);
+    List<JavaFileScannerContext.Location> flowFirstParam = methodYield.flow(0, Lists.newArrayList(ObjectConstraint.class, BooleanConstraint.class));
     assertThat(flowFirstParam).isNotEmpty();
   }
 

@@ -1,19 +1,16 @@
   public List<ProgramState> setConstraint(ProgramState programState, ObjectConstraint nullConstraint) {
-    Object data = programState.getConstraint(this);
-    if (data instanceof ObjectConstraint) {
-      ObjectConstraint nc = (ObjectConstraint) data;
-      if (nc.isNull() ^ nullConstraint.isNull()) {
-        // setting null where value is known to be non null or the contrary
-        return ImmutableList.of();
-      } else if (hasAnyStatus(nc) && hasNoStatus(nullConstraint)) {
-        return ImmutableList.of(programState);
+    Constraint constraint = programState.getConstraint(this, nullConstraint.getClass());
+    if (constraint == null) {
+      if(nullConstraint.isNull()) {
+        // null constraints get rid of all other constraints
+        PMap<Class<? extends Constraint>, Constraint> onlyNullConstraint = PCollections.<Class<? extends Constraint>, Constraint>emptyMap()
+          .put(ObjectConstraint.class, ObjectConstraint.NULL);
+        return ImmutableList.of(programState.addConstraints(this, onlyNullConstraint));
+      } else {
+        return ImmutableList.of(programState.addConstraint(this, nullConstraint));
       }
-    }
-    if (data instanceof BooleanConstraint) {
-      return nullConstraint.isNull() ? ImmutableList.of() : ImmutableList.of(programState);
-    }
-    if (data == null || !data.equals(nullConstraint)) {
-      return ImmutableList.of(programState.addConstraint(this, nullConstraint));
+    } else if (constraint != nullConstraint) {
+      return ImmutableList.of();
     }
     return ImmutableList.of(programState);
   }

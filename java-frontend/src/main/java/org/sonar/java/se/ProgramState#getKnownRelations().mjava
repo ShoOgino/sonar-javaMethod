@@ -1,11 +1,11 @@
   public List<BinaryRelation> getKnownRelations() {
     final List<BinaryRelation> knownRelations = new ArrayList<>();
-    constraints.forEach((symbolicValue, constraint) -> {
+    constraints.forEach((symbolicValue, pMap) -> {
       BinaryRelation relation = symbolicValue.binaryRelation();
       if (relation != null) {
-        if (BooleanConstraint.TRUE.equals(constraint)) {
+        if (BooleanConstraint.TRUE.equals(pMap.get(BooleanConstraint.class))) {
           knownRelations.add(relation);
-        } else if (BooleanConstraint.FALSE.equals(constraint)) {
+        } else if (BooleanConstraint.FALSE.equals(pMap.get(BooleanConstraint.class))) {
           knownRelations.add(relation.inverse());
         }
       }

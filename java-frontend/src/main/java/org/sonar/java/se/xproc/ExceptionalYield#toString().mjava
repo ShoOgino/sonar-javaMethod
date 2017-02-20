@@ -1,5 +1,7 @@
   @Override
   public String toString() {
-    return String.format("{params: %s, exceptional%s}", Arrays.toString(parametersConstraints()), exceptionType == null ? "" : (" (" + exceptionType.fullyQualifiedName() + ")"));
+    return String.format("{params: %s, exceptional%s}",
+      parametersConstraints.stream().map(pMap -> MethodYield.pmapToStream(pMap).map(Constraint::toString).collect(Collectors.toList())).collect(Collectors.toList()),
+      exceptionType == null ? "" : (" (" + exceptionType.fullyQualifiedName() + ")"));
   }
 

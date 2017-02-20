@@ -9,9 +9,12 @@
       .findFirst();
     if (learnedAssociation.isPresent()) {
       LearnedAssociation la = learnedAssociation.get();
-      Constraint constraint = parent.programState.getConstraint(la.symbolicValue());
-      String message = constraint == null ? "..." : String.format("'%s' is assigned %s.", la.symbol().name(), constraint.valueAsString());
-      flow.add(location(parent, message));
+      for (Class<? extends Constraint> domain : domains) {
+        Constraint constraint = parent.programState.getConstraint(la.symbolicValue(), domain);
+        if(constraint != null) {
+          flow.add(location(parent, String.format("'%s' is assigned %s.", la.symbol().name(), constraint.valueAsString())));
+        }
+      }
       return parent.programState.getLastEvaluated();
     }
     return trackSymbol;

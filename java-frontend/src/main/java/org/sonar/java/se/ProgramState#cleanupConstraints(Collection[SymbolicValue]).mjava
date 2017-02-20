@@ -1,19 +1,26 @@
   public ProgramState cleanupConstraints(Collection<SymbolicValue> protectedSymbolicValues) {
-    class CleanAction implements BiConsumer<SymbolicValue, Constraint> {
+    class CleanAction implements BiConsumer<SymbolicValue, PMap<Class<? extends Constraint>, Constraint>> {
       boolean newProgramState = false;
-      PMap<SymbolicValue, Constraint> newConstraints = constraints;
+      PMap<SymbolicValue, PMap<Class<? extends Constraint>, Constraint>> newConstraints = constraints;
       PMap<SymbolicValue, Integer> newReferences = references;
 
       @Override
-      public void accept(SymbolicValue symbolicValue, Constraint constraint) {
-        if (!protectedSymbolicValues.contains(symbolicValue)
-          && !isReachable(symbolicValue, newReferences)
-          && isDisposable(symbolicValue, constraint)
-          && !inStack(stack, symbolicValue)) {
-          newProgramState = true;
-          newConstraints = newConstraints.remove(symbolicValue);
-          newReferences = newReferences.remove(symbolicValue);
-        }
+      public void accept(SymbolicValue symbolicValue, PMap<Class<? extends Constraint>, Constraint> constraintPMap) {
+        constraintPMap.forEach((domain, constraint) -> {
+          if (!protectedSymbolicValues.contains(symbolicValue)
+            && !isReachable(symbolicValue, newReferences)
+            && isDisposable(symbolicValue, constraint)
+            && !inStack(stack, symbolicValue)) {
+            newProgramState = true;
+            PMap<Class<? extends Constraint>, Constraint> removed = newConstraints.get(symbolicValue).remove(domain);
+            if (removed.isEmpty()) {
+              newConstraints = newConstraints.remove(symbolicValue);
+            } else {
+              newConstraints = newConstraints.put(symbolicValue, removed);
+            }
+            newReferences = newReferences.remove(symbolicValue);
+          }
+        });
       }
     }
     CleanAction cleanAction = new CleanAction();

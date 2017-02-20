@@ -6,7 +6,7 @@
         String nonNullAnnotation = nonNullAnnotation(symbol);
         if (nonNullAnnotation != null) {
           SymbolicValue assignedValue = programState.peekValue();
-          Constraint constraint = programState.getConstraint(assignedValue);
+          ObjectConstraint constraint = programState.getConstraint(assignedValue, ObjectConstraint.class);
           if (constraint != null && constraint.isNull()) {
             reportIssue(tree, "\"{0}\" is marked \"{1}\" but is set to null.", symbol.name(), nonNullAnnotation);
           }

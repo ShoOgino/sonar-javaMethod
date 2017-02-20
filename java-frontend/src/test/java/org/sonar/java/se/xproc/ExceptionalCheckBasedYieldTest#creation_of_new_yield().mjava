@@ -11,14 +11,14 @@
     assertThat(mb.yields()).hasSize(5);
 
     assertThat(mb.happyPathYields()).hasSize(3);
-    assertThat(mb.happyPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == null)).hasSize(1);
-    assertThat(mb.happyPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE)).hasSize(1);
-    assertThat(mb.happyPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == null)).hasSize(1);
+    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE)).hasSize(1);
+    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
     assertThat(mb.exceptionalPathYields()).hasSize(2);
     assertThat(mb.exceptionalPathYields()).as("All the exceptional yields are runtime exceptions").allMatch(y -> y.exceptionType() == null);
-    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE)).hasSize(1);
-    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
     // new rule discard any call to plantFlowers(true) by creating a new yield
     sev = createSymbolicExecutionVisitor(FILENAME, new TestSECheck());
@@ -26,8 +26,8 @@
 
     assertThat(mb.yields()).hasSize(4);
     // 2nd param can never be null
-    assertThat(mb.yields().stream().filter(y -> y.parameterConstraint(0) == null && y.parameterConstraint(1).isNull())).hasSize(1);
-    assertThat(mb.yields().stream().filter(y -> !y.parameterConstraint(1).isNull())).hasSize(3);
+    assertThat(mb.yields().stream().filter(y -> y.parametersConstraints.get(0).isEmpty() && y.parametersConstraints.get(1).get(ObjectConstraint.class)== ObjectConstraint.NULL)).hasSize(1);
+    assertThat(mb.yields().stream().filter(y -> y.parametersConstraints.get(1).get(ObjectConstraint.class) != ObjectConstraint.NULL)).hasSize(3);
 
     // happyPath with first parameter being true is discarded
     assertThat(mb.happyPathYields()).hasSize(2);
@@ -36,9 +36,9 @@
     assertThat(mb.exceptionalPathYields()).hasSize(2);
     assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() == null)).hasSize(1);
     assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() != null)).hasSize(1);
-    assertThat(mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.FALSE)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
-    ExceptionalYield exceptionalYield = mb.exceptionalPathYields().filter(y -> ((BooleanConstraint) y.parameterConstraint(0)) == BooleanConstraint.TRUE).findFirst().get();
+    ExceptionalYield exceptionalYield = mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE).findFirst().get();
     assertThat(exceptionalYield).isInstanceOf(ExceptionalCheckBasedYield.class);
 
     ExceptionalCheckBasedYield seCheckExceptionalYield = (ExceptionalCheckBasedYield) exceptionalYield;

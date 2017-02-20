@@ -1,6 +1,6 @@
     private void checkReturnedValue(ReturnStatementTree tree, String nonNullAnnotation) {
       SymbolicValue returnedValue = programState.peekValue();
-      Constraint constraint = programState.getConstraint(returnedValue);
+      ObjectConstraint constraint = programState.getConstraint(returnedValue, ObjectConstraint.class);
       if (constraint != null && constraint.isNull()) {
         reportIssue(tree, "This method''s return value is marked \"{0}\" but null is returned.", nonNullAnnotation);
       }

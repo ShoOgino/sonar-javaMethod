@@ -1,0 +1,13 @@
+  public List<ProgramState> setConstraint(ProgramState programState, Constraint constraint) {
+    if(constraint instanceof BooleanConstraint) {
+      return setConstraint(programState, (BooleanConstraint) constraint);
+    } else if(constraint instanceof ObjectConstraint) {
+      return setConstraint(programState, (ObjectConstraint) constraint);
+    }
+    Constraint csrtaint = programState.getConstraint(this, constraint.getClass());
+    if (constraint.isValidWith(csrtaint)) {
+      return ImmutableList.of(programState.addConstraint(this, constraint));
+    }
+    return ImmutableList.of();
+  }
+

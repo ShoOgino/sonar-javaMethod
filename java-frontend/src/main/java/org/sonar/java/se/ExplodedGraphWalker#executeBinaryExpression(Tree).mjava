@@ -7,17 +7,17 @@
     if(tree.is(Tree.Kind.PLUS)) {
       BinaryExpressionTree bt = (BinaryExpressionTree) tree;
       if (bt.leftOperand().symbolType().is("java.lang.String")) {
-        Constraint leftConstraint = programState.getConstraint(unstackBinary.values.get(1));
+        ObjectConstraint leftConstraint = programState.getConstraint(unstackBinary.values.get(1), ObjectConstraint.class);
         if (leftConstraint != null && !leftConstraint.isNull()) {
-          List<ProgramState> programStates = symbolicValue.setConstraint(programState, ObjectConstraint.notNull());
+          List<ProgramState> programStates = symbolicValue.setConstraint(programState, ObjectConstraint.NOT_NULL);
           Preconditions.checkState(programStates.size() == 1);
           programState = programStates.get(0);
         }
 
       } else if(bt.rightOperand().symbolType().is("java.lang.String")) {
-        Constraint rightConstraint = programState.getConstraint(unstackBinary.values.get(0));
+        ObjectConstraint rightConstraint = programState.getConstraint(unstackBinary.values.get(0), ObjectConstraint.class);
         if (rightConstraint != null && !rightConstraint.isNull()) {
-          List<ProgramState> programStates = symbolicValue.setConstraint(programState, ObjectConstraint.notNull());
+          List<ProgramState> programStates = symbolicValue.setConstraint(programState, ObjectConstraint.NOT_NULL);
           Preconditions.checkState(programStates.size() == 1);
           programState = programStates.get(0);
         }

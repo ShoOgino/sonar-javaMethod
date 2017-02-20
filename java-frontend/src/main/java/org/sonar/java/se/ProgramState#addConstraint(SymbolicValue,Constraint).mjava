@@ -1,8 +1,8 @@
   public ProgramState addConstraint(SymbolicValue symbolicValue, Constraint constraint) {
-    PMap<SymbolicValue, Constraint> newConstraints = constraints.put(symbolicValue, constraint);
-    if (newConstraints != constraints) {
-      return new ProgramState(this, newConstraints);
+    PMap<Class<? extends Constraint>, Constraint> constraintsForSV = constraints.get(symbolicValue);
+    if(constraintsForSV == null) {
+      constraintsForSV = PCollections.emptyMap();
     }
-    return this;
+    return addConstraints(symbolicValue, constraintsForSV.put(constraint.getClass(), constraint));
   }
 

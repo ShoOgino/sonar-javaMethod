@@ -16,11 +16,11 @@
       if (isEqualsMethod || parameterCanBeNull(variableSymbol, nullableParams)) {
         stateStream = stateStream.flatMap((ProgramState ps) ->
           Stream.concat(
-            sv.setConstraint(ps, ObjectConstraint.nullConstraint()).stream(),
-            sv.setConstraint(ps, ObjectConstraint.notNull()).stream()
+            sv.setConstraint(ps, ObjectConstraint.NULL).stream(),
+            sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream()
             ));
       } else if(nonNullParams) {
-        stateStream = stateStream.flatMap(ps -> sv.setConstraint(ps, ObjectConstraint.notNull()).stream());
+        stateStream = stateStream.flatMap(ps -> sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream());
       }
     }
     return stateStream.collect(Collectors.toList());
