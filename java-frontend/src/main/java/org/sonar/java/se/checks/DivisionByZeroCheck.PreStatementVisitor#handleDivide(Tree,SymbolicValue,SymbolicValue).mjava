@@ -1,10 +1,19 @@
     private void handleDivide(Tree tree, SymbolicValue leftOp, SymbolicValue rightOp) {
       if (isZero(rightOp)) {
+        context.addExceptionalYield(rightOp, programState, "java.lang.ArithmeticException", DivisionByZeroCheck.this);
         reportIssue(tree, rightOp);
+        // interrupt exploration
+        programState = null;
       } else if (isZero(leftOp)) {
         reuseSymbolicValue(leftOp);
       } else if (isNonZero(leftOp) && isNonZero(rightOp)) {
         deferConstraint(tree.is(Tree.Kind.DIVIDE, Tree.Kind.DIVIDE_ASSIGNMENT) ? ZeroConstraint.NON_ZERO : null);
+      } else if (hasNoConstraint(rightOp)) {
+        ProgramState exceptionalState = programState
+          .addConstraint(rightOp, ZeroConstraint.ZERO)
+          // FIXME SONARJAVA-2125 - we should not have to add the NOT_NULL constraint for primitive types
+          .addConstraint(rightOp, ObjectConstraint.NOT_NULL);
+        context.addExceptionalYield(rightOp, exceptionalState, "java.lang.ArithmeticException", DivisionByZeroCheck.this);
       }
     }
 
