@@ -1,0 +1,13 @@
+  @Test
+  public void test_report_se_issue_with_flow() throws Exception {
+    ImmutableList<JavaFileScannerContext.Location> flow1 = ImmutableList.of(new JavaFileScannerContext.Location("SE flow1", tree));
+    ImmutableList<JavaFileScannerContext.Location> flow2 = ImmutableList.of(new JavaFileScannerContext.Location("SE flow2", tree));
+    ImmutableSet<List<JavaFileScannerContext.Location>> flows = ImmutableSet.of(flow1, flow2);
+
+    scannerContext.reportIssueWithFlow(seCheck, tree, "msg", flows, null);
+    Issue issue = sensorContext.allIssues().iterator().next();
+
+    //issue is raised with two flows, but only one is expected because SONARJAVA-2109
+    assertThat(issue.flows()).hasSize(1);
+  }
+

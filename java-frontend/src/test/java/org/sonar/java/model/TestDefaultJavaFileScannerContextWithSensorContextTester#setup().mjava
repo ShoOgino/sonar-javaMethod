@@ -1,0 +1,20 @@
+  @Before
+  public void setup() throws IOException {
+    sensorContext = SensorContextTester.create(Paths.get(""));
+    sensorContext.fileSystem().add(
+      new DefaultInputFile("myProjectKey", JAVA_FILE.getPath())
+        .setLanguage("java")
+        .initMetadata(new String(Files.readAllBytes(JAVA_FILE.toPath()), StandardCharsets.UTF_8))
+    );
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, sensorContext.fileSystem(), javaClasspath, javaTestClasspath, checkFactory);
+    sonarComponents.setSensorContext(sensorContext);
+
+    // spy getRuleKey call, to avoid mocking CheckFactory and Checks
+    sonarComponents = spy(sonarComponents);
+    when(sonarComponents.getRuleKey(any())).thenReturn(RuleKey.of("repository", "rule"));
+
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser(StandardCharsets.UTF_8).parse(JAVA_FILE);
+    tree = cut.types().get(0);
+    scannerContext = new DefaultJavaFileScannerContext(cut, JAVA_FILE, null, sonarComponents, null, true);
+  }
+
