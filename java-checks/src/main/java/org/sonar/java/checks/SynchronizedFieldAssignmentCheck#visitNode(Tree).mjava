@@ -5,6 +5,11 @@
       Symbol field = getField(sst.expression());
       if (field != null) {
         sst.block().accept(new AssignmentVisitor(field, sst.expression()));
+      } else {
+        Symbol parameter = getParam(sst.expression());
+        if(parameter != null) {
+          reportIssue(tree, String.format("\"%s\" is a method parameter, and should not be used for synchronization.", parameter.name()));
+        }
       }
     }
   }
