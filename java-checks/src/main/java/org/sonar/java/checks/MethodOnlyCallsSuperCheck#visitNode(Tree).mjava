@@ -4,6 +4,9 @@
       return;
     }
     MethodTree methodTree = (MethodTree) tree;
+    if (ALLOWED_METHODS.anyMatch(methodTree)) {
+      return;
+    }
     if (isSingleStatementMethod(methodTree) && isUselessSuperCall(methodTree)
       && !hasAnnotationDifferentFromOverride(methodTree.modifiers().annotations()) && !isFinal(methodTree)) {
       reportIssue(methodTree.simpleName(), "Remove this method to simply inherit it.");
