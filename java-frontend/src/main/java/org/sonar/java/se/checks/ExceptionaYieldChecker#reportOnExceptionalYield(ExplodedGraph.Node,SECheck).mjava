@@ -1,0 +1,9 @@
+  void reportOnExceptionalYield(ExplodedGraph.Node node, SECheck check) {
+    node.parents().stream().forEach(parent -> {
+      MethodYield yield = node.selectedMethodYield(parent);
+      if (yield != null && yield.generatedByCheck(check)) {
+        reportIssue(parent, check);
+      }
+    });
+  }
+

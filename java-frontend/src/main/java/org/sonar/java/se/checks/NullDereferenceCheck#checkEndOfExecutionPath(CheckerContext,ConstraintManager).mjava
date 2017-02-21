@@ -1,11 +1,5 @@
   @Override
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
-    ExplodedGraph.Node exitNode = context.getNode();
-    exitNode.parents().stream().forEach(node -> {
-      MethodYield yield = exitNode.selectedMethodYield(node);
-      if (yield != null && yield.generatedByCheck(this)) {
-        reportIssueOnMethodInvocation(node);
-      }
-    });
+    EXCEPTIONAL_YIELD_CHECKER.reportOnExceptionalYield(context.getNode(), this);
   }
 
