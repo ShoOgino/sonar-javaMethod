@@ -1,0 +1,16 @@
+  public Set<List<JavaFileScannerContext.Location>> exceptionFlows() {
+    Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(node.parent(), svCausingException, domains(node.programState.getConstraints(svCausingException)));
+    Tree syntaxTree = node.programPoint.syntaxTree();
+    ImmutableSet.Builder<List<JavaFileScannerContext.Location>> flowBuilder = ImmutableSet.builder();
+
+    for (List<JavaFileScannerContext.Location> flow : flows) {
+      List<JavaFileScannerContext.Location> newFlow = ImmutableList.<JavaFileScannerContext.Location>builder()
+        .add(new JavaFileScannerContext.Location(exceptionType().name() + " is thrown.", syntaxTree))
+        .addAll(flow)
+        .build();
+      flowBuilder.add(newFlow);
+    }
+
+    return flowBuilder.build();
+  }
+

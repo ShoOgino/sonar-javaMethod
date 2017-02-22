@@ -1,8 +1,8 @@
   void foo3(int j) {
-    int i = 42;
+    int i = 42; // flow@foo3 [[order=3]] {{non-zero}} flow@foo3 [[order=4]] {{non-null}}
     divByZeroIfArg1Zero(i, j); // Compliant
-    if (j == 0) {
-      divByZeroIfArg1Zero(i, j); // Noncompliant {{A division by zero will occur when invoking method divByZeroIfArg1Zero().}}
+    if (j == 0) { // flow@foo3 [[order=1]] {{Implies 'j' is zero.}} // flow@foo3 [[order=2]] {{Implies 'j' is non-null.}}
+      divByZeroIfArg1Zero(i, j); // Noncompliant [[flows=foo3]] {{A division by zero will occur when invoking method divByZeroIfArg1Zero().}}
     }
   }
 

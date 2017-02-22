@@ -1,0 +1,18 @@
+  private void reportIssue(ExplodedGraph.Node node, ExceptionalCheckBasedYield yield, SECheck check) {
+    MethodInvocationTree mit = (MethodInvocationTree) node.programPoint.syntaxTree();
+    ExpressionTree methodSelect = mit.methodSelect();
+
+    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit);
+    Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
+
+    Set<List<JavaFileScannerContext.Location>> flows = Sets.cartesianProduct(argumentsFlows, exceptionFlows).stream()
+      .map(ExceptionalYieldChecker::concatLists)
+      .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    Tree reportTree = methodSelect;
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      reportTree = ((MemberSelectExpressionTree) methodSelect).identifier();
+    }
+    check.reportIssue(reportTree, String.format(message, mit.symbol().name()), flows);
+  }
+

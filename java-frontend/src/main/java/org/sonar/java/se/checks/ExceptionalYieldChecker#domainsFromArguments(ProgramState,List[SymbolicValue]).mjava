@@ -1,0 +1,10 @@
+  private static List<Class<? extends Constraint>> domainsFromArguments(ProgramState programState, List<SymbolicValue> arguments) {
+    return arguments.stream()
+      .map(programState::getConstraints)
+      .filter(Objects::nonNull)
+      .map(ExceptionalYieldChecker::domainsFromConstraints)
+      .flatMap(List::stream)
+      .distinct()
+      .collect(Collectors.toList());
+  }
+
