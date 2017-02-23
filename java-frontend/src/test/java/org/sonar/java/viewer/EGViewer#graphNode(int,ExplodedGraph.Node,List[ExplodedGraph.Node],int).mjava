@@ -1,0 +1,15 @@
+  private static String graphNode(int index, ExplodedGraph.Node node, List<ExplodedGraph.Node> parents, int firstBlockId) {
+    ProgramStateDataProvider psProvider = new ProgramStateDataProvider(node.programState);
+    return new StringBuilder()
+      .append(index)
+      .append("[")
+      .append("label=\"" + node.programPoint + "\"")
+      .append(",psStack=\"" + psProvider.stack() + "\"")
+      .append(",psConstraints=\"" + psProvider.constraints() + "\"")
+      .append(",psValues=\"" + psProvider.values() + "\"")
+      .append(",psLastEvaluatedSymbol=\"" + psProvider.lastEvaluatedSymbol() + "\"")
+      .append(specialHighlight(node, parents, firstBlockId))
+      .append("]")
+      .toString();
+  }
+

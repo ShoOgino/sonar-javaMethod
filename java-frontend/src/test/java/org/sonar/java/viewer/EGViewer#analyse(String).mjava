@@ -1,8 +1,10 @@
   public void analyse(String source){
     ExplodedGraph eg = buildEG(source);
-    viewer.textArea.setText(CFGDebug.toString(CFGViewer.buildCFG(source)));
-    String dot = egToDot(eg);
+    CFG cfg = CFGViewer.buildCFG(source);
+    viewer.textArea.setText(CFGDebug.toString(cfg));
+    int firstBlockId = cfg.blocks().get(0).id();
+    String dot = egToDot(eg, firstBlockId);
     WebEngine webEngine = viewer.webView.getEngine();
-    webEngine.executeScript("loadEG('" + dot + "', " + (!SHOW_CACHE) + ")");
+    webEngine.executeScript("loadEG('" + dot + "', " + (!SHOW_MULTIPLE_PARENTS) + ")");
   }
 

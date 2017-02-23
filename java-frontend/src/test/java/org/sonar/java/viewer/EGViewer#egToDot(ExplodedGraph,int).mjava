@@ -1,19 +1,19 @@
-  private static String egToDot(ExplodedGraph eg) {
+  private static String egToDot(ExplodedGraph eg, int firstBlockId) {
     String result = "graph ExplodedGraph { ";
     List<ExplodedGraph.Node> nodes = new ArrayList<>(eg.nodes().keySet());
     int index = 0;
     for (ExplodedGraph.Node node : nodes) {
       List<ExplodedGraph.Node> parents = Lists.newArrayList(node.parents());
-      result += graphNode(index, node, parents);
+      result += graphNode(index, node, parents, firstBlockId);
       if (!parents.isEmpty()) {
         ExplodedGraph.Node firstParent = node.parent();
         result += parentEdge(nodes.indexOf(firstParent), index, node, firstParent);
 
         int nbParents = parents.size();
-        if (SHOW_CACHE && nbParents > 1) {
-          List<ExplodedGraph.Node> cacheHits = parents.subList(1, nbParents);
-          for (ExplodedGraph.Node cacheHit : cacheHits) {
-            result += cacheEdge(nodes.indexOf(cacheHit), index, node, cacheHit);
+        if (SHOW_MULTIPLE_PARENTS && nbParents > 1) {
+          List<ExplodedGraph.Node> others = parents.subList(1, nbParents);
+          for (ExplodedGraph.Node other : others) {
+            result += parentEdge(nodes.indexOf(other), index, node, other);
           }
         }
       }

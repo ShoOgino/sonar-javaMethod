@@ -1,11 +1,12 @@
-  private static String parentEdge(int from, int to, ExplodedGraph.Node node, ExplodedGraph.Node firstParent) {
+  private static String parentEdge(int from, int to, ExplodedGraph.Node node, ExplodedGraph.Node parent) {
+    String yield = yield(node, parent);
     return from + "->" + to
       + "[label=\""
       + node.learnedAssociations().map(LearnedAssociation::toString).collect(Collectors.joining(","))
       + "\\n"
       + node.learnedConstraints().map(LearnedConstraint::toString).collect(Collectors.joining(","))
       + "\""
-      + yield(node, firstParent)
+      + (yield.isEmpty() ? handleException(node) : yield)
       + "] ";
   }
 

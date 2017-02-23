@@ -1,8 +1,14 @@
   private static ExplodedGraph getEg(CompilationUnitTree cut, SemanticModel semanticModel, MethodTree methodTree) {
-    JavaFileScannerContext context = mock(JavaFileScannerContext.class);
-    when(context.getTree()).thenReturn(cut);
-    when(context.getSemanticModel()).thenReturn(semanticModel);
-    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList());
+    JavaFileScannerContext mockContext = mock(JavaFileScannerContext.class);
+    when(mockContext.getTree()).thenReturn(cut);
+    when(mockContext.getSemanticModel()).thenReturn(semanticModel);
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList()) {
+      @Override
+      public MethodBehavior execute(MethodTree methodTree) {
+        this.context = mockContext;
+        return super.execute(methodTree);
+      }
+    };
     ExplodedGraphWalker walker = new ExplodedGraphWalker(sev.behaviorCache, semanticModel);
     walker.visitMethod(methodTree, new MethodBehavior(methodTree.symbol()));
     return walker.getExplodedGraph();
