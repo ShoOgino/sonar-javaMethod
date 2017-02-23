@@ -1,7 +1,7 @@
-    private Stream<JavaFileScannerContext.Location> methodInvocationFlow(Constraint learnedConstraint, ExplodedGraph.Edge edge) {
+    private List<JavaFileScannerContext.Location> methodInvocationFlow(Constraint learnedConstraint, ExplodedGraph.Edge edge) {
       ExplodedGraph.Node parent = edge.parent;
       MethodInvocationTree mit = (MethodInvocationTree) parent.programPoint.syntaxTree();
-      Stream.Builder<JavaFileScannerContext.Location> flowBuilder = Stream.builder();
+      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
       SymbolicValue returnSV = edge.child.programState.peekValue();
       if (symbolicValues.contains(returnSV)) {
         flowBuilder.add(location(parent, String.format("'%s()' returns %s.", mit.symbol().name(), learnedConstraint.valueAsString())));
@@ -20,18 +20,6 @@
         })
         .forEach(flowBuilder::add);
 
-      MethodYield selectedMethodYield = edge.child.selectedMethodYield(parent);
-      if (selectedMethodYield != null) {
-        if (symbolicValues.contains(returnSV)) {
-          // to retrieve flow for return value
-          argumentIndices.add(-1);
-        }
-        // FIXME SONARJAVA-2076 consider all flows from yields
-        selectedMethodYield.flow(argumentIndices, domains).stream()
-          .limit(1)
-          .flatMap(List::stream)
-          .forEach(flowBuilder::add);
-      }
       return flowBuilder.build();
     }
 

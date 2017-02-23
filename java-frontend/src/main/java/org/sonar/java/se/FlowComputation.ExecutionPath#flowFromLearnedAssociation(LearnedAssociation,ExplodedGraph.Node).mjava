@@ -1,0 +1,15 @@
+    List<JavaFileScannerContext.Location> flowFromLearnedAssociation(LearnedAssociation learnedAssociation, ExplodedGraph.Node node) {
+      if (trackSymbol == null) {
+        return ImmutableList.of();
+      }
+      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      for (Class<? extends Constraint> domain : domains) {
+        Constraint constraint = node.programState.getConstraint(learnedAssociation.symbolicValue(), domain);
+        if (constraint != null) {
+          String message = String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString());
+          flowBuilder.add(new JavaFileScannerContext.Location(message, node.programPoint.syntaxTree()));
+        }
+      }
+      return flowBuilder.build();
+    }
+

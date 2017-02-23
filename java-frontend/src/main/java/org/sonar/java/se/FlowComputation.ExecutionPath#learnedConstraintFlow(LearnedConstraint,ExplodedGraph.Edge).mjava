@@ -1,7 +1,7 @@
-    private Stream<JavaFileScannerContext.Location> learnedConstraintFlow(LearnedConstraint learnedConstraint, ExplodedGraph.Edge edge) {
+    private List<JavaFileScannerContext.Location> learnedConstraintFlow(LearnedConstraint learnedConstraint, ExplodedGraph.Edge edge) {
       Constraint constraint = learnedConstraint.constraint();
       if (constraint == null || !addToFlow.test(constraint)) {
-        return Stream.empty();
+        return ImmutableList.of();
       }
       ExplodedGraph.Node parent = edge.parent;
       Tree nodeTree = parent.programPoint.syntaxTree();
@@ -9,10 +9,10 @@
         return methodInvocationFlow(constraint, edge);
       }
       if (nodeTree.is(Tree.Kind.NEW_CLASS)) {
-        return Stream.of(location(parent, String.format("Constructor implies '%s'.", constraint.valueAsString())));
+        return ImmutableList.of(location(parent, String.format("Constructor implies '%s'.", constraint.valueAsString())));
       }
       String name = SyntaxTreeNameFinder.getName(nodeTree);
       String message = name == null ? constraint.valueAsString() : String.format("Implies '%s' is %s.", name, constraint.valueAsString());
-      return Stream.of(location(parent, message));
+      return ImmutableList.of(location(parent, message));
     }
 
