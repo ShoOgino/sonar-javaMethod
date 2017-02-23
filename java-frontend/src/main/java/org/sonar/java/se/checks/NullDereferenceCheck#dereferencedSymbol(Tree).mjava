@@ -1,0 +1,11 @@
+  @Nullable
+  private static Symbol dereferencedSymbol(Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree memberSelectExpr = ((MemberSelectExpressionTree) syntaxNode).expression();
+      if (memberSelectExpr.is(Tree.Kind.IDENTIFIER)) {
+        return ((IdentifierTree) memberSelectExpr).symbol();
+      }
+    }
+    return null;
+  }
+

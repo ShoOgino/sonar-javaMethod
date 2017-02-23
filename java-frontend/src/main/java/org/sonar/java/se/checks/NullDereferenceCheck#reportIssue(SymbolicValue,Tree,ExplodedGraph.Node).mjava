@@ -4,7 +4,8 @@
     if (!SymbolicValue.NULL_LITERAL.equals(currentVal)) {
       val = currentVal;
     }
-    Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(node, val, Lists.newArrayList(ObjectConstraint.class)).stream()
+    Symbol dereferencedSymbol = dereferencedSymbol(syntaxNode);
+    Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(node, val, Lists.newArrayList(ObjectConstraint.class), dereferencedSymbol).stream()
       .map(f -> addDereferenceMessage(f, syntaxNode))
       .collect(Collectors.toSet());
     reportIssue(syntaxNode, message, flows);
