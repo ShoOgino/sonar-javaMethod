@@ -1,18 +1,28 @@
   private void reportIssue(ExplodedGraph.Node node, ExceptionalCheckBasedYield yield, SECheck check) {
     MethodInvocationTree mit = (MethodInvocationTree) node.programPoint.syntaxTree();
     ExpressionTree methodSelect = mit.methodSelect();
-
-    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit);
-    Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
-
-    Set<List<JavaFileScannerContext.Location>> flows = Sets.cartesianProduct(argumentsFlows, exceptionFlows).stream()
-      .map(ExceptionalYieldChecker::concatLists)
-      .collect(Collectors.toCollection(LinkedHashSet::new));
+    String methodName = mit.symbol().name();
 
     Tree reportTree = methodSelect;
     if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
       reportTree = ((MemberSelectExpressionTree) methodSelect).identifier();
     }
-    check.reportIssue(reportTree, String.format(message, mit.symbol().name()), flows);
+    JavaFileScannerContext.Location methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s()' is invoked.", methodName), reportTree);
+
+    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit);
+    Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
+
+    ImmutableSet.Builder<List<JavaFileScannerContext.Location>> flows = ImmutableSet.builder();
+    for (List<JavaFileScannerContext.Location> argumentFlow : argumentsFlows) {
+      for (List<JavaFileScannerContext.Location> exceptionFlow : exceptionFlows) {
+        flows.add(ImmutableList.<JavaFileScannerContext.Location>builder()
+          .addAll(Lists.reverse(argumentFlow))
+          .add(methodInvocationMessage)
+          .addAll(Lists.reverse(exceptionFlow))
+          .build());
+      }
+    }
+
+    check.reportIssue(reportTree, String.format(message, methodName), flows.build());
   }
 
