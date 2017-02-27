@@ -1,12 +1,16 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
     sonarFile = fs.inputFile(fs.predicates().is(context.getFile()));
+    CommentLinesVisitor commentLinesVisitor = createCommentLineVisitorAndFindNoSonar(context);
+    if(isSonarLintContext()) {
+      // No need to compute metrics on SonarLint side, but the no sonar filter is still required
+      return;
+    }
     classTrees.clear();
     methods = 0;
     complexityInMethods = 0;
     classes = 0;
     methodComplexityDistribution = new RangeDistributionBuilder(LIMITS_COMPLEXITY_METHODS);
-    CommentLinesVisitor commentLinesVisitor = createCommentLineVisitorAndFindNoSonar(context);
     super.scanFile(context);
     //leave file.
     int fileComplexity = context.getComplexityNodes(context.getTree()).size();
