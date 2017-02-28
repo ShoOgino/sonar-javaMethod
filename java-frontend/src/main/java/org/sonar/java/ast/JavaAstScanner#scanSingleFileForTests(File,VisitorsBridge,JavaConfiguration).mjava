@@ -3,8 +3,12 @@
     if (!file.isFile()) {
       throw new IllegalArgumentException("File '" + file + "' not found.");
     }
-    JavaAstScanner scanner = create(conf, visitorsBridge);
-
+    JavaAstScanner astScanner = new JavaAstScanner(JavaParser.createParser(conf.getCharset()), null);
+    if (visitorsBridge != null) {
+      visitorsBridge.setJavaVersion(conf.javaVersion());
+      astScanner.setVisitorBridge(visitorsBridge);
+    }
+    JavaAstScanner scanner = astScanner;
     scanner.scan(Collections.singleton(file));
   }
 
