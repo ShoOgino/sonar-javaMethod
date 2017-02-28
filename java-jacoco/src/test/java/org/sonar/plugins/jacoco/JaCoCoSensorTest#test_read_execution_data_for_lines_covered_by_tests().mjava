@@ -4,8 +4,7 @@
     jacocoExecutionData = new File(outputDir, "jacoco.exec");
     Files.copy(TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest2/org/example/App.class.toCopy"),
         new File(jacocoExecutionData.getParentFile(), "/org/example/App.class"));
-    DefaultInputFile resource = new DefaultInputFile("", "");
-    resource.setLines(10);
+    DefaultInputFile resource = new TestInputFileBuilder("", "").setLines(10).build();
     when(javaResourceLocator.findResourceByClassName(anyString())).thenReturn(resource);
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
     when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);

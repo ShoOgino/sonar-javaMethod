@@ -2,9 +2,10 @@
   public void setup() throws IOException {
     sensorContext = SensorContextTester.create(Paths.get(""));
     sensorContext.fileSystem().add(
-      new DefaultInputFile("myProjectKey", JAVA_FILE.getPath())
+      new TestInputFileBuilder("myProjectKey", JAVA_FILE.getPath())
         .setLanguage("java")
         .initMetadata(new String(Files.readAllBytes(JAVA_FILE.toPath()), StandardCharsets.UTF_8))
+        .build()
     );
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, sensorContext.fileSystem(), javaClasspath, javaTestClasspath, checkFactory);
     sonarComponents.setSensorContext(sensorContext);

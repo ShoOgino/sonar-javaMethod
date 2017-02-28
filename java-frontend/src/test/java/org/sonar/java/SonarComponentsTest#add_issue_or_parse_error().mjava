@@ -6,14 +6,14 @@
 
     DefaultFileSystem fileSystem = context.fileSystem();
     File file = new File("file.java");
-    DefaultInputFile inputFile = new DefaultInputFile("", "file.java");
+    TestInputFileBuilder inputFile = new TestInputFileBuilder("", "file.java");
     inputFile.setLines(45);
     int[] linesOffset = new int[45];
     linesOffset[35] = 12;
     linesOffset[42] = 1;
     inputFile.setOriginalLineOffsets(linesOffset);
     inputFile.setLastValidOffset(420);
-    fileSystem.add(inputFile);
+    fileSystem.add(inputFile.build());
 
     when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(new ArrayList<>());
     when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));

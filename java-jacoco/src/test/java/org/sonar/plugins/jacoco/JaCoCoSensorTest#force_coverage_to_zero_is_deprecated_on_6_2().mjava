@@ -3,13 +3,12 @@
     context.setRuntime(SonarRuntimeImpl.forSonarQube(SQ_6_2, SonarQubeSide.SCANNER));
     Map<String, String> props = ImmutableMap.of(JacocoConfiguration.REPORT_MISSING_FORCE_ZERO, "true", REPORT_PATHS_PROPERTY, "foo");
     DefaultFileSystem fileSystem = new DefaultFileSystem((File)null);
-    fileSystem.add(new DefaultInputFile("","foo").setLanguage("java"));
+    fileSystem.add(new TestInputFileBuilder("","foo").setLanguage("java").build());
     JacocoConfiguration configuration = new JacocoConfiguration(new MapSettings().addProperties(props));
     JaCoCoSensor sensor_force_coverage = new JaCoCoSensor(configuration, perspectives, fileSystem, pathResolver, javaResourceLocator, javaClasspath);
     context.settings().addProperties(props);
     outputDir = TestUtils.getResource("/org/sonar/plugins/jacoco/JaCoCoSensorTest/");
-    DefaultInputFile resource = new DefaultInputFile("", "");
-    resource.setLines(25);
+    DefaultInputFile resource = new TestInputFileBuilder("", "").setLines(25).build();
     when(javaResourceLocator.findResourceByClassName(anyString())).thenReturn(resource);
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
     when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(new File("foo"));

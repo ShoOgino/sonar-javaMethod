@@ -4,7 +4,10 @@
 
     String effectiveKey = "org/sonar/plugins/java/JavaSquidSensorTest.java";
     File file = new File(fs.baseDir(), effectiveKey);
-    DefaultInputFile inputFile = new DefaultInputFile("", effectiveKey).setLanguage("java").setType(onType).initMetadata(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+    DefaultInputFile inputFile = new TestInputFileBuilder("", effectiveKey).setLanguage("java").setModuleBaseDir(fs.baseDirPath())
+      .setType(onType)
+      .initMetadata(new String(Files.readAllBytes(file.toPath()), "UTF-8"))
+      .build();
     fs.add(inputFile);
     return context;
   }
