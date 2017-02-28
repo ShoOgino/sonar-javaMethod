@@ -1,6 +1,5 @@
   private Map<ImmutableList<Integer>, String> computeFlowLines() {
-    Map<String, List<FlowComment>> flows = Multimaps.asMap(this.flows);
-    flows.forEach((id, flow) -> flow.sort(Comparator.comparingInt(FlowComment::order)));
+    Map<String, SortedSet<FlowComment>> flows = Multimaps.asMap(this.flows);
     return flows.entrySet().stream()
       .collect(Collectors.toMap(e -> flowToLines(e.getValue(), flowComment -> flowComment.line), Map.Entry::getKey));
   }

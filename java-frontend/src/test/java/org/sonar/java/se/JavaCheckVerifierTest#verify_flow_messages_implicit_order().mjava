@@ -1,0 +1,14 @@
+  @Test
+  public void verify_flow_messages_implicit_order() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(4, "error", 5, 11, 15)
+      .flow()
+      .flowItem(4, "msg1")
+      .flowItem(5, "msg2")
+      .flowItem(5, "msg3")
+      .flowItem(6, "msg4")
+      .flowItem(6, "msg5")
+      .add();
+    JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlowsImplicitOrder.java", fakeVisitor);
+  }
+
