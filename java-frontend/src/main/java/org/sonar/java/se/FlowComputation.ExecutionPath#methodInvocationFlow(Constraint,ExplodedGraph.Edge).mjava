@@ -8,14 +8,15 @@
       }
       SymbolicValue invocationTarget = parent.programState.peekValue(mit.arguments().size());
       if (symbolicValues.contains(invocationTarget)) {
-        flowBuilder.add(location(parent, "..."));
+        String invocationTargetName = SyntaxTreeNameFinder.getName(mit.methodSelect());
+        flowBuilder.add(location(parent, String.format(IMPLIES_MSG, invocationTargetName, learnedConstraint.valueAsString())));
       }
 
       List<Integer> argumentIndices = correspondingArgumentIndices(symbolicValues, parent);
       argumentIndices.stream()
         .map(mit.arguments()::get)
         .map(argTree -> {
-          String message = String.format("Implies '%s' is %s.", SyntaxTreeNameFinder.getName(argTree), learnedConstraint.valueAsString());
+          String message = String.format(IMPLIES_MSG, SyntaxTreeNameFinder.getName(argTree), learnedConstraint.valueAsString());
           return new JavaFileScannerContext.Location(message, argTree);
         })
         .forEach(flowBuilder::add);
