@@ -1,10 +1,13 @@
     private Set<ClassJavaType> interfacesOfType() {
-      ImmutableSet.Builder<ClassJavaType> builder = ImmutableSet.builder();
-      for (JavaType interfaceType : getInterfaces()) {
-        ClassJavaType classType = (ClassJavaType) interfaceType;
-        builder.add(classType);
-        builder.addAll(classType.getSymbol().interfacesOfType());
+      if (interfaces == null) {
+        ImmutableSet.Builder<ClassJavaType> builder = ImmutableSet.builder();
+        for (JavaType interfaceType : getInterfaces()) {
+          ClassJavaType classType = (ClassJavaType) interfaceType;
+          builder.add(classType);
+          builder.addAll(classType.getSymbol().interfacesOfType());
+        }
+        interfaces = builder.build();
       }
-      return builder.build();
+      return interfaces;
     }
 

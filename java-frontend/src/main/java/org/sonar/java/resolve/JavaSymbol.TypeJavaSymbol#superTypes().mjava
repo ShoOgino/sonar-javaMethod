@@ -3,15 +3,18 @@
      * @return list of classTypes.
      */
     public Set<ClassJavaType> superTypes() {
-      ImmutableSet.Builder<ClassJavaType> types = ImmutableSet.builder();
-      ClassJavaType superClassType = (ClassJavaType) this.superClass();
-      types.addAll(this.interfacesOfType());
-      while (superClassType != null) {
-        types.add(superClassType);
-        TypeJavaSymbol superClassSymbol = superClassType.getSymbol();
-        types.addAll(superClassSymbol.interfacesOfType());
-        superClassType = (ClassJavaType) superClassSymbol.superClass();
+      if (superTypes == null) {
+        ImmutableSet.Builder<ClassJavaType> types = ImmutableSet.builder();
+        ClassJavaType superClassType = (ClassJavaType) this.superClass();
+        types.addAll(this.interfacesOfType());
+        while (superClassType != null) {
+          types.add(superClassType);
+          TypeJavaSymbol superClassSymbol = superClassType.getSymbol();
+          types.addAll(superClassSymbol.interfacesOfType());
+          superClassType = (ClassJavaType) superClassSymbol.superClass();
+        }
+        superTypes = types.build();
       }
-      return types.build();
+      return superTypes;
     }
 
