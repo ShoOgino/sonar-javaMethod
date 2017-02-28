@@ -1,14 +1,12 @@
   private static boolean hasMethodInvocationInMethodSelect(MethodInvocationTree mit) {
-    if (!mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      return false;
-    }
-    MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
+    MemberSelectExpressionTree mse = getMemberSelect(mit);
     while (mse != null) {
-      if (mse.expression().is(Tree.Kind.METHOD_INVOCATION)) {
+      ExpressionTree expression = mse.expression();
+      if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
         return true;
       }
-      if (mse.expression().is(Tree.Kind.MEMBER_SELECT)) {
-        mse = (MemberSelectExpressionTree) mse.expression();
+      if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+        mse = (MemberSelectExpressionTree) expression;
       } else {
         mse = null;
       }

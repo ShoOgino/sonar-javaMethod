@@ -1,0 +1,18 @@
+  private static boolean hasNonFinalFieldInMethodSelect(MethodInvocationTree mit) {
+    MemberSelectExpressionTree mse = getMemberSelect(mit);
+    if (mse == null) {
+      return false;
+    }
+    ExpressionTree expression = ExpressionUtils.skipParentheses(mse.expression());
+    Symbol symbol = null;
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      symbol = ((IdentifierTree) expression).symbol();
+    } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      symbol = ((MemberSelectExpressionTree) expression).identifier().symbol();
+    }
+    return symbol != null &&
+      symbol.owner().isTypeSymbol()
+      && !isThisOrSuper(symbol.name())
+      && !symbol.isFinal();
+  }
+
