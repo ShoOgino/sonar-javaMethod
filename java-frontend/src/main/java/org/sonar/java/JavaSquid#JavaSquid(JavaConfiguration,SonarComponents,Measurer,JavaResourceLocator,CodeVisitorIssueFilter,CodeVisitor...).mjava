@@ -31,12 +31,13 @@
     }
 
     //AstScanner for main files
-    astScanner = new JavaAstScanner(JavaParser.createParser(conf.getCharset()));
+    ActionParser<Tree> parser = JavaParser.createParser(conf.getCharset());
+    astScanner = new JavaAstScanner(parser, sonarComponents);
     boolean enableSymbolicExecution = hasASymbolicExecutionCheck(visitors);
     astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, conf, sonarComponents, enableSymbolicExecution));
 
     //AstScanner for test files
-    astScannerForTests = new JavaAstScanner(astScanner);
+    astScannerForTests = new JavaAstScanner(parser, sonarComponents);
     astScannerForTests.setVisitorBridge(createVisitorBridge(testCodeVisitors, testClasspath, conf, sonarComponents, false));
 
   }
