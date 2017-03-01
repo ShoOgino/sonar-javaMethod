@@ -1,0 +1,28 @@
+  @Test
+  public void io_error_when_reading_file_should_fail_analysis() throws Exception {
+    SensorContextTester context = SensorContextTester.create(new File(""));
+    DefaultFileSystem fileSystem = context.fileSystem();
+    fileSystem.add(new TestInputFileBuilder("", "unknown_file.java").setCharset(StandardCharsets.UTF_8).build());
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 0)));
+    SonarComponents sonarComponents = new SonarComponents(null, fileSystem, null, null, null, null);
+    sonarComponents.setSensorContext(context);
+
+    File unknownFile = new File("unknown_file.java");
+    try {
+      sonarComponents.fileContent(unknownFile);
+      fail("reading file content should have failed");
+    } catch (AnalysisException e) {
+      assertThat(e).hasMessage("Unable to read file unknown_file.java").hasCauseInstanceOf(FileNotFoundException.class);
+    } catch (Exception e) {
+      fail("reading file content should have failed", e);
+    }
+    try {
+      sonarComponents.fileLines(unknownFile);
+      fail("reading file lines should have failed");
+    } catch (AnalysisException e) {
+      assertThat(e).hasMessage("Unable to read file unknown_file.java").hasCauseInstanceOf(FileNotFoundException.class);
+    } catch (Exception e) {
+      fail("reading file content should have failed");
+    }
+  }
+

@@ -1,8 +1,12 @@
   public List<String> fileLines(File file) {
-    try {
-      return Files.readLines(file, fs.encoding());
+    List<String> lines = new ArrayList<>();
+    try(Scanner scanner = new Scanner(getInputStream(file), getCharset(file).name())) {
+      while (scanner.hasNextLine()) {
+        lines.add(scanner.nextLine());
+      }
     } catch (IOException e) {
-      throw new IllegalStateException(e);
+      throw new AnalysisException("Unable to read file "+file, e);
     }
+    return lines;
   }
 

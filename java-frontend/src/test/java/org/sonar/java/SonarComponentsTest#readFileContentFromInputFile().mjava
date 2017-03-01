@@ -2,8 +2,10 @@
   public void readFileContentFromInputFile() throws Exception {
     // read a file containing kanji set with correct encoding and expecting proper length of read input.
     File file = new File("src/test/files/Kanji.java");
-    DefaultInputFile inputFile = new TestInputFileBuilder("", file.getPath())
-      .initMetadata(new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8)).setCharset(StandardCharsets.UTF_8).build();
+    DefaultInputFile inputFile = spy(new TestInputFileBuilder("", file.getPath())
+      .initMetadata(new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8))
+      .setCharset(StandardCharsets.UTF_8)
+      .build());
 
     SensorContextTester context = SensorContextTester.create(new File(""));
     DefaultFileSystem fileSystem = context.fileSystem();
@@ -16,11 +18,29 @@
 
     String fileContent = sonarComponents.fileContent(file);
     assertThat(fileContent).hasSize(59);
+    List<String> fileLines = sonarComponents.fileLines(file);
+    assertThat(fileLines).hasSize(5);
+    assertThat(fileLines.get(0)).hasSize(11);
 
-    // rely on default filesystem charset for version prior to 6.2
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 0)));
     sonarComponents.setSensorContext(context);
 
+    assertThat(sonarComponents.fileContent(file)).hasSize(59);
+    fileLines = sonarComponents.fileLines(file);
+    assertThat(fileLines).hasSize(5);
+    assertThat(fileLines.get(0)).hasSize(11);
+
+    // rely on default filesystem charset for version prior to 6.0
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(5, 6)));
+    sonarComponents.setSensorContext(context);
+
     assertThat(sonarComponents.fileContent(file)).hasSize(63);
+    fileLines = sonarComponents.fileLines(file);
+    assertThat(fileLines).hasSize(5);
+    assertThat(fileLines.get(0)).hasSize(15);
+
+    // One, and only one call made to inputFile contents for SQ>=6.2
+    verify(inputFile, times(1)).contents();
+    verify(inputFile, times(1)).inputStream();
   }
 

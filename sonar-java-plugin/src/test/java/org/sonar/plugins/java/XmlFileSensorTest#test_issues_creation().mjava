@@ -9,11 +9,6 @@
 
     sensor.execute(context);
 
-    verify(sonarComponents, times(1)).reportIssue(Mockito.argThat(new ArgumentMatcher<AnalyzerMessage>() {
-      @Override
-      public boolean matches(Object argument) {
-        return file.getAbsolutePath().equals(((AnalyzerMessage) argument).getFile().getAbsolutePath());
-      }
-    }));
+    verify(sonarComponents, times(1)).reportIssue(Mockito.argThat(argument -> file.getAbsolutePath().equals(argument.getFile().getAbsolutePath())));
   }
 
