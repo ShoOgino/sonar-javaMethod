@@ -1,0 +1,26 @@
+  @Test
+  public void readFileContentFromInputFile() throws Exception {
+    // read a file containing kanji set with correct encoding and expecting proper length of read input.
+    File file = new File("src/test/files/Kanji.java");
+    DefaultInputFile inputFile = new TestInputFileBuilder("", file.getPath())
+      .initMetadata(new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8)).setCharset(StandardCharsets.UTF_8).build();
+
+    SensorContextTester context = SensorContextTester.create(new File(""));
+    DefaultFileSystem fileSystem = context.fileSystem();
+    fileSystem.add(inputFile);
+    fileSystem.setEncoding(StandardCharsets.ISO_8859_1);
+    SonarComponents sonarComponents = new SonarComponents(null, fileSystem, null, null, null, null);
+
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 2)));
+    sonarComponents.setSensorContext(context);
+
+    String fileContent = sonarComponents.fileContent(file);
+    assertThat(fileContent).hasSize(59);
+
+    // rely on default filesystem charset for version prior to 6.2
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 0)));
+    sonarComponents.setSensorContext(context);
+
+    assertThat(sonarComponents.fileContent(file)).hasSize(63);
+  }
+
