@@ -1,0 +1,9 @@
+  private void reportIssueWithSecondaries(JavaFileScannerContext context) {
+    List<JavaFileScannerContext.Location> secondaries = reportedTrees.stream()
+      .skip(1)
+      .map(tree -> new JavaFileScannerContext.Location("", tree))
+      .collect(Collectors.toList());
+
+    context.reportIssue(this, reportedTrees.get(0), "Use classes from the Java API instead of Sun classes.", secondaries, null);
+  }
+

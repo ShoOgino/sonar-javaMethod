@@ -1,8 +1,11 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    this.context = context;
-    reportedLines.clear();
+    reportedTrees.clear();
     excludePackages = exclude.split(",");
     scan(context.getTree());
+
+    if (!reportedTrees.isEmpty()) {
+      reportIssueWithSecondaries(context);
+    }
   }
 
