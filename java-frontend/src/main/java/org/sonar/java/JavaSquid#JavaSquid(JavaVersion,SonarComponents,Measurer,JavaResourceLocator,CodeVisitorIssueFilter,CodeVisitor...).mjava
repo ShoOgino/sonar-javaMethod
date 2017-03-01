@@ -1,4 +1,4 @@
-  public JavaSquid(JavaConfiguration conf,
+  public JavaSquid(JavaVersion javaVersion,
                    @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer,
                    JavaResourceLocator javaResourceLocator, @Nullable CodeVisitorIssueFilter postAnalysisIssueFilter, CodeVisitor... visitors) {
 
@@ -31,14 +31,14 @@
     }
 
     //AstScanner for main files
-    ActionParser<Tree> parser = JavaParser.createParser(conf.getCharset());
+    ActionParser<Tree> parser = JavaParser.createParser();
     astScanner = new JavaAstScanner(parser, sonarComponents);
     boolean enableSymbolicExecution = hasASymbolicExecutionCheck(visitors);
-    astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, conf, sonarComponents, enableSymbolicExecution));
+    astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, javaVersion, sonarComponents, enableSymbolicExecution));
 
     //AstScanner for test files
     astScannerForTests = new JavaAstScanner(parser, sonarComponents);
-    astScannerForTests.setVisitorBridge(createVisitorBridge(testCodeVisitors, testClasspath, conf, sonarComponents, false));
+    astScannerForTests.setVisitorBridge(createVisitorBridge(testCodeVisitors, testClasspath, javaVersion, sonarComponents, false));
 
   }
 

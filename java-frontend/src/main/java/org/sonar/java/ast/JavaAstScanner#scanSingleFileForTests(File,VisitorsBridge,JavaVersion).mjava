@@ -1,11 +1,11 @@
   @VisibleForTesting
-  public static void scanSingleFileForTests(File file, VisitorsBridge visitorsBridge, JavaConfiguration conf) {
+  public static void scanSingleFileForTests(File file, VisitorsBridge visitorsBridge, JavaVersion javaVersion) {
     if (!file.isFile()) {
       throw new IllegalArgumentException("File '" + file + "' not found.");
     }
-    JavaAstScanner astScanner = new JavaAstScanner(JavaParser.createParser(conf.getCharset()), null);
+    JavaAstScanner astScanner = new JavaAstScanner(JavaParser.createParser(), null);
     if (visitorsBridge != null) {
-      visitorsBridge.setJavaVersion(conf.javaVersion());
+      visitorsBridge.setJavaVersion(javaVersion);
       astScanner.setVisitorBridge(visitorsBridge);
     }
     JavaAstScanner scanner = astScanner;

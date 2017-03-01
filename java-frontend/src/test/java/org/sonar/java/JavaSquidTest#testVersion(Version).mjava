@@ -20,8 +20,7 @@
     FileSystem fs = context.fileSystem();
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, mock(JavaClasspath.class), mock(JavaTestClasspath.class), mock(CheckFactory.class));
     sonarComponents.setSensorContext(context);
-    JavaConfiguration conf = new JavaConfiguration(Charset.forName("UTF-8"));
-    JavaSquid javaSquid = new JavaSquid(conf, sonarComponents, new Measurer(fs, context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
+    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(fs, context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
     javaSquid.scan(Lists.newArrayList(file), Lists.newArrayList());
 
     if(version.isGreaterThanOrEqual(Version.create(6, 0))) {
