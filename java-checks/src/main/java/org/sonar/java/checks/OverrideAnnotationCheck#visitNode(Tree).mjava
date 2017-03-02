@@ -1,7 +1,16 @@
   @Override
   public void visitNode(Tree tree) {
+    if (!hasSemantic() || isExcludedByVersion(context.getJavaVersion())) {
+      return;
+    }
     MethodTreeImpl methodTree = (MethodTreeImpl) tree;
-    if (isOverriding(methodTree) && !methodTree.isAnnotatedOverride() && !isExcluded(context.getJavaVersion(), methodTree)) {
+    Symbol.MethodSymbol overriddenSymbol = ((JavaSymbol.MethodJavaSymbol) methodTree.symbol()).overriddenSymbol();
+    if (overriddenSymbol == null || overriddenSymbol.isUnknown()) {
+      return;
+    }
+    if (!overriddenSymbol.isAbstract()
+      && !overriddenSymbol.owner().type().is("java.lang.Object")
+      && !methodTree.isAnnotatedOverride()) {
       reportIssue(methodTree.simpleName(), "Add the \"@Override\" annotation above this method signature");
     }
   }
