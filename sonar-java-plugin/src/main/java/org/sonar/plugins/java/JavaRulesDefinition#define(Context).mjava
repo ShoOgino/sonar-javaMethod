@@ -5,8 +5,9 @@
       .setName("SonarAnalyzer");
     List<Class> checks = CheckList.getChecks();
     new RulesDefinitionAnnotationLoader().load(repository, Iterables.toArray(checks, Class.class));
+    JavaSonarWayProfile.Profile profile = JavaSonarWayProfile.readProfile();
     for (Class ruleClass : checks) {
-      newRule(ruleClass, repository);
+      newRule(ruleClass, repository, profile);
     }
     repository.done();
   }

@@ -1,5 +1,5 @@
   @VisibleForTesting
-  protected void newRule(Class<?> ruleClass, NewRepository repository) {
+  protected void newRule(Class<?> ruleClass, NewRepository repository, JavaSonarWayProfile.Profile profile) {
 
     org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.check.Rule.class);
     if (ruleAnnotation == null) {
@@ -12,6 +12,9 @@
     NewRule rule = repository.rule(ruleKey);
     if (rule == null) {
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
+    }
+    if (versionIsGreaterThan60) {
+      rule.setActivatedByDefault(profile.ruleKeys.contains(ruleKey));
     }
     rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
     if (ruleAnnotation.cardinality() == Cardinality.MULTIPLE) {
