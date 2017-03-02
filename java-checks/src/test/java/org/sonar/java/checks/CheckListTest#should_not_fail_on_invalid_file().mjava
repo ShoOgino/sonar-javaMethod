@@ -3,11 +3,13 @@
    */
   @Test
   public void should_not_fail_on_invalid_file() throws Exception {
-
+    SensorContextTester context = SensorContextTester.create(new File("")).setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(5, 6), SonarQubeSide.SCANNER));
+    SonarComponents sonarComponents = new SonarComponents(null, context.fileSystem(), null, null, null);
+    sonarComponents.setSensorContext(context);
     for (Class check : CheckList.getChecks()) {
       CodeVisitor visitor = (CodeVisitor) check.newInstance();
       if (visitor instanceof JavaFileScanner) {
-        JavaAstScanner.scanSingleFileForTests(new File("src/test/files/CheckListParseErrorTest.java"), new VisitorsBridgeForTests((JavaFileScanner) visitor));
+        JavaAstScanner.scanSingleFileForTests(new File("src/test/files/CheckListParseErrorTest.java"), new VisitorsBridgeForTests((JavaFileScanner) visitor, sonarComponents));
       }
     }
   }
