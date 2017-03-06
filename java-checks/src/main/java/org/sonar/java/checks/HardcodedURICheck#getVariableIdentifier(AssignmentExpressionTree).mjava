@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static IdentifierTree getVariableIdentifier(AssignmentExpressionTree tree) {
+    ExpressionTree variable = ExpressionUtils.skipParentheses(tree.variable());
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      return (IdentifierTree) variable;
+    } else if (variable.is(Tree.Kind.MEMBER_SELECT)) {
+      return ((MemberSelectExpressionTree) variable).identifier();
+    }
+    // ignore assignments in arrays
+    return null;
+  }
+

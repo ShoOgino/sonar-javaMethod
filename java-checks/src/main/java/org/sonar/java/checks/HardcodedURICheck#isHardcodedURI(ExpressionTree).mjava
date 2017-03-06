@@ -1,0 +1,9 @@
+  private static boolean isHardcodedURI(ExpressionTree expr) {
+    ExpressionTree newExpr = ExpressionUtils.skipParentheses(expr);
+    if (!newExpr.is(Tree.Kind.STRING_LITERAL)) {
+      return false;
+    }
+    String stringLiteral = LiteralUtils.trimQuotes(((LiteralTree) newExpr).value());
+    return URI_PATTERN.matcher(stringLiteral).find();
+  }
+
