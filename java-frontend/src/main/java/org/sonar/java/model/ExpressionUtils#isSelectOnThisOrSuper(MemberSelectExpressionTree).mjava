@@ -1,0 +1,16 @@
+  /**
+   * Checks of is the given tree is selecting with <code>this</code> or <code>super</code>
+   * @param tree The tree to check.
+   * @return true when the tree is a select on <code>this</code> or <code>super</code>
+   * @see #isSelectOnThisOrSuper(AssignmentExpressionTree)
+   */
+  public static boolean isSelectOnThisOrSuper(MemberSelectExpressionTree tree) {
+    if (!tree.expression().is(Tree.Kind.IDENTIFIER)) {
+      // This is no longer simple.
+      return false;
+    }
+
+    String selectSourceName = ((IdentifierTree) tree.expression()).name();
+    return "this".equalsIgnoreCase(selectSourceName) || "super".equalsIgnoreCase(selectSourceName);
+  }
+

@@ -1,0 +1,18 @@
+  @Test
+  public void compound_assignment_member_select() throws Exception {
+    CFG cfg = buildCFG("void foo() {\n" +
+      "  this.myField *= 0;\n" +
+      "}\n" +
+      "int myField;");
+
+    CFGChecker checker = checker(
+      block(
+        element(IDENTIFIER, "this"),
+        element(MEMBER_SELECT),
+        element(INT_LITERAL, 0),
+        element(MULTIPLY_ASSIGNMENT)
+      ).successors(0));
+
+    checker.check(cfg);
+  }
+

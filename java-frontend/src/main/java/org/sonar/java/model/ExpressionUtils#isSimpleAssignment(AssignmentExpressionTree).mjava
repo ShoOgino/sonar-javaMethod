@@ -2,11 +2,18 @@
    * In case of simple assignments, only the expression is evaluated, as we only use the reference to the variable to store the result.
    * For SE-Based checks, only a single value should be unstacked if its the case. For other cases, two values should be unstacked.
    * See JLS8-15.26
-   * 
+   *
    * @param tree The assignment tree
-   * @return true if the tree is a simple assignment 
+   * @return true if the tree is a simple assignment
+   * @see #extractIdentifier(AssignmentExpressionTree)
    */
   public static boolean isSimpleAssignment(AssignmentExpressionTree tree) {
-    return tree.is(Tree.Kind.ASSIGNMENT) && ExpressionUtils.skipParentheses(tree.variable()).is(Tree.Kind.IDENTIFIER);
+    if (!tree.is(Tree.Kind.ASSIGNMENT)) {
+      // This can't possibly be a simple assignment.
+      return false;
+    }
+
+    ExpressionTree variable = ExpressionUtils.skipParentheses(tree.variable());
+    return variable.is(Tree.Kind.IDENTIFIER) || isSelectOnThisOrSuper(tree);
   }
 

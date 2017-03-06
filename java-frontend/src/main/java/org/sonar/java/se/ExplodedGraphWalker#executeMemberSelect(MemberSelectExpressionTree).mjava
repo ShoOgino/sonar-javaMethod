@@ -4,7 +4,12 @@
       ProgramState.Pop unstackMSE = programState.unstackValue(1);
       programState = unstackMSE.state;
     }
-    SymbolicValue mseValue = constraintManager.createSymbolicValue(mse);
-    programState = programState.stackValue(mseValue);
+
+    if (ExpressionUtils.isSelectOnThisOrSuper(mse)) {
+      executeIdentifier(mse.identifier());
+    } else {
+      SymbolicValue mseValue = constraintManager.createSymbolicValue(mse);
+      programState = programState.stackValue(mseValue);
+    }
   }
 

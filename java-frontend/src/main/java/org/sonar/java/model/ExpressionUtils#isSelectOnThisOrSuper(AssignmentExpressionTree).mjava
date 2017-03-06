@@ -1,0 +1,11 @@
+  /**
+   * Checks of is the given tree is a {@link MemberSelectExpressionTree} which is selecting with <code>this</code> or <code>super</code>
+   * @param tree The tree to check.
+   * @return true when the tree is a select on <code>this</code> or <code>super</code>
+   * @see #isSelectOnThisOrSuper(MemberSelectExpressionTree)
+   */
+  public static boolean isSelectOnThisOrSuper(AssignmentExpressionTree tree) {
+    ExpressionTree variable = ExpressionUtils.skipParentheses(tree.variable());
+    return variable.is(Tree.Kind.MEMBER_SELECT) && isSelectOnThisOrSuper((MemberSelectExpressionTree) variable);
+  }
+

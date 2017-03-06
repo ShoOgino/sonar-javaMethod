@@ -1,0 +1,10 @@
+  private List<AssignmentExpressionTree> findAssignmentExpressionTrees(MethodTree methodTree) {
+    return methodTree.block().body().stream()
+          .filter(s -> s.is(Tree.Kind.EXPRESSION_STATEMENT))
+          .map(ExpressionStatementTree.class::cast)
+          .map(ExpressionStatementTree::expression)
+          .filter(e -> e instanceof AssignmentExpressionTree)
+          .map(AssignmentExpressionTree.class::cast)
+          .collect(Collectors.toList());
+  }
+
