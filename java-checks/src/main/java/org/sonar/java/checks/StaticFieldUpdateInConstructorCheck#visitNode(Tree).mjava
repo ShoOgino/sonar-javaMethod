@@ -1,0 +1,25 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    MethodTree constructor = (MethodTree) tree;
+
+    Symbol.TypeSymbol owner = constructor.symbol().enclosingClass();
+    Set<Symbol> staticFields = owner.memberSymbols().stream()
+      .filter(Symbol::isVariableSymbol)
+      .filter(Symbol::isStatic)
+      .collect(Collectors.toSet());
+
+    StaticFieldUpdateVisitor visitor = new StaticFieldUpdateVisitor(staticFields);
+    constructor.block().accept(visitor);
+    visitor.assignedStaticFields().forEach(identifierTree -> {
+      Symbol staticField = identifierTree.symbol();
+      reportIssue(identifierTree,
+        "Remove this assignment of \"" + staticField.name() + "\".",
+        Collections.singletonList(new JavaFileScannerContext.Location("", staticField.declaration())),
+        null);
+    });
+
+  }
+

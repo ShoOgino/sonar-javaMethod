@@ -1,0 +1,11 @@
+    private static IdentifierTree getVariable(ExpressionTree expressionTree) {
+      Tree variable = ExpressionUtils.skipParentheses(expressionTree);
+      if (variable.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
+        return getVariable(((ArrayAccessExpressionTree) variable).expression());
+      }
+      if (variable.is(Tree.Kind.MEMBER_SELECT)) {
+        return getVariable(((MemberSelectExpressionTree) variable).identifier());
+      }
+      return (IdentifierTree) variable;
+    }
+
