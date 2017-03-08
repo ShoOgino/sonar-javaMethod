@@ -1,5 +1,9 @@
   public static Document parseXML(File file) {
     try {
+      if (file.length() == 0) {
+        LOG.warn("File {} is empty and won't be analyzed.", file.getPath());
+        return null;
+      }
       Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
       SAXParserFactory factory = SAXParserFactory.newInstance();
       factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
