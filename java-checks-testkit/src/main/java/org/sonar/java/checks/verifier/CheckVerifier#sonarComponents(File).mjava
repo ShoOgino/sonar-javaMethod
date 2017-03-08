@@ -1,0 +1,13 @@
+  static SonarComponents sonarComponents(File file) {
+    SensorContextTester context = SensorContextTester.create(new File("")).setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 0)));
+    SonarComponents sonarComponents = new SonarComponents(null, context.fileSystem(), null, null, null) {
+      @Override
+      public boolean reportAnalysisError(RecognitionException re, File file) {
+        return false;
+      }
+    };
+    sonarComponents.setSensorContext(context);
+    context.fileSystem().add(new TestInputFileBuilder("", file.getPath()).setCharset(StandardCharsets.UTF_8).build());
+    return sonarComponents;
+  }
+
