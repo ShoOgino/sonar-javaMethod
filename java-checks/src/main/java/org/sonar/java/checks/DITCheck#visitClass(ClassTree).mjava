@@ -4,7 +4,10 @@
       Type superClass = tree.symbol().superClass();
       int dit = 0;
       while (superClass != null) {
-        dit++;
+        String fullyQualifiedName = superClass.fullyQualifiedName();
+        if (getPatterns().stream().noneMatch(wp -> wp.match(fullyQualifiedName))) {
+          dit++;
+        }
         superClass = superClass.symbol().superClass();
       }
       if (dit > max) {
