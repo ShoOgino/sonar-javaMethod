@@ -1,0 +1,10 @@
+  private void checkStaticVariables(List<Tree> members, Type classType) {
+    members.stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .filter(SubClassStaticReferenceCheck::isStaticVariable)
+      .map(VariableTree::initializer)
+      .filter(Objects::nonNull)
+      .forEach(initializer -> initializer.accept(new StaticAccessVisitor(classType)));
+  }
+

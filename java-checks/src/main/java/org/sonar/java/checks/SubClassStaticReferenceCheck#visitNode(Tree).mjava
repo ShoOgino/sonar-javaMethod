@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    Type classType = classTree.symbol().type();
+    List<Tree> members = classTree.members();
+
+    // JLS 12.4. Initialization of Classes and Interfaces:
+    // Initialization of a class consists of executing its static initializers and the initializers for static fields (class variables)
+    // declared in the class.
+    checkStaticVariables(members, classType);
+    checkStaticInitializers(members, classType);
+  }
+

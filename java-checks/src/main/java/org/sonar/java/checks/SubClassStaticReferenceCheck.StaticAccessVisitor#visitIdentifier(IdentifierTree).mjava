@@ -1,0 +1,8 @@
+    @Override
+    public void visitIdentifier(IdentifierTree tree) {
+      Type type = tree.symbolType();
+      if (!classType.equals(type) && type.isSubtypeOf(classType)) {
+        reportIssue(tree, String.format("Remove this reference to \"%s\".", type.symbol().name()));
+      }
+    }
+
