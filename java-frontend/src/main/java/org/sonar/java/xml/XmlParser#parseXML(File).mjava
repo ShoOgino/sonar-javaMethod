@@ -10,7 +10,10 @@
       factory.newSAXParser().parse(file, new LocationHandler(document));
       return document;
     } catch (ParserConfigurationException | SAXException | IOException e) {
-      LOG.error("Unable to parse xml file: " + file.getPath(), e);
+      LOG.error("Unable to parse xml file: {}", file.getPath());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("XML file parsing failed because of : {}", ExceptionUtils.getFullStackTrace(e));
+      }
     }
     return null;
   }
