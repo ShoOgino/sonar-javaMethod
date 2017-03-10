@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree clazzTree = (ClassTree) tree;
+    SymbolMetadata clazzMeta = clazzTree.symbol().metadata();
+
+    if (isSpringComponent(clazzMeta)) {
+      clazzTree.members().stream().filter(v -> v.is(Kind.VARIABLE))
+        .map(m -> (VariableTree) m)
+        .filter(v -> !v.symbol().isStatic())
+        .filter(v -> !v.symbol().metadata().isAnnotatedWith("org.springframework.beans.factory.annotation.Autowired"))
+        .forEach(v -> reportIssue(v.simpleName(), "Make this member @Autowired or remove it."));
+    }
+  }
+
