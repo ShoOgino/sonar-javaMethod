@@ -1,10 +1,5 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Kind.ASSERT_STATEMENT)) {
-      withinAssert = true;
-      containsSideEffect = false;
-    } else if (withinAssert && !containsSideEffect) {
-      containsSideEffect = true;
-    }
+    ((AssertStatementTree) tree).condition().accept(new MethodInvocationVisitor());
   }
 
