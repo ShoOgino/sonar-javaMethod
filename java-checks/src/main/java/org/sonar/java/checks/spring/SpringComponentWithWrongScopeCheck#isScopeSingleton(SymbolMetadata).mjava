@@ -1,0 +1,12 @@
+  private static boolean isScopeSingleton(SymbolMetadata clazzMeta) {
+    List<AnnotationValue> values = clazzMeta.valuesForAnnotation(SCOPE_ANNOTATION_FQN);
+    for (AnnotationValue annotationValue : values) {
+      if (("value".equals(annotationValue.name()) || "scopeName".equals(annotationValue.name()))
+        && annotationValue.value() instanceof LiteralTree
+        && !"\"singleton\"".equals(((LiteralTree) annotationValue.value()).value())) {
+        return false;
+      }
+    }
+    return true;
+  }
+

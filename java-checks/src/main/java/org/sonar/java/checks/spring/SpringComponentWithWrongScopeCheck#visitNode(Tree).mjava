@@ -1,0 +1,12 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree clazzTree = (ClassTree) tree;
+    SymbolMetadata clazzMeta = clazzTree.symbol().metadata();
+
+    if (isSpringComponent(clazzMeta)
+      && clazzMeta.isAnnotatedWith(SCOPE_ANNOTATION_FQN)
+      && !isScopeSingleton(clazzMeta)) {
+      checkScopeAnnotation(clazzTree);
+    }
+  }
+
