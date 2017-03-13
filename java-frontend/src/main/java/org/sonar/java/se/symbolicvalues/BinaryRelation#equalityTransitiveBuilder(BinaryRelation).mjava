@@ -1,0 +1,12 @@
+  @CheckForNull
+  private BinaryRelation equalityTransitiveBuilder(BinaryRelation other) {
+    if (!isEqualityRelation()
+      || (kind == METHOD_EQUALS && other.kind == EQUAL)) {
+      return null;
+    }
+
+    return binaryRelation(other.kind,
+      hasOperand(other.leftOp) ? differentOperand(other) : other.leftOp,
+      hasOperand(other.leftOp) ? other.rightOp : differentOperand(other));
+  }
+

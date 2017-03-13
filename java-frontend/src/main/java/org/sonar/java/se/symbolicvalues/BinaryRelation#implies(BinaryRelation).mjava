@@ -7,11 +7,15 @@
    * </ul>
    * @see RelationState
    */
-  protected RelationState implies(BinaryRelation relation) {
-    if (leftOp.equals(relation.leftOp) && rightOp.equals(relation.rightOp)) {
-      return relation.isImpliedBy(this);
-    } else if (leftOp.equals(relation.rightOp) && rightOp.equals(relation.leftOp)) {
-      return relation.symmetric().isImpliedBy(this);
+  private RelationState implies(BinaryRelation relation) {
+    if (this.equals(relation)) {
+      return RelationState.FULFILLED;
+    }
+    if (inverse().equals(relation)) {
+      return RelationState.UNFULFILLED;
+    }
+    if (hasSameOperandsAs(relation)) {
+      return RelationStateTable.solveRelation(kind, relation.kind);
     }
     return RelationState.UNDETERMINED;
   }

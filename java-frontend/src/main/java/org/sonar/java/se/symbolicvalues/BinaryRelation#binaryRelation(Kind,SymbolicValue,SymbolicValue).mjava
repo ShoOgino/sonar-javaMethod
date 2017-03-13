@@ -1,41 +1,17 @@
-  public static BinaryRelation binaryRelation(Kind kind, SymbolicValue leftOp, SymbolicValue rightOp) {
-    BinaryRelation relation;
+  static BinaryRelation binaryRelation(Kind kind, SymbolicValue leftOp, SymbolicValue rightOp) {
     switch (kind) {
       case EQUAL:
-        relation = new EqualRelation(leftOp, rightOp);
-        relation.inverse = new NotEqualRelation(leftOp, rightOp);
-        relation.inverse.symmetric = new NotEqualRelation(rightOp, leftOp);
-        relation.inverse.inverse = relation;
-        relation.symmetric = new EqualRelation(rightOp, leftOp);
-        relation.symmetric.symmetric = relation;
-        relation.symmetric.inverse = relation.inverse.symmetric;
-        break;
       case NOT_EQUAL:
-        relation = binaryRelation(Kind.EQUAL, leftOp, rightOp).inverse;
-        break;
       case LESS_THAN:
-        relation = new LessThanRelation(leftOp, rightOp);
-        break;
-      case LESS_THAN_OR_EQUAL:
-        relation = new LessThanOrEqualRelation(leftOp, rightOp);
-        break;
-      case GREATER_THAN:
-        relation = new GreaterThanRelation(leftOp, rightOp);
-        break;
       case GREATER_THAN_OR_EQUAL:
-        relation = new GreaterThanOrEqualRelation(leftOp, rightOp);
-        break;
       case METHOD_EQUALS:
-        relation = new MethodEqualsRelation(leftOp, rightOp);
-        break;
       case NOT_METHOD_EQUALS:
-        relation = new NotMethodEqualsRelation(leftOp, rightOp);
-        break;
+        return new BinaryRelation(kind, leftOp, rightOp);
+      case LESS_THAN_OR_EQUAL:
+      case GREATER_THAN:
+        return new BinaryRelation(kind.symmetric(), rightOp, leftOp);
       default:
         throw new IllegalStateException("Creation of relation of kind " + kind + " is missing!");
     }
-    return relation;
-
-
   }
 

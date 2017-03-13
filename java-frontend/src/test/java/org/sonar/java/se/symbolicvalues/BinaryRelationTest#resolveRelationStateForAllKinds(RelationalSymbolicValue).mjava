@@ -1,0 +1,10 @@
+  private List<String> resolveRelationStateForAllKinds(RelationalSymbolicValue known) {
+    List<String> actual = new ArrayList<>();
+    for (Kind when : Kind.values()) {
+      RelationalSymbolicValue test = relSV(when, a, b);
+      RelationState relationState = test.binaryRelation().resolveState(given(known));
+      actual.add(String.format("given %s when %s -> %s", relationToString(known), relationToString(test), relationState));
+    }
+    return actual;
+  }
+

@@ -1,0 +1,11 @@
+  @Test
+  public void test_direct_deduction() throws Exception {
+    List<String> actual = new ArrayList<>();
+    for (Kind given : Kind.values()) {
+      actual.addAll(resolveRelationStateForAllKinds(relSV(given, a, b)));
+      actual.addAll(resolveRelationStateForAllKinds(relSV(given, b, a)));
+    }
+    List<String> expected = IOUtils.readLines(getClass().getResourceAsStream("/relations/direct.txt"));
+    assertThat(actual).isEqualTo(expected);
+  }
+

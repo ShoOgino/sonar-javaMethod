@@ -1,0 +1,12 @@
+  @CheckForNull
+  private BinaryRelation combineTransitively(BinaryRelation other) {
+    if (!potentiallyTransitiveWith(other)) {
+      return null;
+    }
+    BinaryRelation transitive = combineTransitivelyOneWay(other);
+    if (transitive != null) {
+      return transitive;
+    }
+    return other.combineTransitivelyOneWay(this);
+  }
+

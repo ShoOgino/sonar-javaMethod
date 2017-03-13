@@ -1,0 +1,31 @@
+  protected RelationState resolveState(List<BinaryRelation> knownRelations) {
+    if (hasSameOperand()) {
+      return relationStateForSameOperand();
+    }
+    Set<BinaryRelation> allRelations = new HashSet<>(knownRelations);
+    Deque<BinaryRelation> workList = new ArrayDeque<>(knownRelations);
+    int iterations = 0;
+    while (!workList.isEmpty()) {
+      if (allRelations.size() > MAX_DEDUCED_RELATIONS || iterations > MAX_ITERATIONS) {
+        // safety mechanism in case of an error in the algorithm
+        // should not happen under normal conditions
+        throw new TransitiveRelationExceededException("Used relations: " + allRelations.size() + ". Iterations " + iterations);
+      }
+      iterations++;
+      BinaryRelation relation = workList.pop();
+      RelationState result = relation.implies(this);
+      if (result.isDetermined()) {
+        return result;
+      }
+      List<BinaryRelation> newRelations = allRelations.stream()
+        .map(relation::deduceTransitiveOrSimplified)
+        .filter(Objects::nonNull)
+        .filter(r -> !allRelations.contains(r))
+        .collect(Collectors.toList());
+
+      allRelations.addAll(newRelations);
+      workList.addAll(newRelations);
+    }
+    return RelationState.UNDETERMINED;
+  }
+
