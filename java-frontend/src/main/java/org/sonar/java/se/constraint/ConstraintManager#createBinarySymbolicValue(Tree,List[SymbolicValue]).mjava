@@ -1,0 +1,37 @@
+  public SymbolicValue createBinarySymbolicValue(Tree syntaxNode, List<SymbolicValue> computedFrom) {
+    SymbolicValue result;
+    switch (syntaxNode.kind()) {
+      case EQUAL_TO:
+        return createRelationalSymbolicValue(Kind.EQUAL, computedFrom);
+      case NOT_EQUAL_TO:
+        return not(createRelationalSymbolicValue(Kind.EQUAL, computedFrom));
+      case LESS_THAN:
+        return createRelationalSymbolicValue(Kind.LESS_THAN, computedFrom);
+      case LESS_THAN_OR_EQUAL_TO:
+        // a <= b -> ! (b < a)
+        return not(createRelationalSymbolicValue(Kind.LESS_THAN, Lists.reverse(computedFrom)));
+      case GREATER_THAN:
+        return createRelationalSymbolicValue(Kind.LESS_THAN, Lists.reverse(computedFrom));
+      case GREATER_THAN_OR_EQUAL_TO:
+        // a >= b -> ! (a < b)
+        return not(createRelationalSymbolicValue(Kind.LESS_THAN, computedFrom));
+      case AND:
+      case AND_ASSIGNMENT:
+        result = new SymbolicValue.AndSymbolicValue(counter);
+        break;
+      case OR:
+      case OR_ASSIGNMENT:
+        result = new SymbolicValue.OrSymbolicValue(counter);
+        break;
+      case XOR:
+      case XOR_ASSIGNMENT:
+        result = new SymbolicValue.XorSymbolicValue(counter);
+        break;
+      default:
+        result = createDefaultSymbolicValue();
+    }
+    result.computedFrom(computedFrom);
+    counter++;
+    return result;
+  }
+
