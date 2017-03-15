@@ -1,18 +1,14 @@
   @Test
   public void exceptional_SV_should_contain_exception_type_in_toString() {
-    SymbolicValue.ExceptionalSymbolicValue unknownException = new SymbolicValue.ExceptionalSymbolicValue(42, null);
-    // contains the key
-    assertThat(unknownException.toString()).contains("42");
+    SymbolicValue.ExceptionalSymbolicValue unknownException = new SymbolicValue.ExceptionalSymbolicValue(null);
     // contains the exception
     assertThat(unknownException.toString()).contains("!unknownException!");
 
     JavaSymbol.PackageJavaSymbol packageSymbol = new JavaSymbol.PackageJavaSymbol("org.foo.bar", null);
     JavaSymbol.TypeJavaSymbol exceptionSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyException", packageSymbol);
     Type exceptionType = new ClassJavaType(exceptionSymbol);
-    SymbolicValue.ExceptionalSymbolicValue knownException = new SymbolicValue.ExceptionalSymbolicValue(42, exceptionType);
+    SymbolicValue.ExceptionalSymbolicValue knownException = new SymbolicValue.ExceptionalSymbolicValue(exceptionType);
 
-    // contains the key
-    assertThat(knownException.toString()).contains("42");
     // contains the exception
     assertThat(knownException.toString()).contains("org.foo.bar.MyException!");
   }

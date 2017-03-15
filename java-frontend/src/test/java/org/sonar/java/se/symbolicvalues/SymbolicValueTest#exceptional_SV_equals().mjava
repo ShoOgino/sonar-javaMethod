@@ -4,15 +4,15 @@
     JavaSymbol.TypeJavaSymbol exceptionSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyException", packageSymbol);
     Type exceptionType = new ClassJavaType(exceptionSymbol);
 
-    SymbolicValue.ExceptionalSymbolicValue sv = new SymbolicValue.ExceptionalSymbolicValue(42, exceptionType);
+    SymbolicValue.ExceptionalSymbolicValue sv = new SymbolicValue.ExceptionalSymbolicValue(exceptionType);
 
     assertThat(sv).isEqualTo(sv);
     assertThat(sv).isNotEqualTo(null);
-    assertThat(sv).isNotEqualTo(new SymbolicValue(sv.id()));
+    assertThat(sv).isNotEqualTo(new SymbolicValue());
 
     // different IDs but same exception
-    assertThat(sv).isNotEqualTo(new SymbolicValue.ExceptionalSymbolicValue(sv.id() + 1, sv.exceptionType()));
+    assertThat(sv).isNotEqualTo(new SymbolicValue.ExceptionalSymbolicValue(sv.exceptionType()));
     // same IDs but different exception
-    assertThat(sv).isNotEqualTo(new SymbolicValue.ExceptionalSymbolicValue(sv.id(), null));
+    assertThat(sv).isNotEqualTo(new SymbolicValue.ExceptionalSymbolicValue(null));
   }
 
