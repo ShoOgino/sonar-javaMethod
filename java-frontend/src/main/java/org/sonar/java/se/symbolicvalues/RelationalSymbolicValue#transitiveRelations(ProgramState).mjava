@@ -1,0 +1,9 @@
+  private List<RelationalSymbolicValue> transitiveRelations(ProgramState programState) {
+    BinaryRelation relation = binaryRelation();
+    return programState.getKnownRelations().stream()
+      .map(r -> r.deduceTransitiveOrSimplified(relation))
+      .filter(Objects::nonNull)
+      .map(RelationalSymbolicValue::binaryRelationToSymbolicValue)
+      .collect(Collectors.toList());
+  }
+

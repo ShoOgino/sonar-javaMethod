@@ -1,0 +1,16 @@
+  private List<ProgramState> getNewProgramStates(ProgramState initialProgramState) {
+    List<RelationalSymbolicValue> newRelations = transitiveRelations(initialProgramState);
+    newRelations.add(this);
+
+    List<ProgramState> programStates = new ArrayList<>();
+    programStates.add(initialProgramState);
+    for (RelationalSymbolicValue relationalSymbolicValue : newRelations) {
+      List<ProgramState> intermediateStates = new ArrayList<>();
+      for (ProgramState programState: programStates) {
+        intermediateStates.addAll(relationalSymbolicValue.copyAllConstraints(programState));
+      }
+      programStates = intermediateStates;
+    }
+    return programStates;
+  }
+

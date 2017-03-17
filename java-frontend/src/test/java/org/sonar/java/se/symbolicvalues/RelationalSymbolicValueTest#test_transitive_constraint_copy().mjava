@@ -1,0 +1,17 @@
+  @Test
+  public void test_transitive_constraint_copy() throws Exception {
+    SymbolicValue aNEb = create(Tree.Kind.NOT_EQUAL_TO, ImmutableList.of(b, a));
+    SymbolicValue bNEc = create(Tree.Kind.NOT_EQUAL_TO, ImmutableList.of(c, b));
+    ProgramState programState = ProgramState.EMPTY_STATE;
+    List<ProgramState> programStates = aNEb.setConstraint(programState, BooleanConstraint.TRUE);
+    programState = Iterables.getOnlyElement(programStates);
+    programStates = bNEc.setConstraint(programState, BooleanConstraint.TRUE);
+    programState = Iterables.getOnlyElement(programStates);
+
+    SymbolicValue aNEc = create(Tree.Kind.NOT_EQUAL_TO, ImmutableList.of(c, a));
+    programStates = aNEc.setConstraint(programState, BooleanConstraint.FALSE);
+    assertThat(programStates).hasSize(1);
+    programStates = aNEc.setConstraint(programState, BooleanConstraint.TRUE);
+    assertThat(programStates).hasSize(1);
+  }
+

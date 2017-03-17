@@ -1,11 +1,11 @@
-  private List<ProgramState> copyConstraintFromTo(SymbolicValue from, SymbolicValue to, ProgramState programState, BooleanConstraint booleanConstraint) {
+  private List<ProgramState> copyConstraintFromTo(SymbolicValue from, SymbolicValue to, ProgramState programState) {
     List<ProgramState> states = new ArrayList<>();
     states.add(programState);
     PMap<Class<? extends Constraint>, Constraint> leftConstraints = programState.getConstraints(from);
     if (leftConstraints != null) {
       leftConstraints.forEach((d, c) -> {
         List<ProgramState> newStates = new ArrayList<>();
-        Constraint constraint = shouldNotInverse().equals(booleanConstraint) ? c : c.inverse();
+        Constraint constraint = c.copyOver(kind);
         states.forEach(state -> {
           if (constraint == null) {
             PMap<Class<? extends Constraint>, Constraint> constraints = state.getConstraints(to);
