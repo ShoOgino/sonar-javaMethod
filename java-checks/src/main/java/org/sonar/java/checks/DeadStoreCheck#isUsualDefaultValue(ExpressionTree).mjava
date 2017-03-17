@@ -1,0 +1,19 @@
+  private static boolean isUsualDefaultValue(ExpressionTree tree) {
+    ExpressionTree expr = ExpressionUtils.skipParentheses(tree);
+    switch (expr.kind()) {
+      case BOOLEAN_LITERAL:
+      case NULL_LITERAL:
+        return true;
+      case STRING_LITERAL:
+        return isEmptyString((LiteralTree) expr);
+      case INT_LITERAL:
+        String value = ((LiteralTree) expr).value();
+        return "0".equals(value) || "1".equals(value);
+      case UNARY_MINUS:
+      case UNARY_PLUS:
+        return isUsualDefaultValue(((UnaryExpressionTree) tree).expression());
+      default:
+        return false;
+    }
+  }
+

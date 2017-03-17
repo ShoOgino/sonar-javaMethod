@@ -1,7 +1,8 @@
   private void handleVariable(Set<Symbol> out, VariableTree localVar) {
     Symbol symbol = localVar.symbol();
-    if (localVar.initializer() != null && !out.contains(symbol)) {
-      createIssue(((VariableTreeImpl) localVar).equalToken(), localVar.initializer(), symbol);
+    ExpressionTree initializer = localVar.initializer();
+    if (initializer != null && !isUsualDefaultValue(initializer) && !out.contains(symbol)) {
+      createIssue(((VariableTreeImpl) localVar).equalToken(), initializer, symbol);
     }
     out.remove(symbol);
   }
