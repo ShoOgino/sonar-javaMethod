@@ -1,0 +1,12 @@
+  private void checkIntegerDivisionInsideFloatingPointExpression(BinaryExpressionTree integerDivision) {
+    Tree parent = integerDivision.parent();
+    while (parent instanceof ExpressionTree) {
+      ExpressionTree expressionTree = (ExpressionTree) parent;
+      if (isFloatingPoint(expressionTree.symbolType())) {
+        reportIssue(integerDivision, "Cast one of the operands of this integer division to a \"double\".");
+        break;
+      }
+      parent = expressionTree.parent();
+    }
+  }
+

@@ -1,0 +1,8 @@
+  private void checkMethodTree(MethodTreeImpl methodTree) {
+    TypeTree returnTypeTree = methodTree.returnType();
+    Type returnType = returnTypeTree != null ? returnTypeTree.symbolType() : null;
+    if (returnType != null && isVarTypeErrorProne(returnType)) {
+      methodTree.accept(new ReturnStatementVisitor(returnType));
+    }
+  }
+
