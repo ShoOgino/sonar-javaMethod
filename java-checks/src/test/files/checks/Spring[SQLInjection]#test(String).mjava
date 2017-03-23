@@ -1,0 +1,9 @@
+  void test(String parameter) {
+    java.lang.String sqlInjection = "select count(*) from t_actor where column =  " + parameter;
+    jdbcTemplate.queryForObject(sqlInjection, Integer.class); // Noncompliant
+    jdbcOperations.queryForObject(sqlInjection, Integer.class);  // Noncompliant
+
+    new PreparedStatementCreatorFactory(sqlInjection);  // Noncompliant
+    preparedStatementCreatorFactory.newPreparedStatementCreator(sqlInjection, new int[] {});  // Noncompliant
+  }
+

@@ -3,7 +3,7 @@
       Connection conn = DriverManager.getConnection("url", "user1", "password");
       Statement stmt = conn.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT Lname FROM Customers WHERE Snum = 2001");
-      rs = stmt.executeQuery("SELECT Lname FROM Customers WHERE Snum = "+param); // Noncompliant [[sc=17;ec=29]] {{"param" is provided externally to the method and not sanitized before use.}}
+      rs = stmt.executeQuery("SELECT Lname FROM Customers WHERE Snum = "+param); // Noncompliant [[sc=30;ec=79]] {{Use a variable binding mechanism to construct this query instead of concatenation.}}
       String query = "SELECT Lname FROM Customers WHERE Snum = "+param;
       rs = stmt.executeQuery(query); // Noncompliant
 
@@ -27,7 +27,7 @@
       //Callable Statement
       CallableStatement cs = conn.prepareCall("SELECT Lname FROM Customers WHERE Snum = 2001");
       cs.executeQuery(query); // Noncompliant
-      cs  = conn.prepareCall("SELECT Lname FROM Customers WHERE Snum = "+param2); // Noncompliant {{"param2" is provided externally to the method and not sanitized before use.}}
+      cs  = conn.prepareCall("SELECT Lname FROM Customers WHERE Snum = "+param2); // Noncompliant
       cs = conn.prepareCall(query); // Noncompliant
       cs = conn.prepareCall(query2);
       cs = conn.prepareCall(CONSTANT);
@@ -55,13 +55,13 @@
 
       Session session;
       session.createQuery("From Customer where id > ?");
-      session.createQuery("From Customer where id > "+param); // Noncompliant {{Use Hibernate's parameter binding instead of concatenation.}}
-      session.createQuery(query); // Noncompliant {{Use Hibernate's parameter binding instead of concatenation.}}
+      session.createQuery("From Customer where id > "+param); // Noncompliant
+      session.createQuery(query); // Noncompliant
       conn.prepareStatement(param);
       conn.prepareStatement(sqlQuery + "plop");
 
       String sql = "SELECT lastname, firstname FROM employee where uid = '" + param + "'";
-      entityManager.createNativeQuery(sql); // Noncompliant {{"param" is provided externally to the method and not sanitized before use.}}
+      entityManager.createNativeQuery(sql); // Noncompliant
     } catch (Exception e) {
     }
   }
