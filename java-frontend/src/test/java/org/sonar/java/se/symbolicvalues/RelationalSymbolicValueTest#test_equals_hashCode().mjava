@@ -15,5 +15,25 @@
     ab = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
     ba = create(Tree.Kind.LESS_THAN, ImmutableList.of(b, a));
     assertThat(ab).isNotEqualTo(ba);
+
+    SymbolicValue eq = create(Tree.Kind.EQUAL_TO, ImmutableList.of(a, b));
+    SymbolicValue eq1 = create(Tree.Kind.EQUAL_TO, ImmutableList.of(b, b));
+    SymbolicValue eq2 = create(Tree.Kind.EQUAL_TO, ImmutableList.of(a, a));
+    SymbolicValue neq = create(Tree.Kind.NOT_EQUAL_TO, ImmutableList.of(b, a));
+    assertThat(eq).isNotEqualTo(neq);
+    assertThat(eq).isEqualTo(eq);
+    assertThat(eq).isNotEqualTo(eq1);
+    assertThat(eq).isNotEqualTo(eq2);
+    assertThat(eq).isNotEqualTo(null);
+    assertThat(eq).isNotEqualTo(new Object());
+
+
+    SymbolicValue ab1 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
+    SymbolicValue ab2 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
+    SymbolicValue ab3 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, new SymbolicValue()));
+    SymbolicValue ab4 = create(Tree.Kind.LESS_THAN, ImmutableList.of(new SymbolicValue(), b));
+    assertThat(ab1).isEqualTo(ab2);
+    assertThat(ab1).isNotEqualTo(ab3);
+    assertThat(ab1).isNotEqualTo(ab4);
   }
 

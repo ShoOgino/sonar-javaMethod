@@ -1,0 +1,9 @@
+  @Test
+  public void test_setting_constraint_on_relational_sv() throws Exception {
+    RelationalSymbolicValue rel = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.EQUAL);
+    rel.computedFrom(Arrays.asList(new SymbolicValue(), new SymbolicValue()));
+    assertThatThrownBy(() -> ProgramState.EMPTY_STATE.addConstraint(rel, BooleanConstraint.FALSE))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessageStartingWith("Relations stored in PS should always use TRUE constraint");
+  }
+
