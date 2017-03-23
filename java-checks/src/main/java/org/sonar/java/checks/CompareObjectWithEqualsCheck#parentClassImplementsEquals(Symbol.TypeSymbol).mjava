@@ -1,0 +1,12 @@
+  private static boolean parentClassImplementsEquals(Symbol.TypeSymbol symbol) {
+    Type superClass = symbol.superClass();
+    while (superClass != null && superClass.symbol().isTypeSymbol()) {
+      Symbol.TypeSymbol superClassSymbol = superClass.symbol();
+      if (!superClass.is(JAVA_LANG_OBJECT) && hasEqualsMethod(superClassSymbol)) {
+        return true;
+      }
+      superClass = superClassSymbol.superClass();
+    }
+    return false;
+  }
+
