@@ -3,10 +3,11 @@
     scan(tree.resources());
     scan(tree.block());
     scan(tree.catches());
-    if (tree.finallyBlock() != null) {
-      isInFinally.push(true);
-      scan(tree.finallyBlock());
-      isInFinally.pop();
+    BlockTree finallyBlock = tree.finallyBlock();
+    if (finallyBlock != null) {
+      treeKindStack.push(finallyBlock.kind());
+      scan(finallyBlock);
+      treeKindStack.pop();
     }
   }
 

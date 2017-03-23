@@ -1,0 +1,20 @@
+  private boolean isAbruptFinallyBlock(Tree.Kind jumpKind) {
+    if (treeKindStack.isEmpty()) {
+      return false;
+    }
+    Tree.Kind blockKind = treeKindStack.peek();
+    switch (blockKind) {
+      case BLOCK:
+        return true;
+      case FOR_STATEMENT:
+      case FOR_EACH_STATEMENT:
+      case WHILE_STATEMENT:
+      case DO_STATEMENT:
+      case SWITCH_STATEMENT:
+        return handleControlFlowInFinally(jumpKind);
+      case METHOD:
+      default:
+        return false;
+    }
+  }
+
