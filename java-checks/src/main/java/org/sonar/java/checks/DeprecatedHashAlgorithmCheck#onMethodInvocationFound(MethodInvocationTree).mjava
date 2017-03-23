@@ -1,15 +1,12 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     String methodName = MethodsHelper.methodName(mit).name();
-    String algorithm = ALGORITHM_BY_METHOD_NAME.get(methodName);
+    InsecureAlgorithm algorithm = ALGORITHM_BY_METHOD_NAME.get(methodName);
     if (algorithm == null) {
-      algorithm = algorithm(mit.arguments().get(0));
+      algorithm = algorithm(mit.arguments().get(0)).orElse(null);
     }
-    boolean isMd5 = MD5.equalsIgnoreCase(algorithm);
-    boolean isSha1 = SHA1.equalsIgnoreCase(algorithm);
-    if (isMd5 || isSha1) {
-      String msgAlgo = isSha1 ? "SHA-1" : algorithm;
-      reportIssue(MethodsHelper.methodName(mit), "Use a stronger hashing algorithm than " + msgAlgo + ".");
+    if (algorithm != null) {
+      reportIssue(MethodsHelper.methodName(mit), "Use a stronger hashing algorithm than " + algorithm.toString() + ".");
     }
   }
 

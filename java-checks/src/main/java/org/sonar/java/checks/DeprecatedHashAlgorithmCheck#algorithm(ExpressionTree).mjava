@@ -1,13 +1,15 @@
-  private static String algorithm(ExpressionTree invocationArgument) {
+  private static Optional<InsecureAlgorithm> algorithm(ExpressionTree invocationArgument) {
     ExpressionTree expectedAlgorithm = invocationArgument;
     ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(invocationArgument);
     if (defaultPropertyValue != null) {
       expectedAlgorithm = defaultPropertyValue;
     }
     if (expectedAlgorithm.is(Tree.Kind.STRING_LITERAL)) {
-      String algo = LiteralUtils.trimQuotes(((LiteralTree) expectedAlgorithm).value());
-      return algo.replaceAll("-", "");
+      String algorithmName = LiteralUtils.trimQuotes(((LiteralTree) expectedAlgorithm).value());
+      return Arrays.stream(InsecureAlgorithm.values())
+        .filter(alg -> alg.match(algorithmName))
+        .findFirst();
     }
-    return null;
+    return Optional.empty();
   }
 
