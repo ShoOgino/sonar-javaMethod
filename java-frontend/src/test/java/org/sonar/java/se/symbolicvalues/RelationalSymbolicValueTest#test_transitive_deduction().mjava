@@ -1,0 +1,16 @@
+  @Test
+  public void test_transitive_deduction() throws Exception {
+    List<String> actual = new ArrayList<>();
+    for (Tree.Kind r : operators) {
+      RelationalSymbolicValue first = relationalSV(r, b, a);
+      actual.addAll(combineWithAll(first, () -> relationToString(r, a, b)));
+    }
+    RelationalSymbolicValue eqAB = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, a, b);
+    actual.addAll(combineWithAll(eqAB, eqAB::toString));
+    RelationalSymbolicValue neqAB = eqAB.inverse();
+    actual.addAll(combineWithAll(neqAB, neqAB::toString));
+
+    List<String> expected = IOUtils.readLines(getClass().getResourceAsStream("/relations/transitive.txt"));
+    assertThat(actual).isEqualTo(expected);
+  }
+

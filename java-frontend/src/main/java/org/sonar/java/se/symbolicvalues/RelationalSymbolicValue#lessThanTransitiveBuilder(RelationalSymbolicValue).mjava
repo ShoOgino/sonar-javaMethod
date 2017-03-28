@@ -1,0 +1,28 @@
+  @CheckForNull
+  private RelationalSymbolicValue lessThanTransitiveBuilder(RelationalSymbolicValue other) {
+    if (kind != LESS_THAN) {
+      return null;
+    }
+    if (other.kind == LESS_THAN) {
+      // a < x && x < b => a < b
+      if (rightOp.equals(other.leftOp)) {
+        return new RelationalSymbolicValue(LESS_THAN, leftOp, other.rightOp);
+      }
+      // x < a && b < x => b < a
+      if (leftOp.equals(other.rightOp)) {
+        return new RelationalSymbolicValue(LESS_THAN, other.leftOp, rightOp);
+      }
+    }
+    if (other.kind == GREATER_THAN_OR_EQUAL) {
+      // a < x && b >= x => a < b
+      if (rightOp.equals(other.rightOp)) {
+        return new RelationalSymbolicValue(LESS_THAN, leftOp, other.leftOp);
+      }
+      // x < a && x >= b => b < a
+      if (leftOp.equals(other.leftOp)) {
+        return new RelationalSymbolicValue(LESS_THAN, other.rightOp, rightOp);
+      }
+    }
+    return null;
+  }
+

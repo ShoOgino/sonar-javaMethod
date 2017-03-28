@@ -1,0 +1,14 @@
+  @Test
+  public void test_same_operand() {
+    assertThat(sameOperandResolution(Tree.Kind.EQUAL_TO)).isEqualTo(FULFILLED);
+    RelationalSymbolicValue eq = new RelationalSymbolicValue(METHOD_EQUALS, a, a);
+    assertThat(eq.resolveState(ProgramState.EMPTY_STATE)).isEqualTo(FULFILLED);
+    assertThat(sameOperandResolution(Tree.Kind.LESS_THAN_OR_EQUAL_TO)).isEqualTo(FULFILLED);
+    assertThat(sameOperandResolution(Tree.Kind.GREATER_THAN_OR_EQUAL_TO)).isEqualTo(FULFILLED);
+
+    assertThat(sameOperandResolution(Tree.Kind.NOT_EQUAL_TO)).isEqualTo(UNFULFILLED);
+    assertThat(eq.inverse().resolveState(ProgramState.EMPTY_STATE)).isEqualTo(UNFULFILLED);
+    assertThat(sameOperandResolution(Tree.Kind.LESS_THAN)).isEqualTo(UNFULFILLED);
+    assertThat(sameOperandResolution(Tree.Kind.GREATER_THAN)).isEqualTo(UNFULFILLED);
+  }
+

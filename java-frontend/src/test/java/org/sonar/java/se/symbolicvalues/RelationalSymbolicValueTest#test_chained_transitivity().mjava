@@ -1,0 +1,17 @@
+  @Test
+  public void test_chained_transitivity() throws Exception {
+    // create chain of relations in the form sv1 < sv2 < ... < sv45
+    // and test if relation sv1 < sv45 is deduced
+    int chainLength = 45;
+    SymbolicValue[] sv = new SymbolicValue[chainLength];
+    RelationalSymbolicValue[] given = new RelationalSymbolicValue[chainLength - 1];
+    sv[0] = new SymbolicValue();
+    for (int i = 1; i < chainLength; i++) {
+      sv[i] = new SymbolicValue();
+      given[i - 1] = relationalSV(Tree.Kind.LESS_THAN, sv[i - 1], sv[i]);
+    }
+    RelationalSymbolicValue firstLessThanLast = relationalSV(Tree.Kind.LESS_THAN, sv[0], sv[chainLength - 1]);
+    RelationState relationState = firstLessThanLast.resolveState(stateWithRelations(given));
+    assertThat(relationState).isEqualTo(FULFILLED);
+  }
+

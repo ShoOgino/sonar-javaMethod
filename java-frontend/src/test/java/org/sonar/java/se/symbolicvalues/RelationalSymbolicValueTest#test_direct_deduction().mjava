@@ -1,0 +1,14 @@
+  @Test
+  public void test_direct_deduction() throws Exception {
+    List<String> actual = new ArrayList<>();
+    for (Tree.Kind operator : operators) {
+      actual.addAll(resolveRelationStateForAllKinds(relationalSV(operator, b, a), () -> relationToString(operator, a, b)));
+      actual.addAll(resolveRelationStateForAllKinds(relationalSV(operator, a, b), () -> relationToString(operator, b, a)));
+    }
+    RelationalSymbolicValue eqAB = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, a, b);
+    RelationalSymbolicValue eqBA = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, b, a);
+    Stream.of(eqAB, eqBA, eqAB.inverse(), eqBA.inverse()).forEach(rel -> actual.addAll(resolveRelationStateForAllKinds(rel, rel::toString)));
+    List<String> expected = IOUtils.readLines(getClass().getResourceAsStream("/relations/direct.txt"));
+    assertThat(actual).isEqualTo(expected);
+  }
+

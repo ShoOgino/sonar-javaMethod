@@ -1,25 +1,23 @@
   @Test
   public void test_equals_hashCode() throws Exception {
-    SymbolicValue ab = create(Tree.Kind.EQUAL_TO, ImmutableList.of(a, b));
-    SymbolicValue ba = create(Tree.Kind.EQUAL_TO, ImmutableList.of(b, a));
+    SymbolicValue ab = relationalSV(Tree.Kind.EQUAL_TO, a, b);
+    SymbolicValue ba = relationalSV(Tree.Kind.EQUAL_TO, b, a);
     assertThat(ab).isEqualTo(ba);
     assertThat(ab.hashCode()).isEqualTo(ba.hashCode());
 
-    ab = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS);
-    ab.computedFrom(ImmutableList.of(a, b));
-    ba = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS);
-    ba.computedFrom(ImmutableList.of(b, a));
+    ab = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, a, b);
+    ba = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, b, a);
     assertThat(ab).isEqualTo(ba);
     assertThat(ab.hashCode()).isEqualTo(ba.hashCode());
 
-    ab = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
-    ba = create(Tree.Kind.LESS_THAN, ImmutableList.of(b, a));
+    ab = relationalSV(Tree.Kind.LESS_THAN, a, b);
+    ba = relationalSV(Tree.Kind.LESS_THAN, b, a);
     assertThat(ab).isNotEqualTo(ba);
 
-    SymbolicValue eq = create(Tree.Kind.EQUAL_TO, ImmutableList.of(a, b));
-    SymbolicValue eq1 = create(Tree.Kind.EQUAL_TO, ImmutableList.of(b, b));
-    SymbolicValue eq2 = create(Tree.Kind.EQUAL_TO, ImmutableList.of(a, a));
-    SymbolicValue neq = create(Tree.Kind.NOT_EQUAL_TO, ImmutableList.of(b, a));
+    SymbolicValue eq = relationalSV(Tree.Kind.EQUAL_TO, a, b);
+    SymbolicValue eq1 = relationalSV(Tree.Kind.EQUAL_TO, b, b);
+    SymbolicValue eq2 = relationalSV(Tree.Kind.EQUAL_TO, a, a);
+    SymbolicValue neq = relationalSV(Tree.Kind.NOT_EQUAL_TO, b, a);
     assertThat(eq).isNotEqualTo(neq);
     assertThat(eq).isEqualTo(eq);
     assertThat(eq).isNotEqualTo(eq1);
@@ -27,11 +25,10 @@
     assertThat(eq).isNotEqualTo(null);
     assertThat(eq).isNotEqualTo(new Object());
 
-
-    SymbolicValue ab1 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
-    SymbolicValue ab2 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, b));
-    SymbolicValue ab3 = create(Tree.Kind.LESS_THAN, ImmutableList.of(a, new SymbolicValue()));
-    SymbolicValue ab4 = create(Tree.Kind.LESS_THAN, ImmutableList.of(new SymbolicValue(), b));
+    SymbolicValue ab1 = relationalSV(Tree.Kind.LESS_THAN, a, b);
+    SymbolicValue ab2 = relationalSV(Tree.Kind.LESS_THAN, a, b);
+    SymbolicValue ab3 = relationalSV(Tree.Kind.LESS_THAN, a, new SymbolicValue());
+    SymbolicValue ab4 = relationalSV(Tree.Kind.LESS_THAN, new SymbolicValue(), b);
     assertThat(ab1).isEqualTo(ab2);
     assertThat(ab1).isNotEqualTo(ab3);
     assertThat(ab1).isNotEqualTo(ab4);

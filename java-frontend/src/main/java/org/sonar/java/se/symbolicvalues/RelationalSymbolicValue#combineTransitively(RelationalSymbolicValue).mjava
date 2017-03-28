@@ -1,0 +1,12 @@
+  @CheckForNull
+  private RelationalSymbolicValue combineTransitively(RelationalSymbolicValue other) {
+    if (!potentiallyTransitiveWith(other)) {
+      return null;
+    }
+    RelationalSymbolicValue transitive = combineTransitivelyOneWay(other);
+    if (transitive != null) {
+      return transitive;
+    }
+    return other.combineTransitivelyOneWay(this);
+  }
+

@@ -1,0 +1,16 @@
+  private List<String> resolveRelationStateForAllKinds(RelationalSymbolicValue known, Supplier<String> knownAsString) {
+    List<String> actual = new ArrayList<>();
+    for (Tree.Kind operator : operators) {
+      RelationalSymbolicValue test = relationalSV(operator, b, a);
+      RelationState relationState = test.resolveState(stateWithRelations(known));
+      actual.add(String.format("given %s when %s -> %s", knownAsString.get(), relationToString(operator, a, b), relationState));
+    }
+    RelationalSymbolicValue eq = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS, a, b);
+    Stream.of(eq, eq.inverse()).forEach(rel -> {
+        RelationState relationState = rel.resolveState(stateWithRelations(known));
+        actual.add(String.format("given %s when %s -> %s", knownAsString.get(), rel, relationState));
+      }
+    );
+    return actual;
+  }
+

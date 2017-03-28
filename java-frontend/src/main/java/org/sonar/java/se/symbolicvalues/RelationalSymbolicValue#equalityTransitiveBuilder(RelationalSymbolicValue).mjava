@@ -1,0 +1,12 @@
+  @CheckForNull
+  private RelationalSymbolicValue equalityTransitiveBuilder(RelationalSymbolicValue other) {
+    if (!isEquality()
+      || (kind == METHOD_EQUALS && other.kind == EQUAL)) {
+      return null;
+    }
+
+    return new RelationalSymbolicValue(other.kind,
+      hasOperand(other.leftOp) ? differentOperand(other) : other.leftOp,
+      hasOperand(other.leftOp) ? other.rightOp : differentOperand(other));
+  }
+
