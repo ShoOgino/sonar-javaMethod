@@ -1,6 +1,6 @@
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return ImmutableList.of(
+    ImmutableList.Builder<MethodMatcher> matchers = ImmutableList.<MethodMatcher>builder().add(
       method(JAVA_LANG_STRING, "getBytes").withoutParameter(),
       method(JAVA_LANG_STRING, "getBytes").parameters(INT, INT, BYTE_ARRAY, INT),
       constructor(JAVA_LANG_STRING).parameters(BYTE_ARRAY),
@@ -23,26 +23,12 @@
       constructor(JAVA_UTIL_FORMATTER).parameters(JAVA_IO_OUTPUTSTREAM),
       constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_FILE),
       constructor(JAVA_UTIL_SCANNER).parameters(JAVA_NIO_FILE_PATH),
-      constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_INPUTSTREAM),
-      method(COMMONS_IOUTILS, "copy").parameters(JAVA_IO_INPUTSTREAM, JAVA_IO_WRITER),
-      method(COMMONS_IOUTILS, "copy").parameters(JAVA_IO_READER, JAVA_IO_OUTPUTSTREAM),
-      method(COMMONS_IOUTILS, "readLines").parameters(JAVA_IO_INPUTSTREAM),
-      method(COMMONS_IOUTILS, "toByteArray").parameters(JAVA_IO_READER),
-      method(COMMONS_IOUTILS, "toByteArray").parameters(JAVA_LANG_STRING),
-      method(COMMONS_IOUTILS, "toCharArray").parameters(JAVA_IO_INPUTSTREAM),
-      method(COMMONS_IOUTILS, "toInputStream").parameters(TypeCriteria.subtypeOf(JAVA_LANG_CHARSEQUENCE)),
-      method(COMMONS_IOUTILS, "toString").parameters(BYTE_ARRAY),
-      method(COMMONS_IOUTILS, "toString").parameters("java.net.URI"),
-      method(COMMONS_IOUTILS, "toString").parameters("java.net.URL"),
-      method(COMMONS_IOUTILS, "write").parameters("char[]", JAVA_IO_OUTPUTSTREAM),
-      method(COMMONS_IOUTILS, "write").parameters(TypeCriteria.subtypeOf(JAVA_LANG_CHARSEQUENCE), TypeCriteria.is(JAVA_IO_OUTPUTSTREAM)),
-      method(COMMONS_IOUTILS, "writeLines").parameters("java.util.Collection", JAVA_LANG_STRING, JAVA_IO_OUTPUTSTREAM),
-
-      method(COMMONS_FILEUTILS, "readFileToString").parameters(JAVA_IO_FILE),
-      method(COMMONS_FILEUTILS, "readLines").parameters(JAVA_IO_FILE),
-      method(COMMONS_FILEUTILS, "write").parameters(TypeCriteria.is(JAVA_IO_FILE), TypeCriteria.subtypeOf(JAVA_LANG_CHARSEQUENCE)),
-      method(COMMONS_FILEUTILS, "write").parameters(TypeCriteria.is(JAVA_IO_FILE), TypeCriteria.subtypeOf(JAVA_LANG_CHARSEQUENCE), TypeCriteria.is("boolean")),
-      method(COMMONS_FILEUTILS, "writeStringToFile").parameters(JAVA_IO_FILE, JAVA_LANG_STRING)
+      constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_INPUTSTREAM)
     );
+    matchers.addAll(COMMONS_IO);
+    matchers.addAll(COMMONS_IO_WITH_CHARSET);
+    matchers.addAll(FILEUTILS_WRITE_WITH_CHARSET);
+
+    return matchers.build();
   }
 
