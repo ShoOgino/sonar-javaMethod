@@ -1,0 +1,24 @@
+  private static void executeBuildWithCommonProperties(Build<?> build, String projectName, boolean buildQuietly) throws IOException {
+    build.setProperty("sonar.cpd.skip", "true")
+      .setProperty("sonar.import_unknown_files", "true")
+      .setProperty("sonar.skipPackageDesign", "true")
+      .setProperty("sonar.analysis.mode", "preview")
+      .setProperty("sonar.issuesReport.html.enable", "true")
+      .setProperty("sonar.issuesReport.html.location", htmlReportPath(projectName))
+      .setProperty("dump.old", effectiveDumpOldFolder.resolve(projectName).toString())
+      .setProperty("dump.new", FileLocation.of("target/actual/" + projectName).getFile().getAbsolutePath())
+      .setProperty("lits.differences", litsDifferencesPath(projectName));
+    BuildResult buildResult;
+    if (buildQuietly) {
+      // if build fail, ruling job is not violently interrupted, allowing time to dump SQ logs
+      buildResult = orchestrator.executeBuildQuietly(build);
+    } else {
+      buildResult = orchestrator.executeBuild(build);
+    }
+    if (buildResult.isSuccess()) {
+      assertNoDifferences(projectName);
+    } else {
+      dumpServerLogs();
+    }
+  }
+
