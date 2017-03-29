@@ -12,6 +12,10 @@
         // to retrieve flow for return value
         argumentIndices.add(-1);
       }
+      if (argumentIndices.isEmpty()) {
+        // no need to compute any flow on yields : no arg nor return value are corresponding to tracked SVs
+        return ImmutableSet.of(ImmutableList.of());
+      }
       return methodYields.stream()
         .map(y -> y.flow(argumentIndices, domains))
         .flatMap(Set::stream)
