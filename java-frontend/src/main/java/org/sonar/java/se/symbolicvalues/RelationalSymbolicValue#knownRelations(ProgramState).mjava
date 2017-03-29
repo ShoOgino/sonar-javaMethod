@@ -1,7 +1,8 @@
-  private static Stream<RelationalSymbolicValue> knownRelations(ProgramState programState) {
+  private static Set<RelationalSymbolicValue> knownRelations(ProgramState programState) {
     return programState.getValuesWithConstraints(BooleanConstraint.TRUE)
       .stream()
       .filter(RelationalSymbolicValue.class::isInstance)
-      .map(RelationalSymbolicValue.class::cast);
+      .map(RelationalSymbolicValue.class::cast)
+      .collect(Collectors.toSet());
   }
 

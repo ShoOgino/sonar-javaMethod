@@ -1,0 +1,12 @@
+  @VisibleForTesting
+  RelationState resolveRelationState(Set<RelationalSymbolicValue> knownRelations) {
+    if (hasSameOperand()) {
+      return relationStateForSameOperand();
+    }
+
+    return knownRelations.stream()
+      .map(r -> r.implies(this))
+      .filter(RelationState::isDetermined)
+      .findAny().orElse(RelationState.UNDETERMINED);
+  }
+

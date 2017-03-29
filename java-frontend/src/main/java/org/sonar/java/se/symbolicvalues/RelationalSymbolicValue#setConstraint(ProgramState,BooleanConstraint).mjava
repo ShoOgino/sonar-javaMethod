@@ -1,8 +1,20 @@
   @Override
   public List<ProgramState> setConstraint(ProgramState initialProgramState, BooleanConstraint booleanConstraint) {
-    if (!checkRelation(booleanConstraint, initialProgramState)) {
+    if (booleanConstraint == BooleanConstraint.FALSE) {
+      return inverse().setConstraint(initialProgramState, BooleanConstraint.TRUE);
+    }
+    Set<RelationalSymbolicValue> knownRelations = knownRelations(initialProgramState);
+    Set<RelationalSymbolicValue> newRelations = new HashSet<>();
+    newRelations.add(this);
+    newRelations.addAll(transitiveRelations(knownRelations));
+
+    boolean unfulfilled = newRelations.stream()
+      .map(r -> r.resolveRelationState(knownRelations))
+      .anyMatch(RelationState.UNFULFILLED::equals);
+
+    if (unfulfilled) {
       return ImmutableList.of();
     }
-    return booleanConstraint == BooleanConstraint.TRUE ? getNewProgramStates(initialProgramState) : inverse().getNewProgramStates(initialProgramState);
+    return getNewProgramStates(initialProgramState, newRelations);
   }
 
