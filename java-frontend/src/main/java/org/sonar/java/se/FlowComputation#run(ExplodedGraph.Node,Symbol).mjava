@@ -1,8 +1,8 @@
   private Set<List<JavaFileScannerContext.Location>> run(final ExplodedGraph.Node node, @Nullable final Symbol trackSymbol) {
     Set<List<JavaFileScannerContext.Location>> flows = new HashSet<>();
     Deque<ExecutionPath> workList = new ArrayDeque<>();
-
     node.edges().stream().flatMap(e -> startPath(e, trackSymbol)).forEach(workList::push);
+    int flowSteps = 0;
     while (!workList.isEmpty()) {
       ExecutionPath path = workList.pop();
       if (path.finished) {
@@ -12,6 +12,11 @@
           .filter(path::notVisited)
           .flatMap(path::addEdge)
           .forEach(workList::push);
+      }
+      flowSteps++;
+      if(flowSteps == MAX_FLOW_STEPS) {
+        LOG.debug("Flow was not able to complete");
+        break;
       }
     }
     return flows;
