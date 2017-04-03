@@ -4,6 +4,9 @@
       return inverse().setConstraint(initialProgramState, BooleanConstraint.TRUE);
     }
     Set<RelationalSymbolicValue> knownRelations = knownRelations(initialProgramState);
+    if(knownRelations.contains(this)) {
+      return Collections.singletonList(initialProgramState);
+    }
     Set<RelationalSymbolicValue> newRelations = new HashSet<>();
     newRelations.add(this);
     newRelations.addAll(transitiveRelations(knownRelations));
