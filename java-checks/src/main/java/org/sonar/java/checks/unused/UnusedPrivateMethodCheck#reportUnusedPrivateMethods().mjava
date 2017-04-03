@@ -1,0 +1,9 @@
+  private void reportUnusedPrivateMethods() {
+    unusedPrivateMethods.stream()
+      .filter(methodTree -> !unresolvedMethodNames.contains(methodTree.simpleName().name()))
+      .forEach(methodTree -> {
+        IdentifierTree simpleName = methodTree.simpleName();
+        reportIssue(simpleName, String.format("Remove this unused private \"%s\" %s.", simpleName.name(), methodTree.is(Tree.Kind.CONSTRUCTOR) ? "constructor" : "method"));
+      });
+  }
+

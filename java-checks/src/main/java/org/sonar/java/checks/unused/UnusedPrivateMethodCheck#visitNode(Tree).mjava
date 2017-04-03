@@ -3,16 +3,22 @@
     if(!hasSemantic()) {
       return;
     }
-    MethodTree node = (MethodTree) tree;
-    Symbol symbol = node.symbol();
-    if (node.modifiers().annotations().isEmpty() && symbol.isPrivate() && symbol.usages().isEmpty()) {
-      if (node.is(Tree.Kind.CONSTRUCTOR)) {
-        if (!node.parameters().isEmpty()) {
-          reportIssue(node.simpleName(), "Remove this unused private \"" + node.simpleName().name() + "\" constructor.");
-        }
-      } else if (!SerializableContract.SERIALIZABLE_CONTRACT_METHODS.contains(symbol.name())) {
-        reportIssue(node.simpleName(), "Remove this unused private \"" + symbol.name() + "\" method.");
-      }
+    switch (tree.kind()) {
+      case METHOD:
+      case CONSTRUCTOR:
+        checkIfUnused((MethodTree) tree);
+        break;
+      case NEW_CLASS:
+        checkIfUnknown((NewClassTree) tree);
+        break;
+      case METHOD_INVOCATION:
+        checkIfUnknown((MethodInvocationTree) tree);
+        break;
+      case METHOD_REFERENCE:
+        checkIfUnknown((MethodReferenceTree) tree);
+        break;
+      default:
+        throw new IllegalStateException("Unexpected subscribed tree.");
     }
   }
 

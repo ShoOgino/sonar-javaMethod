@@ -1,0 +1,13 @@
+  private static String constructorName(TypeTree typeTree) {
+    switch (typeTree.kind()) {
+      case PARAMETERIZED_TYPE:
+        return constructorName(((ParameterizedTypeTree) typeTree).type());
+      case MEMBER_SELECT:
+        return ((MemberSelectExpressionTree) typeTree).identifier().name();
+      case IDENTIFIER:
+        return ((IdentifierTree) typeTree).name();
+      default:
+        throw new IllegalStateException("Unexpected TypeTree used as constructor.");
+    }
+  }
+
