@@ -1,8 +1,11 @@
   public void checkIfUnused(VariableTree tree) {
-    if (tree.modifiers().annotations().isEmpty()) {
+    if (hasNoAnnotation(tree)) {
       Symbol symbol = tree.symbol();
       String name = symbol.name();
-      if (symbol.isPrivate() && !"serialVersionUID".equals(name) && symbol.usages().size() == assignments.get(symbol).size()) {
+      if (symbol.isPrivate()
+        && onlyUsedInVariableAssignment(symbol)
+        && !"serialVersionUID".equals(name)
+        && !unknownIdentifiers.contains(name)) {
         reportIssue(tree.simpleName(), "Remove this unused \"" + name + "\" private field.");
       }
     }

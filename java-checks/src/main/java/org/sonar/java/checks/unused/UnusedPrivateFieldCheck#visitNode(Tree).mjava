@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    switch (tree.kind()) {
+      case METHOD:
+        checkIfNativeMethod((MethodTree) tree);
+        break;
+      case CLASS:
+        classes.add((ClassTree) tree);
+        break;
+      case EXPRESSION_STATEMENT:
+        collectAssignment(((ExpressionStatementTree) tree).expression());
+        break;
+      case IDENTIFIER:
+        collectUnknownIdentifier((IdentifierTree) tree);
+        break;
+      default:
+        throw new IllegalStateException("Unexpected subscribed tree.");
+    }
+  }
+

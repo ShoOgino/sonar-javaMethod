@@ -1,8 +1,7 @@
   private void checkClassFields(ClassTree classTree) {
-    for (Tree member : classTree.members()) {
-      if (member.is(Tree.Kind.VARIABLE)) {
-        checkIfUnused((VariableTree) member);
-      }
-    }
+    classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .forEach(this::checkIfUnused);
   }
 
