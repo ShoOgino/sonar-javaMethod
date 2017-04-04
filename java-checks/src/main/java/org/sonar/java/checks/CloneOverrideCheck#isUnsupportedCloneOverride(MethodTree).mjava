@@ -1,0 +1,8 @@
+  private static boolean isUnsupportedCloneOverride(MethodTree methodTree) {
+    if (isOneStatementMethod(methodTree)) {
+      StatementTree statementTree = methodTree.block().body().get(0);
+      return statementTree.is(Tree.Kind.THROW_STATEMENT) && ((ThrowStatementTree) statementTree).expression().symbolType().is("java.lang.CloneNotSupportedException");
+    }
+    return false;
+  }
+
