@@ -2,9 +2,9 @@
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
     if (!ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.ABSTRACT)) {
-      classTree.members().stream()
-        .filter(member -> member.is(Tree.Kind.METHOD))
-        .forEach(method -> checkMethod((MethodTree) method));
+      List<Tree> members = classTree.members();
+      checkMethods(members);
+      checkSingleNoArgPublicConstructor(members);
     }
   }
 

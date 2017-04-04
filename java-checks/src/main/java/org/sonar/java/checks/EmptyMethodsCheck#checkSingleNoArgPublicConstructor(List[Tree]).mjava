@@ -1,0 +1,10 @@
+  private void checkSingleNoArgPublicConstructor(List<Tree> members) {
+    List<MethodTree> constructors = members.stream()
+      .filter(member -> member.is(Tree.Kind.CONSTRUCTOR))
+      .map(MethodTree.class::cast)
+      .collect(Collectors.toList());
+    if (constructors.size() == 1 && isPublicNoArgConstructor(constructors.get(0))) {
+      checkMethod(constructors.get(0));
+    }
+  }
+
