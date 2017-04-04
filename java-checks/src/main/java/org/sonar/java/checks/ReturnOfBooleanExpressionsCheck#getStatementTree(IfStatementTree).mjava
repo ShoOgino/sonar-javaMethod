@@ -1,0 +1,17 @@
+  private static StatementTree getStatementTree(IfStatementTree ifStatementTree) {
+    StatementTree elseStatementOrNextStatement = ifStatementTree.elseStatement();
+    if (elseStatementOrNextStatement == null) {
+      JavaTree parent = (JavaTree) ifStatementTree.parent();
+      List<Tree> children = parent.getChildren();
+      int indexOfIf = children.indexOf(ifStatementTree);
+      if (indexOfIf < children.size() - 1) {
+        // Defensive, this condition should always be true as if necessarily followed by a statement or a token.
+        Tree next = children.get(indexOfIf + 1);
+        if(!next.is(Kind.TOKEN)) {
+          elseStatementOrNextStatement = (StatementTree) next;
+        }
+      }
+    }
+    return elseStatementOrNextStatement;
+  }
+

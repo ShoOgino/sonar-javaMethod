@@ -1,7 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     IfStatementTree ifStatementTree = (IfStatementTree) tree;
-    if (hasOneReturnBoolean(ifStatementTree.elseStatement()) && hasOneReturnBoolean(ifStatementTree.thenStatement())) {
+    StatementTree elseStatementOrNextStatement = getStatementTree(ifStatementTree);
+    if (hasOneReturnBoolean(elseStatementOrNextStatement) && hasOneReturnBoolean(ifStatementTree.thenStatement())) {
       reportIssue(ifStatementTree.ifKeyword(), "Replace this if-then-else statement by a single return statement.");
     }
   }
