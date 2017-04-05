@@ -1,0 +1,16 @@
+  private static boolean returnStatementWithLiteral(StatementTree statement) {
+    if (statement.is(Tree.Kind.RETURN_STATEMENT)) {
+      ExpressionTree expression = ((ReturnStatementTree) statement).expression();
+      return expression == null || ExpressionUtils.skipParentheses(expression).is(
+        Tree.Kind.NULL_LITERAL,
+        Tree.Kind.STRING_LITERAL,
+        Tree.Kind.BOOLEAN_LITERAL,
+        Tree.Kind.CHAR_LITERAL,
+        Tree.Kind.DOUBLE_LITERAL,
+        Tree.Kind.FLOAT_LITERAL,
+        Tree.Kind.LONG_LITERAL,
+        Tree.Kind.INT_LITERAL);
+    }
+    return false;
+  }
+

@@ -8,15 +8,6 @@
       return false;
     }
     StatementTree singleStatement = body.get(0);
-    return singleStatement.is(Tree.Kind.THROW_STATEMENT) 
-      || (singleStatement.is(Tree.Kind.RETURN_STATEMENT) && ExpressionUtils.skipParentheses(((ReturnStatementTree) singleStatement).expression()).is(
-      Tree.Kind.NULL_LITERAL,
-      Tree.Kind.STRING_LITERAL,
-      Tree.Kind.BOOLEAN_LITERAL,
-      Tree.Kind.CHAR_LITERAL,
-      Tree.Kind.DOUBLE_LITERAL,
-      Tree.Kind.FLOAT_LITERAL,
-      Tree.Kind.LONG_LITERAL,
-      Tree.Kind.INT_LITERAL));
+    return singleStatement.is(Tree.Kind.THROW_STATEMENT) || returnStatementWithLiteral(singleStatement);
   }
 
