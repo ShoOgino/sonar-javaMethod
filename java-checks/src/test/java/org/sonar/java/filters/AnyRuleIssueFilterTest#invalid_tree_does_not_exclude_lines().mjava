@@ -1,0 +1,26 @@
+  @Test
+  public void invalid_tree_does_not_exclude_lines() {
+
+    // by default, any issue oin line 7 is accepted
+    assertThatIssueWillBeAccepted(7).isTrue();
+
+    Tree mockTree = mock(Tree.class);
+    // without first nor last token, line can not be excluded
+    filter.excludeLines(mockTree);
+    assertThatIssueWillBeAccepted(7).isTrue();
+
+    SyntaxToken mockFirstToken = mock(SyntaxToken.class);
+    when(mockFirstToken.line()).thenReturn(7);
+    when(mockTree.firstToken()).thenReturn(mockFirstToken);
+    // without last token, line can not be excluded
+    filter.excludeLines(mockTree);
+    assertThatIssueWillBeAccepted(7).isTrue();
+
+    SyntaxToken mockLastToken = mock(SyntaxToken.class);
+    when(mockLastToken.line()).thenReturn(7);
+    when(mockTree.lastToken()).thenReturn(mockLastToken);
+    // with first and last token, line 7 can be excluded
+    filter.excludeLines(mockTree);
+    assertThatIssueWillBeAccepted(7).isFalse();
+  }
+
