@@ -6,12 +6,9 @@
       String packageName = Convert.packagePart(flatName);
       JavaSymbol.TypeJavaSymbol owner = classSymbolOwner;
       if(owner == null) {
-        String enclosingClassName = Convert.enclosingClassName(shortName);
-        if(StringUtils.isNotEmpty(enclosingClassName)) {
-          owner = getClassSymbol(Convert.fullName(packageName, enclosingClassName));
-        }
+        owner = getEnclosingClass(shortName, packageName);
       }
-      if ( owner != null) {
+      if (owner != null) {
         //handle innerClasses
         String name = Convert.innerClassName(Convert.shortName(owner.getFullyQualifiedName()), shortName);
         symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), name, owner, bytecodeName);
