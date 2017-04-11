@@ -1,16 +1,14 @@
     @Override
     public void visitBinaryExpression(BinaryExpressionTree tree) {
-      if(tree.is(CONDITIONAL_AND, CONDITIONAL_OR)) {
-        increaseComplexityByOne(tree.operatorToken());
-        ExpressionTree left = ExpressionUtils.skipParentheses(tree.leftOperand());
-        if(left.kind() == tree.kind()) {
-          ignored.add(((BinaryExpressionTree) left).operatorToken());
-          complexity--;
-        }
-        ExpressionTree right = ExpressionUtils.skipParentheses(tree.rightOperand());
-        if(right.kind() == tree.kind()) {
-          ignored.add(((BinaryExpressionTree) right).operatorToken());
-          complexity--;
+      if (tree.is(CONDITIONAL_AND, CONDITIONAL_OR) && !ignored.contains(tree)) {
+        List<BinaryExpressionTree> flattenedLogicalExpressions = flattenLogicalExpression(tree).collect(Collectors.toList());
+
+        BinaryExpressionTree previous = null;
+        for (BinaryExpressionTree current : flattenedLogicalExpressions) {
+          if (previous == null || !previous.is(current.kind())) {
+            increaseComplexityByOne(current.operatorToken());
+          }
+          previous = current;
         }
       }
       super.visitBinaryExpression(tree);
