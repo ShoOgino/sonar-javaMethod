@@ -1,0 +1,68 @@
+  void gul(java.util.List<Object> myList) {
+
+    while(foo())
+      break; // Noncompliant
+
+    do {
+      bar();
+      break; // Noncompliant
+    } while (foo());
+
+    for (int i = 0; foo(); i++) {
+      bar();
+      break; // Noncompliant
+    }
+
+    for (Object o : myList) {
+      bar();
+      break; // Noncompliant
+    }
+
+    for (Object o : myList) {
+      foo();
+      continue; // Noncompliant
+    }
+
+    while(foo()) {
+      if (baz()) {
+        break;
+      }
+      baz();
+      break; // Noncompliant
+    }
+
+    while(foo()) {
+      if (baz()) {
+        continue;
+      }
+      baz();
+      break; // Compliant - the loop can execute more than once
+    }
+
+    while(foo()) {
+      if (baz()) {
+        continue;
+      }
+      baz();
+      continue; // Noncompliant
+    }
+
+    for (int i = 0; foo(); i++) {
+      if (baz()) {
+        continue;
+      }
+      baz();
+      break; // compliant
+    }
+
+    for (int i = 0; foo();) {
+      baz();
+      break; // Noncompliant
+    }
+
+    for (int i = 0; foo(); i++) {
+      baz();
+      continue; // Noncompliant
+    }
+  }
+

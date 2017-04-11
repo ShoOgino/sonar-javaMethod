@@ -1,0 +1,36 @@
+  /**
+   * For or while loops are sometimes used as short-cut simulating goto's, when having always true conditions:
+   * <code>
+   * for(;;) {
+   *  if (...) {
+   *    // ...
+   *    break;
+   *  }
+   *  while (...) {
+   *    // ...
+   *    if (...) {
+   *      break;
+   *    }
+   *  }
+   *  break; // last unconditional jump to exit the infinite loop
+   * }
+   * </code>
+   */
+  private static boolean isEmptyConditionLoop(Tree loopTree) {
+    switch (loopTree.kind()) {
+      case FOR_STATEMENT:
+        ForStatementTree fst = (ForStatementTree) loopTree;
+        return fst.initializer().isEmpty() && fst.condition() == null && fst.update().isEmpty();
+      case WHILE_STATEMENT:
+        // 'while(false)' does not compile, unreachable code
+        return isTrue(((WhileStatementTree) loopTree).condition());
+      case DO_STATEMENT:
+        // only target true literal, which needs a break statement.
+        // For a 'do {...} while (false);', loop the jump is useless and issue should be raised.
+        return isTrue(((DoWhileStatementTree) loopTree).condition());
+      default:
+        // variable and expression of For-Each statement can not be empty
+        return false;
+    }
+  }
+

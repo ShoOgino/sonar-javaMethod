@@ -1,0 +1,12 @@
+  private static CFG getCFG(Tree loop) {
+    Tree currentTree = loop;
+    do {
+      currentTree = currentTree.parent();
+    } while (!currentTree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR, Tree.Kind.INITIALIZER, Tree.Kind.STATIC_INITIALIZER));
+
+    if (currentTree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)) {
+      return CFG.build((MethodTree) currentTree);
+    }
+    return CFG.buildCFG(((BlockTree) currentTree).body());
+  }
+

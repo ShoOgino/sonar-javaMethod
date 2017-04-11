@@ -1,0 +1,26 @@
+  private static boolean hasPredecessorInBlock(CFG.Block block, Tree loop) {
+    for (CFG.Block predecessor : block.predecessors()) {
+      List<Tree> predecessorElements = predecessor.elements();
+      if (predecessorElements.isEmpty()) {
+        return hasPredecessorInBlock(predecessor, loop);
+      } else {
+        Tree predecessorFirstElement = predecessorElements.get(0);
+
+        if (isForStatementInitializer(predecessorFirstElement, loop)) {
+          // skip 'for' loops initializers
+          continue;
+        }
+
+        if (isForStatementUpdate(predecessorFirstElement, loop)) {
+          // there is no way to reach the 'for' loop update
+          return !predecessor.predecessors().isEmpty();
+        }
+
+        if (isDescendant(predecessorFirstElement, loop)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+

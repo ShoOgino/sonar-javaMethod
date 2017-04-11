@@ -1,0 +1,17 @@
+  /**
+   * While loops are sometimes used to get only the first element of an enumeration/collection, using code similar to:
+   * <code>
+   * while(myIterator.hasNext()) {
+   *   // ...
+   *   return myIterator.next(); // unconditional jump
+   * }
+   * </code>
+   */
+  private static boolean isWhileNextElementLoop(Tree loopTree) {
+    if (loopTree.is(Tree.Kind.WHILE_STATEMENT)) {
+      ExpressionTree condition = ExpressionUtils.skipParentheses(((WhileStatementTree) loopTree).condition());
+      return condition.is(Tree.Kind.METHOD_INVOCATION) && NEXT_ELEMENT.anyMatch((MethodInvocationTree) condition);
+    }
+    return false;
+  }
+

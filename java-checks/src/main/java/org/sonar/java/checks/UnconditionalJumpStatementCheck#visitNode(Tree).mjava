@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Tree parent = tree.parent();
+    while (parent.is(Tree.Kind.BLOCK)) {
+      parent = parent.parent();
+    }
+
+    if (!parent.is(LOOP_KINDS)) {
+      return;
+    }
+
+    if (tree.is(Tree.Kind.CONTINUE_STATEMENT)
+      || (!isWhileNextElementLoop(parent) && !isEmptyConditionLoop(parent) && executeUnconditionnally(parent))) {
+      SyntaxToken jumpKeyword = jumpKeyword(tree);
+      reportIssue(jumpKeyword, String.format("Remove this \"%s\" statement or make it conditional.", jumpKeyword.text()));
+    }
+  }
+
