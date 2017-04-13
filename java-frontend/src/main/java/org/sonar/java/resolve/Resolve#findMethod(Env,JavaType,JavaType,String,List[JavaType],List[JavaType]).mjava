@@ -1,10 +1,10 @@
   private Resolution findMethod(Env env, JavaType callSite, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams) {
-    JavaType superclass = site.getSymbol().getSuperclass();
 
     // handle constructors
     if ("this".equals(name)) {
       return findConstructor(env, site, argTypes, typeParams);
     } else if ("super".equals(name)) {
+      JavaType superclass = site.getSuperType();
       if (superclass == null) {
         return unresolved();
       }
