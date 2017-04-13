@@ -1,0 +1,12 @@
+  private Set<ClassJavaType> directSuperTypes() {
+    ImmutableSet.Builder<ClassJavaType> types = ImmutableSet.builder();
+    ClassJavaType superClassType = (ClassJavaType) symbol.superClass();
+    if(superClassType != null) {
+      types.add(substitutedType(superClassType));
+    }
+    for (JavaType interfaceType : symbol.getInterfaces()) {
+      types.add(substitutedType((ClassJavaType) interfaceType));
+    }
+    return types.build();
+  }
+
