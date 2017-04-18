@@ -2,18 +2,16 @@
     String name = symbol.name();
     for (String knownMemberName : membersByName.keySet()) {
       if (name.equalsIgnoreCase(knownMemberName)) {
-        Optional<Symbol> conflictingMember = membersByName.get(knownMemberName).stream()
+        membersByName.get(knownMemberName).stream()
           .filter(knownMemberSymbol -> !symbol.equals(knownMemberSymbol) && isValidIssueLocation(symbol, knownMemberSymbol) && isInvalidMember(symbol, knownMemberSymbol))
-          .findFirst();
-        if (conflictingMember.isPresent()) {
-          Symbol conflictingSymbol = conflictingMember.get();
-          reportIssue(reportTree,
-            "Rename "
-              + getSymbolTypeName(symbol) + " \"" + name + "\" "
-              + "to prevent any misunderstanding/clash with "
-              + getSymbolTypeName(conflictingSymbol) + " \"" + knownMemberName + "\""
-              + getDefinitionPlace(symbol, conflictingSymbol) + ".");
-        }
+          .findFirst()
+          .ifPresent(conflictingSymbol ->
+            reportIssue(reportTree,
+              "Rename "
+                + getSymbolKindName(symbol) + " \"" + name + "\" "
+                + "to prevent any misunderstanding/clash with "
+                + getSymbolKindName(conflictingSymbol) + " \"" + knownMemberName + "\""
+                + getDefinitionPlace(symbol, conflictingSymbol) + "."));
       }
     }
   }

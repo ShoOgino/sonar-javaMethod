@@ -1,0 +1,10 @@
+  private static boolean invalidMethodAndVariable(Symbol currentMember, Symbol knownMember) {
+    if (!sameVisibilityNotPrivate(currentMember, knownMember)) {
+      return false;
+    }
+    Symbol methodSymbol = currentMember.isMethodSymbol() ? currentMember : knownMember;
+    Symbol variableSymbol = methodSymbol == currentMember ? knownMember : currentMember;
+    return !methodReturningVariableWithSameName(methodSymbol, variableSymbol)
+      && !isBuilderPattern(methodSymbol, variableSymbol);
+  }
+
