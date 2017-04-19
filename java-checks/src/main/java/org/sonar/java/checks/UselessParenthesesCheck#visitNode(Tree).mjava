@@ -1,10 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
-    if(tree.is(Kind.PARENTHESIZED_EXPRESSION) && hasParentExpression((ParenthesizedTree) tree)) {
-      reportIssue(((ParenthesizedTree) tree).openParenToken(),
-          "Remove those useless parentheses.",
-          ImmutableList.of(new JavaFileScannerContext.Location("Original", ((ParenthesizedTree) tree).closeParenToken())), null);
+    ParenthesizedTree parenthesizedTree = (ParenthesizedTree) tree;
+    if (uselessParentheses(parenthesizedTree)) {
+      reportIssue(parenthesizedTree.openParenToken(),
+          "Remove these useless parentheses.",
+          Collections.singletonList(new JavaFileScannerContext.Location("", parenthesizedTree.closeParenToken())), null);
     }
-    parent.push(tree);
   }
 
