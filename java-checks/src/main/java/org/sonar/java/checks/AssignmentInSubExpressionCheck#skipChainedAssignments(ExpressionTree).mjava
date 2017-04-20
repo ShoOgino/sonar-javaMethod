@@ -1,0 +1,10 @@
+  private ExpressionTree skipChainedAssignments(ExpressionTree expressionTree) {
+    ExpressionTree tree = ExpressionUtils.skipParentheses(expressionTree);
+    while (tree instanceof AssignmentExpressionTree) {
+      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) tree;
+      scan(assignmentExpressionTree.variable());
+      tree = ExpressionUtils.skipParentheses(assignmentExpressionTree.expression());
+    }
+    return tree;
+  }
+
