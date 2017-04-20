@@ -1,0 +1,28 @@
+  public static int compilationUnitComplexity(CompilationUnitTree cut) {
+    // only visit methods and initializers
+    class CompilationUnitVisitor extends BaseTreeVisitor {
+
+      private int cutComplexity = 0;
+
+      @Override
+      public void visitMethod(MethodTree tree) {
+        cutComplexity += methodComplexity(tree).complexity;
+        super.visitMethod(tree);
+      }
+
+      @Override
+      public void visitBlock(BlockTree tree) {
+        if (tree.is(Tree.Kind.INITIALIZER, Tree.Kind.STATIC_INITIALIZER)) {
+          CognitiveComplexityVisitor visitor = new CognitiveComplexityVisitor();
+          tree.accept(visitor);
+          cutComplexity += visitor.complexity;
+        }
+        super.visitBlock(tree);
+      }
+    }
+
+    CompilationUnitVisitor compilationUnitVisitor = new CompilationUnitVisitor();
+    cut.accept(compilationUnitVisitor);
+    return compilationUnitVisitor.cutComplexity;
+  }
+

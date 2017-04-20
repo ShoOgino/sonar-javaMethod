@@ -1,16 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
     MethodTree method = (MethodTree) tree;
-    if (method.block() == null || ((ClassTree)method.parent()).simpleName() == null || isWithinLocalClass(method)) {
-      return;
-    }
-    CognitiveComplexityVisitor complexityVisitor = new CognitiveComplexityVisitor();
-    method.accept(complexityVisitor);
-    int total = complexityVisitor.complexity;
+    CognitiveComplexityVisitor.Result result = CognitiveComplexityVisitor.methodComplexity(method);
+    int total = result.complexity;
     if (total > max) {
       reportIssue(method.simpleName(),
-        "Refactor this method to reduce its Cognitive Complexity from " + total + " to the " + max + " allowed.", complexityVisitor.flow, total - max);
+        "Refactor this method to reduce its Cognitive Complexity from " + total + " to the " + max + " allowed.", result.locations, total - max);
     }
-
   }
 
