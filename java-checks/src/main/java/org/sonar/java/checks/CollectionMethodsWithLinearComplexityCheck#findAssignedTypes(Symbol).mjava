@@ -1,0 +1,16 @@
+  private static Set<String> findAssignedTypes(Symbol symbol) {
+    Set<String> types = new HashSet<>();
+    Tree declaration = symbol.declaration();
+    if (declaration != null && declaration.is(Tree.Kind.VARIABLE)) {
+      ExpressionTree initializer = ((VariableTree) declaration).initializer();
+      if (initializer != null) {
+        types.add(initializer.symbolType().fullyQualifiedName());
+      }
+    }
+    symbol.usages().stream()
+      .flatMap(CollectionMethodsWithLinearComplexityCheck::usageInAssignment)
+      .map(assignment -> assignment.expression().symbolType().fullyQualifiedName())
+      .forEach(types::add);
+    return types;
+  }
+

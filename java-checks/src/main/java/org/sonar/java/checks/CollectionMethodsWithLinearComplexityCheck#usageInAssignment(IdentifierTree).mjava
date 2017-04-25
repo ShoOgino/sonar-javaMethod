@@ -1,0 +1,16 @@
+  private static Stream<AssignmentExpressionTree> usageInAssignment(IdentifierTree usage) {
+    Tree prevParent = usage;
+    Tree parent = usage.parent();
+    while (parent != null && !parent.is(Tree.Kind.ASSIGNMENT) && parent.is(Tree.Kind.MEMBER_SELECT, Tree.Kind.IDENTIFIER)) {
+      prevParent = parent;
+      parent = parent.parent();
+    }
+    if (parent != null && parent.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) parent;
+      if (assignment.variable().equals(prevParent)) {
+        return Stream.of(assignment);
+      }
+    }
+    return Stream.empty();
+  }
+

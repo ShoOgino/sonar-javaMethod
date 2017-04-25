@@ -1,0 +1,13 @@
+  private static boolean matchesActualType(Symbol invocationTarget, Set<String> actualTypes) {
+    Type declaredType = invocationTarget.type();
+    if (actualTypes.contains(declaredType.fullyQualifiedName())) {
+      return true;
+    }
+    // actual type is looked up only on private or final fields, otherwise it can't be guaranteed
+    if (invocationTarget.isPrivate() || invocationTarget.isFinal()) {
+      Set<String> assignedTypes = findAssignedTypes(invocationTarget);
+      return !assignedTypes.isEmpty() && actualTypes.containsAll(assignedTypes);
+    }
+    return false;
+  }
+

@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static Symbol invocationTarget(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree methodSelectExpression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (methodSelectExpression.is(Tree.Kind.IDENTIFIER)) {
+        return ((IdentifierTree) methodSelectExpression).symbol();
+      }
+    }
+    return null;
+  }
+
