@@ -1,12 +1,12 @@
-  private boolean isAcceptableType(Env env, JavaType arg, JavaType formal, boolean autoboxing) {
+  private boolean isAcceptableType(JavaType arg, JavaType formal, boolean autoboxing) {
     if(arg.isTagged(JavaType.DEFERRED)) {
-      return isAcceptableDeferredType(env, (DeferredType) arg, formal);
+      return isAcceptableDeferredType((DeferredType) arg, formal);
     }
     if(formal.isTagged(JavaType.TYPEVAR) && !arg.isTagged(JavaType.TYPEVAR)) {
       return subtypeOfTypeVar(arg, (TypeVariableJavaType) formal);
     }
     if (formal.isArray() && arg.isArray()) {
-      return isAcceptableType(env, ((ArrayJavaType) arg).elementType(), ((ArrayJavaType) formal).elementType(), autoboxing);
+      return isAcceptableType(((ArrayJavaType) arg).elementType(), ((ArrayJavaType) formal).elementType(), autoboxing);
     }
     if (arg.isParameterized() || formal.isParameterized() || isWilcardType(arg) || isWilcardType(formal)) {
       return callWithRawType(arg, formal) || types.isSubtype(arg, formal) || isAcceptableByAutoboxing(arg, formal.erasure());
