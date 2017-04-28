@@ -1,9 +1,9 @@
-  private List<String> getParameters(String formatString, MethodInvocationTree mit) {
+  protected List<String> getParameters(String formatString, MethodInvocationTree mit) {
     List<String> params = new ArrayList<>();
     Matcher matcher = PRINTF_PARAM_PATTERN.matcher(formatString);
     while (matcher.find()) {
       if (firstArgumentIsLT(params, matcher.group(2))) {
-        reportIssue(mit, "The argument index '<' refers to the previous format specifier but there isn't one.");
+        reportMissingPrevious(mit);
         continue;
       }
       StringBuilder param = new StringBuilder();

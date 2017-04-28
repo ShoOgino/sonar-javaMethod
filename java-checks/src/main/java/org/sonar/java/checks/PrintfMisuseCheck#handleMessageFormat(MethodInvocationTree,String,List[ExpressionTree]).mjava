@@ -1,0 +1,22 @@
+  protected void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
+    String newFormatString = cleanupDoubleQuote(formatString);
+    Set<Integer> indexes = getMessageFormatIndexes(newFormatString);
+    List<ExpressionTree> newArgs = args;
+    if (newArgs.size() == 1) {
+      ExpressionTree firstArg = newArgs.get(0);
+      if (firstArg.symbolType().isArray()) {
+        if (isNewArrayWithInitializers(firstArg)) {
+          newArgs = ((NewArrayTree) firstArg).initializers();
+        } else {
+          // size is unknown
+          return;
+        }
+      }
+    }
+    if (checkEmptyParams(mit, indexes)) {
+      return;
+    }
+    checkToStringInvocation(newArgs);
+    verifyParameters(mit, newArgs, indexes);
+  }
+

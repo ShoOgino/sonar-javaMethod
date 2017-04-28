@@ -1,4 +1,4 @@
-  private void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
+  protected void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
     String newFormatString = cleanupDoubleQuote(formatString);
     Set<Integer> indexes = getMessageFormatIndexes(newFormatString);
     List<ExpressionTree> newArgs = args;
@@ -13,13 +13,11 @@
         }
       }
     }
-    if (checkEmptyParams(mit, indexes)
-      || checkArgumentNumber(mit, indexes.size(), newArgs.size())
+    if (checkArgumentNumber(mit, indexes.size(), newArgs.size())
       || checkUnbalancedQuotes(mit, newFormatString)
       || checkUnbalancedBraces(mit, newFormatString)) {
       return;
     }
-    checkToStringInvocation(newArgs);
     verifyParameters(mit, newArgs, indexes);
   }
 

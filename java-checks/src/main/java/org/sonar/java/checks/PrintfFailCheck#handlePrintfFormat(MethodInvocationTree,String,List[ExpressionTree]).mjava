@@ -1,0 +1,12 @@
+  @Override
+  protected void handlePrintfFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
+    List<String> params = getParameters(formatString, mit);
+    cleanupLineSeparator(params);
+    if (!params.isEmpty()) {
+      if (checkArgumentNumber(mit, argIndexes(params).size(), args.size())) {
+        return;
+      }
+      verifyParameters(mit, args, params);
+    }
+  }
+

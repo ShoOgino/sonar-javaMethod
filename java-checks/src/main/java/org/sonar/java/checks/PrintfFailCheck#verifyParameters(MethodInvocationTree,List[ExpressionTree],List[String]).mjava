@@ -1,0 +1,27 @@
+  private void verifyParameters(MethodInvocationTree mit, List<ExpressionTree> args, List<String> params) {
+    int index = 0;
+    List<ExpressionTree> unusedArgs = new ArrayList<>(args);
+    for (String rawParam : params) {
+      String param = rawParam;
+      int argIndex = index;
+      if (param.contains("$")) {
+        argIndex = getIndex(param) - 1;
+        if (argIndex == -1) {
+          reportIssue(mit, "Arguments are numbered starting from 1.");
+          return;
+        }
+        param = param.substring(param.indexOf('$') + 1);
+      } else if (param.charAt(0) == '<') {
+        //refers to previous argument
+        argIndex = Math.max(0, argIndex - 1);
+      }else {
+        index++;
+      }
+      ExpressionTree argExpressionTree = args.get(argIndex);
+      unusedArgs.remove(argExpressionTree);
+      Type argType = argExpressionTree.symbolType();
+      checkNumerical(mit, param, argType);
+      checkTimeConversion(mit, param, argType);
+    }
+  }
+
