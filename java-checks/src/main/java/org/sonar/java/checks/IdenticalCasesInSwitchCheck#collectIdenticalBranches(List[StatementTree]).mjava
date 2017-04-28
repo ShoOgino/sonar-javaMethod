@@ -1,0 +1,16 @@
+  private static IfElseChain collectIdenticalBranches(List<StatementTree> allBranches) {
+    IfElseChain ifElseChain = new IfElseChain();
+    for (int i = 0; i <  allBranches.size(); i++) {
+      if (ifElseChain.branches.containsValue(allBranches.get(i))) {
+        continue;
+      }
+      for (int j = i + 1; j < allBranches.size(); j++) {
+        if (SyntacticEquivalence.areEquivalent(allBranches.get(i), allBranches.get(j))) {
+          ifElseChain.branches.put(allBranches.get(i), allBranches.get(j));
+        }
+      }
+    }
+    ifElseChain.totalBranchCount = allBranches.size();
+    return ifElseChain;
+  }
+

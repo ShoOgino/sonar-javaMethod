@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.SWITCH_STATEMENT)) {
+      SwitchStatementTree switchStatement = (SwitchStatementTree) tree;
+      Multimap<CaseGroupTree, CaseGroupTree> identicalBranches = checkSwitchStatement(switchStatement);
+      if (allBranchesSame(identicalBranches, switchStatement.cases().size())) {
+        reportIssue(((SwitchStatementTree) tree).switchKeyword(), IF_SWITCH_MSG);
+      }
+    } else if (tree.is(Tree.Kind.IF_STATEMENT)) {
+      if (!tree.parent().is(Tree.Kind.IF_STATEMENT)) {
+        IfStatementTree ifStatementTree = (IfStatementTree) tree;
+        IfElseChain ifElseChain = checkIfStatement(ifStatementTree);
+        if (allBranchesSame(ifElseChain.branches, ifElseChain.totalBranchCount)) {
+          reportIssue(ifStatementTree.ifKeyword(), IF_SWITCH_MSG);
+        }
+      }
+    } else {
+      checkConditionalExpression((ConditionalExpressionTree) tree);
+    }
+  }
+

@@ -1,12 +1,18 @@
-  public void checkSwitchStatement(SwitchStatementTree node) {
+  protected Multimap<CaseGroupTree, CaseGroupTree> checkSwitchStatement(SwitchStatementTree node) {
+    SetMultimap<CaseGroupTree, CaseGroupTree> identicalBranches = HashMultimap.create();
     int index = 0;
     List<CaseGroupTree> cases = node.cases();
-    Set<CaseLabelTree> reportedLabels = Sets.newHashSet();
     for (CaseGroupTree caseGroupTree : cases) {
       index++;
+      if (identicalBranches.containsValue(caseGroupTree)) {
+        continue;
+      }
       for (int i = index; i < cases.size(); i++) {
-        checkCaseEquivalence(reportedLabels, caseGroupTree, cases.get(i));
+        if (SyntacticEquivalence.areEquivalent(caseGroupTree.body(), cases.get(i).body())) {
+          identicalBranches.put(caseGroupTree, cases.get(i));
+        }
       }
     }
+    return identicalBranches;
   }
 

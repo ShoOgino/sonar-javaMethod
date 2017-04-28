@@ -1,0 +1,10 @@
+  private void reportIdenticalIfChainBranches(Multimap<StatementTree, StatementTree> identicalBranches, int totalBranchCount) {
+    if (!allBranchesSame(identicalBranches, totalBranchCount)) {
+      identicalBranches.asMap().forEach((first, others) -> {
+        if (!isTrivialIfStatement(first)) {
+          others.forEach(other -> createIssue(other, issueMessage("branch", first), first));
+        }
+      });
+    }
+  }
+
