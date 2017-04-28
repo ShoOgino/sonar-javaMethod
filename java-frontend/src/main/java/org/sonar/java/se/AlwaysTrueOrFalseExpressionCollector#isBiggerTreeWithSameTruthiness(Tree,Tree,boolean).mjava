@@ -1,0 +1,11 @@
+  private static boolean isBiggerTreeWithSameTruthiness(@Nullable Tree parent, Tree child, boolean isTrue) {
+    if (parent == null) {
+      return false;
+    }
+    if (parent.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      return true;
+    }
+    Tree.Kind operator = isTrue ? Tree.Kind.CONDITIONAL_OR : Tree.Kind.CONDITIONAL_AND;
+    return parent.is(operator) && ((BinaryExpressionTree) parent).leftOperand() == child;
+  }
+

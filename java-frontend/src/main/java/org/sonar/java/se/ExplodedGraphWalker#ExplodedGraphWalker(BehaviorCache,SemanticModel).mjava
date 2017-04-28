@@ -1,8 +1,8 @@
   @VisibleForTesting
   public ExplodedGraphWalker(BehaviorCache behaviorCache, SemanticModel semanticModel) {
-    alwaysTrueOrFalseChecker = new ConditionAlwaysTrueOrFalseCheck();
-    List<SECheck> checks = Lists.newArrayList(alwaysTrueOrFalseChecker, new NullDereferenceCheck(), new DivisionByZeroCheck(),
+    List<SECheck> checks = Lists.newArrayList(new NullDereferenceCheck(), new DivisionByZeroCheck(),
       new UnclosedResourcesCheck(), new LocksNotUnlockedCheck(), new NonNullSetToNullCheck(), new NoWayOutLoopCheck());
+    this.alwaysTrueOrFalseExpressionCollector = new AlwaysTrueOrFalseExpressionCollector();
     this.checkerDispatcher = new CheckerDispatcher(this, checks);
     this.behaviorCache = behaviorCache;
     this.semanticModel = semanticModel;

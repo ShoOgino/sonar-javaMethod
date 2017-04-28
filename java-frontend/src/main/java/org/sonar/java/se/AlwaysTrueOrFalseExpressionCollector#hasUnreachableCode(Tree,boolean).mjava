@@ -1,0 +1,13 @@
+  public static boolean hasUnreachableCode(Tree booleanExpr, boolean isTrue) {
+    Tree parent = biggestTreeWithSameEvaluation(booleanExpr, isTrue);
+    if (parent.is(Tree.Kind.IF_STATEMENT)) {
+      IfStatementTree ifStatementTree = (IfStatementTree) parent;
+      return !isTrue || ifStatementTree.elseStatement() != null;
+    }
+    // Tree.Kind.DO_STATEMENT not considered, because it is always executed at least once
+    if (parent.is(Tree.Kind.WHILE_STATEMENT) && !isTrue) {
+      return true;
+    }
+    return parent.is(Tree.Kind.CONDITIONAL_EXPRESSION);
+  }
+

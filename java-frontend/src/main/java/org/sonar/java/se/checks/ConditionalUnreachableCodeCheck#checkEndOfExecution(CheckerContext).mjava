@@ -1,0 +1,11 @@
+  @Override
+  public void checkEndOfExecution(CheckerContext context) {
+    AlwaysTrueOrFalseExpressionCollector atof = context.alwaysTrueOrFalseExpressions();
+    for (Tree condition : atof.alwaysFalse()) {
+      reportBooleanExpression(context, atof, condition, false);
+    }
+    for (Tree condition : atof.alwaysTrue()) {
+      reportBooleanExpression(context, atof, condition, true);
+    }
+  }
+
