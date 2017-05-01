@@ -1,8 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     ParenthesizedTree parenthesizedTree = (ParenthesizedTree) tree;
-    if (uselessParentheses(parenthesizedTree)) {
-      reportIssue(parenthesizedTree.openParenToken(),
+    if (parenthesizedTree.expression().is(Kind.PARENTHESIZED_EXPRESSION)) {
+      reportIssue(((ParenthesizedTree) parenthesizedTree.expression()).openParenToken(),
           "Remove these useless parentheses.",
           Collections.singletonList(new JavaFileScannerContext.Location("", parenthesizedTree.closeParenToken())), null);
     }
