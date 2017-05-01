@@ -2,9 +2,10 @@
   private static Type getFirstTypeParameter(Type type) {
     if (type instanceof ParametrizedTypeJavaType) {
       ParametrizedTypeJavaType parametrizedTypeType = (ParametrizedTypeJavaType) type;
-      for (TypeVariableJavaType variableType : parametrizedTypeType.typeParameters()) {
-        return parametrizedTypeType.substitution(variableType);
-      }
+      return parametrizedTypeType.typeParameters().stream()
+        .findFirst()
+        .map(parametrizedTypeType::substitution)
+        .orElse(null);
     }
     return null;
   }
