@@ -4,10 +4,16 @@
     ListTree<TypeTree> thrownList = methodTree.throwsClauses();
 
     Set<Type> thrownExceptions = thrownExceptionsFromBody(methodTree);
+    boolean hasTryWithResourceInBody = hasTryWithResourceInBody(methodTree);
 
     Set<String> reported = new HashSet<>();
     for (TypeTree typeTree : thrownList) {
       Type exceptionType = typeTree.symbolType();
+      if (hasTryWithResourceInBody && (exceptionType.is("java.io.IOException") || exceptionType.is("java.lang.Exception"))) {
+        // method 'close()' from 'java.lang.AutoCloseable' interface throws 'java.lang.Exception'
+        // method 'close()' from 'java.io.Closeable' interface throws 'java.io.IOException"
+        continue;
+      }
       String fullyQualifiedName = exceptionType.fullyQualifiedName();
       if (!reported.contains(fullyQualifiedName)) {
         String superTypeName = isSubclassOfAny(exceptionType, thrownList);
@@ -19,7 +25,7 @@
           reportIssue(typeTree, String.format("Remove the redundant '%s' thrown exception declaration(s).", fullyQualifiedName));
         } else if (canNotBeThrown(methodTree, exceptionType, thrownExceptions)) {
           reportIssue(typeTree, String.format("Remove the declaration of thrown exception '%s', as it cannot be thrown from %s's body.", fullyQualifiedName,
-            tree.is(Tree.Kind.CONSTRUCTOR) ? "constructor" : "method"));
+            methodTreeType(methodTree)));
         }
         reported.add(fullyQualifiedName);
       }
