@@ -1,0 +1,7 @@
+  private static Map<Symbol, Tree> singleUpdatesInBody(StatementTree statement, Collection<Symbol> conditionsNotUpdated) {
+    UpdatesInBodyVisitor updatedInBodyVisitor = new UpdatesInBodyVisitor(conditionsNotUpdated);
+    statement.accept(updatedInBodyVisitor);
+    // only report if there is symbols which are updated only once, as multiple update cannot easily be moved to updates
+    return updatedOnlyOnceWithUnaryExpression(updatedInBodyVisitor.updates, statement);
+  }
+

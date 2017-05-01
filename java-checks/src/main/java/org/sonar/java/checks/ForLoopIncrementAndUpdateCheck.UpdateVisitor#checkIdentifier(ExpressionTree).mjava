@@ -1,8 +1,9 @@
     private void checkIdentifier(ExpressionTree expression) {
-      if (expression.is(Tree.Kind.IDENTIFIER)) {
-        addSymbol((IdentifierTree) expression);
-      } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
-        addSymbol(((MemberSelectExpressionTree) expression).identifier());
+      ExpressionTree expr = ExpressionUtils.skipParentheses(expression);
+      if (expr.is(Tree.Kind.IDENTIFIER)) {
+        addSymbol((IdentifierTree) expr);
+      } else if (expr.is(Tree.Kind.MEMBER_SELECT)) {
+        addSymbol(((MemberSelectExpressionTree) expr).identifier());
       }
     }
 

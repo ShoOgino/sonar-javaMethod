@@ -1,15 +1,17 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      ForStatementTree forStatementTree = (ForStatementTree) tree;
-      if (!forStatementTree.update().isEmpty() && forStatementTree.condition() != null) {
-        Collection<Symbol> updateSymbols = getUpdatedSymbols(forStatementTree);
-        ConditionVisitor conditionVisitor = new ConditionVisitor(updateSymbols);
-        forStatementTree.accept(conditionVisitor);
-        if (conditionVisitor.shouldRaiseIssue) {
-          reportIssue(forStatementTree.forKeyword(), "This loop's stop condition tests \"" + Joiner.on(", ").join(conditionVisitor.conditionNames)
-            + "\" but the incrementer updates \"" + getSymbols(updateSymbols) + "\".");
-        }
+    if (!hasSemantic()) {
+      return;
+    }
+    ForStatementTree forStatementTree = (ForStatementTree) tree;
+    if (forStatementTree.update().isEmpty() || forStatementTree.condition() == null) {
+      return;
+    }
+    Collection<Symbol> symbolsFromConditionsNotUpdated = symbolsFromConditionsNotUpdated(forStatementTree);
+    if (!symbolsFromConditionsNotUpdated.isEmpty()) {
+      Map<Symbol, Tree> updatesInBody = singleUpdatesInBody(forStatementTree.statement(), symbolsFromConditionsNotUpdated);
+      if (!updatesInBody.isEmpty()) {
+        reportIssue(forStatementTree.forKeyword(), getMessage(updatesInBody.keySet()), getSecondaries(updatesInBody.values()), null);
       }
     }
   }
