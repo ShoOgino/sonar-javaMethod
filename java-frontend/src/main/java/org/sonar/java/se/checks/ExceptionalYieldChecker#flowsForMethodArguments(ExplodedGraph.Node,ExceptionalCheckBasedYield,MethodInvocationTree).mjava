@@ -1,0 +1,8 @@
+  private static Set<List<JavaFileScannerContext.Location>> flowsForMethodArguments(ExplodedGraph.Node node, ExceptionalCheckBasedYield yield, MethodInvocationTree mit) {
+    ProgramState programState = node.programState;
+    List<SymbolicValue> arguments = Lists.reverse(programState.peekValues(mit.arguments().size()));
+    List<Class<? extends Constraint>> domains = domainsFromArguments(programState, arguments);
+    Symbol symbolToTrack = symbolToTrackFromArgument(mit, yield);
+    return FlowComputation.flow(node, new LinkedHashSet<>(arguments), c -> true, c -> false, domains, symbolToTrack);
+  }
+

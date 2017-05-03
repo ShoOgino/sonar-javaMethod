@@ -1,0 +1,11 @@
+  public Object myOtherMethod(String line, String value) {
+    field = null; // flow@myOtherMethod [[order=1]] {{'field' is assigned null.}}
+    String s = line.length() > 0 ? value : null;
+    if (s == null || s.startsWith("key")) { // flow@myOtherMethod [[order=2]] {{Implies 's' is non-null.}}
+      this.field = new Object();
+    } else {
+      doSomething(this.field, s); // Noncompliant [[flows=myOtherMethod]] {{"NullPointerException" will be thrown when invoking method "doSomething()".}} flow@myOtherMethod [[order=3]] {{'doSomething()' is invoked.}}
+    }
+    return field;
+  }
+
