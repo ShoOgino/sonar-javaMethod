@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    AssignmentExpressionTree aeTree = (AssignmentExpressionTree) tree;
+    SyntaxToken operatorToken = aeTree.operatorToken();
+    SyntaxToken firstToken = aeTree.expression().firstToken();
+    if (isSuspiciousToken(firstToken) && operatorToken.column() + 1 == firstToken.column()) {
+      reportIssue(operatorToken, firstToken, "Was \"" + firstToken.text() + "=\" meant instead?");
+    }
+  }
+
