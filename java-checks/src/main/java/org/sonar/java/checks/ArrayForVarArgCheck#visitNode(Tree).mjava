@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Symbol sym;
+    Arguments args;
+    if (tree.is(Tree.Kind.NEW_CLASS)) {
+      sym = ((NewClassTree) tree).constructorSymbol();
+      args = ((NewClassTree) tree).arguments();
+    } else {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      sym = mit.symbol();
+      args = mit.arguments();
+    }
+    if (sym.isMethodSymbol() && !args.isEmpty()) {
+      ExpressionTree lastArg = args.get(args.size() - 1);
+      checkInvokedMethod((JavaSymbol.MethodJavaSymbol) sym, lastArg);
+    }
+  }
+

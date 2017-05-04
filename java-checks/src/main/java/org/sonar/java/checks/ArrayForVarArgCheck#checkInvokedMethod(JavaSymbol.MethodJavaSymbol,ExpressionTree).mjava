@@ -1,0 +1,22 @@
+  private void checkInvokedMethod(JavaSymbol.MethodJavaSymbol methodSymbol, ExpressionTree lastArg) {
+    if (methodSymbol.isVarArgs() && lastArg.is(Tree.Kind.NEW_ARRAY)) {
+      if (lastParamHasSameType(methodSymbol, lastArg)) {
+        String message = "Remove this array creation";
+        NewArrayTree newArrayTree = (NewArrayTree) lastArg;
+        if (newArrayTree.openBraceToken() == null) {
+          ExpressionTree expression = newArrayTree.dimensions().get(0).expression();
+          Integer literalValue = LiteralUtils.intLiteralValue(expression);
+          if (literalValue != null && literalValue != 0) {
+            return;
+          }
+        } else if (!newArrayTree.initializers().isEmpty()) {
+          message += " and simply pass the elements";
+        }
+        reportIssue(lastArg, message + ".");
+      } else {
+        String type = ((Type.ArrayType) getLastParameterType(methodSymbol)).elementType().name();
+        reportIssue(lastArg, "Disambiguate this call by either casting as \""+type+"\" or \""+type+"[]\"");
+      }
+    }
+  }
+
