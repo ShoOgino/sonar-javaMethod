@@ -1,8 +1,8 @@
   @Override
   public void visitVariable(VariableTree tree) {
-    if (tree.type().symbolType().isSubtypeOf("java.util.Map")) {
+    if (tree.type().symbolType().isSubtypeOf(JAVA_UTIL_MAP)) {
       ExpressionTree initializer = tree.initializer();
-      if (initializer != null) {
+      if (initializer != null && !usesNullKey(tree.symbol())) {
         checkNewMap(initializer, hasEnumKey(tree.type().symbolType()));
       }
     } else {
