@@ -1,0 +1,26 @@
+  private void checkEqualsMethods(MethodInvocationTree mit) {
+    if(EQUALS_MATCHER.matches(mit)) {
+      if(mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        ExpressionTree leftOp = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
+        ExpressionTree rightOp = mit.arguments().get(0);
+        if(SyntacticEquivalence.areEquivalent(leftOp, rightOp)) {
+          reportIssue(
+            rightOp,
+            "Identical sub-expressions on both sides of equals.",
+            ImmutableList.of(new JavaFileScannerContext.Location("", leftOp)),
+            null);
+        }
+      }
+    } else if (DEEP_EQUALS_MATCHER.matches(mit) || OBJECTS_EQUALS_MATCHER.matches(mit)) {
+      ExpressionTree leftOp = mit.arguments().get(0);
+      ExpressionTree rightOp = mit.arguments().get(1);
+      if(SyntacticEquivalence.areEquivalent(leftOp, rightOp)) {
+        reportIssue(
+          rightOp,
+          "Both arguments are identical sub-expressions.",
+          ImmutableList.of(new JavaFileScannerContext.Location("", leftOp)),
+          null);
+      }
+    }
+  }
+

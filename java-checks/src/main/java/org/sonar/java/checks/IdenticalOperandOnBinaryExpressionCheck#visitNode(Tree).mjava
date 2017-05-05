@@ -1,12 +1,17 @@
   @Override
   public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      checkEqualsMethods(mit);
+      return;
+    }
     BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
     ExpressionTree rightOperand = binaryExpressionTree.rightOperand();
     ExpressionTree equivalentOperand = equivalentOperand(binaryExpressionTree, rightOperand);
     if (equivalentOperand != null) {
       reportIssue(
         rightOperand,
-        "Identical sub-expressions on both sides of operator \"" + binaryExpressionTree.operatorToken().text() + "\"",
+        "Correct one of the identical sub-expressions on both sides of operator \"" + binaryExpressionTree.operatorToken().text() + "\"",
         ImmutableList.of(new JavaFileScannerContext.Location("", equivalentOperand)),
         null);
     }
