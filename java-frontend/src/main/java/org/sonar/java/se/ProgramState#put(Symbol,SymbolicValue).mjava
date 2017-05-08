@@ -11,11 +11,8 @@
       }
       newReferences = increaseReference(newReferences, value);
       PMap<Symbol, SymbolicValue> newValues = values.put(symbol, value);
-      return new ProgramState(symbol, newValues, newReferences, constraints, visitedPoints, stack, exitSymbolicValue);
+      return new ProgramState(symbol, newValues, newReferences, constraints, visitedPoints, stack, exitSymbolicValue, lastAssociatedSymbols.put(value, symbol));
     }
-    if(lastEvaluated == null) {
-      lastEvaluated = symbol;
-    }
-    return this;
+    return new ProgramState(symbol, values, references, constraints, visitedPoints, stack, exitSymbolicValue, lastAssociatedSymbols.put(value, symbol));
   }
 

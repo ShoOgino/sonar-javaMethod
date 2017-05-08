@@ -2,6 +2,7 @@
     class CleanAction implements BiConsumer<Symbol, SymbolicValue> {
       boolean newProgramState = false;
       PMap<Symbol, SymbolicValue> newValues = values;
+      PMap<SymbolicValue, Symbol> newLastAssociatedSymbol = lastAssociatedSymbols;
       PMap<SymbolicValue, Integer> newReferences = references;
       PMap<SymbolicValue, PMap<Class<? extends Constraint>, Constraint>> newConstraints = constraints;
 
@@ -10,6 +11,7 @@
         if (isLocalVariable(symbol) && !liveVariables.contains(symbol) && !protectedSymbolicValues.contains(symbolicValue)) {
           newProgramState = true;
           newValues = newValues.remove(symbol);
+          newLastAssociatedSymbol = lastAssociatedSymbols.remove(symbolicValue);
           newReferences = decreaseReference(newReferences, symbolicValue);
           if (!isReachable(symbolicValue, newReferences) && isDisposable(symbolicValue, newConstraints.get(symbolicValue)) && !inStack(stack, symbolicValue)) {
             newConstraints = newConstraints.remove(symbolicValue);
@@ -20,7 +22,8 @@
     }
     CleanAction cleanAction = new CleanAction();
     values.forEach(cleanAction);
-    return cleanAction.newProgramState ? new ProgramState(cleanAction.newValues, cleanAction.newReferences, cleanAction.newConstraints, visitedPoints, stack, exitSymbolicValue)
+    return cleanAction.newProgramState ? new ProgramState(cleanAction.newValues, cleanAction.newReferences, cleanAction.newConstraints, visitedPoints, stack, exitSymbolicValue,
+      cleanAction.newLastAssociatedSymbol)
       : this;
   }
 

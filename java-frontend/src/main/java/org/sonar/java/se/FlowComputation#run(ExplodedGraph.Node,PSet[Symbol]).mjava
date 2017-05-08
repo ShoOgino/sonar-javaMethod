@@ -1,7 +1,7 @@
-  private Set<List<JavaFileScannerContext.Location>> run(final ExplodedGraph.Node node, @Nullable final Symbol trackSymbol) {
+  private Set<List<JavaFileScannerContext.Location>> run(final ExplodedGraph.Node node, PSet<Symbol> trackedSymbols) {
     Set<List<JavaFileScannerContext.Location>> flows = new HashSet<>();
     Deque<ExecutionPath> workList = new ArrayDeque<>();
-    node.edges().stream().flatMap(e -> startPath(e, trackSymbol)).forEach(workList::push);
+    node.edges().stream().flatMap(e -> startPath(e, trackedSymbols)).forEach(workList::push);
     int flowSteps = 0;
     Set<ExecutionPath> visited = new HashSet<>(workList);
     while (!workList.isEmpty()) {

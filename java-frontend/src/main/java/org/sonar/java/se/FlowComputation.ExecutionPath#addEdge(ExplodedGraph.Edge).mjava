@@ -7,7 +7,7 @@
         .orElse(ImmutableList.of());
       flowBuilder.addAll(laFlow);
 
-      Symbol newTrackSymbol = newTrackedSymbol(edge);
+      PSet<Symbol> newTrackSymbols = newTrackedSymbols(edge);
 
       Set<LearnedConstraint> learnedConstraints = learnedConstraints(edge);
       List<JavaFileScannerContext.Location> lcFlow = flowFromLearnedConstraints(edge, learnedConstraints);
@@ -19,6 +19,6 @@
       Set<List<JavaFileScannerContext.Location>> yieldsFlows = flowFromYields(edge);
       return yieldsFlows.stream()
         .map(yieldFlow -> ImmutableList.<JavaFileScannerContext.Location>builder().addAll(currentFlow).addAll(yieldFlow).build())
-        .map(f -> new ExecutionPath(edge, visited.add(edge), newTrackSymbol, f, endOfPath));
+        .map(f -> new ExecutionPath(edge, visited.add(edge), newTrackSymbols, f, endOfPath));
     }
 
