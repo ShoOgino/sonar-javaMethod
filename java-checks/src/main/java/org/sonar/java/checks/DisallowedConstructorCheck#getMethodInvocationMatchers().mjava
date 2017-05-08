@@ -1,0 +1,22 @@
+  @Override
+  protected List<MethodMatcher> getMethodInvocationMatchers() {
+    MethodMatcher invocationMatcher = MethodMatcher.create().name("<init>");
+    if (StringUtils.isEmpty(className)) {
+      return Collections.emptyList();
+    }
+    invocationMatcher.typeDefinition(className);
+    if (allOverloads) {
+      invocationMatcher.withAnyParameters();
+    } else {
+      String[] args = StringUtils.split(argumentTypes, ",");
+      if (args.length == 0) {
+        invocationMatcher.withoutParameter();
+      } else {
+        for (String arg : args) {
+          invocationMatcher.addParameter(StringUtils.trim(arg));
+        }
+      }
+    }
+    return Collections.singletonList(invocationMatcher);
+  }
+
