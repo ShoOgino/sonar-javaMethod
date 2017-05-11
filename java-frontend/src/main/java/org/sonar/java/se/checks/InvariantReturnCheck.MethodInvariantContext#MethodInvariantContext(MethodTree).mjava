@@ -1,0 +1,8 @@
+    MethodInvariantContext(MethodTree methodTree) {
+      this.methodTree = methodTree;
+      TypeTree returnType = methodTree.returnType();
+      this.returnStatementTrees = extractReturnStatements(methodTree);
+      methodToCheck = !isConstructorOrVoid(methodTree, returnType) && returnStatementTrees.size() > 1;
+      returnImmutableType = methodToCheck && (returnType.symbolType().isPrimitive() || returnType.symbolType().is("java.lang.String"));
+    }
+

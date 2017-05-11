@@ -1,0 +1,21 @@
+  @Override
+  public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
+    MethodInvariantContext methodInvariantContext = methodInvariantContexts.peek();
+    if (!methodInvariantContext.methodToCheck) {
+      return;
+    }
+    SymbolicValue exitValue = context.getState().exitValue();
+
+    if (exitValue != null) {
+      methodInvariantContext.endPaths++;
+      methodInvariantContext.symbolicValues.add(exitValue);
+      PMap<Class<? extends Constraint>, Constraint> constraints = context.getState().getConstraints(exitValue);
+      if (constraints != null) {
+        constraints.forEach(methodInvariantContext.methodConstraints::put);
+      } else {
+        // Relational SV or NOT SV : we can't say anything.
+        methodInvariantContext.avoidRaisingConstraintIssue = true;
+      }
+    }
+  }
+
