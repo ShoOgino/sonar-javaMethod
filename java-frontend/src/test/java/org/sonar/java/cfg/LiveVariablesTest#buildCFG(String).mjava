@@ -1,6 +1,6 @@
   private static CFG buildCFG(String methodCode) {
     CompilationUnitTree cut = (CompilationUnitTree) PARSER.parse("class A { int field1; int field2; static int staticField; " + methodCode + " }");
-    SemanticModel.createFor(cut, Collections.<File>emptyList());
+    SemanticModel.createFor(cut, new SquidClassLoader(Collections.emptyList()));
     MethodTree tree = ((MethodTree) ((ClassTree) cut.types().get(0)).members().get(3));
     return CFG.build(tree);
   }

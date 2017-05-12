@@ -6,7 +6,7 @@
       tree = (CompilationUnitTree) parsedTree;
       if (isNotJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"))) {
         try {
-          semanticModel = SemanticModel.createFor(tree, getProjectClasspath());
+          semanticModel = SemanticModel.createFor(tree, classLoader);
         } catch (Exception e) {
           LOG.error("Unable to create symbol table for : " + currentFile.getAbsolutePath(), e);
           return;
@@ -25,8 +25,7 @@
       scanner.scanFile(javaFileScannerContext);
     }
     if (semanticModel != null) {
-      // Close class loader after all the checks.
-      semanticModel.done();
+      ParametrizedTypeJavaType.typeSubstitutionSolver = null;
       classesNotFound.addAll(semanticModel.classesNotFound());
     }
   }
