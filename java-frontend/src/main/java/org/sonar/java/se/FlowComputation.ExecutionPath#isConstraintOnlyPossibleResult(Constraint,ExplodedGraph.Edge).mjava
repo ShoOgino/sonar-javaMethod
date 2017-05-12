@@ -1,0 +1,12 @@
+    private boolean isConstraintOnlyPossibleResult(Constraint constraint, ExplodedGraph.Edge edge) {
+      Set<MethodYield> selectedYields = edge.yields();
+      if (selectedYields.isEmpty()) {
+        // not based on x-procedural analysis, so certainty of constraint is not be guaranteed
+        return false;
+      }
+      MethodBehavior methodBehavior = selectedYields.iterator().next().methodBehavior();
+      return methodBehavior.happyPathYields()
+        .map(HappyPathYield::resultConstraint)
+        .allMatch(resultConstraint -> resultConstraint != null && constraint.equals(resultConstraint.get(constraint.getClass())));
+    }
+

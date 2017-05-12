@@ -7,6 +7,13 @@
       }
 
       List<Integer> argumentIndices = correspondingArgumentIndices(symbolicValues, edge.parent);
+
+      MethodInvocationTree mit = (MethodInvocationTree) edge.parent.programPoint.syntaxTree();
+      // computes flow messages for arguments being passed to the called method
+      List<JavaFileScannerContext.Location> passedArgumentsMessages = flowsForPassedArguments(argumentIndices, mit);
+      // computes flow messages for arguments changing name within called method
+      List<JavaFileScannerContext.Location> changingNameArgumentsMessages = flowsForArgumentsChangingName(argumentIndices, mit);
+
       SymbolicValue returnSV = edge.child.programState.peekValue();
       if (symbolicValues.contains(returnSV)) {
         // to retrieve flow for return value
@@ -19,6 +26,11 @@
       return methodYields.stream()
         .map(y -> y.flow(argumentIndices, domains))
         .flatMap(Set::stream)
+        .map(flowFromYield -> ImmutableList.<JavaFileScannerContext.Location>builder()
+          .addAll(flowFromYield)
+          .addAll(changingNameArgumentsMessages)
+          .addAll(passedArgumentsMessages)
+          .build())
         .collect(Collectors.toSet());
     }
 

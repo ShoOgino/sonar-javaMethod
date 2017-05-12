@@ -1,9 +1,9 @@
   // yield [arg -> true] has two flows
-  private void one_yield_two_flows(boolean arg) {
+  private void one_yield_two_flows(boolean arg) {  // flow@xproc1 [[order=2]] {{Implies 'arg' has the same value as 'a'.}} flow@xproc2 [[order=2]] {{Implies 'arg' has the same value as 'a'.}}
     if (cond) {
-      if (arg) return; // flow@xproc1 {{Implies 'arg' is true.}}
+      if (arg) return;  // flow@xproc1 [[order=3]] {{Implies 'arg' is true.}}
     } else {
-      if (arg) return; // flow@xproc2 {{Implies 'arg' is true.}}
+      if (arg) return;  // flow@xproc2 [[order=3]] {{Implies 'arg' is true.}}
     }
     throw new RuntimeException();
   }

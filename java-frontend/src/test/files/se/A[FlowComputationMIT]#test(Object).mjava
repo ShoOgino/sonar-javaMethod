@@ -1,6 +1,6 @@
   void test(Object a) {
-    if (trueIfNull(a)) { // flow@arg {{Implies 'a' is null.}}
-      a.toString(); // Noncompliant [[flows=arg]] {{A "NullPointerException" could be thrown; "a" is nullable here.}}  flow@arg {{'a' is dereferenced.}}
+    if (trueIfNull(a)) { // flow@arg [[order=1]] {{'a' is passed to 'trueIfNull()'.}} flow@arg [[order=3]] {{Implies 'a' is null.}}
+      a.toString(); // Noncompliant [[flows=arg]] {{A "NullPointerException" could be thrown; "a" is nullable here.}}  flow@arg [[order=4]] {{'a' is dereferenced.}}
     }
   }
 

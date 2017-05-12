@@ -3,8 +3,7 @@
       for (Class<? extends Constraint> domain : domains) {
         Constraint constraint = node.programState.getConstraint(learnedAssociation.symbolicValue(), domain);
         if (constraint != null) {
-          String message = String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString());
-          flowBuilder.add(new JavaFileScannerContext.Location(message, node.programPoint.syntaxTree()));
+          flowBuilder.add(location(node, String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString())));
         }
       }
       return flowBuilder.build();

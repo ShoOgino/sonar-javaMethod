@@ -7,9 +7,19 @@
     if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
       reportTree = ((MemberSelectExpressionTree) methodSelect).identifier();
     }
-    JavaFileScannerContext.Location methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s()' is invoked.", methodName), reportTree);
 
-    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, yield, mit);
+    Symbol symbolToTrack = null;
+    JavaFileScannerContext.Location methodInvocationMessage;
+    IdentifierTree identifierTree = FlowComputation.getArgumentIdentifier(mit, yield.parameterCausingExceptionIndex());
+    if (identifierTree != null) {
+      symbolToTrack = identifierTree.symbol();
+      methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s' is passed to '%s()'.", identifierTree.name(), methodName), identifierTree);
+    } else {
+      methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s()' is invoked.", methodName), reportTree);
+    }
+
+    List<JavaFileScannerContext.Location> argumentChangingNameFlows = flowsForArgumentsChangingName(yield, mit);
+    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, symbolToTrack, mit);
     Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
 
     ImmutableSet.Builder<List<JavaFileScannerContext.Location>> flows = ImmutableSet.builder();
@@ -17,6 +27,7 @@
       for (List<JavaFileScannerContext.Location> exceptionFlow : exceptionFlows) {
         flows.add(ImmutableList.<JavaFileScannerContext.Location>builder()
           .addAll(exceptionFlow)
+          .addAll(argumentChangingNameFlows)
           .add(methodInvocationMessage)
           .addAll(argumentFlow)
           .build());

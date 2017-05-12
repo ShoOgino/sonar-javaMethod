@@ -4,7 +4,7 @@
       ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
       SymbolicValue returnSV = edge.child.programState.peekValue();
       if (symbolicValues.contains(returnSV)) {
-        flowBuilder.add(location(parent, String.format("'%s()' returns %s.", mit.symbol().name(), learnedConstraint.valueAsString())));
+        flowBuilder.add(methodInvocationReturnMessage(learnedConstraint, edge, mit.symbol().name()));
       }
       SymbolicValue invocationTarget = parent.programState.peekValue(mit.arguments().size());
       if (symbolicValues.contains(invocationTarget)) {

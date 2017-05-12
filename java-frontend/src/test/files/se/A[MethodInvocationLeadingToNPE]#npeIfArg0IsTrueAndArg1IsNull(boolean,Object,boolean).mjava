@@ -1,9 +1,9 @@
-  static void npeIfArg0IsTrueAndArg1IsNull(boolean arg0, Object arg1, boolean arg2) {
-    if (arg1 != null) { // flow@foo6  [[order=4]] {{Implies 'arg1' is null.}}
+  static void npeIfArg0IsTrueAndArg1IsNull(boolean arg0, Object arg1, boolean arg2) { // flow@foo6 [[order=4]] {{Implies 'arg1' has the same value as 'o'.}}
+    if (arg1 != null) { // flow@foo6  [[order=5]] {{Implies 'arg1' is null.}}
       return;
     }
     if (arg0) { // only b2 has consequences on NPE
-      arg1.toString(); // Noncompliant {{A "NullPointerException" could be thrown; "arg1" is nullable here.}} flow@foo6  [[order=5]] {{'NullPointerException' is thrown here.}}
+      arg1.toString(); // Noncompliant {{A "NullPointerException" could be thrown; "arg1" is nullable here.}} flow@foo6  [[order=6]] {{'NullPointerException' is thrown here.}}
     }
   }
 
