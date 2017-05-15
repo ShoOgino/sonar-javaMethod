@@ -1,5 +1,4 @@
-  @CheckForNull
-  public MethodBehavior execute(MethodTree methodTree) {
+  public void execute(MethodTree methodTree) {
     ExplodedGraphWalker walker = egwFactory.createWalker(behaviorCache, (SemanticModel) context.getSemanticModel());
     try {
       Symbol.MethodSymbol methodSymbol = methodTree.symbol();
@@ -9,9 +8,8 @@
           methodBehavior = walker.visitMethod(methodTree, methodBehavior);
           methodBehavior.completed();
         }
-        return methodBehavior;
       } else {
-        return walker.visitMethod(methodTree);
+        walker.visitMethod(methodTree);
       }
     } catch (ExplodedGraphWalker.MaximumStepsReachedException
       | ExplodedGraphWalker.ExplodedGraphTooBigException
@@ -21,6 +19,5 @@
         walker.methodBehavior.visited();
       }
     }
-    return null;
   }
 
