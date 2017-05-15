@@ -1,0 +1,12 @@
+  @Test
+  public void test_symbol_should_not_change_equals() throws Exception {
+    ProgramState ps1 = ProgramState.EMPTY_STATE;
+    ProgramState ps2 = ProgramState.EMPTY_STATE;
+    SymbolicValue sv = new SymbolicValue();
+    JavaSymbol.VariableJavaSymbol symbol = variable("a");
+    ps1 = ps1.stackValue(sv);
+    ps2 = ps2.stackValue(sv, symbol);
+    assertThat(ps1).isEqualTo(ps2);
+    assertThat(ImmutableSet.of(ps1, ps2)).hasSize(1);
+  }
+

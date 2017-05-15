@@ -2,21 +2,13 @@
       Optional<LearnedAssociation> learnedAssociation = learnedAssociation(edge);
       return learnedAssociation.map(la -> {
         PSet<Symbol> newTrackedSymbols = trackedSymbols.remove(la.symbol);
-        // if assigning literal, stop tracking symbols, because same SV is reused see SONARJAVA-2164
-        if (isLiteralAssignment(edge.parent.programPoint.syntaxTree())) {
-          return newTrackedSymbols;
-        }
         ProgramState programState = edge.parent.programState;
-        Symbol symbol = programState.lastAssociatedSymbols.get(la.symbolicValue());
+        Symbol symbol = symbolFromStack(la.symbolicValue(), programState);
         if (symbol != null) {
           newTrackedSymbols = newTrackedSymbols.add(symbol);
         } else {
-          // take all symbolic values used in this assignment and retrieve corresponding symbols
-          for (SymbolicValue sv : computedFrom(la.symbolicValue())) {
-            Symbol newSymbol = programState.lastAssociatedSymbols.get(sv);
-            if (newSymbol != null) {
-              newTrackedSymbols = newTrackedSymbols.add(newSymbol);
-            }
+          for (Symbol s : la.symbolicValue().computedFromSymbols()) {
+            newTrackedSymbols = newTrackedSymbols.add(s);
           }
         }
         return newTrackedSymbols;

@@ -3,12 +3,13 @@
     // FIXME handle also assignments with this SONARJAVA-2242
     if (variable.is(Tree.Kind.IDENTIFIER)) {
       ProgramState.Pop unstack = programState.unstackValue(2);
-      SymbolicValue assignedTo = unstack.values.get(1);
-      SymbolicValue value = unstack.values.get(0);
+      ProgramState.SymbolicValueSymbol assignedTo = unstack.valuesAndSymbols.get(1);
+      ProgramState.SymbolicValueSymbol value = unstack.valuesAndSymbols.get(0);
       programState = unstack.state;
       SymbolicValue symbolicValue = constraintManager.createBinarySymbolicValue(tree, ImmutableList.of(assignedTo, value));
-      programState = programState.stackValue(symbolicValue);
-      programState = programState.put(((IdentifierTree) variable).symbol(), symbolicValue);
+      Symbol symbol = ((IdentifierTree) variable).symbol();
+      programState = programState.stackValue(symbolicValue, symbol);
+      programState = programState.put(symbol, symbolicValue);
     }
   }
 

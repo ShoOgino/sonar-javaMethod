@@ -1,0 +1,13 @@
+  @Test
+  public void test_symbols_on_stack() {
+    ProgramState ps = ProgramState.EMPTY_STATE;
+    SymbolicValue sv = new SymbolicValue();
+    JavaSymbol.VariableJavaSymbol symbol = variable("a");
+    ps = ps.stackValue(sv, symbol);
+    Pop pop = ps.unstackValue(1);
+    assertThat(ps.peekValue()).isEqualTo(sv);
+    assertThat(ps.peekValueSymbol().symbol()).isEqualTo(symbol);
+    assertThat(pop.valuesAndSymbols.get(0).symbol()).isEqualTo(symbol);
+    assertThat(pop.valuesAndSymbols.get(0).symbolicValue()).isEqualTo(sv);
+  }
+

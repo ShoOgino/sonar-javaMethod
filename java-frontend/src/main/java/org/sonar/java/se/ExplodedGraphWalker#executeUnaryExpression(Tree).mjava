@@ -3,9 +3,10 @@
     ProgramState.Pop unstackUnary = programState.unstackValue(1);
     programState = unstackUnary.state;
     SymbolicValue unarySymbolicValue = constraintManager.createSymbolicValue(tree);
-    unarySymbolicValue.computedFrom(unstackUnary.values);
+    unarySymbolicValue.computedFrom(unstackUnary.valuesAndSymbols);
     if (tree.is(Tree.Kind.POSTFIX_DECREMENT, Tree.Kind.POSTFIX_INCREMENT)) {
-      programState = programState.stackValue(unstackUnary.values.get(0));
+      ProgramState.SymbolicValueSymbol symbolicValueSymbol = unstackUnary.valuesAndSymbols.get(0);
+      programState = programState.stackValue(symbolicValueSymbol.sv, symbolicValueSymbol.symbol);
     } else {
       programState = programState.stackValue(unarySymbolicValue);
     }

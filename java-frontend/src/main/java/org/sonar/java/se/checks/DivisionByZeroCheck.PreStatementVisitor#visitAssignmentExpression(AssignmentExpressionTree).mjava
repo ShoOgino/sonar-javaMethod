@@ -1,17 +1,19 @@
     @Override
     public void visitAssignmentExpression(AssignmentExpressionTree tree) {
-      List<SymbolicValue> symbolicValues;
       SymbolicValue var;
       SymbolicValue expr;
+      Symbol symbol;
       if (ExpressionUtils.isSimpleAssignment(tree)) {
-        var = programState.getValue(ExpressionUtils.extractIdentifier(tree).symbol());
+        symbol = ExpressionUtils.extractIdentifier(tree).symbol();
+        var = programState.getValue(symbol);
         expr = programState.peekValue();
       } else {
-        symbolicValues = programState.peekValues(2);
-        var = symbolicValues.get(1);
-        expr = symbolicValues.get(0);
+        ProgramState.Pop unstackValue = programState.unstackValue(2);
+        var = unstackValue.values.get(1);
+        expr = unstackValue.values.get(0);
+        symbol = unstackValue.valuesAndSymbols.get(0).symbol();
       }
 
-      checkExpression(tree, var, expr);
+      checkExpression(tree, var, expr, symbol);
     }
 

@@ -1,9 +1,9 @@
-  public SymbolicValue createMethodSymbolicValue(MethodInvocationTree syntaxNode, List<SymbolicValue> values) {
+  public SymbolicValue createMethodSymbolicValue(MethodInvocationTree syntaxNode, List<ProgramState.SymbolicValueSymbol> values) {
     SymbolicValue result;
     if (isEqualsMethod(syntaxNode) || isObjectsEqualsMethod(syntaxNode.symbol())) {
       result = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS);
-      SymbolicValue leftOp = values.get(1);
-      SymbolicValue rightOp = values.get(0);
+      ProgramState.SymbolicValueSymbol leftOp = values.get(1);
+      ProgramState.SymbolicValueSymbol rightOp = values.get(0);
       result.computedFrom(ImmutableList.of(rightOp, leftOp));
     } else {
       result = createDefaultSymbolicValue();

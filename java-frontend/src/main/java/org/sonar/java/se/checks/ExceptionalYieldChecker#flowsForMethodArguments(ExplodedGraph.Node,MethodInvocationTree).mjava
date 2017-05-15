@@ -1,0 +1,9 @@
+  private static Set<List<JavaFileScannerContext.Location>> flowsForMethodArguments(ExplodedGraph.Node node, MethodInvocationTree mit) {
+    ProgramState programState = node.programState;
+    List<ProgramState.SymbolicValueSymbol> arguments = Lists.reverse(programState.peekValuesAndSymbols(mit.arguments().size()));
+    List<Class<? extends Constraint>> domains = domainsFromArguments(programState, arguments);
+    Set<SymbolicValue> argSymbolicValues = arguments.stream().map(ProgramState.SymbolicValueSymbol::symbolicValue).collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<Symbol> argSymbols = arguments.stream().map(ProgramState.SymbolicValueSymbol::symbol).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+    return FlowComputation.flow(node, argSymbolicValues, c -> true, c -> false, domains, argSymbols);
+  }
+

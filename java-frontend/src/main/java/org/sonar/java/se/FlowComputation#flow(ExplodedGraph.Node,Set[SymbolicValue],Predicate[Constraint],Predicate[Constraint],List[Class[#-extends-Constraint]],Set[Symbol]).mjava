@@ -1,24 +1,22 @@
   public static Set<List<JavaFileScannerContext.Location>> flow(ExplodedGraph.Node currentNode, Set<SymbolicValue> symbolicValues, Predicate<Constraint> addToFlow,
-                                                                Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains, @Nullable Symbol trackSymbol) {
+                                                                Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains, Set<Symbol> symbols) {
     Set<SymbolicValue> allSymbolicValues = symbolicValues.stream()
       .map(FlowComputation::computedFrom)
       .flatMap(Set::stream)
       .collect(Collectors.toSet());
 
     PSet<Symbol> trackedSymbols = PCollections.emptySet();
-    if (trackSymbol != null) {
-      trackedSymbols = trackedSymbols.add(trackSymbol);
+    for (Symbol symbol: symbols) {
+      trackedSymbols = trackedSymbols.add(symbol);
     }
-    ProgramState currentNodeProgramState = currentNode.programState;
-    if (currentNodeProgramState != null) {
-      for (SymbolicValue symbolicValue : allSymbolicValues) {
-        Symbol symbol = currentNodeProgramState.lastAssociatedSymbols.get(symbolicValue);
-        if (symbol != null) {
+
+    if (symbols.isEmpty()) {
+      for (SymbolicValue symbolicValue : symbolicValues) {
+        for (Symbol symbol : symbolicValue.computedFromSymbols()) {
           trackedSymbols = trackedSymbols.add(symbol);
         }
       }
     }
-
     FlowComputation flowComputation = new FlowComputation(allSymbolicValues, addToFlow, terminateTraversal, domains);
     return flowComputation.run(currentNode, trackedSymbols);
   }
