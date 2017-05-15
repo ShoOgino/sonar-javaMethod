@@ -1,10 +1,9 @@
     List<JavaFileScannerContext.Location> flowFromLearnedAssociation(LearnedAssociation learnedAssociation, ExplodedGraph.Node node) {
       ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
-      for (Class<? extends Constraint> domain : domains) {
-        Constraint constraint = node.programState.getConstraint(learnedAssociation.symbolicValue(), domain);
-        if (constraint != null) {
-          flowBuilder.add(location(node, String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString())));
-        }
+      PMap<Class<? extends Constraint>, Constraint> allConstraints = node.programState.getConstraints(learnedAssociation.symbolicValue());
+      Collection<Constraint> constraints = filterByDomains(allConstraints);
+      for (Constraint constraint: constraints) {
+        flowBuilder.add(location(node, String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString())));
       }
       return flowBuilder.build();
     }

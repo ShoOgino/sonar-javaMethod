@@ -1,0 +1,17 @@
+    private Collection<Constraint> filterByDomains(@Nullable PMap<Class<? extends Constraint>, Constraint> allConstraints) {
+      if (allConstraints == null) {
+        return Collections.emptySet();
+      }
+      Map<Class<? extends  Constraint>, Constraint> constraints = new LinkedHashMap<>();
+      for (Class<? extends Constraint> domain : domains) {
+        Constraint constraint = allConstraints.get(domain);
+        if (constraint != null) {
+          constraints.put(domain, constraint);
+        }
+      }
+      if (constraints.size() > 1) {
+        constraints.remove(ObjectConstraint.class);
+      }
+      return constraints.values();
+    }
+
