@@ -3,6 +3,13 @@
     if (!hasSemantic()) {
       return;
     }
+    ExclusionsVisitor exclusionsVisitor = new ExclusionsVisitor();
+    tree.accept(exclusionsVisitor);
+    Set<String> currentClassExclusions = exclusionsVisitor.exclusions;
+    if(!exclusions.isEmpty()) {
+      currentClassExclusions.addAll(exclusions.peek());
+    }
+    exclusions.push(currentClassExclusions);
     tree.accept(new DeprecatedTypeVisitor());
   }
 

@@ -1,0 +1,17 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (tree.symbol().isMethodSymbol() && tree.symbol().declaration() == null) {
+        String fqn = tree.symbol().owner().type().fullyQualifiedName();
+        if (isMethodFromJavaPackage(fqn)) {
+          Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) tree.symbol();
+          List<Type> types = new ArrayList<>(methodSymbol.parameterTypes());
+          Symbol.TypeSymbol returnType = methodSymbol.returnType();
+          if (returnType != null) {
+            types.add(returnType.type());
+          }
+          types.forEach(t -> exclusions.addAll(REPLACEMENTS.keySet().stream().filter(t::isSubtypeOf).collect(Collectors.toSet())));
+        }
+      }
+      super.visitMethodInvocation(tree);
+    }
+
