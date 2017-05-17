@@ -1,15 +1,6 @@
     private void reportIssue(MethodInvocationTree mit) {
       String identifier = getIdentifierPart(mit.methodSelect());
-      String issueMsg;
-      String flowMsg;
-      if (identifier.isEmpty()) {
-        issueMsg = "Optional#";
-        flowMsg = "";
-      } else {
-        issueMsg = identifier + ".";
-        flowMsg = identifier + " ";
-      }
-      Set<List<JavaFileScannerContext.Location>> flow = FlowComputation.singleton("Optional " + flowMsg + "is accessed", mit.methodSelect());
-      context.reportIssue(mit, check, "Call \""+ issueMsg + "isPresent()\" before accessing the value.", flow);
+      String issueMsg = identifier.isEmpty() ? "Optional#" : (identifier + ".");
+      context.reportIssue(mit, check, "Call \""+ issueMsg + "isPresent()\" before accessing the value.");
     }
 
