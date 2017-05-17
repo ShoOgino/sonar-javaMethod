@@ -1,7 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     MethodTree methodTree = (MethodTree) tree;
-    if (methodTree.symbol().metadata().isAnnotatedWith("org.junit.Ignore")) {
+    List<SymbolMetadata.AnnotationValue> ignoreAnnotationValues = methodTree.symbol().metadata().valuesForAnnotation("org.junit.Ignore");
+    if (ignoreAnnotationValues != null && ignoreAnnotationValues.isEmpty()) {
       reportIssue(methodTree.simpleName(), "Fix or remove this skipped unit test");
     }
   }
