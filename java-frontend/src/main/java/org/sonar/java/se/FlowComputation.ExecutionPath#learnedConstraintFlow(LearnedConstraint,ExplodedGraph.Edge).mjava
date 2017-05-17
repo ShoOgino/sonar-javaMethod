@@ -15,6 +15,12 @@
       if (name == null) {
         return ImmutableList.of();
       }
-      return ImmutableList.of(location(parent, String.format(IMPLIES_MSG, name, constraint.valueAsString())));
+      String msg;
+      if (ObjectConstraint.NULL == constraint && isNullCheck(nodeTree)) {
+        msg = String.format(IMPLIES_CAN_BE_NULL_MSG, name);
+      } else {
+        msg = String.format(IMPLIES_IS_MSG, name, constraint.valueAsString());
+      }
+      return ImmutableList.of(location(parent, msg));
     }
 

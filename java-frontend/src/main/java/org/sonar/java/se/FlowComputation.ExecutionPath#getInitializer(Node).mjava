@@ -1,0 +1,17 @@
+    @CheckForNull
+    private ExpressionTree getInitializer(Node node) {
+      Tree tree = node.programPoint.syntaxTree();
+      ExpressionTree expr;
+      switch (tree.kind()) {
+        case VARIABLE:
+          expr = ((VariableTree) tree).initializer();
+          break;
+        case ASSIGNMENT:
+          expr = ((AssignmentExpressionTree) tree).expression();
+          break;
+        default:
+          expr = null;
+      }
+      return expr;
+    }
+

@@ -1,0 +1,22 @@
+    private List<JavaFileScannerContext.Location> flowForNullableMethodParameters(ExplodedGraph.Node node) {
+      if (!node.edges().isEmpty() || !domains.contains(ObjectConstraint.class)) {
+        return ImmutableList.of();
+      }
+      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      trackedSymbols.forEach(symbol -> {
+        SymbolicValue sv = node.programState.getValue(symbol);
+        if (sv == null) {
+          return;
+        }
+        ObjectConstraint startConstraint = node.programState.getConstraint(sv, ObjectConstraint.class);
+        if (startConstraint != null && isMethodParameter(symbol)) {
+          String msg = IMPLIES_CAN_BE_NULL_MSG;
+          if (ObjectConstraint.NOT_NULL == startConstraint) {
+            msg = "Implies '%s' can not be null.";
+          }
+          flowBuilder.add(new JavaFileScannerContext.Location(String.format(msg, symbol.name()), ((VariableTree) symbol.declaration()).simpleName()));
+        }
+      });
+      return flowBuilder.build();
+    }
+

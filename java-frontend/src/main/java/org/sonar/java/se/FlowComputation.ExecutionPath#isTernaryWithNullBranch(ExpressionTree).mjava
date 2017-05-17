@@ -1,0 +1,12 @@
+    private boolean isTernaryWithNullBranch(@Nullable ExpressionTree expressionTree) {
+      if (expressionTree == null) {
+        return false;
+      }
+      ExpressionTree expr = ExpressionUtils.skipParentheses(expressionTree);
+      if (expr.is(Tree.Kind.CONDITIONAL_EXPRESSION)) {
+        ConditionalExpressionTree cet = (ConditionalExpressionTree) expr;
+        return ExpressionUtils.isNullLiteral(cet.trueExpression()) || ExpressionUtils.isNullLiteral(cet.falseExpression());
+      }
+      return false;
+    }
+

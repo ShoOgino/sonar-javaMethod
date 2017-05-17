@@ -1,0 +1,10 @@
+  /**
+   * explicit annotation, constraint valided on path
+   */
+  public void qix(@MyAnnotation @Nullable Object obj) { // flow@paramWithAnnotation2 {{Implies 'obj' can be null.}}
+    if (obj == null) {
+      // Noncompliant@+1 [[flows=paramWithAnnotation2]] {{A "NullPointerException" could be thrown; "obj" is nullable here.}}
+      obj.toString(); // flow@paramWithAnnotation2 {{'obj' is dereferenced.}}
+    }
+  }
+

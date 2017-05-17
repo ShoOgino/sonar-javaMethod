@@ -3,7 +3,16 @@
       PMap<Class<? extends Constraint>, Constraint> allConstraints = node.programState.getConstraints(learnedAssociation.symbolicValue());
       Collection<Constraint> constraints = filterByDomains(allConstraints);
       for (Constraint constraint: constraints) {
-        flowBuilder.add(location(node, String.format("'%s' is assigned %s.", learnedAssociation.symbol().name(), constraint.valueAsString())));
+        String symbolName = learnedAssociation.symbol().name();
+        String msg;
+        if (ObjectConstraint.NULL == constraint && assigningNullFromTernary(node)) {
+          msg = String.format(IMPLIES_CAN_BE_NULL_MSG, symbolName);
+        } else if (assigningFromMethodInvocation(node) && assignedFromYieldWithUncertainResult(constraint, node)) {
+          msg = String.format("Implies '%s' can be %s.", symbolName, constraint.valueAsString());
+        } else {
+          msg = String.format("'%s' is assigned %s.", symbolName, constraint.valueAsString());
+        }
+        flowBuilder.add(location(node, msg));
       }
       return flowBuilder.build();
     }

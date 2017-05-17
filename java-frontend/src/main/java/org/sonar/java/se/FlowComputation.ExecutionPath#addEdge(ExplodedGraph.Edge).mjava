@@ -15,6 +15,10 @@
 
       boolean endOfPath = visitedAllParents(edge) || shouldTerminate(learnedConstraints);
 
+      if (endOfPath) {
+        flowBuilder.addAll(flowForNullableMethodParameters(edge.parent));
+      }
+
       List<JavaFileScannerContext.Location> currentFlow = flowBuilder.build();
       Set<List<JavaFileScannerContext.Location>> yieldsFlows = flowFromYields(edge);
       return yieldsFlows.stream()
