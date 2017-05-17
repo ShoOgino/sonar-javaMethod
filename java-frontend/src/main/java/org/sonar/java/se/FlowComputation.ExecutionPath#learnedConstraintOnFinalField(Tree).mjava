@@ -1,0 +1,17 @@
+    @CheckForNull
+    private Symbol learnedConstraintOnFinalField(Tree syntaxTree) {
+      Symbol result = null;
+      if (syntaxTree.is(Tree.Kind.IDENTIFIER)) {
+        result = ((IdentifierTree) syntaxTree).symbol();
+      } else if (syntaxTree.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) syntaxTree;
+        if (ExpressionUtils.isSelectOnThisOrSuper(mset)) {
+          result = mset.identifier().symbol();
+        }
+      }
+      if (isFinalFieldWithDeclaration(result)) {
+        return result;
+      }
+      return null;
+    }
+

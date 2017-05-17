@@ -11,6 +11,12 @@
       if (nodeTree.is(Tree.Kind.NEW_CLASS)) {
         return ImmutableList.of(location(parent, String.format("Constructor implies '%s'.", constraint.valueAsString())));
       }
+      Symbol finalField = learnedConstraintOnFinalField(nodeTree);
+      if (finalField != null) {
+        // constraints on final fields are set on the fly by the EGW when encountering them for the first time
+        String msg = String.format(IMPLIES_IS_MSG, finalField.name(), constraint.valueAsString());
+        return ImmutableList.of(new JavaFileScannerContext.Location(msg, ((VariableTree) finalField.declaration()).initializer()));
+      }
       String name = SyntaxTreeNameFinder.getName(nodeTree);
       if (name == null) {
         return ImmutableList.of();
