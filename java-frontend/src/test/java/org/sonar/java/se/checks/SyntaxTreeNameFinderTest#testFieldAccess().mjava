@@ -1,0 +1,23 @@
+  @Test
+  public void testFieldAccess() {
+    MethodTree tree = buildSyntaxTree("public void test() {this.field = value;} Object field;");
+    BlockTree block = tree.block();
+    AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) ((ExpressionStatementTree) block.body().get(0)).expression();
+    assertThat(SyntaxTreeNameFinder.getName(assignmentTree.variable())).isEqualTo("field");
+
+    tree = buildSyntaxTree("public void test() {super.field = value;}");
+    block = tree.block();
+    assignmentTree = (AssignmentExpressionTree) ((ExpressionStatementTree) block.body().get(0)).expression();
+    assertThat(SyntaxTreeNameFinder.getName(assignmentTree.variable())).isEqualTo("field");
+
+    tree = buildSyntaxTree("public void test() {A.field = value;}");
+    block = tree.block();
+    assignmentTree = (AssignmentExpressionTree) ((ExpressionStatementTree) block.body().get(0)).expression();
+    assertThat(SyntaxTreeNameFinder.getName(assignmentTree.variable())).isEqualTo("A");
+
+    tree = buildSyntaxTree("public void test() {foo().field = value;}");
+    block = tree.block();
+    assignmentTree = (AssignmentExpressionTree) ((ExpressionStatementTree) block.body().get(0)).expression();
+    assertThat(SyntaxTreeNameFinder.getName(assignmentTree.variable())).isEqualTo("foo");
+  }
+
