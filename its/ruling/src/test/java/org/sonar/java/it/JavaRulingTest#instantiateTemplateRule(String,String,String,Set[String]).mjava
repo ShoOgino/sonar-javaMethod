@@ -15,17 +15,23 @@
       .put("params", "name=\"" + instantiationKey + "\";key=\"" + instantiationKey + "\";markdown_description=\"" + instantiationKey + "\";" + params)
       .build());
     String post = sonarClient.get("api/rules/app");
-    Pattern pattern = Pattern.compile("java-rules-\\d+");
-    Matcher matcher = pattern.matcher(post);
-    if (matcher.find()) {
-      String profilekey = matcher.group();
-      sonarClient.post("api/qualityprofiles/activate_rule", ImmutableMap.<String, Object>of(
-        "profile_key", profilekey,
+    String profileKey = null;
+    Map map = GSON.fromJson(post, Map.class);
+    for (Map qp : ((List<Map>) map.get("qualityprofiles"))) {
+      if ("rules".equals(qp.get("name"))) {
+        profileKey = (String) qp.get("key");
+        break;
+      }
+    }
+    if (StringUtils.isEmpty(profileKey)) {
+      LOG.error("Could not retrieve profile key : Template rule " + ruleTemplateKey + " has not been activated");
+    } else {
+      String activateRuleResponse = sonarClient.post("api/qualityprofiles/activate_rule", ImmutableMap.of(
+        "profile_key", profileKey,
         "rule_key", "squid:" + instantiationKey,
         "severity", "INFO",
         "params", ""));
-    } else {
-      LOG.error("Could not retrieve profile key : Template rule " + ruleTemplateKey + " has not been activated");
+      LOG.warn(activateRuleResponse);
     }
   }
 
