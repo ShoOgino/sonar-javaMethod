@@ -1,0 +1,21 @@
+  private static MethodBehavior createRequireNullnessBehavior(Symbol.MethodSymbol symbol, boolean mustBeNull) {
+    MethodBehavior behavior = new MethodBehavior(symbol);
+    HappyPathYield happyYield = new HappyPathYield(behavior);
+    happyYield.parametersConstraints.add(pmapForConstraint(mustBeNull ? ObjectConstraint.NULL : ObjectConstraint.NOT_NULL));
+    for (int i = 1; i < symbol.parameterTypes().size(); i++) {
+      happyYield.parametersConstraints.add(PCollections.emptyMap());
+    }
+    happyYield.setResult(0, happyYield.parametersConstraints.get(0));
+    behavior.addYield(happyYield);
+
+    ExceptionalYield exceptionalYield = new ExceptionalYield(behavior);
+    exceptionalYield.parametersConstraints.add(pmapForConstraint(mustBeNull ? ObjectConstraint.NOT_NULL : ObjectConstraint.NULL));
+    for (int i = 1; i < symbol.parameterTypes().size(); i++) {
+      exceptionalYield.parametersConstraints.add(PCollections.emptyMap());
+    }
+    behavior.addYield(exceptionalYield);
+
+    behavior.completed();
+    return behavior;
+  }
+

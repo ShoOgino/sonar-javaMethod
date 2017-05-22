@@ -1,0 +1,17 @@
+  private static MethodBehavior createCollectionUtilsBehavior(Symbol.MethodSymbol symbol) {
+    MethodBehavior behavior = new MethodBehavior(symbol);
+
+    HappyPathYield happyPathYield = new HappyPathYield(behavior);
+    happyPathYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NULL));
+    happyPathYield.setResult(-1, pmapForConstraint(symbol.name().contains("Not") ? BooleanConstraint.FALSE : BooleanConstraint.TRUE));
+    behavior.addYield(happyPathYield);
+
+    happyPathYield = new HappyPathYield(behavior);
+    happyPathYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NOT_NULL));
+    happyPathYield.setResult(-1, PCollections.emptyMap());
+    behavior.addYield(happyPathYield);
+
+    behavior.completed();
+    return behavior;
+  }
+

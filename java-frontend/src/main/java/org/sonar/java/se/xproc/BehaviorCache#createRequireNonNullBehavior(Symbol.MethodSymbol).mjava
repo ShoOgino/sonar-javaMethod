@@ -4,23 +4,6 @@
    * @return the behavior corresponding to that symbol.
    */
   private static MethodBehavior createRequireNonNullBehavior(Symbol.MethodSymbol symbol) {
-    MethodBehavior behavior = new MethodBehavior(symbol);
-    HappyPathYield happyYield = new HappyPathYield(behavior);
-    happyYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NOT_NULL));
-    for (int i = 1; i < symbol.parameterTypes().size(); i++) {
-      happyYield.parametersConstraints.add(PCollections.emptyMap());
-    }
-    happyYield.setResult(0, happyYield.parametersConstraints.get(0));
-    behavior.addYield(happyYield);
-
-    ExceptionalYield exceptionalYield = new ExceptionalYield(behavior);
-    exceptionalYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NULL));
-    for (int i = 1; i < symbol.parameterTypes().size(); i++) {
-      exceptionalYield.parametersConstraints.add(PCollections.emptyMap());
-    }
-    behavior.addYield(exceptionalYield);
-
-    behavior.completed();
-    return behavior;
+    return createRequireNullnessBehavior(symbol, false);
   }
 

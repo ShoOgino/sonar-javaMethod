@@ -1,7 +1,7 @@
   @CheckForNull
   public MethodBehavior get(Symbol.MethodSymbol symbol) {
     if (!behaviors.containsKey(symbol)) {
-      if (isObjectsRequireNonNullMethod(symbol)) {
+      if (isRequireNonNullMethod(symbol)) {
         behaviors.put(symbol, createRequireNonNullBehavior(symbol));
       } else if (isObjectsNullMethod(symbol)) {
         behaviors.put(symbol, createIsNullBehavior(symbol));
@@ -12,6 +12,10 @@
         }
       } else if (isGuavaPrecondition(symbol)) {
         behaviors.put(symbol, createGuavaPreconditionsBehavior(symbol, "checkNotNull".equals(symbol.name())));
+      } else if (isCollectionUtilsIsEmpty(symbol)) {
+        behaviors.put(symbol, createCollectionUtilsBehavior(symbol));
+      } else if (isSpringIsNull(symbol)) {
+        behaviors.put(symbol, createRequireNullBehavior(symbol));
       } else {
         MethodTree declaration = symbol.declaration();
         if (declaration != null && SymbolicExecutionVisitor.methodCanNotBeOverriden(symbol)) {
