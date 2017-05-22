@@ -4,7 +4,9 @@
       return;
     }
     ClassTree classTree = (ClassTree) tree;
-    if (isSerializable(classTree) && !SerializableContract.hasSpecialHandlingSerializationMethods(classTree)) {
+    if (isSerializable(classTree)
+      && !SerializableContract.hasSpecialHandlingSerializationMethods(classTree)
+      && !classTree.symbol().type().isSubtypeOf("javax.servlet.http.HttpServlet")) {
       for (Tree member : classTree.members()) {
         if (member.is(Tree.Kind.VARIABLE)) {
           checkVariableMember((VariableTree) member);
