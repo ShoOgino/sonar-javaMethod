@@ -1,0 +1,11 @@
+  @Override
+  public void visitBinaryExpression(BinaryExpressionTree tree) {
+    boolean continueVisit = true;
+    if (tree.is(Tree.Kind.DIVIDE) && isIntOrLong(tree.symbolType())) {
+      continueVisit = checkIntegerDivisionInsideFloatingPointExpression(tree);
+    }
+    if (continueVisit) {
+      super.visitBinaryExpression(tree);
+    }
+  }
+
