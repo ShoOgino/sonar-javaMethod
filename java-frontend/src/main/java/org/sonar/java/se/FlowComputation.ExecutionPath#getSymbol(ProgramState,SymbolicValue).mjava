@@ -1,0 +1,16 @@
+    @CheckForNull
+    private Symbol getSymbol(ProgramState programState, SymbolicValue sv) {
+      SymbolicValue peekValue = programState.peekValue();
+      if (sv.equals(peekValue)) {
+        return programState.peekValueSymbol().symbol;
+      }
+      if (peekValue instanceof BinarySymbolicValue) {
+        BinarySymbolicValue bsv = (BinarySymbolicValue) peekValue;
+        if (sv.equals(bsv.getRightOp())) {
+          return bsv.rightSymbol();
+        }
+        return bsv.leftSymbol();
+      }
+      return null;
+    }
+

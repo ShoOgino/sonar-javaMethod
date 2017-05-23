@@ -10,11 +10,11 @@
         }
         ObjectConstraint startConstraint = node.programState.getConstraint(sv, ObjectConstraint.class);
         if (startConstraint != null && isMethodParameter(symbol)) {
-          String msg = IMPLIES_CAN_BE_NULL_MSG;
+          String msg = IMPLIES_CAN_BE_MSG;
           if (ObjectConstraint.NOT_NULL == startConstraint) {
-            msg = "Implies '%s' can not be null.";
+            msg = "Implies '%s' can not be %s.";
           }
-          flowBuilder.add(new JavaFileScannerContext.Location(String.format(msg, symbol.name()), ((VariableTree) symbol.declaration()).simpleName()));
+          flowBuilder.add(new JavaFileScannerContext.Location(String.format(msg, symbol.name(), "null"), ((VariableTree) symbol.declaration()).simpleName()));
         }
       });
       return flowBuilder.build();

@@ -1,7 +1,7 @@
   public Object myMethod(String line, String value) {
-    Object o = null; // flow@myMethod [[order=1]] {{'o' is assigned null.}}
+    Object o = null; // flow@myMethod [[order=1]] {{Implies 'o' is null.}}
     String s = line.length() > 0 ? value : null; // flow@myMethod [[order=2]] {{Implies 's' has the same value as 'value'.}}
-    if (s == null || s.startsWith("key")) { // flow@myMethod [[order=3]] {{Implies 's' is non-null.}}
+    if (s == null || s.startsWith("key")) { // flow@myMethod [[order=3]] {{Implies 's' is not null.}}
       o = new Object();
     } else {
       doSomething(o, s); // Noncompliant [[flows=myMethod]] {{"NullPointerException" will be thrown when invoking method "doSomething()".}} flow@myMethod [[order=4]] {{'o' is passed to 'doSomething()'.}}

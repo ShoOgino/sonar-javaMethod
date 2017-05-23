@@ -17,16 +17,19 @@
         String msg = String.format(IMPLIES_IS_MSG, finalField.name(), constraint.valueAsString());
         return ImmutableList.of(new JavaFileScannerContext.Location(msg, ((VariableTree) finalField.declaration()).initializer()));
       }
-      String name = SyntaxTreeNameFinder.getName(nodeTree);
+
+      Symbol trackedSymbol = getSymbol(parent.programState, learnedConstraint.sv);
+      String name = trackedSymbol != null ? trackedSymbol.name() : SyntaxTreeNameFinder.getName(nodeTree);
       if (name == null) {
+        // unable to deduce name of element on which we learn a constraint. Nothing is reported
         return ImmutableList.of();
       }
       String msg;
-      if (ObjectConstraint.NULL == constraint && isNullCheck(nodeTree)) {
-        msg = String.format(IMPLIES_CAN_BE_NULL_MSG, name);
+      if (ObjectConstraint.NULL == constraint && !sameConstraints.hasAlwaysSameConstraint(trackedSymbol)) {
+        msg = IMPLIES_CAN_BE_MSG;
       } else {
-        msg = String.format(IMPLIES_IS_MSG, name, constraint.valueAsString());
+        msg = IMPLIES_IS_MSG;
       }
-      return ImmutableList.of(location(parent, msg));
+      return ImmutableList.of(location(parent, String.format(msg, name, constraint.valueAsString())));
     }
 

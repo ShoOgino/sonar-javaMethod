@@ -1,0 +1,23 @@
+    private static boolean sameConstraintWhenSameProgramPoint(ExplodedGraph.Node currentNode, Symbol symbol, Class<? extends Constraint> domain) {
+      ProgramState programState = currentNode.programState;
+      SymbolicValue sv = programState.getValue(symbol);
+      if (sv == null) {
+        return false;
+      }
+      Constraint constraint = programState.getConstraint(sv, domain);
+      if (constraint == null) {
+        return false;
+      }
+      Collection<Node> siblingNodes = currentNode.siblings();
+      return siblingNodes.stream()
+        .map(node -> node.programState)
+        .allMatch(ps -> {
+          SymbolicValue siblingSV = ps.getValue(symbol);
+          if (siblingSV == null) {
+            return false;
+          }
+          Constraint siblingConstraint = ps.getConstraint(siblingSV, domain);
+          return constraint.equals(siblingConstraint);
+        });
+    }
+

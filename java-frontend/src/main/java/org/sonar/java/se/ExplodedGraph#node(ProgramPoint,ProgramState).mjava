@@ -2,7 +2,7 @@
    * Returns node associated with given (programPoint,programState) pair. If no node for this pair exists, it is created.
    */
   public Node node(ProgramPoint programPoint, @Nullable ProgramState programState) {
-    Node result = new Node(programPoint, programState);
+    Node result = new Node(programPoint, programState, this);
     Node cached = nodes.get(result);
     if (cached != null) {
       cached.isNew = false;
@@ -10,6 +10,7 @@
     }
     result.isNew = true;
     nodes.put(result, result);
+    nodesByProgramPoint.put(programPoint, result);
     return result;
   }
 

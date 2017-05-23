@@ -1,0 +1,10 @@
+  void qix(A a) {
+    if (a == null) { // flow@npe_qix1 {{Implies 'a' is null.}}
+      b = 4;
+    } else {
+      a = null; // flow@npe_qix2 {{Implies 'a' is null.}}
+    }
+    // Noncompliant@+1 [[flows=npe_qix1,npe_qix2]]
+    a.toString(); // flow@npe_qix1 {{'a' is dereferenced.}} flow@npe_qix2 {{'a' is dereferenced.}}
+  }
+

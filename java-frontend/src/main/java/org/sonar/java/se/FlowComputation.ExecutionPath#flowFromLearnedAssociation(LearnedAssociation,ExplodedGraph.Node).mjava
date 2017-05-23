@@ -11,14 +11,13 @@
         for (Constraint constraint : constraints) {
           String symbolName = learnedAssociation.symbol().name();
           String msg;
-          if (ObjectConstraint.NULL == constraint && assigningNullFromTernary(node)) {
-            msg = String.format(IMPLIES_CAN_BE_NULL_MSG, symbolName);
-          } else if (assigningFromMethodInvocation(node) && assignedFromYieldWithUncertainResult(constraint, node)) {
-            msg = String.format("Implies '%s' can be %s.", symbolName, constraint.valueAsString());
+          if ((ObjectConstraint.NULL == constraint && assigningNullFromTernary(node))
+            || (assigningFromMethodInvocation(node) && assignedFromYieldWithUncertainResult(constraint, node))) {
+            msg = IMPLIES_CAN_BE_MSG;
           } else {
-            msg = String.format("'%s' is assigned %s.", symbolName, constraint.valueAsString());
+            msg = IMPLIES_IS_MSG;
           }
-          flowBuilder.add(location(node, msg));
+          flowBuilder.add(location(node, String.format(msg, symbolName, constraint.valueAsString())));
         }
       }
       return flowBuilder.build();
