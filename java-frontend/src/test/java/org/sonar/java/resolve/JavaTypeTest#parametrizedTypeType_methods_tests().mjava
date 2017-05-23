@@ -8,13 +8,13 @@
     TypeSubstitution typeSubstitution = new TypeSubstitution();
     typeSubstitution.add(typeVariableType, classType);
 
-    ParametrizedTypeJavaType ptt = new ParametrizedTypeJavaType(typeSymbol, typeSubstitution);
+    ParametrizedTypeJavaType ptt = new ParametrizedTypeJavaType(typeSymbol, typeSubstitution, null);
     assertThat(ptt.substitution(typeVariableType)).isEqualTo(classType);
     assertThat(ptt.substitution(new TypeVariableJavaType(new JavaSymbol.TypeVariableJavaSymbol("F", typeSymbol)))).isNull();
     assertThat(ptt.typeParameters()).hasSize(1);
     assertThat(ptt.typeParameters()).contains(typeVariableType);
 
-    ptt = new ParametrizedTypeJavaType(typeSymbol, null);
+    ptt = new ParametrizedTypeJavaType(typeSymbol, null, null);
     assertThat(ptt.substitution(typeVariableType)).isNull();
     assertThat(ptt.typeParameters()).isEmpty();
 
