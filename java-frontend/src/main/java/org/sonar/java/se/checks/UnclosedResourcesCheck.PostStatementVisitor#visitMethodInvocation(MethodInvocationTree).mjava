@@ -10,7 +10,7 @@
         if (targetExpression.is(Tree.Kind.IDENTIFIER) && !isWithinTryHeader(syntaxNode)
           && (syntaxNode.symbol().isStatic() || isJdbcResourceCreation(targetExpression))) {
           SymbolicValue peekedValue = programState.peekValue();
-          programState = programState.addConstraint(peekedValue, OPEN);
+          programState = programState.addConstraintTransitively(peekedValue, OPEN);
           if(isJdbcResourceCreation(targetExpression)) {
             programState = programState.addConstraint(peekedValue, ObjectConstraint.NOT_NULL);
           }

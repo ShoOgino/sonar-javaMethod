@@ -1,0 +1,13 @@
+  @Test
+  public void test_adding_constraint_transitively() throws Exception {
+    ProgramState ps = ProgramState.EMPTY_STATE;
+    SymbolicValue sv1 = new SymbolicValue();
+    SymbolicValue sv2 = new SymbolicValue();
+    RelationalSymbolicValue relSV = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.EQUAL);
+    SymbolicValueTestUtil.computedFrom(relSV, sv1, sv2);
+    ps = ps.addConstraint(relSV, BooleanConstraint.TRUE);
+    UnclosedResourcesCheck.ResourceConstraint constraint = UnclosedResourcesCheck.ResourceConstraint.OPEN;
+    ps = ps.addConstraintTransitively(sv1, constraint);
+    assertThat(ps.getConstraint(sv2, constraint.getClass())).isEqualTo(constraint);
+  }
+
