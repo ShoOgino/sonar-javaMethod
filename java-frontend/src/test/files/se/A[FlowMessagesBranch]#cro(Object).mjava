@@ -1,0 +1,6 @@
+  void cro(Object a) {
+    Object o = a != null ? a.toString() : foo(); // flow@npe6 {{'foo()' returns null.}} flow@npe6 {{Implies 'o' is null.}}
+    // Noncompliant@+1 [[flows=npe6]] {{A "NullPointerException" could be thrown; "o" is nullable here.}}
+    o.toString(); // flow@npe6 {{'o' is dereferenced.}}
+  }
+
