@@ -1,0 +1,18 @@
+  @CheckForNull
+  private static MethodJavaType getMethodType(JavaSymbol.MethodJavaSymbol methodSymbol, Tree methodName) {
+    if (!methodSymbol.isParametrized()) {
+      return null;
+    }
+    IdentifierTree id = null;
+    if (methodName.is(Tree.Kind.MEMBER_SELECT)) {
+      id = ((MemberSelectExpressionTree) methodName).identifier();
+    } else {
+      id = (IdentifierTree) methodName;
+    }
+    Type identifierType = id.symbolType();
+    if (identifierType instanceof MethodJavaType) {
+      return (MethodJavaType) identifierType;
+    }
+    return null;
+  }
+
