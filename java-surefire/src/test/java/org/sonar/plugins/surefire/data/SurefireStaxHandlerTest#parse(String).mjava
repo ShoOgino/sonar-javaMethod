@@ -1,6 +1,11 @@
   private void parse(String path) throws XMLStreamException {
-    File xml = TestUtils.getResource(getClass(), path);
     StaxParser parser = new StaxParser(index);
-    parser.parse(xml);
+    File xmlFile;
+    try {
+      xmlFile = new File(getClass().getResource(getClass().getSimpleName() + "/" + path).toURI());
+    } catch (URISyntaxException e) {
+      throw new IllegalStateException(e);
+    }
+    parser.parse(xmlFile);
   }
 
