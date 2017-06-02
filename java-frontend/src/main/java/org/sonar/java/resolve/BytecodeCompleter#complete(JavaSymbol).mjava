@@ -10,22 +10,12 @@
     }
     Preconditions.checkState(symbol.isPackageSymbol() || classSymbol == symbol);
 
-    InputStream inputStream = null;
-    ClassReader classReader = null;
-    try {
-      inputStream = inputStreamFor(bytecodeName);
-      if(inputStream != null) {
-        classReader = new ClassReader(inputStream);
-      }
-    } catch (IOException e) {
-      throw Throwables.propagate(e);
-    } finally {
-      Closeables.closeQuietly(inputStream);
-    }
-    if (classReader != null) {
+    byte[] bytes = bytesForClass(bytecodeName);
+    if (bytes != null) {
+      ClassReader classReader = new ClassReader(bytes);
       classReader.accept(
-          new BytecodeVisitor(this, symbols, classSymbol, parametrizedTypeCache),
-          ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
+        new BytecodeVisitor(this, symbols, classSymbol, parametrizedTypeCache),
+        ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
     }
   }
 

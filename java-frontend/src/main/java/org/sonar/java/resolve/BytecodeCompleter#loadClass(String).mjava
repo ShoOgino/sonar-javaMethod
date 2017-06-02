@@ -12,26 +12,16 @@
       return symbol;
     }
 
-    // TODO(Godin): pull out conversion of name from the next method to avoid unnecessary conversion afterwards:
-    InputStream inputStream = inputStreamFor(fullname);
-    String bytecodeName = Convert.bytecodeName(fullname);
-
-    if (inputStream == null) {
+    byte[] bytesForClass = bytesForClass(fullname);
+    if (bytesForClass == null) {
       return new Resolve.JavaSymbolNotFound();
     }
 
-    try {
-      ClassReader classReader = new ClassReader(inputStream);
-      String className = classReader.getClassName();
-      if (!className.equals(bytecodeName)) {
-        return new Resolve.JavaSymbolNotFound();
-      }
-    } catch (IOException e) {
-      throw Throwables.propagate(e);
-    } finally {
-      Closeables.closeQuietly(inputStream);
+    ClassReader classReader = new ClassReader(bytesForClass);
+    String className = classReader.getClassName();
+    if (!className.equals(Convert.bytecodeName(fullname))) {
+      return new Resolve.JavaSymbolNotFound();
     }
-
     return getClassSymbol(fullname);
   }
 
