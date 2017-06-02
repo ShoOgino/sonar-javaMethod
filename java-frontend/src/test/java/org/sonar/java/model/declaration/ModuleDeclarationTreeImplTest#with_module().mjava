@@ -1,0 +1,20 @@
+  @Test
+  public void with_module() {
+    CompilationUnitTree cut = createTree("module org.foo { }");
+    ModuleDeclarationTree moduleDeclaration = cut.moduleDeclaration();
+    assertThat(moduleDeclaration).isNotNull();
+    assertThat(moduleDeclaration.is(Tree.Kind.MODULE)).isTrue();
+
+    assertThat(moduleDeclaration.openKeyword()).isNull();
+    assertThat(moduleDeclaration.moduleKeyword().text()).isEqualTo("module");
+    assertThat(moduleDeclaration.moduleDirectives()).isEmpty();
+
+    ExpressionTree moduleName = moduleDeclaration.moduleName();
+    assertThat(moduleName.is(Tree.Kind.MEMBER_SELECT)).isTrue();
+    assertThat(((MemberSelectExpressionTree) moduleName).identifier().name()).isEqualTo("foo");
+    assertThat(((IdentifierTree) ((MemberSelectExpressionTree) moduleName).expression()).name()).isEqualTo("org");
+
+    assertThat(moduleDeclaration.openBraceToken().text()).isEqualTo("{");
+    assertThat(moduleDeclaration.closeBraceToken().text()).isEqualTo("}");
+  }
+

@@ -1,0 +1,16 @@
+  @Test
+  public void test_BaseTreeVisitor() {
+    CompilationUnitTree cut = createTree(
+      "import org.foo.Bar;",
+      "",
+      "@Bar",
+      "open module com.greetings {",
+      "}");
+    ModuleDeclarationVisitor moduleDeclarationVisitor = new ModuleDeclarationVisitor();
+    cut.accept(moduleDeclarationVisitor);
+    assertThat(moduleDeclarationVisitor.visited).isTrue();
+    assertThat(moduleDeclarationVisitor.annotations).hasSize(1);
+    AnnotationTree annotation = moduleDeclarationVisitor.annotations.iterator().next();
+    assertThat(((IdentifierTree) annotation.annotationType()).name()).isEqualTo("Bar");
+  }
+
