@@ -1,7 +1,7 @@
   @Override
   public void visitTryStatement(TryStatementTree tree) {
-    boolean hasAutoCloseableSoftAssertion = tree.resources().stream()
-      .map(VariableTree::symbol)
+    boolean hasAutoCloseableSoftAssertion = tree.resourceList().stream()
+      .map(AssertionsCompletenessCheck::resourceSymbol)
       .map(Symbol::type)
       .filter(Objects::nonNull)
       .filter(type -> type.isSubtypeOf("org.assertj.core.api.AutoCloseableSoftAssertions"))
