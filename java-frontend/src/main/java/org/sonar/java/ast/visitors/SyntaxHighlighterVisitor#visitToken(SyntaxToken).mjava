@@ -1,7 +1,13 @@
   @Override
   public void visitToken(SyntaxToken syntaxToken) {
-    if (keywords.contains(syntaxToken.text())) {
-      highlight(syntaxToken, TypeOfText.KEYWORD);
+    String text = syntaxToken.text();
+    if (keywords.contains(text)) {
+      if (isInterfaceOfAnnotationType(syntaxToken)) {
+        ClassTreeImpl annotationType = (ClassTreeImpl) syntaxToken.parent();
+        highlight(annotationType.atToken(), annotationType.declarationKeyword(), TypeOfText.KEYWORD);
+      } else {
+        highlight(syntaxToken, TypeOfText.KEYWORD);
+      }
     }
   }
 
