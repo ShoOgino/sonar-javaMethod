@@ -1,0 +1,17 @@
+  @Test
+  public void test_BaseTreeVisitor() {
+    CompilationUnitTree cut = createTree(
+      "import org.foo.Bar;",
+      "",
+      "@Bar",
+      "open module com.greetings {",
+      "  exports org.bar to com.module1, module2;",
+      "  provides org.MyInterface with com.MyInterface, MyInterface2;",
+      "}");
+    ProvidesDirectiveVisitor moduleDeclarationVisitor = new ProvidesDirectiveVisitor();
+    cut.accept(moduleDeclarationVisitor);
+    assertThat(moduleDeclarationVisitor.visited).isTrue();
+    assertThat(moduleDeclarationVisitor.directives).hasSize(1);
+    assertThat(moduleDeclarationVisitor.identifiers).containsExactly("Bar", "Bar", "com", "greetings", "MyInterface", "MyInterface", "MyInterface2");
+  }
+

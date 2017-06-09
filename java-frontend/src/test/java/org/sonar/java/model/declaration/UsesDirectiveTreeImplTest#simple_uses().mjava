@@ -1,0 +1,12 @@
+  @Test
+  public void simple_uses() {
+    UsesDirectiveTree exports = moduleDirective("uses foo.MyInterface;");
+
+    assertThat(exports.kind()).isEqualTo(Tree.Kind.USES_DIRECTIVE);
+    assertThat(exports.directiveKeyword().text()).isEqualTo("uses");
+    TypeTree typeName = exports.typeName();
+    assertThat(typeName.is(Tree.Kind.MEMBER_SELECT)).isTrue();
+    assertThat(((MemberSelectExpressionTree) typeName).identifier().name()).isEqualTo("MyInterface");
+    assertThat(exports.semicolonToken().text()).isEqualTo(";");
+  }
+

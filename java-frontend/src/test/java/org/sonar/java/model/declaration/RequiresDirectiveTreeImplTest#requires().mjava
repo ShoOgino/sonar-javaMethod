@@ -1,0 +1,16 @@
+  @Test
+  public void requires() {
+    RequiresDirectiveTree requires = requireDirective("requires static transitive foo.bar;");
+
+    assertThat(requires.kind()).isEqualTo(Tree.Kind.REQUIRES_DIRECTIVE);
+    assertThat(requires.directiveKeyword().text()).isEqualTo("requires");
+    assertThat(requires.modifiers()).hasSize(2);
+    assertThat(ModifiersUtils.hasModifier(requires.modifiers(), Modifier.STATIC)).isTrue();
+    assertThat(ModifiersUtils.hasModifier(requires.modifiers(), Modifier.TRANSITIVE)).isTrue();
+    ModuleNameTree moduleName = requires.moduleName();
+    assertThat(moduleName).hasSize(2);
+    assertThat(moduleName.stream().map(IdentifierTree::name)).containsExactly("foo", "bar");
+    assertThat(moduleName.separators()).hasSize(1);
+    assertThat(requires.semicolonToken().text()).isEqualTo(";");
+  }
+

@@ -1,0 +1,23 @@
+  @Test
+  public void opens_with_modules() {
+    OpensDirectiveTree exports = moduleDirective("opens org.foo to com.module1, module2;");
+
+    assertThat(exports.kind()).isEqualTo(Tree.Kind.OPENS_DIRECTIVE);
+    assertThat(exports.directiveKeyword().text()).isEqualTo("opens");
+    ExpressionTree packageName = exports.packageName();
+    assertThat(packageName.is(Tree.Kind.MEMBER_SELECT)).isTrue();
+    MemberSelectExpressionTree mset = (MemberSelectExpressionTree) packageName;
+    assertThat(((IdentifierTree) mset.expression()).name()).isEqualTo("org");
+    assertThat(mset.identifier().name()).isEqualTo("foo");
+    assertThat(exports.toKeyword().text()).isEqualTo("to");
+
+    ListTree<ModuleNameTree> moduleNames = exports.moduleNames();
+    assertThat(moduleNames).hasSize(2);
+    assertThat(moduleNames.get(0).stream().map(IdentifierTree::name)).containsExactly("com", "module1");
+    assertThat(moduleNames.separators()).hasSize(1);
+    assertThat(moduleNames.separators().iterator().next().text()).isEqualTo(",");
+    assertThat(moduleNames.get(1).stream().map(IdentifierTree::name)).containsExactly("module2");
+
+    assertThat(exports.semicolonToken().text()).isEqualTo(";");
+  }
+

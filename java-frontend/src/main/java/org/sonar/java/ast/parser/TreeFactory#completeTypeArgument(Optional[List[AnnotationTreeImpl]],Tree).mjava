@@ -1,8 +1,6 @@
   public Tree completeTypeArgument(Optional<List<AnnotationTreeImpl>> annotations, Tree partial) {
     if (partial.is(Tree.Kind.UNBOUNDED_WILDCARD, Tree.Kind.EXTENDS_WILDCARD, Tree.Kind.SUPER_WILDCARD)) {
-      List<AnnotationTree> annotationList = annotations.isPresent() ?
-        ImmutableList.<AnnotationTree>builder().addAll(annotations.get()).build() :
-        ImmutableList.<AnnotationTree>of();
+      List<AnnotationTree> annotationList = ImmutableList.copyOf(annotations.or(ImmutableList.of()));
       ((WildcardTreeImpl) partial).complete(annotationList);
     } else {
       completeTypeTreeWithAnnotations((TypeTree) partial, annotations);

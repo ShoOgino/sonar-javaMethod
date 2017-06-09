@@ -9,10 +9,9 @@
     assertThat(moduleDeclaration.moduleKeyword().text()).isEqualTo("module");
     assertThat(moduleDeclaration.moduleDirectives()).isEmpty();
 
-    ExpressionTree moduleName = moduleDeclaration.moduleName();
-    assertThat(moduleName.is(Tree.Kind.MEMBER_SELECT)).isTrue();
-    assertThat(((MemberSelectExpressionTree) moduleName).identifier().name()).isEqualTo("foo");
-    assertThat(((IdentifierTree) ((MemberSelectExpressionTree) moduleName).expression()).name()).isEqualTo("org");
+    ModuleNameTree moduleName = moduleDeclaration.moduleName();
+    assertThat(moduleName).hasSize(2);
+    assertThat(moduleName.stream().map(IdentifierTree::name)).containsExactly("org", "foo");
 
     assertThat(moduleDeclaration.openBraceToken().text()).isEqualTo("{");
     assertThat(moduleDeclaration.closeBraceToken().text()).isEqualTo("}");

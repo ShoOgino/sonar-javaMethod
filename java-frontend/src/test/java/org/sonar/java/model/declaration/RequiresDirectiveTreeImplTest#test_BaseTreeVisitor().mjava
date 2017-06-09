@@ -1,0 +1,15 @@
+  @Test
+  public void test_BaseTreeVisitor() {
+    CompilationUnitTree cut = createTree(
+      "@org.foo.Bar",
+      "open module com.greetings {",
+      "  requires static transitive bos.gul;",
+      "  requires gla.qix;",
+      "}");
+    RequiresDirectiveVisitor moduleDeclarationVisitor = new RequiresDirectiveVisitor();
+    cut.accept(moduleDeclarationVisitor);
+    assertThat(moduleDeclarationVisitor.visited).isTrue();
+    assertThat(moduleDeclarationVisitor.directives).hasSize(2);
+    assertThat(moduleDeclarationVisitor.identifiers).containsExactly("com", "greetings", "bos", "gul", "gla", "qix");
+  }
+
