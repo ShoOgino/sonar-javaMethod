@@ -1,9 +1,8 @@
   public SyntaxHighlighterVisitor(SonarComponents sonarComponents) {
     this.sonarComponents = sonarComponents;
 
-    ImmutableSet.Builder<String> keywordsBuilder = ImmutableSet.builder();
-    keywordsBuilder.add(JavaKeyword.keywordValues());
-    keywords = keywordsBuilder.build();
+    keywords = ImmutableSet.copyOf(JavaKeyword.keywordValues());
+    restrictedKeywords = ImmutableSet.copyOf(JavaRestrictedKeyword.restrictedKeywordValues());
 
     ImmutableMap.Builder<Tree.Kind, TypeOfText> typesByKindBuilder = ImmutableMap.builder();
     typesByKindBuilder.put(Tree.Kind.STRING_LITERAL, TypeOfText.STRING);
