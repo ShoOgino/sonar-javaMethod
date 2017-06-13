@@ -1,9 +1,6 @@
   private boolean isRestrictedKeyword(SyntaxToken syntaxToken) {
-    if (withinModule) {
-      String text = syntaxToken.text();
-      return restrictedKeywords.contains(text)
-        && (!JavaRestrictedKeyword.TRANSITIVE.getValue().equals(text) || syntaxToken.parent().is(Tree.Kind.MODIFIERS));
-    }
-    return false;
+    return withinModule
+      && restrictedKeywords.contains(syntaxToken.text())
+      && !syntaxToken.parent().is(Tree.Kind.IDENTIFIER);
   }
 
