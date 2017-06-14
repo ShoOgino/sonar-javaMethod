@@ -3,15 +3,16 @@
     if (!methodSymbol.isParametrized()) {
       return null;
     }
-    IdentifierTree id = null;
+    Type type = null;
     if (methodName.is(Tree.Kind.MEMBER_SELECT)) {
-      id = ((MemberSelectExpressionTree) methodName).identifier();
-    } else {
-      id = (IdentifierTree) methodName;
+      type = ((MemberSelectExpressionTree) methodName).identifier().symbolType();
+    } else if (methodName.is(Tree.Kind.IDENTIFIER)) {
+      type = ((IdentifierTree) methodName).symbolType();
+    } else if (methodName.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      type = ((ParameterizedTypeTree) methodName).symbolType();
     }
-    Type identifierType = id.symbolType();
-    if (identifierType instanceof MethodJavaType) {
-      return (MethodJavaType) identifierType;
+    if (type instanceof MethodJavaType) {
+      return (MethodJavaType) type;
     }
     return null;
   }
