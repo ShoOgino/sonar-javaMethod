@@ -1,0 +1,15 @@
+  @CheckForNull
+  private static List<File> getReportsDirectoriesFromProperty(Settings settings, FileSystem fs, PathResolver pathResolver) {
+    if(settings.hasKey(SUREFIRE_REPORT_PATHS_PROPERTY)) {
+      String paths = settings.getString(SUREFIRE_REPORT_PATHS_PROPERTY);
+      if (paths != null) {
+        return Arrays.stream(paths.split(","))
+          .map(String::trim)
+          .map(path -> getFileFromPath(fs, pathResolver, path))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+      }
+    }
+    return null;
+  }
+

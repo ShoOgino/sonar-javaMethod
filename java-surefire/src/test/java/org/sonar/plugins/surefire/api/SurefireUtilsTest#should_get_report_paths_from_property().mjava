@@ -1,0 +1,22 @@
+  @Test
+  public void should_get_report_paths_from_property() {
+    Settings settings = new MapSettings();
+    settings.setProperty("sonar.junit.reportPaths", "target/surefire,submodule/target/surefire");
+
+    DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources/org/sonar/plugins/surefire/api/SurefireUtilsTest/shouldGetReportsPathFromProperty"));
+    PathResolver pathResolver = new PathResolver();
+
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+
+    List<File> directories = SurefireUtils.getReportsDirectories(settings, fs, pathResolver);
+
+    assertThat(directories).hasSize(2);
+    File directory1 = directories.get(0);
+    assertThat(directory1.exists()).isTrue();
+    assertThat(directory1.isDirectory()).isTrue();
+    File directory2 = directories.get(1);
+    assertThat(directory2.exists()).isTrue();
+    assertThat(directory2.isDirectory()).isTrue();
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+  }
+

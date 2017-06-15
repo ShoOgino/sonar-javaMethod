@@ -1,0 +1,11 @@
+  @CheckForNull
+  private static File getFileFromPath(FileSystem fs, PathResolver pathResolver, String path) {
+    try {
+      return pathResolver.relativeFile(fs.baseDir(), path);
+    } catch (Exception e) {
+      // exceptions on file not found was only occurring with SQ 5.6 LTS, not with SQ 6.4
+      LOGGER.info("Surefire report path: {}/{} not found.", fs.baseDir(), path);
+    }
+    return null;
+  }
+
