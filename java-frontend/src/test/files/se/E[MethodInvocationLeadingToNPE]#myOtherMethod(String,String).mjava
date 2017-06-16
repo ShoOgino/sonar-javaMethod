@@ -1,10 +1,10 @@
   public Object myOtherMethod(String line, String value) {
     field = null; // flow@myOtherMethod [[order=1]] {{Implies 'field' is null.}}
-    String s = line.length() > 0 ? value : null; // flow@myOtherMethod [[order=2]] {{Implies 's' has the same value as 'value'.}}
-    if (s == null || s.startsWith("key")) { // flow@myOtherMethod [[order=3]] {{Implies 's' is not null.}}
+    String s = line.length() > 0 ? value : null;
+    if (s == null || s.startsWith("key")) {
       this.field = new Object();
     } else {
-      doSomething(this.field, s); // Noncompliant [[flows=myOtherMethod]] {{"NullPointerException" will be thrown when invoking method "doSomething()".}} flow@myOtherMethod [[order=4;sc=24;ec=29]] {{'field' is passed to 'doSomething()'.}}
+      doSomething(this.field, s); // Noncompliant [[flows=myOtherMethod]] {{"NullPointerException" will be thrown when invoking method "doSomething()".}} flow@myOtherMethod [[order=2;sc=24;ec=29]] {{'field' is passed to 'doSomething()'.}}
     }
     return field;
   }

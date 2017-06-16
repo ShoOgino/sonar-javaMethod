@@ -1,0 +1,21 @@
+  private static Set<List<JavaFileScannerContext.Location>> flowsForMethodArguments(ExplodedGraph.Node node, MethodInvocationTree mit, int parameterCausingExceptionIndex) {
+    ProgramState programState = node.programState;
+    List<ProgramState.SymbolicValueSymbol> arguments = Lists.reverse(programState.peekValuesAndSymbols(mit.arguments().size()));
+    SymbolicValue parameterCausingExceptionSV = arguments.get(parameterCausingExceptionIndex).symbolicValue();
+
+    Set<SymbolicValue> argSymbolicValues = new LinkedHashSet<>();
+    Set<Symbol> argSymbols = new LinkedHashSet<>();
+    arguments.stream()
+      .filter(svs -> parameterCausingExceptionSV == svs.symbolicValue() || hasConstraintOtherThanNonNull(svs, programState))
+      .forEach(svs -> {
+        argSymbolicValues.add(svs.symbolicValue());
+        Symbol symbol = svs.symbol();
+        if (symbol != null) {
+          argSymbols.add(symbol);
+        }
+      });
+
+    List<Class<? extends Constraint>> domains = domainsFromArguments(programState, argSymbolicValues);
+    return FlowComputation.flow(node, argSymbolicValues, c -> true, c -> false, domains, argSymbols);
+  }
+

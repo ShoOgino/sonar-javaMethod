@@ -9,7 +9,8 @@
     }
 
     JavaFileScannerContext.Location methodInvocationMessage;
-    IdentifierTree identifierTree = FlowComputation.getArgumentIdentifier(mit, yield.parameterCausingExceptionIndex());
+    int parameterCausingExceptionIndex = yield.parameterCausingExceptionIndex();
+    IdentifierTree identifierTree = FlowComputation.getArgumentIdentifier(mit, parameterCausingExceptionIndex);
     if (identifierTree != null) {
       methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s' is passed to '%s()'.", identifierTree.name(), methodName), identifierTree);
     } else {
@@ -17,7 +18,7 @@
     }
 
     List<JavaFileScannerContext.Location> argumentChangingNameFlows = flowsForArgumentsChangingName(yield, mit);
-    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit);
+    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit, parameterCausingExceptionIndex);
     Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
 
     ImmutableSet.Builder<List<JavaFileScannerContext.Location>> flows = ImmutableSet.builder();
