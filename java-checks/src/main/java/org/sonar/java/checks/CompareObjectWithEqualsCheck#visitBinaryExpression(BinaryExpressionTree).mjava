@@ -4,7 +4,9 @@
     if (tree.is(Tree.Kind.EQUAL_TO, Tree.Kind.NOT_EQUAL_TO)) {
       Type leftOpType = tree.leftOperand().symbolType();
       Type rightOpType = tree.rightOperand().symbolType();
-      if (!isExcluded(leftOpType, rightOpType) && hasObjectOperand(leftOpType, rightOpType) && bothImplementsEqualsMethod(leftOpType, rightOpType)) {
+      if (!isExcluded(leftOpType, rightOpType) && hasObjectOperand(leftOpType, rightOpType)
+        && bothImplementsEqualsMethod(leftOpType, rightOpType)
+        && neitherIsPublicStaticFinal(tree.leftOperand(), tree.rightOperand())) {
         context.reportIssue(this, tree.operatorToken(), "Use the \"equals\" method if value comparison was intended.");
       }
     }
