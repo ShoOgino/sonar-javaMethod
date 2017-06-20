@@ -1,0 +1,17 @@
+  private static boolean callsThisConstructor(MethodTree constructor) {
+    List<StatementTree> body = constructor.block().body();
+    if (body.isEmpty()) {
+      return false;
+    }
+    StatementTree firstStatement = body.get(0);
+    if (!firstStatement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      return false;
+    }
+    ExpressionTree expression = ((ExpressionStatementTree) firstStatement).expression();
+    if (!expression.is(Tree.Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+    ExpressionTree methodSelect = ((MethodInvocationTree) expression).methodSelect();
+    return methodSelect.is(Tree.Kind.IDENTIFIER) && "this".equals(((IdentifierTree) methodSelect).name());
+  }
+
