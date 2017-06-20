@@ -6,19 +6,19 @@
   private static MethodBehavior createIsNullBehavior(Symbol.MethodSymbol symbol) {
     boolean isNull = IS_NULL.equals(symbol.name());
 
-    ObjectConstraint trueConstraint = isNull ? ObjectConstraint.NULL : ObjectConstraint.NOT_NULL;
-    ObjectConstraint falseConstraint = isNull ? ObjectConstraint.NOT_NULL : ObjectConstraint.NULL;
+    ConstraintsByDomain trueConstraint = isNull ? NULL_CONSTRAINTS : NOT_NULL_CONSTRAINTS;
+    ConstraintsByDomain falseConstraint = isNull ? NOT_NULL_CONSTRAINTS : NULL_CONSTRAINTS;
 
     MethodBehavior behavior = new MethodBehavior(symbol);
 
     HappyPathYield trueYield = new HappyPathYield(behavior);
-    trueYield.parametersConstraints.add(pmapForConstraint(trueConstraint));
-    trueYield.setResult(-1, pmapForConstraint(BooleanConstraint.TRUE));
+    trueYield.parametersConstraints.add(trueConstraint);
+    trueYield.setResult(-1, ConstraintsByDomain.empty().put(BooleanConstraint.TRUE));
     behavior.addYield(trueYield);
 
     HappyPathYield falseYield = new HappyPathYield(behavior);
-    falseYield.parametersConstraints.add(pmapForConstraint(falseConstraint));
-    falseYield.setResult(-1, pmapForConstraint(BooleanConstraint.FALSE));
+    falseYield.parametersConstraints.add(falseConstraint);
+    falseYield.setResult(-1, ConstraintsByDomain.empty().put(BooleanConstraint.FALSE));
     behavior.addYield(falseYield);
 
     behavior.completed();

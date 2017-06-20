@@ -2,13 +2,14 @@
     MethodBehavior behavior = new MethodBehavior(symbol);
 
     HappyPathYield happyPathYield = new HappyPathYield(behavior);
-    happyPathYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NULL));
-    happyPathYield.setResult(-1, pmapForConstraint(symbol.name().contains("Not") ? BooleanConstraint.FALSE : BooleanConstraint.TRUE));
+    happyPathYield.parametersConstraints.add(NULL_CONSTRAINTS);
+    BooleanConstraint constraint = symbol.name().contains("Not") ? BooleanConstraint.FALSE : BooleanConstraint.TRUE;
+    happyPathYield.setResult(-1, ConstraintsByDomain.empty().put(constraint));
     behavior.addYield(happyPathYield);
 
     happyPathYield = new HappyPathYield(behavior);
-    happyPathYield.parametersConstraints.add(pmapForConstraint(ObjectConstraint.NOT_NULL));
-    happyPathYield.setResult(-1, PCollections.emptyMap());
+    happyPathYield.parametersConstraints.add(NOT_NULL_CONSTRAINTS);
+    happyPathYield.setResult(-1, ConstraintsByDomain.empty());
     behavior.addYield(happyPathYield);
 
     behavior.completed();

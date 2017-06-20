@@ -26,15 +26,15 @@
     otherYield = new HappyPathYield(methodBehavior);
     assertThat(yield).isNotEqualTo(otherYield);
 
-    PMap<Class<? extends Constraint>, Constraint> nullConstraint = PCollections.<Class<? extends Constraint>, Constraint>emptyMap().put(ObjectConstraint.class, ObjectConstraint.NULL);
+    ConstraintsByDomain nullConstraint = ConstraintsByDomain.empty().put(ObjectConstraint.NULL);
     MethodYield yield1 = newMethodYield(methodBehavior);
     yield1.parametersConstraints.add(nullConstraint);
-    yield1.parametersConstraints.add(PCollections.emptyMap());
+    yield1.parametersConstraints.add(ConstraintsByDomain.empty());
     yield1.parametersConstraints.add(nullConstraint);
     MethodYield yield2 = newMethodYield(methodBehavior);
     yield2.parametersConstraints.add(nullConstraint);
     yield2.parametersConstraints.add(nullConstraint);
-    yield2.parametersConstraints.add(PCollections.emptyMap());
+    yield2.parametersConstraints.add(ConstraintsByDomain.empty());
 
     assertThat(yield1).isNotEqualTo(yield2);
   }
