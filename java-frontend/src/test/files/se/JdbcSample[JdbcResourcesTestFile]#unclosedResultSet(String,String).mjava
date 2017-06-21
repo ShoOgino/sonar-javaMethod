@@ -1,7 +1,9 @@
   public void unclosedResultSet(String url, String query) {
     try (Connection connection = DriverManager.getConnection(url);) {
       Statement statement = connection.createStatement(); // Noncompliant {{Close this "Statement" in a "finally" clause.}}
+      PreparedStatement preparedStatement = connection.prepareStatement("SELECT"); // Noncompliant {{Close this "PreparedStatement" in a "finally" clause.}}
       ResultSet result = statement.executeQuery(query); // Noncompliant {{Close this "ResultSet" in a "finally" clause.}}
+      ResultSet result2 = preparedStatement.executeQuery(); // Noncompliant {{Close this "ResultSet" in a "finally" clause.}}
       String name = result.getString(0);
     }
   }
