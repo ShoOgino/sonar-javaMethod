@@ -7,12 +7,17 @@
       currentParent.push(tree);
     }
 
-    boolean hasDeprecatedAnnotation = hasDeprecatedAnnotation(tree);
+    AnnotationTree deprecatedAnnotation = deprecatedAnnotation(tree);
+    boolean hasDeprecatedAnnotation = deprecatedAnnotation != null;
     boolean hasJavadocDeprecatedTag = hasJavadocDeprecatedTag(tree);
     if (currentClassNotDeprecated() && !isLocalVar) {
-      if (hasDeprecatedAnnotation && !hasJavadocDeprecatedTag) {
-        reportIssue(getReportTree(tree), "Add the missing @deprecated Javadoc tag.");
-      } else if (hasJavadocDeprecatedTag && !hasDeprecatedAnnotation) {
+      if (hasDeprecatedAnnotation) {
+        if (!hasJavadocDeprecatedTag) {
+          reportIssue(getReportTree(tree), "Add the missing @deprecated Javadoc tag.");
+        } else if (isJava9 && deprecatedAnnotation.arguments().isEmpty()) {
+          reportIssue(getReportTree(deprecatedAnnotation), "Add 'since' and/or 'forRemoval' arguments to the @Deprecated annotation.");
+        }
+      } else if (hasJavadocDeprecatedTag) {
         reportIssue(getReportTree(tree), "Add the missing @Deprecated annotation.");
       }
     }
