@@ -1,0 +1,26 @@
+  private static List<ProgramState> setOptionalConstraint(CheckerContext context, Tree syntaxNode) {
+    ProgramState programState = context.getState();
+    if (!syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
+      return Collections.singletonList(programState);
+    }
+    MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+    SymbolicValue peekValue = programState.peekValue();
+    Preconditions.checkNotNull(peekValue);
+    if (OPTIONAL_EMPTY.matches(mit)) {
+      return peekValue.setConstraint(programState, OptionalConstraint.NOT_PRESENT);
+    }
+    if (OPTIONAL_OF.matches(mit)) {
+      return peekValue.setConstraint(programState, OptionalConstraint.PRESENT);
+    }
+    if (OPTIONAL_OF_NULLABLE.matches(mit)) {
+      ProgramState psPriorMethodInvocation = context.getNode().programState;
+      SymbolicValue paramSV = psPriorMethodInvocation.peekValue(0);
+      ObjectConstraint paramConstraint = psPriorMethodInvocation.getConstraint(paramSV, ObjectConstraint.class);
+      if (paramConstraint != null) {
+        // Optional.ofNullable(null) returns an empty Optional
+        return peekValue.setConstraint(programState, paramConstraint == ObjectConstraint.NULL ? OptionalConstraint.NOT_PRESENT : OptionalConstraint.PRESENT);
+      }
+    }
+    return Collections.singletonList(programState);
+  }
+
