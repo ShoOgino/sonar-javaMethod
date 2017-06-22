@@ -22,6 +22,9 @@
 
       List<JavaFileScannerContext.Location> currentFlow = flowBuilder.build();
       Set<List<JavaFileScannerContext.Location>> yieldsFlows = flowFromYields(edge);
+      if (yieldsFlows.isEmpty()) {
+        return Stream.of(new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, ImmutableList.copyOf(currentFlow), endOfPath));
+      }
       return yieldsFlows.stream()
         .map(yieldFlow -> ImmutableList.<JavaFileScannerContext.Location>builder().addAll(currentFlow).addAll(yieldFlow).build())
         .map(f -> new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, f, endOfPath));

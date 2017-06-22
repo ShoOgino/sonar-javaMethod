@@ -1,0 +1,8 @@
+  private void loop(Object o) {
+    while (flag) {
+      g(o); // Noncompliant
+      o.toString();   // Noncompliant [[flows=loop]] flow@loop [[order=3]] {{'o' is dereferenced.}}
+      o = h(); // flow@loop {{Implies 'o' is null.}} [[order=2]] flow@loop [[order=1]] {{'h()' returns null.}}
+    }
+  }
+
