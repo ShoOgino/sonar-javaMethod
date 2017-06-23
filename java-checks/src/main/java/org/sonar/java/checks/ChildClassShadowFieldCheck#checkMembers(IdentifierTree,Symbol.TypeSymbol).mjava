@@ -1,0 +1,13 @@
+  private boolean checkMembers(IdentifierTree fieldSimpleName, Symbol.TypeSymbol symbol) {
+    for (Symbol member : symbol.memberSymbols()) {
+      if (member.isVariableSymbol()
+        && !member.isPrivate()
+        && !member.isStatic()
+        && member.name().equals(fieldSimpleName.name())) {
+        reportIssue(fieldSimpleName, String.format("\"%s\" is the name of a field in \"%s\".", fieldSimpleName.name(), symbol.name()));
+        return true;
+      }
+    }
+    return false;
+  }
+

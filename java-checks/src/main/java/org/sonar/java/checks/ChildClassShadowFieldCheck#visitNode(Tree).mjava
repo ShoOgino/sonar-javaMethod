@@ -5,11 +5,11 @@
       Symbol.TypeSymbol superclassSymbol = superClass.symbolType().symbol();
       ((ClassTree) tree).members().stream()
         .filter(m -> m.is(Kind.VARIABLE))
-        .map(m -> (VariableTree) m)
-        .forEach(v -> {
-          String fieldName = v.simpleName().name();
-          if (!IGNORED_FIELDS.contains(fieldName)) {
-            checkForIssue(superclassSymbol, v, fieldName);
+        .map(VariableTree.class::cast)
+        .map(VariableTree::simpleName)
+        .forEach(fieldSimpleName -> {
+          if (!IGNORED_FIELDS.contains(fieldSimpleName.name())) {
+            checkForIssue(superclassSymbol, fieldSimpleName);
           }
         });
     }
