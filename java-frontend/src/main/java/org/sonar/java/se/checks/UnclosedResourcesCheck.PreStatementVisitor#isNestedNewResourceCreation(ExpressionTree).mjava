@@ -1,0 +1,9 @@
+    private boolean isNestedNewResourceCreation(ExpressionTree expr) {
+      if (expr.is(Tree.Kind.NEW_CLASS)) {
+        return ((NewClassTree) expr).arguments().stream()
+          .filter(UnclosedResourcesCheck::isCloseable)
+          .allMatch(this::isNestedNewResourceCreation);
+      }
+      return false;
+    }
+

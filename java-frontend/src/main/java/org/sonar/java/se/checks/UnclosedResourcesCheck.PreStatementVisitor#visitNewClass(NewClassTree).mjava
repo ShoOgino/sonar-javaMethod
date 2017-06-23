@@ -8,11 +8,12 @@
           if (!iterator.hasNext()) {
             throw new IllegalStateException("Mismatch between declared constructor arguments and argument values!");
           }
-          final Type type = argument.symbolType();
           final SymbolicValue value = iterator.next();
-          if (isCloseable(type)) {
+          if (isCloseable(argument) && !isNestedNewResourceCreation(argument)) {
             constraintManager.setValueFactory(new WrappedValueFactory(value));
             break;
+          } else {
+            closeResource(value);
           }
         }
       } else {
