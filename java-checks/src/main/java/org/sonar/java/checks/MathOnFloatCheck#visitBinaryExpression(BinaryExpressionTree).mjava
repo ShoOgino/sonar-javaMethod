@@ -1,6 +1,9 @@
   @Override
   public void visitBinaryExpression(BinaryExpressionTree tree) {
     if (tree.is(Tree.Kind.PLUS, Tree.Kind.MINUS, Tree.Kind.MULTIPLY, Tree.Kind.DIVIDE)) {
+      if (withinStringConcatenation(tree)) {
+        return;
+      }
       BinaryExpressionTreeImpl expressionTree = (BinaryExpressionTreeImpl) tree;
       if (expressionTree.symbolType().is("float")) {
         context.reportIssue(this, tree, "Use a \"double\" or \"BigDecimal\" instead.");
