@@ -1,4 +1,4 @@
-  private SubscriptionVisitor getPublicApiVisitor(final PublicApiChecker publicApiChecker) {
+  private SubscriptionVisitor getPublicApiVisitor() {
     return new SubscriptionVisitor() {
 
       private final Deque<ClassTree> classTrees = Lists.newLinkedList();
@@ -18,23 +18,23 @@
           if (!methodTrees.isEmpty()) {
             parent = methodTrees.peek();
           }
-          assertThat(publicApiChecker.isPublicApi(parent, tree)).as(name).isEqualTo(name.endsWith("Public"));
+          assertThat(PublicApiChecker.isPublicApi(parent, tree)).as(name).isEqualTo(name.endsWith("Public"));
         } else if (tree.is(PublicApiChecker.methodKinds())) {
           MethodTree methodTree = (MethodTree) tree;
           methodTrees.push(methodTree);
           String name = methodTree.simpleName().name();
           // getters and setters are included in the public API
-          assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).as(name).isEqualTo(name.endsWith("Public") || name.contains("GetSet"));
+          assertThat(PublicApiChecker.isPublicApi(classTrees.peek(), tree)).as(name).isEqualTo(name.endsWith("Public") || name.contains("GetSet"));
         } else if (tree.is(PublicApiChecker.classKinds())) {
           IdentifierTree className = ((ClassTree) tree).simpleName();
           if(className==null) {
-            assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).isFalse();
+            assertThat(PublicApiChecker.isPublicApi(classTrees.peek(), tree)).isFalse();
           }else {
-            assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).as(className.name()).isEqualTo(className != null && className.name().endsWith("Public"));
+            assertThat(PublicApiChecker.isPublicApi(classTrees.peek(), tree)).as(className.name()).isEqualTo(className != null && className.name().endsWith("Public"));
           }
           classTrees.push((ClassTree) tree);
         } else {
-          assertThat(publicApiChecker.isPublicApi(classTrees.peek(), tree)).isFalse();
+          assertThat(PublicApiChecker.isPublicApi(classTrees.peek(), tree)).isFalse();
         }
       }
 
