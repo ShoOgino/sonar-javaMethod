@@ -1,0 +1,16 @@
+  @Test
+  public void should_handle_analysis_cancellation() throws Exception {
+    JavaFileScanner visitor = spy(new JavaFileScanner() {
+      @Override
+      public void scanFile(JavaFileScannerContext context) {
+        // do nothing
+      }
+    });
+    SonarComponents sonarComponents = mock(SonarComponents.class);
+    when(sonarComponents.analysisCancelled()).thenReturn(true);
+    JavaAstScanner scanner = new JavaAstScanner(JavaParser.createParser(), sonarComponents);
+    scanner.setVisitorBridge(new VisitorsBridge(Lists.newArrayList(visitor), Lists.newArrayList(), sonarComponents, false));
+    scanner.scan(ImmutableList.of(new File("src/test/files/metrics/NoSonar.java")));
+    verifyZeroInteractions(visitor);
+  }
+

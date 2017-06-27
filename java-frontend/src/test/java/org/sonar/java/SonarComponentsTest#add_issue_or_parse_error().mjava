@@ -30,20 +30,18 @@
 
     assertThat(context.allIssues()).hasSize(3);
 
-    Version version60 = Version.create(6, 0);
-    Version version56 = Version.create(5, 6);
     RecognitionException parseError = new RecognitionException(new LexerException("parse error"));
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(version60));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_0));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isTrue();
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(version56));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V5_6));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
 
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(version60, SonarQubeSide.SCANNER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(V6_0, SonarQubeSide.SCANNER));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
 
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(version56, SonarQubeSide.SCANNER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(V5_6, SonarQubeSide.SCANNER));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
   }
 

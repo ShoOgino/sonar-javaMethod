@@ -13,7 +13,7 @@
     fileSystem.setEncoding(StandardCharsets.ISO_8859_1);
     SonarComponents sonarComponents = new SonarComponents(null, fileSystem, null, null, null, null);
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 2)));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_2));
     sonarComponents.setSensorContext(context);
 
     String fileContent = sonarComponents.fileContent(file);
@@ -25,7 +25,7 @@
     verify(inputFile, times(1)).contents();
     reset(inputFile);
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 0)));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_0));
     sonarComponents.setSensorContext(context);
 
     assertThat(sonarComponents.fileContent(file)).hasSize(59);
@@ -37,7 +37,7 @@
     reset(inputFile);
 
     // rely on default filesystem charset for version prior to 6.0
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(5, 6)));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V5_6));
     sonarComponents.setSensorContext(context);
 
     assertThat(sonarComponents.fileContent(file)).hasSize(63);

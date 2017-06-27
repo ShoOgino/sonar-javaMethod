@@ -3,12 +3,17 @@
     progressReport.start(Lists.newArrayList(files));
 
     boolean successfullyCompleted = false;
+    boolean cancelled = false;
     try {
       for (File file : files) {
+        if (analysisCancelled()) {
+          cancelled = true;
+          break;
+        }
         simpleScan(file);
         progressReport.nextFile();
       }
-      successfullyCompleted = true;
+      successfullyCompleted = !cancelled;
     } finally {
       if (successfullyCompleted) {
         progressReport.stop();
