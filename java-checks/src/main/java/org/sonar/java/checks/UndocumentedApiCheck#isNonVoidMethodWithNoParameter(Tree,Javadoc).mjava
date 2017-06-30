@@ -1,0 +1,11 @@
+  private boolean isNonVoidMethodWithNoParameter(Tree tree, Javadoc javadoc) {
+    if (!tree.is(Tree.Kind.METHOD)) {
+      return false;
+    }
+
+    return hasNonVoidReturnType(tree)
+      && ((MethodTree) tree).parameters().isEmpty()
+      // if return description is there, then it will be validated later
+      && !javadoc.noReturnDescription();
+  }
+

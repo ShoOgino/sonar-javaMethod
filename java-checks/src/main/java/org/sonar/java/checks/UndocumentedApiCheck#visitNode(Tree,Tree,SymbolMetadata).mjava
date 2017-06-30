@@ -1,8 +1,8 @@
   private void visitNode(Tree tree, Tree reportTree, SymbolMetadata symbolMetadata) {
     if (!isExcluded(tree, symbolMetadata)) {
       Javadoc javadoc = new Javadoc(tree);
-      if (javadoc.noMainDescription()) {
-        context.reportIssue(this, reportTree, "Document this public " + getType(tree) + ".");
+      if (javadoc.noMainDescription() && !isNonVoidMethodWithNoParameter(tree, javadoc)) {
+        context.reportIssue(this, reportTree, "Document this public " + getType(tree) + " by adding an explicit description.");
       } else {
         List<String> undocumentedParameters = javadoc.undocumentedParameters(tree);
         if (!undocumentedParameters.isEmpty()) {
