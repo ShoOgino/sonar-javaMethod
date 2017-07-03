@@ -1,19 +1,19 @@
     @Override
     public void visitNewClass(NewClassTree syntaxNode) {
-      List<SymbolicValue> arguments = new ArrayList<>(programState.peekValues(syntaxNode.arguments().size()));
-      Collections.reverse(arguments);
       if (isOpeningResource(syntaxNode)) {
-        Iterator<SymbolicValue> iterator = arguments.iterator();
-        for (ExpressionTree argument : syntaxNode.arguments()) {
+        List<ProgramState.SymbolicValueSymbol> arguments = Lists.reverse(programState.peekValuesAndSymbols(syntaxNode.arguments().size()));
+        Iterator<ProgramState.SymbolicValueSymbol> iterator = arguments.iterator();
+        for (ExpressionTree argumentTree : syntaxNode.arguments()) {
           if (!iterator.hasNext()) {
             throw new IllegalStateException("Mismatch between declared constructor arguments and argument values!");
           }
-          final SymbolicValue value = iterator.next();
-          if (isCloseable(argument) && !isNestedNewResourceCreation(argument)) {
-            constraintManager.setValueFactory(new WrappedValueFactory(value));
+          ProgramState.SymbolicValueSymbol argument = iterator.next();
+          if (shouldWrapArgument(argument, argumentTree)) {
+            constraintManager.setValueFactory(new WrappedValueFactory(argument.symbolicValue()));
             break;
-          } else {
-            closeResource(value);
+          }
+          if (shouldCloseArgument(argument)){
+            closeResource(argument.symbolicValue());
           }
         }
       } else {

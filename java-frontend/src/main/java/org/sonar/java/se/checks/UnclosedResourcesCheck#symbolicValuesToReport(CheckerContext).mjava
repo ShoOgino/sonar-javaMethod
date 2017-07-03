@@ -1,0 +1,12 @@
+  private static Set<SymbolicValue> symbolicValuesToReport(CheckerContext context) {
+    List<SymbolicValue> openSymbolicValues = context.getState().getValuesWithConstraints(OPEN);
+    Set<SymbolicValue> svToReport = new HashSet<>(openSymbolicValues);
+    // report only outermost OPEN symbolic value
+    for (SymbolicValue openSymbolicValue : openSymbolicValues) {
+      if (openSymbolicValue instanceof ResourceWrapperSymbolicValue) {
+        svToReport.remove(openSymbolicValue.wrappedValue());
+      }
+    }
+    return svToReport;
+  }
+

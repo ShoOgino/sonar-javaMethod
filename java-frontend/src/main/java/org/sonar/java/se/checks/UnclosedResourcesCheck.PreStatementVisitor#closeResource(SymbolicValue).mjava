@@ -1,12 +1,11 @@
     private void closeResource(@Nullable final SymbolicValue target) {
-      SymbolicValue toClose = target;
-      if(toClose instanceof ResourceWrapperSymbolicValue) {
-        toClose = target.wrappedValue();
+      if (target instanceof ResourceWrapperSymbolicValue) {
+        closeResource(target.wrappedValue());
       }
-      if (toClose != null) {
-        ResourceConstraint oConstraint = programState.getConstraint(toClose, ResourceConstraint.class);
+      if (target != null) {
+        ResourceConstraint oConstraint = programState.getConstraint(target, ResourceConstraint.class);
         if (oConstraint != null) {
-          programState = programState.addConstraintTransitively(toClose, CLOSED);
+          programState = programState.addConstraintTransitively(target, CLOSED);
         }
       }
     }

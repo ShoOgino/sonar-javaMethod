@@ -1,6 +1,7 @@
   @Override
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
     ExplodedGraph.Node node = context.getNode();
-    context.getState().getValuesWithConstraints(OPEN).forEach(sv -> processUnclosedSymbolicValue(node, sv));
+    Set<SymbolicValue> svToReport = symbolicValuesToReport(context);
+    svToReport.forEach(sv -> processUnclosedSymbolicValue(node, sv));
   }
 

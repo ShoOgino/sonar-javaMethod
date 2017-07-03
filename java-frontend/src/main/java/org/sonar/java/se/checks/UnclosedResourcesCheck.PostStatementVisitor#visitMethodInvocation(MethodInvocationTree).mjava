@@ -1,21 +1,10 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
-      for (MethodMatcher matcher : CLOSEABLE_EXCEPTIONS) {
-        if (matcher.matches(syntaxNode)) {
-          return;
-        }
-      }
-      if (syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT) && needsClosing(syntaxNode.symbolType())) {
-        final ExpressionTree targetExpression = ((MemberSelectExpressionTree) syntaxNode.methodSelect()).expression();
-        boolean jdbcResourceCreation = JDBC_RESOURCE_CREATIONS.anyMatch(syntaxNode);
-        if (targetExpression.is(Tree.Kind.IDENTIFIER) && !isWithinTryHeader(syntaxNode)
-          && (syntaxNode.symbol().isStatic() || jdbcResourceCreation)) {
-          SymbolicValue peekedValue = programState.peekValue();
-          programState = programState.addConstraintTransitively(peekedValue, OPEN);
-          if (jdbcResourceCreation) {
-            programState = programState.addConstraint(peekedValue, ObjectConstraint.NOT_NULL);
-          }
-        }
+      if (methodOpeningResource(syntaxNode)) {
+        SymbolicValue peekedValue = programState.peekValue();
+        programState = programState.addConstraintTransitively(peekedValue, OPEN);
+        // returned resource is not null
+        programState = programState.addConstraint(peekedValue, ObjectConstraint.NOT_NULL);
       }
     }
 
