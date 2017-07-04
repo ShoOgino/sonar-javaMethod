@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    List<VariableTree> parameters = ((LambdaExpressionTree) tree).parameters();
+    String missingTypeParameters = parameters.stream()
+      .filter(variable -> variable.type().is(Tree.Kind.INFERED_TYPE))
+      .map(VariableTree::simpleName)
+      .map(IdentifierTree::name)
+      .map(parameterName -> "'" + parameterName + "'")
+      .collect(Collectors.joining(", "));
+
+    if (!missingTypeParameters.isEmpty()) {
+      reportIssue(parameters.get(0), Iterables.getLast(parameters), String.format("Specify a type for: %s", missingTypeParameters));
+    }
+  }
+
