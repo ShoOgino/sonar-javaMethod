@@ -1,0 +1,9 @@
+  @Test
+  public void should_log_warnings_if_binaries_missing() {
+    SonarScanner scanner = ditProjectSonarScanner();
+    BuildResult buildResult = ORCHESTRATOR.executeBuildQuietly(scanner);
+    String logs = buildResult.getLogs();
+    assertThat(logs).contains("Please provide compiled classes of your project with sonar.java.binaries property");
+    assertThat(buildResult.isSuccess()).isFalse();
+  }
+

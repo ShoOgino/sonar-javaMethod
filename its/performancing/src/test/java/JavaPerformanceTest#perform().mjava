@@ -2,9 +2,11 @@
   public void perform() throws IOException {
     ORCHESTRATOR.getServer().provisionProject("project", "project");
     ORCHESTRATOR.getServer().associateProjectToQualityProfile("project", "java", "no-rules");
-    SonarRunner build = SonarRunner.create(FileLocation.of("../sources/jdk6").getFile())
+    SonarScanner build = SonarScanner.create(FileLocation.of("../sources/jdk6").getFile())
       .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m -server")
       .setProperty("sonar.importSources", "false")
+      // Dummy sonar.java.binaries to pass validation
+      .setProperty("sonar.java.binaries", "launcher")
       .setProperty("sonar.showProfiling", "true")
       .setProperty("sonar.preloadFileMetadata", "true")
       .setProjectKey("project")
