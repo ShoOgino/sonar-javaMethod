@@ -1,0 +1,11 @@
+  private static boolean hasIrregularPattern(String literalValue) {
+    List<String> groups = Arrays.asList(cleanup(literalValue).split("_"));
+    // groups empty or of size one does not contain "_"
+    if (groups.size() <= 1) {
+      return false;
+    }
+    int firstGroupLength = groups.get(0).length();
+    List<Integer> lengths = groups.stream().skip(1).map(String::length).distinct().collect(Collectors.toList());
+    return lengths.size() != 1 || lengths.get(0) < firstGroupLength;
+  }
+
