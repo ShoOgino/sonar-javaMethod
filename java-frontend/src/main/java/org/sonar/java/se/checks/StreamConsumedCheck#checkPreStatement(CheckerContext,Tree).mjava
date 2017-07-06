@@ -1,0 +1,21 @@
+  @Override
+  public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    if (!syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
+      return context.getState();
+    }
+    MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+    ProgramState programState = context.getState();
+    SymbolicValue invocationTarget = invocationTarget(programState, mit);
+    if (isIntermediateOperation(mit)) {
+      // intermediate operations return same stream pipeline, so we reuse SV
+      context.getConstraintManager().setValueFactory(() -> invocationTarget);
+    }
+    if ((isIntermediateOperation(mit) || isTerminalOperation(mit)) && isPipelineConsumed(programState, invocationTarget)) {
+      reportIssue(syntaxNode, "Refactor this code so that this consumed stream pipeline is not reused.", flow(context, invocationTarget));
+    }
+    if (isTerminalOperation(mit)) {
+      return Iterables.getOnlyElement(invocationTarget.setConstraint(programState, StreamConsumedConstraint.CONSUMED));
+    }
+    return context.getState();
+  }
+
