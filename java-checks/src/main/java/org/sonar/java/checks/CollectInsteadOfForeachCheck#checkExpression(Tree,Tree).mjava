@@ -1,0 +1,10 @@
+  private void checkExpression(Tree reportTree, Tree expression) {
+    Optional<String> listName = Optional.empty();
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      listName = Optional.of(((IdentifierTree) expression).name());
+    } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      listName = Optional.of(((MemberSelectExpressionTree) expression).identifier().name());
+    }
+    listName.ifPresent(list -> context.reportIssue(this, reportTree, getMessage(reportTree, list)));
+  }
+

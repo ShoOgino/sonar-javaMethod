@@ -1,0 +1,16 @@
+  private void handleLambdaExpression(LambdaExpressionTree lambda) {
+    Tree expr = lambda.body();
+    if (expr.is(Tree.Kind.BLOCK)) {
+      expr = expressionFromSingleStatementBlock(((BlockTree) expr).body());
+    }
+    if (expr != null && expr.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) expr;
+      if (ADD.matches(mit)) {
+        ExpressionTree methodSelect = mit.methodSelect();
+        if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+          checkExpression(lambda, ((MemberSelectExpressionTree) methodSelect).expression());
+        }
+      }
+    }
+  }
+
