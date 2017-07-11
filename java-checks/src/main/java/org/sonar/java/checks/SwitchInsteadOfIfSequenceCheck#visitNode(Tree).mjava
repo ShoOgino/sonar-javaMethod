@@ -1,0 +1,25 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if(tree.parent().is(Tree.Kind.IF_STATEMENT)) {
+      IfStatementTree parentIf = (IfStatementTree) tree.parent();
+      if(tree.equals(parentIf.elseStatement())) {
+        // don't double count nested ifs
+        return;
+      }
+    }
+    IfStatementTree ifStatementTree = (IfStatementTree) tree;
+    int level = 1;
+    while (ifStatementTree.elseKeyword() != null && ifStatementTree.elseStatement().is(Tree.Kind.IF_STATEMENT)) {
+      level++;
+      if(!sameEqualCondition(ifStatementTree.condition(), ((IfStatementTree) ifStatementTree.elseStatement()).condition())) {
+        level = 0;
+        break;
+      }
+      ifStatementTree = (IfStatementTree) ifStatementTree.elseStatement();
+    }
+    if(level > 2) {
+      reportIssue(((IfStatementTree) tree).condition(), "Convert this \"if/else if\" structure into a \"switch\"." + context.getJavaVersion().java7CompatibilityMessage());
+    }
+
+  }
+

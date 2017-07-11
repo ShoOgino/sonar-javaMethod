@@ -1,0 +1,28 @@
+  private static Optional<EqualsOperands> getEqualMethodInvocationOperands(ExpressionTree expressionTree) {
+    ExpressionTree arg = null;
+    ExpressionTree expression = null;
+    if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) expressionTree;
+      Symbol symbol = mit.symbol();
+      ExpressionTree methodSelect = mit.methodSelect();
+      if (mit.arguments().size() == 1) {
+        arg = mit.arguments().get(0);
+        if ("equals".equals(symbol.name()) && arg.symbolType().is("java.lang.String") && methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+          expression = ((MemberSelectExpressionTree) methodSelect).expression();
+        }
+      }
+    } else if (expressionTree.is(Tree.Kind.EQUAL_TO)) {
+      BinaryExpressionTree equalTo = (BinaryExpressionTree) expressionTree;
+      arg = equalTo.leftOperand();
+      expression = equalTo.rightOperand();
+    }
+    if (arg != null && expression != null) {
+      if (arg.is(Tree.Kind.STRING_LITERAL) && expression.is(Tree.Kind.IDENTIFIER)) {
+        return Optional.of(new EqualsOperands((LiteralTree) arg, (IdentifierTree) expression));
+      } else if (arg.is(Tree.Kind.IDENTIFIER) && expression.is(Tree.Kind.STRING_LITERAL)) {
+        return Optional.of(new EqualsOperands((LiteralTree) expression, (IdentifierTree) arg));
+      }
+    }
+    return Optional.empty();
+  }
+
