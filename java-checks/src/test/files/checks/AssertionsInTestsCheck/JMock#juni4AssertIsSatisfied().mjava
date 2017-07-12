@@ -1,0 +1,18 @@
+  @Test
+  public void juni4AssertIsSatisfied() { // Compliant
+    SomeUtil someUtil = new SomeUtil();
+    ServiceProvider serviceProvider = new ServiceProvider();
+    otherContext.checking(new Expectations() {{
+        Sequence sequence = context.sequence("pipeline");
+        oneOf(someUtil).doSomething(with(any(String.class)));
+        inSequence(sequence);
+        oneOf(someUtil).doSomething(with(any(String.class)));
+        inSequence(sequence);
+        will(returnValue("a successful reply"));
+        inSequence(sequence);
+      }});
+
+    serviceProvider.processRequest("any ole string");
+    otherContext.assertIsSatisfied();
+  }
+
