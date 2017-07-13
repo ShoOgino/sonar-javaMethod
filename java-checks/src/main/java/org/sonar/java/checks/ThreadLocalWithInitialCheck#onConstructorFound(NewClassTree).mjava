@@ -1,0 +1,20 @@
+  @Override
+  protected void onConstructorFound(NewClassTree newClassTree) {
+    ClassTree classTree = newClassTree.classBody();
+    if (classTree == null) {
+      return;
+    }
+    List<Tree> members = classTree.members();
+    if (members.size() != 1) {
+      return;
+    }
+    members.stream()
+      .filter(tree -> tree.is(Tree.Kind.METHOD))
+      .map(t -> ((MethodTree) t))
+      .filter(t -> "initialValue".equals(t.simpleName().name()))
+      .filter(t -> t.parameters().isEmpty())
+      .findFirst().ifPresent(
+        t -> reportIssue(newClassTree.identifier(), "Replace this anonymous class with a call to \"ThreadLocal.withInitial\"."+context.getJavaVersion().java8CompatibilityMessage())
+      );
+  }
+
