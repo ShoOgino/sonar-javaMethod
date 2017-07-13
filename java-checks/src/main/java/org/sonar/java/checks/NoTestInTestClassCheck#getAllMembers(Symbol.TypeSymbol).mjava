@@ -1,10 +1,16 @@
-  private static Stream<Symbol> getAllMembers(Symbol.TypeSymbol symbol) {
-    Stream<Symbol> members = symbol.memberSymbols().stream();
-    Type superclass = symbol.superClass();
-    while (superclass != null && !"java.lang.Object".equals(superclass.fullyQualifiedName())) {
-      members = Stream.concat(members, superclass.symbol().memberSymbols().stream());
-      superclass = superclass.symbol().superClass();
+  private static Stream<Symbol.MethodSymbol> getAllMembers(Symbol.TypeSymbol symbol) {
+    if ("java.lang.Object".equals(symbol.type().fullyQualifiedName())) {
+      return Stream.empty();
     }
+    Stream<Symbol.MethodSymbol> members = symbol.memberSymbols().stream().filter(Symbol::isMethodSymbol).map(Symbol.MethodSymbol.class::cast);
+    Type superClass = symbol.superClass();
+    if (superClass != null) {
+      members = Stream.concat(members, getAllMembers(superClass.symbol()));
+    }
+    Stream<Symbol.MethodSymbol> defaultMethodsFromInterfaces = symbol.interfaces().stream()
+      .flatMap(i -> getAllMembers(i.symbol()))
+      .filter(m -> ((JavaSymbol.MethodJavaSymbol) m).isDefault());
+    members = Stream.concat(members, defaultMethodsFromInterfaces);
     return members;
   }
 
