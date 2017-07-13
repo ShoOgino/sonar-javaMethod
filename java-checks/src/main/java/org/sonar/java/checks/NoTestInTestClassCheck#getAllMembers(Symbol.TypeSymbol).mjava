@@ -1,0 +1,10 @@
+  private static Stream<Symbol> getAllMembers(Symbol.TypeSymbol symbol) {
+    Stream<Symbol> members = symbol.memberSymbols().stream();
+    Type superclass = symbol.superClass();
+    while (superclass != null && !"java.lang.Object".equals(superclass.fullyQualifiedName())) {
+      members = Stream.concat(members, superclass.symbol().memberSymbols().stream());
+      superclass = superclass.symbol().superClass();
+    }
+    return members;
+  }
+

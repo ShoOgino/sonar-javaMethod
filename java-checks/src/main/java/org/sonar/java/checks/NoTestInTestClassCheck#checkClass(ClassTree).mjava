@@ -1,16 +1,16 @@
   private void checkClass(ClassTree classTree) {
     if (!ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.ABSTRACT)) {
-      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) classTree.symbol();
-      Iterable<Symbol> members = getAllMembers(symbol);
+      Symbol.TypeSymbol classSymbol = classTree.symbol();
+      Stream<Symbol> members = getAllMembers(classSymbol);
       IdentifierTree simpleName = classTree.simpleName();
-      if (classTree.symbol().metadata().isAnnotatedWith("org.testng.annotations.Test")) {
+      if (classSymbol.metadata().isAnnotatedWith("org.testng.annotations.Test")) {
         checkTestNGmembers(simpleName, members);
       } else {
-        boolean isJunit3TestClass = symbol.type().isSubtypeOf("junit.framework.TestCase");
+        boolean isJunit3TestClass = classSymbol.type().isSubtypeOf("junit.framework.TestCase");
         if (isJunit3TestClass) {
           checkJunit3TestClass(simpleName, members);
         } else {
-          checkJunit4AndAboveTestClass(simpleName, symbol, members);
+          checkJunit4AndAboveTestClass(simpleName, classSymbol, members);
         }
       }
     }
