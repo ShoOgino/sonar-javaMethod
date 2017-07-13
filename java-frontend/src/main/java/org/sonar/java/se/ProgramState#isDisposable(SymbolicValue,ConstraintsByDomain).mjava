@@ -1,8 +1,6 @@
   private static boolean isDisposable(SymbolicValue symbolicValue, @Nullable ConstraintsByDomain constraints) {
     //FIXME this should be handle with callbacks rather than keeping those value in programstate
     return SymbolicValue.isDisposable(symbolicValue) &&
-      (constraints == null || (constraints.get(UnclosedResourcesCheck.ResourceConstraint.class) == null
-        && constraints.get(CustomUnclosedResourcesCheck.CustomResourceConstraint.class) == null
-        && constraints.get(LocksNotUnlockedCheck.LockConstraint.class) == null));
+      (constraints == null || NON_DISPOSABLE_CONSTRAINTS.stream().map(constraints::get).allMatch(Objects::isNull));
   }
 

@@ -1,0 +1,10 @@
+  private static Set<List<JavaFileScannerContext.Location>> flow(SymbolicValue invocationTarget, ExplodedGraph.Node node) {
+    Set<List<JavaFileScannerContext.Location>> flows = FlowComputation.flow(node, Collections.singleton(invocationTarget), StreamPipelineConstraint.CONSUMED::equals, c -> false,
+      Collections.singletonList(StreamPipelineConstraint.class), Collections.emptySet());
+    // make copy with explicit message
+    return flows.stream()
+      .map(f ->
+        f.stream().map(l -> new JavaFileScannerContext.Location("Pipeline is consumed here.", flowTree(l.syntaxNode))).collect(Collectors.toList()))
+      .collect(Collectors.toSet());
+  }
+

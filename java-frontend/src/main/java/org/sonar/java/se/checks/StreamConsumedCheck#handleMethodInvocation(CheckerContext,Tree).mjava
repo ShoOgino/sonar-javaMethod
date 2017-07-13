@@ -1,0 +1,25 @@
+  private ProgramState handleMethodInvocation(CheckerContext context, Tree syntaxNode) {
+    MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+    ProgramState programState = context.getState();
+    programState = removeConstraintOnArgs(programState, mit);
+    SymbolicValue invocationTarget = invocationTarget(programState, mit);
+    if ((isIntermediateOperation(mit) || isTerminalOperation(mit))
+        && isPipelineConsumed(programState, invocationTarget)) {
+      reportIssue(syntaxNode, "Refactor this code so that this consumed stream pipeline is not reused.", flow(invocationTarget, context.getNode()));
+      return null;
+    }
+    if (isIntermediateOperation(mit)) {
+      // intermediate operations return same stream pipeline, so we reuse SV
+      context.getConstraintManager().setValueFactory(() -> invocationTarget);
+      return Iterables.getOnlyElement(invocationTarget.setConstraint(programState, StreamPipelineConstraint.NOT_CONSUMED));
+    }
+    if (isTerminalOperation(mit)) {
+      return Iterables.getOnlyElement(invocationTarget.setConstraint(programState, StreamPipelineConstraint.CONSUMED));
+    }
+    if (mit.symbol().isUnknown()) {
+      // lambdas used in pipelines are sometimes not resolved properly, this is to shutdown the noise
+      programState = programState.removeConstraintsOnDomain(invocationTarget, StreamPipelineConstraint.class);
+    }
+    return programState;
+  }
+

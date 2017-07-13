@@ -1,0 +1,9 @@
+  @Override
+  public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
+    ProgramState state = context.getState();
+    if (isReturningPipeline(syntaxNode) || nonLocalAssignment(syntaxNode)) {
+      return state.removeConstraintsOnDomain(state.peekValue(), StreamPipelineConstraint.class);
+    }
+    return state;
+  }
+

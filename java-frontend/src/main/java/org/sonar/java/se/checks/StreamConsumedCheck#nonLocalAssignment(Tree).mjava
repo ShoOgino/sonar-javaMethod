@@ -1,0 +1,8 @@
+  private static boolean nonLocalAssignment(Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.ASSIGNMENT)) {
+      ExpressionTree variable = ((AssignmentExpressionTree) syntaxNode).variable();
+      return !variable.is(Tree.Kind.IDENTIFIER) || ((IdentifierTree) variable).symbol().owner().isTypeSymbol();
+    }
+    return false;
+  }
+
