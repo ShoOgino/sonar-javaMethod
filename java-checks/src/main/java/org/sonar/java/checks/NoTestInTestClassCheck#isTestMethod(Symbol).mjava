@@ -1,4 +1,7 @@
-  private static boolean isTestMethod(Symbol method) {
-    return method.metadata().annotations().stream().anyMatch(PREDICATE_ANNOTATION_TEST_OR_UNKNOWN);
+  private boolean isTestMethod(Symbol method) {
+    return method.metadata().annotations().stream().anyMatch(input -> {
+      Type type = input.symbol().type();
+      return type.isUnknown() || isTestAnnotation(type);
+    });
   }
 

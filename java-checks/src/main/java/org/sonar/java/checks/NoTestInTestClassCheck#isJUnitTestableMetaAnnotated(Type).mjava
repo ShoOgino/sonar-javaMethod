@@ -1,0 +1,19 @@
+  private boolean isJUnitTestableMetaAnnotated(Type type) {
+    if (seenAnnotations.contains(type.fullyQualifiedName())) {
+      return false;
+    }
+    seenAnnotations.add(type.fullyQualifiedName());
+    SymbolMetadata metadata = type.symbol().metadata();
+    if (metadata.isAnnotatedWith("org.junit.platform.commons.annotation.Testable")) {
+      testAnnotations.add(type.fullyQualifiedName());
+      return true;
+    }
+    for (SymbolMetadata.AnnotationInstance annotation : metadata.annotations()) {
+      if (isJUnitTestableMetaAnnotated(annotation.symbol().type())) {
+        testAnnotations.add(type.fullyQualifiedName());
+        return true;
+      }
+    }
+    return false;
+  }
+
