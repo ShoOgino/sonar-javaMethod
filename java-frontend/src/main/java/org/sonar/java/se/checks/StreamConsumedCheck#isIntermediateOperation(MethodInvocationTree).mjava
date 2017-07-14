@@ -1,4 +1,8 @@
   private static boolean isIntermediateOperation(MethodInvocationTree mit) {
-    return INTERMEDIATE_OPERATIONS.anyMatch(mit);
+    Symbol method = mit.symbol();
+    return method.isMethodSymbol()
+      && !method.isStatic()
+      && STREAM_TYPES.contains(method.owner().type().fullyQualifiedName())
+      && STREAM_TYPES.contains(((Symbol.MethodSymbol) method).returnType().type().fullyQualifiedName());
   }
 
