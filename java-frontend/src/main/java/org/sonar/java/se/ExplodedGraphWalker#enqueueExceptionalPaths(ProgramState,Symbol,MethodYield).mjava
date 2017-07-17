@@ -1,4 +1,4 @@
-  private void enqueueExceptionalPaths(ProgramState ps, @Nullable MethodYield methodYield) {
+  private void enqueueExceptionalPaths(ProgramState ps, Symbol methodSymbol, @Nullable MethodYield methodYield) {
     Set<CFG.Block> exceptionBlocks = node.programPoint.block.exceptions();
     List<CFG.Block> catchBlocks = exceptionBlocks.stream().filter(CFG.Block.IS_CATCH_BLOCK).collect(Collectors.toList());
     SymbolicValue peekValue = ps.peekValue();
@@ -25,7 +25,7 @@
 
     // use other exceptional blocks, i.e. finally block and exit blocks
     List<CFG.Block> otherBlocks = exceptionBlocks.stream()
-      .filter(CFG.Block.IS_CATCH_BLOCK.negate())
+      .filter(CFG.Block.IS_CATCH_BLOCK.negate().or(b -> methodSymbol.isUnknown()))
       .collect(Collectors.toList());
     if (otherBlocks.isEmpty()) {
       // explicitly add the exception branching to method exit

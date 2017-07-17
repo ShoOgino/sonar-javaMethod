@@ -14,7 +14,7 @@
     }
 
     // Enqueue additional exceptional paths corresponding to unchecked exceptions, for instance OutOfMemoryError
-    enqueueUncheckedExceptionalPaths();
+    enqueueUncheckedExceptionalPaths(methodSymbol);
 
     final SymbolicValue resultValue = constraintManager.createMethodSymbolicValue(mit, unstack.valuesAndSymbols);
     if (methodInvokedBehavior != null && methodInvokedBehavior.isComplete()) {
@@ -30,7 +30,7 @@
           invocationTypes,
           programState,
           () -> thrownExceptionsByExceptionType.computeIfAbsent(yield.exceptionType(), constraintManager::createExceptionalSymbolicValue))
-          .forEach(psYield -> enqueueExceptionalPaths(psYield, yield)));
+          .forEach(psYield -> enqueueExceptionalPaths(psYield, methodSymbol, yield)));
 
       // Enqueue happy paths
       methodInvokedBehavior.happyPathYields()
