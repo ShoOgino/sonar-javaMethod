@@ -7,6 +7,15 @@
         context.addExceptionalYield(peek, programState, "java.util.NoSuchElementException", check);
         reportIssue(tree);
         programState = null;
+      } else if (OPTIONAL_ORELSE.matches(tree)) {
+        ProgramState.Pop pop = programState.unstackValue(2);
+        SymbolicValue orElseValue = pop.values.get(0);
+        SymbolicValue optional = pop.values.get(1);
+        List<ProgramState> psEmpty = optional.setConstraint(pop.state.stackValue(orElseValue), OptionalConstraint.NOT_PRESENT);
+        List<ProgramState> psPresent = optional.setConstraint(pop.state.stackValue(constraintManager.createSymbolicValue(tree)), OptionalConstraint.PRESENT);
+        psEmpty.forEach(context::addTransition);
+        psPresent.forEach(context::addTransition);
+        programState = null;
       }
     }
 
