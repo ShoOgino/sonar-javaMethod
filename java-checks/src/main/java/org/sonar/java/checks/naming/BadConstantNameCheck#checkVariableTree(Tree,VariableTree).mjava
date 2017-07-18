@@ -1,0 +1,10 @@
+  private void checkVariableTree(Tree owner, VariableTree variableTree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    Type symbolType = variableTree.type().symbolType();
+    if (isConstantType(symbolType) && (owner.is(Tree.Kind.INTERFACE, Tree.Kind.ANNOTATION_TYPE) || isStaticFinal(variableTree.symbol()))) {
+      checkName(variableTree);
+    }
+  }
+
