@@ -1,0 +1,30 @@
+  @Test
+  public void break_in_try_finally() {
+    final CFG cfg = buildCFG("void fun() { while (foo()) {\n" +
+      "      try {\n" +
+      "        bar(\"try\");\n" +
+      "        break;\n" +
+      "      } finally {\n" +
+      "        qix(\"finally\");\n" +
+      "      }\n" +
+      "    }}");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(IDENTIFIER, "foo"),
+        element(METHOD_INVOCATION)
+      ).terminator(WHILE_STATEMENT).successors(0, 4),
+      block(element(TRY_STATEMENT)).successors(3),
+      block(
+        element(Tree.Kind.IDENTIFIER, "bar"),
+        element(STRING_LITERAL, "try"),
+        element(METHOD_INVOCATION)
+      ).successors(2).exceptions(1),
+      terminator(BREAK_STATEMENT, 1).hasNoExitBlock(),
+      block(element(IDENTIFIER, "qix"),
+        element(STRING_LITERAL, "finally"),
+        element(METHOD_INVOCATION)
+      ).successors(0)
+    );
+    cfgChecker.check(cfg);
+  }
+

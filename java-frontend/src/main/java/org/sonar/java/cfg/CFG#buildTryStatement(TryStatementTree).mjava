@@ -8,6 +8,8 @@
       build(finallyBlockTree);
       finallyBlock.addExitSuccessor(exitBlock());
       exitBlocks.push(currentBlock);
+      addContinueTarget(finallyBlock);
+      breakTargets.addLast(finallyBlock);
     }
     Block finallyOrEndBlock = currentBlock;
     Block beforeFinally = createBlock(currentBlock);
@@ -33,6 +35,8 @@
     currentBlock.elements.add(tryStatementTree);
     if (finallyBlockTree != null) {
       exitBlocks.pop();
+      continueTargets.removeLast();
+      breakTargets.removeLast();
     }
   }
 

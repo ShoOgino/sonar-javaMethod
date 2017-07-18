@@ -10,5 +10,14 @@
       targetBlock = labelsBreakTarget.get(label.name());
     }
     currentBlock = createUnconditionalJump(tree, targetBlock);
+    if(currentBlock.exitBlock != null) {
+      currentBlock.exitBlock = null;
+      Block last = breakTargets.removeLast();
+      targetBlock.successors().clear();
+      Block exitBlock = targetBlock.exitBlock;
+      targetBlock.addSuccessor(breakTargets.getLast());
+      targetBlock.addExitSuccessor(exitBlock);
+      breakTargets.addLast(last);
+    }
   }
 
