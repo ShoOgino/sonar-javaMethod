@@ -1,0 +1,10 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (SUPER_THREAD.matches(tree) && ThreadOverridesRunCheck.hasRunnableArgument(tree.arguments())) {
+        callSuperWithRunnable = true;
+        // no need to visit further
+        return;
+      }
+      super.visitMethodInvocation(tree);
+    }
+

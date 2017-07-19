@@ -2,13 +2,21 @@
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
     Symbol.TypeSymbol classSymbol = classTree.symbol();
-    if (classSymbol != null && isDirectSubtypeOfThread(classSymbol) && !overridesRunMethod(classSymbol)) {
+    if (classSymbol != null
+      && isDirectSubtypeOfThread(classSymbol)
+      && !overridesRunMethod(classSymbol)
+      && !hasConstructorCallingSuperWithRunnable(classTree)) {
       Tree report = classTree.simpleName();
       Tree parent = classTree.parent();
       if(parent.is(Tree.Kind.NEW_CLASS)) {
-        report = ((NewClassTree) parent).identifier();
+        NewClassTree newClassTree = (NewClassTree) parent;
+        if (hasRunnableArgument(newClassTree.arguments())) {
+          // will call the super constructor setting a runnable which will be executed by the run() method
+          return;
+        }
+        report = newClassTree.identifier();
       }
-      reportIssue(report, "Stop extending the Thread class as the \"run\" method is not overridden");
+      reportIssue(report, "Don't extend \"Thread\", since the \"run\" method is not overridden.");
     }
   }
 
