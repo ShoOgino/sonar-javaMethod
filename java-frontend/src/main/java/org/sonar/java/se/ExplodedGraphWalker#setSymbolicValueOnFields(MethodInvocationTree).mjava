@@ -1,6 +1,9 @@
   private void setSymbolicValueOnFields(MethodInvocationTree tree) {
-    if (isLocalMethodInvocation(tree) || isProvidingThisAsArgument(tree) || THREAD_SLEEP_MATCHER.matches(tree)) {
-      resetFieldValues();
+    boolean threadSleepMatch = THREAD_SLEEP_MATCHER.matches(tree);
+    boolean providingThisAsArgument = isProvidingThisAsArgument(tree);
+    if (isLocalMethodInvocation(tree) || providingThisAsArgument || threadSleepMatch) {
+      boolean resetOnlyStaticFields = tree.symbol().isStatic() && !threadSleepMatch && !providingThisAsArgument;
+      resetFieldValues(resetOnlyStaticFields);
     }
   }
 
