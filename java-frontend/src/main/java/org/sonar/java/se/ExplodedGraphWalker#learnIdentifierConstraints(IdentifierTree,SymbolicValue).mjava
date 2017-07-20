@@ -7,7 +7,8 @@
     if (!isFinalField(tree.symbol()) || declaration == null) {
       return;
     }
-    ExpressionTree initializer = ((VariableTree) declaration).initializer();
+    VariableTree variableTree = (VariableTree) declaration;
+    ExpressionTree initializer = variableTree.initializer();
     if (initializer == null) {
       return;
     }
@@ -17,13 +18,9 @@
       programState = programState.addConstraint(sv, ObjectConstraint.NULL);
     } else if (initializer.is(Tree.Kind.NEW_CLASS, Tree.Kind.NEW_ARRAY, Tree.Kind.STRING_LITERAL)
       || isNonNullMethodInvocation(initializer)
-      || isNonBooleanPrimitiveTypeExpression(initializer)) {
+      || variableTree.symbol().type().isPrimitive()
+      || initializer.symbolType().isPrimitive()) {
       programState = programState.addConstraint(sv, ObjectConstraint.NOT_NULL);
-    } else if (initializer.is(Tree.Kind.BOOLEAN_LITERAL)) {
-      boolean booleanValue = Boolean.parseBoolean(((LiteralTree) initializer).value());
-      programState = programState
-        .addConstraint(sv, ObjectConstraint.NOT_NULL)
-        .addConstraint(sv, booleanValue ? BooleanConstraint.TRUE : BooleanConstraint.FALSE);
     }
   }
 
