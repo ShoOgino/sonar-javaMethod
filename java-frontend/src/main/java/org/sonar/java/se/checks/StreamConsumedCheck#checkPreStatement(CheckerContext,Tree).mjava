@@ -1,10 +1,10 @@
   @Override
   public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
-      return handleMethodInvocation(context, syntaxNode);
+      return handleMethodInvocation(context, (MethodInvocationTree) syntaxNode);
     }
     if (syntaxNode.is(Tree.Kind.NEW_CLASS)) {
-      return removeConstraintOnArgs(context.getState(), syntaxNode);
+      return removeConstraintOnArgs(context.getState(), ((NewClassTree) syntaxNode).arguments().size());
     }
     ProgramState state = context.getState();
     if (state.peekValue() instanceof SymbolicValue.ExceptionalSymbolicValue) {

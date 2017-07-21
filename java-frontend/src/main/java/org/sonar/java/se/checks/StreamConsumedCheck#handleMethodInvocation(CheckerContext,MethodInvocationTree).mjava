@@ -1,11 +1,10 @@
-  private ProgramState handleMethodInvocation(CheckerContext context, Tree syntaxNode) {
-    MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+  private ProgramState handleMethodInvocation(CheckerContext context, MethodInvocationTree mit) {
     ProgramState programState = context.getState();
-    programState = removeConstraintOnArgs(programState, mit);
+    programState = removeConstraintOnArgs(programState, mit.arguments().size());
     SymbolicValue invocationTarget = invocationTarget(programState, mit);
     if ((isIntermediateOperation(mit) || isTerminalOperation(mit))
         && isPipelineConsumed(programState, invocationTarget)) {
-      reportIssue(syntaxNode, "Refactor this code so that this consumed stream pipeline is not reused.", flow(invocationTarget, context.getNode()));
+      reportIssue(mit, "Refactor this code so that this consumed stream pipeline is not reused.", flow(invocationTarget, context.getNode()));
       return null;
     }
     if (isIntermediateOperation(mit)) {
