@@ -1,8 +1,9 @@
-  private Resolution findMethod(Env env, JavaType callSite, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams, boolean looseInvocation) {
+  private Resolution findMethod(Env env, JavaType callSite, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams,
+                                boolean looseInvocation, boolean varArity) {
     JavaType superclass = site.getSuperType();
     Resolution bestSoFar = unresolved();
 
-    bestSoFar = lookupInScope(env, callSite, site, name, argTypes, typeParams, looseInvocation, site.getSymbol().members(), bestSoFar);
+    bestSoFar = lookupInScope(env, callSite, site, name, argTypes, typeParams, looseInvocation, varArity, site.getSymbol().members(), bestSoFar);
     if (name.equals(CONSTRUCTOR_NAME) && !site.symbol.isInterface()) {
       // Interfaces do not have constructors, but for anonymous classes of interfaces, the Object constructor should be resolved
       return bestSoFar;
@@ -11,7 +12,7 @@
     // FIXME SONARJAVA-2096: interrupt exploration if the most specific method has already been found by strict invocation context
     //look in supertypes for more specialized method (overloading).
     if (superclass != null) {
-      Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams, looseInvocation);
+      Resolution method = findMethod(env, callSite, superclass, name, argTypes, typeParams, looseInvocation, varArity);
       method.type = typeSubstitutionSolver.applySiteSubstitution(method.type, site, superclass);
       Resolution best = selectBest(env, superclass, callSite, argTypes, typeParams, method.symbol, bestSoFar, looseInvocation);
       if (best.symbol == method.symbol) {
@@ -19,7 +20,7 @@
       }
     }
     for (JavaType interfaceType : site.getSymbol().getInterfaces()) {
-      Resolution method = findMethod(env, callSite, interfaceType, name, argTypes, typeParams, looseInvocation);
+      Resolution method = findMethod(env, callSite, interfaceType, name, argTypes, typeParams, looseInvocation, varArity);
       method.type = typeSubstitutionSolver.applySiteSubstitution(method.type, site, interfaceType);
       Resolution best = selectBest(env, interfaceType, callSite, argTypes, typeParams, method.symbol, bestSoFar, looseInvocation);
       if (best.symbol == method.symbol) {

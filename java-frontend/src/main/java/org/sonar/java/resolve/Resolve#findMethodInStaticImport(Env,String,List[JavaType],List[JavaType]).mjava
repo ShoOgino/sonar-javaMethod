@@ -1,22 +1,22 @@
   private Resolution findMethodInStaticImport(Env env, String name, List<JavaType> argTypes, List<JavaType> typeParamTypes) {
     Resolution bestSoFar = unresolved();
     JavaType enclosingType = env.enclosingClass.getType();
-    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, false, env.namedImports, bestSoFar);
+    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, false, false, env.namedImports, bestSoFar);
     if (bestSoFar.symbol.kind < JavaSymbol.ERRONEOUS) {
       // symbol exists
       return bestSoFar;
     }
-    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, false, env.staticStarImports, bestSoFar);
+    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, false, false, env.staticStarImports, bestSoFar);
     if (bestSoFar.symbol.kind < JavaSymbol.ERRONEOUS) {
       // symbol exists
       return bestSoFar;
     }
-    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, true, env.namedImports, bestSoFar);
+    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, true, true, env.namedImports, bestSoFar);
     if (bestSoFar.symbol.kind < JavaSymbol.ERRONEOUS) {
       // symbol exists
       return bestSoFar;
     }
-    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, true, env.staticStarImports, bestSoFar);
+    bestSoFar = lookupInScope(env, enclosingType, enclosingType, name, argTypes, typeParamTypes, true, true, env.staticStarImports, bestSoFar);
     return bestSoFar;
   }
 

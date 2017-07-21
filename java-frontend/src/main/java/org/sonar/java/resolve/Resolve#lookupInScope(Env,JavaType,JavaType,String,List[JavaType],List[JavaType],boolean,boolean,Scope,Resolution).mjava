@@ -1,0 +1,19 @@
+  private Resolution lookupInScope(Env env, JavaType callSite, JavaType site, String name, List<JavaType> argTypes, List<JavaType> typeParams,
+                                   boolean looseInvocation, boolean varArity, Scope scope, Resolution bestFound) {
+    Resolution bestSoFar = bestFound;
+    // look in site members
+    for (JavaSymbol symbol : scope.lookup(name)) {
+      if (symbol.kind == JavaSymbol.MTH) {
+        boolean diffArity = varArity || (!((JavaSymbol.MethodJavaSymbol) symbol).isVarArgs())
+          || (argTypes.size() == ((JavaSymbol.MethodJavaSymbol) symbol).parameterTypes().size() && argTypes.get(argTypes.size() -1 ).isArray());
+        if(diffArity) {
+          Resolution best = selectBest(env, site, callSite, argTypes, typeParams, symbol, bestSoFar, looseInvocation);
+          if (best.symbol == symbol) {
+            bestSoFar = best;
+          }
+        }
+      }
+    }
+    return bestSoFar;
+  }
+
