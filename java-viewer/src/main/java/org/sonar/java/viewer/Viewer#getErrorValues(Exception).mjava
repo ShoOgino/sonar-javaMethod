@@ -1,0 +1,15 @@
+  @VisibleForTesting
+  static Map<String, String> getErrorValues(Exception e) {
+    Map<String, String> values = new HashMap<>();
+
+    StringWriter sw = new StringWriter();
+    e.printStackTrace(new PrintWriter(sw));
+    String stackTrace = sw.toString();
+
+    String message = e.getMessage();
+    values.put("errorMessage", message == null ? "Unexpected error" : message);
+    values.put("errorStackTrace", stackTrace.replace(System.getProperty("line.separator"), "<br/>\n"));
+
+    return values;
+  }
+

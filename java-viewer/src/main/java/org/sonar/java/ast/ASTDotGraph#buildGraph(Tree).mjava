@@ -1,0 +1,18 @@
+  private void buildGraph(Tree tree) {
+    String label = tree.kind() + (tree.firstToken() != null ? (" L#" + tree.firstToken().line()) : "");
+    addNode(new ASTDotNode(index, label, tree.kind()));
+    if (tree.is(Tree.Kind.TOKEN)) {
+      // add an extra node for tokens
+      addNode(new ASTDotNode(index, ((SyntaxToken) tree).text()));
+    }
+    int currentNodeIndex = index;
+    if (!((JavaTree) tree).isLeaf()) {
+      for (Tree child : ((JavaTree) tree).getChildren()) {
+        index++;
+        int childIndex = index;
+        buildGraph(child);
+        addEdge(new ASTDotEdge(currentNodeIndex, childIndex));
+      }
+    }
+  }
+

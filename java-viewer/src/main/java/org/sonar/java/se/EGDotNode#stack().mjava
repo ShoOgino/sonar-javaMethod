@@ -1,0 +1,24 @@
+  @SuppressWarnings("unchecked")
+  private JsonArray stack() {
+    // Ugly hack to get the stack and not expose programState API.
+    // The stack should remain private to avoid uncontrolled usage in engine
+    JsonArrayBuilder builder = Json.createArrayBuilder();
+    try {
+      Field stackField = ps.getClass().getDeclaredField("stack");
+      stackField.setAccessible(true);
+      PStack<SymbolicValueSymbol> stack = (PStack<SymbolicValueSymbol>) stackField.get(ps);
+      stack.forEach(svs -> {
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        objectBuilder.add("sv", svs.sv.toString());
+        Symbol symbol = svs.symbol;
+        if (symbol != null) {
+          objectBuilder.add("symbol", symbol.toString());
+        }
+        builder.add(objectBuilder.build());
+      });
+    } catch (Exception e) {
+      // do nothing
+    }
+    return builder.build();
+  }
+

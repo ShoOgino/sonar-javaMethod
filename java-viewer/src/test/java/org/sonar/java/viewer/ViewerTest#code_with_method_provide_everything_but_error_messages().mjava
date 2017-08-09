@@ -1,0 +1,22 @@
+  @Test
+  public void code_with_method_provide_everything_but_error_messages() {
+    String source = "class A {"
+      + "  int foo(boolean b) {"
+      + "    if (b) {"
+      + "      return 42;"
+      + "    }"
+      + "    return 21;"
+      + "  }"
+      + "}";
+    Map<String, String> values = Viewer.getValues(source);
+
+    assertThat(values.get("cfg")).isNotEmpty();
+
+    assertThat(values.get("dotAST")).isNotEmpty();
+    assertThat(values.get("dotCFG")).isNotEmpty();
+    assertThat(values.get("dotEG")).isNotEmpty();
+
+    assertThat(values.get("errorMessage")).isEmpty();
+    assertThat(values.get("errorStackTrace")).isEmpty();
+  }
+

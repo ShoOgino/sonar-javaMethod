@@ -1,0 +1,12 @@
+  private JsonArray values() {
+    Stream.Builder<JsonObject> values = Stream.builder();
+    ps.values.forEach((symbol, sv) -> {
+      JsonObject jsonConstraint = Json.createObjectBuilder()
+        .add("sv", sv.toString())
+        .add("symbol", symbol.toString())
+        .build();
+      values.add(jsonConstraint);
+    });
+    return JsonHelper.toArraySortedByField(values.build(), "sv");
+  }
+

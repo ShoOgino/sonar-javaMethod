@@ -1,0 +1,18 @@
+  /**
+   * Convert the graph to DOT format (graph description language).
+   * See language specification: http://www.graphviz.org/content/dot-language
+   */
+  public final String toDot() {
+    build();
+
+    StringBuilder sb = new StringBuilder()
+      .append("graph ")
+      .append(name())
+      .append(" {")
+      .append(NEW_LINE);
+    elements.build().map(DotElement::toDot).forEach(sb::append);
+    return sb.append(NEW_LINE)
+      .append("}")
+      .toString();
+  }
+

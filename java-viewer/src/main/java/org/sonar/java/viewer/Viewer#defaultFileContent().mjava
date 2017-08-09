@@ -1,0 +1,12 @@
+  private static String defaultFileContent() {
+    String result;
+    try {
+      Path path = Paths.get(Viewer.class.getResource(DEFAULT_SOURCE_CODE_LOCATION).toURI());
+      result = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    } catch (URISyntaxException | IOException e) {
+      LOGGER.error("Unable to read default file.", e);
+      result = "// Unable to read default file:\\n\\n";
+    }
+    return result;
+  }
+

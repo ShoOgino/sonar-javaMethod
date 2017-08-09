@@ -1,0 +1,11 @@
+  @Test
+  public void label_contains_learned_associations() {
+    ExplodedGraph.Node n1 = node(1, ProgramState.EMPTY_STATE);
+    ExplodedGraph.Node n2 = node(2, ProgramState.EMPTY_STATE.put(A_SYMBOL, SV_42));
+
+    ExplodedGraph.Edge edge = addEdge(n1, n2);
+    String label = new EGDotEdge(1, 2, edge).label();
+    assertThat(label).contains("SV_42");
+    assertThat(label).contains("a");
+  }
+

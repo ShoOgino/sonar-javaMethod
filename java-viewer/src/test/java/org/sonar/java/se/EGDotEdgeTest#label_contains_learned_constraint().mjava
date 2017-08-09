@@ -1,0 +1,11 @@
+  @Test
+  public void label_contains_learned_constraint() {
+    ExplodedGraph.Node n1 = node(1, ProgramState.EMPTY_STATE);
+    ExplodedGraph.Node n2 = node(2, ProgramState.EMPTY_STATE.addConstraint(SV_42, ObjectConstraint.NOT_NULL));
+
+    ExplodedGraph.Edge edge = addEdge(n1, n2);
+    String label = new EGDotEdge(1, 2, edge).label();
+    assertThat(label).contains("SV_42");
+    assertThat(label).contains("NOT_NULL");
+  }
+

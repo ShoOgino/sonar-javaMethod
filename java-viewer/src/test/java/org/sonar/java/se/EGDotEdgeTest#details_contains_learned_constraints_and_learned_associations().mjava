@@ -1,0 +1,30 @@
+  @Test
+  public void details_contains_learned_constraints_and_learned_associations() {
+    ExplodedGraph.Node n1 = node(1, ProgramState.EMPTY_STATE);
+    ExplodedGraph.Node n2 = node(2, ProgramState.EMPTY_STATE
+      .put(A_SYMBOL, SV_42)
+      .addConstraint(SV_42, ObjectConstraint.NOT_NULL));
+
+    ExplodedGraph.Edge edge = addEdge(n1, n2, null);
+    JsonObject details = new EGDotEdge(1, 2, edge).details();
+
+    JsonArray learnedConstraints = details.getJsonArray("learnedConstraints");
+    assertThat(learnedConstraints).isNotNull();
+    assertThat(learnedConstraints).hasSize(1);
+
+    JsonObject lc = (JsonObject) learnedConstraints.get(0);
+    assertThat(lc.getString("sv")).isEqualTo("SV_42");
+    assertThat(lc.getString("constraint")).isEqualTo("NOT_NULL");
+
+    JsonArray learnedAssociations = details.getJsonArray("learnedAssociations");
+    assertThat(learnedAssociations).isNotNull();
+    assertThat(learnedAssociations).hasSize(1);
+
+    JsonObject la = (JsonObject) learnedAssociations.get(0);
+    assertThat(la.getString("sv")).isEqualTo("SV_42");
+    assertThat(la.getString("symbol")).isEqualTo("a");
+
+    JsonArray selectedMethodYields = details.getJsonArray("selectedMethodYields");
+    assertThat(selectedMethodYields).isNull();
+  }
+
