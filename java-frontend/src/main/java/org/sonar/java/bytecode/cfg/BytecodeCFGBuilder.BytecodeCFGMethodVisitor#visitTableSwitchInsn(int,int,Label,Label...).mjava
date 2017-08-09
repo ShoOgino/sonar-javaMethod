@@ -1,0 +1,8 @@
+    @Override
+    public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {
+      blockByLabel.computeIfAbsent(dflt, l -> currentBlock.createSuccessor());
+      for (Label label : labels) {
+        blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
+      }
+    }
+
