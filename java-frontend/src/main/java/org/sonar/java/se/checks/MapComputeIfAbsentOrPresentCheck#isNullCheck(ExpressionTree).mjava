@@ -1,0 +1,10 @@
+  private static boolean isNullCheck(ExpressionTree condition) {
+    if (condition.is(Tree.Kind.EQUAL_TO, Tree.Kind.NOT_EQUAL_TO)) {
+      BinaryExpressionTree bet = (BinaryExpressionTree) condition;
+      ExpressionTree rightOperand = ExpressionUtils.skipParentheses(bet.rightOperand());
+      ExpressionTree leftOperand = ExpressionUtils.skipParentheses(bet.leftOperand());
+      return rightOperand.is(Tree.Kind.NULL_LITERAL) || leftOperand.is(Tree.Kind.NULL_LITERAL);
+    }
+    return false;
+  }
+
