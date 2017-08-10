@@ -1,6 +1,7 @@
     @Override
     public void visitJumpInsn(int opcode, Label label) {
       blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
+      currentBlock.terminator = new Instruction(opcode);
       currentBlock = currentBlock.createSuccessor();
     }
 
