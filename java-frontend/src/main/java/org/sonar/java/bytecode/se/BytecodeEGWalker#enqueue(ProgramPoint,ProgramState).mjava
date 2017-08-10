@@ -1,0 +1,13 @@
+  private void enqueue(ProgramPoint pp, ProgramState programState) {
+    int nbOfExecution = programState.numberOfTimeVisited(pp);
+    if (nbOfExecution > MAX_EXEC_PROGRAM_POINT) {
+      return;
+    }
+    ProgramState ps = programState.visitedPoint(pp, nbOfExecution + 1);
+    ExplodedGraph.Node cachedNode = explodedGraph.node(pp, ps);
+    cachedNode.addParent(node, null);
+    if (cachedNode.isNew) {
+      workList.addFirst(cachedNode);
+    }
+  }
+

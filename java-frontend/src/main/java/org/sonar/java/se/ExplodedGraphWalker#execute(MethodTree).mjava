@@ -24,24 +24,26 @@
       }
       // LIFO:
       setNode(workList.removeFirst());
-      if (programPosition.block.successors().isEmpty()) {
+      CFG.Block block = (CFG.Block) programPosition.block;
+      if (block.successors().isEmpty()) {
         endOfExecutionPath.add(node);
         continue;
       }
       try {
-        if (programPosition.i < programPosition.block.elements().size()) {
+        Tree terminator = block.terminator();
+        if (programPosition.i < block.elements().size()) {
           // process block element
-          visit(programPosition.block.elements().get(programPosition.i), programPosition.block.terminator());
-        } else if (programPosition.block.terminator() == null) {
+          visit(block.elements().get(programPosition.i), terminator);
+        } else if (terminator == null) {
           // process block exit, which is unconditional jump such as goto-statement or return-statement
           handleBlockExit(programPosition);
-        } else if (programPosition.i == programPosition.block.elements().size()) {
+        } else if (programPosition.i == block.elements().size()) {
           // process block exist, which is conditional jump such as if-statement
-          checkerDispatcher.executeCheckPostStatement(programPosition.block.terminator());
+          checkerDispatcher.executeCheckPostStatement(terminator);
         } else {
           // process branch
           // process block exist, which is conditional jump such as if-statement
-          checkerDispatcher.executeCheckPreStatement(programPosition.block.terminator());
+          checkerDispatcher.executeCheckPreStatement(terminator);
           handleBlockExit(programPosition);
         }
       } catch (TooManyNestedBooleanStatesException e) {

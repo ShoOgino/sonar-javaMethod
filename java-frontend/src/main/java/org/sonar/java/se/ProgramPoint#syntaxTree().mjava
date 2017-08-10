@@ -1,7 +1,11 @@
   public Tree syntaxTree() {
-    if (block.elements().isEmpty()) {
-      return block.terminator();
+    if (block instanceof CFG.Block) {
+      CFG.Block syntaxCFGblock = (CFG.Block) this.block;
+      if (block.elements().isEmpty()) {
+        return syntaxCFGblock.terminator();
+      }
+      return syntaxCFGblock.elements().get(Math.min(i, syntaxCFGblock.elements().size() - 1));
     }
-    return block.elements().get(Math.min(i, block.elements().size() - 1));
+    return null;
   }
 
