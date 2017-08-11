@@ -1,0 +1,77 @@
+  @Parameters
+  public static Collection<Object[]> data() {
+    ImmutableList.Builder<Object[]> testData = ImmutableList.builder();
+
+    // Instructions without operand
+    testData.addAll(
+      Instructions.NO_OPERAND_INSN.stream()
+        .map(opcode -> new Object[] {new TestInput(opcode), new InstructionExpectation(new BytecodeCFGBuilder.Instruction(opcode))})
+        .collect(Collectors.toList()));
+
+    // Instructions with int operand
+    testData.add(new Object[] {new TestInput(BIPUSH, 1), null});
+    testData.add(new Object[] {new TestInput(SIPUSH, 1), null});
+    testData.add(new Object[] {new TestInput(NEWARRAY, 1), null});
+
+    // LOAD STORE
+    testData.add(new Object[] {new TestInput(ILOAD, 1), null});
+    testData.add(new Object[] {new TestInput(LLOAD, 1), null});
+    testData.add(new Object[] {new TestInput(FLOAD, 1), null});
+    testData.add(new Object[] {new TestInput(DLOAD, 1), null});
+    testData.add(new Object[] {new TestInput(ALOAD, 1), null});
+    testData.add(new Object[] {new TestInput(ISTORE, 1), null});
+    testData.add(new Object[] {new TestInput(LSTORE, 1), null});
+    testData.add(new Object[] {new TestInput(FSTORE, 1), null});
+    testData.add(new Object[] {new TestInput(DSTORE, 1), null});
+    testData.add(new Object[] {new TestInput(ASTORE, 1), null});
+    testData.add(new Object[] {new TestInput(RET, 1), null});
+
+    // Instructions with type argument
+    testData.add(new Object[] {new TestInput(NEW, JAVA_LANG_OBJECT), null});
+    testData.add(new Object[] {new TestInput(ANEWARRAY, JAVA_LANG_OBJECT), null});
+    testData.add(new Object[] {new TestInput(CHECKCAST, JAVA_LANG_OBJECT), null});
+    testData.add(new Object[] {new TestInput(INSTANCEOF, JAVA_LANG_OBJECT), null});
+
+    // Instructions with field argument
+    testData.add(new Object[] {new TestInput(GETSTATIC, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(PUTSTATIC, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(GETFIELD, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(PUTFIELD, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+
+    // Instructions with method argument
+    testData.add(new Object[] {new TestInput(INVOKESPECIAL, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(INVOKESTATIC, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(INVOKEVIRTUAL, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+    testData.add(new Object[] {new TestInput(INVOKEINTERFACE, new FieldOrMethod(JAVA_LANG_OBJECT, "field", "")), null});
+
+    // Jump instructions
+    testData.add(new Object[] {new TestInput(IFEQ), null});
+    testData.add(new Object[] {new TestInput(IFNE), null});
+    testData.add(new Object[] {new TestInput(IFLT), null});
+    testData.add(new Object[] {new TestInput(IFGE), null});
+    testData.add(new Object[] {new TestInput(IFGT), null});
+    testData.add(new Object[] {new TestInput(IFLE), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPEQ), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPNE), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPLT), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPGE), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPGT), null});
+    testData.add(new Object[] {new TestInput(IF_ICMPLE), null});
+    testData.add(new Object[] {new TestInput(IF_ACMPEQ), null});
+    testData.add(new Object[] {new TestInput(IF_ACMPNE), null});
+    testData.add(new Object[] {new TestInput(GOTO), null});
+    testData.add(new Object[] {new TestInput(JSR), null});
+    testData.add(new Object[] {new TestInput(IFNULL), null});
+    testData.add(new Object[] {new TestInput(IFNONNULL), null});
+
+    // The rest
+    testData.add(new Object[] {new TestInput(LDC), null});
+    testData.add(new Object[] {new TestInput(IINC), null});
+    testData.add(new Object[] {new TestInput(INVOKEDYNAMIC), null});
+    testData.add(new Object[] {new TestInput(TABLESWITCH), null});
+    testData.add(new Object[] {new TestInput(LOOKUPSWITCH), null});
+    testData.add(new Object[] {new TestInput(MULTIANEWARRAY), null});
+
+    return testData.build();
+  }
+

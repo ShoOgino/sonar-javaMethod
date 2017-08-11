@@ -1,0 +1,16 @@
+  private void test_jumps() {
+    Label label = new Label();
+    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions()
+      .visitJumpInsn(testInput.opcode, label)
+      .visitInsn(ICONST_0)
+      .visitLabel(label)
+      .visitInsn(NOP)
+      .cfg();
+    // exit block, jump block, jump-to block, other block
+    assertThat(cfg.blocks.size()).isEqualTo(4);
+    assertThat(cfg.blocks.get(1).instructions).isEmpty();
+    assertThat(cfg.blocks.get(1).terminator().opcode()).isEqualTo(testInput.opcode);
+    assertThat(cfg.blocks.get(2).instructions.get(0).opcode()).isEqualTo(NOP);
+    assertThat(cfg.blocks.get(3).instructions.get(0).opcode()).isEqualTo(ICONST_0);
+  }
+
