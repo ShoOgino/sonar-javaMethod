@@ -17,13 +17,7 @@
 
       Symbol methodSymbol = Iterables.getOnlyElement(testClazz.lookupSymbols(method.name));
       BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG((Symbol.MethodSymbol) methodSymbol, squidClassLoader);
-      Multiset<String> cfgOpcodes = bytecodeCFG.blocks.stream()
-        .flatMap(block -> Stream.concat(block.instructions.stream(), Stream.of(block.terminator)))
-        .filter(Objects::nonNull)
-        .map(BytecodeCFGBuilder.Instruction::opcode)
-        .map(opcode -> Printer.OPCODES[opcode])
-        .collect(Collectors.toCollection(HashMultiset::create));
-
+      Multiset<String> cfgOpcodes = cfgOpcodes(bytecodeCFG);
       assertThat(cfgOpcodes).isEqualTo(opcodes);
     }
   }

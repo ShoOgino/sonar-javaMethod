@@ -1,5 +1,6 @@
     @Override
     public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
+      currentBlock.terminator = new Instruction(Opcodes.LOOKUPSWITCH);
       for (Label label : labels) {
         blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
       }
