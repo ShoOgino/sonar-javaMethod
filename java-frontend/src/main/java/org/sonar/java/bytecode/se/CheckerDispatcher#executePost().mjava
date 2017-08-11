@@ -1,0 +1,13 @@
+  private void executePost() {
+    this.transition = false;
+    if (currentCheckerIndex < checks.size()) {
+      explodedGraphWalker.programState = checks.get(currentCheckerIndex).checkPostStatement(this, currentInstruction);
+    } else {
+      explodedGraphWalker.enqueue(explodedGraphWalker.programPosition.next(), explodedGraphWalker.programState);
+      return;
+    }
+    if (!transition) {
+      addTransition(explodedGraphWalker.programState);
+    }
+  }
+

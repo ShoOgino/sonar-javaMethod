@@ -1,5 +1,14 @@
   private Iterable<ProgramState> startingStates(Symbol.MethodSymbol symbol, ProgramState currentState) {
     // TODO : deal with parameter annotations, equals methods etc.
-    return Collections.singletonList(currentState);
+    int arity = symbol.parameterTypes().size();
+    ProgramState state = currentState;
+    if(!symbol.isStatic()) {
+      // Add a sv for "this"
+      SymbolicValue thisSV = constraintManager.createSymbolicValue((BytecodeCFGBuilder.Instruction) null);
+      methodBehavior.addParameter(thisSV);
+      state = currentState.addConstraint(thisSV, ObjectConstraint.NOT_NULL);
+    }
+    IntStream.range(0, arity).forEach(i -> methodBehavior.addParameter(constraintManager.createSymbolicValue((BytecodeCFGBuilder.Instruction) null)));
+    return Collections.singletonList(state);
   }
 

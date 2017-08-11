@@ -1,6 +1,11 @@
   private void executeInstruction(BytecodeCFGBuilder.Instruction instruction) {
-    // TODO execute check prestatement
+    if(!checkerDispatcher.executeCheckPreStatement(instruction)) {
+      return;
+    }
     switch (instruction.opcode) {
+      case Opcodes.ARETURN:
+        programState.storeExitValue();
+        break;
       case Opcodes.ACONST_NULL:
         programState = programState.stackValue(SymbolicValue.NULL_LITERAL);
         break;
@@ -11,6 +16,7 @@
         break;
       case Opcodes.LLOAD:
       case Opcodes.AALOAD:
+        break;
       case Opcodes.BALOAD:
       case Opcodes.CALOAD:
       case Opcodes.DALOAD:
@@ -19,10 +25,14 @@
       case Opcodes.LALOAD:
       case Opcodes.SALOAD:
         break;
+      case Opcodes.LDC:
+        SymbolicValue symbolicValue = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(symbolicValue);
+        programState = programState.addConstraint(symbolicValue, ObjectConstraint.NOT_NULL);
+        break;
       default:
         // do nothing
     }
-    // TODO execute check poststatement
-    enqueue(programPosition.next(), programState);
+    checkerDispatcher.executeCheckPostStatement(instruction);
   }
 
