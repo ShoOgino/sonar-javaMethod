@@ -1,0 +1,15 @@
+  @VisibleForTesting
+  static void startWebServer(int port, String defaultSourceCode) {
+    // print all exceptions
+    exception(Exception.class, (e, req, res) -> LOGGER.error("Unexpected exception.", e));
+
+    staticFiles.location("/public");
+    port(port);
+
+    get("/", (req, res) -> generate(defaultSourceCode));
+    post("/", (req, res) -> generate(req, defaultSourceCode));
+
+    awaitInitialization();
+    LOGGER.info("Viewer at http://localhost:{}", port);
+  }
+
