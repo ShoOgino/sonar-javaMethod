@@ -1,0 +1,19 @@
+  private void assertStack(ProgramState ps, Constraint... constraints) {
+    assertThat(ps.stackDepth()).isEqualTo(1);
+    List<SymbolicValue> symbolicValues = ps.peekValues(constraints.length);
+    int idx = 0;
+    for (SymbolicValue sv : symbolicValues) {
+      ConstraintsByDomain constraintsByDomain = ps.getConstraints(sv);
+      Constraint expectedConstraint = constraints[idx];
+      if (expectedConstraint != null) {
+        Class<? extends Constraint> expectedConstraintDomain = expectedConstraint.getClass();
+        Constraint constraint = constraintsByDomain.get(expectedConstraintDomain);
+        assertThat(constraint).isEqualTo(expectedConstraint);
+        assertThat(constraintsByDomain.remove(expectedConstraintDomain).isEmpty()).isTrue();
+      } else {
+        assertThat(constraintsByDomain).isNull();
+      }
+      idx++;
+    }
+  }
+
