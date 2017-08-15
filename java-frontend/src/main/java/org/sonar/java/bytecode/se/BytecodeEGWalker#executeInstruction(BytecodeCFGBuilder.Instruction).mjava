@@ -14,8 +14,11 @@
       case Opcodes.DLOAD:
       case Opcodes.FLOAD:
       case Opcodes.ILOAD:
-        break;
       case Opcodes.LLOAD:
+        SymbolicValue value = programState.getValue(instruction.operand);
+        Preconditions.checkNotNull(value, "Loading a symbolic value unindexed");
+        programState = programState.stackValue(value);
+        break;
       case Opcodes.AALOAD:
         break;
       case Opcodes.BALOAD:
