@@ -3,8 +3,14 @@
     int opcode = testInput.opcode;
     if (isJumpInstruction(opcode)) {
       test_jumps();
-    } else {
-      test_no_operand();
+      return;
     }
+    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions().cfg(testInput.opcode, testInput.operandOrVar);
+    assertThat(cfg.blocks.size()).isEqualTo(2);
+    if(expected == null) {
+      expected = inst(testInput.opcode);
+    }
+    BytecodeCFGBuilder.Instruction actual = cfg.blocks.get(1).instructions.get(0);
+    assertThat(isEquivalentInstruction(actual, expected)).isTrue();
   }
 
