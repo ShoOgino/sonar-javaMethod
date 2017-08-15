@@ -1,8 +1,10 @@
   private void test_no_operand() {
-    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions()
-      .visitInsn(testInput.opcode)
-      .cfg();
+    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions().cfg(testInput.opcode);
     assertThat(cfg.blocks.size()).isEqualTo(2);
-    assertThat(cfg.blocks.get(1).instructions.get(0).opcode()).isEqualTo(((InstructionExpectation) expected).instruction.opcode());
+    int opcode = testInput.opcode;
+    if(expected != null) {
+      opcode = expected.instruction.opcode();
+    }
+    assertThat(cfg.blocks.get(1).instructions.get(0).opcode()).isEqualTo(opcode);
   }
 
