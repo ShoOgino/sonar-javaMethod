@@ -8,8 +8,17 @@
         case IFLT:
         case IFGE:
         case IFGT:
-        case IFLE:
-
+        case IFLE: {
+          SymbolicValue svZero = new SymbolicValue();
+          ProgramState.Pop pop = programState.unstackValue(1);
+          List<ProgramState.SymbolicValueSymbol> symbolicValueSymbols = new ArrayList<>(pop.valuesAndSymbols);
+          symbolicValueSymbols.add(new ProgramState.SymbolicValueSymbol(svZero, null));
+          List<ProgramState> programStates = svZero.setConstraint(pop.state, DivisionByZeroCheck.ZeroConstraint.ZERO).stream()
+            .flatMap(s -> svZero.setConstraint(s, BooleanConstraint.FALSE).stream()).collect(Collectors.toList());
+          Preconditions.checkState(programStates.size() == 1);
+          programState = programStates.get(0).stackValue(constraintManager.createBinarySymbolicValue(terminator, symbolicValueSymbols));
+        }
+        break;
         case IF_ICMPEQ:
         case IF_ICMPNE:
         case IF_ICMPLT:
@@ -27,6 +36,8 @@
           symbolicValueSymbols.add(new ProgramState.SymbolicValueSymbol(SymbolicValue.NULL_LITERAL, null));
           programState = pop.state.stackValue(constraintManager.createBinarySymbolicValue(terminator, symbolicValueSymbols));
           break;
+        default:
+          throw new IllegalStateException("Unexpected terminator");
       }
 
       ProgramPoint falsePP = new ProgramPoint(((BytecodeCFGBuilder.Block) programPosition.block).falseSuccessor());
