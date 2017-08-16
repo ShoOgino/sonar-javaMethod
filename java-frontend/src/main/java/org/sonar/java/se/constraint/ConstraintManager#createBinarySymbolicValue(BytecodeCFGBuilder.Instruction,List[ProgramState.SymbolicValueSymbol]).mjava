@@ -1,0 +1,21 @@
+  public SymbolicValue createBinarySymbolicValue(BytecodeCFGBuilder.Instruction inst, List<ProgramState.SymbolicValueSymbol> computedFrom) {
+    SymbolicValue result;
+    switch (inst.opcode) {
+      case Opcodes.IFEQ:
+        result = createRelationalSymbolicValue(Kind.EQUAL, computedFrom);
+        break;
+      case Opcodes.IFNE:
+        result = createRelationalSymbolicValue(Kind.NOT_EQUAL, computedFrom);
+        break;
+      case Opcodes.IFNULL:
+        result = createRelationalSymbolicValue(Kind.EQUAL, computedFrom);
+        break;
+      case Opcodes.IFNONNULL:
+        result = createRelationalSymbolicValue(Kind.NOT_EQUAL, computedFrom);
+        break;
+      default:
+        result = createDefaultSymbolicValue();
+    }
+    return result;
+  }
+
