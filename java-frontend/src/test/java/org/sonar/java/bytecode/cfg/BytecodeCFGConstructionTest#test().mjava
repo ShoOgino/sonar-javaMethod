@@ -1,11 +1,10 @@
   @Test
   public void test() throws Exception {
-    int opcode = testInput.opcode;
-    if (isJumpInstruction(opcode)) {
+    if (isJumpInstruction(testInput.opcode)) {
       test_jumps();
       return;
     }
-    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions().cfg(testInput.opcode, testInput.operandOrVar);
+    BytecodeCFGBuilder.BytecodeCFG cfg = new Instructions().cfg(testInput.opcode, testInput.operandOrVar, testInput.type);
     assertThat(cfg.blocks.size()).isEqualTo(2);
     if(expected == null) {
       expected = inst(testInput.opcode);

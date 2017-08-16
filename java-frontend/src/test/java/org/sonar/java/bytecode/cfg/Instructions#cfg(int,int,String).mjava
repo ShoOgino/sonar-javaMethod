@@ -1,4 +1,4 @@
-  public BytecodeCFGBuilder.BytecodeCFG cfg(int opcode, int operand) {
+  public BytecodeCFGBuilder.BytecodeCFG cfg(int opcode, int operand, @Nullable String className) {
     if (NO_OPERAND_INSN.contains(opcode)) {
       visitInsn(opcode);
     } else if (INT_INSN.contains(opcode)) {
@@ -6,7 +6,7 @@
     } else if (VAR_INSN.contains(opcode)) {
       visitVarInsn(opcode, operand);
     } else if (TYPE_INSN.contains(opcode)) {
-      visitTypeInsn(opcode, "SomeType");
+      visitTypeInsn(opcode, MoreObjects.firstNonNull(className, "SomeType"));
     } else if (FIELD_INSN.contains(opcode)) {
       visitFieldInsn(opcode, "owner", "name", "desc");
     } else if (METHOD_INSN.contains(opcode)) {
