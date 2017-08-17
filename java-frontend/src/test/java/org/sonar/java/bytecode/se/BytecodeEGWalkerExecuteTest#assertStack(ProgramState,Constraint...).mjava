@@ -1,20 +1,10 @@
   private void assertStack(ProgramState ps, Constraint... constraints) {
-    ProgramState.Pop pop = ps.unstackValue(constraints.length);
-    assertThat(pop.state.peekValue()).isNull();
-    List<SymbolicValue> symbolicValues = pop.values;
-    int idx = 0;
-    for (SymbolicValue sv : symbolicValues) {
-      ConstraintsByDomain constraintsByDomain = ps.getConstraints(sv);
-      Constraint expectedConstraint = constraints[idx];
-      if (expectedConstraint != null) {
-        Class<? extends Constraint> expectedConstraintDomain = expectedConstraint.getClass();
-        Constraint constraint = constraintsByDomain.get(expectedConstraintDomain);
-        assertThat(constraint).isEqualTo(expectedConstraint);
-        assertThat(constraintsByDomain.remove(expectedConstraintDomain).isEmpty()).isTrue();
-      } else {
-        assertThat(constraintsByDomain).isNull();
-      }
-      idx++;
+    Constraint[][] cs = new Constraint[constraints.length][1];
+    int i = 0;
+    for (Constraint constraint : constraints) {
+      cs[i] = new Constraint[] {constraint};
+      i++;
     }
+    assertStack(ps, cs);
   }
 
