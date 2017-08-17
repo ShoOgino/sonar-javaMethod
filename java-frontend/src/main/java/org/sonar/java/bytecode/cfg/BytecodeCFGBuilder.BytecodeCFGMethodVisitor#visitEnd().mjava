@@ -1,6 +1,8 @@
     @Override
     public void visitEnd() {
-      // if a block ends up with no successors, it is returning or throwing, link it to exit block.
-      cfg.blocks.stream().filter(b -> b.successors.isEmpty() && b.id != 0).forEach(b -> b.successors.add(cfg.blocks.get(0)));
+      // if last block ends up with no successors, it is returning or throwing, link it to exit block.
+      if(currentBlock.successors.isEmpty()) {
+        currentBlock.successors.add(cfg.blocks.get(0));
+      }
     }
 

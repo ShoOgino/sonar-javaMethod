@@ -2,7 +2,7 @@
     public void visitJumpInsn(int opcode, Label label) {
       if(opcode == GOTO || opcode == JSR) {
         currentBlock.terminator = new Instruction(opcode);
-        currentBlock = blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
+        blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
         return;
       }
       blockByLabel.computeIfAbsent(label, l -> currentBlock.createTrueSuccessor());
