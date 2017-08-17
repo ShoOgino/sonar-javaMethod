@@ -6,6 +6,10 @@
     List<ProgramState.SymbolicValueSymbol> symbolicValueSymbols;
     if (terminator != null) {
       switch (terminator.opcode) {
+        case GOTO:
+        case JSR:
+          programPosition.block.successors().forEach(b -> enqueue(new ProgramPoint(b), programState));
+          return;
         case IFEQ:
         case IFNE:
         case IFLT:
@@ -41,7 +45,7 @@
           ps = pop.state;
           break;
         default:
-          throw new IllegalStateException("Unexpected terminator");
+          throw new IllegalStateException("Unexpected terminator " + terminator.opcode);
       }
       programState = ps.stackValue(constraintManager.createBinarySymbolicValue(terminator, symbolicValueSymbols));
       Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);

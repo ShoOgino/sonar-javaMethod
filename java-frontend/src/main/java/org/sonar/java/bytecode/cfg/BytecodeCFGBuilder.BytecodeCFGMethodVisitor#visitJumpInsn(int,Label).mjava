@@ -1,5 +1,10 @@
     @Override
     public void visitJumpInsn(int opcode, Label label) {
+      if(opcode == GOTO || opcode == JSR) {
+        currentBlock.terminator = new Instruction(opcode);
+        currentBlock = blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
+        return;
+      }
       blockByLabel.computeIfAbsent(label, l -> currentBlock.createTrueSuccessor());
       currentBlock.terminator = new Instruction(opcode);
       currentBlock = currentBlock.createFalseSuccessor();
