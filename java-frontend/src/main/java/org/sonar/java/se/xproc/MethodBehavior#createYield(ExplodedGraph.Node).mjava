@@ -1,22 +1,4 @@
   public void createYield(ExplodedGraph.Node node) {
-    MethodYield yield;
-    boolean expectReturnValue = !(isConstructor() || isVoidMethod());
-    SymbolicValue resultSV = node.programState.exitValue();
-
-    if ((resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
-      ExceptionalYield exceptionalYield = new ExceptionalYield(node, this);
-      if (resultSV != null) {
-        exceptionalYield.setExceptionType(((SymbolicValue.ExceptionalSymbolicValue) resultSV).exceptionType());
-      }
-      yield = exceptionalYield;
-    } else {
-      HappyPathYield happyPathYield = new HappyPathYield(node, this);
-      if (expectReturnValue) {
-        happyPathYield.setResult(parameters.indexOf(resultSV), node.programState.getConstraints(resultSV));
-      }
-      yield = happyPathYield;
-    }
-    addParameterConstraints(node, yield);
-    yields.add(yield);
+    createYield(node, true);
   }
 
