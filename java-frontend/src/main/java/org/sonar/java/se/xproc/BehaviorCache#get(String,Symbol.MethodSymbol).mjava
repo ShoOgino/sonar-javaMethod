@@ -1,0 +1,25 @@
+  private MethodBehavior get(String signature, @Nullable Symbol.MethodSymbol symbol) {
+    if (!behaviors.containsKey(signature)) {
+      if (isRequireNonNullMethod(signature)) {
+        behaviors.put(signature, createRequireNonNullBehavior(symbol));
+      } else if (isObjectsNullMethod(signature) || isGuavaPrecondition(signature)) {
+        return new BytecodeEGWalker(this).getMethodBehavior(symbol, classLoader);
+      } else if (isStringUtilsMethod(signature)) {
+        MethodBehavior stringUtilsMethod = createStringUtilMethodBehavior(symbol);
+        if (stringUtilsMethod != null) {
+          behaviors.put(signature, stringUtilsMethod);
+        }
+      } else if (isCollectionUtilsIsEmpty(signature)) {
+        behaviors.put(signature, createCollectionUtilsBehavior(symbol));
+      } else if (isSpringIsNull(signature)) {
+        behaviors.put(signature, createRequireNullBehavior(symbol));
+      } else if(symbol != null) {
+        MethodTree declaration = symbol.declaration();
+        if (declaration != null && SymbolicExecutionVisitor.methodCanNotBeOverriden(symbol)) {
+          sev.execute(declaration);
+        }
+      }
+    }
+    return behaviors.get(signature);
+  }
+

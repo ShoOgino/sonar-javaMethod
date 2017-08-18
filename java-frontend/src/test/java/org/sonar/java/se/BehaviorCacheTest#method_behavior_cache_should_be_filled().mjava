@@ -5,12 +5,12 @@
     assertThat(sev.behaviorCache.behaviors.values().stream().filter(mb -> mb != null).count()).isEqualTo(4);
     // check order of method exploration : last is the topMethod as it requires the other to get its behavior.
     // Then, as we explore fully a path before switching to another one (see the LIFO in EGW) : qix is handled before foo.
-    assertThat(sev.behaviorCache.behaviors.keySet().stream().map(Symbol.MethodSymbol::name).collect(Collectors.toList()))
-      .containsSequence("topMethod", "bar", "foo", "independent");
+    assertThat(sev.behaviorCache.behaviors.keySet().stream().collect(Collectors.toList()))
+      .containsSequence("MethodBehavior#topMethod(boolean)", "MethodBehavior#bar(boolean)", "MethodBehavior#foo(boolean)", "MethodBehavior#independent()");
 
     // method which can be overriden should not have behaviors: 'abstractMethod', 'publicMethod', 'nativeMethod'
     assertThat(sev.behaviorCache.behaviors.keySet().stream()
-      .filter(s -> "nativeMethod".equals(s.name()) || "abstractMethod".equals(s.name()) || "publicMethod".equals(s.name()))
+      .filter(s -> s.equals("#nativeMethod") || s.contains("#abstractMethod") || s.contains("#publicMethod"))
       .map(s -> sev.behaviorCache.behaviors.get(s))).isEmpty();
   }
 

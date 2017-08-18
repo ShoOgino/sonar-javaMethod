@@ -1,6 +1,7 @@
-  public static Map.Entry<MethodSymbol, MethodBehavior> getSymbolWithMethodBehavior(SymbolicExecutionVisitor sev, String methodName) {
-    Optional<Map.Entry<MethodSymbol, MethodBehavior>> mb = sev.behaviorCache.behaviors.entrySet().stream()
-      .filter(e -> methodName.equals(e.getKey().name()))
+  public static Map.Entry<Symbol.MethodSymbol, MethodBehavior> getSymbolWithMethodBehavior(SymbolicExecutionVisitor sev, String methodName) {
+    Optional<AbstractMap.SimpleEntry<Symbol.MethodSymbol, MethodBehavior>> mb = sev.behaviorCache.behaviors.entrySet().stream()
+      .filter(e -> e.getKey().contains("#" + methodName))
+      .map(e -> new AbstractMap.SimpleEntry<>(e.getValue().methodSymbol(), e.getValue()))
       .findFirst();
     assertThat(mb.isPresent()).isTrue();
     return mb.get();
