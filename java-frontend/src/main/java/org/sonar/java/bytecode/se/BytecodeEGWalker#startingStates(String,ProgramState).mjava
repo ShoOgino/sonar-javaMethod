@@ -1,9 +1,9 @@
-  private Iterable<ProgramState> startingStates(Symbol.MethodSymbol symbol, ProgramState currentState) {
+  private Iterable<ProgramState> startingStates(String signature, ProgramState currentState) {
     // TODO : deal with parameter annotations, equals methods etc.
-    int arity = symbol.parameterTypes().size();
+    int arity = Type.getArgumentTypes(signature.substring(signature.indexOf('('))).length;
     int startIndexParam = 0;
     ProgramState state = currentState;
-    if(!symbol.isStatic()) {
+    if(!methodBehavior.isStaticMethod()) {
       // Add a sv for "this"
       SymbolicValue thisSV = constraintManager.createSymbolicValue((BytecodeCFGBuilder.Instruction) null);
       methodBehavior.addParameter(thisSV);

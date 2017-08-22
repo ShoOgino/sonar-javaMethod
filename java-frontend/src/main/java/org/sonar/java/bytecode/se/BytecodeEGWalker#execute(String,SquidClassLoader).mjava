@@ -1,8 +1,10 @@
-  private void execute(Symbol.MethodSymbol symbol, SquidClassLoader classLoader) {
+  private void execute(String signature, SquidClassLoader classLoader) {
     programState = ProgramState.EMPTY_STATE;
     steps = 0;
-    BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG(symbol, classLoader);
-    for (ProgramState startingState : startingStates(symbol, programState)) {
+    BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG(signature, classLoader);
+    methodBehavior.isStaticMethod = bytecodeCFG.isStaticMethod;
+    methodBehavior.setVarArgs(bytecodeCFG.isVarArgs);
+    for (ProgramState startingState : startingStates(signature, programState)) {
       enqueue(new ProgramPoint(bytecodeCFG.entry()), startingState);
     }
     while (!workList.isEmpty()) {

@@ -1,0 +1,18 @@
+  @VisibleForTesting
+  static BytecodeCFG buildCFG(String sign, byte[] bytes) {
+    ClassReader cr = new ClassReader(bytes);
+    BytecodeCFGMethodVisitor methodVisitor = new BytecodeCFGMethodVisitor();
+    cr.accept(new ClassVisitor(Opcodes.ASM5) {
+      @Override
+      public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        if (name.equals(sign.substring(sign.indexOf('#') + 1, sign.indexOf('('))) && desc.equals(sign.substring(sign.indexOf('(')))) {
+          methodVisitor.isStaticMethod = (access & Flags.STATIC) != 0;
+          methodVisitor.isVarArgs = (access & Flags.VARARGS) != 0;
+          return methodVisitor;
+        }
+        return null;
+      }
+    }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+    return methodVisitor.cfg();
+  }
+

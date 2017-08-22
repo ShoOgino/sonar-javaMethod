@@ -73,12 +73,28 @@
         int arity = isStatic ? instruction.arity() : (instruction.arity() + 1);
         pop = programState.unstackValue(arity);
         Preconditions.checkState(pop.values.size() == arity, "Arguments mismatch for INVOKE");
-        // TODO resolve method and retrieve behavior
+        // TODO use constraintManager.createMethodSymbolicValue to create relational SV for equals
+        SymbolicValue returnSV = constraintManager.createSymbolicValue(instruction);
+        if (isStatic) {
+          // follow only static invocations for now.
+          String signature = instruction.fieldOrMethod.completeSignature();
+          MethodBehavior methodInvokedBehavior = behaviorCache.get(signature);
+          if (methodInvokedBehavior != null && methodInvokedBehavior.isComplete()) {
+            methodInvokedBehavior
+              .yields()
+              .forEach(yield ->
+                yield.statesAfterInvocation(pop.values, Collections.emptyList(), pop.state, () -> returnSV).forEach(ps -> {
+                checkerDispatcher.methodYield = yield;
+                checkerDispatcher.addTransition(ps);
+                checkerDispatcher.methodYield = null;
+              }));
+            return;
+          }
+
+        }
         if (instruction.hasReturnValue()) {
           programState = pop.state;
         } else {
-          // TODO use constraintManager.createMethodSymbolicValue to create relational SV for equals
-          SymbolicValue returnSV = constraintManager.createSymbolicValue(instruction);
           programState = pop.state.stackValue(returnSV);
         }
         break;
