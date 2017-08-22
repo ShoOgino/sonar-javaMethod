@@ -1,0 +1,11 @@
+  private void checkArrayLength(MemberSelectExpressionTree testedValue, BinaryExpressionTree bet, boolean leftIsZero) {
+    if (!"length".equals(testedValue.identifier().name())) {
+      return;
+    }
+    ExpressionTree expression = testedValue.expression();
+    if (!expression.symbolType().isArray()) {
+      return;
+    }
+    reportIssue(bet, leftIsZero, ARRAY_ISSUE_MSG, arrayName(expression));
+  }
+

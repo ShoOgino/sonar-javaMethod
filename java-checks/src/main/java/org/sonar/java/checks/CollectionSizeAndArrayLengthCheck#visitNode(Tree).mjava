@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    BinaryExpressionTree bet = (BinaryExpressionTree) tree;
+    ExpressionTree leftOperand = ExpressionUtils.skipParentheses(bet.leftOperand());
+    ExpressionTree rightOperand = ExpressionUtils.skipParentheses(bet.rightOperand());
+    boolean leftIsZero = isZero(leftOperand);
+    boolean rightIsZero = isZero(rightOperand);
+    if (!leftIsZero && !rightIsZero) {
+      return;
+    }
+    ExpressionTree testedValue = leftIsZero ? rightOperand : leftOperand;
+    if (testedValue.is(Tree.Kind.METHOD_INVOCATION)) {
+      checkCollectionSize((MethodInvocationTree) testedValue, bet, leftIsZero);
+    } else if (testedValue.is(Tree.Kind.MEMBER_SELECT)) {
+      checkArrayLength((MemberSelectExpressionTree) testedValue, bet, leftIsZero);
+    }
+  }
+
