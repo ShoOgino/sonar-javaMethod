@@ -1,0 +1,18 @@
+  @CheckForNull
+  private static MethodInvocationTree getMethodInvocation(StatementTree statementTree) {
+    ExpressionTree expressionTree = null;
+    if (statementTree.is(Tree.Kind.RETURN_STATEMENT)) {
+      expressionTree = ((ReturnStatementTree) statementTree).expression();
+    } else if (statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      expressionTree = ((ExpressionStatementTree) statementTree).expression();
+    }
+    if (expressionTree == null) {
+      return null;
+    }
+    expressionTree = ExpressionUtils.skipParentheses(expressionTree);
+    if (!expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+      return null;
+    }
+    return (MethodInvocationTree) expressionTree;
+  }
+
