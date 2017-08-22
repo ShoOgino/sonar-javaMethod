@@ -1,4 +1,6 @@
   private static boolean isStringUtilsMethod(String signature) {
-    return signature.startsWith("org.apache.commons.lang3.StringUtils") || signature.startsWith("org.apache.commons.lang.StringUtils");
+    return Stream.of("isEmpty", "isNotEmpty", "isBlank", "isNotBlank")
+      .flatMap(m -> Stream.of("org.apache.commons.lang3.StringUtils#" + m, "org.apache.commons.lang.StringUtils#" + m))
+      .anyMatch(signature::startsWith);
   }
 

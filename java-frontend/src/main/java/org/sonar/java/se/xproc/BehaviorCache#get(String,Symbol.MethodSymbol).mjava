@@ -4,13 +4,9 @@
         || isObjectsNullMethod(signature)
         || isGuavaPrecondition(signature)
         || isCollectionUtilsIsEmpty(signature)
-        || isSpringIsNull(signature)) {
+        || isSpringIsNull(signature)
+        || isStringUtilsMethod(signature)) {
         return new BytecodeEGWalker(this).getMethodBehavior(signature, classLoader);
-      } else if (isStringUtilsMethod(signature)) {
-        MethodBehavior stringUtilsMethod = createStringUtilMethodBehavior(symbol);
-        if (stringUtilsMethod != null) {
-          behaviors.put(signature, stringUtilsMethod);
-        }
       } else if(symbol != null) {
         MethodTree declaration = symbol.declaration();
         if (declaration != null && SymbolicExecutionVisitor.methodCanNotBeOverriden(symbol)) {
