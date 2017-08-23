@@ -1,0 +1,12 @@
+  private static Symbol resourceSymbol(Tree resource) {
+    // java 7 try-with resource
+    if (resource.is(Tree.Kind.VARIABLE)) {
+      return ((VariableTree) resource).symbol();
+    }
+    // java 9 try-with-resource
+    if (resource.is(Tree.Kind.IDENTIFIER)) {
+      return ((IdentifierTree) resource).symbol();
+    }
+    return ((MemberSelectExpressionTree) resource).identifier().symbol();
+  }
+

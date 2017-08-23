@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    TryStatementTree tryStatementTree = (TryStatementTree) tree;
+    Set<Symbol> resourceSymbols = tryStatementTree.resourceList().stream()
+      .map(RedundantCloseCheck::resourceSymbol)
+      .filter(s -> !s.isUnknown())
+      .collect(Collectors.toSet());
+    if (resourceSymbols.isEmpty()) {
+      return;
+    }
+    tryStatementTree.block().accept(new CloseVisitor(resourceSymbols));
+  }
+

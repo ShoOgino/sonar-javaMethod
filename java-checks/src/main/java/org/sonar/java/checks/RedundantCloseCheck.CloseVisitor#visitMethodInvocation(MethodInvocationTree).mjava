@@ -1,0 +1,21 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (!AUTOCLOSEABLE_CLOSE.matches(tree)) {
+        return;
+      }
+      ExpressionTree methodSelect = tree.methodSelect();
+      if (!methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+        return;
+      }
+      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodSelect;
+      ExpressionTree expression = mset.expression();
+      if (!expression.is(Tree.Kind.IDENTIFIER)) {
+        return;
+      }
+      Symbol closedSymbol = ((IdentifierTree) expression).symbol();
+      if (resourceSymbols.contains(closedSymbol)) {
+        reportIssue(mset.identifier(), tree.arguments().closeParenToken(),
+          "Remove this \"close\" call; closing the resource is handled automatically by the try-with-resources.");
+      }
+    }
+
