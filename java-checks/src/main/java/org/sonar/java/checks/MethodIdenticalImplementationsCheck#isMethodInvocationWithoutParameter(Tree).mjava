@@ -1,0 +1,12 @@
+  private static boolean isMethodInvocationWithoutParameter(Tree tree) {
+    Tree expr = tree;
+    if (expr.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      expr = ((ExpressionStatementTree) tree).expression();
+    }
+    if (!expr.is(Tree.Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+    MethodInvocationTree mit = (MethodInvocationTree) expr;
+    return mit.methodSelect().is(Tree.Kind.IDENTIFIER) && mit.arguments().isEmpty();
+  }
+

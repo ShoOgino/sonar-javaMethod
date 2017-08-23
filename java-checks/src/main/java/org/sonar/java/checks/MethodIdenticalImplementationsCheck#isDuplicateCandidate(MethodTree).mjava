@@ -1,0 +1,18 @@
+  private static boolean isDuplicateCandidate(MethodTree method) {
+    BlockTree block = method.block();
+    if (block == null) {
+      return false;
+    }
+    List<StatementTree> statements = block.body();
+    if (statements.isEmpty()) {
+      return false;
+    }
+    if (statements.size() == 1) {
+      StatementTree singleStatement = statements.get(0);
+      return !isTrivialReturn(singleStatement)
+        && !isAnyThrowStatement(singleStatement)
+        && !isMethodInvocationWithoutParameter(singleStatement);
+    }
+    return true;
+  }
+

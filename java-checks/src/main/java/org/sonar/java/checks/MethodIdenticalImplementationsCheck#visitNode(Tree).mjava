@@ -1,0 +1,36 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    List<MethodTree> methods = ((ClassTree) tree).members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .filter(MethodIdenticalImplementationsCheck::isDuplicateCandidate)
+      .collect(Collectors.toList());
+    if (methods.size() <= 1) {
+      return;
+    }
+    Set<MethodTree> reported = new HashSet<>();
+    for (int i = 0; i < methods.size(); i++) {
+      MethodTree method = methods.get(i);
+      SyntaxToken methodIdentifier = method.simpleName().identifierToken();
+      List<StatementTree> methodBody = method.block().body();
+      methods.stream()
+        .skip(i + 1L)
+        // avoid reporting multiple times
+        .filter(otherMethod -> !reported.contains(otherMethod))
+        // skip overloads
+        .filter(otherMethod -> !methodIdentifier.text().equals(otherMethod.simpleName().name()))
+        .filter(otherMethod -> SyntacticEquivalence.areEquivalent(methodBody, otherMethod.block().body()))
+        .forEach(otherMethod -> {
+          reported.add(otherMethod);
+          reportIssue(
+            otherMethod.simpleName(),
+            String.format(ISSUE_MSG, methodIdentifier.text(), methodIdentifier.line()),
+            Collections.singletonList(new JavaFileScannerContext.Location("original implementation", methodIdentifier)),
+            null);
+        });
+    }
+  }
+
