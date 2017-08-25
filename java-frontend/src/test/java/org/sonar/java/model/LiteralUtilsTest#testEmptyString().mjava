@@ -1,0 +1,14 @@
+  @Test
+  public void testEmptyString() {
+    boolean[] expectedStringEmptyResult = {true, false, false, false};
+    int i = 0;
+    for (VariableTree variableTree : variables) {
+      if (variableTree.simpleName().name().startsWith("s")) {
+        assertThat(LiteralUtils.isEmptyString(variableTree.initializer())).isEqualTo(expectedStringEmptyResult[i++]);
+      }
+    }
+    Optional<VariableTree> nonStringVariable = variables.stream().filter(v -> v.simpleName().name().startsWith("x")).findFirst();
+    assertThat(nonStringVariable).isPresent();
+    assertThat(LiteralUtils.isEmptyString(nonStringVariable.get().initializer())).isFalse();
+  }
+

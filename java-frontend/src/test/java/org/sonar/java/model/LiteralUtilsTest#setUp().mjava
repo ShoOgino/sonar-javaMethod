@@ -1,0 +1,11 @@
+  @BeforeClass
+  public static void setUp() {
+    File file = new File("src/test/java/org/sonar/java/model/LiteralUtilsTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    ClassTree classTree = (ClassTree) tree.types().get(0);
+    variables = classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .collect(Collectors.toList());
+  }
+
