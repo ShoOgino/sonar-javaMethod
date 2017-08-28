@@ -1,0 +1,20 @@
+  @CheckForNull
+  private static CollectionAndKey isArrayAssignment(StatementTree statementTree) {
+    if (statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      ExpressionTree expression = ((ExpressionStatementTree) statementTree).expression();
+      if (expression.is(Tree.Kind.ASSIGNMENT)) {
+        ExpressionTree variable = ((AssignmentExpressionTree) expression).variable();
+        if (variable.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
+          ArrayAccessExpressionTree aaet = (ArrayAccessExpressionTree) variable;
+          Symbol collection = symbolFromIdentifier(aaet.expression());
+          ExpressionTree keyTree = aaet.dimension().expression();
+          Object key = extractKey(keyTree);
+          if (collection != null && key != null) {
+            return new CollectionAndKey(collection, keyTree, key, true);
+          }
+        }
+      }
+    }
+    return null;
+  }
+

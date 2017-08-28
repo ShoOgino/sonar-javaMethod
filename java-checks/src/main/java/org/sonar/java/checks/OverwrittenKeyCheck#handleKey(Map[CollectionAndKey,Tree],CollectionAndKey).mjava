@@ -1,0 +1,13 @@
+  private void handleKey(Map<CollectionAndKey, Tree> keys, CollectionAndKey collectionAndKey) {
+    if (keys.containsKey(collectionAndKey)) {
+      Tree previousTree = keys.get(collectionAndKey);
+      String indexOrKey = collectionAndKey.isArray ? "index" : "key";
+      reportIssue(collectionAndKey.keyTree,
+        String.format("Verify this is the %s that was intended; a value has already been saved for it on line %d.", indexOrKey, previousTree.firstToken().line()),
+        ImmutableList.of(new JavaFileScannerContext.Location("Original value", previousTree)),
+        null);
+    } else {
+      keys.put(collectionAndKey, collectionAndKey.keyTree);
+    }
+  }
+

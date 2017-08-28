@@ -1,0 +1,17 @@
+  @CheckForNull
+  private static CollectionAndKey isMapPut(StatementTree statementTree) {
+    if (statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      ExpressionTree expression = ((ExpressionStatementTree) statementTree).expression();
+      if (expression.is(Tree.Kind.METHOD_INVOCATION) && MAP_PUT.matches((MethodInvocationTree) expression)) {
+        MethodInvocationTree mapPut = (MethodInvocationTree) expression;
+        Symbol collection = mapPut.methodSelect().is(Tree.Kind.MEMBER_SELECT) ? symbolFromIdentifier(((MemberSelectExpressionTree) mapPut.methodSelect()).expression()) : null;
+        ExpressionTree keyTree = mapPut.arguments().get(0);
+        Object key = extractKey(keyTree);
+        if (collection != null && key != null) {
+          return new CollectionAndKey(collection, keyTree, key, false);
+        }
+      }
+    }
+    return null;
+  }
+

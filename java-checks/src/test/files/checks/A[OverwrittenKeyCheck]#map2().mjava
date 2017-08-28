@@ -1,0 +1,21 @@
+  void map2() {
+    map.put("a", "Apple");
+    f();
+    map.put("a", "Banana"); // FN - not consecutive
+    if (blah) {
+      map.put(3, "test");
+      map.put(4, "another");
+      map.put(4, "another"); // Noncompliant {{Verify this is the key that was intended; a value has already been saved for it on line 18.}}
+    }
+
+    for (int i = 0; i < 10; i++) {
+      map.put(i, "test");
+      map.put(i, "test"); // Noncompliant {{Verify this is the key that was intended; a value has already been saved for it on line 23.}}
+    }
+
+    for (int i = 0; i < 10; i++) {
+      map.put(i++, "test");
+      map.put(i++, "test"); // Compliant
+    }
+  }
+
