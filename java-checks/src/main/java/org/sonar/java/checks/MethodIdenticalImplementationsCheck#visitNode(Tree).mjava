@@ -3,10 +3,11 @@
     if (!hasSemantic()) {
       return;
     }
-    List<MethodTree> methods = ((ClassTree) tree).members().stream()
+    ClassTree classTree = (ClassTree) tree;
+    List<MethodTree> methods = classTree.members().stream()
       .filter(member -> member.is(Tree.Kind.METHOD))
       .map(MethodTree.class::cast)
-      .filter(MethodIdenticalImplementationsCheck::isDuplicateCandidate)
+      .filter(methodTree -> isDuplicateCandidate(methodTree, classTree))
       .collect(Collectors.toList());
     if (methods.size() <= 1) {
       return;
