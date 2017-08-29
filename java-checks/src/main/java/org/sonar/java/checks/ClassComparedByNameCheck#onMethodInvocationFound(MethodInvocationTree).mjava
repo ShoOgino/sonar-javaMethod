@@ -10,6 +10,10 @@
     boolean useClassGetName = false;
     boolean useStackTraceElementGetClassName = false;
     for (ExpressionTree expression : expressionsToCheck) {
+      if (expression.is(Tree.Kind.IDENTIFIER) && isParam(((IdentifierTree) expression).symbol())) {
+        // exclude comparison to method parameters
+        return;
+      }
       ClassGetNameDetector visitor = new ClassGetNameDetector();
       expression.accept(visitor);
       useAssignableMessage &= visitor.useClassGetName;
