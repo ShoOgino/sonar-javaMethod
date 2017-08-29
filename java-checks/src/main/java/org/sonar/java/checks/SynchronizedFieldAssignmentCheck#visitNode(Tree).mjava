@@ -1,15 +1,20 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      SynchronizedStatementTree sst = (SynchronizedStatementTree) tree;
-      Symbol field = getField(sst.expression());
-      if (field != null) {
-        sst.block().accept(new AssignmentVisitor(field, sst.expression()));
-      } else {
-        Symbol parameter = getParam(sst.expression());
-        if(parameter != null) {
-          reportIssue(tree, String.format("\"%s\" is a method parameter, and should not be used for synchronization.", parameter.name()));
-        }
+    if (!hasSemantic()) {
+      return;
+    }
+    SynchronizedStatementTree sst = (SynchronizedStatementTree) tree;
+    if(sst.expression().is(Kind.NEW_CLASS)) {
+      reportIssue(tree, "Synchronizing on a new instance is a no-op.");
+      return;
+    }
+    Symbol field = getField(sst.expression());
+    if (field != null) {
+      sst.block().accept(new AssignmentVisitor(field, sst.expression()));
+    } else {
+      Symbol parameter = getParam(sst.expression());
+      if(parameter != null) {
+        reportIssue(tree, String.format("\"%s\" is a method parameter, and should not be used for synchronization.", parameter.name()));
       }
     }
   }
