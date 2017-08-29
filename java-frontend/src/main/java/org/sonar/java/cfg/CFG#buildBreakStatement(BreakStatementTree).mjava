@@ -1,11 +1,14 @@
   private void buildBreakStatement(BreakStatementTree tree) {
     IdentifierTree label = tree.label();
-    Block targetBlock;
+    Block targetBlock = null;
     if (label == null) {
       if (breakTargets.isEmpty()) {
-        throw new IllegalStateException("'break' statement not in loop or switch statement");
+        if (!ignoreBreakAndContinue) {
+          throw new IllegalStateException("'break' statement not in loop or switch statement");
+        }
+      } else {
+        targetBlock = breakTargets.getLast();
       }
-      targetBlock = breakTargets.getLast();
     } else {
       targetBlock = labelsBreakTarget.get(label.name());
     }

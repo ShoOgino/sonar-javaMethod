@@ -1,11 +1,14 @@
   private void buildContinueStatement(ContinueStatementTree tree) {
     IdentifierTree label = tree.label();
-    Block targetBlock;
+    Block targetBlock = null;
     if (label == null) {
       if (continueTargets.isEmpty()) {
-        throw new IllegalStateException("'continue' statement not in loop or switch statement");
+        if (!ignoreBreakAndContinue) {
+          throw new IllegalStateException("'continue' statement not in loop or switch statement");
+        }
+      } else {
+        targetBlock = continueTargets.getLast();
       }
-      targetBlock = continueTargets.getLast();
     } else {
       targetBlock = labelsContinueTarget.get(label.name());
     }

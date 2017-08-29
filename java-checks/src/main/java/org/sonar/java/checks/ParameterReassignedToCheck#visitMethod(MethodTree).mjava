@@ -1,11 +1,22 @@
   @Override
   public void visitMethod(MethodTree tree) {
+    BlockTree block = tree.block();
+    if(block == null) {
+      return;
+    }
+    CFG cfg = CFG.build(tree);
+    LiveVariables analyze = LiveVariables.analyze(cfg);
+    Set<Symbol> live = analyze.getIn(cfg.entry());
     for (VariableTree parameterTree : tree.parameters()) {
-      variables.add(parameterTree.symbol());
+      if(!live.contains(parameterTree.symbol())) {
+        variables.add(parameterTree.symbol());
+      }
     }
     super.visitMethod(tree);
     for (VariableTree parameterTree : tree.parameters()) {
-      variables.remove(parameterTree.symbol());
+      if(!live.contains(parameterTree.symbol())) {
+        variables.remove(parameterTree.symbol());
+      }
     }
   }
 

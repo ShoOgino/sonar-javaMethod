@@ -1,18 +1,18 @@
   @Override
-  public void visitCatch(CatchTree tree) {
-    CFG cfg = CFG.buildCFG(tree.block().body(), true);
-    Symbol var = tree.parameter().symbol();
+  public void visitForEachStatement(ForEachStatement tree) {
+    CFG cfg = CFG.buildCFG(Collections.singletonList(tree), true);
+    Symbol var = tree.variable().symbol();
     boolean liveVar = true;
     if(var.owner().isMethodSymbol()) {
       cfg.setMethodSymbol((Symbol.MethodSymbol) var.owner());
       LiveVariables analyze = LiveVariables.analyze(cfg);
-      Set<Symbol> live = analyze.getIn(cfg.entry());
+      Set<Symbol> live = analyze.getOut(cfg.reversedBlocks().get(1));
       liveVar = live.contains(var);
     }
     if(!liveVar) {
       variables.add(var);
     }
-    super.visitCatch(tree);
+    super.visitForEachStatement(tree);
     if(!liveVar) {
       variables.remove(var);
     }
