@@ -1,6 +1,12 @@
   private static boolean hasConstantInitializer(VariableTree variableTree) {
-    Tree init = variableTree.initializer();
+    ExpressionTree init = variableTree.initializer();
     if (init != null) {
+      if(ExpressionUtils.skipParentheses(init).is(Tree.Kind.METHOD_REFERENCE)) {
+        MethodReferenceTree methodRef = (MethodReferenceTree) ExpressionUtils.skipParentheses(init);
+        if(isInstanceIdentifier(methodRef.expression())) {
+          return false;
+        }
+      }
       boolean arrayWithInitializer = true;
       if (init.is(Tree.Kind.NEW_ARRAY)) {
         // exclude allocations : new int[6] but allow initialization new int[]{1,2};
