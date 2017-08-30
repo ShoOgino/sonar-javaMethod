@@ -1,14 +1,8 @@
   @CheckForNull
   private String methodName() {
-    Tree syntaxTree = pp.syntaxTree();
-    if (syntaxTree == null || !syntaxTree.is(Tree.Kind.METHOD_INVOCATION)) {
+    if (methodBehavior == null) {
       return null;
     }
-    Symbol symbol = ((MethodInvocationTree) syntaxTree).symbol();
-    MethodBehavior knownBehavior = bc.behaviors.get(symbol);
-    if (knownBehavior == null) {
-      return null;
-    }
-    return symbol.name();
+    return methodBehavior.methodSymbol().name();
   }
 

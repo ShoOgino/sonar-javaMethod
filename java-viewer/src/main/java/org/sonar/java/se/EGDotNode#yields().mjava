@@ -1,15 +1,8 @@
   @CheckForNull
   private JsonArray yields() {
-    Tree syntaxTree = pp.syntaxTree();
-    if (syntaxTree == null || !syntaxTree.is(Tree.Kind.METHOD_INVOCATION)) {
+    if (methodBehavior == null) {
       return null;
     }
-    MethodBehavior knownBehavior = bc.behaviors.get(((MethodInvocationTree) syntaxTree).symbol());
-    if (knownBehavior == null) {
-      return null;
-    }
-    JsonArrayBuilder builder = Json.createArrayBuilder();
-    knownBehavior.yields().stream().map(EGDotNode::yield).forEach(builder::add);
-    return builder.build();
+    return JsonHelper.toArray(methodBehavior.yields().stream().map(EGDotNode::yield));
   }
 
