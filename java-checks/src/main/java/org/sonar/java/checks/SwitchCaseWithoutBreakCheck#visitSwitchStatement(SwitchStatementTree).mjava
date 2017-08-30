@@ -8,7 +8,7 @@
         CaseLabelTree caseLabel = caseGroup.labels().get(caseGroup.labels().size() - 1);
 
           // Reverse the body as commonly the unconditional exit will be at the end of the body.
-        if (Lists.reverse(caseGroup.body()).stream().noneMatch(SwitchCaseWithoutBreakCheck::isUnconditionalExit)) {
+        if (Lists.reverse(caseGroup.body()).stream().noneMatch(SwitchCaseWithoutBreakCheck::isUnconditionalExit) && !intentionalFallThrough(switchStatement, caseGroup)) {
           context.reportIssue(this, caseLabel, "End this switch case with an unconditional break, return or throw statement.");
         }
       });
