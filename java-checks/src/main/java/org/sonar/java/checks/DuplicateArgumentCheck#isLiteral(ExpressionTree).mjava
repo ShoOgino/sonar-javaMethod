@@ -1,0 +1,18 @@
+  private static boolean isLiteral(ExpressionTree arg) {
+    if (arg.is(Tree.Kind.TYPE_CAST)) {
+      return isLiteral(((TypeCastTree) arg).expression());
+    }
+    if (arg instanceof UnaryExpressionTree) {
+      return isLiteral(((UnaryExpressionTree) arg).expression());
+    }
+    return arg.is(
+      Tree.Kind.BOOLEAN_LITERAL,
+      Tree.Kind.CHAR_LITERAL,
+      Tree.Kind.DOUBLE_LITERAL,
+      Tree.Kind.FLOAT_LITERAL,
+      Tree.Kind.INT_LITERAL,
+      Tree.Kind.LONG_LITERAL,
+      Tree.Kind.NULL_LITERAL,
+      Tree.Kind.STRING_LITERAL);
+  }
+
