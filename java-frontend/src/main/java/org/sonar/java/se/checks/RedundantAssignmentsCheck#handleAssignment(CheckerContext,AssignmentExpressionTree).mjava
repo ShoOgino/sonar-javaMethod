@@ -1,0 +1,17 @@
+  private void handleAssignment(CheckerContext context, AssignmentExpressionTree assignmentExpressionTree) {
+    SymbolicValueSymbol assignedVariable = context.getState().peekValueSymbol();
+    Symbol assignedSymbol = assignedVariable.symbol();
+    if (assignedSymbol == null
+      // Rule S3959 returns the same SV after each intermediate operations,
+      // meaning that 'stream = stream.map(...);' would be detected as redundant assignment if not explicitly excluded
+      || STREAM_TYPES.stream().anyMatch(assignedSymbol.type()::is)) {
+      return;
+    }
+    ExplodedGraph.Node node = context.getNode();
+    ProgramState previousState = node.programState;
+    SymbolicValue oldValue = previousState.getValue(assignedSymbol);
+    SymbolicValue newValue = assignedVariable.symbolicValue();
+    Symbol fromSymbol = previousState.peekValueSymbol().symbol();
+    assignmentsByMethod.peek().put(assignmentExpressionTree, new AssignmentDataHolder(assignedSymbol, oldValue, newValue, fromSymbol, node));
+  }
+

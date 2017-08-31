@@ -1,0 +1,11 @@
+  void xmi(boolean test) {
+    a = b; // flow@xmi1 {{Implies 'a' has the same value as 'b'.}} flow@xmi2 {{Implies 'a' has the same value as 'b'.}}
+    c = a; // flow@xmi2 {{Implies 'c' has the same value as 'a'.}}
+    if (test) {
+      d = a; // flow@xmi1 {{Implies 'd' has the same value as 'a'.}}
+    } else {
+      d = c; // flow@xmi2 {{Implies 'd' has the same value as 'c'.}}
+    }
+    b = d; // Noncompliant [[sc=5;ec=10;flows=xmi1,xmi2]] {{Remove this useless assignment; "b" already holds the assigned value along all execution paths.}}
+  }
+
