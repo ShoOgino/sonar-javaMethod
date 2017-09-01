@@ -1,0 +1,13 @@
+    private static boolean hasSameVisibility(Symbol.TypeSymbol type, Symbol.TypeSymbol replacement) {
+      if (type.isPublic()) {
+        return replacement.isPublic();
+      }
+      if (type.isProtected()) {
+        return replacement.isPublic() || replacement.isProtected();
+      }
+      if (type.isPackageVisibility()) {
+        return replacement.isPublic() || (((JavaSymbol.TypeJavaSymbol) type).packge() == ((JavaSymbol.TypeJavaSymbol) replacement).packge());
+      }
+      return false;
+    }
+

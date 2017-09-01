@@ -1,0 +1,11 @@
+  private static boolean isMethodInvocationOnParameter(Symbol parameter, MethodInvocationTree mit) {
+    if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) mit.methodSelect();
+      if (mset.expression().is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) mset.expression()).symbol();
+        return symbol == parameter;
+      }
+    }
+    return false;
+  }
+

@@ -1,0 +1,14 @@
+    private Type leastSpecificType() {
+      if (chains == null || chains.isEmpty()) {
+        return startType;
+      }
+      // pick longest chain, if multiple have same length, prefer interface, if multiple choices, choose alphabetically
+      chains.sort(Comparator.<List<Type>>comparingInt(List::size)
+        .thenComparing(chain -> chain.get(0).symbol().isInterface(), Boolean::compare)
+        .thenComparing(chain -> chain.get(0), Comparator.comparing(Type::fullyQualifiedName).reversed())
+        .reversed());
+
+      List<Type> longestChain = chains.get(0);
+      return longestChain.get(0);
+    }
+

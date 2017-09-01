@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    MethodTree methodTree = (MethodTree) tree;
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+    if (!methodSymbol.isPublic()
+      || BooleanUtils.isNotFalse(((MethodTreeImpl) methodTree).isOverriding())
+      || isOverloaded(methodSymbol)) {
+      return;
+    }
+
+    methodTree.parameters().stream()
+      .map(VariableTree::symbol)
+      .filter(p -> p.type().isClass() && !p.type().symbol().isEnum() && !p.type().is("java.lang.String"))
+      .forEach(this::handleParameter);
+  }
+

@@ -1,0 +1,16 @@
+    private List<List<Type>> computeChains(Symbol m, Type type) {
+      Symbol.TypeSymbol typeSymbol = type.symbol();
+      Set<ClassJavaType> superTypes = ((JavaSymbol.TypeJavaSymbol) typeSymbol).directSuperTypes();
+      List<List<Type>> result = superTypes.stream()
+        .flatMap(superType -> computeChains(m, superType).stream())
+        .peek(c -> c.add(type))
+        .collect(Collectors.toList());
+
+      boolean definesSymbol = definesSymbol(m, typeSymbol);
+      boolean isSpecialization = !((JavaType) startType).isParameterized() && ((JavaType) type).isParameterized();
+      if (definesSymbol && !isSpecialization && result.isEmpty()) {
+        result.add(Lists.newArrayList(type));
+      }
+      return result;
+    }
+

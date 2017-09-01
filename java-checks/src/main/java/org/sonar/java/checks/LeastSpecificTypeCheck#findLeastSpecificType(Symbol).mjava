@@ -1,0 +1,22 @@
+  private static Type findLeastSpecificType(Symbol parameter) {
+    InheritanceGraph inheritanceGraph = new InheritanceGraph(parameter.type());
+    for (IdentifierTree usage : parameter.usages()) {
+      Tree parent = usage.parent();
+      while (parent != null && !parent.is(Tree.Kind.ARGUMENTS, Tree.Kind.METHOD_INVOCATION, Tree.Kind.EXPRESSION_STATEMENT, Tree.Kind.FOR_EACH_STATEMENT)) {
+        parent = parent.parent();
+      }
+      if (parent == null || parent.is(Tree.Kind.EXPRESSION_STATEMENT, Tree.Kind.ARGUMENTS)) {
+        return parameter.type();
+      }
+      if (parent.is(Tree.Kind.FOR_EACH_STATEMENT)) {
+        findIteratorMethod(parameter).ifPresent(inheritanceGraph::update);
+      } else if (parent.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTree mit = (MethodInvocationTree) parent;
+        if (isMethodInvocationOnParameter(parameter, mit)) {
+          inheritanceGraph.update(mit.symbol());
+        }
+      }
+    }
+    return inheritanceGraph.leastSpecificType();
+  }
+

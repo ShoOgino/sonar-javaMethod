@@ -1,0 +1,9 @@
+  private void handleParameter(Symbol parameter) {
+    Type leastSpecificType = findLeastSpecificType(parameter);
+    if (parameter.type() != leastSpecificType
+      && !leastSpecificType.is("java.lang.Object")) {
+      String suggestedType = leastSpecificType.fullyQualifiedName().replace('$', '.');
+      reportIssue(parameter.declaration(), String.format("Use '%s' here; it is a more general type than '%s'.", suggestedType, parameter.type().name()));
+    }
+  }
+
