@@ -1,0 +1,14 @@
+    @Override
+    public void visitIdentifier(IdentifierTree tree) {
+      Symbol symbol = tree.symbol();
+      Type type = symbol.type();
+      if (symbol.isVariableSymbol()) {
+        if (type.isUnknown()) {
+          hasUnknownVariableType = true;
+        } else {
+          usedVariablesByNameAndType.putIfAbsent(tree.name(), type);
+        }
+      }
+      super.visitIdentifier(tree);
+    }
+
