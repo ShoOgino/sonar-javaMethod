@@ -1,0 +1,11 @@
+  private void reportOverwrittenKeys(ListMultimap<CollectionAndKey, Tree> usedKeys) {
+    Multimaps.asMap(usedKeys).forEach( (key, trees) -> {
+      if (trees.size() > 1) {
+        Tree firstUse = trees.get(0);
+        Tree firstOverwrite = trees.get(1);
+        List<Tree> rest = trees.subList(2, trees.size());
+        reportIssue(firstOverwrite,"Verify this is the " + key.indexOrKey() + " that was intended; it was already set before.", secondaryLocations(key, firstUse, rest), 0);
+      }
+    });
+  }
+

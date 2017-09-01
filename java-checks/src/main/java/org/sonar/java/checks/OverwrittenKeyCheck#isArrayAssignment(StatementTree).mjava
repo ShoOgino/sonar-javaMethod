@@ -3,14 +3,15 @@
     if (statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
       ExpressionTree expression = ((ExpressionStatementTree) statementTree).expression();
       if (expression.is(Tree.Kind.ASSIGNMENT)) {
-        ExpressionTree variable = ((AssignmentExpressionTree) expression).variable();
+        AssignmentExpressionTree assignment = (AssignmentExpressionTree) expression;
+        ExpressionTree variable = assignment.variable();
         if (variable.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
           ArrayAccessExpressionTree aaet = (ArrayAccessExpressionTree) variable;
           Symbol collection = symbolFromIdentifier(aaet.expression());
           ExpressionTree keyTree = aaet.dimension().expression();
           Object key = extractKey(keyTree);
           if (collection != null && key != null) {
-            return new CollectionAndKey(collection, keyTree, key, true);
+            return new CollectionAndKey(collection, keyTree, key, true, assignment.expression());
           }
         }
       }
