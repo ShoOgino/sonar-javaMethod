@@ -2,7 +2,8 @@
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree argToCheck = getActualArgument(mit);
     if (isConstant(argToCheck)) {
-      context.reportIssue(this, argToCheck, "Make sure these 2 arguments are in the correct order: expected value, actual value.");
+      List<JavaFileScannerContext.Location> secondaries = Collections.singletonList(new JavaFileScannerContext.Location("", previousArg(argToCheck, mit)));
+      context.reportIssue(this, argToCheck, "Swap these 2 arguments so they are in the correct order: expected value, actual value.", secondaries, null);
     }
   }
 
