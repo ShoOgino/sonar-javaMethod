@@ -1,0 +1,10 @@
+    public Base(String source) {
+      this.cut = (CompilationUnitTree) PARSER.parse(source);
+      this.semanticModel = SemanticModel.createFor(cut, new SquidClassLoader(Collections.emptyList()));
+      this.firstMethod = getFirstMethod(cut);
+
+      Preconditions.checkNotNull(firstMethod, "Unable to find a method in first class.");
+
+      this.cfgFirstMethod = CFG.build(firstMethod);
+    }
+

@@ -1,0 +1,13 @@
+  @VisibleForTesting
+  static String fileContent(String location) {
+    String result;
+    try {
+      Path path = Paths.get(Viewer.class.getResource(location).toURI());
+      result = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    } catch (URISyntaxException | IOException e) {
+      LOGGER.error("Unable to read file at location: " + location + ".", e);
+      result = "// Unable to read file at location: \"" + location + "\"\\n\\n";
+    }
+    return result;
+  }
+

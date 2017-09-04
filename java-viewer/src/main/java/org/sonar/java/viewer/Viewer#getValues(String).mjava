@@ -2,19 +2,13 @@
   static Map<String, String> getValues(String javaCode) {
     Map<String, String> values = new HashMap<>();
 
-    CompilationUnitTree cut = (CompilationUnitTree) PARSER.parse(javaCode);
-    SemanticModel semanticModel = SemanticModel.createFor(cut, new SquidClassLoader(Collections.emptyList()));
-    MethodTree firstMethod = getFirstMethod(cut);
+    Base base = new Base(javaCode);
 
-    Preconditions.checkNotNull(firstMethod, "Unable to find a method in first class.");
+    values.put("cfg", CFGPrinter.toString(base.cfgFirstMethod));
 
-    CFG cfg = CFG.build(firstMethod);
-
-    values.put("cfg", CFGPrinter.toString(cfg));
-
-    values.put("dotAST", new ASTDotGraph(cut).toDot());
-    values.put("dotCFG", new CFGDotGraph(cfg).toDot());
-    values.put("dotEG", new EGDotGraph(cut, firstMethod, semanticModel, cfg.blocks().get(0).id()).toDot());
+    values.put("dotAST", new ASTDotGraph(base.cut).toDot());
+    values.put("dotCFG", new CFGDotGraph(base.cfgFirstMethod).toDot());
+    values.put("dotEG", new EGDotGraph(base).toDot());
 
     // explicitly force empty message and stack trace
     values.put("errorMessage", "");

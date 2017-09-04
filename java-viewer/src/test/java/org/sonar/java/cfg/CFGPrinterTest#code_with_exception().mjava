@@ -1,0 +1,51 @@
+  @Test
+  public void code_with_exception() {
+    String code = "abstract class A {"
+      + "  int foo() {"
+      + "    int result = 42;"
+      + "    try {"
+      + "      result = getValue();"
+      + "    } catch (Exception e) {"
+      + "      result = -1;"
+      + "    }"
+      + "    return result;"
+      + "  }"
+      + "  abstract int getValue() throws IllegalStateException;"
+      + "}";
+
+    Viewer.Base base = new Viewer.Base(code);
+
+    assertThat(CFGPrinter.toString(base.cfgFirstMethod)).isEqualTo(
+      "Starts at B5\n"
+        + "\nB5"
+        + "\n0:\tINT_LITERAL                         \t42\n"
+        + "1:\tVARIABLE                            \tint result\n"
+        + "2:\tTRY_STATEMENT                       \ttry { result = getValue ( ) ; } catch ( Exception e ) { result = - 1 ; }\n"
+        + "\tjumps to: B4\n"
+        + "\n"
+        + "B4\n"
+        + "0:\tIDENTIFIER                          \tgetValue\n"
+        + "1:\tMETHOD_INVOCATION                   \tgetValue ( )\n"
+        + "\tjumps to: B2\n"
+        + "\texceptions to: B0 B3\n"
+        + "\n"
+        + "B3\n"
+        + "0:\tVARIABLE                            \tException e\n"
+        + "1:\tINT_LITERAL                         \t1\n"
+        + "2:\tUNARY_MINUS                         \t- 1\n"
+        + "3:\tASSIGNMENT                          \tresult = - 1\n"
+        + "\tjumps to: B1\n"
+        + "\n"
+        + "B2\n"
+        + "0:\tASSIGNMENT                          \tresult = getValue ( )\n"
+        + "\tjumps to: B1\n"
+        + "\n"
+        + "B1\n"
+        + "0:\tIDENTIFIER                          \tresult\n"
+        + "T:\tRETURN_STATEMENT                    \treturn result ;\n"
+        + "\tjumps to: B0(exit)\n"
+        + "\n"
+        + "B0 (Exit):\n"
+        + "\n");
+  }
+

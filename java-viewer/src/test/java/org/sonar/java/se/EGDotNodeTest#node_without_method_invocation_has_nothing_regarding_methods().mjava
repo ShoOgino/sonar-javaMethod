@@ -1,0 +1,18 @@
+  @Test
+  public void node_without_method_invocation_has_nothing_regarding_methods() {
+    String source = "class A {"
+      + "  void foo() {"
+      + "    int i = 1;"
+      + "  }"
+      + "}";
+
+    Viewer.Base base = new Viewer.Base(source);
+
+    Node node = newNode(base.cfgFirstMethod.blocks().get(0), 0);
+    EGDotNode egDotNode = new EGDotNode(0, node, mockBehaviorCache, false, 1);
+
+    JsonObject details = egDotNode.details();
+    assertThat(details.get("methodName")).isNull();
+    assertThat(details.get("methodYields")).isNull();
+  }
+
