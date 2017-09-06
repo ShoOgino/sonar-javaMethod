@@ -1,0 +1,17 @@
+  private SymbolicValue handleCatchVariable(Type caughtType) {
+    SymbolicValue peekValue = programState.peekValue();
+    SymbolicValue.ExceptionalSymbolicValue sv = null;
+    Type exceptionType = null;
+    // FIXME SONARJAVA-2069 every path conducting to a catch block should have an exceptional symbolic value on top of the stack
+    if (peekValue instanceof SymbolicValue.ExceptionalSymbolicValue) {
+      sv = (SymbolicValue.ExceptionalSymbolicValue) peekValue;
+      exceptionType = sv.exceptionType();
+    }
+    if (exceptionType == null || exceptionType.isUnknown()) {
+      // unknown exception, create an exception of the adequate type
+      sv = constraintManager.createExceptionalSymbolicValue(caughtType);
+    }
+    // use a dedicated SV encapsulating the caught exception
+    return constraintManager.createCaughtExceptionSymbolicValue(sv);
+  }
+

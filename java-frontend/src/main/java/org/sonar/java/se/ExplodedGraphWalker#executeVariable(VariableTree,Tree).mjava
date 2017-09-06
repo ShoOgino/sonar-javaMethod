@@ -7,7 +7,11 @@
       if (terminator != null && terminator.is(Tree.Kind.FOR_EACH_STATEMENT)) {
         sv = constraintManager.createSymbolicValue(variableTree);
       } else if (variableTree.parent().is(Tree.Kind.CATCH)) {
-        sv = getCaughtException(variableTree.symbol().type());
+        sv = handleCatchVariable(variableTree.symbol().type());
+        // an exception have been thrown and caught, stack must be cleared
+        // see notes in JVMS 8 - §6.5. - instruction "athrow"
+        programState = programState.clearStack();
+        // exception variable is not null by definition
         programState = programState.addConstraint(sv, ObjectConstraint.NOT_NULL);
       }
       if (sv != null) {
