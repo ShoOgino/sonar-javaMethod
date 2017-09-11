@@ -1,4 +1,8 @@
   private static boolean isTransientSerializableOrInjected(VariableTree member) {
-    return ModifiersUtils.hasModifier(member.modifiers(), Modifier.TRANSIENT) || isSerializable(member.type()) || member.symbol().metadata().isAnnotatedWith("javax.inject.Inject");
+    if (ModifiersUtils.hasModifier(member.modifiers(), Modifier.TRANSIENT) || isSerializable(member.type())) {
+      return true;
+    }
+    SymbolMetadata metadata = member.symbol().metadata();
+    return metadata.isAnnotatedWith("javax.inject.Inject") || metadata.isAnnotatedWith("javax.ejb.EJB");
   }
 
