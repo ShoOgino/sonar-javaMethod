@@ -10,6 +10,8 @@
       PSet<Symbol> newTrackSymbols = newTrackedSymbols(edge);
       SameConstraints newSameConstraints = newTrackSymbols == trackedSymbols ? sameConstraints : new SameConstraints(sameConstraints, newTrackSymbols);
 
+      flowFromThrownException(edge).ifPresent(flowBuilder::add);
+
       Set<LearnedConstraint> learnedConstraints = learnedConstraints(edge);
       List<JavaFileScannerContext.Location> lcFlow = flowFromLearnedConstraints(edge, filterRedundantObjectDomain(learnedConstraints));
       flowBuilder.addAll(lcFlow);

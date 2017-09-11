@@ -1,0 +1,13 @@
+  void test_multiple_ex_flows() {
+    Object o = null; // flow@ex1,ex2 {{Implies 'o' is null.}}
+    try {
+      methodAB();  // flow@ex1 {{'ExA' is thrown.}} flow@ex2 {{'ExB' is thrown.}}
+      o = new Object();
+    } catch (ExA e) {
+
+    } catch (ExB e) {
+
+    }
+    o.toString(); // Noncompliant [[flows=ex1,ex2]]  flow@ex1,ex2 {{'o' is dereferenced.}}
+  }
+

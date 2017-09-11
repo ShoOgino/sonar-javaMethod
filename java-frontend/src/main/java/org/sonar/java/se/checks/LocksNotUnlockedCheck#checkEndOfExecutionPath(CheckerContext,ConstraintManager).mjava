@@ -2,10 +2,8 @@
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
     ExplodedGraph.Node node = context.getNode();
     context.getState().getValuesWithConstraints(LockConstraint.LOCKED).stream()
-      .flatMap(sv ->{
-        List<Class<? extends Constraint>> domains = Lists.newArrayList(LockConstraint.class);
-        return FlowComputation.flow(node, sv, LockConstraint.LOCKED::equals, LockConstraint.UNLOCKED::equals, domains).stream().flatMap(Collection::stream);
-      })
+      .flatMap(lockedSv -> FlowComputation.flow(node, lockedSv, LockConstraint.LOCKED::equals, LockConstraint.UNLOCKED::equals, LOCK_CONSTRAINT_DOMAIN).stream())
+      .flatMap(FlowComputation::firstFlowLocation)
       .forEach(this::reportIssue);
   }
 

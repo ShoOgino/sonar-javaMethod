@@ -1,0 +1,12 @@
+    private Optional<JavaFileScannerContext.Location> flowFromThrownException(ExplodedGraph.Edge edge) {
+      if (isMethodInvocationNode(edge.parent)) {
+        SymbolicValue peekValue = edge.child.programState.peekValue();
+        if (peekValue instanceof SymbolicValue.ExceptionalSymbolicValue) {
+          Type type = ((SymbolicValue.ExceptionalSymbolicValue) peekValue).exceptionType();
+          String msg = String.format("%s is thrown.", type == null ? "Exception" : ("'" + type.name() + "'"));
+          return Optional.of(location(edge.parent, msg));
+        }
+      }
+      return Optional.empty();
+    }
+

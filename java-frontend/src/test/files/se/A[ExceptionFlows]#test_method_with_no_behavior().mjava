@@ -1,0 +1,13 @@
+  void test_method_with_no_behavior() {
+    Object o = null; // flow@nb1,nb2 {{Implies 'o' is null.}}
+    try {
+      noBehavior();  // flow@nb1 {{'ExA' is thrown.}} flow@nb2 {{'ExB' is thrown.}}
+      o = new Object();
+    } catch (ExA e) {
+
+    } catch (ExB e) {
+
+    }
+    o.toString(); // Noncompliant [[flows=nb1,nb2]]  flow@nb1,nb2 {{'o' is dereferenced.}}
+  }
+
