@@ -1,6 +1,6 @@
   @Override
   public void visitCatch(CatchTree tree) {
-    if (!isExcludedType(tree.parameter().type())) {
+    if (!isExcludedType(tree.parameter().type()) && !excludedCatchTrees.contains(tree)) {
       Symbol exception = tree.parameter().symbol();
       validUsagesStack.addFirst(Lists.newArrayList(exception.usages()));
       super.visitCatch(tree);

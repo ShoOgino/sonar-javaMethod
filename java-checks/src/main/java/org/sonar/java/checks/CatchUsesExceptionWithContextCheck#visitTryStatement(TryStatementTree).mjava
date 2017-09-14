@@ -1,0 +1,11 @@
+  @Override
+  public void visitTryStatement(TryStatementTree tree) {
+    if (containsEnumValueOf(tree.block())) {
+      tree.catches().stream()
+        .filter(c -> c.parameter().symbol().type().is("java.lang.IllegalArgumentException"))
+        .findAny()
+        .ifPresent(excludedCatchTrees::add);
+    }
+    super.visitTryStatement(tree);
+  }
+
