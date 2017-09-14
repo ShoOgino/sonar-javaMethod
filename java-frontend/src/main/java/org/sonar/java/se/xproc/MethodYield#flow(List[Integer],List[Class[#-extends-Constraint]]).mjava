@@ -1,4 +1,4 @@
-  public Set<List<JavaFileScannerContext.Location>> flow(List<Integer> parameterIndices, List<Class<? extends Constraint>> domains) {
+  public Set<Flow> flow(List<Integer> parameterIndices, List<Class<? extends Constraint>> domains) {
     Preconditions.checkArgument(!parameterIndices.isEmpty(), "computing flow on empty symbolic value list should never happen");
     if(node == null || behavior == null) {
       return Collections.emptySet();
@@ -6,7 +6,7 @@
     String key = parameterIndices.stream().sorted().map(Object::toString).collect(Collectors.joining(","));
     String domainKey = domains.stream().map(Class::getName).sorted().reduce("", String::concat);
 
-    Map<String, Set<List<JavaFileScannerContext.Location>>> flowByDomain = cachedFlows.computeIfAbsent(key, k -> new HashMap<>());
+    Map<String, Set<Flow>> flowByDomain = cachedFlows.computeIfAbsent(key, k -> new HashMap<>());
     return flowByDomain.computeIfAbsent(domainKey,
       k -> {
         Set<SymbolicValue> symbolicValues = getSymbolicValues(parameterIndices);

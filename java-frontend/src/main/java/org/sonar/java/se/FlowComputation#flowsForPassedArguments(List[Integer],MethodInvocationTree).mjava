@@ -1,9 +1,11 @@
-  public static List<JavaFileScannerContext.Location> flowsForPassedArguments(List<Integer> argumentIndices, MethodInvocationTree mit) {
+  public static Flow flowsForPassedArguments(List<Integer> argumentIndices, MethodInvocationTree mit) {
     String methodName = mit.symbol().name();
-    return Lists.reverse(argumentIndices.stream()
+    Flow.Builder flowBuilder = Flow.builder();
+    argumentIndices.stream()
       .map(index -> getArgumentIdentifier(mit, index))
       .filter(Objects::nonNull)
       .map(identifierTree -> new JavaFileScannerContext.Location(String.format("'%s' is passed to '%s()'.", identifierTree.name(), methodName), identifierTree))
-      .collect(Collectors.toList()));
+      .forEach(flowBuilder::add);
+    return flowBuilder.build().reverse();
   }
 

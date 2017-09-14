@@ -1,0 +1,14 @@
+  @Test
+  public void test_first_flow_location() {
+    Flow flow1 = Flow.builder()
+      .add(locationWithMockTree("last"))
+      .add(locationWithMockTree("first"))
+      .build();
+    List<JavaFileScannerContext.Location> collect = flow1.firstFlowLocation().collect(Collectors.toList());
+    assertThat(collect).hasSize(1);
+    assertThat(collect.get(0).msg).isEqualTo("first");
+
+    Stream<JavaFileScannerContext.Location> empty = Flow.empty().firstFlowLocation();
+    assertThat(empty).isEmpty();
+  }
+

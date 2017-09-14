@@ -1,6 +1,6 @@
   private void reportBooleanExpression(CheckerContext context, AlwaysTrueOrFalseExpressionCollector atof, Tree condition, boolean isTrue) {
     if (!AlwaysTrueOrFalseExpressionCollector.hasUnreachableCode(condition, isTrue)) {
-      Set<List<JavaFileScannerContext.Location>> flows = atof.flowForExpression(condition).stream()
+      Set<Flow> flows = atof.flowForExpression(condition).stream()
         .map(flow -> AlwaysTrueOrFalseExpressionCollector.addIssueLocation(flow, condition, isTrue))
         .collect(Collectors.toSet());
       context.reportIssue(condition, this, "Remove this expression which always evaluates to \"" + isTrue + "\"", flows);

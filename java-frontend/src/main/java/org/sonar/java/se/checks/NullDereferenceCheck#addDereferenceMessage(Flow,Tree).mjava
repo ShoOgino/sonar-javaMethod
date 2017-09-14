@@ -1,4 +1,4 @@
-  private static List<JavaFileScannerContext.Location> addDereferenceMessage(List<JavaFileScannerContext.Location> flow, Tree syntaxNode) {
+  private static Flow addDereferenceMessage(Flow flow, Tree syntaxNode) {
     String symbolName = SyntaxTreeNameFinder.getName(syntaxNode);
     String msg;
     if (syntaxNode.is(Tree.Kind.MEMBER_SELECT) && ((MemberSelectExpressionTree) syntaxNode).expression().is(Tree.Kind.METHOD_INVOCATION)) {
@@ -6,7 +6,7 @@
     } else {
       msg = String.format("'%s' is dereferenced.", symbolName);
     }
-    return ImmutableList.<JavaFileScannerContext.Location>builder()
+    return Flow.builder()
       .add(new JavaFileScannerContext.Location(msg, syntaxNode))
       .addAll(flow)
       .build();

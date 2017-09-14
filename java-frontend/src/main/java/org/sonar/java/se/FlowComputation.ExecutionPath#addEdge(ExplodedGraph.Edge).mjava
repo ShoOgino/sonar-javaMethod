@@ -1,20 +1,26 @@
     Stream<ExecutionPath> addEdge(ExplodedGraph.Edge edge) {
-      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      Flow.Builder flowBuilder = Flow.builder();
       flowBuilder.addAll(flow);
 
-      List<JavaFileScannerContext.Location> laFlow = learnedAssociation(edge)
+      Flow laFlow = learnedAssociation(edge)
         .map(la -> flowFromLearnedAssociation(la, edge.parent))
-        .orElse(ImmutableList.of());
+        .orElse(Flow.empty());
       flowBuilder.addAll(laFlow);
 
       PSet<Symbol> newTrackSymbols = newTrackedSymbols(edge);
       SameConstraints newSameConstraints = newTrackSymbols == trackedSymbols ? sameConstraints : new SameConstraints(sameConstraints, newTrackSymbols);
 
-      flowFromThrownException(edge).ifPresent(flowBuilder::add);
-      flowFromCaughtException(edge).ifPresent(flowBuilder::add);
+      flowFromThrownException(edge).ifPresent(loc -> {
+        flowBuilder.setAsExceptional();
+        flowBuilder.add(loc);
+      });
+      flowFromCaughtException(edge).ifPresent(loc -> {
+        flowBuilder.setAsExceptional();
+        flowBuilder.add(loc);
+      });
 
       Set<LearnedConstraint> learnedConstraints = learnedConstraints(edge);
-      List<JavaFileScannerContext.Location> lcFlow = flowFromLearnedConstraints(edge, filterRedundantObjectDomain(learnedConstraints));
+      Flow lcFlow = flowFromLearnedConstraints(edge, filterRedundantObjectDomain(learnedConstraints));
       flowBuilder.addAll(lcFlow);
 
       boolean endOfPath = visitedAllParents(edge) || shouldTerminate(learnedConstraints);
@@ -23,13 +29,13 @@
         flowBuilder.addAll(flowForNullableMethodParameters(edge.parent));
       }
 
-      List<JavaFileScannerContext.Location> currentFlow = flowBuilder.build();
-      Set<List<JavaFileScannerContext.Location>> yieldsFlows = flowFromYields(edge);
+      Flow currentFlow = flowBuilder.build();
+      Set<Flow> yieldsFlows = flowFromYields(edge);
       if (yieldsFlows.isEmpty()) {
-        return Stream.of(new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, ImmutableList.copyOf(currentFlow), endOfPath));
+        return Stream.of(new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, Flow.of(currentFlow), endOfPath));
       }
       return yieldsFlows.stream()
-        .map(yieldFlow -> ImmutableList.<JavaFileScannerContext.Location>builder().addAll(currentFlow).addAll(yieldFlow).build())
+        .map(yieldFlow -> Flow.builder().addAll(currentFlow).addAll(yieldFlow).build())
         .map(f -> new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, f, endOfPath));
     }
 

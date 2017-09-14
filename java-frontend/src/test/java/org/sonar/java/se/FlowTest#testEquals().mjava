@@ -1,0 +1,21 @@
+  @Test
+  public void testEquals() {
+
+    Flow flow = Flow.builder()
+      .add(locationWithMockTree("first"))
+      .add(locationWithMockTree("second"))
+      .build();
+
+    Flow flow1 = Flow.builder().addAll(flow).build();
+    Flow flow2 = Flow.builder().addAll(flow).setAsExceptional().build();
+
+    assertThat(flow1.equals(null)).isFalse();
+    assertThat(flow1.equals(new Object())).isFalse();
+
+    assertThat(flow1.equals(Flow.empty())).isFalse();
+    assertThat(flow1.equals(flow2)).isFalse();
+
+    assertThat(flow1.equals(flow1)).isTrue();
+    assertThat(flow1.equals(Flow.of(flow1))).isTrue();
+  }
+

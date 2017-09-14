@@ -1,9 +1,11 @@
-    private List<JavaFileScannerContext.Location> flowFromLearnedConstraints(ExplodedGraph.Edge edge, Set<LearnedConstraint> learnedConstraints) {
+    private Flow flowFromLearnedConstraints(ExplodedGraph.Edge edge, Set<LearnedConstraint> learnedConstraints) {
       // FIXME SONARJAVA-2303 calling distinct is temporary workaround to avoid duplicated messages when constraint is reported on relational SV and also on its operand
-      return learnedConstraints.stream()
+      Flow.Builder flowBuilder = Flow.builder();
+      learnedConstraints.stream()
         .map(lc -> learnedConstraintFlow(lc, edge))
-        .flatMap(List::stream)
+        .flatMap(Flow::stream)
         .distinct()
-        .collect(Collectors.toList());
+        .forEach(flowBuilder::add);
+      return flowBuilder.build();
     }
 

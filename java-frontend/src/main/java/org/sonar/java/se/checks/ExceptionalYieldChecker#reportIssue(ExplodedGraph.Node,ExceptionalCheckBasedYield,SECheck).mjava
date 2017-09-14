@@ -17,14 +17,14 @@
       methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s()' is invoked.", methodName), reportTree);
     }
 
-    List<JavaFileScannerContext.Location> argumentChangingNameFlows = flowsForArgumentsChangingName(yield, mit);
-    Set<List<JavaFileScannerContext.Location>> argumentsFlows = flowsForMethodArguments(node, mit, parameterCausingExceptionIndex);
-    Set<List<JavaFileScannerContext.Location>> exceptionFlows = yield.exceptionFlows();
+    Flow argumentChangingNameFlows = flowsForArgumentsChangingName(yield, mit);
+    Set<Flow> argumentsFlows = flowsForMethodArguments(node, mit, parameterCausingExceptionIndex);
+    Set<Flow> exceptionFlows = yield.exceptionFlows();
 
-    ImmutableSet.Builder<List<JavaFileScannerContext.Location>> flows = ImmutableSet.builder();
-    for (List<JavaFileScannerContext.Location> argumentFlow : argumentsFlows) {
-      for (List<JavaFileScannerContext.Location> exceptionFlow : exceptionFlows) {
-        flows.add(ImmutableList.<JavaFileScannerContext.Location>builder()
+    ImmutableSet.Builder<Flow> flows = ImmutableSet.builder();
+    for (Flow argumentFlow : argumentsFlows) {
+      for (Flow exceptionFlow : exceptionFlows) {
+        flows.add(Flow.builder()
           .addAll(exceptionFlow)
           .addAll(argumentChangingNameFlows)
           .add(methodInvocationMessage)

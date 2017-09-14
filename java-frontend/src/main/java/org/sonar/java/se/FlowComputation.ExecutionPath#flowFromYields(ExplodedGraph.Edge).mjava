@@ -1,4 +1,4 @@
-    private Set<List<JavaFileScannerContext.Location>> flowFromYields(ExplodedGraph.Edge edge) {
+    private Set<Flow> flowFromYields(ExplodedGraph.Edge edge) {
       Set<MethodYield> methodYields = edge.yields();
       if (methodYields.isEmpty()) {
         return ImmutableSet.of();
@@ -8,9 +8,9 @@
 
       MethodInvocationTree mit = (MethodInvocationTree) edge.parent.programPoint.syntaxTree();
       // computes flow messages for arguments being passed to the called method
-      List<JavaFileScannerContext.Location> passedArgumentsMessages = flowsForPassedArguments(argumentIndices, mit);
+      Flow passedArgumentsMessages = flowsForPassedArguments(argumentIndices, mit);
       // computes flow messages for arguments changing name within called method
-      List<JavaFileScannerContext.Location> changingNameArgumentsMessages = flowsForArgumentsChangingName(argumentIndices, mit);
+      Flow changingNameArgumentsMessages = flowsForArgumentsChangingName(argumentIndices, mit);
 
       SymbolicValue returnSV = edge.child.programState.peekValue();
       if (symbolicValues.contains(returnSV)) {
@@ -25,7 +25,7 @@
         .map(y -> y.flow(argumentIndices, domains))
         .flatMap(Set::stream)
         .filter(f -> !f.isEmpty())
-        .map(flowFromYield -> ImmutableList.<JavaFileScannerContext.Location>builder()
+        .map(flowFromYield -> Flow.builder()
           .addAll(flowFromYield)
           .addAll(changingNameArgumentsMessages)
           .addAll(passedArgumentsMessages)

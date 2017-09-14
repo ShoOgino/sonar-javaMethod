@@ -1,4 +1,9 @@
     public Set<List<JavaFileScannerContext.Location>> getFlows() {
-      return flows;
+      Set<List<JavaFileScannerContext.Location>> nonExceptionalFlows = flows.stream().filter(Flow::isNonExceptional).map(Flow::elements).collect(Collectors.toSet());
+      if (!nonExceptionalFlows.isEmpty()) {
+        // keep only the non-exceptional flows and ignore exceptional ones
+        return nonExceptionalFlows;
+      }
+      return flows.stream().map(Flow::elements).collect(Collectors.toSet());
     }
 

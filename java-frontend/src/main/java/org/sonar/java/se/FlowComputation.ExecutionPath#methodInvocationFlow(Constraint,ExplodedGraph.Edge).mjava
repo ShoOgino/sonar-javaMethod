@@ -1,7 +1,7 @@
-    private List<JavaFileScannerContext.Location> methodInvocationFlow(Constraint learnedConstraint, ExplodedGraph.Edge edge) {
+    private Flow methodInvocationFlow(Constraint learnedConstraint, ExplodedGraph.Edge edge) {
       ExplodedGraph.Node parent = edge.parent;
       MethodInvocationTree mit = (MethodInvocationTree) parent.programPoint.syntaxTree();
-      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      Flow.Builder flowBuilder = Flow.builder();
       SymbolicValue returnSV = edge.child.programState.peekValue();
       if (symbolicValues.contains(returnSV)) {
         flowBuilder.add(methodInvocationReturnMessage(learnedConstraint, edge, mit.symbol().name()));

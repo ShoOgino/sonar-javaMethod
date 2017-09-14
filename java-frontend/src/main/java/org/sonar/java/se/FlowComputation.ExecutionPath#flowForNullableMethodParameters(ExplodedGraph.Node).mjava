@@ -1,8 +1,8 @@
-    private List<JavaFileScannerContext.Location> flowForNullableMethodParameters(ExplodedGraph.Node node) {
+    private Flow flowForNullableMethodParameters(ExplodedGraph.Node node) {
       if (!node.edges().isEmpty() || !domains.contains(ObjectConstraint.class)) {
-        return ImmutableList.of();
+        return Flow.empty();
       }
-      ImmutableList.Builder<JavaFileScannerContext.Location> flowBuilder = ImmutableList.builder();
+      Flow.Builder flowBuilder = Flow.builder();
       trackedSymbols.forEach(symbol -> {
         SymbolicValue sv = node.programState.getValue(symbol);
         if (sv == null) {
