@@ -1,0 +1,11 @@
+  void test_finally2(Object o, boolean b2) {
+    try {
+      o = null; // flow@finally2 {{Implies 'o' is null.}}
+      call(); // flow@finally2 {{Exception is thrown.}}
+      o = "";
+    } finally {
+      call();
+      o.toString(); // Noncompliant [[flows=finally2]] flow@finally2 {{'o' is dereferenced.}}
+    }
+  }
+
