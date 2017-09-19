@@ -10,14 +10,16 @@
       PSet<Symbol> newTrackSymbols = newTrackedSymbols(edge);
       SameConstraints newSameConstraints = newTrackSymbols == trackedSymbols ? sameConstraints : new SameConstraints(sameConstraints, newTrackSymbols);
 
-      flowFromThrownException(edge).ifPresent(loc -> {
-        flowBuilder.setAsExceptional();
-        flowBuilder.add(loc);
-      });
-      flowFromCaughtException(edge).ifPresent(loc -> {
-        flowBuilder.setAsExceptional();
-        flowBuilder.add(loc);
-      });
+      if (!skipExceptionMessages) {
+        flowFromThrownException(edge).ifPresent(loc -> {
+          flowBuilder.setAsExceptional();
+          flowBuilder.add(loc);
+        });
+        flowFromCaughtException(edge).ifPresent(loc -> {
+          flowBuilder.setAsExceptional();
+          flowBuilder.add(loc);
+        });
+      }
 
       Set<LearnedConstraint> learnedConstraints = learnedConstraints(edge);
       Flow lcFlow = flowFromLearnedConstraints(edge, filterRedundantObjectDomain(learnedConstraints));
