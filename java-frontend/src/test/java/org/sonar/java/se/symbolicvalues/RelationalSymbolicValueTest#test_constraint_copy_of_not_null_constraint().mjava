@@ -6,16 +6,16 @@
     SymbolicValue sv = new SymbolicValue();
     // sv != NOT_NULL
     RelationalSymbolicValue neq = new RelationalSymbolicValue(NOT_EQUAL, svNotNull, sv);
-    ProgramState result = setTrue(ps , neq);
+    ProgramState result = setTrue(ps, neq);
     assertNoConstraints(result, sv);
 
     // sv != NULL
-    neq = new RelationalSymbolicValue(NOT_EQUAL, SymbolicValue.NULL_LITERAL, sv);
+    neq = new RelationalSymbolicValue(NOT_EQUAL, NULL_LITERAL, sv);
     result = setTrue(ps, neq);
     assertThat(result.getConstraint(sv, ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
 
     // sv == NULL
-    RelationalSymbolicValue eq = new RelationalSymbolicValue(EQUAL, SymbolicValue.NULL_LITERAL, sv);
+    RelationalSymbolicValue eq = new RelationalSymbolicValue(EQUAL, NULL_LITERAL, sv);
     result = setTrue(ps, eq);
     assertNullConstraint(result, sv);
     // sv == NOT_NULL

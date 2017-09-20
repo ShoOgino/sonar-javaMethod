@@ -1,0 +1,24 @@
+  @Test
+  public void recursion_on_copy_constraint_should_stop_distilled() {
+    ProgramState ps = ProgramState.EMPTY_STATE;
+    SymbolicValue sv0 = new SymbolicValue();
+    ps = ps.addConstraint(sv0, TRUE);
+    ps = ps.addConstraint(neq(sv0, NULL_LITERAL), TRUE);
+
+    SymbolicValue sv1 = new SymbolicValue();
+    ps = ps.addConstraint(eq(sv1, NULL_LITERAL), TRUE);
+    ps = ps.addConstraint(neq(sv1, sv0), TRUE);
+
+    SymbolicValue sv2 = new SymbolicValue();
+    ps = ps.addConstraint(sv2, ObjectConstraint.NULL);
+    ps = ps.addConstraint(eq(sv2, sv1), TRUE);
+
+    RelationalSymbolicValue sv2NeqNull = neq(sv2, NULL_LITERAL);
+    ps = ps.addConstraint(eq(sv2, sv2NeqNull), TRUE);
+    ps = ps.addConstraint(eq(sv1, sv2NeqNull), TRUE);
+
+    List<ProgramState> result = sv2NeqNull.setConstraint(ps, FALSE);
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getConstraint(sv2, BooleanConstraint.class)).isEqualTo(BooleanConstraint.FALSE);
+  }
+

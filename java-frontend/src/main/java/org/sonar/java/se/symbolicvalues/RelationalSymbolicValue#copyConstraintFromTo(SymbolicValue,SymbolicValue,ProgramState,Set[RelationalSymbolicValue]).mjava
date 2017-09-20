@@ -1,0 +1,18 @@
+  private List<ProgramState> copyConstraintFromTo(SymbolicValue from, SymbolicValue to, ProgramState programState, Set<RelationalSymbolicValue> knownRelations) {
+    List<ProgramState> states = new ArrayList<>();
+    states.add(programState);
+    ConstraintsByDomain leftConstraints = programState.getConstraints(from);
+    if (leftConstraints == null) {
+      return states;
+    }
+    leftConstraints.forEach((d, c) -> {
+      Constraint constraint = c.copyOver(kind);
+      if (constraint != null) {
+        List<ProgramState> newStates = applyConstraint(constraint, to, states, knownRelations);
+        states.clear();
+        states.addAll(newStates);
+      }
+    });
+    return states;
+  }
+

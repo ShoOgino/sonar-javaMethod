@@ -3,15 +3,15 @@
     SymbolicValue aNEb = relationalSV(Tree.Kind.NOT_EQUAL_TO, b, a);
     SymbolicValue bNEc = relationalSV(Tree.Kind.NOT_EQUAL_TO, c, b);
     ProgramState programState = ProgramState.EMPTY_STATE;
-    List<ProgramState> programStates = aNEb.setConstraint(programState, BooleanConstraint.TRUE);
+    List<ProgramState> programStates = aNEb.setConstraint(programState, TRUE);
     programState = Iterables.getOnlyElement(programStates);
-    programStates = bNEc.setConstraint(programState, BooleanConstraint.TRUE);
+    programStates = bNEc.setConstraint(programState, TRUE);
     programState = Iterables.getOnlyElement(programStates);
 
     SymbolicValue aNEc = relationalSV(Tree.Kind.NOT_EQUAL_TO, c, a);
-    programStates = aNEc.setConstraint(programState, BooleanConstraint.FALSE);
+    programStates = aNEc.setConstraint(programState, FALSE);
     assertThat(programStates).hasSize(1);
-    programStates = aNEc.setConstraint(programState, BooleanConstraint.TRUE);
+    programStates = aNEc.setConstraint(programState, TRUE);
     assertThat(programStates).hasSize(1);
   }
 
