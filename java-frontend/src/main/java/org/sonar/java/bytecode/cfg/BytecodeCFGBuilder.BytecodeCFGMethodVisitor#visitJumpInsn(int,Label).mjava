@@ -3,6 +3,7 @@
       if (opcode == GOTO || opcode == JSR) {
         currentBlock.terminator = new Instruction(opcode);
         currentBlock.successors = Collections.singletonList(blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor()));
+        currentBlock = null;
         return;
       }
       currentBlock.setTrueBlock(blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor()));

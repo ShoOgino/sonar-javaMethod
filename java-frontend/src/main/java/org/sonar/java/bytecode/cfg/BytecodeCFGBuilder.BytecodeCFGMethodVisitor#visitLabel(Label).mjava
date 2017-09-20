@@ -1,9 +1,18 @@
     @Override
     public void visitLabel(Label label) {
       Block previous = currentBlock;
-      currentBlock = blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
-      if(previous.successors.isEmpty()) {
-        previous.successors.add(currentBlock);
+      if (currentBlock == null) {
+        // previous instruction was unconditional jump : so create new block or use the one defined for the label
+        currentBlock = blockByLabel.computeIfAbsent(label, l -> {
+          Block block = new Block(cfg);
+          cfg.blocks.add(block);
+          return block;
+        });
+      } else {
+        currentBlock = blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor());
+        if (previous.successors.isEmpty()) {
+          previous.successors.add(currentBlock);
+        }
       }
     }
 
