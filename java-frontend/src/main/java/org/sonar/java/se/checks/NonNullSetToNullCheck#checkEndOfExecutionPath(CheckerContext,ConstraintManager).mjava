@@ -2,7 +2,8 @@
   public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
     if (methodTree.is(Tree.Kind.CONSTRUCTOR)
       && !isDefaultConstructorForJpa(methodTree)
-      && !callsThisConstructor(methodTree)) {
+      && !callsThisConstructor(methodTree)
+      && !exitingWithException(context)) {
       ClassTree classTree = (ClassTree) methodTree.parent();
       classTree.members().stream()
         .filter(m -> m.is(Tree.Kind.VARIABLE))
