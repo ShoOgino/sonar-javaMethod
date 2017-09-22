@@ -1,0 +1,19 @@
+  @Test
+  public void binary_expression_creates_not_null_value() throws Exception {
+    int[] counter = new int[1];
+    SECheck check = new SECheck() {
+      @Override
+      public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
+        ProgramState state = context.getState();
+        if (syntaxNode instanceof BinaryExpressionTree) {
+          SymbolicValue sv = state.peekValue();
+          assertThat(state.getConstraint(sv, ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
+          counter[0]++;
+        }
+        return state;
+      }
+    };
+    JavaCheckVerifier.verifyNoIssue("src/test/files/se/BinaryTreeExecution.java", check);
+    assertThat(counter[0]).isEqualTo(17);
+  }
+

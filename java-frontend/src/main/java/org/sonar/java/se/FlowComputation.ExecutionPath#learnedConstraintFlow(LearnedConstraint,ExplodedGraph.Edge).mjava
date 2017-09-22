@@ -3,6 +3,10 @@
       if (!addToFlow.test(constraint)) {
         return Flow.empty();
       }
+      if (constraint == ObjectConstraint.NOT_NULL && learnedConstraint.sv instanceof BinarySymbolicValue) {
+        // don't report on binary expression to be not null, it's obvious
+        return Flow.empty();
+      }
       ExplodedGraph.Node parent = edge.parent;
       Tree nodeTree = parent.programPoint.syntaxTree();
       if (isMethodInvocationNode(parent)) {
