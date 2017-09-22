@@ -1,28 +1,14 @@
   ProgramState resetFieldValues(ConstraintManager constraintManager, boolean resetOnlyStaticFields) {
-    final List<VariableTree> variableTrees = new ArrayList<>();
+    List<Symbol> fields = new ArrayList<>();
     values.forEach((symbol, symbolicValue) -> {
       if (isField(symbol) && !symbol.isFinal() && (symbol.isStatic() || !resetOnlyStaticFields) ) {
-        VariableTree variable = ((Symbol.VariableSymbol) symbol).declaration();
-        if (variable != null) {
-          variableTrees.add(variable);
-        }
+        fields.add(symbol);
       }
     });
-    if (variableTrees.isEmpty()) {
-      return this;
+    ProgramState newProgramState = this;
+    for (Symbol field : fields) {
+      newProgramState = newProgramState.put(field, constraintManager.createDefaultSymbolicValue());
     }
-    PMap<Symbol, SymbolicValue> newValues = values;
-    PMap<SymbolicValue, Integer> newReferences = references;
-    for (VariableTree variableTree : variableTrees) {
-      Symbol symbol = variableTree.symbol();
-      SymbolicValue oldValue = newValues.get(symbol);
-      if (oldValue != null) {
-        newReferences = decreaseReference(newReferences, oldValue);
-      }
-      SymbolicValue newValue = constraintManager.createSymbolicValue(variableTree);
-      newValues = newValues.put(symbol, newValue);
-      newReferences = increaseReference(newReferences, newValue);
-    }
-    return new ProgramState(newValues, newReferences, constraints, visitedPoints, stack, exitSymbolicValue);
+    return newProgramState;
   }
 
