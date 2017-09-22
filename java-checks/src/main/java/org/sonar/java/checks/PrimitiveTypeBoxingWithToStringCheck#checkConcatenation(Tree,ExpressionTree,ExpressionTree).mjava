@@ -1,8 +1,10 @@
   private void checkConcatenation(Tree tree, ExpressionTree leftOperand, ExpressionTree rightOperand) {
     Type wrapper = null;
-    if (LiteralUtils.isEmptyString(leftOperand)) {
-      wrapper = ((JavaType) rightOperand.symbolType()).primitiveWrapperType();
-    } else if (LiteralUtils.isEmptyString(rightOperand)) {
+    ExpressionTree leftOp = ExpressionUtils.skipParentheses(leftOperand);
+    ExpressionTree rightOp = ExpressionUtils.skipParentheses(rightOperand);
+    if (LiteralUtils.isEmptyString(leftOp) && !isConstant(rightOp)) {
+      wrapper = ((JavaType) rightOp.symbolType()).primitiveWrapperType();
+    } else if (LiteralUtils.isEmptyString(rightOp) && !isConstant(leftOp)) {
       wrapper = ((JavaType) leftOperand.symbolType()).primitiveWrapperType();
     }
     if (wrapper != null) {

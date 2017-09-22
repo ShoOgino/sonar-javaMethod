@@ -1,0 +1,9 @@
+  private static boolean isPrimitiveConstant(Symbol symbol) {
+    // Static or final is enough to get optimization occurring when initializer is a literal,
+    // as long as it is not access with "this."
+    // For constants declared outside the current file, result will depend of the initializer,
+    // so ignoring initializers to not raise FPs (prefer FNs over FPs)
+    // JLS8 : §15.28 & §15.18.1
+    return (symbol.isStatic() || symbol.isFinal()) && symbol.type().isPrimitive();
+  }
+
