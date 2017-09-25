@@ -1,22 +1,32 @@
   @Override
   public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
     MethodTree methodTree = (MethodTree) tree;
-    if (hasSemantic() && methodTree.block() != null && !isExcluded(methodTree)) {
-      List<IdentifierTree> unused = Lists.newArrayList();
-      for (VariableTree var : methodTree.parameters()) {
-        Symbol symbol = var.symbol();
-        if (symbol.usages().isEmpty() && !symbol.metadata().isAnnotatedWith(AUTHORIZED_ANNOTATION) && !isStrutsActionParameter(var)) {
-          unused.add(var.simpleName());
+    if (methodTree.block() == null || isExcluded(methodTree)) {
+      return;
+    }
+    Set<String> documentedParameters = documentedParameters(methodTree);
+    boolean overideableMethod = overrideableMethod(methodTree.symbol());
+    List<IdentifierTree> unused = Lists.newArrayList();
+    for (VariableTree var : methodTree.parameters()) {
+      Symbol symbol = var.symbol();
+      if (symbol.usages().isEmpty() && !symbol.metadata().isAnnotatedWith(AUTHORIZED_ANNOTATION) && !isStrutsActionParameter(var)) {
+        if (overideableMethod && documentedParameters.contains(symbol.name())) {
+          continue;
         }
+        unused.add(var.simpleName());
       }
-      if (!unused.isEmpty()) {
-        List<JavaFileScannerContext.Location> locations = new ArrayList<>();
-        for (IdentifierTree identifier : unused.subList(1, unused.size())) {
-          locations.add(new JavaFileScannerContext.Location("Remove this unused method parameter "+identifier.name()+"\".", identifier));
-        }
-        IdentifierTree firstUnused = unused.get(0);
-        reportIssue(firstUnused, "Remove this unused method parameter \"" + firstUnused.name() + "\".", locations, null);
+
+    }
+    if (!unused.isEmpty()) {
+      List<JavaFileScannerContext.Location> locations = new ArrayList<>();
+      for (IdentifierTree identifier : unused.subList(1, unused.size())) {
+        locations.add(new JavaFileScannerContext.Location("Remove this unused method parameter " + identifier.name() + "\".", identifier));
       }
+      IdentifierTree firstUnused = unused.get(0);
+      reportIssue(firstUnused, "Remove this unused method parameter \"" + firstUnused.name() + "\".", locations, null);
     }
   }
 

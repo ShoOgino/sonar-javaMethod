@@ -1,0 +1,11 @@
+  private static Set<String> documentedParameters(MethodTree methodTree) {
+    return methodTree.firstToken().trivias().stream()
+      .map(SyntaxTrivia::comment)
+      .map(c -> c.split("\\r?\\n"))
+      .flatMap(Arrays::stream)
+      .map(PARAMETER_JAVADOC_PATTERN::matcher)
+      .filter(Matcher::matches)
+      .map(matcher -> matcher.group("name"))
+      .collect(Collectors.toSet());
+  }
+
