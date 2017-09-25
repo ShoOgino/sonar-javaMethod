@@ -7,8 +7,8 @@
     Type cast = typeCastTree.type().symbolType();
     Type target = targetType(typeCastTree);
     Type expressionType = typeCastTree.expression().symbolType();
-    if(isPrimitiveWrapperInConditional(expressionType, typeCastTree)) {
-      // Excluded because covered by S2154
+    if (isPrimitiveWrapperInConditional(expressionType, typeCastTree) || requiredForMethodInvocation(typeCastTree)) {
+      // Primitive wrappers excluded because covered by S2154
       return;
     }
     if(target != null && (isRedundantNumericalCast(cast, expressionType) || isSubtype(expressionType, target))) {

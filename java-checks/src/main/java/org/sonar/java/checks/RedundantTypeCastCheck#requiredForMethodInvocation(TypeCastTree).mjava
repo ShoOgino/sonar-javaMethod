@@ -1,0 +1,18 @@
+  private static boolean requiredForMethodInvocation(TypeCastTree typeCastTree) {
+    ExpressionTree expression = typeCastTree.expression();
+    if (!expression.is(Tree.Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+    Symbol symbol = ((MethodInvocationTree) expression).symbol();
+    if (!symbol.isMethodSymbol()) {
+      return false;
+    }
+    Type returnType = ((Symbol.MethodSymbol) symbol).returnType().type();
+    if (!(returnType instanceof TypeVariableJavaType) || ((TypeVariableJavaType) returnType).bounds().get(0).is("java.lang.Object")) {
+      return false;
+    }
+    // consider REQUIRED as soon as the parent expression is a method invocation (killing the noise), without checking if cast could have been avoided
+    Tree parent = skipParentheses(typeCastTree.parent());
+    return parent.is(Tree.Kind.MEMBER_SELECT) && skipParentheses(parent.parent()).is(Tree.Kind.METHOD_INVOCATION);
+  }
+
