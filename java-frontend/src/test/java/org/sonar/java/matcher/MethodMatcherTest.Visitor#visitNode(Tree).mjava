@@ -5,9 +5,23 @@
         boolean match = false;
         MethodMatcher matcher = entry.getKey();
         if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-          match = matcher.matches((MethodInvocationTree) tree);
+          MethodInvocationTree mit = (MethodInvocationTree) tree;
+          Symbol symbol = mit.symbol();
+          if ("foo".equals(symbol.name())) {
+            // only 'foo' is tested with symbol
+            match = matcher.matches(symbol);
+          } else {
+            match = matcher.matches(mit);
+          }
         } else if (tree.is(Tree.Kind.METHOD)) {
-          match = matcher.matches((MethodTree) tree);
+          MethodTree methodTree = (MethodTree) tree;
+          Symbol.MethodSymbol symbol = methodTree.symbol();
+          if ("foo".equals(symbol.name())) {
+            // only 'foo' is tested with symbol
+            match = matcher.matches(symbol);
+          } else {
+            match = matcher.matches(methodTree);
+          }
         } else if (tree.is(Tree.Kind.NEW_CLASS)) {
           match = matcher.matches((NewClassTree) tree);
         }
