@@ -1,9 +1,4 @@
   private static boolean hasNotFinalEqualsMethod(Symbol.TypeSymbol superClassSymbol) {
-    for (Symbol symbol : superClassSymbol.lookupSymbols("equals")) {
-      if (isEqualsMethod(symbol) && !symbol.isFinal()) {
-        return true;
-      }
-    }
-    return false;
+    return superClassSymbol.lookupSymbols("equals").stream().anyMatch(symbol -> EQUALS_MATCHER.matches(symbol) && !symbol.isFinal());
   }
 
