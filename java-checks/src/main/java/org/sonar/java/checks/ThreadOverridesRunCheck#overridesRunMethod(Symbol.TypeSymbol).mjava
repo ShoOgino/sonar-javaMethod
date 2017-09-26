@@ -1,15 +1,4 @@
   private static boolean overridesRunMethod(Symbol.TypeSymbol classSymbol) {
-    Collection<Symbol> runSymbols = classSymbol.lookupSymbols("run");
-    boolean overridesRunMethod = false;
-    for (Symbol run : runSymbols) {
-      if (run.isMethodSymbol()) {
-        Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) run;
-        if (methodSymbol.parameterTypes().isEmpty()) {
-          overridesRunMethod = true;
-          break;
-        }
-      }
-    }
-    return overridesRunMethod;
+    return classSymbol.lookupSymbols("run").stream().anyMatch(RUN::matches);
   }
 
