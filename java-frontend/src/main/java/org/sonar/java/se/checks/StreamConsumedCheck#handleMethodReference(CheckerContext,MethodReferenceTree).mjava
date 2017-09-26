@@ -1,0 +1,20 @@
+  private ProgramState handleMethodReference(CheckerContext context, MethodReferenceTree mrt) {
+    ProgramState programState = context.getState();
+    if (TERMINAL_OPERATIONS.anyMatch(mrt.method().symbol())) {
+      Tree expression = mrt.expression();
+      if (expression.is(Tree.Kind.IDENTIFIER)) {
+        SymbolicValue ownerSV = programState.getValue(((IdentifierTree) expression).symbol());
+        if (ownerSV == null) {
+          return programState;
+        }
+        if (isPipelineConsumed(programState, ownerSV)) {
+          reportIssue(mrt, "Refactor this code so that this consumed stream pipeline is not reused.", flow(ownerSV, context.getNode()));
+          return null;
+        } else {
+          return Iterables.getOnlyElement(ownerSV.setConstraint(programState, StreamPipelineConstraint.CONSUMED));
+        }
+      }
+    }
+    return programState;
+  }
+

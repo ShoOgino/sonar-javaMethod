@@ -1,5 +1,8 @@
   @Override
   public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.METHOD_REFERENCE)) {
+      return handleMethodReference(context, (MethodReferenceTree) syntaxNode);
+    }
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       return handleMethodInvocation(context, (MethodInvocationTree) syntaxNode);
     }
