@@ -2,7 +2,7 @@
   public void leaveNode(Tree tree) {
     if (hasSemantic() && tree.is(Kind.METHOD)) {
       MethodTree methodTree = (MethodTree) tree;
-      if (isFinalize(methodTree.symbol()) && doesOverrideFinalize(methodTree.symbol().owner())) {
+      if (FINALIZE_MATCHER.matches(methodTree) && doesOverrideFinalize(methodTree.symbol().owner())) {
         if (lastStatementTree == null) {
           reportIssue(methodTree.simpleName(), "Add a call to super.finalize() at the end of this Object.finalize() implementation.");
         } else if (!isLastStatement(methodTree, lastStatementTree)) {
