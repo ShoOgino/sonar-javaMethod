@@ -1,6 +1,5 @@
   private static boolean hasProperEquals(MethodTree methodTree) {
-    Symbol.MethodSymbol symbol = methodTree.symbol();
-    Symbol.TypeSymbol enclosingClass = symbol.enclosingClass();
-    return enclosingClass != null && enclosingClass.memberSymbols().stream().anyMatch(MethodNamedEqualsCheck::isEqualsMethod);
+    Symbol.TypeSymbol enclosingClass = methodTree.symbol().enclosingClass();
+    return enclosingClass != null && enclosingClass.lookupSymbols(EQUALS).stream().anyMatch(EQUALS_MATCHER::matches);
   }
 
