@@ -1,12 +1,4 @@
   private static boolean declaresCloneMethod(Symbol.TypeSymbol classSymbol) {
-    for (Symbol memberSymbol : classSymbol.lookupSymbols("clone")) {
-      if (memberSymbol.isMethodSymbol()) {
-        Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) memberSymbol;
-        if (methodSymbol.parameterTypes().isEmpty()) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return classSymbol.lookupSymbols("clone").stream().anyMatch(CLONE_MATCHER::matches);
   }
 

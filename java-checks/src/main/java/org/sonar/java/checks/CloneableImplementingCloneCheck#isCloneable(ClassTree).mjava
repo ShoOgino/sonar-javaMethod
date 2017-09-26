@@ -1,9 +1,4 @@
   private static boolean isCloneable(ClassTree classTree) {
-    for (TypeTree superInterface : classTree.superInterfaces()) {
-      if (superInterface.symbolType().is("java.lang.Cloneable")) {
-        return true;
-      }
-    }
-    return false;
+    return classTree.superInterfaces().stream().map(TypeTree::symbolType).anyMatch(t -> t.is("java.lang.Cloneable"));
   }
 
