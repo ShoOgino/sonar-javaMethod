@@ -1,12 +1,4 @@
   private static boolean implementsEquals(Symbol.TypeSymbol symbol) {
-    for (Symbol equals : symbol.lookupSymbols("equals")) {
-      if (equals.isMethodSymbol()) {
-        List<Type> params = ((Symbol.MethodSymbol) equals).parameterTypes();
-        if (params.size() == 1 && params.get(0).is("java.lang.Object")) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return symbol.lookupSymbols("equals").stream().anyMatch(EQUALS_MATCHER::matches);
   }
 
