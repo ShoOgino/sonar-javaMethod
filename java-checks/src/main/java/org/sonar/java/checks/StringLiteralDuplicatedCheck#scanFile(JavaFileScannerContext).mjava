@@ -1,21 +1,23 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
     occurrences.clear();
+    constants.clear();
     scan(context.getTree());
     for (String entry : occurrences.keySet()) {
       Collection<LiteralTree> literalTrees = occurrences.get(entry);
-      int literalOccurence = literalTrees.size();
-      if (literalOccurence >= threshold) {
-        List<JavaFileScannerContext.Location> flow = new ArrayList<>();
-        for (Tree element : literalTrees) {
-          flow.add(new JavaFileScannerContext.Location("Duplication", element));
-        }
+      int literalOccurrence = literalTrees.size();
+      if (constants.containsKey(entry) && literalOccurrence > 1) {
+        VariableTree constant = constants.get(entry);
+        List<LiteralTree> duplications = literalTrees.stream().filter(literal -> literal.parent() != constant).collect(Collectors.toList());
+        context.reportIssue(this, duplications.iterator().next(),
+          "Use already defined constant '" + constant.simpleName() + "' instead of duplicating literal " + entry + ".",
+          secondaryLocations(duplications.subList(1, duplications.size())), literalOccurrence);
+      } else if (literalOccurrence >= threshold) {
         context.reportIssue(
           this,
-          Iterables.getFirst(literalTrees, null),
-          "Define a constant instead of duplicating this literal " + entry + " " + literalOccurence + " times.",
-          flow,
-          literalOccurence);
+          literalTrees.iterator().next(),
+          "Define a constant instead of duplicating this literal " + entry + " " + literalOccurrence + " times.",
+          secondaryLocations(literalTrees), literalOccurrence);
       }
     }
   }
