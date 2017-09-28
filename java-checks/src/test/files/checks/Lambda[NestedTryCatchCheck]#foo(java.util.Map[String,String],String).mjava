@@ -1,0 +1,14 @@
+  String foo(java.util.Map<String, String> myMap, String key) throws MyException {
+    try {
+      return myMap.computeIfAbsent(key, k -> {
+        try { // Compliant - within body of lambda
+          return getValue(key);
+        } catch (Exception e) {
+          throw new MyRuntimeException();
+        }
+      });
+    } catch (MyRuntimeException e) {
+      throw new MyException();
+    }
+  }
+
