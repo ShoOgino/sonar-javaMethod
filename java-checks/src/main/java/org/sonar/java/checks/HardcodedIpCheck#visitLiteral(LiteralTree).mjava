@@ -1,9 +1,10 @@
   @Override
   public void visitLiteral(LiteralTree tree) {
     if (tree.is(Tree.Kind.STRING_LITERAL)) {
-      IP.reset(tree.value());
+      String value = LiteralUtils.trimQuotes(tree.value());
+      IP.reset(value);
       if (IP.matches()) {
-        String ip = IP.group(1);
+        String ip = IP.group("ip");
         if (areAllBelow256(Splitter.on('.').split(ip))) {
           context.reportIssue(this, tree, "Make this IP \"" + ip + "\" address configurable.");
         }
