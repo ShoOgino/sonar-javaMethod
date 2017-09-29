@@ -1,0 +1,15 @@
+  private void reportUnusedParameters(List<IdentifierTree> unused) {
+    List<JavaFileScannerContext.Location> locations = new ArrayList<>();
+    for (IdentifierTree identifier : unused) {
+      locations.add(new JavaFileScannerContext.Location("Remove this unused method parameter " + identifier.name() + "\".", identifier));
+    }
+    IdentifierTree firstUnused = unused.get(0);
+    String msg;
+    if (unused.size() > 1) {
+      msg = "Remove these unused method parameters.";
+    } else {
+      msg = "Remove this unused method parameter \"" + firstUnused.name() + "\".";
+    }
+    reportIssue(firstUnused, msg, locations, null);
+  }
+
