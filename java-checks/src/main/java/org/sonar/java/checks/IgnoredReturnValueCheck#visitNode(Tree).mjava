@@ -1,10 +1,16 @@
   @Override
   public void visitNode(Tree tree) {
-    ExpressionStatementTree est = (ExpressionStatementTree) tree;
-    if (est.expression().is(Tree.Kind.METHOD_INVOCATION)) {
-      MethodInvocationTree mit = (MethodInvocationTree) est.expression();
-      if (!isVoidOrUnknown(mit.symbolType()) && isCheckedType(mit.symbol().owner().type())
-        && mit.symbol().isPublic() && !((JavaSymbol.MethodJavaSymbol) mit.symbol()).isConstructor()) {
+    ExpressionTree expr = ((ExpressionStatementTree) tree).expression();
+    if (expr.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) expr;
+      if (EXCLUDED.anyMatch(mit)) {
+        return;
+      }
+      Symbol methodSymbol = mit.symbol();
+      if (!isVoidOrUnknown(mit.symbolType())
+        && isCheckedType(methodSymbol.owner().type())
+        && methodSymbol.isPublic()
+        && !isConstructor(methodSymbol)) {
         IdentifierTree methodName = MethodsHelper.methodName(mit);
         reportIssue(methodName, "The return value of \"" + methodName.name() + "\" must be used.");
       }
