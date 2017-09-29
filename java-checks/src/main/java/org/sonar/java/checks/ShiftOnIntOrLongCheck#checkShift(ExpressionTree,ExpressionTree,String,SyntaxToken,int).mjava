@@ -1,9 +1,10 @@
-  private void checkShift(ExpressionTree tree, ExpressionTree shift, @Nullable String identifier, SyntaxToken operatorToken) {
+  private void checkShift(ExpressionTree tree, ExpressionTree shift, @Nullable String identifier, SyntaxToken operatorToken,
+                          int treeIndex) {
     Long literalValue = LiteralUtils.longLiteralValue(shift);
     if (literalValue != null) {
       int numericalBase = getNumericalBase(tree);
       long reducedNumberBits = literalValue % numericalBase;
-      if (isInvalidShift(reducedNumberBits, literalValue, numericalBase)) {
+      if (isInvalidShift(reducedNumberBits, literalValue, numericalBase, operatorToken, treeIndex)) {
         reportIssue(operatorToken, getMessage(reducedNumberBits, numericalBase, identifier));
       }
     }

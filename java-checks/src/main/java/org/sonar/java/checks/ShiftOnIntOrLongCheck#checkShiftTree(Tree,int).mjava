@@ -1,0 +1,24 @@
+  private void checkShiftTree(Tree tree, int treeIndex) {
+    String identifier;
+    ExpressionTree shift;
+    SyntaxToken operatorToken;
+
+    if (tree.is(Kind.LEFT_SHIFT, Kind.RIGHT_SHIFT)) {
+      BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
+      if (isZeroMaskShift(binaryExpressionTree)) {
+        // No issue should be reported for "1 << 0" or "1 >> 0"
+        return;
+      }
+      identifier = getIdentifierName(binaryExpressionTree.leftOperand());
+      shift = binaryExpressionTree.rightOperand();
+      operatorToken = binaryExpressionTree.operatorToken();
+    } else {
+      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) tree;
+      identifier = getIdentifierName(assignmentExpressionTree.variable());
+      shift = assignmentExpressionTree.expression();
+      operatorToken = assignmentExpressionTree.operatorToken();
+    }
+
+    checkShift((ExpressionTree) tree, shift, identifier, operatorToken, treeIndex);
+  }
+
