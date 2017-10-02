@@ -1,0 +1,6 @@
+  private static boolean isExcluded(MethodInvocationTree mit) {
+    String methodName = mit.symbol().name();
+    return mit.symbol().isUnknown() || EXCLUDED.anyMatch(mit) ||
+      (isInTryCatch(mit) && (EXCLUDED_PREFIX.stream().anyMatch(methodName::startsWith) || STRING_GET_BYTES.matches(mit)));
+  }
+
