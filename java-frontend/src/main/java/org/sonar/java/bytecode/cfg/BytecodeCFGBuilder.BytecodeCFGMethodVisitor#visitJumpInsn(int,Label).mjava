@@ -2,7 +2,9 @@
     public void visitJumpInsn(int opcode, Label label) {
       if (opcode == GOTO || opcode == JSR) {
         currentBlock.terminator = new Instruction(opcode);
-        currentBlock.successors = Collections.singletonList(blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor()));
+        List<Block> successors = new ArrayList<>();
+        successors.add(blockByLabel.computeIfAbsent(label, l -> currentBlock.createSuccessor()));
+        currentBlock.successors = successors;
         currentBlock = null;
         return;
       }

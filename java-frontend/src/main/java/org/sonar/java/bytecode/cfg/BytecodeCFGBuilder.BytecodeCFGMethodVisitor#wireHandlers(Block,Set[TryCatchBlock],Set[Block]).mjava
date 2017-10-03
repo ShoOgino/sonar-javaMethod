@@ -1,0 +1,12 @@
+    private void wireHandlers(Block from, Set<TryCatchBlock> tryCatchBlocks, Set<Block> visited) {
+      Set<TryCatchBlock> newTryCatchBlocks = new HashSet<>(tryCatchBlocks);
+      newTryCatchBlocks.removeAll(handlersEndingWith(from));
+      newTryCatchBlocks.addAll(handlersStartingWith(from));
+      Set<Block> newVisited = new HashSet<>(visited);
+      newVisited.add(from);
+      from.successors().stream()
+        .filter(b -> !newVisited.contains(b))
+        .forEach(b -> wireHandlers(b, newTryCatchBlocks, newVisited));
+      newTryCatchBlocks.forEach(tcb -> from.successors.add(tcb.blockHandler));
+    }
+
