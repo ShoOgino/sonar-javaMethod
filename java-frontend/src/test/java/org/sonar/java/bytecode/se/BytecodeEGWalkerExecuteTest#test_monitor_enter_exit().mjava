@@ -1,0 +1,12 @@
+  @Test
+  public void test_monitor_enter_exit() throws Exception {
+    int opcodes[] = {Opcodes.MONITORENTER, Opcodes.MONITOREXIT};
+
+    for (int opcode : opcodes) {
+      ProgramState programState = execute(new Instruction(opcode), ProgramState.EMPTY_STATE.stackValue(new SymbolicValue()));
+      assertEmptyStack(programState);
+
+      assertThatThrownBy(() -> execute(new Instruction(opcode))).hasMessage(Printer.OPCODES[opcode] + " needs 1 values on stack");
+    }
+  }
+

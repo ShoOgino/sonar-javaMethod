@@ -1,0 +1,13 @@
+  public boolean executeCheckPreStatement(Instruction instruction) {
+    this.currentInstruction = instruction;
+    ProgramState ps;
+    for (BytecodeSECheck checker : checks) {
+      ps = checker.checkPreStatement(this, instruction);
+      if (ps == null) {
+        return false;
+      }
+      explodedGraphWalker.programState = ps;
+    }
+    return true;
+  }
+

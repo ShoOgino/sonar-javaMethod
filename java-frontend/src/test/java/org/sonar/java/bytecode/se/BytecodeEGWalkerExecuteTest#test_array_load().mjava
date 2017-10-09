@@ -1,0 +1,20 @@
+  @Test
+  public void test_array_load() throws Exception {
+    int[] loadRefOpcodes = new int[] {Opcodes.IALOAD, Opcodes.LALOAD, Opcodes.FALOAD, Opcodes.DALOAD, Opcodes.AALOAD, Opcodes.BALOAD, Opcodes.CALOAD, Opcodes.SALOAD};
+    SymbolicValue array = new SymbolicValue();
+    SymbolicValue index = new SymbolicValue();
+    ProgramState initState = ProgramState.EMPTY_STATE.stackValue(array).stackValue(index);
+    for (int opcode : loadRefOpcodes) {
+      ProgramState programState = execute(new Instruction(opcode), initState);
+      if (opcode != Opcodes.AALOAD) {
+        assertStack(programState, ObjectConstraint.NOT_NULL);
+      } else {
+        ProgramState.Pop result = programState.unstackValue(1);
+        assertThat(result.values).hasSize(1);
+        assertThat(result.state).isEqualTo(ProgramState.EMPTY_STATE);
+        assertThat(result.values.get(0)).isNotEqualTo(array);
+        assertThat(result.values.get(0)).isNotEqualTo(index);
+      }
+    }
+  }
+

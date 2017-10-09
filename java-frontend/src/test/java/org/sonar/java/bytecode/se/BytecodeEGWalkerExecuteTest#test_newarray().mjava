@@ -1,0 +1,13 @@
+  @Test
+  public void test_newarray() throws Exception {
+    SymbolicValue size = new SymbolicValue();
+    int[] opcodes = {Opcodes.NEWARRAY, Opcodes.ANEWARRAY};
+    for (int opcode : opcodes) {
+      ProgramState programState = execute(new Instruction(opcode), ProgramState.EMPTY_STATE.stackValue(size));
+      assertThat(programState.peekValue()).isNotEqualTo(size);
+      assertStack(programState, ObjectConstraint.NOT_NULL);
+
+      assertThatThrownBy(() -> execute(new Instruction(opcode), ProgramState.EMPTY_STATE)).hasMessage(Printer.OPCODES[opcode] + " needs 1 values on stack");
+    }
+  }
+

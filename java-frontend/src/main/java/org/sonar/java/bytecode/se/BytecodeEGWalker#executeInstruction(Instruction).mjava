@@ -1,0 +1,299 @@
+  @VisibleForTesting
+  void executeInstruction(Instruction instruction) {
+    if(!checkerDispatcher.executeCheckPreStatement(instruction)) {
+      return;
+    }
+    ProgramState.Pop pop;
+    SymbolicValue sv;
+    switch (instruction.opcode) {
+      case NOP:
+        break;
+      case ACONST_NULL:
+        programState = programState.stackValue(SymbolicValue.NULL_LITERAL);
+        break;
+      case ICONST_M1:
+      case ICONST_0:
+      case ICONST_1:
+      case ICONST_2:
+      case ICONST_3:
+      case ICONST_4:
+      case ICONST_5:
+      case LCONST_0:
+      case LCONST_1:
+      case FCONST_0:
+      case FCONST_1:
+      case FCONST_2:
+      case DCONST_0:
+      case DCONST_1:
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        if (instruction.opcode == ICONST_1 || instruction.opcode == LCONST_1 || instruction.opcode == FCONST_1 || instruction.opcode == DCONST_1) {
+          programState = programState.addConstraint(sv, BooleanConstraint.TRUE);
+        }
+        if (instruction.opcode == ICONST_0 || instruction.opcode == LCONST_0 || instruction.opcode == FCONST_0  || instruction.opcode == DCONST_0  ) {
+          programState = programState.addConstraint(sv, BooleanConstraint.FALSE).addConstraint(sv, DivisionByZeroCheck.ZeroConstraint.ZERO);
+        } else {
+          programState = programState.addConstraint(sv, DivisionByZeroCheck.ZeroConstraint.NON_ZERO);
+        }
+        break;
+      case BIPUSH:
+      case SIPUSH:
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL).addConstraint(sv,DivisionByZeroCheck.ZeroConstraint.NON_ZERO);
+        if(instruction.operand == 0) {
+          programState = programState.addConstraint(sv, BooleanConstraint.FALSE).addConstraint(sv, DivisionByZeroCheck.ZeroConstraint.ZERO);
+        } else if (instruction.operand == 1) {
+          programState = programState.addConstraint(sv, BooleanConstraint.TRUE);
+        }
+        break;
+      case LDC:
+        createNonNullValue(instruction);
+        break;
+      case ILOAD:
+      case LLOAD:
+      case FLOAD:
+      case DLOAD:
+      case ALOAD:
+        SymbolicValue value = programState.getValue(instruction.operand);
+        Preconditions.checkNotNull(value, "Loading a symbolic value unindexed");
+        programState = programState.stackValue(value);
+        break;
+      case IALOAD:
+      case LALOAD:
+      case FALOAD:
+      case DALOAD:
+      case AALOAD:
+      case BALOAD:
+      case CALOAD:
+      case SALOAD:
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.unstackValue(2).state.stackValue(sv);
+        if (instruction.opcode != AALOAD) {
+          programState = programState.addConstraint(sv, ObjectConstraint.NOT_NULL);
+        }
+        break;
+      case ISTORE:
+      case LSTORE:
+      case FSTORE:
+      case DSTORE:
+      case ASTORE:
+        pop = popStack(1, instruction.opcode);
+        programState = pop.state.put(instruction.operand, pop.values.get(0));
+        break;
+      case IASTORE:
+      case LASTORE:
+      case FASTORE:
+      case DASTORE:
+      case AASTORE:
+      case BASTORE:
+      case CASTORE:
+      case SASTORE:
+        programState = programState.unstackValue(3).state;
+        break;
+      case POP:
+        programState = programState.unstackValue(1).state;
+        break;
+      case POP2:
+        programState = programState.unstackValue(2).state;
+        break;
+      case DUP:
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "DUP on empty stack");
+        programState = programState.stackValue(sv);
+        break;
+      case DUP_X1:
+        pop = popStack(2, instruction.opcode);
+        programState = pop.state.stackValue(pop.values.get(0)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        break;
+      case DUP_X2:
+        pop = popStack(3, instruction.opcode);
+        programState = pop.state.stackValue(pop.values.get(0)).stackValue(pop.values.get(2)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        break;
+      case DUP2:
+        pop = popStack(2, instruction.opcode);
+        programState = pop.state.stackValue(pop.values.get(1)).stackValue(pop.values.get(0)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        break;
+      case DUP2_X1:
+        pop = popStack(3, instruction.opcode);
+        programState = pop.state
+          .stackValue(pop.values.get(1))
+          .stackValue(pop.values.get(0))
+          .stackValue(pop.values.get(2))
+          .stackValue(pop.values.get(1))
+          .stackValue(pop.values.get(0));
+        break;
+      case DUP2_X2:
+        pop = popStack(4, instruction.opcode);
+        programState = pop.state
+          .stackValue(pop.values.get(1))
+          .stackValue(pop.values.get(0))
+          .stackValue(pop.values.get(3))
+          .stackValue(pop.values.get(2))
+          .stackValue(pop.values.get(1))
+          .stackValue(pop.values.get(0));
+        break;
+      case SWAP:
+        pop = popStack(2, instruction.opcode);
+        programState = pop.state.stackValue(pop.values.get(0)).stackValue(pop.values.get(1));
+        break;
+      case IADD:
+      case LADD:
+      case FADD:
+      case DADD:
+      case ISUB:
+      case LSUB:
+      case FSUB:
+      case DSUB:
+      case IMUL:
+      case LMUL:
+      case FMUL:
+      case DMUL:
+      case IDIV:
+      case LDIV:
+      case FDIV:
+      case DDIV:
+      case IREM:
+      case LREM:
+      case FREM:
+      case DREM:
+      case ISHL:
+      case LSHL:
+      case ISHR:
+      case LSHR:
+      case IUSHR:
+      case LUSHR:
+        pop = popStack(2, instruction.opcode);
+        SymbolicValue sv1 = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv1).addConstraint(sv1, ObjectConstraint.NOT_NULL);
+        break;
+      case INEG:
+      case LNEG:
+      case FNEG:
+      case DNEG:
+        pop = popStack(1, instruction.opcode);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        break;
+      case IAND:
+      case LAND:
+      case IOR:
+      case LOR:
+      case IXOR:
+      case LXOR:
+        pop = popStack(2, instruction.opcode);
+        sv = constraintManager.createBinarySymbolicValue(instruction, pop.valuesAndSymbols);
+        programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        break;
+      case IINC:
+        int index = instruction.operand;
+        SymbolicValue existing = programState.getValue(index);
+        Preconditions.checkNotNull(existing, "Local variable " + index + " not found");
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.put(index, sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        break;
+      case I2L:
+      case I2F:
+      case I2D:
+      case L2I:
+      case L2F:
+      case L2D:
+      case F2I:
+      case F2L:
+      case F2D:
+      case D2I:
+      case D2L:
+      case D2F:
+      case I2B:
+      case I2C:
+      case I2S:
+        // TODO SONARJAVA-2508 handle value conversion
+        break;
+      case LCMP:
+      case FCMPL:
+      case FCMPG:
+      case DCMPL:
+      case DCMPG:
+        pop = popStack(2, instruction.opcode);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        break;
+      case IRETURN:
+      case LRETURN:
+      case FRETURN:
+      case DRETURN:
+      case ARETURN:
+        programState.storeExitValue();
+        programState = programState.unstackValue(1).state;
+        break;
+      case RETURN:
+        // do nothing
+        break;
+      case GETSTATIC:
+        // TODO SONARJAVA-2510 associated symbolic value with symbol
+        programState = programState.stackValue(constraintManager.createSymbolicValue(instruction));
+        break;
+      case PUTSTATIC:
+        pop = programState.unstackValue(1);
+        programState = pop.state;
+        break;
+      case GETFIELD:
+        pop = popStack(1, instruction.opcode);
+        programState = pop.state.stackValue(constraintManager.createSymbolicValue(instruction));
+        break;
+      case PUTFIELD:
+        pop = popStack(2, instruction.opcode);
+        programState = pop.state;
+        break;
+      case INVOKEVIRTUAL:
+      case INVOKESPECIAL:
+      case INVOKESTATIC:
+      case INVOKEINTERFACE:
+        if (handleMethodInvocation(instruction)) {
+          // when yields are available, do not execute post check on this node
+          return;
+        }
+        break;
+      case INVOKEDYNAMIC:
+        // TODO SONARJAVA-2512
+        break;
+      case NEW:
+        createNonNullValue(instruction);
+        break;
+      case NEWARRAY:
+      case ANEWARRAY:
+      case ARRAYLENGTH:
+        pop = popStack(1, instruction.opcode);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        break;
+      case ATHROW:
+        pop = popStack(1, instruction.opcode);
+        programState = pop.state.stackValue(constraintManager.createExceptionalSymbolicValue(null));
+        programState.storeExitValue();
+        break;
+      case CHECKCAST:
+        Preconditions.checkState(programState.peekValue() != null, "CHECKCAST needs 1 value on stack");
+        break;
+      case INSTANCEOF:
+        pop = popStack(1, instruction.opcode);
+        SymbolicValue.InstanceOfSymbolicValue instanceOf = new SymbolicValue.InstanceOfSymbolicValue();
+        instanceOf.computedFrom(pop.valuesAndSymbols);
+        programState = pop.state.stackValue(instanceOf);
+        break;
+      case MONITORENTER:
+      case MONITOREXIT:
+        pop = popStack(1, instruction.opcode);
+        programState = pop.state;
+        break;
+      case MULTIANEWARRAY:
+        Instruction.MultiANewArrayInsn multiANewArrayInsn = (Instruction.MultiANewArrayInsn) instruction;
+        pop = popStack(multiANewArrayInsn.dim, instruction.opcode);
+        SymbolicValue arrayRef = new SymbolicValue();
+        programState = pop.state.stackValue(arrayRef).addConstraint(arrayRef, ObjectConstraint.NOT_NULL);
+        break;
+      default:
+        throw new IllegalStateException("Instruction not handled. " + Printer.OPCODES[instruction.opcode]);
+    }
+    checkerDispatcher.executeCheckPostStatement(instruction);
+  }
+

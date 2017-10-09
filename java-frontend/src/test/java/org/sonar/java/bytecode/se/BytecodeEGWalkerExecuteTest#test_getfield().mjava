@@ -1,0 +1,11 @@
+  @Test
+  public void test_getfield() throws Exception {
+    SymbolicValue objectRef = new SymbolicValue();
+    ProgramState programState = execute(new Instruction(Opcodes.GETFIELD), ProgramState.EMPTY_STATE.stackValue(objectRef));
+    SymbolicValue fieldValue = programState.peekValue();
+    assertThat(fieldValue).isNotNull();
+    assertThat(fieldValue).isNotEqualTo(objectRef);
+
+    assertThatThrownBy(() -> execute(new Instruction(Opcodes.GETFIELD))).hasMessage("GETFIELD needs 1 values on stack");
+  }
+

@@ -1,0 +1,14 @@
+  @Test
+  public void test_iinc() throws Exception {
+    SymbolicValue sv = new SymbolicValue();
+    ProgramState programState = ProgramState.EMPTY_STATE.put(2, sv);
+    programState = execute(new Instruction(Opcodes.IINC, 2), programState);
+    SymbolicValue result = programState.getValue(2);
+    assertThat(result).isNotEqualTo(sv);
+    assertThat(programState.getConstraint(result, ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
+    assertEmptyStack(programState);
+
+    assertThatThrownBy(() -> execute(new Instruction(Opcodes.IINC, 1), ProgramState.EMPTY_STATE))
+      .hasMessage("Local variable 1 not found");
+  }
+

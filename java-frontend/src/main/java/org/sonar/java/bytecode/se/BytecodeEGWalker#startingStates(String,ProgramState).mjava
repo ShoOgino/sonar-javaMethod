@@ -5,14 +5,14 @@
     ProgramState state = currentState;
     if(!methodBehavior.isStaticMethod()) {
       // Add a sv for "this"
-      SymbolicValue thisSV = constraintManager.createSymbolicValue((BytecodeCFGBuilder.Instruction) null);
+      SymbolicValue thisSV = constraintManager.createSymbolicValue((Instruction) null);
       methodBehavior.addParameter(thisSV);
       state = currentState.addConstraint(thisSV, ObjectConstraint.NOT_NULL).put(0, thisSV);
       parameterIdx = 1;
     }
     Type[] argumentTypes = Type.getArgumentTypes(signature.substring(signature.indexOf('(')));
     for (Type argumentType: argumentTypes) {
-      SymbolicValue sv = constraintManager.createSymbolicValue((BytecodeCFGBuilder.Instruction) null);
+      SymbolicValue sv = constraintManager.createSymbolicValue((Instruction) null);
       methodBehavior.addParameter(sv);
       state = state.put(parameterIdx, sv);
       parameterIdx += argumentType.getSize();

@@ -1,0 +1,10 @@
+  @Test
+  public void test_putfield() throws Exception {
+    SymbolicValue objectRef = new SymbolicValue();
+    SymbolicValue value = new SymbolicValue();
+    ProgramState programState = execute(new Instruction(Opcodes.PUTFIELD), ProgramState.EMPTY_STATE.stackValue(objectRef).stackValue(value));
+    assertThat(programState.peekValue()).isNull();
+
+    assertThatThrownBy(() -> execute(new Instruction(Opcodes.PUTFIELD), ProgramState.EMPTY_STATE.stackValue(value))).hasMessage("PUTFIELD needs 2 values on stack");
+  }
+

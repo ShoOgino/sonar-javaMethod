@@ -1,6 +1,7 @@
-  private void handleBlockExit(ProgramPoint programPosition) {
+  @VisibleForTesting
+  void handleBlockExit(ProgramPoint programPosition) {
     BytecodeCFGBuilder.Block block = (BytecodeCFGBuilder.Block) programPosition.block;
-    BytecodeCFGBuilder.Instruction terminator = block.terminator();
+    Instruction terminator = block.terminator();
     ProgramState.Pop pop;
     ProgramState ps;
     List<ProgramState.SymbolicValueSymbol> symbolicValueSymbols;
@@ -44,8 +45,13 @@
           symbolicValueSymbols.add(new ProgramState.SymbolicValueSymbol(SymbolicValue.NULL_LITERAL, null));
           ps = pop.state;
           break;
+        case TABLESWITCH:
+        case LOOKUPSWITCH:
+          pop = programState.unstackValue(1);
+          programPosition.block.successors().forEach(b -> enqueue(new ProgramPoint(b), pop.state));
+          return;
         default:
-          throw new IllegalStateException("Unexpected terminator " + terminator.opcode);
+          throw new IllegalStateException("Unexpected terminator " + Printer.OPCODES[terminator.opcode]);
       }
       programState = ps.stackValue(constraintManager.createBinarySymbolicValue(terminator, symbolicValueSymbols));
       Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
@@ -54,7 +60,6 @@
       pair.a.stream().forEach(s -> enqueue(falsePP, s));
       pair.b.stream().forEach(s -> enqueue(truePP, s));
     } else {
-      //  Table switch and lookup
       // TODO : filter some node of the EG depending of the exceptionType in the successor.
       programPosition.block.successors().forEach(b -> enqueue(new ProgramPoint(b), programState));
     }

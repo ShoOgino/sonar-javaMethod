@@ -1,0 +1,11 @@
+  @Test
+  public void test_xReturn() throws Exception {
+    SymbolicValue returnValue = new SymbolicValue();
+    int[] opcodes = {Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN, Opcodes.ARETURN};
+    for (int opcode : opcodes) {
+      ProgramState programState = execute(new Instruction(opcode), ProgramState.EMPTY_STATE.stackValue(returnValue));
+      assertThat(programState.peekValue()).isNull();
+      assertThat(programState.exitValue()).isEqualTo(returnValue);
+    }
+  }
+
