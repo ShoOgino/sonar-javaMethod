@@ -1,23 +1,7 @@
   @Override
   public void visitBinaryExpression(BinaryExpressionTree tree) {
-    super.visitBinaryExpression(tree);
-    JavaType left = getType(tree.leftOperand());
-    JavaType right = getType(tree.rightOperand());
-    // TODO avoid nulls
-    if (left == null || right == null) {
-      registerType(tree, Symbols.unknownType);
-      return;
-    }
-    if("+".equals(tree.operatorToken().text()) && (left == symbols.stringType || right == symbols.stringType)) {
-      registerType(tree, symbols.stringType);
-      return;
-    }
-    JavaSymbol symbol = resolve.findMethod(semanticModel.getEnv(tree), symbols.predefClass.type, tree.operatorToken().text(), ImmutableList.of(left, right)).symbol();
-    if (symbol.kind != JavaSymbol.MTH) {
-      // not found
-      registerType(tree, Symbols.unknownType);
-      return;
-    }
-    registerType(tree, ((MethodJavaType) symbol.type).resultType);
+    tree.leftOperand().accept(this);
+    tree.rightOperand().accept(this);
+    registerBinaryExpressionType(tree);
   }
 

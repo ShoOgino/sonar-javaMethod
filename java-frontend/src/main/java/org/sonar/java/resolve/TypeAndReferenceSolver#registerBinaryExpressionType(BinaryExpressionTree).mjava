@@ -1,0 +1,15 @@
+  private void registerBinaryExpressionType(BinaryExpressionTree tree) {
+    JavaType left = getType(tree.leftOperand());
+    JavaType right = getType(tree.rightOperand());
+    // TODO avoid nulls
+    if (left == null || right == null) {
+      registerType(tree, Symbols.unknownType);
+      return;
+    }
+    if ("+".equals(tree.operatorToken().text()) && (left == symbols.stringType || right == symbols.stringType)) {
+      registerType(tree, symbols.stringType);
+      return;
+    }
+    registerType(tree, binaryExpressionType(tree, left, right));
+  }
+

@@ -1,0 +1,9 @@
+  private JavaType binaryExpressionType(BinaryExpressionTree tree, JavaType left, JavaType right) {
+    JavaSymbol symbol = resolve.findMethod(semanticModel.getEnv(tree), symbols.predefClass.type, tree.operatorToken().text(), ImmutableList.of(left, right)).symbol();
+    if (symbol.kind != JavaSymbol.MTH) {
+      // not found
+      return Symbols.unknownType;
+    }
+    return ((MethodJavaType) symbol.type).resultType;
+  }
+
