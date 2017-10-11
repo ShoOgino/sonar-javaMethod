@@ -1,0 +1,12 @@
+  public MethodBehavior getMethodBehavior(String signature, @Nullable Symbol.MethodSymbol methodSymbol, SquidClassLoader classLoader) {
+    methodBehavior = behaviorCache.methodBehaviorForSymbol(signature);
+    if(!methodBehavior.isComplete()) {
+      execute(signature, classLoader);
+      if (methodSymbol != null) {
+        methodBehavior.setMethodSymbol(methodSymbol);
+      }
+      methodBehavior.completed();
+    }
+    return methodBehavior;
+  }
+
