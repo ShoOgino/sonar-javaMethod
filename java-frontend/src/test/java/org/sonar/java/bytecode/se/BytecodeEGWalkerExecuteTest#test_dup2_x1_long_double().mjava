@@ -1,0 +1,12 @@
+  @Test
+  public void test_dup2_x1_long_double() throws Exception {
+    SymbolicValue normalSv = new SymbolicValue();
+    SymbolicValue longSv = new SymbolicValue();
+    SymbolicValue another = new SymbolicValue();
+    ProgramState startingState = ProgramState.EMPTY_STATE.stackValue(another).stackValue(normalSv).stackValue(longSv);
+    startingState = setDoubleOrLong(startingState, longSv, true);
+    ProgramState programState = execute(new Instruction(Opcodes.DUP2_X1), startingState);
+    ProgramState.Pop pop = programState.unstackValue(5);
+    assertThat(pop.values).containsExactly(longSv, normalSv, longSv, another);
+  }
+

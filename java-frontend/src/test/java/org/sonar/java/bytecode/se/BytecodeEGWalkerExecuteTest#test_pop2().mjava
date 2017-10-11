@@ -5,5 +5,7 @@
     SymbolicValue sv3 = new SymbolicValue();
     ProgramState programState = execute(new Instruction(Opcodes.POP2), ProgramState.EMPTY_STATE.stackValue(sv1).stackValue(sv2).stackValue(sv3));
     assertThat(programState.peekValue()).isEqualTo(sv1);
+
+    assertThatThrownBy(() -> execute(new Instruction(Opcodes.POP2))).hasMessage("POP2 on empty stack");
   }
 

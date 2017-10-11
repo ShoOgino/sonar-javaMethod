@@ -6,6 +6,9 @@
     int idx = 0;
     for (SymbolicValue sv : symbolicValues) {
       ConstraintsByDomain constraintsByDomain = ps.getConstraints(sv);
+      if (constraintsByDomain != null) {
+        constraintsByDomain = constraintsByDomain.remove(BytecodeEGWalker.StackValueCategoryConstraint.class);
+      }
       for (Constraint expectedConstraint : constraints[idx]) {
         if (expectedConstraint != null) {
           Class<? extends Constraint> expectedConstraintDomain = expectedConstraint.getClass();
@@ -16,7 +19,7 @@
           assertThat(constraintsByDomain).isNull();
         }
       }
-      if(constraintsByDomain != null) {
+      if (constraintsByDomain != null) {
         assertThat(constraintsByDomain.isEmpty()).isTrue();
       }
       idx++;

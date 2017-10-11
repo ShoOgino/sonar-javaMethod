@@ -26,6 +26,7 @@
       case DCONST_0:
       case DCONST_1:
         sv = constraintManager.createSymbolicValue(instruction);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         programState = programState.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
         if (instruction.opcode == ICONST_1 || instruction.opcode == LCONST_1 || instruction.opcode == FCONST_1 || instruction.opcode == DCONST_1) {
           programState = programState.addConstraint(sv, BooleanConstraint.TRUE);
@@ -47,7 +48,9 @@
         }
         break;
       case LDC:
-        createNonNullValue(instruction);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case ILOAD:
       case LLOAD:
@@ -94,7 +97,10 @@
         programState = programState.unstackValue(1).state;
         break;
       case POP2:
-        programState = programState.unstackValue(2).state;
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "POP2 on empty stack");
+        pop = isDoubleOrLong(sv) ? popStack(1, instruction.opcode) : popStack(2, instruction.opcode);
+        programState = pop.state;
         break;
       case DUP:
         sv = programState.peekValue();
@@ -103,34 +109,54 @@
         break;
       case DUP_X1:
         pop = popStack(2, instruction.opcode);
-        programState = pop.state.stackValue(pop.values.get(0)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        programState = stackValues(pop, 0, 1, 0);
         break;
       case DUP_X2:
-        pop = popStack(3, instruction.opcode);
-        programState = pop.state.stackValue(pop.values.get(0)).stackValue(pop.values.get(2)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        sv = programState.peekValue(1);
+        if (isDoubleOrLong(sv)) {
+          pop = popStack(2, instruction.opcode);
+          programState = stackValues(pop, 0, 1, 0);
+        } else {
+          pop = popStack(3, instruction.opcode);
+          programState = stackValues(pop, 0, 2, 1, 0);
+        }
         break;
       case DUP2:
-        pop = popStack(2, instruction.opcode);
-        programState = pop.state.stackValue(pop.values.get(1)).stackValue(pop.values.get(0)).stackValue(pop.values.get(1)).stackValue(pop.values.get(0));
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "DUP2 needs at least 1 value on stack");
+        if (isDoubleOrLong(sv)) {
+          pop = popStack(1, instruction.opcode);
+          programState = stackValues(pop, 0, 0);
+        } else {
+          pop = popStack(2, instruction.opcode);
+          programState = stackValues(pop, 1, 0, 1, 0);
+        }
         break;
       case DUP2_X1:
-        pop = popStack(3, instruction.opcode);
-        programState = pop.state
-          .stackValue(pop.values.get(1))
-          .stackValue(pop.values.get(0))
-          .stackValue(pop.values.get(2))
-          .stackValue(pop.values.get(1))
-          .stackValue(pop.values.get(0));
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "DUP2_X1 needs at least 1 value on stack");
+        if (isDoubleOrLong(sv)) {
+          pop = popStack(2, instruction.opcode);
+          programState = stackValues(pop, 0, 1, 0);
+        } else {
+          pop = popStack(3, instruction.opcode);
+          programState = stackValues(pop, 1, 0, 2, 1, 0);
+        }
         break;
       case DUP2_X2:
-        pop = popStack(4, instruction.opcode);
-        programState = pop.state
-          .stackValue(pop.values.get(1))
-          .stackValue(pop.values.get(0))
-          .stackValue(pop.values.get(3))
-          .stackValue(pop.values.get(2))
-          .stackValue(pop.values.get(1))
-          .stackValue(pop.values.get(0));
+        if (isDoubleOrLong(programState.peekValue()) && isDoubleOrLong(programState.peekValue(1))) {
+          pop = popStack(2, instruction.opcode);
+          programState = stackValues(pop, 0, 1, 0);
+        } else if (isDoubleOrLong(programState.peekValue(2))) {
+          pop = popStack(3, instruction.opcode);
+          programState = stackValues(pop, 1, 0, 2, 1, 0);
+        } else if (isDoubleOrLong(programState.peekValue())) {
+          pop = popStack(3, instruction.opcode);
+          programState = stackValues(pop, 0, 2, 1, 0);
+        } else {
+          pop = popStack(4, instruction.opcode);
+          programState = stackValues(pop, 1, 0, 3, 2, 1, 0);
+        }
         break;
       case SWAP:
         pop = popStack(2, instruction.opcode);
@@ -163,8 +189,9 @@
       case IUSHR:
       case LUSHR:
         pop = popStack(2, instruction.opcode);
-        SymbolicValue sv1 = constraintManager.createSymbolicValue(instruction);
-        programState = pop.state.stackValue(sv1).addConstraint(sv1, ObjectConstraint.NOT_NULL);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case INEG:
       case LNEG:
@@ -173,6 +200,7 @@
         pop = popStack(1, instruction.opcode);
         sv = constraintManager.createSymbolicValue(instruction);
         programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case IAND:
       case LAND:
@@ -183,6 +211,7 @@
         pop = popStack(2, instruction.opcode);
         sv = constraintManager.createBinarySymbolicValue(instruction, pop.valuesAndSymbols);
         programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case IINC:
         int index = instruction.operand;
@@ -192,21 +221,28 @@
         programState = programState.put(index, sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
         break;
       case I2L:
-      case I2F:
       case I2D:
-      case L2I:
-      case L2F:
-      case L2D:
-      case F2I:
       case F2L:
       case F2D:
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "%s needs value on stack", instruction);
+        programState = setDoubleOrLong(sv, true);
+        break;
+      case L2I:
+      case L2F:
       case D2I:
-      case D2L:
       case D2F:
+        sv = programState.peekValue();
+        Preconditions.checkNotNull(sv, "%s needs value on stack", instruction);
+        programState = setDoubleOrLong(sv, false);
+        break;
+      case D2L:
+      case I2F:
+      case L2D:
+      case F2I:
       case I2B:
       case I2C:
       case I2S:
-        // TODO SONARJAVA-2508 handle value conversion
         break;
       case LCMP:
       case FCMPL:
@@ -230,7 +266,9 @@
         break;
       case GETSTATIC:
         // TODO SONARJAVA-2510 associated symbolic value with symbol
-        programState = programState.stackValue(constraintManager.createSymbolicValue(instruction));
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(sv);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case PUTSTATIC:
         pop = programState.unstackValue(1);
@@ -238,7 +276,9 @@
         break;
       case GETFIELD:
         pop = popStack(1, instruction.opcode);
-        programState = pop.state.stackValue(constraintManager.createSymbolicValue(instruction));
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv);
+        programState = setDoubleOrLong(sv, instruction.isLongOrDoubleValue());
         break;
       case PUTFIELD:
         pop = popStack(2, instruction.opcode);
@@ -260,7 +300,9 @@
         programState = pop.state.stackValue(lambdaTargetInterface).addConstraint(lambdaTargetInterface, ObjectConstraint.NOT_NULL);
         break;
       case NEW:
-        createNonNullValue(instruction);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = programState.stackValue(sv);
+        programState = programState.addConstraint(sv, ObjectConstraint.NOT_NULL);
         break;
       case NEWARRAY:
       case ANEWARRAY:
@@ -295,7 +337,7 @@
         programState = pop.state.stackValue(arrayRef).addConstraint(arrayRef, ObjectConstraint.NOT_NULL);
         break;
       default:
-        throw new IllegalStateException("Instruction not handled. " + Printer.OPCODES[instruction.opcode]);
+        throw new IllegalStateException("Instruction not handled. " + instruction);
     }
     checkerDispatcher.executeCheckPostStatement(instruction);
   }

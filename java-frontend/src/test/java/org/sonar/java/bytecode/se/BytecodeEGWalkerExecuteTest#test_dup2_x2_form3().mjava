@@ -1,0 +1,13 @@
+  @Test
+  public void test_dup2_x2_form3() throws Exception {
+    SymbolicValue sv1 = new SymbolicValue();
+    SymbolicValue sv2 = new SymbolicValue();
+    SymbolicValue sv3 = new SymbolicValue();
+    SymbolicValue sv4 = new SymbolicValue();
+    ProgramState startingState = ProgramState.EMPTY_STATE.stackValue(sv4).stackValue(sv3).stackValue(sv2).stackValue(sv1);
+    startingState = setDoubleOrLong(startingState, sv3, true);
+    ProgramState programState = execute(new Instruction(Opcodes.DUP2_X2), startingState);
+    ProgramState.Pop pop = programState.unstackValue(6);
+    assertThat(pop.values).containsExactly(sv1, sv2, sv3, sv1, sv2, sv4);
+  }
+

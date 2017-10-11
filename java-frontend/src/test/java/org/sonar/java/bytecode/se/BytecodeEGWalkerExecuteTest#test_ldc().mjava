@@ -1,6 +1,14 @@
   @Test
   public void test_ldc() throws Exception {
-    ProgramState programState = execute(new Instruction(Opcodes.LDC));
+    ProgramState programState = execute(new Instruction.LdcInsn("a"));
     assertStack(programState, ObjectConstraint.NOT_NULL);
+    SymbolicValue sv = programState.peekValue();
+    assertThat(isDoubleOrLong(programState, sv)).isFalse();
+    programState = execute(new Instruction.LdcInsn(1L));
+    sv = programState.peekValue();
+    assertThat(isDoubleOrLong(programState, sv)).isTrue();
+    programState = execute(new Instruction.LdcInsn(1D));
+    sv = programState.peekValue();
+    assertThat(isDoubleOrLong(programState, sv)).isTrue();
   }
 

@@ -4,10 +4,10 @@
     SymbolicValue sv2 = new SymbolicValue();
     ProgramState programState = execute(new Instruction(Opcodes.DUP2), ProgramState.EMPTY_STATE.stackValue(sv2).stackValue(sv1));
     ProgramState.Pop pop = programState.unstackValue(4);
-    assertThat(pop.values).containsOnly(sv1, sv2, sv1, sv2);
+    assertThat(pop.values).containsExactly(sv1, sv2, sv1, sv2);
     assertThat(pop.state).isEqualTo(ProgramState.EMPTY_STATE);
 
     assertThatThrownBy(() -> execute(new Instruction(Opcodes.DUP2)))
-      .hasMessage("DUP2 needs 2 values on stack");
+      .hasMessage("DUP2 needs at least 1 value on stack");
   }
 
