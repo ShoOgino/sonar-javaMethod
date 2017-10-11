@@ -1,16 +1,5 @@
   private void assertCFGforMethod(String methodName, String expectedCFG) {
-    SquidClassLoader squidClassLoader = new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
-    File file = new File("src/test/java/org/sonar/java/bytecode/cfg/BytecodeCFGBuilderTest.java");
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel.createFor(tree, squidClassLoader);
-    List<Tree> classMembers = ((ClassTree) tree.types().get(0)).members();
-    Symbol.MethodSymbol symbol = classMembers.stream()
-      .filter( m-> m instanceof MethodTree)
-      .map(m -> ((MethodTree) m).symbol())
-      .filter(s -> methodName.equals(s.name()))
-      .findFirst()
-      .orElseThrow(IllegalStateException::new);
-    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilder.buildCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
+    BytecodeCFGBuilder.BytecodeCFG cfg = getBytecodeCFG(methodName, "src/test/java/org/sonar/java/bytecode/cfg/BytecodeCFGBuilderTest.java");
     StringBuilder sb = new StringBuilder();
     cfg.blocks.forEach(b-> sb.append(b.printBlock()));
     assertThat(sb.toString()).isEqualTo(expectedCFG);
