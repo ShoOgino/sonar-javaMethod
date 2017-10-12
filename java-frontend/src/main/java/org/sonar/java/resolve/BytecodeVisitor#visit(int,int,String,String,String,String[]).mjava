@@ -1,7 +1,7 @@
   @Override
   public void visit(int version, int flags, String name, @Nullable String signature, @Nullable String superName, @Nullable String[] interfaces) {
     Preconditions.checkState(name.endsWith(classSymbol.name), "Name : '%s' should ends with %s", name, classSymbol.name);
-    Preconditions.checkState(name.endsWith("package-info") || !BytecodeCompleter.isSynthetic(flags), "%s is synthetic", name);
+    Preconditions.checkState(name.endsWith("package-info") || isNotSynthetic(flags), "%s is synthetic", name);
     className = name;
     if (signature != null) {
       SignatureReader signatureReader = new SignatureReader(signature);
@@ -22,11 +22,10 @@
     //if class has already access flags set (inner class) then do not reset those.
     //The important access flags are the one defined in the outer class.
     if ((classSymbol.flags & Flags.ACCESS_FLAGS) != 0) {
-      classSymbol.flags |= bytecodeCompleter.filterBytecodeFlags(flags & ~Flags.ACCESS_FLAGS);
+      classSymbol.flags |= Flags.filterAccessBytecodeFlags(flags & ~Flags.ACCESS_FLAGS);
     } else {
-      classSymbol.flags |= bytecodeCompleter.filterBytecodeFlags(flags);
+      classSymbol.flags |= Flags.filterAccessBytecodeFlags(flags);
     }
     classSymbol.members = new Scope(classSymbol);
-
   }
 

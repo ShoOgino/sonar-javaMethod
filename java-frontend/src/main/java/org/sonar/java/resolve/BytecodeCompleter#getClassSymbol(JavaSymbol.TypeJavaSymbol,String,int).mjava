@@ -8,12 +8,13 @@
       if(owner == null) {
         owner = getEnclosingClass(shortName, packageName);
       }
+      int classFlags = Flags.filterAccessBytecodeFlags(flags);
       if (owner != null) {
         //handle innerClasses
         String name = Convert.innerClassName(Convert.shortName(owner.getFullyQualifiedName()), shortName);
-        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), name, owner, bytecodeName);
+        symbol = new JavaSymbol.TypeJavaSymbol(classFlags, name, owner, bytecodeName);
       } else {
-        symbol = new JavaSymbol.TypeJavaSymbol(filterBytecodeFlags(flags), shortName, enterPackage(packageName));
+        symbol = new JavaSymbol.TypeJavaSymbol(classFlags, shortName, enterPackage(packageName));
       }
       symbol.members = new Scope(symbol);
       symbol.typeParameters = new Scope(symbol);

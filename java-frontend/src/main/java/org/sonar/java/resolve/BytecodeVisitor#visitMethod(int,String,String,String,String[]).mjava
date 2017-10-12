@@ -2,7 +2,7 @@
   public MethodVisitor visitMethod(int flags, String name, String desc, @Nullable String signature, @Nullable String[] exceptions) {
     Preconditions.checkNotNull(name);
     Preconditions.checkNotNull(desc);
-    if (!BytecodeCompleter.isSynthetic(flags)) {
+    if (isNotSynthetic(flags)) {
       if((flags & Opcodes.ACC_BRIDGE) != 0) {
         LOG.warn("bridge method {} not marked as synthetic in class {}", name, className);
         return null;
@@ -14,8 +14,8 @@
           getCompletedClassSymbolsType(exceptions),
           classSymbol
       );
-      int methodFlags = bytecodeCompleter.filterBytecodeFlags(flags);
-      if(classSymbol.isInterface() && (methodFlags & (Flags.ABSTRACT | Flags.PRIVATE | Flags.STATIC)) == 0) {
+      int methodFlags = Flags.filterAccessBytecodeFlags(flags);
+      if (classSymbol.isInterface() && Flags.isNotFlagged(methodFlags, Flags.ABSTRACT | Flags.PRIVATE | Flags.STATIC)) {
         // abstract, static nor private method of interface is a default method
         methodFlags |= Flags.DEFAULT;
       }
