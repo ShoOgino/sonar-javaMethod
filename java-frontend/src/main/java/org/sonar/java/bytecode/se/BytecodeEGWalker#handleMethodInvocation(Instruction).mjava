@@ -20,12 +20,15 @@
             }));
         methodInvokedBehavior
           .exceptionalPathYields()
-          .forEach(yield ->
+          .forEach(yield -> {
+            org.sonar.plugins.java.api.semantic.Type exceptionType = yield.exceptionType();
             yield.statesAfterInvocation(
-              Lists.reverse(pop.values), Collections.emptyList(), pop.state, () -> constraintManager.createExceptionalSymbolicValue(yield.exceptionType())).forEach(ps -> {
-              ps.storeExitValue();
-              enqueue(new ProgramPoint(exitBlock), ps);
-            }));
+              Lists.reverse(pop.values), Collections.emptyList(), pop.state, () -> constraintManager.createExceptionalSymbolicValue(exceptionType)
+              ).forEach(ps -> {
+                ps.storeExitValue();
+                enqueueExceptionHandlers(exceptionType, ps);
+            });
+          });
         return true;
       }
     } else {

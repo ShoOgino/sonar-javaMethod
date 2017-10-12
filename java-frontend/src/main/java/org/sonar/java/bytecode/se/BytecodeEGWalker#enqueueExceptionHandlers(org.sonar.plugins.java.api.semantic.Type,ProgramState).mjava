@@ -1,0 +1,10 @@
+  private void enqueueExceptionHandlers(org.sonar.plugins.java.api.semantic.Type exceptionType, ProgramState ps) {
+    programPosition.block.successors().stream()
+      .map(b -> (BytecodeCFGBuilder.Block) b)
+      .filter(b -> b.getExceptionType() != null)
+      .filter(b -> b.isUncaughtException()
+        ||/*required as long as there is no real type tracking*/ exceptionType == null
+        || exceptionType.isSubtypeOf(b.getExceptionType()))
+      .forEach(b -> enqueue(new ProgramPoint(b), ps));
+  }
+
