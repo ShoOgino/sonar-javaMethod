@@ -1,0 +1,10 @@
+  private static ClassTree getClass(CompilationUnitTree cut, String className) {
+    ClassTree testClass = (ClassTree) cut.types().get(0);
+    return testClass.members().stream()
+      .filter(m -> m.is(Tree.Kind.CLASS))
+      .map(ClassTree.class::cast)
+      .filter(ct -> className.equals(ct.simpleName().name()))
+      .findFirst()
+      .get();
+  }
+
