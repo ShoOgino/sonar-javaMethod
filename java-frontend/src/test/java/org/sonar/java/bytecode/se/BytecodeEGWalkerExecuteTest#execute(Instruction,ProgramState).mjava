@@ -5,6 +5,10 @@
     walker.programPosition = programPoint;
     walker.programState = startingState;
     walker.executeInstruction(instruction);
+    if (instruction.opcode == Opcodes.INVOKESTATIC) {
+      // X-PROC on static methods generate new states
+      return walker.workList.getFirst().programState;
+    }
     return walker.programState;
   }
 

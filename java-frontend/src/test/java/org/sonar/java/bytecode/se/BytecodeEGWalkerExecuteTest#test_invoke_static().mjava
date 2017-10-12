@@ -1,20 +1,20 @@
   @Test
   public void test_invoke_static() throws Exception {
-    ProgramState programState = execute(invokeStatic("()V"));
-    assertEmptyStack(programState);
-
-    programState = execute(invokeStatic("()Z"));
+    ProgramState programState = execute(invokeStatic("foo", "()V"));
     assertStack(programState, new Constraint[] {null});
+
+    programState = execute(invokeStatic("bar", "()Z"));
+    assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
 
     SymbolicValue arg = new SymbolicValue();
-    programState = execute(invokeStatic("(I)I"), ProgramState.EMPTY_STATE.stackValue(arg));
-    assertStack(programState, new Constraint[] {null});
+    programState = execute(invokeStatic("qix", "(I)I"), ProgramState.EMPTY_STATE.stackValue(arg));
+    assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
     assertThat(programState.peekValue()).isNotEqualTo(arg);
 
-    programState = execute(invokeStatic("(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
-    assertEmptyStack(programState);
+    programState = execute(invokeStatic("gul", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
+    assertStack(programState, new Constraint[] {null});
 
-    assertThatThrownBy(() -> execute(invokeStatic("(I)V")))
+    assertThatThrownBy(() -> execute(invokeStatic("tak", "(I)V")))
       .hasMessage("Arguments mismatch for INVOKE");
   }
 

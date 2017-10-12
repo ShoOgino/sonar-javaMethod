@@ -5,8 +5,8 @@
     ProgramState programState = execute(invokeMethod(Opcodes.INVOKESPECIAL, "()V"), startingState);
     assertThat(hasConstraint(thisSv, programState, ObjectConstraint.NOT_NULL)).isTrue();
 
-    programState = execute(invokeMethod(Opcodes.INVOKESTATIC, "()V"), startingState);
-    assertThat(programState).isEqualTo(startingState);
+    programState = execute(invokeStatic("bar", "()Z"), startingState);
+    assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}, {null}});
 
     programState = execute(invokeMethod(Opcodes.INVOKESPECIAL, "(I)V"), startingState.stackValue(new SymbolicValue()));
     assertThat(hasConstraint(thisSv, programState, ObjectConstraint.NOT_NULL)).isTrue();
