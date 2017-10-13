@@ -1,20 +1,20 @@
   @Test
   public void test_invoke_static() throws Exception {
-    ProgramState programState = execute(invokeStatic("foo", "()V"));
+    ProgramState programState = execute(invokeStatic("staticMethod", "()V"));
     assertStack(programState, new Constraint[] {null});
 
-    programState = execute(invokeStatic("bar", "()Z"));
+    programState = execute(invokeStatic("staticBooleanMethod", "()Z"));
     assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
 
     SymbolicValue arg = new SymbolicValue();
-    programState = execute(invokeStatic("qix", "(I)I"), ProgramState.EMPTY_STATE.stackValue(arg));
+    programState = execute(invokeStatic("staticIntMethodWithIntArgument", "(I)I"), ProgramState.EMPTY_STATE.stackValue(arg));
     assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
     assertThat(programState.peekValue()).isNotEqualTo(arg);
 
-    programState = execute(invokeStatic("gul", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
+    programState = execute(invokeStatic("staticMethodWithIntIntArgument", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
     assertStack(programState, new Constraint[] {null});
 
-    assertThatThrownBy(() -> execute(invokeStatic("tak", "(I)V")))
+    assertThatThrownBy(() -> execute(invokeStatic("staticBooleanMethodWithIntArgument", "(I)V")))
       .hasMessage("Arguments mismatch for INVOKE");
   }
 

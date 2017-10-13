@@ -4,21 +4,21 @@
     for (int opcode : opcodes) {
       SymbolicValue thisSv = new SymbolicValue();
       ProgramState stateWithThis = ProgramState.EMPTY_STATE.stackValue(thisSv);
-      ProgramState programState = execute(invokeMethod(opcode, "()V"), stateWithThis);
+      ProgramState programState = execute(invokeMethod(opcode, "methodWithoutArgument", "()V"), stateWithThis);
       assertEmptyStack(programState);
       assertThat(programState.getConstraints(thisSv).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
 
-      programState = execute(invokeMethod(opcode, "()Z"), stateWithThis);
+      programState = execute(invokeMethod(opcode, "booleanMethod", "()Z"), stateWithThis);
       assertStack(programState, new Constraint[] {null});
 
       SymbolicValue arg = new SymbolicValue();
-      programState = execute(invokeMethod(opcode, "(I)I"), stateWithThis.stackValue(arg));
+      programState = execute(invokeMethod(opcode, "intMethodWithIntArgument", "(I)I"), stateWithThis.stackValue(arg));
       assertStack(programState, new Constraint[] {null});
       assertThat(programState.peekValue()).isNotEqualTo(arg);
 
-      programState = execute(invokeMethod(opcode, "(II)V"), stateWithThis.stackValue(arg).stackValue(arg));
+      programState = execute(invokeMethod(opcode, "methodWithIntIntArgument", "(II)V"), stateWithThis.stackValue(arg).stackValue(arg));
       assertEmptyStack(programState);
-      assertThatThrownBy(() -> execute(invokeMethod(opcode, "(II)V"), stateWithThis))
+      assertThatThrownBy(() -> execute(invokeMethod(opcode, "methodWithIntIntArgument", "(II)V"), stateWithThis))
         .isInstanceOf(IllegalStateException.class);
     }
   }
