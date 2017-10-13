@@ -1,15 +1,6 @@
   private MethodBehavior get(String signature, @Nullable Symbol.MethodSymbol symbol) {
     if (!behaviors.containsKey(signature)) {
-      if (isRequireNonNullMethod(signature)
-        || isObjectsNullMethod(signature)
-        || isGuavaPrecondition(signature)
-        || isCollectionUtilsIsEmpty(signature)
-        || isSpringIsNull(signature)
-        || isStringUtilsMethod(signature)
-        || isEclipseAssert(signature)
-        ) {
-        return new BytecodeEGWalker(this, semanticModel).getMethodBehavior(signature, symbol, classLoader);
-      } else if(symbol != null) {
+      if (symbol != null) {
         MethodTree declaration = symbol.declaration();
         if (SymbolicExecutionVisitor.methodCanNotBeOverriden(symbol)) {
           if (declaration != null) {
@@ -19,9 +10,6 @@
           }
         }
       } else {
-        // FIXME
-        // get(...) called from bytecode, method is necessarily static
-        // should handle other cases of non-overrideable methods
         return new BytecodeEGWalker(this, semanticModel).getMethodBehavior(signature, symbol, classLoader);
       }
     }
