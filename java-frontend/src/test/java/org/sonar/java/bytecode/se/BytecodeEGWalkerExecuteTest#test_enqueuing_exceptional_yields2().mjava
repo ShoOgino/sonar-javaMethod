@@ -1,0 +1,16 @@
+  @Test
+  public void test_enqueuing_exceptional_yields2() {
+    initializeWalker();
+    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilder.buildCFG(TRY_WRONG_CATCH_SIGNATURE, squidClassLoader);
+    BytecodeCFGBuilder.Block b2 = cfg.blocks().get(2);
+    walker.programState = ProgramState.EMPTY_STATE.stackValue(new SymbolicValue()).stackValue(new SymbolicValue());
+    walker.programPosition = new ProgramPoint(b2).next().next();
+    walker.executeInstruction(b2.elements().get(3));
+
+    assertThat(walker.workList).hasSize(2);
+    assertThat(walker.workList.pop().programState.exitValue()).isNotNull()
+      .isInstanceOf(SymbolicValue.ExceptionalSymbolicValue.class)
+      .extracting(sv -> ((SymbolicValue.ExceptionalSymbolicValue) sv).exceptionType().fullyQualifiedName()).containsExactly("java.lang.IllegalStateException");
+    assertThat(walker.workList.pop().programState.exitValue()).isNull();
+  }
+

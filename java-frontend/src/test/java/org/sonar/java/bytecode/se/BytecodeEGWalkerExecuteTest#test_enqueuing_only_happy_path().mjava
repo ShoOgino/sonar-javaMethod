@@ -1,8 +1,8 @@
   @Test
   public void test_enqueuing_only_happy_path() {
-    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilderTest.getBytecodeCFG("tryCatch", "src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerExecuteTest.java");
+    initializeWalker();
+    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilder.buildCFG(TRY_CATCH_SIGNATURE, squidClassLoader);
     BytecodeCFGBuilder.Block b2 = cfg.blocks().get(2);
-    BytecodeEGWalker walker = new BytecodeEGWalker(new BehaviorCache(null, null));
     walker.programState = ProgramState.EMPTY_STATE.stackValue(new SymbolicValue());
     walker.handleBlockExit(new ProgramPoint(b2));
     assertThat(walker.workList).hasSize(1);

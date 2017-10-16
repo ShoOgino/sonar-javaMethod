@@ -1,9 +1,14 @@
   @Test
   public void test_athrow() throws Exception {
-    ProgramState programState = execute(new Instruction(Opcodes.ATHROW), ProgramState.EMPTY_STATE.stackValue(new SymbolicValue()));
+    initializeWalker();
+    SymbolicValue sv = new SymbolicValue();
+    Type exceptionType = semanticModel.getClassType("java.lang.RuntimeException");
+    ProgramState initialState = ProgramState.EMPTY_STATE.stackValue(sv)
+        .addConstraint(sv, new TypedConstraint(exceptionType));
+    ProgramState programState = execute(new Instruction(Opcodes.ATHROW), initialState);
     SymbolicValue exception = programState.peekValue();
     assertThat(exception).isInstanceOf(SymbolicValue.ExceptionalSymbolicValue.class);
-    assertThat(((SymbolicValue.ExceptionalSymbolicValue) exception).exceptionType()).isNull();
+    assertThat(((SymbolicValue.ExceptionalSymbolicValue) exception).exceptionType()).isEqualTo(exceptionType);
     assertThat(programState.exitValue()).isEqualTo(exception);
   }
 

@@ -1,25 +1,12 @@
   @Test
   public void test_enqueuing_exceptional_yields() {
-    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilderTest.getBytecodeCFG("tryCatch", "src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerExecuteTest.java");
+    initializeWalker();
+    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilder.buildCFG(TRY_CATCH_SIGNATURE, squidClassLoader);
     BytecodeCFGBuilder.Block b2 = cfg.blocks().get(2);
-    SquidClassLoader squidClassLoader = new SquidClassLoader(new ArrayList<>(FileUtils.listFiles(new File("target/test-jars"), new String[] {"jar", "zip"}, true)));
-    BytecodeEGWalker walker = new BytecodeEGWalker(new BehaviorCache(null, squidClassLoader));
     walker.programState = ProgramState.EMPTY_STATE.stackValue(new SymbolicValue()).stackValue(new SymbolicValue());
     walker.programPosition = new ProgramPoint(b2).next().next();
+
     walker.executeInstruction(b2.elements().get(3));
     assertThat(walker.workList).hasSize(3);
-
-
-    cfg = BytecodeCFGBuilderTest.getBytecodeCFG("tryWrongCatch", "src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerExecuteTest.java");
-    b2 = cfg.blocks().get(2);
-    walker.workList.clear();
-    walker.programState = ProgramState.EMPTY_STATE.stackValue(new SymbolicValue()).stackValue(new SymbolicValue());
-    walker.programPosition = new ProgramPoint(b2).next().next();
-    walker.executeInstruction(b2.elements().get(3));
-    //FIXME should be 2 as the path to the catch should not be enqueued : should be fix by tracking properly exception types
-    assertThat(walker.workList).hasSize(3);
-    assertThat(walker.workList.pop().programState.exitValue()).isNotNull().isInstanceOf(SymbolicValue.ExceptionalSymbolicValue.class);
-    assertThat(walker.workList.pop().programState.exitValue()).isNotNull().isInstanceOf(SymbolicValue.ExceptionalSymbolicValue.class);
-    assertThat(walker.workList.pop().programState.exitValue()).isNull();
   }
 
