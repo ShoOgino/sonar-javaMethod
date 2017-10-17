@@ -6,9 +6,6 @@
         && currentBlock.successors.isEmpty()) {
         currentBlock.successors.add(cfg.blocks.get(0));
       }
-
-      tryCatchBlocks.forEach(h->h.computeBlocks(blockByLabel));
-      Block entry = (Block) cfg.entry();
-      wireHandlers(entry, new HashSet<>(), new HashSet<>());
+      handlersToWire.forEach((b, tcbs) -> tcbs.forEach(tcb -> b.successors.add(tcb.blockHandler(blockByLabel))));
     }
 
