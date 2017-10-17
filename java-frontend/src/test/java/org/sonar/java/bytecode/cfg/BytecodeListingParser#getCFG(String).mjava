@@ -1,0 +1,17 @@
+  public static BytecodeCFGBuilder.BytecodeCFG getCFG(String bytecodeInstructions) {
+    // Define class and method stub for instructions
+    ClassWriter cw = new ClassWriter(Opcodes.ASM5);
+    cw.visit(V1_8, ACC_PUBLIC, "A", null, "java/lang/Object", null);
+    MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "test", "()V", null, null);
+    JavaSymbol.MethodJavaSymbol methodStub = new JavaSymbol.MethodJavaSymbol(0, "test", null);
+    Map<Integer, Label> labelIndexes =  new HashMap<>();
+    String[] lines = bytecodeInstructions.split("\n");
+    for (String line : lines) {
+      visitLine(line.trim().split(" "), mv, labelIndexes);
+    }
+    mv.visitEnd();
+    cw.visitEnd();
+    byte[] bytes = cw.toByteArray();
+    return BytecodeCFGBuilder.buildCFG(methodStub.completeSignature(), bytes);
+  }
+
