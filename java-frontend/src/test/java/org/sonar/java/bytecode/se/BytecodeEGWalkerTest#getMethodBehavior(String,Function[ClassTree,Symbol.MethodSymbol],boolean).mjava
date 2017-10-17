@@ -1,0 +1,11 @@
+  private static MethodBehavior getMethodBehavior(String targetClass, Function<ClassTree, Symbol.MethodSymbol> methodFinder, boolean useSymbol) {
+    SquidClassLoader squidClassLoader = new SquidClassLoader(CLASS_PATH);
+    File file = new File("src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    SemanticModel semanticModel = SemanticModel.createFor(tree, squidClassLoader);
+    BytecodeEGWalker bytecodeEGWalker = new BytecodeEGWalker(new BehaviorCache(null, squidClassLoader, semanticModel), semanticModel);
+    ClassTree innerClass = getClass(tree, targetClass);
+    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) methodFinder.apply(innerClass);
+    return bytecodeEGWalker.getMethodBehavior(methodSymbol.completeSignature(), useSymbol ? methodSymbol : null, squidClassLoader);
+  }
+

@@ -1,4 +1,9 @@
+  @CheckForNull
   public MethodBehavior getMethodBehavior(String signature, @Nullable Symbol.MethodSymbol methodSymbol, SquidClassLoader classLoader) {
+    if (methodFromArray(signature)) {
+      // should not generate any method behavior
+      return null;
+    }
     methodBehavior = behaviorCache.methodBehaviorForSymbol(signature);
     if (!methodBehavior.isVisited()) {
       try {
