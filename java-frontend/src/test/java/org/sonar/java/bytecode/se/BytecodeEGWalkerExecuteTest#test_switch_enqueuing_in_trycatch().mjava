@@ -1,0 +1,29 @@
+  @Test
+  public void test_switch_enqueuing_in_trycatch() throws Exception {
+    initializeWalker();
+
+    Instructions mv = new Instructions();
+    Label l0 = new Label();
+    Label l1 = new Label();
+    Label l2 = new Label();
+    mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
+    mv.visitLabel(l0);
+    mv.visitVarInsn(ILOAD, 1);
+    mv.visitLookupSwitchInsn(l1, new int[] {0}, new Label[] {l1});
+    mv.visitLabel(l1);
+    Label l3 = new Label();
+    mv.visitJumpInsn(GOTO, l3);
+    mv.visitLabel(l2);
+    mv.visitVarInsn(ASTORE, 2);
+    mv.visitLabel(l3);
+    mv.visitInsn(RETURN);
+
+    BytecodeCFGBuilder.BytecodeCFG cfg = mv.cfg();
+    BytecodeCFGBuilder.Block switchBlock = cfg.blocks().get(2);
+
+    assertThat(switchBlock.terminator().opcode).isEqualTo(Opcodes.LOOKUPSWITCH);
+    walker.programState = ProgramState.EMPTY_STATE;
+    walker.handleBlockExit(new ProgramPoint(switchBlock));
+    assertThat(walker.workList).hasSize(1);
+  }
+
