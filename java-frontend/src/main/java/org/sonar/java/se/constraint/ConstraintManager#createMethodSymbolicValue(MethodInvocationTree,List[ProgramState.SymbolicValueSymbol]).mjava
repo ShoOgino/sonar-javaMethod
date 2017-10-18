@@ -1,6 +1,6 @@
   public SymbolicValue createMethodSymbolicValue(MethodInvocationTree syntaxNode, List<ProgramState.SymbolicValueSymbol> values) {
     SymbolicValue result;
-    if (isEqualsMethod(syntaxNode) || isObjectsEqualsMethod(syntaxNode.symbol())) {
+    if (ExplodedGraphWalker.EQUALS_METHODS.anyMatch(syntaxNode)) {
       result = new RelationalSymbolicValue(RelationalSymbolicValue.Kind.METHOD_EQUALS);
       ProgramState.SymbolicValueSymbol leftOp = values.get(1);
       ProgramState.SymbolicValueSymbol rightOp = values.get(0);
