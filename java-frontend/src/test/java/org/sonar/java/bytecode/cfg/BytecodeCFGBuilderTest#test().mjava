@@ -1,11 +1,6 @@
   @Test
   public void test() throws Exception {
-    SquidClassLoader squidClassLoader = new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
-    File file = new File("src/test/java/org/sonar/java/bytecode/cfg/BytecodeCFGBuilderTest.java");
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel.createFor(tree, squidClassLoader);
-    Symbol.MethodSymbol symbol = ((MethodTree) ((ClassTree) ((ClassTree) tree.types().get(0)).members().get(1)).members().get(0)).symbol();
-    BytecodeCFGBuilder.BytecodeCFG cfg = BytecodeCFGBuilder.buildCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
+    BytecodeCFGBuilder.BytecodeCFG cfg = getCFGForMethod("fun");
     StringBuilder sb = new StringBuilder();
     cfg.blocks.forEach(b-> sb.append(b.printBlock()));
     assertThat(sb.toString()).isEqualTo(

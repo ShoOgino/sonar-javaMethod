@@ -2,12 +2,11 @@
     programState = ProgramState.EMPTY_STATE;
     steps = 0;
     BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG(signature, classLoader);
-    methodBehavior.setStaticMethod(bytecodeCFG.isStaticMethod());
-    methodBehavior.setVarArgs(bytecodeCFG.isVarArgs());
-    methodBehavior.setOverrideableOrNative(bytecodeCFG.isOverrideableOrNativeMethod());
-    if (bytecodeCFG.isOverrideableOrNativeMethod()) {
+    if (bytecodeCFG == null) {
       return;
     }
+    methodBehavior.setStaticMethod(bytecodeCFG.isStaticMethod());
+    methodBehavior.setVarArgs(bytecodeCFG.isVarArgs());
     for (ProgramState startingState : startingStates(signature, programState)) {
       enqueue(new ProgramPoint(bytecodeCFG.entry()), startingState);
     }
@@ -34,6 +33,7 @@
 
     handleEndOfExecutionPath();
     executeCheckEndOfExecution();
+    methodBehavior.completed();
     // Cleanup:
     workList = null;
     node = null;

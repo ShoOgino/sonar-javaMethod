@@ -2,9 +2,11 @@
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
       if (name.equals(methodSignature.substring(methodSignature.indexOf('#') + 1, methodSignature.indexOf('(')))
         && desc.equals(methodSignature.substring(methodSignature.indexOf('(')))) {
-        methodVisitor.isStaticMethod = Flags.isFlagged(access, Flags.STATIC);
-        methodVisitor.isVarArgs = Flags.isFlagged(access, Flags.VARARGS);
-        methodVisitor.isOverrideableOrNativeMethod = isOverrideableOrNativeMethod(access);
+        if (isOverridableOrNativeMethod(access)) {
+          // avoid computing CFG when the method behavior won't be used
+          return null;
+        }
+        methodVisitor.initCFG(access);
         return new JSRInlinerAdapter(methodVisitor, access, name, desc, signature, exceptions);
       }
       return null;
