@@ -10,6 +10,7 @@
 
       programState = execute(invokeMethod(opcode, "booleanMethod", "()Z"), stateWithThis);
       assertStack(programState, new Constraint[] {null});
+      assertThat(isDoubleOrLong(programState, programState.peekValue())).isFalse();
 
       SymbolicValue arg = new SymbolicValue();
       programState = execute(invokeMethod(opcode, "intMethodWithIntArgument", "(I)I"), stateWithThis.stackValue(arg));
@@ -20,6 +21,11 @@
       assertEmptyStack(programState);
       assertThatThrownBy(() -> execute(invokeMethod(opcode, "methodWithIntIntArgument", "(II)V"), stateWithThis))
         .isInstanceOf(IllegalStateException.class);
+
+      programState = execute(invokeMethod(opcode, "returningLong", "()J"), stateWithThis);
+      assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
+      programState = execute(invokeMethod(opcode, "returningDouble", "()D"), stateWithThis);
+      assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
     }
   }
 

@@ -5,14 +5,25 @@
 
     programState = execute(invokeStatic("staticBooleanMethod", "()Z"));
     assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
+    assertThat(isDoubleOrLong(programState, programState.peekValue())).isFalse();
 
     SymbolicValue arg = new SymbolicValue();
     programState = execute(invokeStatic("staticIntMethodWithIntArgument", "(I)I"), ProgramState.EMPTY_STATE.stackValue(arg));
     assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
     assertThat(programState.peekValue()).isNotEqualTo(arg);
+    assertThat(isDoubleOrLong(programState, programState.peekValue())).isFalse();
 
     programState = execute(invokeStatic("staticMethodWithIntIntArgument", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
     assertStack(programState, new Constraint[] {null});
+
+    programState = execute(invokeStatic("staticMethodWithIntIntArgument", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
+    assertStack(programState, new Constraint[] {null});
+
+    programState = execute(invokeStatic("staticReturningLong", "()J"), ProgramState.EMPTY_STATE);
+    assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
+
+    programState = execute(invokeStatic("staticReturningDouble", "()D"), ProgramState.EMPTY_STATE);
+    assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
 
     assertThatThrownBy(() -> execute(invokeStatic("staticBooleanMethodWithIntArgument", "(I)V")))
       .hasMessage("Arguments mismatch for INVOKE");
