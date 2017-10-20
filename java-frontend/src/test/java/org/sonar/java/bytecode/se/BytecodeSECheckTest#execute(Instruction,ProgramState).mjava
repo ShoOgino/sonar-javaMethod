@@ -1,0 +1,13 @@
+  private ProgramState execute(Instruction instruction, ProgramState startingState) {
+    initializeWalker();
+    ProgramPoint programPoint = mock(ProgramPoint.class);
+    when(programPoint.next()).thenReturn(programPoint);
+    ExplodedGraph.Node startingNode = walker.explodedGraph.node(programPoint, startingState);
+    walker.setNode(startingNode);
+    walker.executeInstruction(instruction);
+    if (walker.workList.isEmpty()) {
+      return null;
+    }
+    return walker.workList.getFirst().programState;
+  }
+

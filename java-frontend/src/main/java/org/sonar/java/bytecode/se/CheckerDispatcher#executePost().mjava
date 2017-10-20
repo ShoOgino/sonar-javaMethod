@@ -2,6 +2,10 @@
     this.transition = false;
     if (currentCheckerIndex < checks.size()) {
       explodedGraphWalker.programState = checks.get(currentCheckerIndex).checkPostStatement(this, currentInstruction);
+      if (explodedGraphWalker.programState == null) {
+        // one of the check interrupted exploration
+        return;
+      }
     } else {
       explodedGraphWalker.enqueue(explodedGraphWalker.programPosition.next(), explodedGraphWalker.programState);
       return;
