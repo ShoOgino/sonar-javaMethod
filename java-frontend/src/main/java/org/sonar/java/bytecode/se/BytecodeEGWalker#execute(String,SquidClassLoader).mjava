@@ -5,9 +5,8 @@
     if (bytecodeCFG == null) {
       return;
     }
-    methodBehavior.setStaticMethod(bytecodeCFG.isStaticMethod());
     methodBehavior.setVarArgs(bytecodeCFG.isVarArgs());
-    for (ProgramState startingState : startingStates(signature, programState)) {
+    for (ProgramState startingState : startingStates(signature, programState, bytecodeCFG.isStaticMethod())) {
       enqueue(new ProgramPoint(bytecodeCFG.entry()), startingState);
     }
     while (!workList.isEmpty()) {

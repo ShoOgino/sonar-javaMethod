@@ -5,7 +5,7 @@
       @Override
       public void visitNode(Tree tree) {
         ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (SemanticModel) context.getSemanticModel(), false);
-        explodedGraphWalker.visitMethod((MethodTree) tree, new MethodBehavior(((MethodTree) tree).symbol()));
+        explodedGraphWalker.visitMethod((MethodTree) tree, methodBehaviorForSymbol(((MethodTree) tree).symbol()));
         steps[0] += explodedGraphWalker.steps;
       }
     });
@@ -14,7 +14,7 @@
       public void visitNode(Tree tree) {
         ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (SemanticModel) context.getSemanticModel());
         MethodTree methodTree = (MethodTree) tree;
-        explodedGraphWalker.visitMethod(methodTree, new MethodBehavior(methodTree.symbol()));
+        explodedGraphWalker.visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
         steps[1] += explodedGraphWalker.steps;
       }
     });

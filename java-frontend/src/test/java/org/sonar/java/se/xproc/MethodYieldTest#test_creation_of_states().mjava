@@ -1,17 +1,16 @@
   @Test
   public void test_creation_of_states() throws Exception {
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYields.java");
-    Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "foo");
-    Symbol.MethodSymbol methodSymbol = entry.getKey();
+    MethodBehavior mb = getMethodBehavior(sev, "foo");
 
     ProgramState ps = ProgramState.EMPTY_STATE;
     SymbolicValue sv1 = new SymbolicValue();
     SymbolicValue sv2 = new SymbolicValue();
     SymbolicValue sv3 = new SymbolicValue();
-    Symbol sym = new JavaSymbol.VariableJavaSymbol(0, "myVar", (JavaSymbol) methodSymbol);
+    Symbol sym = new JavaSymbol.VariableJavaSymbol(0, "myVar", new JavaSymbol.MethodJavaSymbol(0, "dummy", null));
     ps = ps.put(sym, sv1);
 
-    MethodYield methodYield = entry.getValue().happyPathYields().findFirst().get();
+    MethodYield methodYield = mb.happyPathYields().findFirst().get();
     Stream<ProgramState> generatedStatesFromFirstYield = methodYield.statesAfterInvocation(Lists.newArrayList(sv1, sv2), Lists.newArrayList(), ps, () -> sv3);
     assertThat(generatedStatesFromFirstYield).hasSize(1);
   }

@@ -1,4 +1,9 @@
   public static MethodBehavior getMethodBehavior(SymbolicExecutionVisitor sev, String methodName) {
-    return getSymbolWithMethodBehavior(sev, methodName).getValue();
+    Optional<MethodBehavior> mb = sev.behaviorCache.behaviors.entrySet().stream()
+      .filter(e -> e.getKey().contains("#" + methodName))
+      .map(Map.Entry::getValue)
+      .findFirst();
+    assertThat(mb.isPresent()).isTrue();
+    return mb.get();
   }
 

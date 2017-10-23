@@ -1,9 +1,9 @@
   @VisibleForTesting
-  Iterable<ProgramState> startingStates(String signature, ProgramState currentState) {
+  Iterable<ProgramState> startingStates(String signature, ProgramState currentState, boolean isStaticMethod) {
     // TODO : deal with parameter annotations, equals methods etc.
     int parameterIdx = 0;
     ProgramState state = currentState;
-    if(!methodBehavior.isStaticMethod()) {
+    if(!isStaticMethod) {
       // Add a sv for "this"
       SymbolicValue thisSV = constraintManager.createSymbolicValue((Instruction) null);
       state = currentState.addConstraint(thisSV, ObjectConstraint.NOT_NULL).put(0, thisSV);

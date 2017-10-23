@@ -1,10 +1,16 @@
   @Test
   public void constraints_on_varargs() throws Exception {
-    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/VarArgsYields.java");
+    ActionParser<Tree> p = JavaParser.createParser();
+    CompilationUnitTree cut = (CompilationUnitTree) p.parse(new File("src/test/files/se/VarArgsYields.java"));
+    SemanticModel semanticModel = SemanticModel.createFor(cut, new SquidClassLoader(new ArrayList<>()));
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList(new SECheck[]{}), new SquidClassLoader(new ArrayList<>()));
+    JavaFileScannerContext context = mock(JavaFileScannerContext.class);
+    when(context.getTree()).thenReturn(cut);
+    when(context.getSemanticModel()).thenReturn(semanticModel);
+    sev.scanFile(context);
 
-    Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "varArgMethod");
-    Symbol.MethodSymbol methodSymbol = entry.getKey();
-    MethodBehavior mb = entry.getValue();
+    MethodSymbol methodSymbol = ((MethodTree) ((ClassTree) cut.types().get(0)).members().get(0)).symbol();
+    MethodBehavior mb = getMethodBehavior(sev, "varArgMethod");
     List<MethodYield> yields = mb.yields();
     assertThat(yields).hasSize(5);
     assertThat(mb.exceptionalPathYields()).hasSize(4);

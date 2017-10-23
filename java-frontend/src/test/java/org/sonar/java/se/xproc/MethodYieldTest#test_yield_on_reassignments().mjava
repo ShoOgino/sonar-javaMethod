@@ -1,8 +1,7 @@
   @Test
   public void test_yield_on_reassignments() throws Exception {
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYieldsReassignments.java");
-    Map.Entry<MethodSymbol, MethodBehavior> entry = getSymbolWithMethodBehavior(sev, "foo");
-    MethodBehavior mb = entry.getValue();
+    MethodBehavior mb = getMethodBehavior(sev, "foo");
     assertThat(mb.happyPathYields())
       .allMatch(y -> y.parametersConstraints.get(0) != null && !ObjectConstraint.NULL.equals(y.parametersConstraints.get(0).get(ObjectConstraint.class)));
   }
