@@ -1,14 +1,15 @@
-  private ProgramState execute(Instruction instruction, ProgramState startingState) {
-    initializeWalker();
+  private static ProgramState execute(Instruction instruction, ProgramState startingState) {
+    walker.workList.clear();
     ProgramPoint programPoint = mock(ProgramPoint.class);
     when(programPoint.next()).thenReturn(programPoint);
     walker.programPosition = programPoint;
     walker.programState = startingState;
     walker.executeInstruction(instruction);
+    ProgramState programState = walker.programState;
     if (instruction.opcode == Opcodes.INVOKESTATIC) {
       // X-PROC on static methods generate new states
-      return walker.workList.getFirst().programState;
+       programState = walker.workList.getFirst().programState;
     }
-    return walker.programState;
+    return programState;
   }
 

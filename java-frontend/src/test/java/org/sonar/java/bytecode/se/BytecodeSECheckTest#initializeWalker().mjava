@@ -1,11 +1,10 @@
-  private void initializeWalker() {
-    List<File> files = new ArrayList<>(FileUtils.listFiles(new File("target/test-jars"), new String[] {"jar", "zip"}, true));
-    files.add(new File("target/classes"));
+  @BeforeClass
+  public static void initializeWalker() {
+    List<File> files = new ArrayList<>();
     files.add(new File("target/test-classes"));
     squidClassLoader = new SquidClassLoader(files);
-    File file = new File("src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerExecuteTest.java");
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel semanticModel = SemanticModel.createFor(tree, squidClassLoader);
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse("class A {}");
+    semanticModel = SemanticModel.createFor(tree, squidClassLoader);
     walker = new BytecodeEGWalker(new BehaviorCache(null, squidClassLoader, semanticModel), semanticModel);
   }
 
