@@ -1,5 +1,5 @@
   public ProgramState addConstraintTransitively(SymbolicValue symbolicValue, Constraint constraint) {
-    List<SymbolicValue> transitiveSymbolicValues = knownRelations()
+    List<SymbolicValue> transitiveSymbolicValues = knownRelations().stream()
       .filter(rsv -> rsv.isEquality() && (rsv.getLeftOp() == symbolicValue || rsv.getRightOp() == symbolicValue))
       .map(rsv -> rsv.getLeftOp() == symbolicValue ? rsv.getRightOp() : rsv.getLeftOp())
       .collect(Collectors.toList());

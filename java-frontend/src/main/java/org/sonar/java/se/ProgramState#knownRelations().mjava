@@ -1,7 +1,11 @@
-  private Stream<RelationalSymbolicValue> knownRelations() {
-    return getValuesWithConstraints(BooleanConstraint.TRUE)
-      .stream()
-      .filter(RelationalSymbolicValue.class::isInstance)
-      .map(RelationalSymbolicValue.class::cast);
+  public Set<RelationalSymbolicValue> knownRelations() {
+    if(knownRelations == null) {
+      knownRelations = Collections.unmodifiableSet(getValuesWithConstraints(BooleanConstraint.TRUE)
+        .stream()
+        .filter(RelationalSymbolicValue.class::isInstance)
+        .map(RelationalSymbolicValue.class::cast)
+        .collect(Collectors.toSet()));
+    }
+    return knownRelations;
   }
 
