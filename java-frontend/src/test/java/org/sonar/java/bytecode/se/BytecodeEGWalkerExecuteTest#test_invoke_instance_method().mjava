@@ -26,6 +26,10 @@
       assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
       programState = execute(invokeMethod(opcode, "returningDouble", "()D"), stateWithThis);
       assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
+
+      programState = execute(invokeMethod(opcode, "returnArg", "(Ljava/lang/Object;)Ljava/lang/Object;"), stateWithThis.stackValue(arg));
+      assertThat(programState.peekValue()).isNotEqualTo(thisSv);
+      assertThat(programState.peekValue()).isEqualTo(arg);
     }
   }
 
