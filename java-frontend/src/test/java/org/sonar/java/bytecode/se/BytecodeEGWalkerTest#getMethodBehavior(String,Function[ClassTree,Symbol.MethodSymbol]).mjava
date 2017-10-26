@@ -3,7 +3,7 @@
     File file = new File("src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerTest.java");
     CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
     SemanticModel semanticModel = SemanticModel.createFor(tree, squidClassLoader);
-    BytecodeEGWalker bytecodeEGWalker = new BytecodeEGWalker(new BehaviorCache(null, squidClassLoader, semanticModel), semanticModel);
+    BytecodeEGWalker bytecodeEGWalker = getBytecodeEGWalker(squidClassLoader, semanticModel);
     ClassTree innerClass = getClass(tree, targetClass);
     JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) methodFinder.apply(innerClass);
     return bytecodeEGWalker.getMethodBehavior(methodSymbol.completeSignature(), squidClassLoader);
