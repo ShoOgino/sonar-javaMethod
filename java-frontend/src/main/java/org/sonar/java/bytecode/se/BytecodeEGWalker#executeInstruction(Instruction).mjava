@@ -308,9 +308,13 @@
             .addConstraint(sv, ObjectConstraint.NOT_NULL)
             .addConstraint(sv, new TypedConstraint(classType));
         break;
+      case ARRAYLENGTH:
+        pop = popStack(1, instruction.opcode);
+        sv = constraintManager.createSymbolicValue(instruction);
+        programState = pop.state.stackValue(sv);
+        break;
       case NEWARRAY:
       case ANEWARRAY:
-      case ARRAYLENGTH:
         pop = popStack(1, instruction.opcode);
         sv = constraintManager.createSymbolicValue(instruction);
         programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);

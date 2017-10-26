@@ -1,8 +1,8 @@
   @Test
   public void test_starting_states() throws Exception {
-    BytecodeEGWalker walker = new BytecodeEGWalker(null, null);
+    BytecodeEGWalker walker = new BytecodeEGWalker(null, semanticModel);
 
-    String signature = "()V";
+    String signature = "type#foo()V";
     walker.methodBehavior = new MethodBehavior(signature);
     ProgramState startingState = Iterables.getOnlyElement(walker.startingStates(signature, ProgramState.EMPTY_STATE, false));
     SymbolicValue thisSv = startingState.getValue(0);
@@ -12,7 +12,7 @@
     startingState = Iterables.getOnlyElement(walker.startingStates(signature, ProgramState.EMPTY_STATE, true));
     assertThat(startingState).isEqualTo(ProgramState.EMPTY_STATE);
 
-    signature = "(DIJ)V";
+    signature = "type#foo(DIJ)V";
     walker.methodBehavior = new MethodBehavior(signature);
     startingState = Iterables.getOnlyElement(walker.startingStates(signature, ProgramState.EMPTY_STATE, true));
     assertThat(startingState.getValue(0)).isNotNull();
