@@ -1,0 +1,14 @@
+  @Test
+  public void method_returning_new_should_have_not_null_result() {
+    MethodBehavior mb = walker.getMethodBehavior(BytecodeEGWalkerExecuteTest.class.getCanonicalName() + "#newObject()Ljava/lang/Object;", squidClassLoader);
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(1);
+    MethodYield yield = yields.get(0);
+    assertThat(yield).isInstanceOf(HappyPathYield.class);
+    ConstraintsByDomain resultConstraint = ((HappyPathYield) yield).resultConstraint();
+    assertThat(resultConstraint).isNotNull();
+    assertThat(resultConstraint.get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
+    TypedConstraint typeConstraint = (TypedConstraint) resultConstraint.get(TypedConstraint.class);
+    assertThat(typeConstraint.type.is("java.lang.String")).isTrue();
+  }
+

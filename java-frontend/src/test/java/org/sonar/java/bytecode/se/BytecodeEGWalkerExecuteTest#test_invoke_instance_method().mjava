@@ -8,6 +8,10 @@
       assertEmptyStack(programState);
       assertThat(programState.getConstraints(thisSv).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
 
+      programState = execute(invokeMethod(opcode, "finalVoid", "()V"), stateWithThis);
+      assertEmptyStack(programState);
+      assertThat(programState.getConstraints(thisSv).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
+
       programState = execute(invokeMethod(opcode, "booleanMethod", "()Z"), stateWithThis);
       assertStack(programState, new Constraint[] {null});
       assertThat(isDoubleOrLong(programState, programState.peekValue())).isFalse();

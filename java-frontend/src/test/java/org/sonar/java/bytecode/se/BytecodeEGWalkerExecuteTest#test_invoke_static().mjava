@@ -1,7 +1,7 @@
   @Test
   public void test_invoke_static() throws Exception {
     ProgramState programState = execute(invokeStatic("staticMethod", "()V"));
-    assertStack(programState, new Constraint[] {null});
+    assertEmptyStack(programState);
 
     programState = execute(invokeStatic("staticBooleanMethod", "()Z"));
     assertStack(programState, new Constraint[][] {{ObjectConstraint.NOT_NULL, BooleanConstraint.FALSE, DivisionByZeroCheck.ZeroConstraint.ZERO}});
@@ -14,10 +14,10 @@
     assertThat(isDoubleOrLong(programState, programState.peekValue())).isFalse();
 
     programState = execute(invokeStatic("staticMethodWithIntIntArgument", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
-    assertStack(programState, new Constraint[] {null});
+    assertEmptyStack(programState);
 
     programState = execute(invokeStatic("staticMethodWithIntIntArgument", "(II)V"), ProgramState.EMPTY_STATE.stackValue(arg).stackValue(arg));
-    assertStack(programState, new Constraint[] {null});
+    assertEmptyStack(programState);
 
     programState = execute(invokeStatic("staticReturningLong", "()J"), ProgramState.EMPTY_STATE);
     assertThat(isDoubleOrLong(programState, programState.peekValue())).isTrue();
