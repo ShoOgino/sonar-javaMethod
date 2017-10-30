@@ -3,7 +3,7 @@
     SymbolicValue sv = new SymbolicValue();
     Type exceptionType = semanticModel.getClassType("java.lang.RuntimeException");
     ProgramState initialState = ProgramState.EMPTY_STATE.stackValue(sv)
-        .addConstraint(sv, new TypedConstraint(exceptionType));
+        .addConstraint(sv, new TypedConstraint("java.lang.RuntimeException"));
     ProgramState programState = execute(new Instruction(Opcodes.ATHROW), initialState);
     SymbolicValue exception = programState.peekValue();
     assertThat(exception).isInstanceOf(SymbolicValue.ExceptionalSymbolicValue.class);

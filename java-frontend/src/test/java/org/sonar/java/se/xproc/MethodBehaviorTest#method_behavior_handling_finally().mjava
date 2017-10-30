@@ -1,6 +1,8 @@
   @Test
   public void method_behavior_handling_finally() {
-    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/resources/se/ReturnAndFinally.java");
+    Pair<SymbolicExecutionVisitor, SemanticModel> visitorAndSemantic = createSymbolicExecutionVisitorAndSemantic("src/test/resources/se/ReturnAndFinally.java");
+    SymbolicExecutionVisitor sev = visitorAndSemantic.a;
+    SemanticModel semanticModel = visitorAndSemantic.b;
     assertThat(sev.behaviorCache.behaviors.entrySet()).hasSize(5);
 
     MethodBehavior foo = getMethodBehavior(sev, "foo");
@@ -35,9 +37,9 @@
     assertThat(rethrowingException.yields()).hasSize(4);
     assertThat(rethrowingException.happyPathYields()).hasSize(1);
     assertThat(rethrowingException.exceptionalPathYields()).hasSize(3);
-    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType() == null)).hasSize(1);
-    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType() != null && y.exceptionType().is("java.lang.Exception"))).hasSize(1);
-    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType() != null && y.exceptionType().is("org.foo.MyException"))).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel) == null)).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel) != null && y.exceptionType(semanticModel).is("java.lang.Exception"))).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel) != null && y.exceptionType(semanticModel).is("org.foo.MyException"))).hasSize(1);
 
   }
 

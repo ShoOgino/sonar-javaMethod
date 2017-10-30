@@ -4,7 +4,9 @@
     SymbolicExecutionVisitor sev;
     MethodBehavior mb;
 
-    sev = createSymbolicExecutionVisitor(FILENAME);
+    Pair<SymbolicExecutionVisitor, SemanticModel> visitorAndSemantic = createSymbolicExecutionVisitorAndSemantic(FILENAME);
+    sev = visitorAndSemantic.a;
+    SemanticModel semanticModel = visitorAndSemantic.b;
     mb = getMethodBehavior(sev, methodName);
 
     // no creation of custom yields, 4 method yields
@@ -16,7 +18,7 @@
     assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
     assertThat(mb.exceptionalPathYields()).hasSize(2);
-    assertThat(mb.exceptionalPathYields()).as("All the exceptional yields are runtime exceptions").allMatch(y -> y.exceptionType() == null);
+    assertThat(mb.exceptionalPathYields()).as("All the exceptional yields are runtime exceptions").allMatch(y -> y.exceptionType(semanticModel) == null);
     assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE)).hasSize(1);
     assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
@@ -35,8 +37,8 @@
 
     // still 2 exceptional path
     assertThat(mb.exceptionalPathYields()).hasSize(2);
-    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() == null)).hasSize(1);
-    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType() != null)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel) == null)).hasSize(1);
+    assertThat(mb.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel) != null)).hasSize(1);
     assertThat(mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(1);
 
     ExceptionalYield exceptionalYield = mb.exceptionalPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE).findFirst().get();
@@ -44,9 +46,9 @@
 
     ExceptionalCheckBasedYield seCheckExceptionalYield = (ExceptionalCheckBasedYield) exceptionalYield;
     assertThat(seCheckExceptionalYield.check()).isEqualTo(TestSECheck.class);
-    assertThat(seCheckExceptionalYield.exceptionType()).isNotNull();
-    assertThat(seCheckExceptionalYield.exceptionType().is("java.lang.UnsupportedOperationException")).isTrue();
-    assertThat(seCheckExceptionalYield.exceptionType().isSubtypeOf("java.lang.RuntimeException")).isTrue();
+    assertThat(seCheckExceptionalYield.exceptionType(semanticModel)).isNotNull();
+    assertThat(seCheckExceptionalYield.exceptionType(semanticModel).is("java.lang.UnsupportedOperationException")).isTrue();
+    assertThat(seCheckExceptionalYield.exceptionType(semanticModel).isSubtypeOf("java.lang.RuntimeException")).isTrue();
     assertThat(seCheckExceptionalYield.generatedByCheck(check)).isTrue();
     assertThat(seCheckExceptionalYield.generatedByCheck(new SECheck() { })).isFalse();
     assertThat(seCheckExceptionalYield.parameterCausingExceptionIndex()).isEqualTo(0);
