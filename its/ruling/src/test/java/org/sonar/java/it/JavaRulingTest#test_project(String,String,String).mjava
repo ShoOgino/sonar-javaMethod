@@ -1,8 +1,7 @@
-  private static void test_project(String projectKey, @Nullable String path, String projectName) throws IOException {
+  private static MavenBuild test_project(String projectKey, @Nullable String path, String projectName) throws IOException {
     String pomLocation = "../sources/" + (path != null ? path + "/" : "") + projectName + "/pom.xml";
     File pomFile = FileLocation.of(pomLocation).getFile();
     prepareProject(projectKey, projectName);
-    MavenBuild mavenBuild = MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests");
-    executeBuildWithCommonProperties(mavenBuild, projectName);
+    return MavenBuild.create().setPom(pomFile).setCleanPackageSonarGoals().addArgument("-DskipTests");
   }
 

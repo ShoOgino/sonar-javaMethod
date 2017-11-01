@@ -1,4 +1,4 @@
-  public VisitorsBridge(Iterable visitors, List<File> projectClasspath, @Nullable SonarComponents sonarComponents, boolean symbolicExecutionEnabled) {
+  public VisitorsBridge(Iterable visitors, List<File> projectClasspath, @Nullable SonarComponents sonarComponents, SymbolicExecutionMode symbolicExecutionMode) {
     ImmutableList.Builder<JavaFileScanner> scannersBuilder = ImmutableList.builder();
     for (Object visitor : visitors) {
       if (visitor instanceof JavaFileScanner) {
@@ -9,7 +9,7 @@
     this.executableScanners = scanners;
     this.sonarComponents = sonarComponents;
     this.classLoader = ClassLoaderBuilder.create(projectClasspath);
-    this.symbolicExecutionEnabled = symbolicExecutionEnabled;
-    this.behaviorCache = new BehaviorCache(classLoader);
+    this.symbolicExecutionEnabled = symbolicExecutionMode.isEnabled();
+    this.behaviorCache = new BehaviorCache(classLoader, symbolicExecutionMode.isCrossFileEnabled());
   }
 

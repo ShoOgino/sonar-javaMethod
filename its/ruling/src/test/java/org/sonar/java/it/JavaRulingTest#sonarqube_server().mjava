@@ -1,6 +1,9 @@
   @Test
   public void sonarqube_server() throws Exception {
     // sonarqube-6.5-M1/server/sonar-server (v.6.5-M1)
-    test_project("org.sonarsource.sonarqube:sonar-server", "sonarqube-6.5-M1/server", "sonar-server");
+    String projectName = "sonar-server";
+    MavenBuild build = test_project("org.sonarsource.sonarqube:sonar-server", "sonarqube-6.5-M1/server", projectName);
+    build.setProperty("sonar.java.xfile", "true");
+    executeBuildWithCommonProperties(build, projectName);
   }
 

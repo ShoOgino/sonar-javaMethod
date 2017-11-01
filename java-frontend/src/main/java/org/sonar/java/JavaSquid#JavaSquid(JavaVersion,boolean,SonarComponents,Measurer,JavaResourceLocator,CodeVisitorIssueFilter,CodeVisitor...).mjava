@@ -1,0 +1,45 @@
+  public JavaSquid(JavaVersion javaVersion, boolean xFileEnabled,
+                   @Nullable SonarComponents sonarComponents, @Nullable Measurer measurer,
+                   JavaResourceLocator javaResourceLocator, @Nullable CodeVisitorIssueFilter postAnalysisIssueFilter, CodeVisitor... visitors) {
+
+    List<CodeVisitor> commonVisitors = Lists.newArrayList(javaResourceLocator);
+    if (postAnalysisIssueFilter != null) {
+      commonVisitors.add(postAnalysisIssueFilter);
+    }
+
+    Iterable<CodeVisitor> codeVisitors = Iterables.concat(commonVisitors, Arrays.asList(visitors));
+    Collection<CodeVisitor> testCodeVisitors = Lists.newArrayList(commonVisitors);
+    if (measurer != null) {
+      Iterable<CodeVisitor> measurers = Collections.singletonList(measurer);
+      codeVisitors = Iterables.concat(measurers, codeVisitors);
+      testCodeVisitors.add(measurer.new TestFileMeasurer());
+    }
+    List<File> classpath = Lists.newArrayList();
+    List<File> testClasspath = Lists.newArrayList();
+    if (sonarComponents != null) {
+      if(!sonarComponents.isSonarLintContext()) {
+        codeVisitors = Iterables.concat(
+          codeVisitors,
+          Arrays.asList(
+            new FileLinesVisitor(sonarComponents),
+            new SyntaxHighlighterVisitor(sonarComponents)
+          )
+        );
+        testCodeVisitors.add(new SyntaxHighlighterVisitor(sonarComponents));
+      }
+      classpath = sonarComponents.getJavaClasspath();
+      testClasspath = sonarComponents.getJavaTestClasspath();
+      testCodeVisitors.addAll(sonarComponents.testCheckClasses());
+    }
+
+    //AstScanner for main files
+    ActionParser<Tree> parser = JavaParser.createParser();
+    astScanner = new JavaAstScanner(parser, sonarComponents);
+    astScanner.setVisitorBridge(createVisitorBridge(codeVisitors, classpath, javaVersion, sonarComponents, SymbolicExecutionMode.getMode(visitors, xFileEnabled)));
+
+    //AstScanner for test files
+    astScannerForTests = new JavaAstScanner(parser, sonarComponents);
+    astScannerForTests.setVisitorBridge(createVisitorBridge(testCodeVisitors, testClasspath, javaVersion, sonarComponents, SymbolicExecutionMode.DISABLED));
+
+  }
+
