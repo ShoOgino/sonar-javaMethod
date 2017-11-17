@@ -9,12 +9,8 @@
       String testName = '/' + cls.getName().replace('.', '/') + "Test.class";
       String simpleName = cls.getSimpleName();
       // Handle legacy keys.
-      org.sonar.java.RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(cls, org.sonar.java.RspecKey.class);
-      org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(cls, org.sonar.check.Rule.class);
-      String key = ruleAnnotation.key();
-      if (rspecKeyAnnotation != null) {
-        key = rspecKeyAnnotation.value();
-      }
+      Rule ruleAnnotation = AnnotationUtils.getAnnotation(cls, Rule.class);
+      String key = getKey(cls, ruleAnnotation);
       keyMap.put(ruleAnnotation.key(), key);
       if (SE_CHEKS.contains(simpleName)) {
         continue;

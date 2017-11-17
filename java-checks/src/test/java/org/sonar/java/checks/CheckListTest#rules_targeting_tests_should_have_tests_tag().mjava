@@ -1,0 +1,20 @@
+  @Test
+  public void rules_targeting_tests_should_have_tests_tag() throws Exception {
+    Set<Class> testChecks = new HashSet<>(CheckList.getJavaTestChecks());
+
+    for (Class cls : CheckList.getChecks()) {
+      String key = getKey(cls, AnnotationUtils.getAnnotation(cls, Rule.class));
+      URL metadataURL = getClass().getResource("/org/sonar/l10n/java/rules/" + CheckList.REPOSITORY_KEY + "/" + key + "_java.json");
+      File metadataFile = new File(metadataURL.toURI());
+      assertThat(metadataFile).exists();
+      try (FileReader jsonReader = new FileReader(metadataFile)) {
+        DummyMetatada metatada = gson.fromJson(jsonReader, DummyMetatada.class);
+        if (testChecks.contains(cls)) {
+          assertThat(metatada.tags).as("Rule " + key + " is targeting tests sources and should contain the 'tests' tag.").contains("tests");
+        } else {
+          assertThat(metatada.tags).as("Rule " + key + " is targeting main sources and should not contain the 'tests' tag.").doesNotContain("tests");
+        }
+      }
+    }
+  }
+
