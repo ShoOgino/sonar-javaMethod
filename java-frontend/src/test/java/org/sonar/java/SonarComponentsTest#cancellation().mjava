@@ -4,19 +4,12 @@
     SensorContextTester context = SensorContextTester.create(new File(""));
     sonarComponents.setSensorContext(context);
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V5_6));
-    assertThat(sonarComponents.analysisCancelled()).isFalse();
-
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_0));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_7));
     assertThat(sonarComponents.analysisCancelled()).isFalse();
 
     // cancellation only handled from SQ 6.0
     context.setCancelled(true);
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V5_6));
-    assertThat(sonarComponents.analysisCancelled()).isFalse();
-
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_0));
     assertThat(sonarComponents.analysisCancelled()).isTrue();
   }
 

@@ -32,16 +32,11 @@
 
     RecognitionException parseError = new RecognitionException(new LexerException("parse error"));
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_0));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_7));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isTrue();
 
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(V5_6));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(V6_7, SonarQubeSide.SCANNER));
     assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
 
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(V6_0, SonarQubeSide.SCANNER));
-    assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
-
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(V5_6, SonarQubeSide.SCANNER));
-    assertThat(sonarComponents.reportAnalysisError(parseError, file)).isFalse();
   }
 
