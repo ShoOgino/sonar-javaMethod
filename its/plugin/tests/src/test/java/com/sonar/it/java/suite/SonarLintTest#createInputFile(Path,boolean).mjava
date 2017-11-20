@@ -2,8 +2,8 @@
     return new ClientInputFile() {
 
       @Override
-      public Path getPath() {
-        return path;
+      public String getPath() {
+        return path.toString();
       }
 
       @Override
@@ -19,6 +19,16 @@
       @Override
       public <G> G getClientObject() {
         return null;
+      }
+
+      @Override
+      public InputStream inputStream() throws IOException {
+        return new FileInputStream(path.toFile());
+      }
+
+      @Override
+      public String contents() throws IOException {
+        return Files.toString(path.toFile(), StandardCharsets.UTF_8);
       }
     };
   }
