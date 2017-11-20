@@ -1,10 +1,15 @@
   public static List getExtensions() {
     ImmutableList.Builder<Object> extensions = ImmutableList.builder();
 
-    extensions.addAll(JacocoConfiguration.getPropertyDefinitions());
     extensions.add(
-      JacocoConfiguration.class,
-      // Unit tests
+      PropertyDefinition.builder(REPORT_PATHS_PROPERTY)
+      .defaultValue(REPORT_PATHS_DEFAULT_VALUE)
+      .category(JavaConstants.JAVA_CATEGORY)
+      .subCategory("JaCoCo")
+      .name("JaCoCo Reports")
+      .description("Path to the JaCoCo report files containing coverage data by unit tests. The path may be absolute or relative to the project base directory.")
+      .onQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
+      .build(),
       JaCoCoSensor.class);
     return extensions.build();
   }

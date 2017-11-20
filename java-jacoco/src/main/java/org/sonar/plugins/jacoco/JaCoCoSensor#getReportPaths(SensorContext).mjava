@@ -12,28 +12,8 @@
         reportPaths.add(report);
       }
     }
-    Optional<String> reportPathProp = settings.get(REPORT_PATH_PROPERTY);
-    if (reportPathProp.isPresent()) {
-      String reportPathProperty = reportPathProp.get();
-      warnUsageOfDeprecatedProperty(settings, REPORT_PATH_PROPERTY);
-      File report = fs.resolvePath(reportPathProperty);
-      if (!report.isFile()) {
-        LOG.info("JaCoCo UT report not found: '{}'", reportPathProperty);
-      } else {
-        reportPaths.add(report);
-      }
-    }
-    Optional<String> itReportPathProp = settings.get(IT_REPORT_PATH_PROPERTY);
-    if (itReportPathProp.isPresent()) {
-      String itReportPathProperty = itReportPathProp.get();
-      warnUsageOfDeprecatedProperty(settings, IT_REPORT_PATH_PROPERTY);
-      File report = fs.resolvePath(itReportPathProperty);
-      if (!report.isFile()) {
-        LOG.info("JaCoCo IT report not found: '{}'", itReportPathProperty);
-      } else {
-        reportPaths.add(report);
-      }
-    }
+    getReport(settings, fs, REPORT_PATH_PROPERTY, "JaCoCo UT report not found: '{}'").ifPresent(reportPaths::add);
+    getReport(settings, fs, IT_REPORT_PATH_PROPERTY, "JaCoCo IT report not found: '{}'").ifPresent(reportPaths::add);
     return reportPaths;
   }
 
