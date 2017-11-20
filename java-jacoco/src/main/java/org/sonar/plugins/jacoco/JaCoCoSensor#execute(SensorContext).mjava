@@ -1,34 +1,21 @@
   @Override
   public void execute(SensorContext context) {
-    if(context.getSonarQubeVersion().isGreaterThanOrEqual(JacocoConfiguration.SQ_6_2)) {
-      if (context.settings().hasKey(REPORT_MISSING_FORCE_ZERO)) {
-        LOG.warn("Property '{}' is deprecated and its value will be ignored.", REPORT_MISSING_FORCE_ZERO);
-      }
-      Set<File> reportPaths = getReportPaths(context);
-      if (reportPaths.isEmpty()) {
-        return;
-      }
-      // Merge JaCoCo reports
-      File reportMerged;
-      if(reportPaths.size() == 1) {
-        reportMerged = reportPaths.iterator().next();
-      } else {
-        reportMerged = new File(context.fileSystem().workDir(), JACOCO_MERGED_FILENAME);
-        reportMerged.getParentFile().mkdirs();
-        JaCoCoReportMerger.mergeReports(reportMerged, reportPaths.toArray(new File[0]));
-      }
-      new UnitTestsAnalyzer(reportMerged).analyse(context);
-    } else {
-      // JaCoCo analysis for SQ prior to 6.2
-      String reportPath = context.settings().getString(REPORT_PATH_PROPERTY);
-      File report = pathResolver.relativeFile(fileSystem.baseDir(), reportPath);
-      boolean foundReport = report.isFile();
-      if(!foundReport) {
-        LOG.info("JaCoCoSensor: JaCoCo report not found : "+report.getPath());
-      }
-      if(configuration.shouldExecuteOnProject(foundReport)) {
-        new UnitTestsAnalyzer(report).analyse(context);
-      }
+    if (context.config().hasKey(REPORT_MISSING_FORCE_ZERO)) {
+      LOG.warn("Property '{}' is deprecated and its value will be ignored.", REPORT_MISSING_FORCE_ZERO);
     }
+    Set<File> reportPaths = getReportPaths(context);
+    if (reportPaths.isEmpty()) {
+      return;
+    }
+    // Merge JaCoCo reports
+    File reportMerged;
+    if(reportPaths.size() == 1) {
+      reportMerged = reportPaths.iterator().next();
+    } else {
+      reportMerged = new File(context.fileSystem().workDir(), JACOCO_MERGED_FILENAME);
+      reportMerged.getParentFile().mkdirs();
+      JaCoCoReportMerger.mergeReports(reportMerged, reportPaths.toArray(new File[0]));
+    }
+    new UnitTestsAnalyzer(reportMerged).analyse(context);
   }
 

@@ -5,7 +5,6 @@
     DefaultInputFile resource = new TestInputFileBuilder("", "").setLines(25).build();
     when(javaResourceLocator.findResourceByClassName(anyString())).thenReturn(resource);
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
-    when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     MutableTestable testAbleFile = mock(MutableTestable.class);
     when(perspectives.as(eq(MutableTestable.class), eq(resource))).thenReturn(testAbleFile);
@@ -17,7 +16,7 @@
     when(testPlan.testCasesByName("testFoo")).thenReturn(newArrayList(testCase));
 
     when(perspectives.as(eq(MutableTestPlan.class), eq(resource))).thenReturn(testPlan);
-
+    context.settings().setProperty(REPORT_PATH_PROPERTY, jacocoExecutionData.getAbsolutePath());
     sensor.execute(context);
     verify(testCase).setCoverageBlock(testAbleFile, linesExpected);
   }

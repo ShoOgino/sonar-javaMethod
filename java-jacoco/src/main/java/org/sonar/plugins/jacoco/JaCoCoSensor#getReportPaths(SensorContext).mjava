@@ -1,6 +1,6 @@
   private static Set<File> getReportPaths(SensorContext context) {
     Set<File> reportPaths = new HashSet<>();
-    Settings settings = context.settings();
+    Configuration settings = context.config();
     FileSystem fs = context.fileSystem();
     for (String reportPath : settings.getStringArray(REPORT_PATHS_PROPERTY)) {
       File report = fs.resolvePath(reportPath);
@@ -12,20 +12,24 @@
         reportPaths.add(report);
       }
     }
-    if (settings.hasKey(REPORT_PATH_PROPERTY)) {
+    Optional<String> reportPathProp = settings.get(REPORT_PATH_PROPERTY);
+    if (reportPathProp.isPresent()) {
+      String reportPathProperty = reportPathProp.get();
       warnUsageOfDeprecatedProperty(settings, REPORT_PATH_PROPERTY);
-      File report = fs.resolvePath(settings.getString(REPORT_PATH_PROPERTY));
+      File report = fs.resolvePath(reportPathProperty);
       if (!report.isFile()) {
-        LOG.info("JaCoCo UT report not found: '{}'", settings.getString(REPORT_PATH_PROPERTY));
+        LOG.info("JaCoCo UT report not found: '{}'", reportPathProperty);
       } else {
         reportPaths.add(report);
       }
     }
-    if (settings.hasKey(IT_REPORT_PATH_PROPERTY)) {
+    Optional<String> itReportPathProp = settings.get(IT_REPORT_PATH_PROPERTY);
+    if (itReportPathProp.isPresent()) {
+      String itReportPathProperty = itReportPathProp.get();
       warnUsageOfDeprecatedProperty(settings, IT_REPORT_PATH_PROPERTY);
-      File report = fs.resolvePath(settings.getString(IT_REPORT_PATH_PROPERTY));
+      File report = fs.resolvePath(itReportPathProperty);
       if (!report.isFile()) {
-        LOG.info("JaCoCo IT report not found: '{}'", settings.getString(IT_REPORT_PATH_PROPERTY));
+        LOG.info("JaCoCo IT report not found: '{}'", itReportPathProperty);
       } else {
         reportPaths.add(report);
       }

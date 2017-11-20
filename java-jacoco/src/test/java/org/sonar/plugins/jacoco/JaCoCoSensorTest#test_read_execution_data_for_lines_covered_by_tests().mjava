@@ -7,7 +7,6 @@
     DefaultInputFile resource = new TestInputFileBuilder("", "").setLines(10).build();
     when(javaResourceLocator.findResourceByClassName(anyString())).thenReturn(resource);
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
-    when(pathResolver.relativeFile(any(File.class), any(String.class))).thenReturn(jacocoExecutionData);
 
     MutableTestable testAbleFile = mock(MutableTestable.class);
     when(perspectives.as(eq(MutableTestable.class), eq(resource))).thenReturn(testAbleFile);
@@ -18,6 +17,7 @@
     when(testPlan.testCasesByName("test")).thenReturn(newArrayList(testCase));
 
     when(perspectives.as(eq(MutableTestPlan.class), eq(resource))).thenReturn(testPlan);
+    context.settings().setProperty(REPORT_PATH_PROPERTY, jacocoExecutionData.getAbsolutePath());
     SensorContextTester spy = Mockito.spy(context);
     sensor.execute(spy);
     verify(spy, times(1)).newCoverage();

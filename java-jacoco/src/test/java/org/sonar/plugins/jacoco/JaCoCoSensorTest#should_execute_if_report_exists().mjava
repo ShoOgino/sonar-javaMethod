@@ -1,18 +1,13 @@
   @Test
   public void should_execute_if_report_exists() {
-    JacocoConfiguration configuration = mock(JacocoConfiguration.class);
-    JaCoCoSensor sensor = new JaCoCoSensor(configuration, perspectives, context.fileSystem(), pathResolver, javaResourceLocator, javaClasspath);
+    JaCoCoSensor sensor = new JaCoCoSensor(perspectives, javaResourceLocator, javaClasspath);
     context.settings().setProperty(REPORT_PATH_PROPERTY, "ut.exec");
-    File outputDir = TestUtils.getResource(JaCoCoOverallSensorTest.class, ".");
-    when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.exec"));
-    when(configuration.shouldExecuteOnProject(true)).thenReturn(true);
-    when(configuration.shouldExecuteOnProject(false)).thenReturn(false);
     sensor.execute(context);
     assertThat(logTester.logs(LoggerLevel.INFO)).contains("No JaCoCo analysis of project coverage can be done since there is no class files.");
-    when(pathResolver.relativeFile(any(File.class), eq("ut.exec"))).thenReturn(new File(outputDir, "ut.not.found.exec"));
+    context.settings().setProperty(REPORT_PATH_PROPERTY, "ut.notfound.exec");
     sensor.execute(context);
     List<String> logs = logTester.logs(LoggerLevel.INFO);
     assertThat(logs).hasSize(2);
-    assertThat(logs.get(1)).startsWith("JaCoCoSensor: JaCoCo report not found :");
+    assertThat(logs.get(1)).startsWith("JaCoCo UT report not found:");
   }
 

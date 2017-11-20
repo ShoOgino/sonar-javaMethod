@@ -6,16 +6,12 @@
     Files.copy(TestUtils.getResource("Hello.class.toCopy"), new File(jacocoExecutionData.getParentFile(), "Hello.class"));
 
     context = SensorContextTester.create(outputDir);
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(SQ_5_6, SonarQubeSide.SCANNER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(SQ_6_7, SonarQubeSide.SCANNER));
     context.fileSystem().setWorkDir(temp.newFolder().toPath());
-    pathResolver = mock(PathResolver.class);
 
-    Settings settings = new MapSettings();
-    settings.setProperty(REPORT_PATH_PROPERTY, JacocoConfiguration.REPORT_PATH_DEFAULT_VALUE);
-    context.settings().setProperty(REPORT_PATH_PROPERTY, JacocoConfiguration.REPORT_PATH_DEFAULT_VALUE);
-    configuration = new JacocoConfiguration(settings);
+    context.settings().setProperty(REPORT_PATH_PROPERTY, "jacoco.exec");
     perspectives = mock(ResourcePerspectives.class);
     javaClasspath = mock(JavaClasspath.class);
-    sensor = new JaCoCoSensor(configuration, perspectives, context.fileSystem(), pathResolver, javaResourceLocator, javaClasspath);
+    sensor = new JaCoCoSensor(perspectives, javaResourceLocator, javaClasspath);
   }
 
