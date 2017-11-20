@@ -1,0 +1,13 @@
+  /**
+   *  Lookup method as described in JVM spec https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-5.html#jvms-5.4.3.3
+   *  Some steps of the algorithm are not followed precisely, mostly the concept of maximally-specific superinterface,
+   *  this should be OK, because such code should not compile anyway (i.e this can happen only if runtime and compile-time
+   *  dependencies are different)
+   *
+   */
+  @CheckForNull
+  public static MethodLookup lookup(String signature, SquidClassLoader classLoader, MethodVisitor methodVisitor) {
+    String className = signature.substring(0, signature.indexOf('#'));
+    return lookup(className, signature, classLoader, methodVisitor);
+  }
+

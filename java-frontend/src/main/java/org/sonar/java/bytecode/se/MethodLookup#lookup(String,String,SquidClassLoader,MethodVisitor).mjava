@@ -1,0 +1,27 @@
+  private static MethodLookup lookup(String className, String signature, SquidClassLoader classLoader, MethodVisitor methodVisitor) {
+    byte[] bytes = getClassBytes(className, classLoader);
+    if (bytes == null) {
+      return null;
+    }
+    ClassReader cr = new ClassReader(bytes);
+    LookupClassVisitor lookupVisitor = new LookupClassVisitor(methodVisitor, signature);
+    cr.accept(lookupVisitor, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+    if (lookupVisitor.methodFound) {
+      return new MethodLookup(lookupVisitor.isStatic, lookupVisitor.isVarArgs, lookupVisitor.declaredExceptions);
+    }
+    // we didn't succeed to find the method in the class, try recursively on superclasses and interfaces
+    if (lookupVisitor.superClassName != null) {
+      MethodLookup result = lookup(lookupVisitor.superClassName, signature, classLoader, methodVisitor);
+      if (result != null) {
+        return result;
+      }
+    }
+    if (lookupVisitor.interfaces != null) {
+      return Arrays.stream(lookupVisitor.interfaces)
+          .map(iface -> lookup(iface, signature, classLoader, methodVisitor))
+          .filter(Objects::nonNull)
+          .findAny().orElse(null);
+    }
+    return null;
+  }
+

@@ -16,7 +16,7 @@
         .collect(Collectors.toCollection(HashMultiset::create));
 
       Symbol methodSymbol = Iterables.getOnlyElement(testClazz.lookupSymbols(method.name));
-      BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG(((JavaSymbol.MethodJavaSymbol) methodSymbol).completeSignature(), squidClassLoader);
+      BytecodeCFG bytecodeCFG = SETestUtils.bytecodeCFG(((JavaSymbol.MethodJavaSymbol) methodSymbol).completeSignature(), squidClassLoader);
       Multiset<String> cfgOpcodes = cfgOpcodes(bytecodeCFG);
       assertThat(cfgOpcodes).isEqualTo(opcodes);
     }

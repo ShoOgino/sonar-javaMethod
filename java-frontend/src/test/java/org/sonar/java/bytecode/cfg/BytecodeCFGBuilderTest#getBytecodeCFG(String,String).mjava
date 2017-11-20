@@ -1,4 +1,4 @@
-  public static BytecodeCFGBuilder.BytecodeCFG getBytecodeCFG(String methodName, String filename) {
+  public static BytecodeCFG getBytecodeCFG(String methodName, String filename) {
     SquidClassLoader squidClassLoader = new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
     File file = new File(filename);
     CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
@@ -10,6 +10,6 @@
       .filter(s -> methodName.equals(s.name()))
       .findFirst()
       .orElseThrow(IllegalStateException::new);
-    return BytecodeCFGBuilder.buildCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
+    return SETestUtils.bytecodeCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
   }
 

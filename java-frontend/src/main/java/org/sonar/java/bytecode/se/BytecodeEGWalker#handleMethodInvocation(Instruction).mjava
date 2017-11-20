@@ -36,6 +36,13 @@
       return !methodInvokedBehavior.yields().isEmpty();
     }
     programState = pop.state;
+    if (methodInvokedBehavior != null) {
+      methodInvokedBehavior.getDeclaredExceptions().forEach(exception -> {
+        Type exceptionType = semanticModel.getClassType(exception);
+        ProgramState ps = programState.stackValue(constraintManager.createExceptionalSymbolicValue(exceptionType));
+        enqueueExceptionHandlers(exceptionType, ps);
+      });
+    }
     if (instruction.hasReturnValue()) {
       programState = programState.stackValue(returnSV);
       programState = setDoubleOrLong(returnSV, instruction.isLongOrDoubleValue());

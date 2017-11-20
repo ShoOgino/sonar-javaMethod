@@ -1,12 +1,18 @@
   private void execute(String signature, SquidClassLoader classLoader) {
-    programState = ProgramState.EMPTY_STATE;
-    steps = 0;
-    BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG(signature, classLoader);
+    BytecodeCFGMethodVisitor cfgVisitor = new BytecodeCFGMethodVisitor();
+    MethodLookup lookup = MethodLookup.lookup(signature, classLoader, cfgVisitor);
+    if (lookup == null) {
+      LOG.debug("Method body not found: %s", signature);
+      return;
+    }
+    methodBehavior.setDeclaredExceptions(lookup.declaredExceptions);
+    methodBehavior.setVarArgs(lookup.isVarArgs);
+    BytecodeCFG bytecodeCFG = cfgVisitor.getCfg();
     if (bytecodeCFG == null) {
       return;
     }
-    methodBehavior.setVarArgs(bytecodeCFG.isVarArgs());
-    for (ProgramState startingState : startingStates(signature, programState, bytecodeCFG.isStaticMethod())) {
+    steps = 0;
+    for (ProgramState startingState : startingStates(signature, ProgramState.EMPTY_STATE, lookup.isStatic)) {
       enqueue(new ProgramPoint(bytecodeCFG.entry()), startingState);
     }
     while (!workList.isEmpty()) {

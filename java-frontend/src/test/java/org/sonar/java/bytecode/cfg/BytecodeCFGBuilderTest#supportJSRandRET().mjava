@@ -1,7 +1,7 @@
   @Test
   public void supportJSRandRET() throws Exception {
     SquidClassLoader classLoader = new SquidClassLoader(Lists.newArrayList(new File("src/test/JsrRet")));
-    BytecodeCFGBuilder.BytecodeCFG bytecodeCFG = BytecodeCFGBuilder.buildCFG("jdk3.AllInstructions#jsrAndRetInstructions(I)I", classLoader);
+    BytecodeCFG bytecodeCFG = SETestUtils.bytecodeCFG("jdk3.AllInstructions#jsrAndRetInstructions(I)I", classLoader);
     assertThat(bytecodeCFG).isNotNull();
     bytecodeCFG.blocks.stream().map(b-> b.terminator).filter(Objects::nonNull).forEach(t -> assertThat(t.opcode).isNotEqualTo(JSR));
   }

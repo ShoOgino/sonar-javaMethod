@@ -1,6 +1,6 @@
   @VisibleForTesting
   void handleBlockExit(ProgramPoint programPosition) {
-    BytecodeCFGBuilder.Block block = (BytecodeCFGBuilder.Block) programPosition.block;
+    BytecodeCFG.Block block = (BytecodeCFG.Block) programPosition.block;
     Instruction terminator = block.terminator();
     ProgramState.Pop pop;
     ProgramState ps;
@@ -55,8 +55,8 @@
       }
       programState = ps.stackValue(constraintManager.createBinarySymbolicValue(terminator, symbolicValueSymbols));
       Pair<List<ProgramState>, List<ProgramState>> pair = constraintManager.assumeDual(programState);
-      ProgramPoint falsePP = new ProgramPoint(((BytecodeCFGBuilder.Block) programPosition.block).falseSuccessor());
-      ProgramPoint truePP = new ProgramPoint(((BytecodeCFGBuilder.Block) programPosition.block).trueSuccessor());
+      ProgramPoint falsePP = new ProgramPoint(((BytecodeCFG.Block) programPosition.block).falseSuccessor());
+      ProgramPoint truePP = new ProgramPoint(((BytecodeCFG.Block) programPosition.block).trueSuccessor());
       pair.a.stream().forEach(s -> enqueue(falsePP, s));
       pair.b.stream().forEach(s -> enqueue(truePP, s));
     } else {

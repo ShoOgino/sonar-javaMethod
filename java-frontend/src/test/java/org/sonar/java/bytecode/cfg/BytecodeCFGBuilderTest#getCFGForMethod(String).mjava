@@ -1,10 +1,10 @@
-  private BytecodeCFGBuilder.BytecodeCFG getCFGForMethod(String methodName) {
+  private BytecodeCFG getCFGForMethod(String methodName) {
     SquidClassLoader squidClassLoader = new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
     File file = new File("src/test/java/org/sonar/java/bytecode/cfg/BytecodeCFGBuilderTest.java");
     CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
     SemanticModel.createFor(tree, squidClassLoader);
     Symbol.TypeSymbol innerClass = ((Symbol.TypeSymbol) ((ClassTree) tree.types().get(0)).symbol().lookupSymbols("InnerClass").iterator().next());
     Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) innerClass.lookupSymbols(methodName).iterator().next();
-    return BytecodeCFGBuilder.buildCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
+    return SETestUtils.bytecodeCFG(((JavaSymbol.MethodJavaSymbol) symbol).completeSignature(), squidClassLoader);
   }
 
