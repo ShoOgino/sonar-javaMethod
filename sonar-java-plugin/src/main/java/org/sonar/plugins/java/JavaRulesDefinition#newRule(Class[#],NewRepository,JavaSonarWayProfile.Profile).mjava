@@ -14,9 +14,7 @@
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
     String metadataKey = ruleMetadata(ruleClass, rule);
-    if (versionIsGreaterThan60) {
-      rule.setActivatedByDefault(profile.ruleKeys.contains(ruleKey) || profile.ruleKeys.contains(metadataKey));
-    }
+    rule.setActivatedByDefault(profile.ruleKeys.contains(ruleKey) || profile.ruleKeys.contains(metadataKey));
     rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
     if (ruleAnnotation.cardinality() == Cardinality.MULTIPLE) {
       throw new IllegalArgumentException("Cardinality is not supported, use the RuleTemplate annotation instead for " + ruleClass);
