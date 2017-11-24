@@ -1,12 +1,12 @@
   @Test
   public void return_default_value_if_property_unset() throws Exception {
-    Settings settings = mock(Settings.class);
+    MapSettings settings = new MapSettings();
     DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources/org/sonar/plugins/surefire/api/SurefireUtilsTest"));
     PathResolver pathResolver = new PathResolver();
 
     assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
 
-    List<File> directories = SurefireUtils.getReportsDirectories(settings, fs, pathResolver);
+    List<File> directories = SurefireUtils.getReportsDirectories(settings.asConfig(), fs, pathResolver);
 
     assertThat(directories).hasSize(1);
     File directory = directories.get(0);

@@ -1,9 +1,9 @@
   @Test
   public void shouldNotFailIfReportsNotFound() {
-    Settings settings = mock(Settings.class);
-    when(settings.getString(SurefireUtils.SUREFIRE_REPORTS_PATH_PROPERTY)).thenReturn("unknown");
+    MapSettings settings = new MapSettings();
+    settings.setProperty(SurefireUtils.SUREFIRE_REPORTS_PATH_PROPERTY, "unknown");
 
-    SurefireSensor surefireSensor = new SurefireSensor(mock(SurefireJavaParser.class), settings, fs, pathResolver);
+    SurefireSensor surefireSensor = new SurefireSensor(mock(SurefireJavaParser.class), settings.asConfig(), fs, pathResolver);
     surefireSensor.execute(mock(SensorContext.class));
   }
 

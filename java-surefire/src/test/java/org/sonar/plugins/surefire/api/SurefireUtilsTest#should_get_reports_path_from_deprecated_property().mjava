@@ -1,6 +1,6 @@
   @Test
   public void should_get_reports_path_from_deprecated_property() {
-    Settings settings = new MapSettings();
+    MapSettings settings = new MapSettings();
     settings.setProperty("sonar.junit.reportsPath", "target/surefire");
 
     DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources/org/sonar/plugins/surefire/api/SurefireUtilsTest/shouldGetReportsPathFromDeprecatedProperty"));
@@ -8,7 +8,7 @@
 
     assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
 
-    List<File> directories = SurefireUtils.getReportsDirectories(settings, fs, pathResolver);
+    List<File> directories = SurefireUtils.getReportsDirectories(settings.asConfig(), fs, pathResolver);
 
     assertThat(directories).hasSize(1);
     File directory = directories.get(0);

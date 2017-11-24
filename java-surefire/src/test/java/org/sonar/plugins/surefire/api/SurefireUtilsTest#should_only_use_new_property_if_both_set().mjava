@@ -1,6 +1,6 @@
   @Test
   public void should_only_use_new_property_if_both_set() {
-    Settings settings = new MapSettings();
+    MapSettings settings = new MapSettings();
     settings.setProperty("sonar.junit.reportsPath", "../shouldGetReportsPathFromDeprecatedProperty/target/surefire");
     settings.setProperty("sonar.junit.reportPaths", "target/surefire,submodule/target/surefire");
 
@@ -9,7 +9,7 @@
 
     assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
 
-    List<File> directories = SurefireUtils.getReportsDirectories(settings, fs, pathResolver);
+    List<File> directories = SurefireUtils.getReportsDirectories(settings.asConfig(), fs, pathResolver);
 
     assertThat(directories).hasSize(2);
     File directory1 = directories.get(0);
