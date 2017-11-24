@@ -6,7 +6,7 @@
         declaredExceptions = convertExceptions(exceptions);
         isStatic = Flags.isFlagged(access, Flags.STATIC);
         isVarArgs = Flags.isFlagged(access, Flags.VARARGS);
-        if (isOverridableOrNativeMethod(access) || methodIsBlacklisted(methodSignature)) {
+        if (!methodVisitor.shouldVisitMethod(access, methodSignature)) {
           // avoid computing CFG when the method behavior won't be used
           return null;
         }
