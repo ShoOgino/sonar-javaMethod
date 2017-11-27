@@ -1,21 +1,13 @@
   private static SonarComponents createSonarComponentsMock(SensorContextTester contextTester) {
-
-    CheckFactory checkFactory = mock(CheckFactory.class);
-    Checks<Object> checks = mock(Checks.class);
-    when(checks.addAnnotatedChecks(any(Iterable.class))).thenReturn(checks);
-    when(checks.ruleKey(any(JavaCheck.class))).thenReturn(RuleKey.of("squid", RuleAnnotationUtils.getRuleKey(BadMethodNameCheck.class)));
-
-    JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
-    when(javaTestClasspath.getElements()).thenReturn(ImmutableList.of());
-
-    JavaClasspath javaClasspath = mock(JavaClasspath.class);
-    when(javaClasspath.getElements()).thenReturn(ImmutableList.of());
-    when(checkFactory.create(anyString())).thenReturn(checks);
+    Configuration settings = new MapSettings().asConfig();
+    DefaultFileSystem fs = contextTester.fileSystem();
+    JavaTestClasspath javaTestClasspath = new JavaTestClasspath(settings, fs);
+    JavaClasspath javaClasspath = new JavaClasspath(settings, fs);
 
     FileLinesContext fileLinesContext = mock(FileLinesContext.class);
     FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
-    SonarComponents sonarComponents = spy(new SonarComponents(fileLinesContextFactory, contextTester.fileSystem(), javaClasspath, javaTestClasspath, checkFactory));
+    SonarComponents sonarComponents = spy(new SonarComponents(fileLinesContextFactory, fs, javaClasspath, javaTestClasspath, checkFactory));
     sonarComponents.setSensorContext(contextTester);
 
     BadMethodNameCheck check = new BadMethodNameCheck();

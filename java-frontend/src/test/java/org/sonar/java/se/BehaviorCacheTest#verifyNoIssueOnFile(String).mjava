@@ -1,9 +1,8 @@
   private static void verifyNoIssueOnFile(String fileName) {
-    NullDereferenceCheck seCheck = new NullDereferenceCheck();
-    createSymbolicExecutionVisitor(fileName, seCheck);
+    createSymbolicExecutionVisitor(fileName, nullDereferenceCheck);
     // verify we did not raise any issue, if we did, the context will get them reported.
     JavaFileScannerContext context = mock(JavaFileScannerContext.class);
-    seCheck.scanFile(context);
-    verify(context, never()).reportIssueWithFlow(eq(seCheck), any(Tree.class), anyString(), anySet(), nullable(Integer.class));
+    nullDereferenceCheck.scanFile(context);
+    verify(context, never()).reportIssueWithFlow(eq(nullDereferenceCheck), any(Tree.class), anyString(), anySet(), nullable(Integer.class));
   }
 

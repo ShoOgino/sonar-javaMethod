@@ -1,12 +1,9 @@
   public static Pair<SymbolicExecutionVisitor, SemanticModel> createSymbolicExecutionVisitorAndSemantic(String fileName, SECheck... checks) {
-    ActionParser<Tree> p = JavaParser.createParser();
-    CompilationUnitTree cut = (CompilationUnitTree) p.parse(new File(fileName));
-    SemanticModel semanticModel = SemanticModel.createFor(cut, new SquidClassLoader(new ArrayList<>(CLASS_PATH)));
-    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Lists.newArrayList(checks), new BehaviorCache(new SquidClassLoader(CLASS_PATH)));
-    JavaFileScannerContext context = mock(JavaFileScannerContext.class);
-    when(context.getTree()).thenReturn(cut);
-    when(context.getSemanticModel()).thenReturn(semanticModel);
-    sev.scanFile(context);
+    File file = new File(fileName);
+    CompilationUnitTree cut = (CompilationUnitTree) PARSER.parse(file);
+    SemanticModel semanticModel = SemanticModel.createFor(cut, CLASSLOADER);
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Arrays.asList(checks), new BehaviorCache(CLASSLOADER));
+    sev.scanFile(new DefaultJavaFileScannerContext(cut, file, semanticModel, null, new JavaVersionImpl(8), true));
     return new Pair<>(sev, semanticModel);
   }
 
