@@ -1,0 +1,8 @@
+  private void throwTooManyTransitiveRelationsException(MethodTree tree, RelationalSymbolicValue.TransitiveRelationExceededException e) {
+    String message = String.format("reached maximum number of transitive relations generated for method %s in class %s",
+      tree.simpleName().name(), tree.symbol().owner().name());
+    MaximumStepsReachedException cause = new MaximumStepsReachedException(message, e);
+    interrupted(cause);
+    throw cause;
+  }
+

@@ -1,7 +1,8 @@
   private void throwTooManyBooleanStates(MethodTree tree, TooManyNestedBooleanStatesException e) {
-    interrupted();
     String message = String.format("reached maximum number of %d branched states for method %s in class %s",
       MAX_NESTED_BOOLEAN_STATES, tree.simpleName().name(), tree.symbol().owner().name());
-    throw new MaximumStepsReachedException(message, e);
+    MaximumStepsReachedException cause = new MaximumStepsReachedException(message, e);
+    interrupted(cause);
+    throw cause;
   }
 

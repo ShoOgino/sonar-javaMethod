@@ -1,7 +1,8 @@
   private void throwMaxSteps(MethodTree tree) {
-    interrupted();
     String message = String.format("reached limit of %d steps for method %s#%d in class %s",
       maxSteps(), tree.simpleName().name(), tree.simpleName().firstToken().line(), tree.symbol().owner().name());
-    throw new MaximumStepsReachedException(message);
+    MaximumStepsReachedException cause = new MaximumStepsReachedException(message);
+    interrupted(cause);
+    throw cause;
   }
 
