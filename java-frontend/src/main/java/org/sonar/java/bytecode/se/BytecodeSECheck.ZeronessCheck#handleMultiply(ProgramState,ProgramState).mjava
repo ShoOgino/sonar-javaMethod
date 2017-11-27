@@ -8,6 +8,9 @@
         // Reuse zero
         return currentState.unstackValue(1).state.stackValue(op1Zero ? op1 : op2);
       }
-      return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class).addConstraint(result, ZeroConstraint.NON_ZERO);
+      if (isNonZero(currentState, op1) && isNonZero(currentState, op2)) {
+        return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class).addConstraint(result, ZeroConstraint.NON_ZERO);
+      }
+      return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class);
     }
 

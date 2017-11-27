@@ -1,25 +1,6 @@
   @Test
   public void zeroness_check_mul() {
-    SymbolicValue sv1 = new SymbolicValue();
-    SymbolicValue sv2 = new SymbolicValue();
-
     int[] opCodes = {Opcodes.DMUL, Opcodes.FMUL, Opcodes.IMUL, Opcodes.LMUL};
-
-    ProgramState zeroZeroPs = ProgramState.EMPTY_STATE;
-    zeroZeroPs = zeroZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-    zeroZeroPs = zeroZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-
-    ProgramState zeroNonZeroPs = ProgramState.EMPTY_STATE;
-    zeroNonZeroPs = zeroNonZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-    zeroNonZeroPs = zeroNonZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-
-    ProgramState nonZeroZeroPs = ProgramState.EMPTY_STATE;
-    nonZeroZeroPs = nonZeroZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-    nonZeroZeroPs = nonZeroZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-
-    ProgramState nonZeroNonZeroPs = ProgramState.EMPTY_STATE;
-    nonZeroNonZeroPs = nonZeroNonZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-    nonZeroNonZeroPs = nonZeroNonZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO));
 
     for (int mulOpCode : opCodes) {
       Instruction instruction = new Instruction(mulOpCode);
@@ -49,6 +30,13 @@
       assertThat(peekValue).isNotIn(sv1, sv2);
       constraints = ps.getConstraints(peekValue);
       assertThat(constraints.get(ZeroConstraint.class)).isEqualTo(ZeroConstraint.NON_ZERO);
+      assertThat(constraints.get(BooleanConstraint.class)).isNull();
+
+      ps = execute(instruction, noConstraints);
+      peekValue = ps.peekValue();
+      assertThat(peekValue).isNotIn(sv1, sv2);
+      constraints = ps.getConstraints(peekValue);
+      assertThat(constraints.get(ZeroConstraint.class)).isNull();
       assertThat(constraints.get(BooleanConstraint.class)).isNull();
     }
   }

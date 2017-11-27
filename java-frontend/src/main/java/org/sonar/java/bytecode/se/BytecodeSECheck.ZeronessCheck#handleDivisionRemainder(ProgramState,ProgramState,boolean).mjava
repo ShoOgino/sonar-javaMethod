@@ -1,4 +1,4 @@
-    private static ProgramState handleDivisionRemainder(ProgramState previousState, ProgramState currentState) {
+    private static ProgramState handleDivisionRemainder(ProgramState previousState, ProgramState currentState, boolean isDivision) {
       List<SymbolicValue> operands = previousState.peekValues(2);
       SymbolicValue result = currentState.peekValue();
       SymbolicValue op1 = operands.get(0);
@@ -11,6 +11,9 @@
         // Reuse zero
         return currentState.unstackValue(1).state.stackValue(op1);
       }
-      return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class).addConstraint(result, ZeroConstraint.NON_ZERO);
+      if (isNonZero(currentState, op1) && isDivision) {
+        return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class).addConstraint(result, ZeroConstraint.NON_ZERO);
+      }
+      return currentState.removeConstraintsOnDomain(result, BooleanConstraint.class);
     }
 

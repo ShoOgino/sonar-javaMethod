@@ -1,28 +1,11 @@
   @Test
   public void zeroness_check_div_rem() {
-    SymbolicValue sv1 = new SymbolicValue();
-    SymbolicValue sv2 = new SymbolicValue();
-
     int[] opCodes = {
       Opcodes.DDIV, Opcodes.FDIV, Opcodes.IDIV, Opcodes.LDIV,
       Opcodes.DREM, Opcodes.FREM, Opcodes.IREM, Opcodes.LREM
     };
 
-    ProgramState zeroZeroPs = ProgramState.EMPTY_STATE;
-    zeroZeroPs = zeroZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-    zeroZeroPs = zeroZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-
-    ProgramState zeroNonZeroPs = ProgramState.EMPTY_STATE;
-    zeroNonZeroPs = zeroNonZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-    zeroNonZeroPs = zeroNonZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-
-    ProgramState nonZeroZeroPs = ProgramState.EMPTY_STATE;
-    nonZeroZeroPs = nonZeroZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-    nonZeroZeroPs = nonZeroZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.ZERO).put(BooleanConstraint.FALSE));
-
-    ProgramState nonZeroNonZeroPs = ProgramState.EMPTY_STATE;
-    nonZeroNonZeroPs = nonZeroNonZeroPs.stackValue(sv1).addConstraints(sv1, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO).put(BooleanConstraint.TRUE));
-    nonZeroNonZeroPs = nonZeroNonZeroPs.stackValue(sv2).addConstraints(sv2, ConstraintsByDomain.empty().put(ZeroConstraint.NON_ZERO));
+    Set<Integer> remOpcodes = ImmutableSet.of(Opcodes.DREM, Opcodes.FREM, Opcodes.IREM, Opcodes.LREM);
 
     for (int divOpCode : opCodes) {
       Instruction instruction = new Instruction(divOpCode);
@@ -33,17 +16,28 @@
       assertThat(ps).isNull();
 
       ps = execute(instruction, nonZeroZeroPs);
-      SymbolicValue peekValue = ps.peekValue();
-      assertThat(peekValue).isEqualTo(sv2);
-      ConstraintsByDomain constraints = ps.getConstraints(peekValue);
+      SymbolicValue result = ps.peekValue();
+      assertThat(result).isEqualTo(sv2);
+      ConstraintsByDomain constraints = ps.getConstraints(result);
       assertThat(constraints.get(ZeroConstraint.class)).isEqualTo(ZeroConstraint.ZERO);
       assertThat(constraints.get(BooleanConstraint.class)).isEqualTo(BooleanConstraint.FALSE);
 
       ps = execute(instruction, nonZeroNonZeroPs);
-      peekValue = ps.peekValue();
-      assertThat(peekValue).isNotIn(sv1, sv2);
-      constraints = ps.getConstraints(peekValue);
-      assertThat(constraints.get(ZeroConstraint.class)).isEqualTo(ZeroConstraint.NON_ZERO);
+      result = ps.peekValue();
+      assertThat(result).isNotIn(sv1, sv2);
+      constraints = ps.getConstraints(result);
+      if (remOpcodes.contains(divOpCode)) {
+        assertThat(constraints.get(ZeroConstraint.class)).isNull();
+      } else {
+        assertThat(constraints.get(ZeroConstraint.class)).isEqualTo(ZeroConstraint.NON_ZERO);
+      }
+      assertThat(constraints.get(BooleanConstraint.class)).isNull();
+
+      ps = execute(instruction, noConstraints);
+      result = ps.peekValue();
+      assertThat(result).isNotIn(sv1, sv2);
+      constraints = ps.getConstraints(result);
+      assertThat(constraints.get(ZeroConstraint.class)).isNull();
       assertThat(constraints.get(BooleanConstraint.class)).isNull();
     }
   }
