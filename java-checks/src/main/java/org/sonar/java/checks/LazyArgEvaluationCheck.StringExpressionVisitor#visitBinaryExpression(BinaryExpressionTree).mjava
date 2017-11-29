@@ -1,6 +1,11 @@
     @Override
     public void visitBinaryExpression(BinaryExpressionTree tree) {
       hasBinaryExpression = true;
-      super.visitBinaryExpression(tree);
+      if (!isConstant(tree.rightOperand())) {
+        tree.rightOperand().accept(this);
+      }
+      if (!isConstant(tree.leftOperand())) {
+        tree.leftOperand().accept(this);
+      }
     }
 

@@ -1,0 +1,21 @@
+    private static boolean isConstant(ExpressionTree operand) {
+      switch (operand.kind()) {
+        case BOOLEAN_LITERAL:
+        case CHAR_LITERAL:
+        case DOUBLE_LITERAL:
+        case FLOAT_LITERAL:
+        case INT_LITERAL:
+        case LONG_LITERAL:
+        case STRING_LITERAL:
+        case NULL_LITERAL:
+          return true;
+        case IDENTIFIER:
+          return isConstant(((IdentifierTree) operand).symbol());
+        case MEMBER_SELECT:
+          MemberSelectExpressionTree mset = (MemberSelectExpressionTree) operand;
+          return isConstant(mset.identifier().symbol());
+        default:
+          return false;
+      }
+    }
+
