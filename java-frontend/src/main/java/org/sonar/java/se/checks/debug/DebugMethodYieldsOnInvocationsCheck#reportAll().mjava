@@ -1,0 +1,9 @@
+  private void reportAll() {
+    methodBehaviors.entrySet().forEach(entry -> {
+      MethodBehavior mb = entry.getValue();
+      IdentifierTree methodName = entry.getKey();
+      Set<Flow> flow = flowFromYield(mb, methodName);
+      reportIssue(methodName, String.format("Method '%s' has %d method yields.", methodName.name(), mb.yields().size()), flow);
+    });
+  }
+
