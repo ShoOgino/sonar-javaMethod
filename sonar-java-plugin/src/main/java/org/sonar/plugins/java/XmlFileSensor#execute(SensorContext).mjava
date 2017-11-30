@@ -1,9 +1,12 @@
   @Override
   public void execute(SensorContext context) {
     if (hasXmlFiles()) {
+      Iterable<InputFile> xmlInputFiles = getXmlFiles();
+      // make xml files visible in SQ UI, when XML plugin is not installed
+      xmlInputFiles.forEach(context::markForPublishing);
       sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getXmlChecks());
       sonarComponents.setSensorContext(context);
-      new XmlAnalyzer(sonarComponents, sonarComponents.checkClasses()).scan(getXmlFiles());
+      new XmlAnalyzer(sonarComponents, sonarComponents.checkClasses()).scan(toFile(xmlInputFiles));
     }
   }
 
