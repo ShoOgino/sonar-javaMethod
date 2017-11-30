@@ -4,9 +4,11 @@
     ProgramState.Pop pop = programState.unstackValue(arity);
     Preconditions.checkState(pop.values.size() == arity, "Arguments mismatch for INVOKE");
     // TODO use constraintManager.createMethodSymbolicValue to create relational SV for equals
+    programState = pop.state;
     SymbolicValue returnSV = instruction.hasReturnValue() ? constraintManager.createSymbolicValue(instruction) : null;
     String signature = instruction.fieldOrMethod.completeSignature();
     MethodBehavior methodInvokedBehavior = behaviorCache.get(signature);
+    enqueueUncheckedExceptions();
     if (methodInvokedBehavior != null && methodInvokedBehavior.isComplete()) {
       List<SymbolicValue> stack = Lists.reverse(pop.values);
       if (!isStatic) {
@@ -17,7 +19,7 @@
 
       methodInvokedBehavior
         .happyPathYields()
-        .forEach(yield -> yield.statesAfterInvocation(arguments, Collections.emptyList(), pop.state, () -> returnSV).forEach(ps -> {
+        .forEach(yield -> yield.statesAfterInvocation(arguments, Collections.emptyList(), programState, () -> returnSV).forEach(ps -> {
           checkerDispatcher.methodYield = yield;
           checkerDispatcher.addTransition(ps);
           checkerDispatcher.methodYield = null;
@@ -27,7 +29,7 @@
         .forEach(yield -> {
           Type exceptionType = yield.exceptionType(semanticModel);
           yield.statesAfterInvocation(
-            arguments, Collections.emptyList(), pop.state, () -> constraintManager.createExceptionalSymbolicValue(exceptionType)).forEach(ps -> {
+            arguments, Collections.emptyList(), programState, () -> constraintManager.createExceptionalSymbolicValue(exceptionType)).forEach(ps -> {
               ps.storeExitValue();
               enqueueExceptionHandlers(exceptionType, ps);
           });
@@ -35,7 +37,6 @@
       // FIXME : empty yields here should not happen, for now act as if behavior was not resolved.
       return !methodInvokedBehavior.yields().isEmpty();
     }
-    programState = pop.state;
     if (methodInvokedBehavior != null) {
       methodInvokedBehavior.getDeclaredExceptions().forEach(exception -> {
         Type exceptionType = semanticModel.getClassType(exception);

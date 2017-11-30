@@ -6,14 +6,10 @@
         return 2;
       }
     };
-    File file = new File("src/test/java/org/sonar/java/bytecode/se/BytecodeEGWalkerTest.java");
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel.createFor(tree, squidClassLoader);
-    ClassTree innerClass = getClass(tree, "InnerClass");
-    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) innerClass.symbol().lookupSymbols("fun").stream().findFirst().get();
-    MethodBehavior methodBehavior = bytecodeEGWalker.getMethodBehavior(methodSymbol.completeSignature(), squidClassLoader);
+    MethodBehavior methodBehavior = getMethodBehavior(BytecodeTestClass.class, "fun(ZLjava/lang/Object;)Ljava/lang/Object;", bytecodeEGWalker);
     assertThat(logTester.logs(LoggerLevel.DEBUG))
-      .contains("Dataflow analysis is incomplete for method org.sonar.java.bytecode.se.BytecodeEGWalkerTest$InnerClass#fun(ZLjava/lang/Object;)Ljava/lang/Object; : Too many steps resolving org.sonar.java.bytecode.se.BytecodeEGWalkerTest$InnerClass#fun(ZLjava/lang/Object;)Ljava/lang/Object;");
+      .contains("Dataflow analysis is incomplete for method org.sonar.java.bytecode.se.testdata.BytecodeTestClass#fun(ZLjava/lang/Object;)Ljava/lang/Object;" +
+          " : Too many steps resolving org.sonar.java.bytecode.se.testdata.BytecodeTestClass#fun(ZLjava/lang/Object;)Ljava/lang/Object;");
     assertThat(methodBehavior.isComplete()).isFalse();
     assertThat(methodBehavior.isVisited()).isTrue();
   }

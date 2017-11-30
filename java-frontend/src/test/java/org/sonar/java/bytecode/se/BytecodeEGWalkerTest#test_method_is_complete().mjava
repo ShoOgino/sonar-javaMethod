@@ -1,21 +1,22 @@
   @Test
   public void test_method_is_complete() {
-    MethodBehavior nativeMethod = getMethodBehavior("nativeMethod");
+    String desc = "(Ljava/lang/String;)Z";
+    MethodBehavior nativeMethod = getMethodBehavior("nativeMethod" + desc);
     assertThat(nativeMethod.isComplete()).isFalse();
 
-    MethodBehavior abstractMethod = getMethodBehavior("abstractMethod");
+    MethodBehavior abstractMethod = getMethodBehavior("abstractMethod" + desc);
     assertThat(abstractMethod.isComplete()).isFalse();
 
-    MethodBehavior finalMethod = getMethodBehavior("finalMethod");
+    MethodBehavior finalMethod = getMethodBehavior("finalMethod" + desc);
     assertThat(finalMethod.isComplete()).isFalse();
 
-    MethodBehavior staticMethod = getMethodBehavior("staticMethod");
+    MethodBehavior staticMethod = getMethodBehavior("staticMethod" + desc);
     assertThat(staticMethod.isComplete()).isTrue();
 
-    MethodBehavior privateMethod = getMethodBehavior("privateMethod");
+    MethodBehavior privateMethod = getMethodBehavior("privateMethod" + desc);
     assertThat(privateMethod.isComplete()).isFalse();
 
-    MethodBehavior publicMethodInFinalClass = getMethodBehavior("FinalInnerClass", finalInnerClass -> ((MethodTree) finalInnerClass.members().get(0)).symbol());
+    MethodBehavior publicMethodInFinalClass = getMethodBehavior(FinalBytecodeTestClass.class, "publicMethod" + desc);
     assertThat(publicMethodInFinalClass.isComplete()).isFalse();
   }
 

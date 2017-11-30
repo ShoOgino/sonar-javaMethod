@@ -1,0 +1,11 @@
+  @Test
+  public void unchecked_exceptions_should_be_enqueued() {
+    MethodBehavior mb = getMethodBehavior(ExceptionEnqueue.class, "test(Lorg/sonar/java/bytecode/se/testdata/ExceptionEnqueue;)Z");
+    List<Constraint> resultConstraint = mb.happyPathYields().map(y -> y.resultConstraint().get(BooleanConstraint.class)).collect(Collectors.toList());
+    assertThat(resultConstraint).contains(BooleanConstraint.TRUE, BooleanConstraint.FALSE);
+    List<String> exceptions = mb.exceptionalPathYields().map(y -> y.exceptionType(semanticModel).fullyQualifiedName()).collect(Collectors.toList());
+    assertThat(exceptions).contains("org.sonar.java.bytecode.se.testdata.ExceptionEnqueue$ExceptionCatch",
+        "org.sonar.java.bytecode.se.testdata.ExceptionEnqueue$ThrowableCatch",
+        "org.sonar.java.bytecode.se.testdata.ExceptionEnqueue$ErrorCatch");
+  }
+
