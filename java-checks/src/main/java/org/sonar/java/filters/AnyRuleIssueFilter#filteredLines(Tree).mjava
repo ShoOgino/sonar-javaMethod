@@ -2,7 +2,16 @@
     SyntaxToken firstSyntaxToken = tree.firstToken();
     SyntaxToken lastSyntaxToken = tree.lastToken();
     if (firstSyntaxToken != null && lastSyntaxToken != null) {
-      return ContiguousSet.create(Range.closed(firstSyntaxToken.line(), lastSyntaxToken.line()), DiscreteDomain.integers());
+      int startLine = firstSyntaxToken.line();
+      int endLine = lastSyntaxToken.line();
+
+      // includes trivia on top of first syntax token.
+      List<SyntaxTrivia> trivias = firstSyntaxToken.trivias();
+      if (!trivias.isEmpty()) {
+        startLine = trivias.get(0).startLine();
+      }
+
+      return ContiguousSet.create(Range.closed(startLine, endLine), DiscreteDomain.integers());
     }
     return new HashSet<>();
   }
