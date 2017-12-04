@@ -1,5 +1,10 @@
   private static boolean isDesignedForExtension(MethodTree methodTree) {
-    return !ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.PRIVATE)
-      && (emptyBody(methodTree) || onlyReturnLiteralsOrThrowException(methodTree));
+    ModifiersTree modifiers = methodTree.modifiers();
+    if (ModifiersUtils.hasModifier(modifiers, Modifier.PRIVATE)) {
+      return false;
+    }
+    return ModifiersUtils.hasModifier(modifiers, Modifier.DEFAULT)
+      || emptyBody(methodTree)
+      || onlyReturnLiteralsOrThrowException(methodTree);
   }
 
