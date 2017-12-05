@@ -5,11 +5,20 @@
     }
     VariableTree variableTree = (VariableTree) tree;
     ExpressionTree initializer = variableTree.initializer();
-    if (initializer != null) {
-      if(initializer.is(Kind.METHOD_INVOCATION) && COLLECTIONS_UNMODIFIABLE.matches((MethodInvocationTree) initializer)) {
-        initializer = ((MethodInvocationTree) initializer).arguments().get(0);
-      }
-      checkIssue(initializer.symbolType(), initializer, variableTree.type());
+    if (initializer == null) {
+      return;
     }
+    if (initializer.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) initializer;
+      if (COLLECTIONS_UNMODIFIABLE.matches(mit)) {
+        // check the collection used as parameter
+        initializer = mit.arguments().get(0);
+      } else if (!GUAVA_SETS_ANY_METHOD.matches(mit) || "immutableEnumSet".equals(mit.symbol().name())) {
+        // Methods from Guava 'Sets' except 'immutableEnumSet' should be checked,
+        // but discard any other method invocations (killing the noise)
+        return;
+      }
+    }
+    checkIssue(initializer.symbolType(), initializer, variableTree.type());
   }
 
