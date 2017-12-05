@@ -1,6 +1,9 @@
   @Override
   public void visitCaseLabel(CaseLabelTree tree) {
-    blame.add(tree.firstToken());
+    if (!DEFAULT_KEYWORD.equals(tree.caseOrDefaultKeyword().text())) {
+      // default keyword does not count in complexity
+      blame.add(tree.firstToken());
+    }
     super.visitCaseLabel(tree);
   }
 
