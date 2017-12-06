@@ -1,0 +1,22 @@
+  private Set<HappyPathYield> reduce(Set<HappyPathYield> yields) {
+    LinkedList<HappyPathYield> yieldsToReduce = new LinkedList<>(yields);
+    Set<HappyPathYield> newYields = new LinkedHashSet<>();
+    while (!yieldsToReduce.isEmpty()) {
+      HappyPathYield yield1 = yieldsToReduce.removeFirst();
+      HappyPathYield reduced = null;
+      for (ListIterator<HappyPathYield> iterator = yieldsToReduce.listIterator(); iterator.hasNext(); ) {
+        HappyPathYield yield2 = iterator.next();
+        reduced = reduce(yield1, yield2);
+        if (reduced != null) {
+          newYields.add(reduced);
+          iterator.remove();
+          break;
+        }
+      }
+      if (reduced == null) {
+        newYields.add(yield1);
+      }
+    }
+    return newYields;
+  }
+

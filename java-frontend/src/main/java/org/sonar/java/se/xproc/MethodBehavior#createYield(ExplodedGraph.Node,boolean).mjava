@@ -21,7 +21,11 @@
     } else {
       HappyPathYield happyPathYield = new HappyPathYield(nodeForYield, this);
       if (expectReturnValue) {
-        happyPathYield.setResult(parameters.indexOf(resultSV), node.programState.getConstraints(resultSV));
+        ConstraintsByDomain cleanup = cleanup(node.programState.getConstraints(resultSV), org.objectweb.asm.Type.getReturnType(signature.substring(signature.indexOf('('))));
+        if (cleanup.isEmpty()) {
+          cleanup = null;
+        }
+        happyPathYield.setResult(parameters.indexOf(resultSV), cleanup);
       }
       yield = happyPathYield;
     }

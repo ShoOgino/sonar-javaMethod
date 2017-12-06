@@ -1,0 +1,23 @@
+  @CheckForNull
+  private HappyPathYield reduce(HappyPathYield yield1, HappyPathYield yield2) {
+    Optional<Integer> onlyConstraintDifferenceIndex = getOnlyConstraintDifferenceIndex(yield1, yield2);
+    if(!onlyConstraintDifferenceIndex.isPresent()) {
+      return null;
+    }
+    int constraintDifferenceIndex = onlyConstraintDifferenceIndex.get();
+
+    HappyPathYield reducedYield = new HappyPathYield(this);
+    reducedYield.parametersConstraints = new ArrayList<>(yield1.parametersConstraints);
+    reducedYield.setResult(yield1.resultIndex(), yield1.resultConstraint());
+
+    if (constraintDifferenceIndex == yield1.parametersConstraints.size()) {
+      if (isIrreducible(yield1.resultConstraint()) || isIrreducible(yield2.resultConstraint())) {
+        return null;
+      }
+      reducedYield.setResult(-1, null);
+    } else {
+      reducedYield.parametersConstraints.set(constraintDifferenceIndex, ConstraintsByDomain.empty());
+    }
+    return reducedYield;
+  }
+

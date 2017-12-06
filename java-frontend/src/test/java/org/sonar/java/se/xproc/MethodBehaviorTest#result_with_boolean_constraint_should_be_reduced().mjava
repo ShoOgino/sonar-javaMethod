@@ -1,0 +1,18 @@
+  @Test
+  public void result_with_boolean_constraint_should_be_reduced() {
+    MethodBehavior mb = new MethodBehavior("foo()Z");
+    addYield(mb, BooleanConstraint.TRUE);
+    addYield(mb, BooleanConstraint.FALSE);
+    mb.completed();
+    assertThat(mb.yields()).hasSize(1);
+    assertThat(((HappyPathYield) mb.yields().get(0)).resultConstraint()).isNull();
+
+    mb = new MethodBehavior("foo()Z");
+    addYield(mb, BooleanConstraint.TRUE, ObjectConstraint.NULL);
+    addYield(mb, BooleanConstraint.FALSE, ObjectConstraint.NOT_NULL);
+    mb.completed();
+    assertThat(mb.yields()).hasSize(2);
+    List<Constraint> resultConstraints = mb.yields().stream().map(y -> ((HappyPathYield) y).resultConstraint().get(BooleanConstraint.class)).collect(Collectors.toList());
+    assertThat(resultConstraints).contains(BooleanConstraint.TRUE, BooleanConstraint.FALSE);
+  }
+

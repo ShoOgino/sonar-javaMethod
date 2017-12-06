@@ -1,0 +1,11 @@
+  @Test
+  public void result_with_unreducible_constraint_should_not_be_reduced() {
+    MethodBehavior mb = new MethodBehavior("foo()Ljava/lang/Object;");
+    addYield(mb, ObjectConstraint.NOT_NULL);
+    addYield(mb, ObjectConstraint.NULL);
+    mb.completed();
+    assertThat(mb.yields()).hasSize(2);
+    List<Constraint> resultConstraints = mb.yields().stream().map(y -> ((HappyPathYield) y).resultConstraint().get(ObjectConstraint.class)).collect(Collectors.toList());
+    assertThat(resultConstraints).contains(ObjectConstraint.NULL, ObjectConstraint.NOT_NULL);
+  }
+

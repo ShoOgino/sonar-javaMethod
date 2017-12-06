@@ -1,0 +1,12 @@
+  private void reduceYields() {
+    Set<HappyPathYield> happyPathYields = happyPathYields().filter(y -> y.resultIndex() == -1).collect(Collectors.toCollection(LinkedHashSet::new));
+    yields.removeAll(happyPathYields);
+    int sizeBeforeReduction;
+    Set<HappyPathYield> newYields = happyPathYields;
+    do {
+      sizeBeforeReduction = newYields.size();
+      newYields = reduce(newYields);
+    } while (newYields.size() < sizeBeforeReduction);
+    yields.addAll(newYields);
+  }
+

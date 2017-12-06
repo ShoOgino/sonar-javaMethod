@@ -1,0 +1,17 @@
+  @Test
+  public void test_reducing_of_yields_on_arguments() {
+    MethodBehavior mb = new MethodBehavior("foo(Ljava/lang/Object;)V");
+    addYield(mb, null, ObjectConstraint.NOT_NULL);
+    addYield(mb, null, ObjectConstraint.NULL);
+    mb.completed();
+    assertThat(mb.yields()).hasSize(1);
+    assertThat(mb.yields().get(0).parametersConstraints).contains(ConstraintsByDomain.empty());
+
+    mb = new MethodBehavior("foo(Z)V");
+    addYield(mb, null, BooleanConstraint.TRUE);
+    addYield(mb, null, BooleanConstraint.FALSE);
+    mb.completed();
+    assertThat(mb.yields()).hasSize(1);
+    assertThat(mb.yields().get(0).parametersConstraints).contains(ConstraintsByDomain.empty());
+  }
+

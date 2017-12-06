@@ -22,6 +22,9 @@
         .happyPathYields()
         .forEach(yield -> yield.statesAfterInvocation(arguments, Collections.emptyList(), programState, () -> returnSV).forEach(ps -> {
           checkerDispatcher.methodYield = yield;
+          if (ps.peekValue() != null) {
+            ps = setDoubleOrLong(ps, ps.peekValue(), instruction.isLongOrDoubleValue());
+          }
           checkerDispatcher.addTransition(ps);
           checkerDispatcher.methodYield = null;
         }));

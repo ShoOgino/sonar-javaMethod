@@ -1,0 +1,17 @@
+  private static Optional<Integer> getOnlyConstraintDifferenceIndex(HappyPathYield yield1, HappyPathYield yield2) {
+    List<ConstraintsByDomain> constraints1 = new ArrayList<>(yield1.parametersConstraints);
+    constraints1.add(yield1.resultConstraint());
+    List<ConstraintsByDomain> constraints2 = new ArrayList<>(yield2.parametersConstraints);
+    constraints2.add(yield2.resultConstraint());
+    List<Integer> diff = new ArrayList<>();
+    for (int i = 0; i < constraints1.size(); i++) {
+      if (!Objects.equals(constraints1.get(i), constraints2.get(i))) {
+        diff.add(i);
+      }
+    }
+    if (diff.size() != 1) {
+      return Optional.empty();
+    }
+    return Optional.of(diff.get(0));
+  }
+

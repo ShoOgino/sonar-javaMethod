@@ -1,11 +1,17 @@
   private void addParameterConstraints(ExplodedGraph.Node node, MethodYield yield) {
     // add the constraints on all the parameters
+    int index = 0;
     for (SymbolicValue parameter : parameters) {
       ConstraintsByDomain constraints = node.programState.getConstraints(parameter);
       if (constraints == null) {
         constraints = ConstraintsByDomain.empty();
+      } else {
+        //cleanup based on signature
+        org.objectweb.asm.Type[] argumentTypes = org.objectweb.asm.Type.getArgumentTypes(signature.substring(signature.indexOf('(')));
+        constraints = cleanup(constraints, argumentTypes[index]);
       }
       yield.parametersConstraints.add(constraints);
+      index++;
     }
   }
 
