@@ -1,0 +1,27 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    Type superType = classTree.symbol().superClass();
+    IdentifierTree className = classTree.simpleName();
+    if (className == null || classTree.symbol().isAbstract() || superType == null || !(superType.is("java.io.OutputStream") || superType.is("java.io.FilterOutputStream"))) {
+      return;
+    }
+    Optional<MethodTree> writeByteIntInt = findMethod(classTree, WRITE_BYTES_INT_INT);
+    Optional<MethodTree> writeInt = findMethod(classTree, WRITE_INT);
+
+    if (!writeByteIntInt.isPresent()) {
+      String message = "Provide an override of \"write(byte[],int,int)\" for this class.";
+      if (writeInt.isPresent()) {
+        MethodTree writeIntTree = writeInt.get();
+        if (writeIntTree.block().body().isEmpty()) {
+          message = "Provide an empty override of \"write(byte[],int,int)\" for this class as well.";
+        }
+      }
+      reportIssue(className, message);
+    }
+
+  }
+
