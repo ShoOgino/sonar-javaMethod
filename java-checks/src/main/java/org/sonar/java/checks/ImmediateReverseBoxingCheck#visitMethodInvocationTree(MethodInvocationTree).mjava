@@ -1,17 +1,17 @@
-  private void visitMethodInvocationTree(MethodInvocationTree methodInvocationTree) {
-    if (isValueOfInvocation(methodInvocationTree)) {
-      checkForUnboxing(methodInvocationTree.arguments().get(0));
-    } else if (isUnboxingMethodInvocation(methodInvocationTree)) {
-      ExpressionTree methodSelect = methodInvocationTree.methodSelect();
+  private void visitMethodInvocationTree(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (isValueOfInvocation(mit)) {
+      ExpressionTree arg0 = mit.arguments().get(0);
+      checkForUnboxing(arg0);
+      checkForUselessUnboxing(mit.symbolType(), methodSelect, arg0);
+    } else if (isUnboxingMethodInvocation(mit)) {
       if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
-        MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) methodSelect;
-        checkForBoxing(memberSelectExpressionTree.expression());
+        checkForBoxing(((MemberSelectExpressionTree) methodSelect).expression());
       }
     } else {
-      Symbol symbol = methodInvocationTree.symbol();
+      Symbol symbol = mit.symbol();
       if (symbol.isMethodSymbol()) {
-        List<Type> parametersTypes = ((Symbol.MethodSymbol) symbol).parameterTypes();
-        checkMethodInvocationArguments(methodInvocationTree, parametersTypes);
+        checkMethodInvocationArguments(mit, ((Symbol.MethodSymbol) symbol).parameterTypes());
       }
     }
   }

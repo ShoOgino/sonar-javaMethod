@@ -1,23 +1,26 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-        visitMethodInvocationTree((MethodInvocationTree) tree);
-      } else if (tree.is(Tree.Kind.VARIABLE)) {
-        VariableTree variableTree = (VariableTree) tree;
-        ExpressionTree initializer = variableTree.initializer();
-        if (initializer != null) {
-          checkExpression(initializer, variableTree.type().symbolType());
-        }
-      } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
-        AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) tree;
-        checkExpression(assignmentTree.expression(), assignmentTree.symbolType());
-      } else {
-        NewClassTree newClassTree = (NewClassTree) tree;
-        Symbol.TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);
-        if (classSymbol != null) {
-          checkForUnboxing(newClassTree.arguments().get(0));
-        }
+    if (!hasSemantic()) {
+      return;
+    }
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      visitMethodInvocationTree((MethodInvocationTree) tree);
+    } else if (tree.is(Tree.Kind.VARIABLE)) {
+      VariableTree variableTree = (VariableTree) tree;
+      ExpressionTree initializer = variableTree.initializer();
+      if (initializer != null) {
+        checkExpression(initializer, variableTree.type().symbolType());
+      }
+    } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) tree;
+      checkExpression(assignmentTree.expression(), assignmentTree.symbolType());
+    } else {
+      NewClassTree newClassTree = (NewClassTree) tree;
+      Symbol.TypeSymbol classSymbol = wrapperClassSymbol(newClassTree);
+      if (classSymbol != null) {
+        ExpressionTree arg0 = newClassTree.arguments().get(0);
+        checkForUnboxing(arg0);
+        checkForUselessUnboxing(newClassTree.symbolType(), newClassTree.identifier(), arg0);
       }
     }
   }

@@ -1,5 +1,7 @@
   void intUnboxingAndBoxing(int int1, Integer integer1, String string, Number number) {
-    new Integer(integer1.intValue()); // Noncompliant
+    new Integer(integer1.intValue()); // Noncompliant {{Remove the unboxing of "integer1".}}
+    new Integer(integer1); // Noncompliant [[sc=9;ec=16]] {{Remove the boxing to "Integer"; The argument is already of the same type.}}
+    new Long(integer1); // Compliant
     new Integer(int1);
     new Integer(string.length());
     new Integer(createInteger().intValue()); // Noncompliant
