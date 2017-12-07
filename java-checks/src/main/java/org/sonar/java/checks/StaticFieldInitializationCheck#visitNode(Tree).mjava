@@ -1,25 +1,37 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD)) {
-      methodUsesLocks.push(false);
-    }
-    if (tree.is(Tree.Kind.METHOD_INVOCATION)
-      && (locks.anyMatch((MethodInvocationTree) tree))
-      && methodUsesLocks.size() != 1) {
-      methodUsesLocks.pop();
-      methodUsesLocks.push(true);
-    }
-    if (hasSemantic() && tree.is(Tree.Kind.ASSIGNMENT)) {
-      AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
-      if (aet.variable().is(Tree.Kind.IDENTIFIER) && !isInSyncBlock() && !withinStaticInitializer.peek() && !isUsingLock()) {
-        IdentifierTree variable = (IdentifierTree) aet.variable();
-        if (isStaticNotVolatileObject(variable)) {
-          reportIssue(variable, "Synchronize this lazy initialization of '" + variable.name() + "'");
+    switch (tree.kind()) {
+      case CLASS:
+        classWithSynchronizedMethod.push(hasSynchronizedMethod((ClassTree) tree));
+        break;
+      case STATIC_INITIALIZER:
+        withinStaticInitializer.push(true);
+        break;
+      case METHOD:
+        methodUsesLocks.push(false);
+        break;
+      case METHOD_INVOCATION:
+        if (locks.anyMatch((MethodInvocationTree) tree) && methodUsesLocks.size() != 1) {
+          methodUsesLocks.pop();
+          methodUsesLocks.push(true);
         }
-      }
-    }
-    if (tree.is(Tree.Kind.STATIC_INITIALIZER)) {
-      withinStaticInitializer.push(true);
+        break;
+      case ASSIGNMENT:
+        AssignmentExpressionTree aet = (AssignmentExpressionTree) tree;
+        if (hasSemantic()
+          && aet.variable().is(Tree.Kind.IDENTIFIER)
+          && !isInSyncBlock()
+          && !isInStaticInitializer()
+          && !isUsingLock()
+          && isInClassWithSynchronizedMethod()) {
+          IdentifierTree variable = (IdentifierTree) aet.variable();
+          if (isStaticNotVolatileObject(variable)) {
+            reportIssue(variable, "Synchronize this lazy initialization of '" + variable.name() + "'");
+          }
+        }
+        break;
+      default:
+        // Do nothing
     }
     super.visitNode(tree);
   }

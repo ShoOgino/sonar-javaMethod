@@ -1,0 +1,8 @@
+  private static Boolean hasSynchronizedMethod(ClassTree tree) {
+    return tree.members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .map(MethodTree::modifiers)
+      .anyMatch(modifiers -> ModifiersUtils.hasModifier(modifiers, Modifier.SYNCHRONIZED));
+  }
+

@@ -1,10 +1,17 @@
   @Override
   public void leaveNode(Tree tree) {
-    if (tree.is(Tree.Kind.STATIC_INITIALIZER)) {
-      withinStaticInitializer.pop();
-    }
-    if(tree.is(Tree.Kind.METHOD)) {
-      methodUsesLocks.pop();
+    switch (tree.kind()) {
+      case CLASS:
+        classWithSynchronizedMethod.pop();
+        break;
+      case STATIC_INITIALIZER:
+        withinStaticInitializer.pop();
+        break;
+      case METHOD:
+        methodUsesLocks.pop();
+        break;
+      default:
+        // do nothing
     }
     super.leaveNode(tree);
   }
