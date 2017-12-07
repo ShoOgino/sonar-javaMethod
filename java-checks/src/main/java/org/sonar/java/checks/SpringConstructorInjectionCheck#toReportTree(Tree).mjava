@@ -1,0 +1,13 @@
+  private static Tree toReportTree(Tree member) {
+    Stream<AnnotationTree> stream = Stream.empty();
+    if (member.is(Kind.VARIABLE)) {
+      stream = ((VariableTree) member).modifiers().annotations().stream();
+    } else if (member.is(Kind.METHOD)) {
+      stream = ((MethodTree) member).modifiers().annotations().stream();
+    }
+    return stream
+      .filter(a -> a.annotationType().symbolType().is("org.springframework.beans.factory.annotation.Autowired"))
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("Mapping a tree to something unexpected"));
+  }
+

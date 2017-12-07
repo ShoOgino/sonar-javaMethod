@@ -1,0 +1,33 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if(!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    if (isClassTreeAnnotatedWith(classTree,
+      "org.springframework.stereotype.Controller",
+      "org.springframework.stereotype.Repository",
+      "org.springframework.stereotype.Service")) {
+      List<Tree> toReport = classTree.members()
+        .stream()
+        .filter(SpringConstructorInjectionCheck::isMemberAutowired)
+        .map(SpringConstructorInjectionCheck::toReportTree)
+        .collect(Collectors.toList());
+
+      if (!toReport.isEmpty()) {
+        int cost = toReport.size();
+        // find constructor
+        classTree.members().stream()
+          .filter(m -> m.is(Kind.CONSTRUCTOR))
+          .map(m -> ((MethodTree) m).simpleName())
+          .findFirst()
+          .ifPresent(toReport::add);
+
+        reportIssue(toReport.get(0),
+          "Remove this annotation and use constructor injection instead.",
+          toReport.stream().skip(1).map(i -> new JavaFileScannerContext.Location("", i)).collect(Collectors.toList())
+          , cost);
+      }
+    }
+  }
+
