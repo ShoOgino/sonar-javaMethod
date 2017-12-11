@@ -2,7 +2,7 @@
   public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
-      if (MAP_PUT.matches(mit)) {
+      if (MAP_PUT.matches(mit) && !isMethodInvocationThrowingCheckedException(mit.arguments().get(1))) {
         ProgramState ps = context.getState();
 
         SymbolicValue keySV = ps.peekValue(1);
