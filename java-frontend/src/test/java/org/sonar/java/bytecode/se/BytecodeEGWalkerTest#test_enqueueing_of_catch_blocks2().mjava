@@ -1,0 +1,11 @@
+  @Test
+  public void test_enqueueing_of_catch_blocks2() {
+    MethodBehavior mb = getMethodBehavior(ExceptionEnqueue.class, "testCatchBlockEnqueue2()Z");
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(1);
+    // result should have TRUE constraint, but wrong yield with FALSE constraint is also created
+    // and two yields are reduced subsequently
+    assertThat(mb.happyPathYields().findFirst().get().resultConstraint()).isNull();
+    assertThat(mb.exceptionalPathYields().findFirst().isPresent()).isFalse();
+  }
+

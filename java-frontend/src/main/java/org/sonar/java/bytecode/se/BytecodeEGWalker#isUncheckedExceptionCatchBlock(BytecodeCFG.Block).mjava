@@ -1,9 +1,4 @@
   private boolean isUncheckedExceptionCatchBlock(BytecodeCFG.Block b) {
-    String exceptionTypeName = b.getExceptionType();
-    if (exceptionTypeName == null) {
-      return false;
-    }
-    Type exceptionType = semanticModel.getClassType(exceptionTypeName);
-    return ExceptionUtils.isUncheckedException(exceptionType);
+    return b.isCatchBlock() && ExceptionUtils.isUncheckedException(b.getExceptionType(semanticModel));
   }
 

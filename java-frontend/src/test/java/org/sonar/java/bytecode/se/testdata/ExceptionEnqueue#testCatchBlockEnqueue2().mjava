@@ -1,0 +1,13 @@
+  static boolean testCatchBlockEnqueue2() throws IOException {
+    try {
+     throwSpecificException();
+    } catch (FileNotFoundException e) {
+      return true;
+    } catch (IOException e) {
+      // this return is not reachable, however catch is enqueued and yield is created anyway,
+      // because we don't know if we have precise type of exception
+      return false;
+    }
+    throw new RuntimeException();
+  }
+

@@ -6,12 +6,12 @@
     Preconditions.checkState(peekValue instanceof SymbolicValue.ExceptionalSymbolicValue, "Top of stack should always contains exceptional SV");
     SymbolicValue.ExceptionalSymbolicValue exceptionSV = (SymbolicValue.ExceptionalSymbolicValue) peekValue;
     // only consider the first match, as order of catch block is important
-    Optional<CFG.Block> firstMatchingCatchBlock = catchBlocks.stream()
+    List<CFG.Block> caughtBlocks = catchBlocks.stream()
       .filter(b -> isCaughtByBlock(exceptionSV.exceptionType(), b))
       .sorted((b1, b2) -> Integer.compare(b2.id(), b1.id()))
-      .findFirst();
-    if (firstMatchingCatchBlock.isPresent()) {
-      enqueue(new ProgramPoint(firstMatchingCatchBlock.get()), ps, methodYield);
+      .collect(Collectors.toList());
+    if (!caughtBlocks.isEmpty()) {
+      caughtBlocks.forEach(b -> enqueue(new ProgramPoint(b), ps, methodYield));
       return;
     }
 
