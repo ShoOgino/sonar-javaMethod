@@ -1,0 +1,15 @@
+  @Test
+  public void test_getAuthURL(TestContext contextVertx) { // Compliant
+    HttpClient client = vertx.createHttpClient();
+    Async async = contextVertx.async();
+
+    client.getNow(port, "localhost", requestURI, resp -> {
+      resp.bodyHandler(body -> {
+        contextVertx.assertEquals(urlString, body.toString()); // assertion
+        client.close();
+        async.complete();
+      });
+    });
+
+  }
+

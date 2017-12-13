@@ -1,0 +1,19 @@
+  @Test
+  public void test_saveUser() { // Compliant even if this test may not be run correctly - assertion is present
+    TestSuite suite = TestSuite.create("suite_user_save");
+    HttpClient client = vertx.createHttpClient();
+
+    suite.test("user_save", context -> {
+
+      client.getNow(port, host, requestURI, resp -> {
+        resp.bodyHandler(body -> {
+
+          context.assertNotEquals("created", body.toString()); // assertion
+          client.close();
+        });
+      });
+
+    });
+
+  }
+
