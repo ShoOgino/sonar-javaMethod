@@ -2,17 +2,18 @@
   public void should_create_sonar_way_profile() {
     ValidationMessages validation = ValidationMessages.create();
 
-    JavaSonarWayProfile profileDef = new JavaSonarWayProfile(ruleFinder(false));
-    RulesProfile profile = profileDef.createProfile(validation);
-
-    assertThat(profile.getLanguage()).isEqualTo(Java.KEY);
-    List<ActiveRule> activeRules = profile.getActiveRulesByRepository(CheckList.REPOSITORY_KEY);
-    assertThat(profile.getActiveRulesByRepository("common-java")).hasSize(1);
+    JavaSonarWayProfile profileDef = new JavaSonarWayProfile();
+    BuiltInQualityProfilesDefinition.Context context = new BuiltInQualityProfilesDefinition.Context();
+    profileDef.define(context);
+    BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("java", "Sonar way");
+    assertThat(profile.language()).isEqualTo(Java.KEY);
+    List<BuiltInQualityProfilesDefinition.BuiltInActiveRule> activeRules = profile.rules();
+    assertThat(activeRules.stream().filter(r -> r.repoKey().equals("common-java"))).hasSize(1);
     assertThat(activeRules.size()).as("Expected number of rules in profile").isGreaterThanOrEqualTo(268);
-    assertThat(profile.getName()).isEqualTo("Sonar way");
+    assertThat(profile.name()).isEqualTo("Sonar way");
     Set<String> keys = new HashSet<>();
-    for (ActiveRule activeRule : activeRules) {
-      keys.add(activeRule.getRuleKey());
+    for (BuiltInQualityProfilesDefinition.BuiltInActiveRule activeRule : activeRules) {
+      keys.add(activeRule.ruleKey());
     }
     //Check that we store active rule with legacy keys, not RSPEC keys
     assertThat(keys.contains("S116")).isFalse();
@@ -20,6 +21,6 @@
     assertThat(validation.hasErrors()).isFalse();
 
     // Check that we use severity from the read rule and not default one.
-    assertThat(activeRules.get(0).getSeverity()).isSameAs(RulePriority.MINOR);
+    assertThat(activeRules.get(0).overriddenSeverity()).isNull();
   }
 

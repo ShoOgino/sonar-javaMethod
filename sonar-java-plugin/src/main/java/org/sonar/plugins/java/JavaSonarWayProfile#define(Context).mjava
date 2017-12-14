@@ -1,0 +1,12 @@
+  @Override
+  public void define(Context context) {
+    NewBuiltInQualityProfile sonarWay = context.createBuiltInQualityProfile("Sonar way", Java.KEY);
+    sonarWay.activateRule("common-" + Java.KEY, "DuplicatedBlocks");
+    Profile jsonProfile = readProfile();
+    Map<String, String> keys = legacyKeys();
+    for (String key : jsonProfile.ruleKeys) {
+      sonarWay.activateRule(CheckList.REPOSITORY_KEY, keys.get(key));
+    }
+    sonarWay.done();
+  }
+
