@@ -19,6 +19,11 @@
         unused.add(var.simpleName());
       }
     }
+    Set<String> unresolvedIdentifierNames = unresolvedIdentifierNames(methodTree.block());
+    // kill the noise regarding unresolved identifiers, and remove the one with matching names from the list of unused
+    unused = unused.stream()
+      .filter(id -> !unresolvedIdentifierNames.contains(id.name()))
+      .collect(Collectors.toList());
     if (!unused.isEmpty()) {
       reportUnusedParameters(unused);
     }

@@ -1,0 +1,11 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      ExpressionTree methodSelect = tree.methodSelect();
+      if (!methodSelect.is(Tree.Kind.IDENTIFIER)) {
+        // not interested in simple method invocations, we are targeting usage of method parameters
+        scan(methodSelect);
+      }
+      scan(tree.typeArguments());
+      scan(tree.arguments());
+    }
+
