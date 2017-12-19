@@ -8,12 +8,12 @@
 
     List<ExceptionalYield> exceptionalYields = mb.exceptionalPathYields().collect(Collectors.toList());
     assertThat(exceptionalYields).hasSize(3);
-    assertThat(exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel) == null).count()).isEqualTo(1);
+    assertThat(exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel).isUnknown()).count()).isEqualTo(1);
 
-    MethodYield explicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel) != null && y.exceptionType(semanticModel).is("org.foo.MyException1")).findAny().get();
+    MethodYield explicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel).is("org.foo.MyException1")).findAny().get();
     assertThat(explicitExceptionYield.parametersConstraints.get(0).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NULL);
 
-    MethodYield implicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel) != null && y.exceptionType(semanticModel).is("org.foo.MyException2")).findAny().get();
+    MethodYield implicitExceptionYield = exceptionalYields.stream().filter(y -> y.exceptionType(semanticModel).is("org.foo.MyException2")).findAny().get();
     assertThat(implicitExceptionYield.parametersConstraints.get(0).get(ObjectConstraint.class)).isEqualTo(ObjectConstraint.NOT_NULL);
   }
 

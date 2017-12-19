@@ -1,4 +1,8 @@
   public boolean exitingOnRuntimeException() {
-    return exitSymbolicValue instanceof SymbolicValue.ExceptionalSymbolicValue && ((SymbolicValue.ExceptionalSymbolicValue) exitSymbolicValue).exceptionType() == null;
+    if (exitSymbolicValue instanceof SymbolicValue.ExceptionalSymbolicValue) {
+      Type exceptionType = ((SymbolicValue.ExceptionalSymbolicValue) exitSymbolicValue).exceptionType();
+      return exceptionType == null || exceptionType.isSubtypeOf("java.lang.RuntimeException");
+    }
+    return false;
   }
 

@@ -1,0 +1,8 @@
+  @Test
+  public void test_enqueueing_of_exit_block4() {
+    MethodBehavior mb = getMethodBehavior(ExceptionEnqueue.class, "enqueueExitBlock4()Z");
+    List<HappyPathYield> happyPathYields = mb.happyPathYields().collect(Collectors.toList());
+    assertThat(happyPathYields.get(0).resultConstraint().hasConstraint(BooleanConstraint.TRUE)).isTrue();
+    assertThat(mb.exceptionalPathYields().findFirst().isPresent()).isFalse();
+  }
+

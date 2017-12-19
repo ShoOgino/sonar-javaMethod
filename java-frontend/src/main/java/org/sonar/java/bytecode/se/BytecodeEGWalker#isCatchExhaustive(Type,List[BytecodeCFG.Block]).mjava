@@ -1,0 +1,6 @@
+  private boolean isCatchExhaustive(Type exceptionType, List<BytecodeCFG.Block> blocksCatchingException) {
+    return blocksCatchingException.stream()
+        .filter(BytecodeCFG.Block::isCatchBlock)
+        .anyMatch(b -> b.isUncaughtException() || exceptionType.isSubtypeOf(b.getExceptionType(semanticModel)));
+  }
+

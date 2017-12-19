@@ -1,0 +1,11 @@
+  @Test
+  public void test_enqueueing_of_exit_block() {
+    MethodBehavior mb = getMethodBehavior(ExceptionEnqueue.class, "enqueueExitBlock()Z");
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(1);
+    assertThat(mb.happyPathYields().findFirst().isPresent()).isFalse();
+    ExceptionalYield exceptionalYield = mb.exceptionalPathYields().findFirst().get();
+    Type exceptionType = exceptionalYield.exceptionType(semanticModel);
+    assertThat(exceptionType.is("java.io.FileNotFoundException")).isTrue();
+  }
+

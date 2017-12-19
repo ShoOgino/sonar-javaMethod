@@ -319,11 +319,14 @@
         programState = pop.state.stackValue(sv).addConstraint(sv, ObjectConstraint.NOT_NULL);
         break;
       case ATHROW:
-        pop = popStack(1, instruction.opcode);
-        sv = pop.values.get(0);
-        TypedConstraint typedConstraint = programState.getConstraint(sv, TypedConstraint.class);
-        Type type = typedConstraint != null ? typedConstraint.getType(semanticModel) : Symbols.unknownType;
-        programState = pop.state.stackValue(constraintManager.createExceptionalSymbolicValue(type));
+        if (!(programState.peekValue() instanceof SymbolicValue.ExceptionalSymbolicValue)) {
+          // create exceptional SV if not already on top of the stack (e.g. throw new MyException(); )
+          pop = popStack(1, instruction.opcode);
+          sv = pop.values.get(0);
+          TypedConstraint typedConstraint = programState.getConstraint(sv, TypedConstraint.class);
+          Type type = typedConstraint != null ? typedConstraint.getType(semanticModel) : Symbols.unknownType;
+          programState = pop.state.stackValue(constraintManager.createExceptionalSymbolicValue(type));
+        }
         programState.storeExitValue();
         break;
       case CHECKCAST:
