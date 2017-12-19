@@ -1,0 +1,12 @@
+  @Test
+  public void test_loading_class() {
+    SquidClassLoader classLoader = new SquidClassLoader(Collections.singletonList(new File("target/test-classes")));
+    String className = getClass().getCanonicalName();
+    byte[] bytes = classLoader.getBytesForClass(className);
+    assertThat(bytes).isNotNull();
+    ClassReader cr = new ClassReader(bytes);
+    ClassNode classNode = new ClassNode();
+    cr.accept(classNode, 0);
+    assertThat(classNode.name).isEqualTo("org/sonar/java/bytecode/loader/SquidClassLoaderTest");
+  }
+

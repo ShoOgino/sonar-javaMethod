@@ -1,6 +1,13 @@
+  /**
+   * Read bytes representing class with name passed as an argument. Modify the class version in bytecode so ASM can read
+   * returned array without issues.
+   *
+   * @param className canonical name of the class (e.g. org.acme.Foo )
+   * @return bytes or null if class is not found
+   */
   @CheckForNull
-  private static byte[] getClassBytes(String className, SquidClassLoader classLoader) {
-    try (InputStream is = classLoader.getResourceAsStream(Convert.bytecodeName(className) + ".class")) {
+  public byte[] getBytesForClass(String className) {
+    try (InputStream is = getResourceAsStream(Convert.bytecodeName(className) + ".class")) {
       if (is == null) {
         LOG.debug(".class not found for {}", className);
         return null;
