@@ -1,9 +1,4 @@
   public static Pair<SymbolicExecutionVisitor, SemanticModel> createSymbolicExecutionVisitorAndSemantic(String fileName, SECheck... checks) {
-    File file = new File(fileName);
-    CompilationUnitTree cut = (CompilationUnitTree) PARSER.parse(file);
-    SemanticModel semanticModel = SemanticModel.createFor(cut, CLASSLOADER);
-    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Arrays.asList(checks), new BehaviorCache(CLASSLOADER));
-    sev.scanFile(new DefaultJavaFileScannerContext(cut, file, semanticModel, null, new JavaVersionImpl(8), true));
-    return new Pair<>(sev, semanticModel);
+    return createSymbolicExecutionVisitorAndSemantic(fileName, true, checks);
   }
 
