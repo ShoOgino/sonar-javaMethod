@@ -1,0 +1,23 @@
+  @Test
+  public void test_compare_with_zero() {
+    SymbolicValue sv = new SymbolicValue();
+    int[] opcodes = {Opcodes.IFEQ, Opcodes.IFNE, Opcodes.IFLT, Opcodes.IFGE};
+    for (int opcode : opcodes) {
+      ProgramState programState = walker.branchingState(new Instruction(opcode), ProgramState.EMPTY_STATE.stackValue(sv));
+      RelationalSymbolicValue relSV = (RelationalSymbolicValue) programState.peekValue();
+      assertThat(relSV.getLeftOp()).isSameAs(sv);
+      assertThat(relSV.getRightOp()).isNotSameAs(sv);
+      assertThat(programState.getConstraints(relSV.getRightOp()).hasConstraint(DivisionByZeroCheck.ZeroConstraint.ZERO)).isTrue();
+    }
+
+    // these opcodes inverse operator and swap operands
+    int[] swapOperandsOpcodes = {Opcodes.IFLE, Opcodes.IFGT};
+    for (int opcode : swapOperandsOpcodes) {
+      ProgramState programState = walker.branchingState(new Instruction(opcode), ProgramState.EMPTY_STATE.stackValue(sv));
+      RelationalSymbolicValue relSV = (RelationalSymbolicValue) programState.peekValue();
+      assertThat(relSV.getRightOp()).isSameAs(sv);
+      assertThat(relSV.getLeftOp()).isNotSameAs(sv);
+      assertThat(programState.getConstraints(relSV.getLeftOp()).hasConstraint(DivisionByZeroCheck.ZeroConstraint.ZERO)).isTrue();
+    }
+  }
+
