@@ -2,9 +2,9 @@
   public void visitNode(Tree tree) {
     if (hasSemantic()) {
       ClassTree classTree = (ClassTree) tree;
-      Symbol symbol = classTree.symbol();
+      Symbol.TypeSymbol symbol = classTree.symbol();
       String className = symbol.name();
-      if (className.toLowerCase(Locale.US).endsWith("exception") && !symbol.type().isSubtypeOf("java.lang.Exception")) {
+      if (endsWithException(className) && !isSubtypeOfException(symbol) && !hasUnknownSuperType(symbol)) {
         String suffix = className.substring(className.length() - "exception".length());
         reportIssue(classTree.simpleName(), "Rename this class to remove \"" + suffix + "\" or correct its inheritance.");
       }
