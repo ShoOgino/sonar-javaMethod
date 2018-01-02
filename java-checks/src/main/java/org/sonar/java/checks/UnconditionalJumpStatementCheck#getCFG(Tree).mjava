@@ -2,11 +2,18 @@
     Tree currentTree = loop;
     do {
       currentTree = currentTree.parent();
-    } while (!currentTree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR, Tree.Kind.INITIALIZER, Tree.Kind.STATIC_INITIALIZER));
+    } while (!currentTree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR, Tree.Kind.LAMBDA_EXPRESSION, Tree.Kind.INITIALIZER, Tree.Kind.STATIC_INITIALIZER));
 
     if (currentTree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)) {
       return CFG.build((MethodTree) currentTree);
     }
+    if (currentTree.is(Tree.Kind.LAMBDA_EXPRESSION)) {
+      currentTree = ((LambdaExpressionTree) currentTree).body();
+      if (!currentTree.is(Tree.Kind.BLOCK)) {
+        throw new IllegalStateException("Block statement was expected");
+      }
+    }
+
     return CFG.buildCFG(((BlockTree) currentTree).body());
   }
 
