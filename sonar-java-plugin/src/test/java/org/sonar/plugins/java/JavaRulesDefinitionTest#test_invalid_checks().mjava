@@ -2,7 +2,6 @@
   public void test_invalid_checks() throws Exception {
     RulesDefinition.Context context = new RulesDefinition.Context();
     RulesDefinition.NewRepository newRepository = context.createRepository("test", "java");
-    newRepository.createRule("myCardinality");
     newRepository.createRule("correctRule");
     JavaRulesDefinition definition = new JavaRulesDefinition(settings);
     JavaSonarWayProfile.Profile profile = new JavaSonarWayProfile.Profile();
@@ -23,11 +22,6 @@
       definition.newRule(UnregisteredRule.class, newRepository, profile);
     } catch (IllegalStateException ise) {
       assertThat(ise).hasMessage("No rule was created for class "+UnregisteredRule.class.getName()+" in test");
-    }
-    try {
-      definition.newRule(CardinalityRule.class, newRepository, profile);
-    } catch (IllegalArgumentException ise) {
-      assertThat(ise).hasMessage("Cardinality is not supported, use the RuleTemplate annotation instead for class "+CardinalityRule.class.getName());
     }
     // no metadata defined, does not fail on registration of rule
     definition.newRule(CorrectRule.class, newRepository, profile);
