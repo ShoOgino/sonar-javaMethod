@@ -1,0 +1,15 @@
+  private Map<InputFile, UnitTestClassReport> mapToInputFile(Map<String, UnitTestClassReport> indexByClassname) {
+    Map<InputFile, UnitTestClassReport> result = new HashMap<>();
+    indexByClassname.forEach((className, index) -> {
+      InputFile resource = getUnitTestResource(className, index);
+      if (resource != null) {
+        UnitTestClassReport report = result.computeIfAbsent(resource, r -> new UnitTestClassReport());
+        // in case of repeated/parameterized tests (JUnit 5.x) we may end up with tests having the same name
+        index.getResults().forEach(report::add);
+      } else {
+        LOGGER.debug("Resource not found: {}", className);
+      }
+    });
+    return result;
+  }
+

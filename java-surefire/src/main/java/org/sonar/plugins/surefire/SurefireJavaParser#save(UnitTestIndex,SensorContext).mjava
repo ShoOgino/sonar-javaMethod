@@ -1,15 +1,11 @@
   private void save(UnitTestIndex index, SensorContext context) {
     long negativeTimeTestNumber = 0;
-    for (Map.Entry<String, UnitTestClassReport> entry : index.getIndexByClassname().entrySet()) {
+    Map<InputFile, UnitTestClassReport> indexByInputFile = mapToInputFile(index.getIndexByClassname());
+    for (Map.Entry<InputFile, UnitTestClassReport> entry : indexByInputFile.entrySet()) {
       UnitTestClassReport report = entry.getValue();
       if (report.getTests() > 0) {
         negativeTimeTestNumber += report.getNegativeTimeTestNumber();
-        InputFile resource = getUnitTestResource(entry.getKey());
-        if (resource != null) {
-          save(report, resource, context);
-        } else {
-          LOGGER.debug("Resource not found: {}", entry.getKey());
-        }
+        save(report, entry.getKey(), context);
       }
     }
     if (negativeTimeTestNumber > 0) {
