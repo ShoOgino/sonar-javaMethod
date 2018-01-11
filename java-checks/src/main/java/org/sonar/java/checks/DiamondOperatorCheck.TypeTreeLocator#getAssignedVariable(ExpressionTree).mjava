@@ -1,21 +1,13 @@
     @CheckForNull
     private static Tree getAssignedVariable(ExpressionTree expression) {
+      if (expression.is(Tree.Kind.ARRAY_ACCESS_EXPRESSION)) {
+        return getAssignedVariable(((ArrayAccessExpressionTree) expression).expression());
+      }
       IdentifierTree identifier;
-      switch (expression.kind()) {
-        case ARRAY_ACCESS_EXPRESSION:
-          return getAssignedVariable(((ArrayAccessExpressionTree) expression).expression());
-        case TYPE_CAST:
-          return getAssignedVariable(((TypeCastTree) expression).expression());
-        case PARENTHESIZED_EXPRESSION:
-          return getAssignedVariable(((ParenthesizedTree) expression).expression());
-        case IDENTIFIER:
-          identifier = (IdentifierTree) expression;
-          break;
-        case MEMBER_SELECT:
-          identifier = ((MemberSelectExpressionTree) expression).identifier();
-          break;
-        default:
-          throw new IllegalStateException("Unexpected expression " + expression.kind().name() + " at: " + ((JavaTree) expression).getLine());
+      if (expression.is(Tree.Kind.IDENTIFIER)) {
+        identifier = (IdentifierTree) expression;
+      } else {
+        identifier = ((MemberSelectExpressionTree) expression).identifier();
       }
       return identifier.symbol().declaration();
     }
