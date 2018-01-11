@@ -1,0 +1,21 @@
+  private void handleAnyMatch(MethodInvocationTree anyMatchMIT) {
+    ExpressionTree predicate = anyMatchMIT.arguments().get(0);
+    IdentifierTree reportTree = MethodsHelper.methodName(anyMatchMIT);
+    if (anyMatchMIT.parent().is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+      if (predicate.is(Tree.Kind.LAMBDA_EXPRESSION) && ((LambdaExpressionTree) predicate).body().is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+        // !stream.anyMatch(x -> !(...))
+        context.reportIssue(this, reportTree,
+          "Replace this double negation with \"allMatch()\" and positive predicate.");
+      } else {
+        context.reportIssue(this, reportTree,
+          "Replace this negation and \"anyMatch()\" with \"noneMatch()\".");
+      }
+    }
+    if (predicate.is(Tree.Kind.METHOD_REFERENCE) && isBooleanValueReference((MethodReferenceTree) predicate)) {
+      previousMITInChain(anyMatchMIT)
+        .filter(MAP_METHODS::anyMatch)
+        .ifPresent(mapMIT -> context.reportIssue(this, reportTree,
+          "Use mapper from \"map()\" directly as predicate in \"anyMatch()\"."));
+    }
+  }
+
