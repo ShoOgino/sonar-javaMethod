@@ -1,11 +1,11 @@
-  private boolean checkMethod(Tree reportTree, MethodSymbol methodSymbol, Type superClass) {
+  private boolean checkMethod(Tree reportTree, Symbol.MethodSymbol methodSymbol, Type superClass) {
     boolean reportStaticIssue = false;
     for (Symbol methodWithSameName : superClass.symbol().lookupSymbols(methodSymbol.name())) {
       if (methodWithSameName.isMethodSymbol()) {
         if (hideStaticMethod(methodSymbol, superClass, methodWithSameName)) {
           reportIssue(reportTree, "Rename this method or make it \"static\".");
           reportStaticIssue = true;
-        } else if (confusingOverload(methodSymbol, (MethodSymbol) methodWithSameName)) {
+        } else if (confusingOverload(methodSymbol, (Symbol.MethodSymbol) methodWithSameName)) {
           reportIssue(reportTree, getMessage(methodWithSameName));
         }
       }
