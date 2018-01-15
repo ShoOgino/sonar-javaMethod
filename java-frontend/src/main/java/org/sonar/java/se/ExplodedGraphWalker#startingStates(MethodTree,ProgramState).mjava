@@ -1,9 +1,8 @@
   private Iterable<ProgramState> startingStates(MethodTree tree, ProgramState currentState) {
     Stream<ProgramState> stateStream = Stream.of(currentState);
     boolean isEqualsMethod = EQUALS.matches(tree);
-    SymbolMetadata packageMetadata = ((JavaSymbol.MethodJavaSymbol) tree.symbol()).packge().metadata();
-    boolean nonNullParams = packageMetadata.isAnnotatedWith("javax.annotation.ParametersAreNonnullByDefault");
-    boolean nullableParams = packageMetadata.isAnnotatedWith("javax.annotation.ParametersAreNullableByDefault");
+    boolean nonNullParameters = parametersAreNonNull(methodTree);
+    boolean nullableParameters = parametersAreNullable(methodTree);
     boolean hasMethodBehavior = methodBehavior != null;
     for (final VariableTree variableTree : tree.parameters()) {
       // create
@@ -13,13 +12,13 @@
         methodBehavior.addParameter(sv);
       }
       stateStream = stateStream.map(ps -> ps.put(variableSymbol, sv));
-      if (isEqualsMethod || parameterCanBeNull(variableSymbol, nullableParams)) {
+      if (isEqualsMethod || parameterCanBeNull(variableSymbol, nullableParameters)) {
         stateStream = stateStream.flatMap((ProgramState ps) ->
           Stream.concat(
             sv.setConstraint(ps, ObjectConstraint.NULL).stream(),
             sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream()
             ));
-      } else if (nonNullParams || isAnnotatedNonNull(variableSymbol)) {
+      } else if (nonNullParameters || isAnnotatedNonNull(variableSymbol)) {
         stateStream = stateStream.flatMap(ps -> sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream());
       }
     }
