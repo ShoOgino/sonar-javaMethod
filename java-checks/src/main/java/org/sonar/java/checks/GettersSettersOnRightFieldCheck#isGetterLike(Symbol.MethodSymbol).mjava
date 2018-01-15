@@ -1,0 +1,14 @@
+  private static Optional<String> isGetterLike(Symbol.MethodSymbol methodSymbol) {
+    if (!methodSymbol.parameterTypes().isEmpty() || isPrivateStaticOrAbstract(methodSymbol)) {
+      return Optional.empty();
+    }
+    String methodName = methodSymbol.name();
+    if (methodName.length() > 3 && methodName.startsWith("get")) {
+      return Optional.of(lowerCaseFirstLetter(methodName.substring(3)));
+    }
+    if (methodName.length() > 2 && methodName.startsWith("is")) {
+      return Optional.of(lowerCaseFirstLetter(methodName.substring(2)));
+    }
+    return Optional.empty();
+  }
+

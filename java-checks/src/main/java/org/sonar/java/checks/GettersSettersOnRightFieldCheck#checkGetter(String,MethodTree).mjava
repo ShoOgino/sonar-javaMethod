@@ -1,0 +1,14 @@
+  private void checkGetter(String fieldName, MethodTree methodTree) {
+    Symbol.TypeSymbol getterOwner = ((Symbol.TypeSymbol) methodTree.symbol().owner());
+    if (!hasPrivateFieldWithName(fieldName, getterOwner)) {
+      return;
+    }
+    firstAndOnlyStatement(methodTree)
+      .filter(statementTree -> statementTree.is(Tree.Kind.RETURN_STATEMENT))
+      .map(statementTree -> ((ReturnStatementTree) statementTree).expression())
+      .flatMap(GettersSettersOnRightFieldCheck::symbolFromExpression)
+      .filter(returnSymbol -> !fieldName.equals(returnSymbol.name()))
+      .ifPresent(returnedSymbol -> context.reportIssue(this, methodTree.simpleName(),
+        "Refactor this getter so that it actually refers to the field \"" + fieldName + "\"."));
+  }
+
