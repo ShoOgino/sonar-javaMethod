@@ -1,0 +1,13 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree collectMIT) {
+    ExpressionTree argument = collectMIT.arguments().get(0);
+    if (argument.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree methodInvocation = (MethodInvocationTree) argument;
+      REPLACEMENTS.entrySet().stream()
+        .filter(e -> e.getKey().matches(methodInvocation))
+        .findFirst()
+        .ifPresent(e -> context.reportIssue(this,  MethodsHelper.methodName(methodInvocation),
+            "Use \"" + e.getValue() + "\" instead."));
+    }
+  }
+
