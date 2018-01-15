@@ -1,11 +1,7 @@
   private static boolean isAnnotatedWith(MethodTree methodTree, String annotation) {
     JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) methodTree.symbol();
-    if (methodSymbol.metadata().isAnnotatedWith(annotation)) {
-      return true;
-    }
-    if (methodSymbol.enclosingClass().metadata().isAnnotatedWith(annotation)) {
-      return true;
-    }
-    return methodSymbol.packge().metadata().isAnnotatedWith(annotation);
+    return isAnnotatedWith(methodSymbol, annotation)
+      || isAnnotatedWith(methodSymbol.enclosingClass(), annotation)
+      || isAnnotatedWith(methodSymbol.packge(), annotation);
   }
 

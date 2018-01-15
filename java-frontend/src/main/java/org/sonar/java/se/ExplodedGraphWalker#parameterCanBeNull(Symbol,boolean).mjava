@@ -1,9 +1,7 @@
   private static boolean parameterCanBeNull(Symbol variableSymbol, boolean nullableParameters) {
-    SymbolMetadata metadata = variableSymbol.metadata();
-    return metadata.isAnnotatedWith("javax.annotation.CheckForNull")
-      || metadata.isAnnotatedWith("javax.annotation.Nullable")
-      || (nullableParameters
-        && !variableSymbol.type().isPrimitive()
-        && !metadata.isAnnotatedWith("javax.annotation.Nonnull"));
+    if (variableSymbol.type().isPrimitive()) {
+      return false;
+    }
+    return isAnnotatedNullable(variableSymbol) || (nullableParameters && !isAnnotatedNonNull(variableSymbol));
   }
 
