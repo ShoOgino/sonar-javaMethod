@@ -1,8 +1,9 @@
   private void checkVariable(CheckerContext context, MethodTree tree, final Symbol symbol) {
-    String nonNullAnnotation = nonNullAnnotation(symbol);
-    if (nonNullAnnotation != null && isUndefinedOrNull(context, symbol)) {
-      context.reportIssue(tree, this,
-        MessageFormat.format("\"{0}\" is marked \"{1}\" but is not initialized in this constructor.", symbol.name(), nonNullAnnotation));
-    }
+    nonNullAnnotation(symbol).ifPresent(annotation -> {
+      if (isUndefinedOrNull(context, symbol)) {
+        context.reportIssue(tree, this,
+          MessageFormat.format("\"{0}\" is marked \"{1}\" but is not initialized in this constructor.", symbol.name(), annotation));
+      }
+    });
   }
 

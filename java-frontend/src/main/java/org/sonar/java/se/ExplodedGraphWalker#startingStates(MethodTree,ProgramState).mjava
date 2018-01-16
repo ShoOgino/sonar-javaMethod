@@ -1,8 +1,8 @@
   private Iterable<ProgramState> startingStates(MethodTree tree, ProgramState currentState) {
     Stream<ProgramState> stateStream = Stream.of(currentState);
     boolean isEqualsMethod = EQUALS.matches(tree);
-    boolean nonNullParameters = isAnnotatedWith(methodTree, "javax.annotation.ParametersAreNonnullByDefault");
-    boolean nullableParameters = isAnnotatedWith(methodTree, "javax.annotation.ParametersAreNullableByDefault");
+    boolean nonNullParameters = isGloballyAnnotatedWith(methodTree, "javax.annotation.ParametersAreNonnullByDefault");
+    boolean nullableParameters = isGloballyAnnotatedWith(methodTree, "javax.annotation.ParametersAreNullableByDefault");
     boolean hasMethodBehavior = methodBehavior != null;
     for (final VariableTree variableTree : tree.parameters()) {
       // create
@@ -18,7 +18,7 @@
             sv.setConstraint(ps, ObjectConstraint.NULL).stream(),
             sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream()
             ));
-      } else if (nonNullParameters || AnnotationUtils.isAnnotatedNonNull(variableSymbol)) {
+      } else if (nonNullParameters || isAnnotatedNonNull(variableSymbol)) {
         stateStream = stateStream.flatMap(ps -> sv.setConstraint(ps, ObjectConstraint.NOT_NULL).stream());
       }
     }

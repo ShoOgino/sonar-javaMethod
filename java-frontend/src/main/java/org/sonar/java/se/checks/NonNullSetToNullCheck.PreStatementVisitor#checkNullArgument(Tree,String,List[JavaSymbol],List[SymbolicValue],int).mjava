@@ -1,10 +1,9 @@
     protected void checkNullArgument(Tree syntaxTree, String message, List<JavaSymbol> scopeSymbols, List<SymbolicValue> argumentValues, int i) {
-      String nonNullAnnotation = nonNullAnnotation(scopeSymbols.get(i));
-      if (nonNullAnnotation != null) {
+      nonNullAnnotation(scopeSymbols.get(i)).ifPresent(annotation -> {
         ObjectConstraint constraint = programState.getConstraint(argumentValues.get(i), ObjectConstraint.class);
         if (constraint != null && constraint.isNull()) {
-          reportIssue(syntaxTree, message, Integer.valueOf(i + 1), nonNullAnnotation);
+          reportIssue(syntaxTree, message, Integer.valueOf(i + 1), annotation);
         }
-      }
+      });
     }
 

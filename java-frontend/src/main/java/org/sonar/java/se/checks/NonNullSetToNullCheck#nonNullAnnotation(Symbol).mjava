@@ -1,10 +1,6 @@
-  @CheckForNull
-  private static String nonNullAnnotation(Symbol javaSymbol) {
-    for (String annotation : ANNOTATIONS) {
-      if (javaSymbol.metadata().isAnnotatedWith(annotation)) {
-        return annotation;
-      }
-    }
-    return null;
+  private static Optional<String> nonNullAnnotation(Symbol symbol) {
+    return NullableAnnotationUtils.NONNULL_ANNOTATIONS.stream()
+      .filter(annotation -> NullableAnnotationUtils.isAnnotatedWith(symbol, annotation))
+      .findFirst();
   }
 

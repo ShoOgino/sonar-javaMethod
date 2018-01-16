@@ -3,14 +3,13 @@
       if (ExpressionUtils.isSimpleAssignment(tree)) {
         IdentifierTree variable = ExpressionUtils.extractIdentifier(tree);
         Symbol symbol = variable.symbol();
-        String nonNullAnnotation = nonNullAnnotation(symbol);
-        if (nonNullAnnotation != null) {
+        nonNullAnnotation(symbol).ifPresent(annotation -> {
           SymbolicValue assignedValue = programState.peekValue();
           ObjectConstraint constraint = programState.getConstraint(assignedValue, ObjectConstraint.class);
           if (constraint != null && constraint.isNull()) {
-            reportIssue(tree, "\"{0}\" is marked \"{1}\" but is set to null.", symbol.name(), nonNullAnnotation);
+            reportIssue(tree, "\"{0}\" is marked \"{1}\" but is set to null.", symbol.name(), annotation);
           }
-        }
+        });
       }
     }
 
