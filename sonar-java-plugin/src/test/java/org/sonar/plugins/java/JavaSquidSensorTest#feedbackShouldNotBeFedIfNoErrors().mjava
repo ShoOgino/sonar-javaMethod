@@ -1,0 +1,9 @@
+  @Test
+  public void feedbackShouldNotBeFedIfNoErrors() throws IOException {
+    SensorContextTester context = createContext(InputFile.Type.MAIN);
+    MapSettings settings = new MapSettings();
+    settings.appendProperty("sonar.host.url", "https://sonarcloud.io");
+    executeJavaSquidSensor(context, settings);
+    assertThat(context.<String>measure("projectKey", "sonarjava_feedback")).isNull();
+  }
+
