@@ -1,5 +1,5 @@
   public void saveAnalysisErrors() {
-    if (!analysisErrors.isEmpty() && "https://sonarcloud.io".equals(context.config().get("sonar.host.url").orElse(""))) {
+    if (!isSonarLintContext() && !analysisErrors.isEmpty() && server.getPublicRootUrl().equals("https://sonarcloud.io")) {
       Metric.Builder metricBuilder = new Metric.Builder("sonarjava_feedback", "SonarJava feedback", Metric.ValueType.DATA);
       metricBuilder.setHidden(true);
       Gson gson = new Gson();

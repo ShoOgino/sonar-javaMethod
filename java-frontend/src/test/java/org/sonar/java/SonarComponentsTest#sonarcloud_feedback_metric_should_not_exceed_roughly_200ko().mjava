@@ -2,8 +2,8 @@
   public void sonarcloud_feedback_metric_should_not_exceed_roughly_200ko() {
     File file = new File("src/test/files/ParseError.java");
     SensorContextTester sensorContext = SensorContextTester.create(file.getParentFile().getAbsoluteFile());
-    sensorContext.settings().appendProperty("sonar.host.url", "https://sonarcloud.io");
-    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, null, null);
+    when(server.getPublicRootUrl()).thenReturn("https://sonarcloud.io");
+    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, null, server);
     sonarComponents.setSensorContext(sensorContext);
 
     AnalysisError analysisError;
