@@ -1,38 +1,12 @@
   @Test
   public void verify_analysis_errors_are_collected_on_parse_error() throws Exception {
-    SensorContextTester context = SensorContextTester.create(temp.getRoot().getAbsoluteFile());
-
-    // set up a file to analyze
-    File file = temp.newFile().getAbsoluteFile();
-    Files.write("/***/\nclass A {\n String foo() {\n  return foo();\n }\n", file, StandardCharsets.UTF_8);
-    DefaultInputFile defaultFile = new TestInputFileBuilder(temp.getRoot().getAbsolutePath(), file.getName())
-      .setLanguage("java")
-      .initMetadata(new String(java.nio.file.Files.readAllBytes(file.getAbsoluteFile().toPath()), StandardCharsets.UTF_8))
-      .setCharset(StandardCharsets.UTF_8)
-      .build();
-    context.fileSystem().add(defaultFile);
-
-    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 7)));
-    // Mock visitor for metrics.
-    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
-    FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
-    when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
-
-    Server server = mock(Server.class);
-    when(server.getPublicRootUrl()).thenReturn("https://sonarcloud.io");
-
-    FileSystem fs = context.fileSystem();
-    JavaClasspath javaClasspath = mock(JavaClasspath.class);
-    JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, javaTestClasspath, mock(CheckFactory.class), server);
-    sonarComponents.setSensorContext(context);
-    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(fs, context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
-    javaSquid.scan(Collections.singletonList(file), Collections.emptyList());
+    String code = "/***/\nclass A {\n String foo() {\n  return foo();\n }\n";
+    SonarComponents sonarComponents = collectAnalysisErrors(code);
     assertThat(sonarComponents.analysisErrors).hasSize(1);
     AnalysisError analysisError = sonarComponents.analysisErrors.get(0);
     assertThat(analysisError.getMessage()).startsWith("Parse error at line 6 column 1:");
     assertThat(analysisError.getCause()).startsWith("com.sonar.sslr.api.RecognitionException: Parse error at line 6 column 1:");
     assertThat(analysisError.getFilename()).endsWith(".tmp");
-    assertThat(analysisError.getType()).isEqualToIgnoringCase("Parse error");
+    assertThat(analysisError.getKind()).isEqualTo(AnalysisError.Kind.PARSE_ERROR);
   }
 
