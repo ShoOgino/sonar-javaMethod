@@ -1,0 +1,15 @@
+  @Test
+  public void annotationArrayOfEnum() {
+    JavaSymbol.TypeJavaSymbol classSymbol = bytecodeCompleter.getClassSymbol("org.sonar.java.resolve.targets.AnnotationSymbolMethod");
+    Symbol barMethod = classSymbol.memberSymbols().stream().filter(symbol -> "bar".equals(symbol.name())).findFirst().get();
+    SymbolMetadata barMetadata = barMethod.metadata();
+    assertThat(barMetadata.annotations()).hasSize(1);
+    List<SymbolMetadata.AnnotationValue> valuesForAnnotation = barMetadata.valuesForAnnotation("org.sonar.java.resolve.targets.ArrayEnumAnnotation");
+    assertThat(valuesForAnnotation).hasSize(1);
+    assertThat(valuesForAnnotation.get(0).name()).isEqualTo("value");
+    Object annotationValue = valuesForAnnotation.get(0).value();
+    assertThat(annotationValue).isInstanceOf(Object[].class);
+    assertThat((Object[]) annotationValue).hasSize(2);
+    assertThat(Arrays.stream((Object[]) annotationValue)).allMatch(o -> o instanceof Symbol && ((Symbol) o).type().is("org.sonar.java.resolve.targets.MyEnum"));
+  }
+

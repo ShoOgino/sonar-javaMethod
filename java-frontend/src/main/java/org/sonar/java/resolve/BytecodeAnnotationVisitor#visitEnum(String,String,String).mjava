@@ -1,10 +1,7 @@
   @Override
   public void visitEnum(String name, String desc, String value) {
-    List<JavaSymbol> lookup = getSymbol(desc).members().lookup(value);
-    for (JavaSymbol symbol : lookup) {
-      if (symbol.isKind(JavaSymbol.VAR)) {
-        addValue(name, symbol);
-      }
-    }
+    getSymbol(desc).members().lookup(value).stream()
+      .filter(symbol -> symbol.isKind(JavaSymbol.VAR))
+      .forEach(symbol -> addValue(name, symbol));
   }
 

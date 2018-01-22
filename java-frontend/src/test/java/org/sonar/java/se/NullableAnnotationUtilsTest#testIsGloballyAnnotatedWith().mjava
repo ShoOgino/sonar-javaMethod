@@ -1,0 +1,11 @@
+  @Test
+  public void testIsGloballyAnnotatedWith() {
+    Symbol.MethodSymbol foo = (Symbol.MethodSymbol) getSymbol("foo");
+    assertThat(isGloballyAnnotatedWith(foo, "android.support.annotation.MyAnnotation")).isTrue();
+
+    Symbol.MethodSymbol bar = (Symbol.MethodSymbol) getSymbol("bar");
+    assertThat(isAnnotatedWith(bar, "android.support.annotation.MyAnnotation")).isFalse();
+    assertThat(isGloballyAnnotatedWith(bar, "android.support.annotation.MyAnnotation")).isTrue();
+    assertThat(isGloballyAnnotatedWith(bar, "org.bar.MyOtherAnnotation")).isFalse();
+  }
+

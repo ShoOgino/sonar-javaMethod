@@ -1,11 +1,18 @@
   @Override
   public AnnotationVisitor visitArray(final String name) {
     final List<Object> valuesList = Lists.newArrayList();
-    //TODO handle arrays of annotation and arrays of enum values.
+    // TODO handle arrays of annotation
     return new AnnotationVisitor(Opcodes.ASM5, this) {
       @Override
       public void visit(String name, Object value) {
         valuesList.add(value);
+      }
+
+      @Override
+      public void visitEnum(String name, String desc, String value) {
+        getSymbol(desc).members().lookup(value).stream()
+          .filter(symbol -> symbol.isKind(JavaSymbol.VAR))
+          .forEach(valuesList::add);
       }
 
       @Override

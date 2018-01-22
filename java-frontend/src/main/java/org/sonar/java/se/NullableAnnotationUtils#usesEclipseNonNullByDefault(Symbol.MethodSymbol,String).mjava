@@ -1,0 +1,18 @@
+  private static boolean usesEclipseNonNullByDefault(Symbol.MethodSymbol symbol, String target) {
+    List<AnnotationValue> parameters = valuesForGlobalAnnotation(symbol, "org.eclipse.jdt.annotation.NonNullByDefault");
+    if (parameters == null) {
+      return false;
+    }
+    if (parameters.isEmpty()) {
+      // annotation default value include parameters
+      return true;
+    }
+    Object annotationValue = parameters.get(0).value();
+    if (annotationValue instanceof Tree) {
+      // from sources
+      return containsDefaultLocation((Tree) annotationValue, target);
+    }
+    // from binaries
+    return containsDefaultLocation((Object[]) annotationValue, target);
+  }
+
