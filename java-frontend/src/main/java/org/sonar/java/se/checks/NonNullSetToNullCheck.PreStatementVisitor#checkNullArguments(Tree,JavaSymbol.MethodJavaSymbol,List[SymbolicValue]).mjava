@@ -1,4 +1,6 @@
-    protected void checkNullArguments(Tree syntaxTree, @Nullable Scope parameters, List<SymbolicValue> argumentValues, String message) {
+    private void checkNullArguments(Tree syntaxTree, JavaSymbol.MethodJavaSymbol symbol, List<SymbolicValue> argumentValues) {
+      Scope parameters = symbol.getParameters();
+      String methodAnnotatedParameterNonNull = parameterNonNullGlobalAnnotation(symbol);
       if (parameters != null) {
         List<JavaSymbol> scopeSymbols = parameters.scopeSymbols();
         int parametersToTest = argumentValues.size();
@@ -7,7 +9,7 @@
           parametersToTest = scopeSymbols.size() - 1;
         }
         for (int i = 0; i < parametersToTest; i++) {
-          checkNullArgument(syntaxTree, message, scopeSymbols, argumentValues, i);
+          checkNullArgument(syntaxTree, symbol, scopeSymbols.get(i), argumentValues.get(i), i, methodAnnotatedParameterNonNull);
         }
       }
     }

@@ -1,0 +1,18 @@
+  private static boolean isGloballyAnnotatedWith(Symbol.MethodSymbol symbol, String annotation, String parameter) {
+    List<AnnotationValue> parameters = valuesForGlobalAnnotation(symbol, annotation);
+    if (parameters == null) {
+      return false;
+    }
+    if (parameters.isEmpty()) {
+      // annotation default value include parameters
+      return true;
+    }
+    Object annotationValue = parameters.get(0).value();
+    if (annotationValue instanceof Tree) {
+      // from sources
+      return containsDefaultLocation((Tree) annotationValue, parameter);
+    }
+    // from binaries
+    return containsDefaultLocation((Object[]) annotationValue, parameter);
+  }
+
