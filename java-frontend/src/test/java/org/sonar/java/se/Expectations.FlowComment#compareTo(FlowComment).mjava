@@ -5,13 +5,15 @@
       Integer thisOrder = ORDER.get(attributes);
       Integer otherOrder = ORDER.get(other.attributes);
       if (thisOrder != null && otherOrder != null) {
-        Preconditions.checkState(!thisOrder.equals(otherOrder), "Same explicit ORDER=%s provided for two comments.\n%s\n%s", thisOrder, this, other);
+        if(thisOrder.equals(otherOrder)) {
+          Fail.fail("Same explicit ORDER=%s provided for two comments.\n%s\n%s", thisOrder, this, other);
+        }
         return thisOrder.compareTo(otherOrder);
       }
       if (thisOrder == null && otherOrder == null) {
         int compareLines = Integer.compare(line, other.line);
         return compareLines != 0 ? compareLines : Integer.compare(startColumn, other.startColumn);
       }
-      throw new IllegalStateException("Mixed explicit and implicit order in same flow.\n" + this + "\n" + other);
+      throw new AssertionError("Mixed explicit and implicit order in same flow.\n" + this + "\n" + other);
     }
 
