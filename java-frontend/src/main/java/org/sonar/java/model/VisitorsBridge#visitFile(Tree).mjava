@@ -20,10 +20,10 @@
     JavaFileScannerContext javaFileScannerContext = createScannerContext(tree, semanticModel, sonarComponents, fileParsed);
     // Symbolic execution checks
     if (symbolicExecutionEnabled && isNotJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"))) {
-      new SymbolicExecutionVisitor(executableScanners, behaviorCache).scanFile(javaFileScannerContext);
+      runScanner(javaFileScannerContext, new SymbolicExecutionVisitor(executableScanners, behaviorCache));
       behaviorCache.cleanup();
     }
-    runChecks(javaFileScannerContext);
+    executableScanners.forEach(scanner -> runScanner(javaFileScannerContext, scanner));
     if (semanticModel != null) {
       classesNotFound.addAll(semanticModel.classesNotFound());
     }
