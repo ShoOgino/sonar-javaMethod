@@ -1,6 +1,9 @@
   @CheckForNull
   public static String nonNullAnnotation(Symbol symbol) {
     SymbolMetadata metadata = symbol.metadata();
+    if (isNullableThroughNonNull(symbol)) {
+      return null;
+    }
     Optional<String> result = NONNULL_ANNOTATIONS.stream().filter(metadata::isAnnotatedWith).findFirst();
     if (result.isPresent()) {
       return result.get();

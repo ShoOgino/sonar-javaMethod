@@ -1,18 +1,8 @@
   private static boolean isGloballyAnnotatedWithEclipseNonNullByDefault(Symbol.MethodSymbol symbol, String parameter) {
-    List<SymbolMetadata.AnnotationValue> annotationValues = valuesForGlobalAnnotation(symbol, ORG_ECLIPSE_JDT_ANNOTATION_NON_NULL_BY_DEFAULT);
-    if (annotationValues == null) {
+    List<SymbolMetadata.AnnotationValue> valuesForGlobalAnnotation = valuesForGlobalAnnotation(symbol, ORG_ECLIPSE_JDT_ANNOTATION_NON_NULL_BY_DEFAULT);
+    if (valuesForGlobalAnnotation == null) {
       return false;
     }
-    if (annotationValues.isEmpty()) {
-      // annotation default value include parameters
-      return true;
-    }
-    Object annotationValue = annotationValues.get(0).value();
-    if (annotationValue instanceof Tree) {
-      // from sources
-      return containsEclipseDefaultLocation((Tree) annotationValue, parameter);
-    }
-    // from binaries
-    return containsEclipseDefaultLocation((Object[]) annotationValue, parameter);
+    return valuesForGlobalAnnotation.isEmpty() || checkAnnotationParameter(valuesForGlobalAnnotation, "value", parameter);
   }
 
