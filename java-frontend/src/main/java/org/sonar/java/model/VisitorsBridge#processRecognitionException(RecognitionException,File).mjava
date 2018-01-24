@@ -1,7 +1,5 @@
   public void processRecognitionException(RecognitionException e, File file) {
-    if (sonarComponents != null) {
-      sonarComponents.addAnalysisError(new AnalysisError(e, file.getPath(), AnalysisError.Kind.PARSE_ERROR));
-    }
+    addAnalysisError(e, file.getPath(), AnalysisError.Kind.PARSE_ERROR);
     if(sonarComponents == null || !sonarComponents.reportAnalysisError(e, file)) {
       this.visitFile(null);
       scanners.stream()
