@@ -8,10 +8,12 @@
           return;
         }
       }
-      nonNullAnnotation(((MethodTree) parent).symbol()).ifPresent(annotation -> {
-        if (isLocalExpression(tree.expression())) {
-          checkReturnedValue(tree, annotation);
-        }
-      });
+      String nonNullAnnotation = nonNullAnnotation(((MethodTree) parent).symbol());
+      if (nonNullAnnotation == null) {
+        return;
+      }
+      if (isLocalExpression(tree.expression())) {
+        checkReturnedValue(tree, nonNullAnnotation);
+      }
     }
 

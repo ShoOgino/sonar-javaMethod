@@ -1,4 +1,4 @@
-  private static boolean containsDefaultLocation(Tree defaultLocation, String target) {
+  private static boolean containsEclipseDefaultLocation(Tree defaultLocation, String target) {
     Symbol symbol;
     switch (defaultLocation.kind()) {
       case IDENTIFIER:
@@ -8,7 +8,7 @@
         symbol = ((MemberSelectExpressionTree) defaultLocation).identifier().symbol();
         break;
       case NEW_ARRAY:
-        return ((NewArrayTree) defaultLocation).initializers().stream().anyMatch(expr -> containsDefaultLocation(expr, target));
+        return ((NewArrayTree) defaultLocation).initializers().stream().anyMatch(expr -> containsEclipseDefaultLocation(expr, target));
       default:
         throw new IllegalArgumentException("Unexpected tree used to parameterize annotation");
     }

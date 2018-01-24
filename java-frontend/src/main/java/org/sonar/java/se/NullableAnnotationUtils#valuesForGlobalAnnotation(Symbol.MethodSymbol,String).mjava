@@ -1,18 +1,9 @@
-  @VisibleForTesting
   @CheckForNull
-  public static List<SymbolMetadata.AnnotationValue> valuesForGlobalAnnotation(Symbol.MethodSymbol method, String annotation) {
-    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) method;
-    if (isAnnotatedWith(methodSymbol, annotation)) {
-      return methodSymbol.metadata().valuesForAnnotation(annotation);
-    }
-    JavaSymbol.TypeJavaSymbol enclosingClassSymbol = methodSymbol.enclosingClass();
-    if (isAnnotatedWith(enclosingClassSymbol, annotation)) {
-      return enclosingClassSymbol.metadata().valuesForAnnotation(annotation);
-    }
-    JavaSymbol.PackageJavaSymbol packageSymbol = methodSymbol.packge();
-    if (isAnnotatedWith(packageSymbol, annotation)) {
-      return packageSymbol.metadata().valuesForAnnotation(annotation);
-    }
-    return null;
+  private static List<SymbolMetadata.AnnotationValue> valuesForGlobalAnnotation(Symbol.MethodSymbol method, String annotation) {
+    return Arrays.asList(method, method.enclosingClass(), ((JavaSymbol.MethodJavaSymbol) method).packge()).stream()
+      .map(symbol -> symbol.metadata().valuesForAnnotation(annotation))
+      .filter(Objects::nonNull)
+      .findFirst()
+      .orElse(null);
   }
 
