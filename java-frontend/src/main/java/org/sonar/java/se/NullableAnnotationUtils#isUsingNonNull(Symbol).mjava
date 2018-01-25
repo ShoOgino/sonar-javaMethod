@@ -1,0 +1,8 @@
+  private static boolean isUsingNonNull(Symbol symbol) {
+    if (isNullableThroughNonNull(symbol)) {
+      return false;
+    }
+    SymbolMetadata metadata = symbol.metadata();
+    return NONNULL_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith) || isMethodAnnotatedWithEclipseNonNullReturnType(symbol);
+  }
+

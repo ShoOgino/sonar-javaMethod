@@ -1,0 +1,14 @@
+  private List<Symbol> metaAnnotations(Set<Type> knownTypes) {
+    List<Symbol> result = new ArrayList<>();
+    for (AnnotationInstance annotationInstance : annotations) {
+      Symbol annotationSymbol = annotationInstance.symbol();
+      Type annotationType = annotationSymbol.type();
+      if (!knownTypes.contains(annotationType)) {
+        knownTypes.add(annotationType);
+        result.add(annotationSymbol);
+        result.addAll(((SymbolMetadataResolve) annotationSymbol.metadata()).metaAnnotations(knownTypes));
+      }
+    }
+    return new ArrayList<>(result);
+  }
+

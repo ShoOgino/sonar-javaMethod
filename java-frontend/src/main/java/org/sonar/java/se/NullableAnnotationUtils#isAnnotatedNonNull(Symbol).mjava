@@ -1,9 +1,4 @@
   public static boolean isAnnotatedNonNull(Symbol symbol) {
-    if (isNullableThroughNonNull(symbol)) {
-      return false;
-    }
-    SymbolMetadata metadata = symbol.metadata();
-    return NONNULL_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith)
-      || isMethodAnnotatedWithEclipseNonNullReturnType(symbol);
+    return isUsingNonNull(symbol) || ((SymbolMetadataResolve) symbol.metadata()).metaAnnotations().stream().anyMatch(NullableAnnotationUtils::isUsingNonNull);
   }
 
