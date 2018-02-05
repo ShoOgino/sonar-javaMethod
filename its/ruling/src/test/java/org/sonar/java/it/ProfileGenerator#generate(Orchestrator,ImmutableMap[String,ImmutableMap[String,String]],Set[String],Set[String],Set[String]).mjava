@@ -1,29 +1,19 @@
-  static void generate(Orchestrator orchestrator, String language, String repositoryKey, ImmutableMap<String, ImmutableMap<String, String>> rulesParameters,
+  static void generate(Orchestrator orchestrator, ImmutableMap<String, ImmutableMap<String, String>> rulesParameters,
     Set<String> excluded, Set<String> subsetOfEnabledRules, Set<String> activatedRuleKeys) {
     try {
       StringBuilder sb = new StringBuilder()
         .append("<profile>")
         .append("<name>rules</name>")
-        .append("<language>").append(language).append("</language>")
+        .append("<language>").append(LANGUAGE).append("</language>")
         .append("<rules>");
 
-      List<String> ruleKeys = Lists.newArrayList();
-      String json = new HttpRequestFactory(orchestrator.getServer().getUrl())
-        .get("/api/rules/search", ImmutableMap.<String, Object>of("languages", language, "repositories", repositoryKey, "ps", "1000"));
-      @SuppressWarnings("unchecked")
-      List<Map> jsonRules = (List<Map>) ((Map) JSONValue.parse(json)).get("rules");
-      for (Map jsonRule : jsonRules) {
-        String key = (String) jsonRule.get("key");
-        ruleKeys.add(key.split(":")[1]);
-      }
-
-      for (String key : ruleKeys) {
+      for (String key : getRuleKeys(orchestrator)) {
         if (excluded.contains(key) || (!subsetOfEnabledRules.isEmpty() && !subsetOfEnabledRules.contains(key))) {
           continue;
         }
         activatedRuleKeys.add(key);
         sb.append("<rule>")
-          .append("<repositoryKey>").append(repositoryKey).append("</repositoryKey>")
+          .append("<repositoryKey>").append(REPOSITORY_KEY).append("</repositoryKey>")
           .append("<key>").append(key).append("</key>")
           .append("<priority>INFO</priority>");
         if (rulesParameters.containsKey(key)) {
