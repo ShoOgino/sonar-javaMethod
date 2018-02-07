@@ -1,7 +1,9 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       Symbol symbol = tree.symbol();
-      if (isPrivateMethodOfOuterClass(symbol)) {
+      if(symbol.isUnknown()) {
+        unknownInvocations.put(MethodsHelper.methodName(tree).name(), tree);
+      } else if (isPrivateMethodOfOuterClass(symbol)) {
         usages.add(symbol);
       }
       super.visitMethodInvocation(tree);

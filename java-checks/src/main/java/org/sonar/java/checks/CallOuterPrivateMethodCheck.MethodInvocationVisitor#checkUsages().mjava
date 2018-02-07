@@ -1,7 +1,14 @@
-    public void checkUsages() {
-      for (Symbol methodUsed : usages.elementSet()) {
-        if (methodUsed.usages().size() == usages.count(methodUsed)) {
-          reportIssueOnMethod((MethodTree) methodUsed.declaration());
+    void checkUsages() {
+      for (Map.Entry<Symbol.TypeSymbol, Multiset<Symbol>> usageByInnerClassEntry : usagesByInnerClass.entrySet()) {
+        Multiset<Symbol> innerClassUsages = usageByInnerClassEntry.getValue();
+        for (Symbol methodUsed : innerClassUsages.elementSet()) {
+          boolean matchArity = unknownInvocations.get(methodUsed.name())
+            .stream()
+            .anyMatch(mit -> hasSameArity((Symbol.MethodSymbol) methodUsed, mit));
+          // if an unknown method has same name and same arity, do not report, likely a FP.
+          if (!matchArity && methodUsed.usages().size() == innerClassUsages.count(methodUsed)) {
+            reportIssueOnMethod((MethodTree) methodUsed.declaration(), usageByInnerClassEntry.getKey());
+          }
         }
       }
     }
