@@ -1,18 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      if (containsExplicitThrowsException) {
+      if (isThrowingJavaLangException(tree.symbol())) {
         return;
-      }
-      Symbol symbol = tree.symbol();
-      if (symbol.isUnknown()) {
-        containsExplicitThrowsException = true;
-        return;
-      }
-      for (Type type : ((Symbol.MethodSymbol) symbol).thrownTypes()) {
-        if (isJavaLangException(type)) {
-          containsExplicitThrowsException = true;
-          return;
-        }
       }
       super.visitMethodInvocation(tree);
     }
