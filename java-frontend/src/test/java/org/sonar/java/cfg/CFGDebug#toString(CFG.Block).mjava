@@ -21,7 +21,7 @@
       buffer.append(SyntaxTreeDebug.toString(terminator));
     }
     boolean first = true;
-    for (Block successor : block.successors()) {
+    for (Block successor : block.successors().stream().sorted(Comparator.comparingInt(Block::id).reversed()).collect(Collectors.toList())) {
       if (first) {
         first = false;
         buffer.append('\n');

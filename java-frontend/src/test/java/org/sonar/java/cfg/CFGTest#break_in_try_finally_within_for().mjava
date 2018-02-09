@@ -1,0 +1,62 @@
+  @Test
+  public void break_in_try_finally_within_for() {
+    CFG cfg = buildCFG(" void run3() {\n" +
+      "    for (int i = 0; i < 5; i++) {\n" +
+      "      try {\n" +
+      "        break;\n" +
+      "      } finally {\n" +
+      "        String s;\n" +
+      "        System.out.println(true ? \"trueLiteral\" : \"falseLiteral\");\n" +
+      "      }\n" +
+      "    }\n" +
+      "  }\n");
+    assertThat(CFGDebug.toString(cfg)).isEqualTo("Starts at B9\n" +
+      "\n" +
+      "B9\n" +
+      "0:\tINT_LITERAL                         \t0\n" +
+      "1:\tVARIABLE                            \ti\n" +
+      "\tjumps to: B8\n" +
+      "\n" +
+      "B8\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tINT_LITERAL                         \t5\n" +
+      "2:\tLESS_THAN                           \ti < 5\n" +
+      "T:\tFOR_STATEMENT                       \tfor {i;i < 5;i++}\n" +
+      "\tjumps to: B7(true) B0(false)\n" +
+      "\n" +
+      "B7\n" +
+      "0:\tTRY_STATEMENT                       \t\n" +
+      "\tjumps to: B6\n" +
+      "\n" +
+      "B6\n" +
+      "T:\tBREAK_STATEMENT                     \tbreak\n" +
+      "\tjumps to: B5\n" +
+      "\n" +
+      "B5\n" +
+      "0:\tVARIABLE                            \ts\n" +
+      "1:\tIDENTIFIER                          \tSystem\n" +
+      "2:\tMEMBER_SELECT                       \tSystem.out\n" +
+      "3:\tBOOLEAN_LITERAL                     \ttrue\n" +
+      "T:\tCONDITIONAL_EXPRESSION              \ttrue ? \"trueLiteral\" : \"falseLiteral\"\n" +
+      "\tjumps to: B4(true) B3(false)\n" +
+      "\n" +
+      "B4\n" +
+      "0:\tSTRING_LITERAL                      \t\"trueLiteral\"\n" +
+      "\tjumps to: B2\n" +
+      "\n" +
+      "B3\n" +
+      "0:\tSTRING_LITERAL                      \t\"falseLiteral\"\n" +
+      "\tjumps to: B2\n" +
+      "\n" +
+      "B2\n" +
+      "0:\tMETHOD_INVOCATION                   \t.println(true ? \"trueLiteral\" : \"falseLiteral\")\n" +
+      "\tjumps to: B1 B0(exit)\n" +
+      "\n" +
+      "B1\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tPOSTFIX_INCREMENT                   \ti++\n" +
+      "\tjumps to: B8\n" +
+      "\n" +
+      "B0 (Exit):\n\n");
+  }
+

@@ -1,0 +1,16 @@
+  private static void cleanupUnfeasibleBreakPaths(List<Block> blocks) {
+    for (Block block : blocks) {
+      Set<Block> happyPathPredecessor = block.predecessors.stream().filter(p -> !p.exceptions.contains(block)).collect(Collectors.toSet());
+      if(block.isFinallyBlock && happyPathPredecessor.size() == 1) {
+        Block pred = happyPathPredecessor.iterator().next();
+        if (pred.terminator != null && pred.terminator.is(Tree.Kind.BREAK_STATEMENT)) {
+          Set<Block> succs = block.successors.stream()
+            .filter(suc -> suc.terminator == null || !suc.terminator.is(Tree.Kind.WHILE_STATEMENT, Tree.Kind.DO_STATEMENT, Tree.Kind.FOR_STATEMENT, Tree.Kind.FOR_EACH_STATEMENT))
+            .collect(Collectors.toSet());
+          block.successors.clear();
+          block.successors.addAll(succs);
+        }
+      }
+    }
+  }
+

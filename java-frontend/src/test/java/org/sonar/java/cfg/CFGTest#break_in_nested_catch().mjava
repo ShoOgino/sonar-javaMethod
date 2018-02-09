@@ -1,0 +1,113 @@
+  @Test
+  public void break_in_nested_catch() {
+    CFG cfg = buildCFG(
+      "  void foo(boolean a) {\n" +
+      "    String[] types = new String[12];\n" +
+      "    try {\n" +
+      "      invoke0();\n" +
+      "    for (int i = 0; i < files.length; i++) {\n" +
+      "      A file = files[i];\n" +
+      "      try{\n" +
+      "        invoke1();\n" +
+      "      }catch(Throwable e) {\n" +
+      "        invoke2();\n" +
+      "        invoke3();\n" +
+      "        break;\n" +
+      "      } finally {\n" +
+      "        types[i] = invoke4();\n" +
+      "      }\n" +
+      "    }\n" +
+      "    } finally {\n" +
+      "      invoke10();\n" +
+      "      invoke11();\n" +
+      "    }\n" +
+      "    \n" +
+      "  }\n");
+    assertThat(CFGDebug.toString(cfg)).isEqualTo("Starts at B13\n" +
+      "\n" +
+      "B13\n" +
+      "0:\tINT_LITERAL                         \t12\n" +
+      "1:\tNEW_ARRAY                           \tnew []\n" +
+      "2:\tVARIABLE                            \ttypes\n" +
+      "3:\tTRY_STATEMENT                       \t\n" +
+      "\tjumps to: B12\n" +
+      "\n" +
+      "B12\n" +
+      "0:\tIDENTIFIER                          \tinvoke0\n" +
+      "1:\tMETHOD_INVOCATION                   \tinvoke0()\n" +
+      "\tjumps to: B11\n" +
+      "\texceptions to: B1\n" +
+      "\n" +
+      "B11\n" +
+      "0:\tINT_LITERAL                         \t0\n" +
+      "1:\tVARIABLE                            \ti\n" +
+      "\tjumps to: B10\n" +
+      "\n" +
+      "B10\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tIDENTIFIER                          \tfiles\n" +
+      "2:\tMEMBER_SELECT                       \tfiles.length\n" +
+      "3:\tLESS_THAN                           \ti < files.length\n" +
+      "T:\tFOR_STATEMENT                       \tfor {i;i < files.length;i++}\n" +
+      "\tjumps to: B9(true) B1(false)\n" +
+      "\n" +
+      "B9\n" +
+      "0:\tIDENTIFIER                          \tfiles\n" +
+      "1:\tIDENTIFIER                          \ti\n" +
+      "2:\tARRAY_ACCESS_EXPRESSION             \tfiles[i]\n" +
+      "3:\tVARIABLE                            \tfile\n" +
+      "4:\tTRY_STATEMENT                       \t\n" +
+      "\tjumps to: B8\n" +
+      "\n" +
+      "B8\n" +
+      "0:\tIDENTIFIER                          \tinvoke1\n" +
+      "1:\tMETHOD_INVOCATION                   \tinvoke1()\n" +
+      "\tjumps to: B4\n" +
+      "\texceptions to: B4 B7\n" +
+      "\n" +
+      "B7\n" +
+      "0:\tVARIABLE                            \te\n" +
+      "1:\tIDENTIFIER                          \tinvoke2\n" +
+      "2:\tMETHOD_INVOCATION                   \tinvoke2()\n" +
+      "\tjumps to: B6\n" +
+      "\texceptions to: B4\n" +
+      "\n" +
+      "B6\n" +
+      "0:\tIDENTIFIER                          \tinvoke3\n" +
+      "1:\tMETHOD_INVOCATION                   \tinvoke3()\n" +
+      "\tjumps to: B5\n" +
+      "\texceptions to: B4\n" +
+      "\n" +
+      "B5\n" +
+      "T:\tBREAK_STATEMENT                     \tbreak\n" +
+      "\tjumps to: B4\n" +
+      "\n" +
+      "B4\n" +
+      "0:\tIDENTIFIER                          \ttypes\n" +
+      "1:\tIDENTIFIER                          \ti\n" +
+      "2:\tARRAY_ACCESS_EXPRESSION             \ttypes[i]\n" +
+      "3:\tIDENTIFIER                          \tinvoke4\n" +
+      "4:\tMETHOD_INVOCATION                   \tinvoke4()\n" +
+      "\tjumps to: B3\n" +
+      "\texceptions to: B1\n" +
+      "\n" +
+      "B3\n" +
+      "0:\tASSIGNMENT                          \ttypes[i]=invoke4()\n" +
+      "\tjumps to: B2 B1(exit)\n" +
+      "\n" +
+      "B2\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tPOSTFIX_INCREMENT                   \ti++\n" +
+      "\tjumps to: B10\n" +
+      "\n" +
+      "B1\n" +
+      "0:\tIDENTIFIER                          \tinvoke10\n" +
+      "1:\tMETHOD_INVOCATION                   \tinvoke10()\n" +
+      "2:\tIDENTIFIER                          \tinvoke11\n" +
+      "3:\tMETHOD_INVOCATION                   \tinvoke11()\n" +
+      "\tjumps to: B0(exit)\n" +
+      "\n" +
+      "B0 (Exit):\n" +
+      "\n");
+  }
+

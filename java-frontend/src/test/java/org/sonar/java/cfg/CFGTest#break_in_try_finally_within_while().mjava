@@ -1,0 +1,51 @@
+  @Test
+  public void break_in_try_finally_within_while() {
+    CFG cfg = buildCFG("void run1() {\n" +
+      "    while (true) {\n" +
+      "      try {\n" +
+      "        break;\n" +
+      "      } finally {\n" +
+      "        String s = true ? \"trueLiteral\" : \"falseLiteral\";\n" +
+      "        System.out.println(s);\n" +
+      "      }\n" +
+      "    }\n" +
+      "  }");
+    assertThat(CFGDebug.toString(cfg)).isEqualTo("Starts at B7\n" +
+      "\n" +
+      "B7\n" +
+      "0:\tBOOLEAN_LITERAL                     \ttrue\n" +
+      "T:\tWHILE_STATEMENT                     \twhile (true)\n" +
+      "\tjumps to: B6(true) B0(false)\n" +
+      "\n" +
+      "B6\n" +
+      "0:\tTRY_STATEMENT                       \t\n" +
+      "\tjumps to: B5\n" +
+      "\n" +
+      "B5\n" +
+      "T:\tBREAK_STATEMENT                     \tbreak\n" +
+      "\tjumps to: B4\n" +
+      "\n" +
+      "B4\n" +
+      "0:\tBOOLEAN_LITERAL                     \ttrue\n" +
+      "T:\tCONDITIONAL_EXPRESSION              \ttrue ? \"trueLiteral\" : \"falseLiteral\"\n" +
+      "\tjumps to: B3(true) B2(false)\n" +
+      "\n" +
+      "B3\n" +
+      "0:\tSTRING_LITERAL                      \t\"trueLiteral\"\n" +
+      "\tjumps to: B1\n" +
+      "\n" +
+      "B2\n" +
+      "0:\tSTRING_LITERAL                      \t\"falseLiteral\"\n" +
+      "\tjumps to: B1\n" +
+      "\n" +
+      "B1\n" +
+      "0:\tVARIABLE                            \ts\n" +
+      "1:\tIDENTIFIER                          \tSystem\n" +
+      "2:\tMEMBER_SELECT                       \tSystem.out\n" +
+      "3:\tIDENTIFIER                          \ts\n" +
+      "4:\tMETHOD_INVOCATION                   \t.println(s)\n" +
+      "\tjumps to: B7 B0(exit)\n" +
+      "\n" +
+      "B0 (Exit):\n\n");
+  }
+

@@ -1,0 +1,159 @@
+  @Test
+  public void break_without_finally() {
+    CFG cfg = buildCFG("void fun(int highestLevel) {       while (highestLevel >= lowestOddLevel) {\n" +
+      "            int i = levelStart;\n" +
+      "\n" +
+      "            for (;;) {\n" +
+      "                while (i < levelLimit && levels[i] < highestLevel) {\n" +
+      "                    i++;\n" +
+      "                }\n" +
+      "                int begin = i++;\n" +
+      "\n" +
+      "                if (begin == levelLimit) {\n" +
+      "                    break; // no more runs at this level\n" +
+      "                }\n" +
+      "\n" +
+      "                while (i < levelLimit && levels[i] >= highestLevel) {\n" +
+      "                    i++;\n" +
+      "                }\n" +
+      "                int end = i - 1;\n" +
+      "\n" +
+      "\t\tbegin += delta;\n" +
+      "\t\tend += delta;\n" +
+      "                while (begin < end) {\n" +
+      "                    Object temp = objects[begin];\n" +
+      "                    objects[begin] = objects[end];\n" +
+      "                    objects[end] = temp;\n" +
+      "                    ++begin;\n" +
+      "                    --end;\n" +
+      "                }\n" +
+      "            }\n" +
+      "\n" +
+      "            --highestLevel;\n" +
+      "        }}");
+    assertThat(CFGDebug.toString(cfg)).isEqualTo("Starts at B15\n" +
+      "\n" +
+      "B15\n" +
+      "0:\tIDENTIFIER                          \thighestLevel\n" +
+      "1:\tIDENTIFIER                          \tlowestOddLevel\n" +
+      "2:\tGREATER_THAN_OR_EQUAL_TO            \thighestLevel >= lowestOddLevel\n" +
+      "T:\tWHILE_STATEMENT                     \twhile (highestLevel >= lowestOddLevel)\n" +
+      "\tjumps to: B14(true) B0(false)\n" +
+      "\n" +
+      "B14\n" +
+      "0:\tIDENTIFIER                          \tlevelStart\n" +
+      "1:\tVARIABLE                            \ti\n" +
+      "\tjumps to: B13\n" +
+      "\n" +
+      "B13\n" +
+      "T:\tFOR_STATEMENT                       \tfor {;;}\n" +
+      "\tjumps to: B12\n" +
+      "\n" +
+      "B12\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tIDENTIFIER                          \tlevelLimit\n" +
+      "2:\tLESS_THAN                           \ti < levelLimit\n" +
+      "T:\tCONDITIONAL_AND                     \ti < levelLimit && levels[i] < highestLevel\n" +
+      "\tjumps to: B11(true) B9(false)\n" +
+      "\n" +
+      "B11\n" +
+      "0:\tIDENTIFIER                          \tlevels\n" +
+      "1:\tIDENTIFIER                          \ti\n" +
+      "2:\tARRAY_ACCESS_EXPRESSION             \tlevels[i]\n" +
+      "3:\tIDENTIFIER                          \thighestLevel\n" +
+      "4:\tLESS_THAN                           \tlevels[i] < highestLevel\n" +
+      "T:\tWHILE_STATEMENT                     \twhile (i < levelLimit && levels[i] < highestLevel)\n" +
+      "\tjumps to: B10(true) B9(false)\n" +
+      "\n" +
+      "B10\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tPOSTFIX_INCREMENT                   \ti++\n" +
+      "\tjumps to: B12\n" +
+      "\n" +
+      "B9\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tPOSTFIX_INCREMENT                   \ti++\n" +
+      "2:\tVARIABLE                            \tbegin\n" +
+      "3:\tIDENTIFIER                          \tbegin\n" +
+      "4:\tIDENTIFIER                          \tlevelLimit\n" +
+      "5:\tEQUAL_TO                            \tbegin == levelLimit\n" +
+      "T:\tIF_STATEMENT                        \tif (begin == levelLimit)\n" +
+      "\tjumps to: B8(true) B7(false)\n" +
+      "\n" +
+      "B8\n" +
+      "T:\tBREAK_STATEMENT                     \tbreak\n" +
+      "\tjumps to: B1\n" +
+      "\n" +
+      "B7\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tIDENTIFIER                          \tlevelLimit\n" +
+      "2:\tLESS_THAN                           \ti < levelLimit\n" +
+      "T:\tCONDITIONAL_AND                     \ti < levelLimit && levels[i] >= highestLevel\n" +
+      "\tjumps to: B6(true) B4(false)\n" +
+      "\n" +
+      "B6\n" +
+      "0:\tIDENTIFIER                          \tlevels\n" +
+      "1:\tIDENTIFIER                          \ti\n" +
+      "2:\tARRAY_ACCESS_EXPRESSION             \tlevels[i]\n" +
+      "3:\tIDENTIFIER                          \thighestLevel\n" +
+      "4:\tGREATER_THAN_OR_EQUAL_TO            \tlevels[i] >= highestLevel\n" +
+      "T:\tWHILE_STATEMENT                     \twhile (i < levelLimit && levels[i] >= highestLevel)\n" +
+      "\tjumps to: B5(true) B4(false)\n" +
+      "\n" +
+      "B5\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tPOSTFIX_INCREMENT                   \ti++\n" +
+      "\tjumps to: B7\n" +
+      "\n" +
+      "B4\n" +
+      "0:\tIDENTIFIER                          \ti\n" +
+      "1:\tINT_LITERAL                         \t1\n" +
+      "2:\tMINUS                               \ti - 1\n" +
+      "3:\tVARIABLE                            \tend\n" +
+      "4:\tIDENTIFIER                          \tbegin\n" +
+      "5:\tIDENTIFIER                          \tdelta\n" +
+      "6:\tPLUS_ASSIGNMENT                     \tbegin+=delta\n" +
+      "7:\tIDENTIFIER                          \tend\n" +
+      "8:\tIDENTIFIER                          \tdelta\n" +
+      "9:\tPLUS_ASSIGNMENT                     \tend+=delta\n" +
+      "\tjumps to: B3\n" +
+      "\n" +
+      "B3\n" +
+      "0:\tIDENTIFIER                          \tbegin\n" +
+      "1:\tIDENTIFIER                          \tend\n" +
+      "2:\tLESS_THAN                           \tbegin < end\n" +
+      "T:\tWHILE_STATEMENT                     \twhile (begin < end)\n" +
+      "\tjumps to: B13(false) B2(true)\n" +
+      "\n" +
+      "B2\n" +
+      "0:\tIDENTIFIER                          \tobjects\n" +
+      "1:\tIDENTIFIER                          \tbegin\n" +
+      "2:\tARRAY_ACCESS_EXPRESSION             \tobjects[begin]\n" +
+      "3:\tVARIABLE                            \ttemp\n" +
+      "4:\tIDENTIFIER                          \tobjects\n" +
+      "5:\tIDENTIFIER                          \tbegin\n" +
+      "6:\tARRAY_ACCESS_EXPRESSION             \tobjects[begin]\n" +
+      "7:\tIDENTIFIER                          \tobjects\n" +
+      "8:\tIDENTIFIER                          \tend\n" +
+      "9:\tARRAY_ACCESS_EXPRESSION             \tobjects[end]\n" +
+      "10:\tASSIGNMENT                          \tobjects[begin]=objects[end]\n" +
+      "11:\tIDENTIFIER                          \tobjects\n" +
+      "12:\tIDENTIFIER                          \tend\n" +
+      "13:\tARRAY_ACCESS_EXPRESSION             \tobjects[end]\n" +
+      "14:\tIDENTIFIER                          \ttemp\n" +
+      "15:\tASSIGNMENT                          \tobjects[end]=temp\n" +
+      "16:\tIDENTIFIER                          \tbegin\n" +
+      "17:\tPREFIX_INCREMENT                    \t++begin\n" +
+      "18:\tIDENTIFIER                          \tend\n" +
+      "19:\tPREFIX_DECREMENT                    \t--end\n" +
+      "\tjumps to: B3\n" +
+      "\n" +
+      "B1\n" +
+      "0:\tIDENTIFIER                          \thighestLevel\n" +
+      "1:\tPREFIX_DECREMENT                    \t--highestLevel\n" +
+      "\tjumps to: B15\n" +
+      "\n" +
+      "B0 (Exit):\n\n");
+
+  }
+
