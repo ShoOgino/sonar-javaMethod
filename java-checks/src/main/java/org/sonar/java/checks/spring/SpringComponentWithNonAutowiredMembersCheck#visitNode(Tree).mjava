@@ -3,7 +3,7 @@
     ClassTree clazzTree = (ClassTree) tree;
     SymbolMetadata clazzMeta = clazzTree.symbol().metadata();
 
-    if (isSpringComponent(clazzMeta)) {
+    if (isSpringComponent(clazzMeta) && !hasUniqueConstructor(clazzTree)) {
       clazzTree.members().stream().filter(v -> v.is(Kind.VARIABLE))
         .map(m -> (VariableTree) m)
         .filter(v -> !v.symbol().isStatic())

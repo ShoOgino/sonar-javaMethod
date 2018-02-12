@@ -1,0 +1,9 @@
+  private static boolean hasUniqueConstructor(ClassTree clazzTree) {
+    return clazzTree.symbol().memberSymbols().stream()
+      .filter(Symbol::isMethodSymbol)
+      .map(s -> (Symbol.MethodSymbol) s)
+      .filter(m -> m.name().equals("<init>"))
+      .filter(m -> m.declaration() != null)
+      .count() == 1;
+  }
+
