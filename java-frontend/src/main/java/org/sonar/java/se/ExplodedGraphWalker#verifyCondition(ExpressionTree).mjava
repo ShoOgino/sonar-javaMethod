@@ -1,0 +1,11 @@
+  private static boolean verifyCondition(ExpressionTree condition) {
+    if(condition.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) condition;
+      if(identifierTree.symbol().isFinal() && identifierTree.symbol().isVariableSymbol()) {
+        VariableTree declaration = (VariableTree) identifierTree.symbol().declaration();
+        return declaration == null || declaration.initializer() == null || !declaration.initializer().is(Tree.Kind.BOOLEAN_LITERAL);
+      }
+    }
+    return !condition.is(Tree.Kind.BOOLEAN_LITERAL);
+  }
+

@@ -6,7 +6,8 @@
     if (terminator != null) {
       switch (terminator.kind()) {
         case IF_STATEMENT:
-          handleBranch(block, cleanupCondition(((IfStatementTree) terminator).condition()));
+          ExpressionTree ifCondition = ((IfStatementTree) terminator).condition();
+          handleBranch(block, cleanupCondition(ifCondition), verifyCondition(ifCondition));
           return;
         case CONDITIONAL_OR:
         case CONDITIONAL_AND:
@@ -24,11 +25,11 @@
           break;
         case WHILE_STATEMENT:
           ExpressionTree whileCondition = ((WhileStatementTree) terminator).condition();
-          handleBranch(block, cleanupCondition(whileCondition), !whileCondition.is(Tree.Kind.BOOLEAN_LITERAL));
+          handleBranch(block, cleanupCondition(whileCondition), verifyCondition(whileCondition));
           return;
         case DO_STATEMENT:
           ExpressionTree doCondition = ((DoWhileStatementTree) terminator).condition();
-          handleBranch(block, cleanupCondition(doCondition), !doCondition.is(Tree.Kind.BOOLEAN_LITERAL));
+          handleBranch(block, cleanupCondition(doCondition), verifyCondition(doCondition));
           return;
         case SYNCHRONIZED_STATEMENT:
           resetFieldValues(false);
