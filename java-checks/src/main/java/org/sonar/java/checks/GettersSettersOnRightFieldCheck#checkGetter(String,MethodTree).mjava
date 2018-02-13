@@ -1,6 +1,6 @@
   private void checkGetter(String fieldName, MethodTree methodTree) {
     Symbol.TypeSymbol getterOwner = ((Symbol.TypeSymbol) methodTree.symbol().owner());
-    if (!hasPrivateFieldWithName(fieldName, getterOwner)) {
+    if (hasNoPrivateFieldMatchingNameAndType(fieldName, methodTree.symbol().returnType().type(), getterOwner)) {
       return;
     }
     firstAndOnlyStatement(methodTree)

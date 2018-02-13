@@ -1,0 +1,8 @@
+  private static boolean hasNoPrivateFieldMatchingNameAndType(String fieldName, Type fieldType, Symbol.TypeSymbol accessorOwner) {
+    return accessorOwner.lookupSymbols(fieldName).stream()
+      .filter(Symbol::isVariableSymbol)
+      .filter(Symbol::isPrivate)
+      .filter(symbol -> symbol.type().equals(fieldType) || symbol.type().isSubtypeOf(fieldType))
+      .noneMatch(symbol -> fieldName.equals(symbol.name()));
+  }
+
