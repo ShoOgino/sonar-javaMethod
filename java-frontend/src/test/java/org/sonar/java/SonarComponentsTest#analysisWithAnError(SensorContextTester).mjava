@@ -1,0 +1,20 @@
+  private Measure<String> analysisWithAnError(SensorContextTester sensorContext) {
+    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, null);
+    sonarComponents.setSensorContext(sensorContext);
+
+    AnalysisError analysisError;
+    try {
+      throw new IllegalStateException("This is the message of this exception");
+    } catch (IllegalStateException iae) {
+      analysisError = new AnalysisError(iae, "/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/abcde/some_very/long/path/FileInError.java", AnalysisError.Kind.PARSE_ERROR);
+    }
+
+    for (int i = 0; i < 200_000; i++) {
+      sonarComponents.addAnalysisError(analysisError);
+    }
+
+    sonarComponents.saveAnalysisErrors();
+
+    return sensorContext.measure("projectKey", "sonarjava_feedback");
+  }
+
