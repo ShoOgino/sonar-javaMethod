@@ -1,7 +1,7 @@
   @Test
   public void verify_analysis_errors_are_collected_on_parse_error() throws Exception {
     SensorContextTester context = createParseErrorContext();
-    when(server.getPublicRootUrl()).thenReturn("https://sonarcloud.io");
+    context.settings().setProperty(SonarComponents.COLLECT_ANALYSIS_ERRORS_KEY, true);
     executeJavaSquidSensor(context);
 
     String feedback = context.<String>measure("projectKey", "sonarjava_feedback").value();

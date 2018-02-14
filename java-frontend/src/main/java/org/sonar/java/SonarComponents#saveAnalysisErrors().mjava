@@ -1,10 +1,8 @@
   public void saveAnalysisErrors() {
-    if (!isSonarLintContext() && !analysisErrors.isEmpty() && server.getPublicRootUrl().equals("https://sonarcloud.io")) {
-      Metric.Builder metricBuilder = new Metric.Builder("sonarjava_feedback", "SonarJava feedback", Metric.ValueType.DATA);
-      metricBuilder.setHidden(true);
+    if (!isSonarLintContext() && !analysisErrors.isEmpty() && shouldCollectAnalysisErrors()) {
       Gson gson = new Gson();
       String metricValue = gson.toJson(analysisErrors);
-      context.<String>newMeasure().forMetric(metricBuilder.create()).on(context.module()).withValue(metricValue).save();
+      context.<String>newMeasure().forMetric(FEEDBACK_METRIC).on(context.module()).withValue(metricValue).save();
     }
   }
 
