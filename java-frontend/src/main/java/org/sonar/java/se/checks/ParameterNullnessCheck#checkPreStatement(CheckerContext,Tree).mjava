@@ -1,0 +1,13 @@
+  @Override
+  public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    ProgramState state = context.getState();
+    if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+      checkParameters(mit, mit.symbol(), mit.arguments(), state);
+    } else if (syntaxNode.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree nct = (NewClassTree) syntaxNode;
+      checkParameters(nct, nct.constructorSymbol(), nct.arguments(), state);
+    }
+    return state;
+  }
+

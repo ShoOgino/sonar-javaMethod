@@ -1,0 +1,26 @@
+  private void checkParameters(Tree syntaxnode, Symbol symbol, Arguments arguments, ProgramState state) {
+    if (!symbol.isMethodSymbol() || arguments.isEmpty()) {
+      return;
+    }
+    JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) symbol;
+    Scope parameters = methodSymbol.getParameters();
+    if (parameters == null) {
+      // FIXME: scope should never be null for parameters (null in default constructors for instance)
+      return;
+    }
+    if (nonNullAnnotationOnParameters(methodSymbol) == null) {
+      // method is not annotated (locally or globally)
+      return;
+    }
+    int nbArguments = arguments.size();
+    List<SymbolicValue> argumentSVs = getArgumentSVs(state, syntaxnode, nbArguments);
+    List<JavaSymbol> argumentSymbols = parameters.scopeSymbols();
+    int nbArgumentToCheck = Math.min(nbArguments, argumentSymbols.size() - (methodSymbol.isVarArgs() ? 1 : 0));
+    for (int i = 0; i < nbArgumentToCheck; i++) {
+      ObjectConstraint constraint = state.getConstraint(argumentSVs.get(i), ObjectConstraint.class);
+      if (constraint != null && constraint.isNull() && !parameterIsNullable(methodSymbol, argumentSymbols.get(i))) {
+        reportIssue(arguments.get(i), "Annotate the parameter with @javax.annotation.Nullable in method declaration, or make sure that null can not be passed as argument.");
+      }
+    }
+  }
+
