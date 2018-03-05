@@ -1,0 +1,14 @@
+  private boolean alreadyReported(UnaryExpressionTree tree) {
+    if (prefixSet.contains(tree)) {
+      return true;
+    }
+    Tree parent = tree;
+    while (parent.is(Tree.Kind.PARENTHESIZED_EXPRESSION, Tree.Kind.BITWISE_COMPLEMENT, Tree.Kind.LOGICAL_COMPLEMENT, Tree.Kind.UNARY_PLUS, Tree.Kind.UNARY_MINUS)) {
+      parent = parent.parent();
+      if (prefixSet.contains(parent)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
