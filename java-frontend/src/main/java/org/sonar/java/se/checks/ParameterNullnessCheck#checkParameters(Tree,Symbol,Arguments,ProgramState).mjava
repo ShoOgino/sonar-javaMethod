@@ -1,4 +1,4 @@
-  private void checkParameters(Tree syntaxnode, Symbol symbol, Arguments arguments, ProgramState state) {
+  private void checkParameters(Tree syntaxNode, Symbol symbol, Arguments arguments, ProgramState state) {
     if (!symbol.isMethodSymbol() || arguments.isEmpty()) {
       return;
     }
@@ -8,13 +8,13 @@
       return;
     }
     int nbArguments = arguments.size();
-    List<SymbolicValue> argumentSVs = getArgumentSVs(state, syntaxnode, nbArguments);
+    List<SymbolicValue> argumentSVs = getArgumentSVs(state, syntaxNode, nbArguments);
     List<JavaSymbol> argumentSymbols = methodSymbol.getParameters().scopeSymbols();
     int nbArgumentToCheck = Math.min(nbArguments, argumentSymbols.size() - (methodSymbol.isVarArgs() ? 1 : 0));
     for (int i = 0; i < nbArgumentToCheck; i++) {
       ObjectConstraint constraint = state.getConstraint(argumentSVs.get(i), ObjectConstraint.class);
       if (constraint != null && constraint.isNull() && !parameterIsNullable(methodSymbol, argumentSymbols.get(i))) {
-        reportIssue(arguments.get(i), "Annotate the parameter with @javax.annotation.Nullable in method declaration, or make sure that null can not be passed as argument.");
+        reportIssue(syntaxNode, arguments.get(i), methodSymbol);
       }
     }
   }
