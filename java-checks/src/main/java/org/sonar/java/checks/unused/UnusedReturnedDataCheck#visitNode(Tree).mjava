@@ -4,7 +4,7 @@
       CHECKED_METHODS.stream()
         .map(matcher -> isTreeMethodInvocation(((ExpressionStatementTree) tree).expression(), matcher))
         .filter(Objects::nonNull)
-        .forEach(mit -> raiseIssue(MethodsHelper.methodName(mit)));
+        .forEach(mit -> raiseIssue(ExpressionUtils.methodName(mit)));
     } else {
       BinaryExpressionTree expressionTree = (BinaryExpressionTree) tree;
       ExpressionTree leftOperand = expressionTree.leftOperand();
@@ -12,11 +12,11 @@
       for (MethodMatcher matcher : CHECKED_METHODS) {
         MethodInvocationTree leftMit = isTreeMethodInvocation(leftOperand, matcher);
         if (leftMit != null && isTreeLiteralNull(rightOperand)) {
-          raiseIssue(MethodsHelper.methodName(leftMit));
+          raiseIssue(ExpressionUtils.methodName(leftMit));
         }
         MethodInvocationTree rightMit = isTreeMethodInvocation(rightOperand, matcher);
         if (rightMit != null && isTreeLiteralNull(leftOperand)) {
-          raiseIssue(MethodsHelper.methodName(rightMit));
+          raiseIssue(ExpressionUtils.methodName(rightMit));
         }
       }
     }

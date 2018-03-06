@@ -1,0 +1,13 @@
+  @Test
+  public void method_name() throws Exception {
+    File file = new File("src/test/files/model/ExpressionUtilsMethodNameTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    MethodTree methodTree = (MethodTree) ((ClassTree) tree.types().get(0)).members().get(0);
+
+    MethodInvocationTree firstMIT = (MethodInvocationTree) ((ExpressionStatementTree) methodTree.block().body().get(0)).expression();
+    MethodInvocationTree secondMIT = (MethodInvocationTree) ((ExpressionStatementTree) methodTree.block().body().get(1)).expression();
+
+    assertThat(ExpressionUtils.methodName(firstMIT).name()).isEqualTo("foo");
+    assertThat(ExpressionUtils.methodName(secondMIT).name()).isEqualTo("foo");
+  }
+
