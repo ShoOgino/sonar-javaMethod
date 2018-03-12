@@ -1,0 +1,43 @@
+  void foo2() {
+    int i = 0;
+    switch(i) {  // Compliant
+      case 1:
+        break;
+      case 2: {
+        for(;i<3;i++) {
+          switch(i) { // Noncompliant
+            case 0:
+              break;
+            case 2:{
+              new Thread() {
+                public void run() {
+                  System.out.println();
+                  int i = 0;
+                  switch(i) {  // Compliant
+                    case 0: 
+                      break;
+                    case 1:
+                      break;
+                  }
+                }
+              }.start();
+              break;
+            }
+            case 3:
+              list.stream().filter(x -> {
+                switch(x) {  // Compliant 
+                  case 0:
+                    return true;
+                  case 1:
+                    return false;
+                }
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+  }
+
