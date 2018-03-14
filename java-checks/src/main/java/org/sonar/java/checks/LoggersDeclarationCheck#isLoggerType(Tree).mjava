@@ -1,8 +1,12 @@
   private static boolean isLoggerType(Tree tree) {
-    if (!tree.is(Tree.Kind.IDENTIFIER)) {
+    IdentifierTree identifierTree = null;
+    if (tree.is(Tree.Kind.IDENTIFIER)) {
+      identifierTree = (IdentifierTree) tree;
+    } else if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+      identifierTree = ((MemberSelectExpressionTree) tree).identifier ();
+    } else {
       return false;
     }
-    IdentifierTree identifierTree = (IdentifierTree) tree;
 
     return "Log".equals(identifierTree.name()) ||
       "Logger".equals(identifierTree.name());
