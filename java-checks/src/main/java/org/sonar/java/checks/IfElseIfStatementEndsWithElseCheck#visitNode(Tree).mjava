@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    StatementTree elseStmt = ((IfStatementTree) tree).elseStatement();
+    if (elseStmt != null
+      && elseStmt.is(Tree.Kind.IF_STATEMENT) && ((IfStatementTree) elseStmt).elseStatement() == null) {
+
+      reportIssue(((IfStatementTree) elseStmt.parent()).elseKeyword(), ((IfStatementTree) elseStmt).ifKeyword(), "\"if ... else if\" constructs should end with \"else\" clauses.");
+    }
+  }
+
