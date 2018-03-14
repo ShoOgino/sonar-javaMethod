@@ -1,0 +1,18 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      if (!isThis(tree.expression())) {
+        return;
+      }
+      ExpressionTree variable = tree.variable();
+      if (variable.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) variable;
+        // not an issue because "this" is assigned to an object of the same type which is also defined as static
+        if (memberSelect.expression().symbolType().symbol().equals(this.owner) && memberSelect.identifier().symbol().isStatic()) {
+          return;
+        }
+      } else if (variable.is(Tree.Kind.IDENTIFIER) && (((IdentifierTree) variable).symbol().isStatic())) {
+        return;
+      }
+      report(tree);
+    }
+
