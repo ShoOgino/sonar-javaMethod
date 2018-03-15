@@ -2,7 +2,10 @@
   public void visitVariable(VariableTree tree) {
     Symbol symbol = tree.symbol();
     if (symbol != null && !symbol.isStatic()) {
-      super.visitVariable(tree);
+      scan(tree.modifiers());
+      scan(tree.type());
+      // skip the simple name
+      scan(tree.initializer());
     }
   }
 
