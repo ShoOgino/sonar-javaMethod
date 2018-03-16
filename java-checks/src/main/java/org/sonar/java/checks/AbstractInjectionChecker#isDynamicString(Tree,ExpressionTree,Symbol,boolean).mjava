@@ -1,6 +1,11 @@
   protected boolean isDynamicString(Tree methodTree, ExpressionTree arg, @Nullable Symbol currentlyChecking, boolean firstLevel) {
     if (arg.is(Tree.Kind.MEMBER_SELECT)) {
-      return !isConstant(((MemberSelectExpressionTree) arg).identifier().symbol());
+      MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) arg;
+      IdentifierTree identifier = memberSelectExpressionTree.identifier();
+      if (ExpressionUtils.isSelectOnThisOrSuper(memberSelectExpressionTree)) {
+        return isIdentifierDynamicString(methodTree, identifier, currentlyChecking, firstLevel);
+      }
+      return !isConstant(identifier.symbol());
     } else if (arg.is(Tree.Kind.IDENTIFIER)) {
       return isIdentifierDynamicString(methodTree, (IdentifierTree) arg, currentlyChecking, firstLevel);
     } else if (arg.is(Tree.Kind.PLUS)) {
