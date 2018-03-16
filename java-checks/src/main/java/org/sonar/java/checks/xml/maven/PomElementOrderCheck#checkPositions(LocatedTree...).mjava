@@ -1,14 +1,27 @@
   private static List<Location> checkPositions(LocatedTree... trees) {
-    List<Location> issues = new LinkedList<>();
-    List<LocatedTree> expectedOrder = getNonNullTrees(trees);
-    List<LocatedTree> observedOrder = sortByLine(expectedOrder);
+    List<LocatedTree> expectedOrder = Arrays.stream(trees).filter(Objects::nonNull).collect(Collectors.toList());
+    List<LocatedTree> observedOrder = expectedOrder.stream().sorted(LINE_COMPARATOR).collect(Collectors.toList());
+
+    int lastWrongPosition = -1;
+    int firstWrongPosition = -1;
 
     for (int index = 0; index < expectedOrder.size(); index++) {
-      LocatedTree expected = expectedOrder.get(index);
-      int indexObserved = observedOrder.indexOf(expected);
-      if (!issues.isEmpty() || index != indexObserved) {
-        issues.add(new Location("Expected position: " + (index + 1), expected.startLocation().line()));
+      if (observedOrder.indexOf(expectedOrder.get(index)) != index) {
+        lastWrongPosition = index;
+        if (firstWrongPosition == -1) {
+          firstWrongPosition = index;
+        }
       }
+    }
+
+    if (lastWrongPosition == -1) {
+      return Collections.emptyList();
+    }
+
+    List<Location> issues = new ArrayList<>();
+    // only reports between first and last wrong position
+    for (int index = firstWrongPosition; index <= lastWrongPosition; index++) {
+      issues.add(new Location("Expected position: " + (index + 1), expectedOrder.get(index).startLocation().line()));
     }
 
     return issues;
