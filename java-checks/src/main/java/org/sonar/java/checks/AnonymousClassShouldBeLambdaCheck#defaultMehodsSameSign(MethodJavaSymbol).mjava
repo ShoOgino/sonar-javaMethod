@@ -1,0 +1,14 @@
+  // seaches in the interface if there is a default method with the same signature
+  private static boolean defaultMehodsSameSign(MethodJavaSymbol methodSymbol) {
+    TypeJavaSymbol tjs = methodSymbol.overriddenSymbol().outermostClass();
+    if (methodSymbol.overriddenSymbol().isDefault() && tjs.isInterface() && tjs.declaration() != null) {
+      for (Symbol mjs : ((TypeJavaSymbol) tjs.declaration().symbol()).memberSymbols()) {
+        if (mjs.isMethodSymbol() && !checkmethodSignature(methodSymbol, (MethodJavaSymbol) mjs)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
