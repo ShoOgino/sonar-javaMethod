@@ -1,0 +1,11 @@
+  private static boolean checkForDefaultMethodsWithSameSignature(JavaSymbol.MethodJavaSymbol methodSymbol, Set<JavaSymbol.MethodJavaSymbol> methods) {
+    List<JavaSymbol.MethodJavaSymbol> list1 = methods.stream().filter(method -> method.getParameters().scopeSymbols()
+      .equals(methodSymbol.getParameters().scopeSymbols()) && !method.name().equals("main") && method.isDefault())
+      .collect(Collectors.toList());
+    if (list1.isEmpty()) {
+      return true;
+    } else {
+      return list1.size() > 1 ? false : true;
+    }
+  }
+

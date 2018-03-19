@@ -1,13 +1,9 @@
   private static boolean isSAM(ClassTree classBody) {
     if (hasOnlyOneMethod(classBody.members()) && classBody.symbol().isTypeSymbol()) {
       // Verify class body is a subtype of an interface
-      MethodJavaSymbol methodSymbol = ((MethodJavaSymbol) ((MethodTree) classBody.symbol().memberSymbols().stream().findFirst().get().declaration())
-        .symbol());
       JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) classBody.symbol();
-      boolean checkAnonymousClassFP = defaultMehodsSameSign(methodSymbol);
       return symbol.getInterfaces().size() == 1 &&
-        symbol.getSuperclass().is("java.lang.Object") &&
-        checkAnonymousClassFP;
+        symbol.getSuperclass().is("java.lang.Object");
     }
     return false;
   }
