@@ -4,11 +4,8 @@
     ClassTree classBody = tree.classBody();
     if (classBody != null) {
       TypeTree identifier = tree.identifier();
-      if (!useThisIdentifier(classBody) && !enumConstants.contains(identifier) && isSAM(classBody)) {
-        Tree member = classBody.members().get(0);
-        if (member.is(Tree.Kind.METHOD) && multipleMethodsDefaultSameSignature(((JavaSymbol.MethodJavaSymbol) ((MethodTree) member).symbol()))) {
-          context.reportIssue(this, identifier, "Make this anonymous inner class a lambda" + context.getJavaVersion().java8CompatibilityMessage());
-        }
+      if (!useThisIdentifier(classBody) && !enumConstants.contains(identifier) && isSAM(classBody, identifier)) {
+        context.reportIssue(this, identifier, "Make this anonymous inner class a lambda" + context.getJavaVersion().java8CompatibilityMessage());
       }
     }
   }
