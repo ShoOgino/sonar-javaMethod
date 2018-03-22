@@ -1,0 +1,11 @@
+  private static boolean isSAM(ClassTree classBody) {
+    if (hasOnlyOneMethod(classBody.members())) {
+      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) classBody.symbol();
+      // should be anonymous class of interface and not abstract class
+      return symbol.getInterfaces().size() == 1
+        && symbol.getSuperclass().is(JAVA_LANG_OBJECT)
+        && hasSingleAbstractMethodInHierarchy(symbol.superTypes());
+    }
+    return false;
+  }
+

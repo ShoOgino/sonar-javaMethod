@@ -1,0 +1,15 @@
+  private static boolean hasSingleAbstractMethodInHierarchy(Set<ClassJavaType> superTypes) {
+    return superTypes.stream()
+      .filter(type -> !type.is(JAVA_LANG_OBJECT))
+      .map(ClassJavaType::getSymbol)
+      // collect all the methods declared in hierarchy
+      .flatMap(superType -> superType.memberSymbols().stream().filter(Symbol::isMethodSymbol).filter(Symbol::isAbstract))
+      .map(JavaSymbol.MethodJavaSymbol.class::cast)
+      // remove objects methods redefined in interfaces
+      .filter(symbol -> !isObjectMethod(symbol))
+      // always take same symbol if method is redeclared over and over in hierarchy
+      .map(symbol -> symbol.overriddenSymbol() != null ? symbol.overriddenSymbol() : symbol)
+      .collect(Collectors.toSet())
+      .size() == 1;
+  }
+
