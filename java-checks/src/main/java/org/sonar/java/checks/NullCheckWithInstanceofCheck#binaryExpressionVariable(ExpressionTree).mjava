@@ -1,0 +1,14 @@
+  @CheckForNull
+  private static ExpressionTree binaryExpressionVariable(ExpressionTree expression) {
+    BinaryExpressionTree binaryExpression = null;
+    if (expression.is(Tree.Kind.NOT_EQUAL_TO, Tree.Kind.EQUAL_TO)) {
+      binaryExpression = (BinaryExpressionTree) expression;
+      if (binaryExpression.leftOperand().is(Tree.Kind.NULL_LITERAL)) {
+        return binaryExpression.rightOperand();
+      } else if (binaryExpression.rightOperand().is(Tree.Kind.NULL_LITERAL)) {
+        return binaryExpression.leftOperand();
+      }
+    }
+    return null;
+  }
+

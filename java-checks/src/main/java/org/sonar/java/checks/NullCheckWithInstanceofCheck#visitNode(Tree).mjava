@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    BinaryExpressionTree binaryExpression = (BinaryExpressionTree) tree;
+    ExpressionTree leftOp = ExpressionUtils.skipParentheses(binaryExpression.leftOperand());
+    ExpressionTree rightOp = ExpressionUtils.skipParentheses(binaryExpression.rightOperand());
+    if ((is(Tree.Kind.EQUAL_TO, leftOp, rightOp) && nullCheckWithInstanceOf(leftOp, rightOp, binaryExpression.kind(), Tree.Kind.CONDITIONAL_OR)) ||
+      (is(Tree.Kind.NOT_EQUAL_TO, leftOp, rightOp) && nullCheckWithInstanceOf(leftOp, rightOp, binaryExpression.kind(), Tree.Kind.CONDITIONAL_AND))) {
+      reportIssue(treeToReport(leftOp, rightOp), "Remove this unnecessary null check; \"instanceof\" returns false for nulls.");
+    }
+  }
+

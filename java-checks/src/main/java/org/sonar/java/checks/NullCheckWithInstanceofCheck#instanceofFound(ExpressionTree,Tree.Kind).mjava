@@ -1,0 +1,14 @@
+  @CheckForNull
+  private static ExpressionTree instanceofFound(ExpressionTree expressionTree, Tree.Kind kind) {
+    if (kind == Tree.Kind.CONDITIONAL_OR) {
+      /* if CONDITIONAL_OR we want LOGICAL COMPLEMENT before instanceof */
+      if (expressionTree.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+        return instanceofLHS(ExpressionUtils.skipParentheses(((UnaryExpressionTree) expressionTree).expression()));
+      } else {
+        return null;
+      }
+    } else {
+      return instanceofLHS(expressionTree);
+    }
+  }
+

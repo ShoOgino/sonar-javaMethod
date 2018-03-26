@@ -1,0 +1,11 @@
+  private static boolean nullCheckWithInstanceOf(ExpressionTree leftOp, ExpressionTree rightOp, Tree.Kind binaryExpressionKind, Tree.Kind expectedKind) {
+    ExpressionTree binaryVariable = Optional.ofNullable(binaryExpressionVariable(leftOp))
+      .orElse(binaryExpressionVariable(rightOp));
+    if (binaryVariable == null || binaryExpressionKind != expectedKind) {
+      return false;
+    }
+    ExpressionTree instanceofVariable = Optional.ofNullable(instanceofFound(rightOp, binaryExpressionKind))
+      .orElse(instanceofFound(leftOp, binaryExpressionKind));
+    return instanceofVariable != null && SyntacticEquivalence.areEquivalent(binaryVariable, instanceofVariable);
+  }
+
