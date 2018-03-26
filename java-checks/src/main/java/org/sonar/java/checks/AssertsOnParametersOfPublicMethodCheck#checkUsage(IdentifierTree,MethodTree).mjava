@@ -1,0 +1,12 @@
+  private void checkUsage(IdentifierTree parameterUsage, MethodTree methodTree) {
+    Tree parameterParent = parameterUsage.parent();
+    while (!parameterParent.equals(methodTree) && !assertReported.contains(parameterParent)) {
+      if (parameterParent.is(Tree.Kind.ASSERT_STATEMENT)) {
+        assertReported.add((AssertStatementTree) parameterParent);
+        reportIssue(parameterParent, "Replace this assert with a proper check.");
+        return;
+      }
+      parameterParent = parameterParent.parent();
+    }
+  }
+
