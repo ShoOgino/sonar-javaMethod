@@ -1,0 +1,18 @@
+  private static boolean matchingTypesWrongOrder(ParametersList formalParameterList, List<IdentifierTree> argumentList) {
+    Iterator<IdentifierTree> argumentsIterator = argumentList.stream().filter(Objects::nonNull).iterator();
+    int countArgumentsNotOrdered = 0;
+    while (argumentsIterator.hasNext()) {
+      IdentifierTree argument = argumentsIterator.next();
+      int index = formalParameterList.indexOf(argument.name().toLowerCase(Locale.ENGLISH));
+      Type formalType = formalParameterList.typeOfIndex(index);
+      Type argType = argument.symbolType();
+      if (!formalType.is(argType.fullyQualifiedName()) || formalType.isUnknown() || argType.isUnknown()) {
+        return false;
+      }
+      if (argumentList.indexOf(argument) != index) {
+        countArgumentsNotOrdered++;
+      }
+    }
+    return countArgumentsNotOrdered >= 2;
+  }
+
