@@ -1,0 +1,15 @@
+  @Nullable
+  private LocationInFile location(CFG.Block javaBlock) {
+    Tree firstTree = null;
+    List<Tree> elements = javaBlock.elements();
+    if (!elements.isEmpty()) {
+      firstTree = elements.get(0);
+    } else if (javaBlock.terminator() != null) {
+      firstTree = javaBlock.terminator();
+    }
+    if (firstTree == null) {
+      return null;
+    }
+    return location(firstTree);
+  }
+

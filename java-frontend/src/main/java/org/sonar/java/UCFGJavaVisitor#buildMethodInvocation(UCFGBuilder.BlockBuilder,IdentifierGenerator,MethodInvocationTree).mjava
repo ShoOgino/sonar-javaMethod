@@ -1,0 +1,21 @@
+  private void buildMethodInvocation(UCFGBuilder.BlockBuilder blockBuilder, IdentifierGenerator idGenerator, MethodInvocationTree mit) {
+    List<String> arguments = null;
+    if (isString(mit.symbol().owner().type())) {
+      // myStr.myMethod(args) -> myMethod(myStr, args)
+      arguments = new ArrayList<>();
+      // safe cast, only case where methodSelect cannot be a MSE is when analysing java.lang.String source and SonarJava don't build semantic for java.lang package.
+      arguments.add(idGenerator.lookupIdFor(((MemberSelectExpressionTree) mit.methodSelect()).expression()));
+      arguments.addAll(argumentIds(idGenerator, mit));
+    } else if (isString(mit.symbolType()) || mit.arguments().stream().map(ExpressionTree::symbolType).anyMatch(UCFGJavaVisitor::isString)) {
+      arguments = argumentIds(idGenerator, mit);
+    }
+
+    if (arguments != null && !mit.symbol().isUnknown()) {
+      String destination = idGenerator.newIdFor(mit);
+      blockBuilder.assignTo(variableWithId(destination),
+        UCFGBuilder.call(signatureFor((Symbol.MethodSymbol) mit.symbol()))
+          .withArgs(arguments.stream().map(UCFGBuilder::variableWithId).toArray(Expression.Variable[]::new)),
+        location(mit));
+    }
+  }
+

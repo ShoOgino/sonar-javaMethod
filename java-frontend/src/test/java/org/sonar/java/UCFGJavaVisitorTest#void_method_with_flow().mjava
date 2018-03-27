@@ -1,0 +1,15 @@
+  @Test
+  public void void_method_with_flow() {
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable var0 = UCFGBuilder.variableWithId("%0");
+    Expression.Variable var1 = UCFGBuilder.variableWithId("%1");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/String;)V").addMethodParam(arg)
+      .addStartingBlock(newBasicBlock("1").assignTo(var1, call("java.lang.String#toString()Ljava/lang/String;").withArgs(arg), new LocationInFile(FILE_KEY, 1,72,1,86))
+        .jumpTo(UCFGBuilder.createLabel("0")))
+      .addStartingBlock(newBasicBlock("2").assignTo(var0, call("java.lang.String#toString()Ljava/lang/String;").withArgs(arg), new LocationInFile(FILE_KEY, 1,54,1,68))
+        .jumpTo(UCFGBuilder.createLabel("1")))
+      .addBasicBlock(newBasicBlock("0").ret(constant("implicit return"), new LocationInFile(FILE_KEY, 1,87,1,88)))
+      .build();
+    assertCodeToUCfg("class A { public void method(String arg) { if(cond) { arg.toString(); } arg.toString();}}", expectedUCFG);
+  }
+

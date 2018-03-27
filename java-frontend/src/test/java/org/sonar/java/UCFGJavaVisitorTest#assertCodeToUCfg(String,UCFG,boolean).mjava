@@ -1,0 +1,30 @@
+  private UCFG assertCodeToUCfg(String source, UCFG expectedUCFG, boolean testLocations) {
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser().parse(source);
+    SemanticModel.createFor(cut, squidClassLoader);
+    UCFGJavaVisitor UCFGJavaVisitor = new UCFGJavaVisitor(tmp.getRoot());
+    UCFGJavaVisitor.fileKey = FILE_KEY;
+    UCFGJavaVisitor.visitCompilationUnit(cut);
+
+    UCFG actualUCFG = null;
+    try {
+      File java_ucfg_dir = new File(new File(tmp.getRoot(), "ucfg"), "java");
+      File ucfg = new File(java_ucfg_dir, "ucfg_0.proto");
+      actualUCFG = UCFGtoProtobuf.fromProtobufFile(ucfg);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    assertThat(actualUCFG.methodId()).isEqualTo(expectedUCFG.methodId());
+    assertThat(actualUCFG.basicBlocks()).isEqualTo(expectedUCFG.basicBlocks());
+    assertThat(actualUCFG.basicBlocks().values().stream().flatMap(b->b.calls().stream()))
+      .containsExactlyElementsOf(expectedUCFG.basicBlocks().values().stream().flatMap(b->b.calls().stream()).collect(Collectors.toList()));
+    assertThat(actualUCFG.basicBlocks().values().stream().map(BasicBlock::terminator))
+      .containsExactlyElementsOf(expectedUCFG.basicBlocks().values().stream().map(BasicBlock::terminator).collect(Collectors.toList()));
+    assertThat(actualUCFG.entryBlocks()).isEqualTo(expectedUCFG.entryBlocks());
+    assertThat(toLocationStream(actualUCFG).noneMatch(l->l == UCFGBuilder.LOC)).isTrue();
+    if(testLocations) {
+      Stream<LocationInFile> locStream = toLocationStream(actualUCFG);
+      assertThat(locStream).containsExactlyElementsOf(toLocationStream(expectedUCFG).collect(Collectors.toList()));
+    }
+    return actualUCFG;
+  }
+

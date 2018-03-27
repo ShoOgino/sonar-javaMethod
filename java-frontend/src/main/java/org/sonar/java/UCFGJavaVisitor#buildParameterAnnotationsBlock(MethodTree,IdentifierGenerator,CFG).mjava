@@ -1,0 +1,11 @@
+  private BlockBuilder buildParameterAnnotationsBlock(MethodTree methodTree, IdentifierGenerator idGenerator, CFG cfg) {
+    LocationInFile parametersLocation = location(methodTree.openParenToken(), methodTree.closeParenToken());
+    UCFGBuilder.BlockBuilder blockBuilder = UCFGBuilder.newBasicBlock("paramAnnotations", parametersLocation);
+
+    getAnnotatedStringParameters(methodTree).forEach(parameter -> buildBlockForParameter(parameter, blockBuilder, idGenerator));
+
+    Label nextBlockLabel = UCFGBuilder.createLabel(Integer.toString(cfg.entry().id()));
+    blockBuilder.jumpTo(nextBlockLabel);
+    return blockBuilder;
+  }
+

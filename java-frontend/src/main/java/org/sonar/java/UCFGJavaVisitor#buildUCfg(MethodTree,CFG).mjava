@@ -1,0 +1,26 @@
+  private UCFG buildUCfg(MethodTree methodTree, CFG cfg) {
+    String signature = signatureFor(methodTree.symbol());
+
+    IdentifierGenerator idGenerator = new IdentifierGenerator(methodTree);
+    UCFGBuilder builder = UCFGBuilder.createUCFGForMethod(signature);
+
+    methodTree.parameters().stream()
+      .map(p -> idGenerator.lookupIdFor(p.symbol()))
+      .map(UCFGBuilder::variableWithId)
+      .forEach(builder::addMethodParam);
+
+    BlockBuilder entryBlockBuilder = buildBasicBlock(cfg.entry(), methodTree, idGenerator);
+
+    if (getAnnotatedStringParameters(methodTree).count() > 0) {
+      builder.addStartingBlock(buildParameterAnnotationsBlock(methodTree, idGenerator, cfg));
+      builder.addBasicBlock(entryBlockBuilder);
+    } else {
+      builder.addStartingBlock(entryBlockBuilder);
+    }
+
+    cfg.blocks().stream()
+      .filter(b -> !b.equals(cfg.entry()))
+      .forEach(b -> builder.addBasicBlock(buildBasicBlock(b, methodTree, idGenerator)));
+    return builder.build();
+  }
+

@@ -1,0 +1,15 @@
+  private void buildBlockForParameter(VariableTree parameter, BlockBuilder blockBuilder, IdentifierGenerator idGenerator) {
+    Expression.Variable parameterVariable = variableWithId(idGenerator.lookupIdFor(parameter.symbol()));
+    List<AnnotationTree> annotationList = parameter.modifiers().annotations();
+    List<Expression> annotationVariables = new ArrayList<>();
+
+    annotationList.forEach(annotationTree -> {
+      Expression.Variable var = variableWithId(idGenerator.newIdFor(annotationTree));
+      annotationVariables.add(var);
+      blockBuilder.assignTo(var, call(annotationTree.annotationType().symbolType().fullyQualifiedName()).withArgs(parameterVariable), location(annotationTree));
+    });
+
+    Expression[] args = annotationVariables.toArray(new Expression[annotationVariables.size()]);
+    blockBuilder.assignTo(parameterVariable, call("__annotation").withArgs(args), location(parameter.simpleName()));
+  }
+

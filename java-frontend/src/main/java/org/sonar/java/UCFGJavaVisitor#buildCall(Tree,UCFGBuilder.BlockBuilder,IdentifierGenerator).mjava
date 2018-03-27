@@ -1,0 +1,40 @@
+  private void buildCall(Tree element, UCFGBuilder.BlockBuilder blockBuilder, IdentifierGenerator idGenerator) {
+    if (isStringVarDecl(element)) {
+      VariableTree variableTree = (VariableTree) element;
+
+      String lhs = idGenerator.lookupIdFor(variableTree.simpleName());
+      if (!idGenerator.isConst(lhs)) {
+        ExpressionTree initializer = variableTree.initializer();
+        String source = idGenerator.lookupIdFor(initializer);
+        blockBuilder.assignTo(variableWithId(lhs), UCFGBuilder.call("__id").withArgs(variableWithId(source)), location(element));
+      }
+      return;
+    }
+
+    if (element.is(METHOD_INVOCATION)) {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) element;
+      buildMethodInvocation(blockBuilder, idGenerator, methodInvocationTree);
+    } else if (element.is(PLUS, PLUS_ASSIGNMENT, ASSIGNMENT) && isString(((ExpressionTree) element).symbolType())) {
+      if (element.is(PLUS)) {
+        BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) element;
+        Expression lhs = idGenerator.lookupExpressionFor(binaryExpressionTree.leftOperand());
+        Expression rhs = idGenerator.lookupExpressionFor(binaryExpressionTree.rightOperand());
+        Expression.Variable var = variableWithId(idGenerator.newIdFor(binaryExpressionTree));
+        blockBuilder.assignTo(var, call("__concat").withArgs(lhs, rhs), location(element));
+      } else if (element.is(PLUS_ASSIGNMENT)) {
+        Expression var = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).variable());
+        Expression expr = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).expression());
+        if (!var.isConstant()) {
+          idGenerator.varForExpression(element, ((Expression.Variable) var).id());
+          blockBuilder.assignTo((Expression.Variable) var, call("__concat").withArgs(var, expr), location(element));
+        }
+      } else if (element.is(ASSIGNMENT)) {
+        Expression var = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).variable());
+        Expression expr = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).expression());
+        if (!var.isConstant()) {
+          blockBuilder.assignTo((Expression.Variable) var, call("__id").withArgs(expr), location(element));
+        }
+      }
+    }
+  }
+

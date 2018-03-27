@@ -1,0 +1,14 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    super.visitMethod(tree);
+    if (tree.block() != null) {
+      CFG cfg = CFG.build(tree);
+      try {
+        UCFG uCFG = buildUCfg(tree, cfg);
+        UCFGtoProtobuf.toProtobufFile(uCFG, filePath());
+      } catch (Exception e) {
+        LOG.error("Cannot generate ucfg in file " + fileKey + " for method at line" + tree.firstToken().line(), e);
+      }
+    }
+  }
+

@@ -1,0 +1,26 @@
+  private UCFGBuilder.BlockBuilder buildBasicBlock(CFG.Block javaBlock, MethodTree methodTree, IdentifierGenerator idGenerator) {
+    UCFGBuilder.BlockBuilder blockBuilder = UCFGBuilder.newBasicBlock(String.valueOf(javaBlock.id()), location(javaBlock));
+
+    javaBlock.elements().forEach(e -> buildCall(e, blockBuilder, idGenerator));
+
+    Tree terminator = javaBlock.terminator();
+    if (terminator != null && terminator.is(Tree.Kind.RETURN_STATEMENT)) {
+      ExpressionTree returnedExpression = ((ReturnStatementTree) terminator).expression();
+      Expression retExpr = constant(IdentifierGenerator.CONST);
+      if(isString(methodTree.returnType().symbolType())) {
+        retExpr = idGenerator.lookupExpressionFor(returnedExpression);
+      }
+      blockBuilder.ret(retExpr, location(terminator));
+      return blockBuilder;
+    }
+
+    Set<CFG.Block> successors = javaBlock.successors();
+    if (!successors.isEmpty()) {
+      blockBuilder.jumpTo(successors.stream().map(b -> UCFGBuilder.createLabel(Integer.toString(b.id()))).toArray(Label[]::new));
+      return blockBuilder;
+    }
+    Preconditions.checkState(javaBlock.id() == 0);
+    blockBuilder.ret(constant("implicit return"), location(methodTree.lastToken()));
+    return blockBuilder;
+  }
+
