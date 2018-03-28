@@ -1,6 +1,5 @@
   private UCFG assertCodeToUCfg(String source, UCFG expectedUCFG, boolean testLocations) {
-    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser().parse(source);
-    SemanticModel.createFor(cut, squidClassLoader);
+    CompilationUnitTree cut = getCompilationUnitTreeWithSemantics(source);
     UCFGJavaVisitor UCFGJavaVisitor = new UCFGJavaVisitor(tmp.getRoot());
     UCFGJavaVisitor.fileKey = FILE_KEY;
     UCFGJavaVisitor.visitCompilationUnit(cut);
