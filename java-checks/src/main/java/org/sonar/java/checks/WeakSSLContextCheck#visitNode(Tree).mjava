@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (hasSemantic()) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      Arguments arguments = mit.arguments();
+      if (SSLCONTEXT_GETINSTANCE_MATCHER.matches(mit)) {
+        ExpressionTree firstArgument = arguments.get(0);
+        if (firstArgument.is(Tree.Kind.STRING_LITERAL) && !STRONG_PROTOCOLS.contains(trimQuotes(((LiteralTree) firstArgument).value()))) {
+          reportIssue(firstArgument, "Change this code to use a stronger protocol.");
+        }
+      }
+    }
+  }
+
