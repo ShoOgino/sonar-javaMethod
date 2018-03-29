@@ -3,16 +3,19 @@
     if (node.is(Tree.Kind.SWITCH_STATEMENT)) {
       SwitchStatementTree switchStatement = (SwitchStatementTree) node;
       Multimap<CaseGroupTree, CaseGroupTree> identicalBranches = checkSwitchStatement(switchStatement);
-      if (!allBranchesSame(identicalBranches, switchStatement.cases().size())) {
+      boolean allBranchesSame = allBranchesSame(identicalBranches, switchStatement.cases().size());
+      boolean allBranchesSameWithoutDefault = allBranchesSame && !hasDefaultClause(switchStatement);
+      if (!allBranchesSame || allBranchesSameWithoutDefault) {
         identicalBranches.asMap().forEach((first, others) -> {
-          if (!isTrivialCase(first.body())) {
+          if (!isTrivialCase(first.body()) || allBranchesSameWithoutDefault) {
             others.forEach(other -> createIssue(other, issueMessage("case", first), first));
           }
         });
       }
     } else if (node.is(Tree.Kind.IF_STATEMENT) && !node.parent().is(Tree.Kind.IF_STATEMENT)) {
-      IfElseChain ifElseChain = checkIfStatement((IfStatementTree) node);
-      reportIdenticalIfChainBranches(ifElseChain.branches, ifElseChain.totalBranchCount);
+      IfStatementTree ifStatement = (IfStatementTree) node;
+      IfElseChain ifElseChain = checkIfStatement(ifStatement);
+      reportIdenticalIfChainBranches(ifElseChain.branches, ifElseChain.totalBranchCount, hasElseClause(ifStatement));
     }
   }
 
