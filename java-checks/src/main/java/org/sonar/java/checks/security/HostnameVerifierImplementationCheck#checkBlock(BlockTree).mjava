@@ -1,0 +1,11 @@
+  private void checkBlock(BlockTree blockTree) {
+    BlockTree innerBlock = blockTree;
+    while (innerBlock.body().size() == 1 && innerBlock.body().get(0).is(Tree.Kind.BLOCK)) {
+      innerBlock = (BlockTree) innerBlock.body().get(0);
+    }
+
+    if (isReturnTrueStatement(innerBlock.body())) {
+      reportIssue(innerBlock.body().get(0), ISSUE_MESSAGE);
+    }
+  }
+
