@@ -4,13 +4,7 @@
       return;
     }
     SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
-    Optional<CaseLabelTree> defaultLabel = getDefaultLabel(switchStatementTree);
-    if (defaultLabel.isPresent()) {
-      CaseLabelTree defaultLabelTree = defaultLabel.get();
-      if (!defaultLabelTree.equals(getLastLabel(switchStatementTree))) {
-        reportIssue(defaultLabelTree, "Move this default to the end of the switch.");
-      }
-    } else {
+    if (getDefaultLabel(switchStatementTree)) {
       if (!isSwitchOnEnum(switchStatementTree)) {
         reportIssue(switchStatementTree.switchKeyword(), "Add a default case to this switch.");
       } else if (missingCasesOfEnum(switchStatementTree)) {
