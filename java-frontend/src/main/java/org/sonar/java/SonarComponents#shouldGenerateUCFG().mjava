@@ -1,4 +1,10 @@
   public boolean shouldGenerateUCFG() {
-    return !context.activeRules().findByRepository("SonarSecurityJava").isEmpty();
+    Set<String> activeRuleKeys = context.activeRules().findByRepository(this.ruleRepositoryKey).stream()
+      .map(ActiveRule::ruleKey)
+      .map(RuleKey::rule)
+      .collect(Collectors.toSet());
+    Set<String> securityRuleKeys = getSecurityRuleKeys();
+    activeRuleKeys.retainAll(securityRuleKeys);
+    return !activeRuleKeys.isEmpty();
   }
 

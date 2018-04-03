@@ -1,0 +1,18 @@
+  public static Set<String> getSecurityRuleKeys() {
+    try {
+      Class<?> javaRulesClass = Class.forName("com.sonar.plugins.security.api.JavaRules");
+      Method getRuleKeysMethod = javaRulesClass.getMethod("getRuleKeys");
+      return (Set<String>) getRuleKeysMethod.invoke(null);
+    } catch (ClassNotFoundException e) {
+      LOG.debug("com.sonar.plugins.security.api.JavaRules is not found, no security rules added to Sonar way java profile: " + e.getMessage());
+    } catch (NoSuchMethodException e) {
+      LOG.debug("com.sonar.plugins.security.api.JavaRules#getRuleKeys is not found, no security rules added to Sonar way java profile: " + e.getMessage());
+    } catch (IllegalAccessException e) {
+      LOG.debug("[IllegalAccessException] no security rules added to Sonar way java profile: " + e.getMessage());
+    } catch (InvocationTargetException e) {
+      LOG.debug("[InvocationTargetException] no security rules added to Sonar way java profile: " + e.getMessage());
+    }
+
+    return new HashSet<>();
+  }
+
