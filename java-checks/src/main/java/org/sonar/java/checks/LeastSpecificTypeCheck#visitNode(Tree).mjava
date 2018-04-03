@@ -12,9 +12,11 @@
       return;
     }
 
+    boolean springInjectionAnnotated = isSpringInjectionAnnotated(methodSymbol.metadata());
     methodTree.parameters().stream()
       .map(VariableTree::symbol)
       .filter(p -> p.type().isClass() && !p.type().symbol().isEnum() && !p.type().is("java.lang.String"))
-      .forEach(this::handleParameter);
+      .filter(p -> !(springInjectionAnnotated && p.type().is("java.util.Collection")))
+      .forEach(p -> handleParameter(p, springInjectionAnnotated));
   }
 
