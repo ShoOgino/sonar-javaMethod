@@ -1,7 +1,5 @@
   private static void completeTypeTreeWithAnnotations(TypeTree type, Optional<List<AnnotationTreeImpl>> annotations) {
-    if (annotations.isPresent()) {
-      List<AnnotationTree> typeAnnotations = ImmutableList.copyOf(annotations.get());
-      completeTypeTreeWithAnnotations(type, typeAnnotations);
-    }
+    List<AnnotationTree> annotationList = ImmutableList.copyOf(annotations.or(ImmutableList.of()));
+    ((JavaTree.AnnotatedTypeTree) type).complete(annotationList);
   }
 
