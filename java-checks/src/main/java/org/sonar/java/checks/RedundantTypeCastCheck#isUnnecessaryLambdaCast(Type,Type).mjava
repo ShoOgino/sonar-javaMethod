@@ -1,0 +1,9 @@
+  private static boolean isUnnecessaryLambdaCast(Type childType, Type parentType) {
+    if (parentType.isSubtypeOf(childType)) {
+      return true;
+    }
+
+    List<MethodJavaSymbol> childMethods = getMethodSymbolsOf(childType).collect(Collectors.toList());
+    return childMethods.isEmpty() || (childMethods.size() == 1 && isSingleAbstractMethodOverride(childMethods.get(0), parentType));
+  }
+
