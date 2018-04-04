@@ -1,0 +1,15 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree firstArgument = ExpressionUtils.skipParentheses(mit.arguments().get(0));
+    if (isSplitMethod(mit) && firstArgument.is(Tree.Kind.STRING_LITERAL)) {
+      String argValue = LiteralUtils.trimQuotes(((LiteralTree) firstArgument).value());
+      if ((exceptionSplitMethod(argValue) &&
+        !SPLIT_EXCLUSION.matcher(argValue).matches()) || metaCharactersInSplit(argValue)) {
+        return;
+      }
+    }
+    if (!storedInStaticFinal(mit) && (firstArgument.is(Tree.Kind.STRING_LITERAL) || isConstant(firstArgument))) {
+      reportIssue(ExpressionUtils.methodName(mit), mit.arguments(), "Refactor this code to use a \"static final\" Pattern.");
+    }
+  }
+

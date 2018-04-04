@@ -1,0 +1,12 @@
+  private static boolean storedInStaticFinal(MethodInvocationTree mit) {
+    Tree tree = mit.parent();
+    while (!tree.is(Tree.Kind.VARIABLE, Tree.Kind.CLASS, Tree.Kind.ASSIGNMENT, Tree.Kind.METHOD)) {
+      tree = tree.parent();
+    }
+    if (tree.is(Tree.Kind.CLASS, Tree.Kind.METHOD)) {
+      return false;
+    } else {
+      return isConstant(tree);
+    }
+  }
+
