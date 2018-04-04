@@ -26,5 +26,10 @@
         restrictedKeywords[1],
         ArrayUtils.subarray(restrictedKeywords, 2, restrictedKeywords.length)),
       b.nextNot(LETTER_OR_DIGIT));
+
+    // special identifier introduced for java10: 'var'
+    for (JavaSpecialIdentifier tokenType : JavaSpecialIdentifier.values()) {
+      b.rule(tokenType).is(tokenType.getValue(), b.nextNot(LETTER_OR_DIGIT), SPACING);
+    }
   }
 
