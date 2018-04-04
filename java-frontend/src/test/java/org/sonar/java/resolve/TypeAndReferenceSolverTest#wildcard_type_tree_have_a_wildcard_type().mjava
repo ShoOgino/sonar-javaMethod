@@ -1,0 +1,15 @@
+  @Test
+  public void wildcard_type_tree_have_a_wildcard_type() {
+    CompilationUnitTree cut = treeOf("abstract class A<T> { abstract A<? extends Runnable> foo(); }");
+    TypeTree returnType = ((MethodTree) ((ClassTree) cut.types().get(0)).members().get(0)).returnType();
+    assertThat(returnType.is(Tree.Kind.PARAMETERIZED_TYPE)).isTrue();
+    Tree typeArg = ((ParameterizedTypeTree) returnType).typeArguments().get(0);
+    assertThat(typeArg.is(Tree.Kind.EXTENDS_WILDCARD)).isTrue();
+    JavaType javaType = (JavaType) ((WildcardTree) typeArg).symbolType();
+    assertThat(javaType).isInstanceOf(WildCardType.class);
+    WildCardType wildCardType = (WildCardType) javaType;
+    assertThat(wildCardType.isSubtypeOf("java.lang.Runnable")).isTrue();
+    assertThat(wildCardType.bound.is("java.lang.Runnable")).isTrue();
+    assertThat(wildCardType.boundType).isEqualTo(WildCardType.BoundType.EXTENDS);
+  }
+
