@@ -1,0 +1,18 @@
+  private void checkBlock(Block block) {
+    Block successorWithoutJump = block.successorWithoutJump();
+    Tree terminator = block.terminator();
+
+    if (terminator != null
+      && successorWithoutJump != null
+      && terminator.is(Tree.Kind.CONTINUE_STATEMENT, Tree.Kind.RETURN_STATEMENT)
+      && !isReturnWithExpression(terminator)
+      && !isSwitchCaseChild(terminator)) {
+
+      successorWithoutJump = nonEmptySuccessor(successorWithoutJump);
+      Block successor = nonEmptySuccessor(block.successors().iterator().next());
+      if (successorWithoutJump.equals(successor)) {
+        reportIssue(terminator, "Remove this redundant jump.");
+      }
+    }
+  }
+
