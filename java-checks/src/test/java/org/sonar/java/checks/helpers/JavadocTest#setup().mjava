@@ -1,0 +1,18 @@
+  @BeforeClass
+  public static void setup() {
+    File file = new File("src/test/files/checks/helpers/JavadocTest.java");
+    tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    SemanticModel.createFor(tree, new SquidClassLoader(Collections.emptyList()));
+
+    Map<String, MethodTree> methods = ((ClassTree) tree.types().get(0)).members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .collect(Collectors.toMap(methodTree -> methodTree.simpleName().name(), Function.identity()));
+
+    fooJavadoc = new Javadoc(methods.get("foo"));
+    barJavadoc = new Javadoc(methods.get("bar"));
+    emptyDescriptionJavadoc = new Javadoc(methods.get("emptyDescription"));
+    fullParamsDescriptionJavadoc = new Javadoc(methods.get("fullParamsDescription"));
+    genericExceptionThrownJavadoc = new Javadoc(methods.get("genericExceptionThrown"));
+  }
+

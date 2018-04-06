@@ -1,0 +1,20 @@
+  private static Map<BlockTagKey, List<String>> extractBlockTags(List<String> javadocLines, List<BlockTag> tags) {
+    Map<BlockTagKey, List<String>> results = new HashMap<>();
+    for (int i = 0; i < javadocLines.size(); i++) {
+      for (int j = 0; j < tags.size(); j++) {
+        BlockTag tag = tags.get(j);
+        Matcher matcher = tag.getPattern().matcher(javadocLines.get(i));
+        if (matcher.matches()) {
+          BlockTagKey key = BlockTagKey.of(tag, tag.isPatternWithName() ? matcher.group("name") : null);
+          List<String> descriptions = results.computeIfAbsent(key, k -> new ArrayList<>());
+          String newDescription = getDescription(javadocLines, i, matcher.group("descr"));
+          if (!newDescription.isEmpty()) {
+            descriptions.add(newDescription);
+            break;
+          }
+        }
+      }
+    }
+    return results;
+  }
+

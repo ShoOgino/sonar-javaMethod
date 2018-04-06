@@ -1,0 +1,13 @@
+  private boolean noDescriptionForException(Map<String, List<String>> thrownExceptionsMap, String exceptionSimpleName) {
+    List<String> descriptions = thrownExceptionsMap.get(exceptionSimpleName);
+    if (descriptions == null) {
+      // exceptions used in javadoc is using fully qualified name when method declaration use simple name
+      descriptions = thrownExceptionsMap.entrySet().stream()
+        .filter(e -> toSimpleName(e.getKey()).equals(exceptionSimpleName))
+        .map(Map.Entry::getValue)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    }
+    return isEmptyDescription(descriptions);
+  }
+

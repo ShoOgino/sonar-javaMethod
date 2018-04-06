@@ -1,0 +1,17 @@
+  private List<String> computeUndocumentedThrownExceptions() {
+    Map<String, List<String>> thrownExceptionsMap = getJavadocExceptions();
+    List<String> exceptionNames = elementExceptionNames;
+    if (exceptionNames.size() == 1 && GENERIC_EXCEPTIONS.contains(toSimpleName(exceptionNames.get(0))) && !thrownExceptionsMap.isEmpty()) {
+      // check for documented exceptions without description when only "Exception" is declared as being thrown
+      return thrownExceptionsMap.entrySet().stream()
+        .filter(e -> isEmptyDescription(e.getValue()))
+        .map(Map.Entry::getKey)
+        .map(Javadoc::toSimpleName)
+        .collect(Collectors.toList());
+    }
+    return exceptionNames.stream()
+      .map(Javadoc::toSimpleName)
+      .filter(simpleName -> noDescriptionForException(thrownExceptionsMap, simpleName))
+      .collect(Collectors.toList());
+  }
+

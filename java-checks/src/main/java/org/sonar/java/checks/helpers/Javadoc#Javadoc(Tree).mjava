@@ -1,0 +1,28 @@
+  public Javadoc(Tree tree) {
+    if (tree.is(METHOD_KINDS)) {
+      elementParameters = ((MethodTree) tree).parameters().stream()
+        .map(VariableTree::simpleName)
+        .map(IdentifierTree::name)
+        .collect(Collectors.toList());
+      elementExceptionNames = ((MethodTree) tree).throwsClauses().stream()
+        .map(Javadoc::exceptionName)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+    } else if (tree.is(CLASS_KINDS)) {
+      elementParameters = ((ClassTree) tree).typeParameters().stream()
+        .map(TypeParameterTree::identifier)
+        .map(IdentifierTree::name)
+        .map(name -> "<" + name + ">")
+        .collect(Collectors.toList());
+      elementExceptionNames = Collections.emptyList();
+    } else {
+      elementParameters = Collections.emptyList();
+      elementExceptionNames = Collections.emptyList();
+    }
+
+    List<String> javadocLines = cleanLines(PublicApiChecker.getApiJavadoc(tree));
+    mainDescription = getDescription(javadocLines, -1, "");
+    blockTagDescriptions = extractBlockTags(javadocLines, Arrays.asList(BlockTag.values()));
+    undocumentedNamedTags = new EnumMap<>(BlockTag.class);
+  }
+

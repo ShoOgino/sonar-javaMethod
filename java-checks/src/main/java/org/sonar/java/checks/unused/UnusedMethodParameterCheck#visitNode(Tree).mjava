@@ -4,18 +4,18 @@
       return;
     }
     MethodTree methodTree = (MethodTree) tree;
-    if (methodTree.block() == null || isExcluded(methodTree)) {
+    if (methodTree.block() == null || methodTree.parameters().isEmpty() || isExcluded(methodTree)) {
       return;
     }
-    Set<String> documentedParameters = documentedParameters(methodTree);
-    boolean overridableMethod = overridableMethod(methodTree.symbol());
+    List<String> undocumentedParameters = new Javadoc(methodTree).undocumentedParameters();
+    boolean overridableMethod = ((JavaSymbol.MethodJavaSymbol) methodTree.symbol()).isOverridable();
     List<IdentifierTree> unused = Lists.newArrayList();
     for (VariableTree var : methodTree.parameters()) {
       Symbol symbol = var.symbol();
       if (symbol.usages().isEmpty()
         && !symbol.metadata().isAnnotatedWith(AUTHORIZED_ANNOTATION)
         && !isStrutsActionParameter(var)
-        && (!overridableMethod || !documentedParameters.contains(symbol.name()))) {
+        && (!overridableMethod || undocumentedParameters.contains(symbol.name()))) {
         unused.add(var.simpleName());
       }
     }
