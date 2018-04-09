@@ -1,0 +1,12 @@
+  private DefaultInputFile addFile(String code, SensorContextTester context) throws IOException {
+    File file = temp.newFile().getAbsoluteFile();
+    Files.write(code, file, StandardCharsets.UTF_8);
+    DefaultInputFile defaultFile = new TestInputFileBuilder(temp.getRoot().getAbsolutePath(), file.getName())
+      .setLanguage("java")
+      .initMetadata(new String(java.nio.file.Files.readAllBytes(file.getAbsoluteFile().toPath()), StandardCharsets.UTF_8))
+      .setCharset(StandardCharsets.UTF_8)
+      .build();
+    context.fileSystem().add(defaultFile);
+    return defaultFile;
+  }
+
