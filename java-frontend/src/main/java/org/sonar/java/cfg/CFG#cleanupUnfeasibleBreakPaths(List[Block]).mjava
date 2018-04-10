@@ -5,7 +5,8 @@
         Block pred = happyPathPredecessor.iterator().next();
         if (pred.terminator != null && pred.terminator.is(Tree.Kind.BREAK_STATEMENT)) {
           Set<Block> succs = block.successors.stream()
-            .filter(suc -> suc.terminator == null || !suc.terminator.is(Tree.Kind.WHILE_STATEMENT, Tree.Kind.DO_STATEMENT, Tree.Kind.FOR_STATEMENT, Tree.Kind.FOR_EACH_STATEMENT))
+            .map(suc -> isLoop(suc) ? getAfterLoopBlock(suc) : suc)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
           block.successors.clear();
           block.successors.addAll(succs);
