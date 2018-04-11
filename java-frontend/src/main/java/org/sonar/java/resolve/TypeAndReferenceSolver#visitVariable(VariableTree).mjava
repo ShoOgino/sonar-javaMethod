@@ -1,13 +1,18 @@
   @Override
   public void visitVariable(VariableTree tree) {
     scan(tree.modifiers());
-    completeMetadata(((VariableTreeImpl) tree).getSymbol(), tree.modifiers().annotations());
+    JavaSymbol.VariableJavaSymbol variableSymbol = ((VariableTreeImpl) tree).getSymbol();
+    completeMetadata(variableSymbol, tree.modifiers().annotations());
     //skip type, it has been resolved in second pass
     ExpressionTree initializer = tree.initializer();
     if (initializer != null) {
       resolveAs(initializer, JavaSymbol.VAR);
-      if(((JavaType) initializer.symbolType()).isTagged(JavaType.DEFERRED)) {
-        setInferedType(tree.type().symbolType(), (DeferredType) initializer.symbolType());
+      TypeTree typeTree = tree.type();
+      JavaType initializerType = (JavaType) initializer.symbolType();
+      if (initializerType.isTagged(JavaType.DEFERRED)) {
+        setInferedType(typeTree.symbolType(), (DeferredType) initializer.symbolType());
+      } else if (typeTree.is(Tree.Kind.VAR_TYPE)) {
+        setInferedType(upwardProjection(initializerType), (DeferredType) typeTree.symbolType());
       }
     }
   }

@@ -1,0 +1,26 @@
+  private StatementTree getStatement(String statement) {
+    String code = "package org.foo;\n"
+      + "class A {\n"
+      + "  void tst(java.util.List<String> items,\n"
+      + "           java.util.Collection itemsRawType,\n"
+      + "           java.lang.Iterable itemsIterableRawType,\n"
+      + "           C<?> itemsWildcard,\n"
+      + "           C<? extends A> itemsExtends,\n"
+      + "           C<? super B> itemsSuper,\n"
+      + "           C<C<? extends A>> itemsNested) {\n"
+      + "    " + statement + "\n"
+      + "  }\n"
+      + "}\n"
+      + "class B extends A {}\n"
+      + "abstract class C<T> {\n"
+      + "  abstract T bar();\n"
+      + "}";
+
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser().parse(code);
+    SemanticModel.createFor(cut, CLASS_LOADER);
+
+    ClassTree classTree = (ClassTree) (cut.types().get(0));
+    MethodTree methodTree = (MethodTree) classTree.members().get(0);
+    return methodTree.block().body().get(0);
+  }
+

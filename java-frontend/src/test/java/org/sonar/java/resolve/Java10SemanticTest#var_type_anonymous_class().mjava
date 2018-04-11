@@ -1,0 +1,33 @@
+  /**
+   * JLS10 §14.4.1-1.d
+   */
+  @Test
+  public void var_type_anonymous_class() {
+    VariableTree var = getLocalVariable(
+      "var d = new A() { int myField; void myMethod() { } };\n"
+        + "d.myField = 42;\n"
+        + "d.myMethod();");
+    Type type = var.symbol().type();
+    assertThat(type).isEqualTo(var.type().symbolType());
+    assertThat(type).isNot("java.lang.Object");
+    assertThat(type).isSubtypeOf("java.lang.Object");
+
+    JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) type.symbol();
+    assertThat(symbol.memberSymbols()).hasSize(4);
+
+    JavaSymbol thisIdentifier = symbol.members().lookup("this").get(0);
+    assertThat(thisIdentifier.declaration()).isNull();
+    JavaSymbol superIdentifier = symbol.members().lookup("super").get(0);
+    assertThat(superIdentifier.declaration()).isNull();
+
+    JavaSymbol myField = symbol.members().lookup("myField").get(0);
+    assertThat(myField.isVariableSymbol()).isTrue();
+    assertThat(myField.declaration()).isNotNull();
+    assertThat(myField.usages()).hasSize(1);
+
+    JavaSymbol myMethod = symbol.members().lookup("myMethod").get(0);
+    assertThat(myMethod.isMethodSymbol()).isTrue();
+    assertThat(myMethod.declaration()).isNotNull();
+    assertThat(myMethod.usages()).hasSize(1);
+  }
+

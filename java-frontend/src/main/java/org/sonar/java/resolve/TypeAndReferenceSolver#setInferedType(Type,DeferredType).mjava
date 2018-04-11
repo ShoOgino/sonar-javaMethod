@@ -9,5 +9,10 @@
     }
     inferedExpression.setInferedType(newType);
     inferedExpression.accept(this);
+    if (inferedExpression.is(Tree.Kind.VAR_TYPE)) {
+      // change type of the variable
+      JavaSymbol.VariableJavaSymbol variableSymbol = ((VariableTreeImpl) inferedExpression.parent()).getSymbol();
+      variableSymbol.type = (JavaType) newType;
+    }
   }
 
