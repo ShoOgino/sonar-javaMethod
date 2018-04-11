@@ -1,0 +1,9 @@
+  private static boolean intentionalFallThrough(Tree caseGroup, Tree nextCaseGroup) {
+    // Check first token of next case group when comment is last element of case group it is attached to next group.
+    FallThroughCommentVisitor visitor = new FallThroughCommentVisitor();
+    List<Tree> treesToScan = ImmutableList.<Tree>builder().addAll(((CaseGroupTree) caseGroup).body())
+      .add(nextCaseGroup.firstToken()).build();
+    visitor.scan(treesToScan);
+    return visitor.hasComment;
+  }
+

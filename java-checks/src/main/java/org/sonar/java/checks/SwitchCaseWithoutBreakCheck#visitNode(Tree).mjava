@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
+    List<CaseGroupTree> caseGroupTrees = switchStatementTree.cases();
+    CFG cfg = CFG.buildCFG(Collections.singletonList(tree), true);
+    Set<CFG.Block> switchSuccessors = cfg.entry().successors();
+
+    Map<CFG.Block, CaseGroupTree> cfgBlockToCaseGroupMap = createMapping(switchSuccessors, caseGroupTrees);
+    switchSuccessors.stream()
+      .filter(cfgBlockToCaseGroupMap.keySet()::contains)
+      .flatMap(cfgBlock -> getForbiddenCaseGroupPredecessors(cfgBlock, cfgBlockToCaseGroupMap))
+      .map(CaseGroupTree::labels)
+      .map(caseGroupLabels -> caseGroupLabels.get(caseGroupLabels.size() - 1))
+      .forEach(label -> reportIssue(label, "End this switch case with an unconditional break, return or throw statement."));
+  }
+

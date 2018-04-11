@@ -1,0 +1,9 @@
+  private static Map<CFG.Block, CaseGroupTree> createMapping(Set<CFG.Block> switchSuccessors, List<CaseGroupTree> caseGroupTrees) {
+    return switchSuccessors.stream()
+      .filter(cfgBlock -> cfgBlock.caseGroup() != null && caseGroupTrees.contains(cfgBlock.caseGroup()))
+      .collect(
+        Collectors.toMap(
+          Function.identity(),
+          CFG.Block::caseGroup));
+  }
+

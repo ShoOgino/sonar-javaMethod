@@ -1,9 +1,0 @@
-  private static boolean intentionalFallThrough(SwitchStatementTree switchStatement, CaseGroupTree caseGroup) {
-    FallThroughCommentVisitor visitor = new FallThroughCommentVisitor();
-    // Check first token of next case group when comment is last element of case group it is attached to next group.
-    CaseGroupTree nextCaseGroup = switchStatement.cases().get(switchStatement.cases().indexOf(caseGroup) + 1);
-    List<Tree> treesToScan = ImmutableList.<Tree>builder().addAll(caseGroup.body()).add(nextCaseGroup.firstToken()).build();
-    visitor.scan(treesToScan);
-    return visitor.hasComment;
-  }
-
