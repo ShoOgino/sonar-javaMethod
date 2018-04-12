@@ -1,31 +1,21 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    List<ExpressionTree> expressionsToCheck = new ArrayList<>(2);
-    if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      expressionsToCheck.add(((MemberSelectExpressionTree) mit.methodSelect()).expression());
+    if (!mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      return;
     }
-    expressionsToCheck.add(mit.arguments().get(0));
 
-    boolean useAssignableMessage = expressionsToCheck.size() > 1;
-    boolean useClassGetName = false;
-    boolean useStackTraceElementGetClassName = false;
-    for (ExpressionTree expression : expressionsToCheck) {
-      if (expression.is(Tree.Kind.IDENTIFIER) && isParam(((IdentifierTree) expression).symbol())) {
-        // exclude comparison to method parameters
-        return;
-      }
-      ClassGetNameDetector visitor = new ClassGetNameDetector();
-      expression.accept(visitor);
-      useAssignableMessage &= visitor.useClassGetName;
-      useClassGetName |= visitor.useClassGetName;
-      useStackTraceElementGetClassName |= visitor.useStackTraceElementGetClassName;
-    }
-    if (useClassGetName && !useStackTraceElementGetClassName) {
-      String message = "Use an \"instanceof\" comparison instead.";
-      if(useAssignableMessage) {
-        message = "Use \"isAssignableFrom\" instead.";
-      }
-      reportIssue(mit, message);
+    ExpressionTree firstOperand = ExpressionUtils.skipParentheses(((MemberSelectExpressionTree) mit.methodSelect()).expression());
+    ExpressionTree secondOperand = ExpressionUtils.skipParentheses(mit.arguments().get(0));
+
+    // Only check comparison for string literals and use of class#getName methods to avoid FP. Ref: SONARJAVA-2603
+    boolean firstOpIsClassGetNameMethod = useClassGetNameMethod(firstOperand);
+    boolean secondOpIsClassGetNameMethod = useClassGetNameMethod(secondOperand);
+
+    if (firstOpIsClassGetNameMethod && secondOpIsClassGetNameMethod) {
+      reportIssue(mit, "Use \"isAssignableFrom\" instead.");
+    } else if ((firstOpIsClassGetNameMethod && secondOperand.is(Tree.Kind.STRING_LITERAL))
+      || (secondOpIsClassGetNameMethod && firstOperand.is(Tree.Kind.STRING_LITERAL))) {
+      reportIssue(mit, "Use an \"instanceof\" comparison instead.");
     }
   }
 
