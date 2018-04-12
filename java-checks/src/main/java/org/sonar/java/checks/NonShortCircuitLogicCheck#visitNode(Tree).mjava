@@ -4,7 +4,11 @@
     if (isBoolean(binaryExpressionTree.leftOperand().symbolType())) {
       String operator = binaryExpressionTree.operatorToken().text();
       String replacement = REPLACEMENTS.get(operator);
-      reportIssue(binaryExpressionTree.operatorToken(), "Correct this \"" + operator + "\" to \"" + replacement + "\".");
+      String sideEffectWarning = "";
+      if (mayHaveSideEffect(binaryExpressionTree.rightOperand())) {
+        sideEffectWarning = " and extract the right operand to a variable if it should always be evaluated";
+      }
+      reportIssue(binaryExpressionTree.operatorToken(), "Correct this \"" + operator + "\" to \"" + replacement + "\"" + sideEffectWarning + ".");
     }
   }
 
