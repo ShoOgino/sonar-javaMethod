@@ -4,8 +4,11 @@
       innerBlock = (BlockTree) innerBlock.body().get(0);
     }
 
-    if (isReturnTrueStatement(innerBlock.body())) {
-      reportIssue(innerBlock.body().get(0), ISSUE_MESSAGE);
+    List<StatementTree> statementTreeList = innerBlock.body().stream()
+      .filter(statementTree -> !statementTree.is(Tree.Kind.EMPTY_STATEMENT))
+      .collect(Collectors.toList());
+    if (isReturnTrueStatement(statementTreeList)) {
+      reportIssue(statementTreeList.get(0), ISSUE_MESSAGE);
     }
   }
 

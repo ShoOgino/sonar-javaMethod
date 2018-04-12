@@ -1,5 +1,7 @@
   private List<String> computeUndocumentedThrownExceptions() {
-    Map<String, List<String>> thrownExceptionsMap = getJavadocExceptions();
+    Map<String, List<String>> thrownExceptionsMap = blockTagDescriptions.entrySet().stream()
+      .filter(entry -> entry.getKey().tag == BlockTag.EXCEPTIONS && entry.getKey().name != null)
+      .collect(Collectors.toMap(entry -> entry.getKey().name, Map.Entry::getValue));
     List<String> exceptionNames = elementExceptionNames;
     if (exceptionNames.size() == 1 && GENERIC_EXCEPTIONS.contains(toSimpleName(exceptionNames.get(0))) && !thrownExceptionsMap.isEmpty()) {
       // check for documented exceptions without description when only "Exception" is declared as being thrown
