@@ -1,7 +1,7 @@
   private static Stream<CaseGroupTree> getForbiddenCaseGroupPredecessors(CFG.Block cfgBlock, Map<CFG.Block, CaseGroupTree> cfgBlockToCaseGroupMap) {
     CaseGroupTree caseGroup = cfgBlockToCaseGroupMap.get(cfgBlock);
     return cfgBlock.predecessors().stream()
-      .map(predecessor -> getForbiddenCaseGroupPredecessor(predecessor, cfgBlockToCaseGroupMap))
+      .map(predecessor -> getForbiddenCaseGroupPredecessor(predecessor, cfgBlockToCaseGroupMap, new HashSet<>()))
       .filter(Objects::nonNull)
       .filter(predecessor -> !intentionalFallThrough(predecessor, caseGroup))
       .distinct();

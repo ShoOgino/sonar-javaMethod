@@ -1,0 +1,18 @@
+  @Nullable
+  private static CaseGroupTree getForbiddenCaseGroupPredecessor(CFG.Block predecessor, Map<CFG.Block, CaseGroupTree> cfgBlockToCaseGroupMap, Set<CFG.Block> seen) {
+    if (cfgBlockToCaseGroupMap.get(predecessor) != null) {
+      return cfgBlockToCaseGroupMap.get(predecessor);
+    }
+
+    if (seen.contains(predecessor)) {
+      return null;
+    }
+
+    seen.add(predecessor);
+    return predecessor.predecessors().stream()
+      .map(previousPredecessors -> getForbiddenCaseGroupPredecessor(previousPredecessors, cfgBlockToCaseGroupMap, seen))
+      .filter(Objects::nonNull)
+      .findFirst()
+      .orElse(null);
+  }
+
