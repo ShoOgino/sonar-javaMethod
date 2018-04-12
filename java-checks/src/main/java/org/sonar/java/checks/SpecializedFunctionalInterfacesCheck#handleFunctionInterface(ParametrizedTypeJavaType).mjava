@@ -1,0 +1,18 @@
+  private static Optional<String> handleFunctionInterface(ParametrizedTypeJavaType ptjt) {
+    ParameterTypeNameAndTreeType firstArgument = new ParameterTypeNameAndTreeType(ptjt, 0);
+    ParameterTypeNameAndTreeType secondArgument = new ParameterTypeNameAndTreeType(ptjt, 1);
+    if (firstArgument.paramType.equals(secondArgument.paramType)) {
+      return functionalInterfaceName("UnaryOperator<%s>", firstArgument.paramType);
+    }
+    if (firstArgument.paramTypeName != null && secondArgument.paramTypeName != null) {
+      return functionalInterfaceName("%sTo%sFunction", firstArgument.paramTypeName, secondArgument.paramTypeName);
+    }
+    if (firstArgument.paramTypeName == null && secondArgument.paramTypeName != null) {
+      return functionalInterfaceName("To%sFunction<%s>", secondArgument.paramTypeName, firstArgument.paramType);
+    }
+    if (firstArgument.paramTypeName != null) {
+      return functionalInterfaceName("%sFunction<%s>", firstArgument.paramTypeName, secondArgument.paramType);
+    }
+    return Optional.empty();
+  }
+

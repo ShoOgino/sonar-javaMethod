@@ -1,0 +1,14 @@
+  public void checkClassInterfaces(ClassTree tree) {
+    List<InterfaceTreeAndStringPairReport> reportTreeAndStringInterfaces = tree.superInterfaces().stream()
+      .map(typeTree -> matchFunctionalInterface(typeTree.symbolType()).map(rs -> new InterfaceTreeAndStringPairReport(rs, typeTree)).orElse(null))
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+    if (reportTreeAndStringInterfaces.isEmpty()) {
+      return;
+    }
+    List<JavaFileScannerContext.Location> secondaryLocations = reportTreeAndStringInterfaces.stream()
+      .map(interf -> new JavaFileScannerContext.Location("", interf.classInterface))
+      .collect(Collectors.toList());
+    reportIssue(tree.simpleName(), reportMessage(reportTreeAndStringInterfaces), secondaryLocations, null);
+  }
+
