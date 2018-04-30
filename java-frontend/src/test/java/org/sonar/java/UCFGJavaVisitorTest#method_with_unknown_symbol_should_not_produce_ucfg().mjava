@@ -1,0 +1,18 @@
+  @Test
+  public void method_with_unknown_symbol_should_not_produce_ucfg() {
+    UCFGJavaVisitor UCFGJavaVisitor = new UCFGJavaVisitor(tmp.getRoot()) {
+      @Override
+      protected void serializeUCFG(MethodTree tree, CFG cfg) {
+        fail("should not serialize a UCFG of a method with unknown parameters");
+      }
+    };
+    UCFGJavaVisitor.fileKey = FILE_KEY;
+    // method with unknown arg
+    CompilationUnitTree cut = getCompilationUnitTreeWithSemantics("class A {void foo(UnkownType t) {return t;}}");
+    UCFGJavaVisitor.visitCompilationUnit(cut);
+
+    // method with unkown return type
+    cut = getCompilationUnitTreeWithSemantics("class A {UnkownType foo(String t) {return t;}}");
+    UCFGJavaVisitor.visitCompilationUnit(cut);
+  }
+
