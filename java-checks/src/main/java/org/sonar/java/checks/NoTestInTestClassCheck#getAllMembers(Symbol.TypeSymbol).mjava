@@ -2,7 +2,10 @@
     if ("java.lang.Object".equals(symbol.type().fullyQualifiedName())) {
       return Stream.empty();
     }
-    Stream<Symbol.MethodSymbol> members = symbol.memberSymbols().stream().filter(Symbol::isMethodSymbol).map(Symbol.MethodSymbol.class::cast);
+    Stream<Symbol.MethodSymbol> members = Stream.empty();
+    if (!checkRunWith(symbol, "Enclosed.class")) {
+      members = symbol.memberSymbols().stream().filter(Symbol::isMethodSymbol).map(Symbol.MethodSymbol.class::cast);
+    }
     Type superClass = symbol.superClass();
     if (superClass != null) {
       members = Stream.concat(members, getAllMembers(superClass.symbol()));
@@ -12,6 +15,8 @@
       .filter(m -> ((JavaSymbol.MethodJavaSymbol) m).isDefault());
     for (Symbol s : symbol.memberSymbols()) {
       if (s.isTypeSymbol() && s.metadata().isAnnotatedWith("org.junit.jupiter.api.Nested")) {
+        members = Stream.concat(members, getAllMembers((Symbol.TypeSymbol) s));
+      } else if (checkRunWith(symbol, "Enclosed.class") && isPublicStaticClass(s) && !s.isAbstract()) {
         members = Stream.concat(members, getAllMembers((Symbol.TypeSymbol) s));
       }
     }

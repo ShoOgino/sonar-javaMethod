@@ -1,10 +1,14 @@
-  private static boolean runWithEnclosedOrCucumberOrSuiteRunner(Symbol.TypeSymbol symbol) {
+  protected static boolean checkRunWith(Symbol.TypeSymbol symbol, String... runnerClasses) {
     List<SymbolMetadata.AnnotationValue> annotationValues = symbol.metadata().valuesForAnnotation("org.junit.runner.RunWith");
-    if(annotationValues != null && annotationValues.size() == 1) {
+    if (annotationValues != null && annotationValues.size() == 1) {
       Object value = annotationValues.get(0).value();
       if (value instanceof MemberSelectExpressionTree) {
         String runnerParam = ExpressionsHelper.concatenate((ExpressionTree) value);
-        return runnerParam.endsWith("Enclosed.class") || runnerParam.endsWith("Cucumber.class") || runnerParam.endsWith("Suite.class") || runnerParam.endsWith("Theories.class");
+        for (String runnerClass : runnerClasses) {
+          if (runnerParam.endsWith(runnerClass)) {
+            return true;
+          }
+        }
       }
     }
     return false;
