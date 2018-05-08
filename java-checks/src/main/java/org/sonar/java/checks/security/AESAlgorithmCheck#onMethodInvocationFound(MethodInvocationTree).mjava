@@ -1,0 +1,16 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (mit.arguments().isEmpty()) {
+      return;
+    }
+    ExpressionTree firstArgument = mit.arguments().get(0);
+    ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(firstArgument);
+    ExpressionTree algorithmTree = defaultPropertyValue == null ? firstArgument : defaultPropertyValue;
+    if (algorithmTree.is(Tree.Kind.STRING_LITERAL)) {
+      String algorithmName = LiteralUtils.trimQuotes(((LiteralTree) algorithmTree).value());
+      if (isInsecureAESAlgorithm(algorithmName)) {
+        reportIssue(firstArgument, "Use Galois/Counter Mode (GCM/NoPadding) instead.");
+      }
+    }
+  }
+
