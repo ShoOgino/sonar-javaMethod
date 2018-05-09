@@ -1,0 +1,9 @@
+  private static boolean isSecurityAuthenticationConstant(ExpressionTree tree) {
+    if (tree.is(Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree constantExpression = (MemberSelectExpressionTree) tree;
+      return "javax.naming.Context".equals(constantExpression.expression().symbolType().fullyQualifiedName())
+        && "SECURITY_AUTHENTICATION".equals(constantExpression.identifier().name());
+    }
+    return LiteralUtils.hasValue(tree, "java.naming.security.authentication");
+  }
+

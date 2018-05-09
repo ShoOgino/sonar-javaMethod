@@ -1,0 +1,14 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree methodTree) {
+    if (methodTree.arguments().size() != 2) {
+      return;
+    }
+    ExpressionTree putKey = methodTree.arguments().get(0);
+    ExpressionTree putValue = methodTree.arguments().get(1);
+    ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(putValue);
+    ExpressionTree mechanismTree = defaultPropertyValue == null ? putValue : defaultPropertyValue;
+    if (isSecurityAuthenticationConstant(putKey) && LiteralUtils.hasValue(mechanismTree, "none")) {
+      reportIssue(putValue, "Change authentication to \"simple\" or stronger.");
+    }
+  }
+
