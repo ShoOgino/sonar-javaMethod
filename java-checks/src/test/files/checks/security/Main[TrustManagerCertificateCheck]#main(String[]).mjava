@@ -1,0 +1,74 @@
+  public static void main(String[] args) {
+
+    X509TrustManager trustManager = new X509TrustManager() {
+      @Override
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Noncompliant
+      }
+
+      @Override
+      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Noncompliant
+        System.out.println("123");
+      }
+
+      // does not override
+      public void checkServerTrusted(String s) {
+      }
+
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+        return null;
+      }
+    };
+
+    trustManager = new X509TrustManager() {
+      @Override
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        throw new CertificateException();
+      }
+
+      @Override
+      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        checkClientTrusted(x509Certificates, s);
+      }
+
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+        return null;
+      }
+    };
+
+    trustManager = new X509TrustManager() {
+      @Override
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        java.lang.Integer.parseInt("error");
+      }
+
+      @Override
+      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        new java.io.FileInputStream(null);
+      }
+
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+        return null;
+      }
+    };
+
+    trustManager = new X509TrustManager() {
+      @Override
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+        unResolvedMethod();
+      }
+
+      @Override
+      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Noncompliant
+      }
+
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+        return null;
+      }
+    };
+
+  }
+

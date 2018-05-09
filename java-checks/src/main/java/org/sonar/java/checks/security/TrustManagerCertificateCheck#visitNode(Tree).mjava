@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    MethodTree methodTree = (MethodTree) tree;
+    BlockTree blockTree = methodTree.block();
+    if (blockTree == null) {
+      return;
+    }
+    if ((CHECK_CLIENT_TRUSTED_MATCHER.matches(methodTree) || CHECK_SERVER_TRUSTED_MATCHER.matches(methodTree)) &&
+      !ThrowExceptionVisitor.throwsException(blockTree)) {
+      reportIssue(methodTree.simpleName(), "Change this method so it throws exceptions.");
+    }
+  }
+
