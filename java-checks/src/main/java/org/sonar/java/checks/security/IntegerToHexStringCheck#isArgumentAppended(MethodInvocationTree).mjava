@@ -1,0 +1,13 @@
+  private static boolean isArgumentAppended(MethodInvocationTree method) {
+    return Optional.of(method)
+      .map(Tree::parent)
+      .filter(tree -> tree.is(Tree.Kind.ARGUMENTS))
+      .map(Tree::parent)
+      .filter(tree -> tree.is(Tree.Kind.METHOD_INVOCATION))
+      .map(MethodInvocationTree.class::cast)
+      .filter(parentMethod -> APPEND_MATCHER.matches(parentMethod) ||
+        PRINT_MATCHER.matches(parentMethod) ||
+        JOINER_MATCHER.matches(parentMethod))
+      .isPresent();
+  }
+
