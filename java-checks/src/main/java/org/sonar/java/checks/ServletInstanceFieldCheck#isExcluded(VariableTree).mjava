@@ -1,5 +1,5 @@
   private static boolean isExcluded(VariableTree variable) {
     SymbolMetadata varMetadata = variable.symbol().metadata();
-    return isStaticOrFinal(variable) || varMetadata.isAnnotatedWith("javax.inject.Inject") || varMetadata.isAnnotatedWith("javax.ejb.EJB");
+    return isStaticOrFinal(variable) || ANNOTATIONS_EXCLUDING_FIELDS.stream().anyMatch(varMetadata::isAnnotatedWith);
   }
 
