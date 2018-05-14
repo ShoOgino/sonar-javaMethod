@@ -1,6 +1,6 @@
     @Override
     public void visitWhileStatement(WhileStatementTree tree) {
-      if (isHardCodedTrue(tree.condition())) {
+      if (LiteralUtils.isTrue(tree.condition())) {
         CFGLoop loopBlocks = contexts.peek().getLoop(tree);
         if (loopBlocks != null && loopBlocks.hasNoWayOut()) {
           context.reportIssue(tree, NoWayOutLoopCheck.this, "Add an end condition to this loop.");
