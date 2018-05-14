@@ -1,0 +1,33 @@
+  @CheckForNull
+  public static String resolveAsStringConstant(ExpressionTree tree) {
+    ExpressionTree expression = tree;
+    while (expression.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      expression = ((ParenthesizedTree) expression).expression();
+    }
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      expression = ((MemberSelectExpressionTree) expression).identifier();
+    }
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree id = (IdentifierTree) expression;
+      Symbol symbol = id.symbol();
+      if (symbol instanceof JavaSymbol.ConstantJavaSymbol) {
+        Object constantValue = ((JavaSymbol.ConstantJavaSymbol) symbol).value();
+        if (constantValue instanceof String) {
+          return (String) constantValue;
+        }
+      }
+    }
+    if (expression.is(Tree.Kind.STRING_LITERAL)) {
+      return LiteralUtils.trimQuotes(((LiteralTree) expression).value());
+    }
+    if (expression.is(Tree.Kind.PLUS)) {
+      BinaryExpressionTree binaryExpression = (BinaryExpressionTree) expression;
+      String left = resolveAsStringConstant(binaryExpression.leftOperand());
+      String right = resolveAsStringConstant(binaryExpression.rightOperand());
+      if (left != null && right != null) {
+        return left + right;
+      }
+    }
+    return null;
+  }
+

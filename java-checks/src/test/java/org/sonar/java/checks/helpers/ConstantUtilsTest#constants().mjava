@@ -1,0 +1,14 @@
+  @Test
+  public void constants() {
+    File file = new File("src/test/java//org/sonar/java/checks/helpers/ClassWithConstants.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    SemanticModel.createFor(tree, new SquidClassLoader(Collections.singletonList(new File("target/test-classes"))));
+
+    ClassTree classTree = (ClassTree) tree.types().get(0);
+    assertThat(constantValuesInMethod(classTree, "literals")).containsExactly("hello", null, null);
+    assertThat(constantValuesInMethod(classTree, "identifiers")).containsExactly("abc", "abcdef", null);
+    assertThat(constantValuesInMethod(classTree, "parentheses")).containsExactly("abc");
+    assertThat(constantValuesInMethod(classTree, "member_select")).containsExactly("abc");
+    assertThat(constantValuesInMethod(classTree, "concatenation")).containsExactly("hello abc", null, null);
+  }
+
