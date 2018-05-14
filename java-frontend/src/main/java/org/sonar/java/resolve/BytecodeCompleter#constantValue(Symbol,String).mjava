@@ -1,0 +1,28 @@
+  @CheckForNull
+  public Object constantValue(Symbol owner, String constantName) {
+    if (constantValues.containsKey(owner)) {
+      return constantValues.get(owner).get(constantName);
+    }
+    if (owner.isTypeSymbol()) {
+      JavaSymbol.TypeJavaSymbol typeSymbol = (JavaSymbol.TypeJavaSymbol) owner;
+      String bytecodeName = typeSymbol.getFullyQualifiedName();
+      byte[] bytes = classLoader.getBytesForClass(bytecodeName);
+      if (bytes != null) {
+        Map<String, Object> valuesByFieldName = new HashMap<>();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(
+          new ClassVisitor(Opcodes.ASM5) {
+            @Override
+            public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+              valuesByFieldName.put(name, value);
+              return super.visitField(access, name, descriptor, signature, value);
+            }
+          },
+          ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
+        constantValues.put(typeSymbol, valuesByFieldName);
+        return valuesByFieldName.get(constantName);
+      }
+    }
+    return null;
+  }
+

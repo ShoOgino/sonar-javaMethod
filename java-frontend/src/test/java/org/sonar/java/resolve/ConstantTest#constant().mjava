@@ -1,0 +1,29 @@
+  @Test
+  public void constant() {
+    File bytecodeDir = new File("target/test-classes");
+    Map<String,Object> valuesByFieldName = new HashMap<>();
+    JavaAstScanner.scanSingleFileForTests(
+      new File("src/test/java/org/sonar/java/resolve/targets/ClassWithConstants.java"),
+      new VisitorsBridge(Collections.singleton(new SubscriptionVisitor() {
+        @Override
+        public List<Tree.Kind> nodesToVisit() {
+          return Collections.singletonList(Tree.Kind.VARIABLE);
+        }
+
+        @Override
+        public void visitNode(Tree tree) {
+          VariableTree variableTree = (VariableTree) tree;
+          Object value = null;
+          Symbol symbol = variableTree.symbol();
+          if (symbol instanceof JavaSymbol.ConstantJavaSymbol) {
+            value = ((JavaSymbol.ConstantJavaSymbol) symbol).value();
+          }
+          valuesByFieldName.put(variableTree.simpleName().name(), value);
+        }
+      }), Collections.singletonList(bytecodeDir), null));
+    assertThat(valuesByFieldName.keySet()).contains("CONST1", "nonStatic", "nonFinal");
+    assertThat(valuesByFieldName.get("CONST1")).isEqualTo("CONST_VALUE");
+    assertThat(valuesByFieldName.get("nonStatic")).isNull();
+    assertThat(valuesByFieldName.get("nonFinal")).isNull();
+  }
+
