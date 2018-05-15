@@ -1,4 +1,4 @@
-  private List<String> constantValuesInMethod(ClassTree classTree, String methodName) {
+  private <T> List<T> constantValuesInMethod(String methodName, Function<ExpressionTree,T> resolver) {
     MethodTree method = classTree.members().stream()
       .filter(m -> m.is(Tree.Kind.METHOD))
       .map(MethodTree.class::cast)
@@ -9,7 +9,8 @@
       .map(ExpressionStatementTree.class::cast)
       .map(ExpressionStatementTree::expression)
       .map(MethodInvocationTree.class::cast)
-      .map(m -> ConstantUtils.resolveAsStringConstant(m.arguments().iterator().next()))
+      .map(m -> m.arguments().iterator().next())
+      .map(resolver)
       .collect(Collectors.toList());
   }
 

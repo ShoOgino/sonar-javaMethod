@@ -1,0 +1,32 @@
+  @CheckForNull
+  private static Object resolveAsConstant(ExpressionTree tree) {
+    ExpressionTree expression = tree;
+    while (expression.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      expression = ((ParenthesizedTree) expression).expression();
+    }
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      expression = ((MemberSelectExpressionTree) expression).identifier();
+    }
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree id = (IdentifierTree) expression;
+      Symbol symbol = id.symbol();
+      if (symbol.isVariableSymbol()) {
+        return ((JavaSymbol.VariableJavaSymbol) symbol).constantValue().orElse(null);
+      }
+    }
+    if (expression.is(Tree.Kind.STRING_LITERAL)) {
+      return LiteralUtils.trimQuotes(((LiteralTree) expression).value());
+    }
+    if (tree.is(Tree.Kind.INT_LITERAL)) {
+      return Integer.valueOf(((LiteralTree) tree).value());
+    }
+    if (tree.is(Tree.Kind.LONG_LITERAL)) {
+      String value = ((LiteralTree) tree).value();
+      return Long.valueOf(value.substring(0, value.length() - 1));
+    }
+    if (expression.is(Tree.Kind.PLUS)) {
+      return resolvePlus((BinaryExpressionTree) expression);
+    }
+    return null;
+  }
+
