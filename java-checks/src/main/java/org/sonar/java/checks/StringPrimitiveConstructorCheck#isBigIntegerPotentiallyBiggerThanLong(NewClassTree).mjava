@@ -1,0 +1,16 @@
+  private static boolean isBigIntegerPotentiallyBiggerThanLong(NewClassTree newClassTree) {
+    if (!newClassTree.symbolType().is("java.math.BigInteger")) {
+      return false;
+    }
+    ExpressionTree argument = newClassTree.arguments().get(0);
+    if (!argument.is(Tree.Kind.STRING_LITERAL)) {
+      return true;
+    }
+    try {
+      BigInteger value = new BigInteger(LiteralUtils.trimQuotes(((LiteralTree)argument).value()));
+      return value.compareTo(MIN_BIG_INTEGER_VALUE) < 0 || value.compareTo(MAX_BIG_INTEGER_VALUE) > 0;
+    } catch (NumberFormatException e) {
+      return true;
+    }
+  }
+
