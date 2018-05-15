@@ -2,7 +2,7 @@
     ExpressionTree expression = ExpressionUtils.skipParentheses(given);
     if (expression.is(Tree.Kind.NEW_CLASS)) {
       NewClassTree newClassTree = (NewClassTree) expression;
-      if (newClassTree.symbolType().isSubtypeOf("java.util.HashMap") && (useEnumKey || hasEnumKey(newClassTree.identifier().symbolType()))) {
+      if (isUnorderedMap(newClassTree.symbolType()) && (useEnumKey || hasEnumKey(newClassTree.identifier().symbolType()))) {
         addIssue(newClassTree);
       }
     }
