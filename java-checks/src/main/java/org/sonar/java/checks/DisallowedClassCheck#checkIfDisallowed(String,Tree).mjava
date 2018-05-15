@@ -1,4 +1,4 @@
-  private void checkIfDisallowed(String className, Tree tree) {
+  private boolean checkIfDisallowed(String className, Tree tree) {
     if (pattern == null) {
       try {
         pattern = Pattern.compile(disallowedClass);
@@ -8,6 +8,8 @@
     }
     if (pattern.matcher(className).matches() && !tree.is(Tree.Kind.INFERED_TYPE)) {
       context.reportIssue(this, tree, "Remove the use of this forbidden class.");
+      return true;
     }
+    return false;
   }
 

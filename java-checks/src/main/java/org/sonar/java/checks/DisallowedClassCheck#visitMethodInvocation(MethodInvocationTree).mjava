@@ -1,0 +1,9 @@
+  @Override
+  public void visitMethodInvocation(MethodInvocationTree tree) {
+    if(tree.symbol().isMethodSymbol()) {
+      String className = tree.symbol().owner().type().fullyQualifiedName();
+      checkIfDisallowed(className, tree.methodSelect());
+    }
+    super.visitMethodInvocation(tree);
+  }
+

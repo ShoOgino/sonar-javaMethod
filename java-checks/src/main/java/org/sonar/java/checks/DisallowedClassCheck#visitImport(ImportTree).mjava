@@ -1,0 +1,12 @@
+  @Override
+  public void visitImport(ImportTree tree) {
+    String importName = ExpressionsHelper.concatenate((ExpressionTree) tree.qualifiedIdentifier());
+    if (!checkIfDisallowed(importName, tree.qualifiedIdentifier())) {
+      int separator = importName.lastIndexOf('.');
+      if (separator != -1) {
+        checkIfDisallowed(importName.substring(0, separator), tree.qualifiedIdentifier());
+      }
+    }
+    super.visitImport(tree);
+  }
+
