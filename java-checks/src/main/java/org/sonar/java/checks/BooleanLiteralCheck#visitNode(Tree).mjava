@@ -2,9 +2,13 @@
   public void visitNode(Tree tree) {
     LiteralTree literal;
     if(tree.is(Kind.LOGICAL_COMPLEMENT)) {
-      literal = getBooleanLiteral(((UnaryExpressionTree)tree).expression());
+      literal = getBooleanLiteral(((UnaryExpressionTree) tree).expression());
+    } else if (tree.is(Kind.CONDITIONAL_EXPRESSION)) {
+      ConditionalExpressionTree expression = (ConditionalExpressionTree) tree;
+      literal = getBooleanLiteral(expression.trueExpression(), expression.falseExpression());
     } else {
-      literal = getBooleanLiteralOperands((BinaryExpressionTree)tree);
+      BinaryExpressionTree expression = (BinaryExpressionTree) tree;
+      literal = getBooleanLiteral(expression.leftOperand(), expression.rightOperand());
     }
     if(literal != null) {
       reportIssue(literal, "Remove the literal \"" + literal.value() + "\" boolean value.");
