@@ -1,0 +1,13 @@
+    @Override
+    public boolean test(MethodInvocationTree methodInvocation) {
+      Arguments arguments = methodInvocation.arguments();
+      if (SET_PROPERTY.matches(methodInvocation)) {
+        String propertyName = resolveAsStringConstant(arguments.get(0));
+        if (XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES.equals(propertyName) || XMLInputFactory.SUPPORT_DTD.equals(propertyName)) {
+          ExpressionTree propertyValue = arguments.get(1);
+          return Boolean.FALSE.equals(resolveAsBooleanConstant(propertyValue));
+        }
+      }
+      return false;
+    }
+

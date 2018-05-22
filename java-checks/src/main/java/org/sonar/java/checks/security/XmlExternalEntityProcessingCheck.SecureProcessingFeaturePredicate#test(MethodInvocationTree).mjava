@@ -1,0 +1,12 @@
+    @Override
+    public boolean test(MethodInvocationTree methodInvocation) {
+      if (methodMatcher.matches(methodInvocation)) {
+        Arguments arguments = methodInvocation.arguments();
+        String featureName = resolveAsStringConstant(arguments.get(0));
+        return Boolean.TRUE.equals(resolveAsBooleanConstant(arguments.get(1)))
+          && (XMLConstants.FEATURE_SECURE_PROCESSING.equals(featureName)
+          || "http://apache.org/xml/features/disallow-doctype-decl".equals(featureName));
+      }
+      return false;
+    }
+

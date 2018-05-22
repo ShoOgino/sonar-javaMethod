@@ -1,0 +1,13 @@
+    private void checkMethodInvocation(MethodInvocationTree methodInvocation) {
+      if (triggeringInvocationMatcher.matches(methodInvocation)) {
+        MethodTree enclosingMethod = enclosingMethod(methodInvocation);
+        if (enclosingMethod != null) {
+          MethodVisitor methodVisitor = new MethodVisitor(securingInvocationPredicate);
+          enclosingMethod.accept(methodVisitor);
+          if (!methodVisitor.isExternalEntityProcessingDisabled) {
+            reportIssue(methodInvocation.methodSelect(), "Disable external entity (XXE) processing.");
+          }
+        }
+      }
+    }
+
