@@ -1,0 +1,12 @@
+  @Override
+  protected void onConstructorFound(NewClassTree newClassTree) {
+    Tree mTree = findEnclosingMethod(newClassTree);
+    if (mTree != null) {
+      MethodInvocationVisitor mitVisit = new MethodInvocationVisitor(newClassTree);
+      mTree.accept(mitVisit);
+      if (!mitVisit.secureRandomFound) {
+        reportIssue(newClassTree, "Use a dynamically-generated, random IV.");
+      }
+    }
+  }
+

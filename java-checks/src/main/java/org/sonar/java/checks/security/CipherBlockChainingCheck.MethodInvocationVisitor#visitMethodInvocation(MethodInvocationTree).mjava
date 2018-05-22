@@ -1,0 +1,11 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree methodInvocation) {
+      if (SECURE_RANDOM_NEXT_BYTES.matches(methodInvocation)) {
+        Symbol initVector = symbol(ivParameterSpecInstantiation.arguments().get(0));
+        if (initVector != null && initVector.equals(symbol(methodInvocation.arguments().get(0)))) {
+          secureRandomFound = true;
+        }
+      }
+      super.visitMethodInvocation(methodInvocation);
+    }
+
