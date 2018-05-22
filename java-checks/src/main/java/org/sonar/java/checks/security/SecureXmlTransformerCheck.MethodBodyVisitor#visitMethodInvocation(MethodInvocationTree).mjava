@@ -1,0 +1,26 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree methodInvocation) {
+      Arguments arguments = methodInvocation.arguments();
+
+      if (SET_FEATURE.matches(methodInvocation)
+        && XMLConstants.FEATURE_SECURE_PROCESSING.equals(resolveAsStringConstant(arguments.get(0)))
+        && LiteralUtils.isTrue(arguments.get(1))) {
+
+        hasSecureProcessingFeature = true;
+      }
+
+      if (SET_ATTRIBUTE.matches(methodInvocation)) {
+        String attributeName = resolveAsStringConstant(arguments.get(0));
+        String attributeValue = resolveAsStringConstant(arguments.get(1));
+        if ("".equals(attributeValue)) {
+          if (XMLConstants.ACCESS_EXTERNAL_DTD.equals(attributeName)) {
+            hasSecuredExternalDtd = true;
+          } else if (XMLConstants.ACCESS_EXTERNAL_STYLESHEET.equals(attributeName)) {
+            hasSecuredExternalStylesheet = true;
+          }
+        }
+      }
+
+      super.visitMethodInvocation(methodInvocation);
+    }
+

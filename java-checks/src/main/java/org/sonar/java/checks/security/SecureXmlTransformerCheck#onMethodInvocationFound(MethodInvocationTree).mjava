@@ -1,0 +1,13 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree methodInvocation) {
+    Tree enclosingMethod = enclosingMethod(methodInvocation);
+    if (enclosingMethod == null) {
+      return;
+    }
+    MethodBodyVisitor visitor = new MethodBodyVisitor();
+    enclosingMethod.accept(visitor);
+    if (!visitor.foundCallsToSecuringMethods()) {
+      reportIssue(methodInvocation.methodSelect(), "Secure this \"Transformer\" by either disabling external DTDs or enabling secure processing.");
+    }
+  }
+
