@@ -1,0 +1,11 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (tree.methodSelect().is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) tree.methodSelect()).symbol();
+        usesThisInstance |= symbol.isMethodSymbol() &&
+          !symbol.isStatic() &&
+          instanceType.isSubtypeOf(symbol.owner().type());
+      }
+      super.visitMethodInvocation(tree);
+    }
+
