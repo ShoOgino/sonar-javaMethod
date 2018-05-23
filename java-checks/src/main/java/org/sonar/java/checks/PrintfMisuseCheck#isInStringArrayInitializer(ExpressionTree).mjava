@@ -1,0 +1,15 @@
+  private static boolean isInStringArrayInitializer(ExpressionTree arg) {
+    return Optional.of(arg)
+      .map(Tree::parent)
+      .filter(tree -> tree.is(Tree.Kind.LIST))
+      .map(Tree::parent)
+      .filter(tree -> tree.is(Tree.Kind.NEW_ARRAY))
+      .map(NewArrayTree.class::cast)
+      .map(ExpressionTree::symbolType)
+      .filter(Type::isArray)
+      .map(ArrayJavaType.class::cast)
+      .map(ArrayJavaType::elementType)
+      .filter(type -> type.is("java.lang.String"))
+      .isPresent();
+  }
+
