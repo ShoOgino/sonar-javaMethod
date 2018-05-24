@@ -1,0 +1,12 @@
+  private void buildConstructorInvocation(BlockBuilder blockBuilder, IdentifierGenerator idGenerator, NewClassTree tree) {
+    Symbol constructorSymbol = tree.constructorSymbol();
+    if (constructorSymbol.isUnknown()) {
+      return;
+    }
+
+    if(isString(constructorSymbol.owner().type()) || tree.arguments().stream().map(ExpressionTree::symbolType).anyMatch(UCFGJavaVisitor::isString)) {
+      List<Expression> arguments = argumentIds(idGenerator, tree.arguments());
+      buildAssignCall(blockBuilder, idGenerator, arguments, tree, (Symbol.MethodSymbol) constructorSymbol);
+    }
+  }
+
