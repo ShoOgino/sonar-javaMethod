@@ -1,0 +1,13 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+      if (keyGenInit.matches(mit) || keyPairGenInitialize.matches(mit)) {
+        Integer minKeySize = algorithmKeySizeMap.get(this.algorithm);
+        if (minKeySize != null) {
+          Integer keySize = LiteralUtils.intLiteralValue(mit.arguments().get(0));
+          if (keySize != null && keySize < minKeySize) {
+            reportIssue(mit, "Use a key length of at least " + minKeySize + " bits.");
+          }
+        }
+      }
+    }
+
