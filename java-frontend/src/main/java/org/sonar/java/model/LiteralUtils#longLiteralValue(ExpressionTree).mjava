@@ -12,6 +12,9 @@
       // long as hexadecimal can be written using underscore to separate groups
       value = value.replaceAll("\\_", "");
       try {
+        if (value.startsWith("0b") || value.startsWith("0B")) {
+          return sign * Long.valueOf(value.substring(2), 2);
+        }
         return sign * Long.decode(value);
       } catch (NumberFormatException e) {
         // Long.decode() may fail in case of very large long number written in hexadecimal. In such situation, we ignore the number.
