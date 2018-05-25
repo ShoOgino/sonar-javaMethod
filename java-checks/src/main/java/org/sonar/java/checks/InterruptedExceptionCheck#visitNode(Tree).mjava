@@ -3,12 +3,13 @@
     TryStatementTree tryStatementTree = (TryStatementTree) tree;
     withinInterruptingFinally.addFirst(isFinallyInterrupting(tryStatementTree.finallyBlock()));
     for (CatchTree catchTree : tryStatementTree.catches()) {
-      Type catchType = catchTree.parameter().symbol().type();
-      if(catchType.is("java.lang.InterruptedException") || catchType.is("java.lang.ThreadDeath")) {
+      Optional<Type> interruptType = findInterruptingType(catchTree.parameter());
+      if(interruptType.isPresent()) {
         BlockVisitor blockVisitor = new BlockVisitor(catchTree.parameter().symbol());
         catchTree.block().accept(blockVisitor);
         if(!blockVisitor.threadInterrupted && !isWithinInterruptingFinally()) {
-          reportIssue(catchTree.parameter(), "Either re-interrupt this method or rethrow the \""+catchType.name()+"\".");
+          reportIssue(catchTree.parameter(), "Either re-interrupt this method" +
+            " or rethrow the \""+interruptType.get().name()+"\".");
         }
       }
     }

@@ -1,0 +1,13 @@
+  private static Optional<Type> findInterruptingType(VariableTree parameter) {
+    if (parameter.type().is(Tree.Kind.UNION_TYPE)) {
+      return ((UnionTypeTree) parameter.type()).typeAlternatives().stream()
+        .map(TypeTree::symbolType)
+        .filter(INTERRUPTING_TYPE_PREDICATE)
+        .findFirst();
+    }
+    return Optional.of(parameter)
+      .map(VariableTree::symbol)
+      .map(Symbol::type)
+      .filter(INTERRUPTING_TYPE_PREDICATE);
+  }
+
