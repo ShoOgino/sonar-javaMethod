@@ -1,0 +1,12 @@
+  private static boolean shouldVerify(AssignmentExpressionTree assignment) {
+    if (assignment.expression().is(Tree.Kind.NEW_CLASS) && assignment.variable().is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifier = (IdentifierTree) assignment.variable();
+      boolean isMethodVariable = identifier.symbol().isVariableSymbol()
+          && identifier.symbol().owner().isMethodSymbol();
+      boolean isSupportedClass = CLASSES.stream().anyMatch(identifier.symbolType()::isSubtypeOf)
+          || CLASSES.stream().anyMatch(assignment.expression().symbolType()::isSubtypeOf);
+      return isMethodVariable && isSupportedClass;
+    }
+    return false;
+  }
+

@@ -1,0 +1,55 @@
+  void servletCookie(boolean param, Cookie c0) {
+
+    c0.setHttpOnly(false); // Noncompliant [[sc=19;ec=26]] {{Add the "HttpOnly" cookie attribute.}}
+    field6.setHttpOnly(false); // Noncompliant
+    field7.setHttpOnly(false);
+
+    Cookie c1 = new Cookie("name", "value");
+    if (param) {
+      c1.setHttpOnly(false); // FN
+    }
+    else {
+      c1.setHttpOnly(true);
+    }
+
+    Cookie c2 = new Cookie("name", "value"); // Noncompliant [[sc=12;ec=14]]
+
+    Cookie c3 = new Cookie("name", "value"); // Noncompliant
+    c3.setHttpOnly(false);
+
+    Cookie c4 = new Cookie("name", "value");
+    c4.setHttpOnly(FALSE_CONSTANT); // FN, would require SE
+
+    Cookie c5 = new Cookie("name", "value");
+    boolean b = true;
+    c5.setHttpOnly(b); // FN, would require SE
+
+    Cookie c6 = new Cookie("name", "value");
+    c6.setHttpOnly(param);
+
+    Cookie c7 = new UnknownCookie("name", "value"); // Noncompliant
+    Object c8 = new Cookie("name", "value"); // Noncompliant
+
+    Cookie c9; // Noncompliant
+    c9 = new Cookie("name", "value");
+    c9.setHttpOnly(false);
+
+    Cookie c10;  // Noncompliant
+    c10 = new Cookie("name", "value");
+
+    Cookie c11;
+    c11 = new Cookie("name", "value");
+    c11.setHttpOnly(true);
+
+    Object c12; // Noncompliant
+    c12 = new Cookie("name", "value");
+
+    Cookie c13; // Noncompliant
+    c13 = new UnknownCookie("name", "value");
+
+    field4 = new Cookie("name, value"); // FN
+
+    X x;
+    x = new X("name", "value");
+  }
+

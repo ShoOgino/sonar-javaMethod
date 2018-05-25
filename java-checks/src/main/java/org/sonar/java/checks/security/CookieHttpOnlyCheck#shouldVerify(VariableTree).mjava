@@ -1,0 +1,10 @@
+  private static boolean shouldVerify(VariableTree variableDeclaration) {
+    ExpressionTree initializer = variableDeclaration.initializer();
+    if (initializer != null && initializer.is(Tree.Kind.NEW_CLASS)) {
+      boolean isSupportedClass = CLASSES.stream().anyMatch(variableDeclaration.type().symbolType()::isSubtypeOf)
+          || CLASSES.stream().anyMatch(initializer.symbolType()::isSubtypeOf);
+      return variableDeclaration.symbol().owner().isMethodSymbol() && isSupportedClass;
+    }
+    return false;
+  }
+

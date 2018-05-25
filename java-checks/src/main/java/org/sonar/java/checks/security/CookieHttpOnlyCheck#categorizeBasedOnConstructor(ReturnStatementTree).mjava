@@ -1,0 +1,10 @@
+  private void categorizeBasedOnConstructor(ReturnStatementTree returnStatement) {
+    ExpressionTree returnedExpression = returnStatement.expression();
+    if (returnedExpression != null && returnedExpression.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree newClass = (NewClassTree) returnedExpression;
+      if (!isCompliantConstructorCall(newClass) && CLASSES.stream().anyMatch(newClass.symbolType()::isSubtypeOf)) {
+        newClassToReport.add(newClass);
+      }
+    }
+  }
+

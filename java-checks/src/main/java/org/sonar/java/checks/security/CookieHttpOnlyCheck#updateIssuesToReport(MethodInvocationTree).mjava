@@ -1,0 +1,12 @@
+  private void updateIssuesToReport(MethodInvocationTree mit) {
+    MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
+    VariableSymbol reference = (VariableSymbol) ((IdentifierTree) mse.expression()).symbol();
+    if (setterArgumentHasCompliantValue(mit.arguments())) {
+      variablesToReport.remove(reference);
+    } else if (compliantConstructorInitializations.contains(reference)) {
+      variablesToReport.add(reference);
+    } else if (!variablesToReport.contains(reference)) {
+      settersToReport.add(mit);
+    }
+  }
+

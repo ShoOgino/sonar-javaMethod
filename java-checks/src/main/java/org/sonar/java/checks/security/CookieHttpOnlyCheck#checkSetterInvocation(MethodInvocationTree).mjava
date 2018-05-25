@@ -1,0 +1,17 @@
+  private void checkSetterInvocation(MethodInvocationTree mit) {
+    if (isExpectedSetter(mit)) {
+      if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        boolean isCalledOnIdentifier = ((MemberSelectExpressionTree) mit.methodSelect()).expression().is(Tree.Kind.IDENTIFIER);
+        if (isCalledOnIdentifier) {
+          updateIssuesToReport(mit);
+        } else if (!setterArgumentHasCompliantValue(mit.arguments())) {
+          // builder method
+          settersToReport.add(mit);
+        }
+      } else if (!setterArgumentHasCompliantValue(mit.arguments())) {
+        // sub-class method
+        settersToReport.add(mit);
+      }
+    }
+  }
+
