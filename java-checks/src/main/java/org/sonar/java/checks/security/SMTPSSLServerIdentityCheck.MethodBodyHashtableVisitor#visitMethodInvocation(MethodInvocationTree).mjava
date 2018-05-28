@@ -1,0 +1,11 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+      Arguments args = mit.arguments();
+      if (HASHTABLE_PUT.matches(mit)
+        && "mail.smtp.ssl.checkserveridentity".equals(ConstantUtils.resolveAsStringConstant(args.get(0)))
+        && isNotFalse(args.get(1))) {
+        this.isSecured = true;
+      }
+      super.visitMethodInvocation(mit);
+    }
+

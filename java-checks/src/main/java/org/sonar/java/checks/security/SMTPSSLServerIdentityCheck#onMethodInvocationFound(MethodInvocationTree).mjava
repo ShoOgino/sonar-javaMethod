@@ -1,0 +1,23 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    MethodTree method = findEnclosingMethod(mit);
+    if (method != null) {
+      Arguments args = mit.arguments();
+      if (SET_SSL_ON_CONNECT.matches(mit) && LiteralUtils.isTrue(args.get(0))) {
+        MethodBodyApacheVisitor apacheVisitor = new MethodBodyApacheVisitor();
+        method.accept(apacheVisitor);
+        if (!apacheVisitor.isSecured) {
+          reportIssue(mit, "Enable server identity validation on this SMTP SSL connection.");
+        }
+      } else if (HASHTABLE_PUT.matches(mit) && "mail.smtp.socketFactory.class".equals(ConstantUtils.resolveAsStringConstant(args.get(0)))
+        && "javax.net.ssl.SSLSocketFactory".equals(ConstantUtils.resolveAsStringConstant(args.get(1)))) {
+        MethodBodyHashtableVisitor hashVisitor = new MethodBodyHashtableVisitor();
+        method.accept(hashVisitor);
+        if (!hashVisitor.isSecured) {
+          reportIssue(mit, "Enable server identity validation, set \"mail.smtp.ssl.checkserveridentity\" to true");
+        }
+      }
+    }
+    super.onMethodInvocationFound(mit);
+  }
+
