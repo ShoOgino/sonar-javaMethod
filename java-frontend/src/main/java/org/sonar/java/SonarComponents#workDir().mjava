@@ -1,4 +1,11 @@
   public File workDir() {
-    return context.fileSystem().workDir();
+    ProjectDefinition current = projectDefinition;
+    if(current == null) {
+      return fs.workDir();
+    }
+    while (current.getParent() != null) {
+      current = current.getParent();
+    }
+    return current.getWorkDir();
   }
 
