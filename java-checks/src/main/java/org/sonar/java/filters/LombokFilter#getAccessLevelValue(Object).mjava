@@ -1,0 +1,15 @@
+  @Nullable
+  private static String getAccessLevelValue(Object value) {
+    if (value instanceof Tree) {
+      Tree tree = (Tree) value;
+      if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+        return ((MemberSelectExpressionTree) tree).identifier().name();
+      } else if (tree.is(Tree.Kind.IDENTIFIER)) {
+        return ((IdentifierTree) tree).name();
+      }
+    } else if (value instanceof Symbol.VariableSymbol) {
+      return ((Symbol.VariableSymbol) value).name();
+    }
+    return null;
+  }
+
