@@ -2,6 +2,10 @@
     if (parentType.isSubtypeOf(childType)) {
       return true;
     }
+    // intersection type on lambda should not raise an issue : required to make lambda serializable for instance
+    if (((JavaType) childType).isTagged(JavaType.INTERSECTION)) {
+      return false;
+    }
 
     List<MethodJavaSymbol> childMethods = getMethodSymbolsOf(childType).collect(Collectors.toList());
     return childMethods.isEmpty() || (childMethods.size() == 1 && isSingleAbstractMethodOverride(childMethods.get(0), parentType));
