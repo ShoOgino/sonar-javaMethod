@@ -1,9 +1,11 @@
   @Override
   public void visitTypeCast(TypeCastTree tree) {
-    // FIXME SONARJAVA-2724: should be the intersection of the type with its bounds
     resolveAs(tree.type(), JavaSymbol.TYP);
+    for (Tree bound : tree.bounds()) {
+      resolveAs(bound, JavaSymbol.TYP);
+    }
     resolveAs(tree.expression(), JavaSymbol.VAR);
-    JavaType castType = getType(tree.type());
+    JavaType castType = intersectionType(getType(tree.type()), tree.bounds().stream().map(b -> ((JavaType) ((ExpressionTree) b).symbolType())).collect(Collectors.toSet()), tree);
     Type expressionType = tree.expression().symbolType();
     if(expressionType instanceof DeferredType) {
       setInferedType(castType, (DeferredType) expressionType);
