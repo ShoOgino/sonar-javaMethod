@@ -1,0 +1,17 @@
+  private static boolean inheritRequestMethod(Symbol.TypeSymbol symbol) {
+    List<SymbolMetadata.AnnotationValue> annotationValues = symbol.metadata().valuesForAnnotation(REQUEST_MAPPING_CLASS);
+    if (annotationValues != null && annotationValues.stream().anyMatch(value -> REQUEST_METHOD.equals(value.name()))) {
+      return true;
+    }
+    Type superClass = symbol.superClass();
+    if (superClass != null && inheritRequestMethod(superClass.symbol())) {
+      return true;
+    }
+    for (Type type : symbol.interfaces()) {
+      if (inheritRequestMethod(type.symbol())) {
+        return true;
+      }
+    }
+    return false;
+  }
+

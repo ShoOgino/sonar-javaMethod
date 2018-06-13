@@ -1,0 +1,11 @@
+  private static Optional<AssignmentExpressionTree> findRequestMethod(ExpressionTree argument) {
+    if (argument.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) argument;
+      // assignment.variable() in annotation is always a Tree.Kind.IDENTIFIER
+      if (REQUEST_METHOD.equals(((IdentifierTree) assignment.variable()).name())) {
+        return Optional.of(assignment);
+      }
+    }
+    return Optional.empty();
+  }
+

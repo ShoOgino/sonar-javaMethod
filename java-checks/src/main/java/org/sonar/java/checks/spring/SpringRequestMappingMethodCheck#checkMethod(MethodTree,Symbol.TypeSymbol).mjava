@@ -1,0 +1,14 @@
+  private void checkMethod(MethodTree method, Symbol.TypeSymbol classSymbol) {
+    Optional<AnnotationTree> requestMappingAnnotation = findRequestMappingAnnotation(method.modifiers());
+    Optional<AssignmentExpressionTree> requestMethod = requestMappingAnnotation
+      .flatMap(SpringRequestMappingMethodCheck::findRequestMethod);
+
+    if (requestMethod.isPresent()) {
+      requestMethod
+        .filter(SpringRequestMappingMethodCheck::hasMoreThanOneValue)
+        .ifPresent(assignment -> reportIssue(assignment.expression(), "Consider narrowing this list of methods to one."));
+    } else if (requestMappingAnnotation.isPresent() && !inheritRequestMethod(classSymbol)) {
+      reportIssue(requestMappingAnnotation.get().annotationType(), "Add a \"method\" parameter to this \"@RequestMapping\" annotation.");
+    }
+  }
+

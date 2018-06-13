@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    findRequestMappingAnnotation(classTree.modifiers())
+      .flatMap(SpringRequestMappingMethodCheck::findRequestMethod)
+      .filter(SpringRequestMappingMethodCheck::hasMoreThanOneValue)
+      .ifPresent(assignment -> reportIssue(assignment.expression(), "Consider narrowing this list of methods to one."));
+
+    classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .forEach(member -> checkMethod((MethodTree) member, classTree.symbol()));
+  }
+
