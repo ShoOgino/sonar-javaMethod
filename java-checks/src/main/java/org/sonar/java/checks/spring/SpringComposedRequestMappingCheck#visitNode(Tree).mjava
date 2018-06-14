@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    AnnotationTree annotation = (AnnotationTree) tree;
+    if (annotation.symbolType().is("org.springframework.web.bind.annotation.RequestMapping")) {
+      List<ExpressionTree> methodValues = annotation.arguments().stream()
+        .filter(argument -> "method".equals(attributeName(argument)))
+        .flatMap(SpringComposedRequestMappingCheck::extractValues)
+        .collect(Collectors.toList());
+
+      if (methodValues.size() == 1) {
+        ExpressionTree requestMethod = methodValues.get(0);
+        String currentMethod = getRequestMethodEnumEntry(requestMethod);
+        String preferredMethod = PREFERRED_METHOD_MAP.get(currentMethod);
+        if (preferredMethod != null) {
+          reportIssue(annotation.annotationType(),
+            "Replace \"@RequestMapping(method = RequestMethod." + currentMethod + ")\" with \"" + preferredMethod + "\"",
+            Collections.singletonList(new JavaFileScannerContext.Location("", requestMethod)),
+            null);
+        }
+      }
+    }
+  }
+

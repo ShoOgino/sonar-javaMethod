@@ -1,0 +1,14 @@
+  private static String getRequestMethodEnumEntry(ExpressionTree requestMethod) {
+    ExpressionTree expression = requestMethod;
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      expression = ((MemberSelectExpressionTree) requestMethod).identifier();
+    }
+    if (expression.is(Tree.Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) expression).symbol();
+      if (symbol.type().is("org.springframework.web.bind.annotation.RequestMethod")) {
+        return symbol.name();
+      }
+    }
+    return "";
+  }
+
