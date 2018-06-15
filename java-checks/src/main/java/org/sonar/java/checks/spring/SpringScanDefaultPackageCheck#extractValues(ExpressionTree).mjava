@@ -1,0 +1,12 @@
+  private static Stream<ExpressionTree> extractValues(ExpressionTree argument) {
+    ExpressionTree expression = argument;
+    if (expression.is(Tree.Kind.ASSIGNMENT)) {
+      expression = ((AssignmentExpressionTree) expression).expression();
+    }
+    if (expression.is(Tree.Kind.NEW_ARRAY)) {
+      return ((NewArrayTree) expression).initializers().stream()
+        .flatMap(SpringScanDefaultPackageCheck::extractValues);
+    }
+    return Stream.of(expression);
+  }
+

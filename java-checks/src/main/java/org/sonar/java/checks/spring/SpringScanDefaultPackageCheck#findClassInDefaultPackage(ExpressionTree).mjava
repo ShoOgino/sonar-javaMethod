@@ -1,0 +1,13 @@
+  private static Optional<IdentifierTree> findClassInDefaultPackage(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) expression;
+      if ("class".equals(memberSelect.identifier().name()) && memberSelect.expression().is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifier = (IdentifierTree) memberSelect.expression();
+        if (isTypeInDefaultPackage(identifier.symbol())) {
+          return Optional.of(identifier);
+        }
+      }
+    }
+    return Optional.empty();
+  }
+

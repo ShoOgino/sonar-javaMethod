@@ -1,0 +1,18 @@
+  private void checkAnnotationPackageAttributes(AnnotationTree annotation, List<ExpressionTree> scanPackageAttributeValues) {
+    if (scanPackageAttributeValues.isEmpty()) {
+      if (isNodeInDefaultPackage(annotation)) {
+        reportIssue(annotation.annotationType(), "Remove the annotation \"@" + annotation.symbolType().name() +
+          "\" or move the annotated class out of the default package.");
+      }
+    } else {
+      scanPackageAttributeValues.stream()
+        .map(SpringScanDefaultPackageCheck::findEmptyString)
+        .forEach(opt -> opt.ifPresent(expression -> reportIssue(expression, "Define packages to scan. Don't rely on the default package.")));
+
+      scanPackageAttributeValues.stream()
+        .map(SpringScanDefaultPackageCheck::findClassInDefaultPackage)
+        .forEach(opt -> opt.ifPresent(identifier -> reportIssue(identifier, "Remove the annotation \"@" + annotation.symbolType().name() +
+          "\" or move the \"" + identifier.name() + "\" class out of the default package.")));
+    }
+  }
+
