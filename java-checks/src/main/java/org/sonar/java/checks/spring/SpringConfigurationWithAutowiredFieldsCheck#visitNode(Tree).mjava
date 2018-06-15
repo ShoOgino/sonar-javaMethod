@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+    if (classTree.symbol().metadata().isAnnotatedWith(CONFIGURATION_ANNOTATION)) {
+      Map<Symbol, VariableTree> autowiredFields = new HashMap<>();
+      classTree.members().forEach(m -> collectAutowiredFields(m, autowiredFields));
+
+      Map<Symbol, List<MethodTree>> methodsThatUseAutowiredFields = new HashMap<>();
+      autowiredFields.keySet().forEach(f -> methodsThatUseAutowiredFields.put(f, new ArrayList<>()));
+      classTree.members().forEach(m -> collectMethodsThatUseAutowiredFields(m, methodsThatUseAutowiredFields));
+
+      // report autowired fields that are used by a single method, if that method is @Bean
+      methodsThatUseAutowiredFields.entrySet().stream()
+        .filter(methodsForField -> methodsForField.getValue().size() == 1 &&
+          methodsForField.getValue().get(0).symbol().metadata().isAnnotatedWith(BEAN_ANNOTATION))
+        .forEach(methodsForField -> reportIssue(
+          autowiredFields.get(methodsForField.getKey()).simpleName(),
+          String.format(MESSAGE_FORMAT, methodsForField.getValue().get(0).simpleName().name())));
+    }
+  }
+

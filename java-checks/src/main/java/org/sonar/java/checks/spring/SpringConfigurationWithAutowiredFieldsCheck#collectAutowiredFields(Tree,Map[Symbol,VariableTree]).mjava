@@ -1,0 +1,11 @@
+  private static void collectAutowiredFields(Tree tree, Map<Symbol, VariableTree> autowiredFields) {
+    if (!tree.is(Tree.Kind.VARIABLE)) {
+      return;
+    }
+    VariableTree variable = (VariableTree) tree;
+    Symbol variableSymbol = variable.symbol();
+    if (AUTOWIRED_ANNOTATIONS.stream().anyMatch(a -> variableSymbol.metadata().isAnnotatedWith(a))) {
+      autowiredFields.put(variableSymbol, variable);
+    }
+  }
+

@@ -1,0 +1,13 @@
+  private static void collectMethodsThatUseAutowiredFields(Tree tree, Map<Symbol, List<MethodTree>> methodsThatUseAutowiredFields) {
+    if (!tree.is(Tree.Kind.METHOD)) {
+      return;
+    }
+    IdentifiersVisitor identifiersVisitor = new IdentifiersVisitor(methodsThatUseAutowiredFields.keySet());
+    tree.accept(identifiersVisitor);
+    // for each autowired field that is referenced in this method, add the current method name to the list
+    identifiersVisitor.isFieldReferenced.entrySet().stream()
+      .filter(Map.Entry::getValue)
+      .map(Map.Entry::getKey)
+      .forEach(field -> methodsThatUseAutowiredFields.get(field).add((MethodTree) tree));
+  }
+
