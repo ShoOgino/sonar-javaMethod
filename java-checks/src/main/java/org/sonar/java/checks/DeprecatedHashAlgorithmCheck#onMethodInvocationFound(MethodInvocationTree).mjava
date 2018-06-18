@@ -1,6 +1,11 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     IdentifierTree methodName = ExpressionUtils.methodName(mit);
+    String message = DeprecatedSpringPasswordEncoder.MESSAGE_PER_CLASS.get(methodName.symbol().owner().type().fullyQualifiedName());
+    if (message != null) {
+      reportIssue(methodName, message);
+      return;
+    }
     InsecureAlgorithm algorithm = ALGORITHM_BY_METHOD_NAME.get(methodName.name());
     if (algorithm == null) {
       algorithm = algorithm(mit.arguments().get(0)).orElse(null);
