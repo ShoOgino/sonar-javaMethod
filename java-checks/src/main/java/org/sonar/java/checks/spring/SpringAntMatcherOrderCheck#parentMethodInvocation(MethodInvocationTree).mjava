@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static MethodInvocationTree parentMethodInvocation(MethodInvocationTree method) {
+    Tree parent = method.parent();
+    if (parent.is(Tree.Kind.MEMBER_SELECT)) {
+      parent = parent.parent();
+      if (parent.is(Tree.Kind.METHOD_INVOCATION)) {
+        return (MethodInvocationTree) parent;
+      }
+    }
+    return null;
+  }
+

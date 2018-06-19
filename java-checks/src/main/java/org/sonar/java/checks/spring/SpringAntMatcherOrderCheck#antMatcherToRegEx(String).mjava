@@ -1,0 +1,15 @@
+  @VisibleForTesting
+  static String antMatcherToRegEx(String pattern) {
+    // Note, regexp is not supported: {spring:[a-z]+} matches the regexp [a-z]+ as a path variable named "spring"
+
+    // escape regexp special characters
+    return escapeRegExpChars(pattern)
+      // ? matches one character
+      .replace("?", "[^/]")
+      // ** matches zero or more directories in a path ("$$" is a temporary place holder)
+      .replace("**", "$$")
+      // * matches zero or more characters
+      .replace("*", "[^/]*")
+      .replace("$$", ".*");
+  }
+

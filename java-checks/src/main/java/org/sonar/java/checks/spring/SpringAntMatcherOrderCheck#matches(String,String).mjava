@@ -1,0 +1,16 @@
+  @VisibleForTesting
+  static boolean matches(String pattern, String text) {
+    if (pattern.equals(text)) {
+      return true;
+    }
+    if (pattern.endsWith("**") && text.startsWith(pattern.substring(0, pattern.length() - 2))) {
+      return true;
+    }
+    boolean antPatternContainsRegExp = pattern.contains("{");
+    boolean textIsAlsoAnAntPattern = MATCHER_SPECIAL_CHAR.matcher(text).find();
+    if (pattern.isEmpty() || antPatternContainsRegExp || textIsAlsoAnAntPattern) {
+      return false;
+    }
+    return text.matches(antMatcherToRegEx(pattern));
+  }
+

@@ -1,0 +1,12 @@
+  private void checkAntPatternAt(List<StringConstant> antPatterns, int indexToCheck) {
+    StringConstant patternToCheck = antPatterns.get(indexToCheck);
+    StringConstant incompatiblePattern = firstIncompatiblePreviousPattern(patternToCheck, antPatterns, indexToCheck);
+    if (incompatiblePattern != null) {
+      List<JavaFileScannerContext.Location> secondary = Collections.singletonList(
+        new JavaFileScannerContext.Location("Less restrictive", incompatiblePattern.expression));
+
+      reportIssue(patternToCheck.expression, "Reorder the URL patterns from most to less specific, the pattern \"" +
+        patternToCheck.value + "\" should occurs before \"" + incompatiblePattern.value + "\".", secondary, null);
+    }
+  }
+

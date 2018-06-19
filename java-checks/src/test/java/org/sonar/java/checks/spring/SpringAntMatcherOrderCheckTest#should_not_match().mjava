@@ -1,0 +1,12 @@
+  @Test
+  public void should_not_match() {
+    assertThat(matches("", "/def")).isFalse();
+    assertThat(matches("/abc", "/def")).isFalse();
+    assertThat(matches("/abc/**", "/def/abc")).isFalse();
+    assertThat(matches("/abc/*ef", "/abc/deg")).isFalse();
+    assertThat(matches("/abc/?ef", "/abc/ddef")).isFalse();
+    // does not match because not supported
+    assertThat(matches("/abc/**/def", "/abc/**/x/**/def")).isFalse();
+    assertThat(matches("/{name:[a-z]}", "/abc")).isFalse();
+  }
+
