@@ -1,0 +1,16 @@
+  private static boolean isSecureParamFalse(NewClassTree newClassTree) {
+    ExpressionTree secureArgument = null;
+    Arguments arguments = newClassTree.arguments();
+    if (CONSTRUCTORS_WITH_SECURE_PARAM_LAST.stream().anyMatch(m -> m.matches(newClassTree))) {
+      secureArgument = arguments.get(arguments.size() - 1);
+    } else if (CONSTRUCTORS_WITH_SECURE_PARAM_BEFORE_LAST.stream().anyMatch(m -> m.matches(newClassTree))) {
+      secureArgument = arguments.get(arguments.size() - 2);
+    } else if (CONSTRUCTORS_WITH_SECURE_PARAM_BEFORE_BEFORE_LAST.stream().anyMatch(m -> m.matches(newClassTree))) {
+      secureArgument = arguments.get(arguments.size() - 3);
+    }
+    if (secureArgument != null) {
+      return LiteralUtils.isFalse(secureArgument);
+    }
+    return true;
+  }
+

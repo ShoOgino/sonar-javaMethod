@@ -1,0 +1,21 @@
+  HttpCookie getHttpCookie() {
+    HttpCookie c1 = new HttpCookie("name", "value");
+    c1.setSecure(true);
+
+    HttpCookie c2 = new HttpCookie("name", "value"); // Noncompliant
+
+    HttpCookie c3 = new HttpCookie("name", "value"); // Noncompliant
+    c3.setSecure(false);
+
+    HttpCookie c4 = new HttpCookie("name", "value");
+    c4.setSecure(FALSE_CONSTANT); // FN
+
+    HttpCookie c5; // Noncompliant
+    c5 = new HttpCookie("name", "value");
+    c3.setSecure(false);
+
+    field6 = new HttpCookie("name, value"); // FN, ignore fields
+
+    return new HttpCookie("name", "value"); // Noncompliant
+  }
+

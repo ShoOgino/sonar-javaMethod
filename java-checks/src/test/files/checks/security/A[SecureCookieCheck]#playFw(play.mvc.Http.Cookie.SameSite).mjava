@@ -1,0 +1,22 @@
+  void playFw(play.mvc.Http.Cookie.SameSite sameSite) {
+    play.mvc.Http.Cookie c11 = new play.mvc.Http.Cookie("1", "2", 3, "4", "5", false, true); // Noncompliant
+    play.mvc.Http.Cookie c12 = new play.mvc.Http.Cookie("1", "2", 3, "4", "5", true, false);
+    play.mvc.Http.Cookie c21 = new play.mvc.Http.Cookie("1", "2", 3, "4", "5", false, false, sameSite); // Noncompliant
+    play.mvc.Http.Cookie c22 = new play.mvc.Http.Cookie("1", "2", 3, "4", "5", true, false, sameSite);
+    play.mvc.Http.Cookie c4;
+    c4 =  new play.mvc.Http.Cookie("1", "2", 3, "4", "5", true, true);
+    CookieBuilder cb1 = play.mvc.Http.Cookie.builder("1", "2"); // Noncompliant
+    cb1.withSecure(false);
+    CookieBuilder cb2 = play.mvc.Http.Cookie.builder("1", "2");
+    cb2.withSecure(true);
+    play.mvc.Http.Cookie.builder("1", "2")
+        .withMaxAge(1)
+        .withPath("x")
+        .withDomain("x")
+        .withSecure(true)
+        .withSecure(false) // Noncompliant [[sc=20;ec=27]] {{Add the "secure" attribute to this cookie}}
+        .withSecure(true)
+        .build();
+    play.mvc.Http.Cookie c5 = play.mvc.Http.Cookie.builder("theme", "blue").withSecure(true).build();
+  }
+

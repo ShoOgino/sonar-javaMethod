@@ -1,0 +1,50 @@
+  Cookie servletCookie(
+      Cookie firstParam, // Noncompliant [[sc=14;ec=24]] {{Add the "secure" attribute to this cookie}}
+      Cookie secondParam,
+      Cookie thirdParam,
+      boolean param) {
+    firstParam.setSecure(false);
+    secondParam.setSecure(true);
+
+    field4 = new Cookie("name, value"); // FN, ignore fields
+    field5.setSecure(false); // FN, ignore fields
+    this.field4 = new Cookie("name", "value"); // FN ignore fields
+
+    Cookie cookie = new Cookie("name", "value");
+    cookie.setSecure(true);
+
+    Cookie cookie2 = new Cookie("name", "value"); // Noncompliant [[sc=12;ec=19]] {{Add the "secure" attribute to this cookie}}
+
+    Cookie cookie3 = new Cookie("name", "value"); // Noncompliant {{Add the "secure" attribute to this cookie}}
+    cookie3.setSecure(false);
+
+    Cookie cookie5 = new Cookie("name", "value");
+    cookie5.setSecure(FALSE_CONSTANT); // FN
+
+    Cookie c6 = new Cookie("name", "value");
+    if (param) {
+      c6.setSecure(false); // FN
+    }
+    else {
+      c6.setSecure(true);
+    }
+
+    Cookie c7 = new Cookie("name", "value");
+    boolean b = false;
+    c7.setSecure(b); // FN
+
+    Cookie c8 = new Cookie("name", "value");
+    c8.setSecure(param);
+
+    Object c9 = new Cookie("name", "value"); // Noncompliant
+
+    Cookie c10;
+    c10 = new Cookie("name", "value");
+    c10.setSecure(true);
+
+    Object c12;  // Noncompliant [[sc=12;ec=15]] {{Add the "secure" attribute to this cookie}}
+    c12 = new Cookie("name", "value");
+
+    return new Cookie("name", "value"); // Noncompliant
+  }
+

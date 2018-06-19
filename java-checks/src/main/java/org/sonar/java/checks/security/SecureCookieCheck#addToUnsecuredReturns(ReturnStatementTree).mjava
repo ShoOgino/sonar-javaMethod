@@ -1,0 +1,10 @@
+  private void addToUnsecuredReturns(ReturnStatementTree tree) {
+    ExpressionTree returnedExpression = tree.expression();
+    if (returnedExpression != null
+        && returnedExpression.is(Tree.Kind.NEW_CLASS)
+        && isCookieClass(returnedExpression.symbolType())
+        && isSecureParamFalse((NewClassTree) returnedExpression)) {
+      unsecuredReturns.add((NewClassTree) returnedExpression);
+    }
+  }
+

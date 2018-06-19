@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    if (tree.is(Tree.Kind.VARIABLE)) {
+      addToUnsecuredCookies((VariableTree) tree);
+    } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      addToUnsecuredCookies((AssignmentExpressionTree) tree);
+    } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      checkSecureCall((MethodInvocationTree) tree);
+    } else {
+      addToUnsecuredReturns((ReturnStatementTree) tree);
+    }
+  }
+
