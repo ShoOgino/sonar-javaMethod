@@ -1,0 +1,11 @@
+  @Override
+  public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+    PreparedStatement ps = connection.prepareStatement("insert into emp(name, surname) values (?, ?)"); // Compliant
+    ps.setString(1, "bruce");
+    ps.setString(2, "lee");
+
+    MyCloseable myCloseable = new MyCloseable(); // Noncompliant
+
+    return ps;
+  }
+

@@ -1,6 +1,7 @@
     private boolean methodOpeningResource(MethodInvocationTree mit) {
       return !isWithinTryHeader(mit)
         && !excludedByRuleOption(mit.symbolType())
+        && !handledByFramework(mit)
         && (JDBC_RESOURCE_CREATIONS.anyMatch(mit)
           || STREAMS_BACKED_BY_RESOURCE.anyMatch(mit)
           || (needsClosing(mit.symbolType()) && !CLOSEABLE_EXCEPTIONS.anyMatch(mit) && mitHeuristics(mit)));

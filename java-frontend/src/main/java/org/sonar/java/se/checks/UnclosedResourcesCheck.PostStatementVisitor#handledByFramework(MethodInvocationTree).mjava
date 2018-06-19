@@ -1,0 +1,9 @@
+    private boolean handledByFramework(MethodInvocationTree mit) {
+      // according to spring documentation, no leak is expected:
+      // "Implementations do not need to concern themselves with SQLExceptions that may be thrown from operations
+      // they attempt. The JdbcTemplate class will catch and handle SQLExceptions appropriately."
+      return JDBC_RESOURCE_CREATIONS.anyMatch(mit)
+        && (visitedMethodOwnerType.isSubtypeOf("org.springframework.jdbc.core.PreparedStatementCreator")
+          || visitedMethodOwnerType.isSubtypeOf("org.springframework.jdbc.core.CallableStatementCreator"));
+    }
+
