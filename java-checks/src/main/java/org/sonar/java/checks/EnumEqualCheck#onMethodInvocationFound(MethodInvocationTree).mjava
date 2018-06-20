@@ -1,0 +1,10 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
+      if (isEnum(mse.expression()) || isEnum(mit.arguments().get(0))) {
+        reportIssue(mse.identifier(), "Use \"==\" to perform this enum comparison instead of using \"equals\"");
+      }
+    }
+  }
+
