@@ -1,0 +1,10 @@
+  @CheckForNull
+  private static ExpressionTree enumExpressionFromSwitchOnEnum(CaseLabelTree tree) {
+    Tree parent = tree.parent();
+    while (!parent.is(Tree.Kind.SWITCH_STATEMENT)) {
+      parent = parent.parent();
+    }
+    ExpressionTree enumExpression = ((SwitchStatementTree) parent).expression();
+    return enumExpression.symbolType().symbol().isEnum() ? enumExpression : null;
+  }
+
