@@ -1,0 +1,14 @@
+  private static String getAnnotationAttributeAsString(List<AnnotationValue> values, String attributeName, String defaultValue) {
+    return values.stream()
+      .filter(annotationValue -> annotationValue.name().equals(attributeName))
+      .map(AnnotationValue::value)
+      .filter(Tree.class::isInstance)
+      .map(Tree.class::cast)
+      .map(tree -> tree.is(Tree.Kind.MEMBER_SELECT) ? ((MemberSelectExpressionTree) tree).identifier() : tree)
+      .filter(tree -> tree.is(Tree.Kind.IDENTIFIER))
+      .map(IdentifierTree.class::cast)
+      .map(IdentifierTree::name)
+      .findFirst()
+      .orElse(defaultValue);
+  }
+

@@ -1,0 +1,18 @@
+  private void checkMethodInvocations(MethodTree method, @Nullable String callerPropagation, Map<Symbol, String> methodsPropagationMap) {
+    BlockTree methodBody = method.block();
+    if (methodBody == null) {
+      return;
+    }
+    methodBody.accept(new BaseTreeVisitor() {
+      @Override
+      public void visitMethodInvocation(MethodInvocationTree methodInvocation) {
+        super.visitMethodInvocation(methodInvocation);
+        Symbol calleeMethodSymbol = methodInvocation.symbol();
+        if (methodsPropagationMap.containsKey(calleeMethodSymbol) && methodInvocationOnThisInstance(methodInvocation)) {
+          String calleePropagation = methodsPropagationMap.get(calleeMethodSymbol);
+          checkIncompatiblePropagation(methodInvocation, callerPropagation, calleeMethodSymbol, calleePropagation);
+        }
+      }
+    });
+  }
+

@@ -1,0 +1,12 @@
+  private static boolean methodInvocationOnThisInstance(MethodInvocationTree methodInvocation) {
+    if (methodInvocation.symbol().isStatic()) {
+      return false;
+    }
+    ExpressionTree expression = methodInvocation.methodSelect();
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      expression = ((MemberSelectExpressionTree) expression).expression();
+      return expression.is(Tree.Kind.IDENTIFIER) && ((IdentifierTree) expression).name().equals("this");
+    }
+    return expression.is(Tree.Kind.IDENTIFIER);
+  }
+

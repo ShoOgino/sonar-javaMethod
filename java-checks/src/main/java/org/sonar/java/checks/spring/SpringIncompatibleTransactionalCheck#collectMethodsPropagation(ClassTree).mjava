@@ -1,0 +1,12 @@
+  private static Map<Symbol, String> collectMethodsPropagation(ClassTree classTree) {
+    Map<Symbol, String> methodPropagationMap = new HashMap<>();
+    String classPropagation = getPropagation(classTree.symbol(), null);
+    for (Tree member : classTree.members()) {
+      if (member.is(Tree.Kind.METHOD)) {
+        MethodTree method = (MethodTree) member;
+        methodPropagationMap.put(method.symbol(), getPropagation(method.symbol(), classPropagation));
+      }
+    }
+    return methodPropagationMap;
+  }
+
