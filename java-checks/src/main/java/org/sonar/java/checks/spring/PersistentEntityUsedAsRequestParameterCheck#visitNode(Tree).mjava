@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    MethodTree methodTree = (MethodTree) tree;
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+
+    if (isRequestMappingAnnotated(methodSymbol)) {
+      methodTree.parameters().stream()
+        .filter(PersistentEntityUsedAsRequestParameterCheck::isPersistentEntity)
+        .forEach(p -> reportIssue(p.simpleName(), "Replace this persistent entity with a simple POJO or DTO object."));
+    }
+  }
+
