@@ -1,0 +1,5 @@
+  private boolean hasPropertyAsChild(XmlCheckContext context, Node bean, XPathExpression expression) {
+    return StreamSupport.stream(context.evaluate(expression, bean).spliterator(), false)
+      .anyMatch(property -> hasAttributeValue(property, "value") || !Iterables.isEmpty(context.evaluate(valueExpression, property)));
+  }
+

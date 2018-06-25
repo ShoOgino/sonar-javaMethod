@@ -1,0 +1,8 @@
+  private static boolean hasAttributeValue(Node bean, String attributeName) {
+    NamedNodeMap attributes = bean.getAttributes();
+    return IntStream.range(0, attributes.getLength())
+      .mapToObj(attributes::item)
+      // ignore namespace
+      .anyMatch(attribute -> attribute.getNodeName().endsWith(attributeName) && "true".equals(attribute.getNodeValue()));
+  }
+

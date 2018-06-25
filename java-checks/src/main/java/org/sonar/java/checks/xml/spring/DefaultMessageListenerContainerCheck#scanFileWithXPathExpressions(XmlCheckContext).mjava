@@ -1,0 +1,7 @@
+  @Override
+  public void scanFileWithXPathExpressions(XmlCheckContext context) {
+    StreamSupport.stream(context.evaluateOnDocument(defaultMessageListenerContainerBeanExpression).spliterator(), false)
+      .filter(bean -> !hasAcceptMessagePropertyEnabled(context, bean) && hasSessionTransactedDisabled(context, bean))
+      .forEach(bean -> reportIssue(bean, "Enable \"acceptMessagesWhileStopping\"."));
+  }
+
