@@ -1,0 +1,12 @@
+  @Test
+  public void visit_other() {
+    SemanticModel semanticModel = mock(SemanticModel.class);
+    when(semanticModel.getEnv(any(Tree.class))).thenReturn(env);
+    TypeAndReferenceSolver visitor = new TypeAndReferenceSolver(semanticModel, symbols, new Resolve(symbols, bytecodeCompleter, parametrizedTypeCache), parametrizedTypeCache);
+
+    JavaTree.NotImplementedTreeImpl notImplementedTree = new JavaTree.NotImplementedTreeImpl();
+    notImplementedTree.accept(visitor);
+
+    assertThat(visitor.getType(notImplementedTree)).isEqualTo(Symbols.unknownType);
+  }
+
