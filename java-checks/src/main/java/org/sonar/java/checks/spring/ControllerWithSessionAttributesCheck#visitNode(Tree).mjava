@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    ClassTree classTree = (ClassTree) tree;
+    SymbolMetadata classMetadata = classTree.symbol().metadata();
+    Optional<AnnotationTree> sessionAttributesAnnotation = classTree.modifiers().annotations()
+      .stream()
+      .filter(a -> a.annotationType().symbolType().is("org.springframework.web.bind.annotation.SessionAttributes"))
+      .findFirst();
+
+    if (sessionAttributesAnnotation.isPresent()
+        && classMetadata.isAnnotatedWith("org.springframework.stereotype.Controller")) {
+      MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
+      classTree.accept(methodInvocationVisitor);
+      if (!methodInvocationVisitor.setCompleteIsCalled) {
+        reportIssue(sessionAttributesAnnotation.get().annotationType(),
+          "Add a call to \"setComplete()\" on the SessionStatus object in a \"@RequestMapping\" method.");
+      }
+    }
+  }
+
