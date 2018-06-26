@@ -1,6 +1,8 @@
   @Override
   public void reportIssue(JavaCheck javaCheck, Tree startTree, Tree endTree, String message, List<Location> secondary, @Nullable Integer cost) {
+    throwIfEndOfAnalysisCheck(javaCheck);
+
     List<List<Location>> flows = secondary.stream().map(Collections::singletonList).collect(Collectors.toList());
-    sonarComponents.reportIssue(createAnalyzerMessage(file, javaCheck, startTree, endTree, message, flows, cost));
+    reportIssue(createAnalyzerMessage(file, javaCheck, startTree, endTree, message, flows, cost));
   }
 

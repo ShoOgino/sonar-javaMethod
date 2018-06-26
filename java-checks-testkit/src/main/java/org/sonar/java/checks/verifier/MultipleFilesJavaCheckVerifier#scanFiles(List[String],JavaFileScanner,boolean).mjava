@@ -1,0 +1,17 @@
+  private Set<AnalyzerMessage> scanFiles(List<String> filesToScan, JavaFileScanner check, boolean withSemantic) {
+    List<File> classPath = JavaCheckVerifier.getClassPath(JavaCheckVerifier.DEFAULT_TEST_JARS_DIRECTORY);
+    VisitorsBridgeForTests visitorsBridge;
+    if (withSemantic) {
+      visitorsBridge = new VisitorsBridgeForTests(Arrays.asList(check, new JavaCheckVerifier.ExpectedIssueCollector(this)), classPath, null);
+    } else {
+      visitorsBridge = new VisitorsBridgeForTests(Arrays.asList(check, new JavaCheckVerifier.ExpectedIssueCollector(this)), null);
+    }
+    visitorsBridge.setJavaVersion(new JavaVersionImpl());
+    JavaAstScanner astScanner = new JavaAstScanner(JavaParser.createParser(), null);
+    astScanner.setVisitorBridge(visitorsBridge);
+    astScanner.scan(filesToScan.stream().map(File::new).collect(Collectors.toList()));
+
+    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
+    return testJavaFileScannerContext.getIssues();
+  }
+

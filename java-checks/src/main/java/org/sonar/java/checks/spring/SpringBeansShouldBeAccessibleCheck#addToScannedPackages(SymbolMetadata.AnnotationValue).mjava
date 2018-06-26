@@ -1,0 +1,15 @@
+  private void addToScannedPackages(SymbolMetadata.AnnotationValue annotationValue) {
+    if (COMPONENT_SCAN_ARGUMENTS.contains(annotationValue.name()) && annotationValue.value() instanceof ExpressionTree) {
+      ExpressionTree values = (ExpressionTree) annotationValue.value();
+      if (values.is(Tree.Kind.STRING_LITERAL)) {
+        String packageName = ConstantUtils.resolveAsStringConstant(values);
+        packagesScannedBySpring.add(packageName);
+      } else if (values.is(Tree.Kind.NEW_ARRAY)) {
+        for (ExpressionTree p : ((NewArrayTree) values).initializers()) {
+          String packageName = ConstantUtils.resolveAsStringConstant(p);
+          packagesScannedBySpring.add(packageName);
+        }
+      }
+    }
+  }
+

@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+
+    if (!hasSemantic() || classTree.simpleName() == null) {
+      return;
+    }
+
+    String classPackageName = packageNameOf(classTree.symbol());
+    SymbolMetadata classSymbolMetadata = classTree.symbol().metadata();
+
+    List<SymbolMetadata.AnnotationValue> componentScanValues = classSymbolMetadata.valuesForAnnotation(COMPONENT_SCAN_ANNOTATION);
+    if (componentScanValues != null) {
+      componentScanValues.forEach(this::addToScannedPackages);
+    } else if (hasAnnotation(classSymbolMetadata, SPRING_BOOT_APP_ANNOTATION)) {
+      packagesScannedBySpring.add(classPackageName);
+    } else if (hasAnnotation(classSymbolMetadata, SPRING_BEAN_ANNOTATIONS)) {
+      addMessageToMap(classPackageName, classTree.simpleName());
+    }
+  }
+

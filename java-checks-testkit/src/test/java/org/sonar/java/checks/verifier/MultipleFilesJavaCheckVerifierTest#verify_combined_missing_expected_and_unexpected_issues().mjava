@@ -1,0 +1,11 @@
+  @Test
+  public void verify_combined_missing_expected_and_unexpected_issues() {
+    IssuableSubscriptionVisitor visitor = new JavaCheckVerifierTest.FakeVisitor().withDefaultIssues().withIssue(4, "extra message").withoutIssue(1);
+    try {
+      MultipleFilesJavaCheckVerifier.verify(Arrays.asList(FILENAME_ISSUES_FIRST, FILENAME_NO_ISSUE), visitor);
+      Fail.fail("");
+    } catch (AssertionError e) {
+      assertThat(e).hasMessage("Expected {1=[{MESSAGE=message}]}, Unexpected at [4]");
+    }
+  }
+

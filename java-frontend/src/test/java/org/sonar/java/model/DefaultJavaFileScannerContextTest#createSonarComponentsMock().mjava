@@ -5,6 +5,19 @@
       return null;
     }).when(sonarComponents).reportIssue(any(AnalyzerMessage.class));
 
+    doAnswer(invocation -> {
+      Integer cost = invocation.getArgument(4);
+      reportedMessage = new AnalyzerMessage(invocation.getArgument(1),
+          invocation.getArgument(0),
+          null,
+          invocation.getArgument(3),
+          cost != null ? cost : 0);
+      return null;
+    }).when(sonarComponents).addIssue(any(File.class), any(JavaCheck.class), anyInt(), anyString(), any());
+
+    doAnswer(invocation -> new ArrayList()).when(sonarComponents).fileLines(eq(JAVA_FILE));
+    doAnswer(invocation -> "content").when(sonarComponents).fileContent(eq(JAVA_FILE));
+
     return sonarComponents;
   }
 

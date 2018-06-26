@@ -1,0 +1,9 @@
+  @Override
+  public void endOfAnalysis() {
+    DefaultJavaFileScannerContext defaultContext = (DefaultJavaFileScannerContext) context;
+    messagesPerPackage.entrySet().stream()
+      // support sub-packages
+      .filter(entry -> packagesScannedBySpring.stream().noneMatch(entry.getKey()::contains))
+      .forEach(entry -> entry.getValue().forEach(defaultContext::reportIssue));
+  }
+
