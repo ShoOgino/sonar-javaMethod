@@ -1,0 +1,12 @@
+  @Test
+  public void duplication_should_be_computed_by_SQ() {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("test-duplications")).setCleanPackageSonarGoals();
+
+    orchestrator.executeBuild(build);
+
+    assertThat(getMeasureAsDouble(DUPLICATION_PROJECT_KEY, "duplicated_lines_density")).isEqualTo(32.7);
+    assertThat(getMeasureAsInteger(DUPLICATION_PROJECT_KEY, "duplicated_lines")).isEqualTo(36);
+    assertThat(getMeasureAsInteger(DUPLICATION_PROJECT_KEY, "duplicated_files")).isEqualTo(2);
+    assertThat(getMeasureAsInteger(DUPLICATION_PROJECT_KEY, "duplicated_blocks")).isEqualTo(2);
+  }
+
