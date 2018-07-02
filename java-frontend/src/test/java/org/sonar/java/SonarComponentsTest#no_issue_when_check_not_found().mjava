@@ -3,8 +3,6 @@
     JavaCheck expectedCheck = new CustomCheck();
     CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
 
-    Issuable issuable = mock(Issuable.class);
-
     when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(null);
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, null, null, null, checkFactory, new CheckRegistrar[] {
       expectedRegistrar
@@ -12,6 +10,6 @@
     sonarComponents.setSensorContext(context);
 
     sonarComponents.addIssue(new File(""), expectedCheck, 0, "message", null);
-    verify(issuable, never()).addIssue(any(Issue.class));
+    verify(context, never()).newIssue();
   }
 
