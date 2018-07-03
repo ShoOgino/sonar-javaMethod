@@ -1,6 +1,5 @@
   @VisibleForTesting
   protected void newRule(Class<?> ruleClass, NewRepository repository, JavaSonarWayProfile.Profile profile) {
-
     org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.check.Rule.class);
     if (ruleAnnotation == null) {
       throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
@@ -13,9 +12,17 @@
     if (rule == null) {
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
-    String metadataKey = ruleMetadata(ruleClass, rule);
+    String rspecKey = rspecKey(ruleClass, rule);
+    RuleMetadata ruleMetadata = readRuleMetadata(rspecKey);
+    addMetadata(rule, ruleMetadata);
+    String ruleHtmlDescription = readRuleHtmlDescription(rspecKey);
+    if (ruleHtmlDescription != null) {
+      rule.setHtmlDescription(ruleHtmlDescription);
+    }
     // 'setActivatedByDefault' is used by SonarLint standalone, to define which rules will be active
-    rule.setActivatedByDefault(profile.ruleKeys.contains(ruleKey) || profile.ruleKeys.contains(metadataKey));
+    boolean activatedInProfile = profile.ruleKeys.contains(ruleKey) || profile.ruleKeys.contains(rspecKey);
+    boolean isSecurityHotspot = ruleMetadata != null && ruleMetadata.isSecurityHotspot();
+    rule.setActivatedByDefault(activatedInProfile && !isSecurityHotspot);
     rule.setTemplate(TEMPLATE_RULE_KEY.contains(ruleKey));
   }
 
