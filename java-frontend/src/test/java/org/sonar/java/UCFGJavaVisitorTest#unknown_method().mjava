@@ -1,8 +1,18 @@
   @Test
   public void unknown_method() {
     Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
+    Expression.Variable aux1 = UCFGBuilder.variableWithId("%1");
+    Expression.Variable aux2 = UCFGBuilder.variableWithId("%2");
 
     UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/util/Set;)V").addMethodParam(arg)
+      .addBasicBlock(newBasicBlock("1")
+        .assignTo(aux0, call("java.util.Collection#stream()Ljava/util/stream/Stream;").withArgs(arg), new LocationInFile(FILE_KEY, 6, 4, 6, 16))
+        .assignTo(aux1, call("java.util.stream.Stream#flatMap(Ljava/util/function/Function;)Ljava/util/stream/Stream;").withArgs(aux0, constant("\"\"")), new LocationInFile(FILE_KEY, 6, 4, 7, 34))
+        .assignTo(aux2,
+            call("java.util.stream.Collectors#toCollection(Ljava/util/function/Supplier;)Ljava/util/stream/Collector;").withArgs(new Expression.ClassName("java.util.stream.Collectors"), constant("\"\"")),
+            new LocationInFile(FILE_KEY, 8, 15, 8, 58))
+        .jumpTo(UCFGBuilder.createLabel("0")))
       .addBasicBlock(newBasicBlock("0")
         .ret(constant("implicit return"), new LocationInFile(FILE_KEY, 9, 2, 9, 3)))
       .build();

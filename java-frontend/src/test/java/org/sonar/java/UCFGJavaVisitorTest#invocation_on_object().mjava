@@ -1,0 +1,12 @@
+  @Test
+  public void invocation_on_object() {
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable temp = UCFGBuilder.variableWithId("%0");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Object;)Ljava/lang/String;").addMethodParam(arg)
+      .addBasicBlock(newBasicBlock("1")
+          .assignTo(temp, call("java.lang.Object#toString()Ljava/lang/String;").withArgs(arg), new LocationInFile(FILE_KEY, 1,62,1,76))
+          .ret(temp, new LocationInFile(FILE_KEY, 1, 55, 1, 77)))
+      .build();
+    assertCodeToUCfg("class A { String method(Object arg) {int var; var = 2; return arg.toString(); }}", expectedUCFG);
+  }
+

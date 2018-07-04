@@ -3,7 +3,7 @@
     Expression.Variable arg = UCFGBuilder.variableWithId("arg");
     Expression.Variable var = UCFGBuilder.variableWithId("%0");
     UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Object;)Ljava/lang/String;").addMethodParam(arg)
-      .addBasicBlock(newBasicBlock("1").assignTo(var, call("java.lang.Object#toString()Ljava/lang/String;"), new LocationInFile(FILE_KEY, 1,44,1,58))
+      .addBasicBlock(newBasicBlock("1").assignTo(var, call("java.lang.Object#toString()Ljava/lang/String;").withArgs(arg), new LocationInFile(FILE_KEY, 1,44,1,58))
         .ret(var, new LocationInFile(FILE_KEY, 1,37,1,59)))
       .build();
     assertCodeToUCfg("class A { String method(Object arg) {return arg.toString();}}", expectedUCFG);
