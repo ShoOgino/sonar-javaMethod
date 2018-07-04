@@ -1,0 +1,16 @@
+  @Test
+  public void implicit_usage_of_this() {
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo()Ljava/lang/String;").addMethodParam(arg)
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("java.lang.Object#toString()Ljava/lang/String;").withArgs(Expression.THIS), new LocationInFile(FILE_KEY, 3, 11, 3, 21))
+            .ret(aux0, new LocationInFile(FILE_KEY, 3, 4, 3, 22)))
+        .build();
+    assertCodeToUCfg("class A { \n" +
+        "  private String foo() { \n" +
+        "    return toString();\n" +
+        "  }\n" +
+        "}", expectedUCFG);
+  }
+

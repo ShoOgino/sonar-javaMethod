@@ -1,0 +1,11 @@
+  @Test
+  public void object_to_string_invocation() {
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable var0 = UCFGBuilder.variableWithId("%0");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Integer;)Ljava/lang/String;").addMethodParam(arg)
+      .addStartingBlock(newBasicBlock("1").assignTo(var0, call("java.lang.Integer#toString()Ljava/lang/String;").withArgs(arg), new LocationInFile(FILE_KEY, 1, 45, 1, 59))
+        .ret(var0, new LocationInFile(FILE_KEY, 1, 38, 1, 60)))
+      .build();
+    assertCodeToUCfg("class A { String method(Integer arg) {return arg.toString();}}", expectedUCFG);
+  }
+

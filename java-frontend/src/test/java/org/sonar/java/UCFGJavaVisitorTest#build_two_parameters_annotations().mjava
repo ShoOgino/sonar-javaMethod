@@ -5,17 +5,17 @@
     Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
     Expression.Variable aux1 = UCFGBuilder.variableWithId("%1");
 
-    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;").addMethodParam(arg0).addMethodParam(arg1)
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/String;Ljava/lang/Integer;)Ljava/lang/String;").addMethodParam(arg0).addMethodParam(arg1)
       .addBasicBlock(newBasicBlock("paramAnnotations")
         .assignTo(aux0, call("javax.annotation.Nullable").withArgs(arg0), new LocationInFile(FILE_KEY, 1, 24, 1, 50))
         .assignTo(arg0, call("__annotation").withArgs(aux0), new LocationInFile(FILE_KEY, 1, 58, 1, 62))
         .assignTo(aux1, call("javax.annotation.Nullable").withArgs(arg1), new LocationInFile(FILE_KEY, 1, 64, 1, 90))
-        .assignTo(arg1, call("__annotation").withArgs(aux1), new LocationInFile(FILE_KEY, 1, 98, 1, 102))
+        .assignTo(arg1, call("__annotation").withArgs(aux1), new LocationInFile(FILE_KEY, 1, 99, 1, 103))
         .jumpTo(UCFGBuilder.createLabel("1")))
       .addBasicBlock(
         newBasicBlock("1")
-          .ret(constant("foo"), new LocationInFile(FILE_KEY, 1, 106, 1, 119)))
+          .ret(constant("foo"), new LocationInFile(FILE_KEY, 1, 107, 1, 120)))
       .build();
-    assertCodeToUCfg("class A { String method(@javax.annotation.Nullable String arg0, @javax.annotation.Nullable String arg1) { return \"foo\";}}", expectedUCFG);
+    assertCodeToUCfg("class A { String method(@javax.annotation.Nullable String arg0, @javax.annotation.Nullable Integer arg1) { return \"foo\";}}", expectedUCFG);
   }
 
