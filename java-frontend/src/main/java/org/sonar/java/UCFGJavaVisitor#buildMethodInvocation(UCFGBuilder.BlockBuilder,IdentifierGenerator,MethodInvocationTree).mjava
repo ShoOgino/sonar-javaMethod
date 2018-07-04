@@ -3,22 +3,16 @@
       return;
     }
 
-    List<Expression> arguments = null;
-
-    if (isObject(tree.symbol().owner().type()) ) {
-      arguments = new ArrayList<>();
-      if (tree.symbol().isStatic()) {
-        arguments.add(new Expression.ClassName(tree.symbol().type().fullyQualifiedName()));
-      } else if (tree.methodSelect().is(MEMBER_SELECT)) {
-        arguments.add(idGenerator.lookupExpressionFor(((MemberSelectExpressionTree) tree.methodSelect()).expression()));
-      } else if (tree.methodSelect().is(IDENTIFIER)) {
-        arguments.add(Expression.THIS);
-      }
-      arguments.addAll(argumentIds(idGenerator, tree.arguments()));
+    List<Expression> arguments = new ArrayList<>();
+    if (tree.symbol().isStatic()) {
+      arguments.add(new Expression.ClassName(tree.symbol().type().fullyQualifiedName()));
+    } else if (tree.methodSelect().is(MEMBER_SELECT)) {
+      arguments.add(idGenerator.lookupExpressionFor(((MemberSelectExpressionTree) tree.methodSelect()).expression()));
+    } else if (tree.methodSelect().is(IDENTIFIER)) {
+      arguments.add(Expression.THIS);
     }
+    arguments.addAll(argumentIds(idGenerator, tree.arguments()));
 
-    if (arguments != null) {
-      buildAssignCall(blockBuilder, idGenerator, arguments, tree, (Symbol.MethodSymbol) tree.symbol());
-    }
+    buildAssignCall(blockBuilder, idGenerator, arguments, tree, (Symbol.MethodSymbol) tree.symbol());
   }
 

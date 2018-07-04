@@ -1,12 +1,11 @@
   private void buildPlusOrAssignmentInvocation(BlockBuilder blockBuilder, IdentifierGenerator idGenerator, Tree element) {
-    boolean elementIsString = (((ExpressionTree) element).symbolType()).is("java.lang.String");
-    if (element.is(PLUS) && elementIsString) {
+    if (element.is(PLUS)) {
       BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) element;
       Expression lhs = idGenerator.lookupExpressionFor(binaryExpressionTree.leftOperand());
       Expression rhs = idGenerator.lookupExpressionFor(binaryExpressionTree.rightOperand());
       Expression.Variable var = variableWithId(idGenerator.newIdFor(binaryExpressionTree));
       blockBuilder.assignTo(var, call("__concat").withArgs(lhs, rhs), location(element));
-    } else if (element.is(PLUS_ASSIGNMENT) && elementIsString) {
+    } else if (element.is(PLUS_ASSIGNMENT)) {
       Expression var = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).variable());
       Expression expr = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).expression());
       if (var instanceof Expression.Variable) {
