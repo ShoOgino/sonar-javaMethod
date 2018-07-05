@@ -1,0 +1,17 @@
+  private static List<JavaFileScannerContext.Location> collectSecondaryLocations(NewClassTree newClassTree) {
+    Tree parentMethodOrClass = parentMethod(newClassTree);
+    if (parentMethodOrClass == null) {
+      return Collections.emptyList();
+    }
+    List<JavaFileScannerContext.Location> secondaries = new ArrayList<>();
+    parentMethodOrClass.accept(new BaseTreeVisitor() {
+      @Override
+      public void visitMethodInvocation(MethodInvocationTree tree) {
+        if (READ_OBJECT.matches(tree)) {
+          secondaries.add(new JavaFileScannerContext.Location("Possible data execution", tree));
+        }
+      }
+    });
+    return secondaries;
+  }
+
