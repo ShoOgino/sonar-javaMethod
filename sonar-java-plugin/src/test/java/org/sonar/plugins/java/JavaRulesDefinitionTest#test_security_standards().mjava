@@ -1,0 +1,11 @@
+  @Test
+  public void test_security_standards() throws Exception {
+    JavaRulesDefinition definition = new JavaRulesDefinition(settings, SonarVersion.SQ_73_RUNTIME);
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    definition.define(context);
+    RulesDefinition.Repository repository = context.repository("squid");
+
+    RulesDefinition.Rule rule = repository.rule("S1989");
+    assertThat(rule.securityStandards()).containsExactlyInAnyOrder("cwe:600", "owaspTop10:a3");
+  }
+

@@ -1,0 +1,12 @@
+  @Test
+  public void test_security_standards_not_set_when_unsupported() throws Exception {
+    JavaRulesDefinition definition = new JavaRulesDefinition(settings, SonarVersion.SQ_67_RUNTIME);
+    RulesDefinition.NewRepository repository = mock(RulesDefinition.NewRepository.class);
+    RulesDefinition.NewRule newRule = mock(RulesDefinition.NewRule.class);
+    when(repository.rule(any())).thenReturn(newRule);
+    definition.newRule(ServletMethodsExceptionsThrownCheck.class, repository, JavaSonarWayProfile.readProfile());
+
+    verify(newRule, never()).addOwaspTop10();
+    verify(newRule, never()).addCwe();
+  }
+
