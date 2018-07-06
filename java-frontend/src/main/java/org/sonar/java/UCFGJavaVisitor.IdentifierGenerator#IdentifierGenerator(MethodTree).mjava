@@ -1,9 +1,9 @@
     public IdentifierGenerator(MethodTree methodTree) {
-      List<Symbol> parameters = methodTree.parameters().stream().map(VariableTree::symbol).collect(Collectors.toList());
+      Set<Symbol> objectParameters = methodTree.parameters().stream().filter(p -> isObject(p.symbol().type())).map(VariableTree::symbol).collect(Collectors.toSet());
       VariableReadExtractor variableReadExtractor = new VariableReadExtractor(methodTree.symbol(), false);
       methodTree.accept(variableReadExtractor);
-      Set<Symbol> locals = variableReadExtractor.usedVariables().stream().filter(s -> isObject(s.type())).collect(Collectors.toSet());
-      vars = Sets.union(new HashSet<>(parameters), locals).stream().collect(Collectors.toMap(s -> s, Symbol::name));
+      Set<Symbol> objectLocals = variableReadExtractor.usedVariables().stream().filter(s -> isObject(s.type())).collect(Collectors.toSet());
+      objectVars = Sets.union(objectParameters, objectLocals).stream().collect(Collectors.toMap(s -> s, Symbol::name));
       temps = new HashMap<>();
       counter = 0;
     }
