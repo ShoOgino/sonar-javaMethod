@@ -1,0 +1,13 @@
+  private static boolean isJsonTypeIdEnumValue(ExpressionTree tree, Set<String> values) {
+    if (!isJsonTypeId(tree)) {
+      return false;
+    }
+    String valueName;
+    if (tree.is(Tree.Kind.MEMBER_SELECT)) {
+      valueName = ((MemberSelectExpressionTree) tree).identifier().name();
+    } else {
+      valueName = ((IdentifierTree) tree).name();
+    }
+    return values.contains(valueName);
+  }
+

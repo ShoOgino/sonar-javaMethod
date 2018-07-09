@@ -1,0 +1,13 @@
+  private static Optional<ExpressionTree> findUseArgument(AnnotationTree annotationTree) {
+    for (ExpressionTree tree : annotationTree.arguments()) {
+      if (tree.is(Tree.Kind.ASSIGNMENT)) {
+        AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
+        if (((IdentifierTree) assignment.variable()).name().equals("use")
+            && isJsonTypeIdEnumValue(assignment.expression(), ImmutableSet.of("CLASS", "MINIMAL_CLASS"))) {
+          return Optional.of(assignment.expression());
+        }
+      }
+    }
+    return Optional.empty();
+  }
+
