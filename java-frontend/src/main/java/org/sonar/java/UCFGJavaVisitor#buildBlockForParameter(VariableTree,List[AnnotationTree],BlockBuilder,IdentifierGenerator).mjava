@@ -1,9 +1,9 @@
-  private void buildBlockForParameter(VariableTree parameter, BlockBuilder blockBuilder, IdentifierGenerator idGenerator) {
+  private void buildBlockForParameter(VariableTree parameter, List<AnnotationTree> methodAnnotations, BlockBuilder blockBuilder, IdentifierGenerator idGenerator) {
     Expression.Variable parameterVariable = variableWithId(idGenerator.lookupIdFor(parameter.symbol()));
     List<Expression> annotationVariables = new ArrayList<>();
 
-    parameter.modifiers().annotations().forEach(annotationTree -> {
-      Expression.Variable var = variableWithId(idGenerator.newIdFor(annotationTree));
+    Stream.concat(methodAnnotations.stream(), parameter.modifiers().annotations().stream()).forEach(annotationTree -> {
+      Expression.Variable var = variableWithId(idGenerator.newId());
       annotationVariables.add(var);
       blockBuilder.assignTo(var, annotateCall(annotationTree, parameterVariable), location(annotationTree));
     });
