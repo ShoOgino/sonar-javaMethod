@@ -1,4 +1,4 @@
-  private UCFG createUCFG(String source) {
+  private Map<String, UCFG> createUCFG(String source) {
     File java_ucfg_dir = new File(new File(tmp.getRoot(), "ucfg"), "java");
     if(java_ucfg_dir.isDirectory()) {
       for (File file : java_ucfg_dir.listFiles()) {
@@ -10,13 +10,21 @@
     UCFGJavaVisitor.javaFileKey = FILE_KEY;
     UCFGJavaVisitor.visitCompilationUnit(cut);
 
-    UCFG actualUCFG = null;
+    Map<String, UCFG> result = new HashMap<String, UCFG>();
     try {
-      File ucfg = new File(java_ucfg_dir, "ucfg_0.proto");
-      actualUCFG = UCFGtoProtobuf.fromProtobufFile(ucfg);
+      DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(java_ucfg_dir.getAbsolutePath()), new DirectoryStream.Filter<Path>() {
+        @Override
+        public boolean accept(final Path entry) {
+          return entry.toFile().getName().matches("ucfg_(.*).proto");
+        }
+      });
+      for (Path path : stream) {
+        UCFG ucfg = UCFGtoProtobuf.fromProtobufFile(path.toFile());
+        result.put(ucfg.methodId(), ucfg);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return actualUCFG;
+    return result;
   }
 
