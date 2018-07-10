@@ -2,6 +2,8 @@
     Map<String, UCFG> actualUCFGs  = createUCFG(source);
     for (UCFG expectedUCFG : expectedUCFGs) {
       UCFG actualUCFG = actualUCFGs.get(expectedUCFG.methodId());
+      // actualUCFG will be null in case there's no UCFG with the expected methodId
+      assertThat(actualUCFG).isNotNull();
       assertThat(actualUCFG.methodId()).isEqualTo(expectedUCFG.methodId());
       assertThat(actualUCFG.basicBlocks()).isEqualTo(expectedUCFG.basicBlocks());
       assertThat(actualUCFG.basicBlocks().values().stream().flatMap(b -> b.instructions().stream()))

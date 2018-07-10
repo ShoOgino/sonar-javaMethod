@@ -1,0 +1,11 @@
+  private void buildNewArrayInvocation(BlockBuilder blockBuilder, IdentifierGenerator idGenerator, NewArrayTree tree) {
+    Expression.Variable newArray = variableWithId(idGenerator.newIdFor(tree));
+    blockBuilder.newObject(newArray, tree.symbolType().fullyQualifiedName(), location(tree));
+    idGenerator.varForExpression(tree, newArray.id());
+
+    for (ExpressionTree initializer : tree.initializers()) {
+      Expression argument = idGenerator.lookupExpressionFor(initializer);
+      blockBuilder.assignTo(variableWithId(idGenerator.newId()), arraySet(newArray, argument), location(tree));
+    }
+  }
+
