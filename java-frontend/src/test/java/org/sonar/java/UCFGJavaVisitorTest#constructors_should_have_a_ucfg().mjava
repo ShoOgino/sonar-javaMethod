@@ -1,6 +1,7 @@
   @Test
   public void constructors_should_have_a_ucfg() {
-    UCFG ucfg = createUCFG("class A { Object foo(String s) {new A(s); new Object(); new Unknown(\"\"); return new String();} A(String s) {} }");
+    UCFG ucfg = createUCFG("class A { Object foo(String s) {new A(s); new Object(); new Unknown(\"\"); return new String();} A(String s) {} }")
+        .get("A#foo(Ljava/lang/String;)Ljava/lang/Object;");
     assertThat(ucfg.methodId()).isEqualTo("A#foo(Ljava/lang/String;)Ljava/lang/Object;");
     List<Instruction> calls = ucfg.entryBlocks().iterator().next().instructions();
     assertThat(calls).hasSize(6);

@@ -1,0 +1,20 @@
+  private Map<String, UCFG> assertCodeToUCfg(String source, boolean testLocations, UCFG... expectedUCFGs) {
+    Map<String, UCFG> actualUCFGs  = createUCFG(source);
+    for (UCFG expectedUCFG : expectedUCFGs) {
+      UCFG actualUCFG = actualUCFGs.get(expectedUCFG.methodId());
+      assertThat(actualUCFG.methodId()).isEqualTo(expectedUCFG.methodId());
+      assertThat(actualUCFG.basicBlocks()).isEqualTo(expectedUCFG.basicBlocks());
+      assertThat(actualUCFG.basicBlocks().values().stream().flatMap(b -> b.instructions().stream()))
+          .containsExactlyElementsOf(expectedUCFG.basicBlocks().values().stream().flatMap(b -> b.instructions().stream()).collect(Collectors.toList()));
+      assertThat(actualUCFG.basicBlocks().values().stream().map(BasicBlock::terminator))
+          .containsExactlyElementsOf(expectedUCFG.basicBlocks().values().stream().map(BasicBlock::terminator).collect(Collectors.toList()));
+      assertThat(actualUCFG.entryBlocks()).isEqualTo(expectedUCFG.entryBlocks());
+      assertThat(toLocationStream(actualUCFG).noneMatch(l -> l == UCFGBuilder.LOC)).isTrue();
+      if (testLocations) {
+        Stream<LocationInFile> locStream = toLocationStream(actualUCFG);
+        assertThat(locStream).containsExactlyElementsOf(toLocationStream(expectedUCFG).collect(Collectors.toList()));
+      }
+    }
+    return actualUCFGs;
+  }
+
