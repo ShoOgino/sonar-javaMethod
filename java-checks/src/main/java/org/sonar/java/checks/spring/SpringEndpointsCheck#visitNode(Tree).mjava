@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    MethodTree methodTree = (MethodTree) tree;
+    List<AnnotationTree> annotations = methodTree.modifiers().annotations();
+    annotations.stream().filter(SpringEndpointsCheck::isSpringWebHandler).forEach(annotationTree ->
+        reportIssue(methodTree.simpleName(), "Review this Spring request handler"));
+  }
+
