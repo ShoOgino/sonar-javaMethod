@@ -1,0 +1,29 @@
+  @Test
+  public void array_in_expressions_with_multiple_access() {
+    Expression.Variable array = UCFGBuilder.variableWithId("array");
+    Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
+    Expression.Variable aux1 = UCFGBuilder.variableWithId("%1");
+    Expression.Variable aux2 = UCFGBuilder.variableWithId("%2");
+    Expression.Variable aux3 = UCFGBuilder.variableWithId("%3");
+    Expression.Variable aux4 = UCFGBuilder.variableWithId("%4");
+    Expression.Variable aux5 = UCFGBuilder.variableWithId("%5");
+    Expression.Variable aux6 = UCFGBuilder.variableWithId("%6");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo([Ljava/lang/String;)Ljava/lang/String;")
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 3,4,3,12))
+            .assignTo(aux1, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 3,16,3,24))
+            .assignTo(aux2, call("__concat").withArgs(aux0, aux1), new LocationInFile(FILE_KEY, 3,4,3,24))
+            .assignTo(aux3, call("__arraySet").withArgs(array, aux2), new LocationInFile(FILE_KEY, 3,4,3,24))
+            .assignTo(aux4, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 4,11,4,19))
+            .assignTo(aux5, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 4,22,4,30))
+            .assignTo(aux6, call("__concat").withArgs(aux4, aux5), new LocationInFile(FILE_KEY, 4,11,4,30))
+            .ret(aux6, new LocationInFile(FILE_KEY, 4,4,4,31)))
+        .build();
+    assertCodeToUCfg("class A { \n" +
+        "  private String foo(String[] array) { \n" +
+        "    array[0] += array[0];\n" +
+        "    return array[0] + array[0];\n" +
+        "  }\n" +
+        "}", expectedUCFG);
+  }
+

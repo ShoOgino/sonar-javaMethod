@@ -1,0 +1,18 @@
+  @Test
+  public void plus_assign_to_array_field() {
+    // in case of array access, fields are not ignored
+    // this will change with SONARSEC-121
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
+    Expression.Variable aux1 = UCFGBuilder.variableWithId("%1");
+    Expression.Variable aux2 = UCFGBuilder.variableWithId("%2");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/String;)Ljava/lang/String;").addMethodParam(arg)
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("__arrayGet").withArgs(constant("\"\"")), new LocationInFile(FILE_KEY, 1,53,1,66))
+            .assignTo(aux1, call("__concat").withArgs(aux0, arg), new LocationInFile(FILE_KEY, 1,53,1,73))
+            .assignTo(aux2, call("__arraySet").withArgs(constant("\"\""), aux1), new LocationInFile(FILE_KEY, 1,53,1,73))
+            .ret(arg, new LocationInFile(FILE_KEY, 1, 75, 1, 86)))
+        .build();
+    assertCodeToUCfg("class A { String[] field; String method(String arg) {this.field[0] += arg; return arg;}}", expectedUCFG);
+  }
+
