@@ -1,23 +1,26 @@
   @Test
   public void method_argument_expressions_get_stored_in_auxiliary_local_variables() {
-    Expression.Variable arg1 = UCFGBuilder.variableWithId("arg1");
-    Expression.Variable arg2 = UCFGBuilder.variableWithId("arg2");
-    Expression.Variable arg3 = UCFGBuilder.variableWithId("arg3");
+    Expression.Variable argument1 = UCFGBuilder.variableWithId("arg1");
+    Expression.Variable argument2 = UCFGBuilder.variableWithId("arg2");
+    Expression.Variable argument3 = UCFGBuilder.variableWithId("arg3");
     Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
     Expression.Variable aux1 = UCFGBuilder.variableWithId("%1");
     Expression.Variable aux2 = UCFGBuilder.variableWithId("%2");
     Expression.Variable aux3 = UCFGBuilder.variableWithId("%3");
+    Expression.Variable aux4 = UCFGBuilder.variableWithId("%4");
 
-    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Object;[Ljava/lang/String;LA$Foo;)Ljava/lang/String;").addMethodParam(arg1).addMethodParam(arg2).addMethodParam(arg3)
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Object;[Ljava/lang/String;LA$Foo;)Ljava/lang/String;")
+        .addMethodParam(argument1).addMethodParam(argument2).addMethodParam(argument3)
         .addStartingBlock(newBasicBlock("1")
             .newObject(aux0, "java.lang.Integer", new LocationInFile(FILE_KEY, 4, 35, 4, 42))
             .assignTo(aux1, call("java.lang.Integer#<init>(I)V").withArgs(aux0, constant("\"\"")), new LocationInFile(FILE_KEY, 4,31,4,45))
-            .assignTo(aux2, call("java.lang.Object#toString()Ljava/lang/String;").withArgs(arg1), new LocationInFile(FILE_KEY, 4,47,4,62))
-            // field access and array access will change with SONARSEC-121 and SONARSEC-131, respectively
-            .assignTo(aux3, call("java.lang.String#format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;")
-                    .withArgs(new Expression.ClassName("java.lang.String"), constant("%s"), aux0, aux2, constant("\"\""), constant("\"\"")),
+            .assignTo(aux2, call("java.lang.Object#toString()Ljava/lang/String;").withArgs(argument1), new LocationInFile(FILE_KEY, 4,47,4,62))
+            .assignTo(aux3, call("__arrayGet").withArgs(argument2), new LocationInFile(FILE_KEY, 4,64,4,71))
+            // field access will change with SONARSEC-121
+            .assignTo(aux4, call("java.lang.String#format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;")
+                    .withArgs(new Expression.ClassName("java.lang.String"), constant("%s"), aux0, aux2, aux3, constant("\"\"")),
                 new LocationInFile(FILE_KEY, 4,11,4,82))
-            .ret(aux3, new LocationInFile(FILE_KEY, 4,4,4,83)))
+            .ret(aux4, new LocationInFile(FILE_KEY, 4,4,4,83)))
         .build();
     assertCodeToUCfg("class A { \n" +
         "  class Foo { String foo; }\n" +

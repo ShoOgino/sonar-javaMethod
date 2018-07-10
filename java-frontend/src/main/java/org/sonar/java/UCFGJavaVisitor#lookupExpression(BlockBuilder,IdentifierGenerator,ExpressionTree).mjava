@@ -1,0 +1,14 @@
+  /**
+   * An array access expression depends on context - it might be a get or a set.
+   * This method should be used for the contexts where it is clear that the array access (if present) is a get.
+   */
+  private Expression lookupExpression(BlockBuilder blockBuilder, IdentifierGenerator idGenerator, ExpressionTree expressionTree) {
+    if (expressionTree.is(ARRAY_ACCESS_EXPRESSION)) {
+      Expression array = idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree)expressionTree).expression());
+      Expression.Variable aux = variableWithId(idGenerator.newId());
+      blockBuilder.assignTo(aux, arrayGet(array), location(expressionTree));
+      return aux;
+    }
+    return idGenerator.lookupExpressionFor(expressionTree);
+  }
+

@@ -17,8 +17,21 @@
     } else if (element.is(NEW_CLASS)) {
       NewClassTree newClassTree = (NewClassTree) element;
       buildConstructorInvocation(blockBuilder, idGenerator, newClassTree);
-    } else if (element.is(PLUS, PLUS_ASSIGNMENT, ASSIGNMENT) && isObject(((ExpressionTree) element).symbolType())) {
-      buildPlusOrAssignmentInvocation(blockBuilder, idGenerator, element);
+    } else if (element.is(PLUS)) {
+      BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) element;
+      buildConcatenationInvocation(blockBuilder, idGenerator, binaryExpressionTree);
+    } else if (element.is(ASSIGNMENT)) {
+      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
+      buildAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
+    } else if (element.is(PLUS_ASSIGNMENT)) {
+      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
+      buildPlusAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
+    } else if (element.is(ARRAY_ACCESS_EXPRESSION) && !element.parent().is(PLUS_ASSIGNMENT, ASSIGNMENT)) {
+      // PLUS_ASSIGNMENT and ASSIGNMENT might imply an array set, otherwise an array access is always a get
+      Expression.Variable getValue = variableWithId(idGenerator.newId());
+      Expression array = idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree)element).expression());
+      blockBuilder.assignTo(getValue, arrayGet(array), location(element));
+      idGenerator.varForExpression(element, getValue.id());
     }
   }
 

@@ -1,0 +1,16 @@
+  @Test
+  public void array_access_return() {
+    Expression.Variable array = UCFGBuilder.variableWithId("array");
+    Expression.Variable aux0 = UCFGBuilder.variableWithId("%0");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo([Ljava/lang/String;)Ljava/lang/String;")
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 3,11,3,19))
+            .ret(aux0, new LocationInFile(FILE_KEY, 3,4,3,20)))
+        .build();
+    assertCodeToUCfg("class A { \n" +
+        "  private String foo(String[] array) { \n" +
+        "    return array[0];\n" +
+        "  }\n" +
+        "}", expectedUCFG);
+  }
+
