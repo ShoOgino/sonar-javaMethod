@@ -1,0 +1,13 @@
+  private void read(InputStream in) throws XMLStreamException, IOException {
+    XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(in);
+    while (reader.hasNext()) {
+      XMLEvent event = reader.nextEvent();
+      if (event.isStartElement()) {
+        level++;
+        onElement(event.asStartElement());
+      } else if (event.isEndElement()) {
+        level--;
+      }
+    }
+  }
+

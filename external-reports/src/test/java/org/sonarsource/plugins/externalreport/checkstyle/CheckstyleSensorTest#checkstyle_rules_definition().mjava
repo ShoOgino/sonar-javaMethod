@@ -1,0 +1,24 @@
+  @Test
+  public void checkstyle_rules_definition() {
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    new ExternalRulesDefinition(CheckstyleSensor.ruleLoader()).define(context);
+
+    assertThat(context.repositories()).hasSize(1);
+    RulesDefinition.Repository repository = context.repository("external_checkstyle");
+    assertThat(repository.name()).isEqualTo("Checkstyle");
+    assertThat(repository.language()).isEqualTo("java");
+    assertThat(repository.isExternal()).isEqualTo(true);
+
+    assertThat(repository.rules().size()).isEqualTo(155);
+
+    RulesDefinition.Rule rule = repository.rule("ArrayTypeStyleCheck");
+    assertThat(rule).isNotNull();
+    assertThat(rule.name()).isEqualTo("Array Type Style");
+    assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(rule.severity()).isEqualTo("MINOR");
+    assertThat(rule.htmlDescription()).isEqualTo("Checks the style of array type definitions. Some like Java-style:" +
+      " public static void main(String[] args) and some like C-style: public static void main(String args[])\n\n<p>\n</p>");
+    assertThat(rule.tags()).isEmpty();
+    assertThat(rule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
+  }
+

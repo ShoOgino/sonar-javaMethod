@@ -1,0 +1,9 @@
+  @Test
+  public void no_issues_with_invalid_line_number() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "checkstyle-with-invalid-line.xml");
+    assertThat(externalIssues).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+      .startsWith("NumberFormatException: For input string: \"invalid\"")
+      .endsWith("checkstyle-with-invalid-line.xml' can't be read.");
+  }
+

@@ -1,0 +1,23 @@
+  @Test
+  public void checkstyle() {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("checkstyle-external-report"))
+      .setProperty("sonar.java.checkstyle.reportPaths", "target" + File.separator + "checkstyle-result.xml")
+      .setGoals("org.apache.maven.plugins:maven-checkstyle-plugin:3.0.0:checkstyle", "sonar:sonar");
+    orchestrator.executeBuild(build);
+
+    List<Issue> issues = getExternalIssues();
+    boolean externalIssuesSupported = orchestrator.getServer().version().isGreaterThanOrEquals(7, 2);
+    if (externalIssuesSupported) {
+      assertThat(issues).hasSize(1);
+      Issue issue = issues.get(0);
+      assertThat(issue.componentKey()).isEqualTo("com.sonarsource.it.projects:checkstyle-external-report:src/main/java/Main.java");
+      assertThat(issue.ruleKey()).isEqualTo("external_checkstyle:javadoc.JavadocPackageCheck");
+      assertThat(issue.line()).isNull();
+      assertThat(issue.message()).isEqualTo("Missing package-info.java file.");
+      assertThat(issue.severity()).isEqualTo("MINOR");
+      assertThat(issue.debt()).isEqualTo("30min");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+

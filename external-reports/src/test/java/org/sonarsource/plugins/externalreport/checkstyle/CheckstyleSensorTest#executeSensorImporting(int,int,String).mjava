@@ -1,0 +1,10 @@
+  private List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
+    SensorContextTester context = createContext(PROJECT_DIR, majorVersion, minorVersion);
+    if (fileName != null) {
+      File reportFile = generateReport(fileName);
+      context.settings().setProperty("sonar.java.checkstyle.reportPaths", reportFile.getPath());
+    }
+    checkstyleSensor.execute(context);
+    return new ArrayList<>(context.allExternalIssues());
+  }
+

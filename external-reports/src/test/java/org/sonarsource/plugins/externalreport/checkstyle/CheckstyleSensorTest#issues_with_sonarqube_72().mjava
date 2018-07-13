@@ -1,0 +1,35 @@
+  @Test
+  public void issues_with_sonarqube_72() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "checkstyle-result.xml");
+    assertThat(externalIssues).hasSize(3);
+
+    ExternalIssue first = externalIssues.get(0);
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("checkstyle-project:Main.java");
+    assertThat(first.ruleKey().rule()).isEqualTo("javadoc.JavadocPackageCheck");
+    assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(first.severity()).isEqualTo(Severity.MINOR);
+    assertThat(first.remediationEffort().longValue()).isEqualTo(30L);
+    assertThat(first.primaryLocation().message()).isEqualTo("Missing package-info.java file.");
+    assertThat(first.primaryLocation().textRange()).isNull();
+
+    ExternalIssue second = externalIssues.get(1);
+    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("checkstyle-project:Main.java");
+    assertThat(second.ruleKey().rule()).isEqualTo("modifier.ModifierOrderCheck");
+    assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(second.severity()).isEqualTo(Severity.MINOR);
+    assertThat(second.remediationEffort().longValue()).isEqualTo(10L);
+    assertThat(second.primaryLocation().message()).isEqualTo("'static' modifier out of order with the JLS suggestions.");
+    assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(2);
+
+    ExternalIssue third = externalIssues.get(2);
+    assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("checkstyle-project:A.java");
+    assertThat(third.ruleKey().rule()).isEqualTo("javadoc.JavadocTypeCheck");
+    assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(third.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(second.remediationEffort().longValue()).isEqualTo(10L);
+    assertThat(third.primaryLocation().message()).isEqualTo("Missing a Javadoc comment.");
+    assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(1);
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+  }
+

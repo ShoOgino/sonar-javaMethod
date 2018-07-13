@@ -1,0 +1,13 @@
+  private void onFileElement(StartElement element) {
+    String filePath = getAttributeValue(element, NAME);
+    if (filePath.isEmpty()) {
+      inputFile = null;
+      return;
+    }
+    FilePredicates predicates = context.fileSystem().predicates();
+    inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath));
+    if (inputFile == null) {
+      LOG.warn("No input file found for '{}'. No checkstyle issues will be imported on this file.", filePath);
+    }
+  }
+

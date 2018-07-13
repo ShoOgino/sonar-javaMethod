@@ -1,0 +1,10 @@
+  private void onElement(StartElement element) throws IOException {
+    if (level == 1 && !CHECKSTYLE.equals(element.getName())) {
+      throw new IOException("Unexpected document root '" + element.getName().getLocalPart() + "' instead of 'checkstyle'.");
+    } else if (level == 2 && FILE.equals(element.getName())) {
+      onFileElement(element);
+    } else if (level == 3 && ERROR.equals(element.getName())) {
+      onErrorElement(element);
+    }
+  }
+
