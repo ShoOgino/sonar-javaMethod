@@ -30,10 +30,13 @@
       buildPlusAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
     } else if (element.is(ARRAY_ACCESS_EXPRESSION) && !element.parent().is(PLUS_ASSIGNMENT, ASSIGNMENT)) {
       // PLUS_ASSIGNMENT and ASSIGNMENT might imply an array set, otherwise an array access is always a get
-      Expression.Variable getValue = variableWithId(idGenerator.newId());
-      Expression array = idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree)element).expression());
-      blockBuilder.assignTo(getValue, arrayGet(array), location(element));
-      idGenerator.varForExpression(element, getValue.id());
+      ArrayAccessExpressionTree arrayAccessExpressionTree = (ArrayAccessExpressionTree) element;
+      if (isObject(arrayAccessExpressionTree.symbolType())) {
+        Expression.Variable getValue = variableWithId(idGenerator.newId());
+        Expression array = idGenerator.lookupExpressionFor(arrayAccessExpressionTree.expression());
+        blockBuilder.assignTo(getValue, arrayGet(array), location(element));
+        idGenerator.varForExpression(element, getValue.id());
+      }
     }
   }
 
