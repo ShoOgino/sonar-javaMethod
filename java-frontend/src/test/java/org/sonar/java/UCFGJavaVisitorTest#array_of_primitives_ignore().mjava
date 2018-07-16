@@ -1,0 +1,23 @@
+  @Test
+  public void array_of_primitives_ignore() {
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo([I[[III)[B")
+        .addBasicBlock(newBasicBlock("1")
+            .newObject(aux0, "$Array", new LocationInFile(FILE_KEY, 5, 16, 5, 24))
+            .assignTo(aux1, call("A#baz([I[IB)V").withArgs(Expression.THIS, constant("\"\""), constant("\"\""), constant("\"\"")), new LocationInFile(FILE_KEY, 6,4,6,35))
+            .ret(constant("\"\""), new LocationInFile(FILE_KEY, 9, 4, 9, 15)))
+        .build();
+    assertCodeToUCfg("class A { \n" +
+        "  private void baz(int[] a, int[] b, byte c) {}\n" +
+        "  private byte[] foo(int[] input, int[][] multiDim, int i, int j) { \n" +
+        "    byte[] foo = new byte[10];\n" +
+        "    int[] bar = { 1, 2 };\n" + // we cannot tell the type of the new array construct
+        "    baz(multiDim[0], input, foo[0]);\n" +
+        "    foo[bar[0]] = foo[0];\n" +
+        "    foo[j + 1] = (byte) ((input[i] >>> 8) & 0xff);\n" +
+        "    return foo;\n" +
+        "  }\n" +
+        "}", expectedUCFG);
+  }
+
