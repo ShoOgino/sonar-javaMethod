@@ -1,0 +1,20 @@
+  private void onViolationStartElement(StartElement element) {
+    try {
+      TextRange textRange = textRange(element);
+      RuleKey ruleKey = RuleKey.of(PmdSensor.LINTER_KEY, getAttributeValue(element, "rule"));
+      issue = context.newExternalIssue()
+        .forRule(ruleKey)
+        .type(RuleType.CODE_SMELL)
+        .severity(SEVERITIES.get(getAttributeAsInt(element, "priority")))
+        .remediationEffortMinutes(ruleLoader.ruleConstantDebtMinutes(ruleKey.rule()));
+      issueLocation = issue.newLocation()
+        .on(inputFile)
+        .at(textRange);
+      issueMessage = new StringBuilder();
+    } catch (RuntimeException e) {
+      int lineNumber = element.getLocation().getLineNumber();
+      LOG.warn("Can't import issue at line " + lineNumber + " in " + reportFile + ": " + e.getMessage());
+      issue = null;
+    }
+  }
+

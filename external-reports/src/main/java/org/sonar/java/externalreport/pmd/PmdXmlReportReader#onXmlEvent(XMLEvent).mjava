@@ -1,0 +1,27 @@
+  private void onXmlEvent(XMLEvent event) {
+    if (event.isStartElement()) {
+      StartElement element = event.asStartElement();
+      String elementName = element.getName().getLocalPart();
+      if ("file".equals(elementName)) {
+        String filePath = getAttributeValue(element, "name");
+        FilePredicates predicates = context.fileSystem().predicates();
+        inputFile = context.fileSystem().inputFile(predicates.hasPath(filePath));
+        if (inputFile == null) {
+          LOG.warn("No input file found for {}. No PMD issue will be imported on this file.", filePath);
+        }
+      } else if ("violation".equals(elementName) && inputFile != null) {
+        onViolationStartElement(element);
+      }
+
+    } else if (event.isCharacters()) {
+      issueMessage.append(event.asCharacters().getData());
+
+    } else if (event.isEndElement()
+      && "violation".equals(event.asEndElement().getName().getLocalPart())
+      && inputFile != null
+      && issue != null) {
+      issueLocation.message(issueMessage.toString());
+      issue.at(issueLocation).save();
+    }
+  }
+

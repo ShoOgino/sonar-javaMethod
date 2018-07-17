@@ -1,0 +1,13 @@
+  private TextRange textRange(StartElement violationElement) {
+    Integer beginLine = getAttributeAsInt(violationElement, "beginline");
+    try {
+      Integer endLine = getAttributeAsInt(violationElement, "endline");
+      Integer beginColumn = getAttributeAsInt(violationElement, "begincolumn");
+      Integer endColumn = getAttributeAsInt(violationElement, "endcolumn");
+      return inputFile.newRange(beginLine, beginColumn - 1, endLine, endColumn);
+    } catch (RuntimeException e) {
+      // Some PMD rules seem to report invalid line offsets, e.g. TooManyStaticImports
+      return inputFile.selectLine(beginLine);
+    }
+  }
+

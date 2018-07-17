@@ -5,9 +5,8 @@
       .setGoals("org.apache.maven.plugins:maven-checkstyle-plugin:3.0.0:checkstyle", "sonar:sonar");
     orchestrator.executeBuild(build);
 
-    List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = orchestrator.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
+    List<Issue> issues = getExternalIssues("com.sonarsource.it.projects:checkstyle-external-report");
+    if (externalIssuesSupported()) {
       assertThat(issues).hasSize(1);
       Issue issue = issues.get(0);
       assertThat(issue.componentKey()).isEqualTo("com.sonarsource.it.projects:checkstyle-external-report:src/main/java/Main.java");

@@ -1,6 +1,6 @@
-  private List<Issue> getExternalIssues() {
+  private List<Issue> getExternalIssues(String projectKey) {
     IssueClient issueClient = SonarClient.create(orchestrator.getServer().getUrl()).issueClient();
-    return issueClient.find(IssueQuery.create().componentRoots("com.sonarsource.it.projects:checkstyle-external-report")).list().stream()
+    return issueClient.find(IssueQuery.create().componentRoots(projectKey)).list().stream()
       .filter(issue -> issue.ruleKey().startsWith("external_"))
       .collect(Collectors.toList());
   }

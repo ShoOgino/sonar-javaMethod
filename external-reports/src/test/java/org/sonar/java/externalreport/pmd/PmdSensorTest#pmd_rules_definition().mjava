@@ -1,0 +1,23 @@
+  @Test
+  public void pmd_rules_definition() {
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    new ExternalRulesDefinition(PmdSensor.RULE_LOADER).define(context);
+
+    assertThat(context.repositories()).hasSize(1);
+    RulesDefinition.Repository repository = context.repository("external_pmd");
+    assertThat(repository.name()).isEqualTo("PMD");
+    assertThat(repository.language()).isEqualTo("java");
+    assertThat(repository.isExternal()).isEqualTo(true);
+
+    assertThat(repository.rules().size()).isEqualTo(288);
+
+    RulesDefinition.Rule rule = repository.rule("EqualsNull");
+    assertThat(rule).isNotNull();
+    assertThat(rule.name()).isEqualTo("Equals null");
+    assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(rule.htmlDescription())
+      .contains("Tests for null should not use the equals() method. The '==' operator should be used instead.")
+      .contains("<p>See more at <a href=\"https://pmd.github.io/pmd-6.5.0/pmd_rules_java_errorprone.html#equalsnull\">PMD website</a>.</p>");
+    assertThat(rule.tags()).isEmpty();
+  }
+

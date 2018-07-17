@@ -1,0 +1,12 @@
+  @Test
+  public void skip_issue_on_invalid_priority() throws IOException {
+    List<ExternalIssue> externalIssues = execute(SQ72, "invalid-severity.xml");
+    assertThat(externalIssues).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.WARN).get(0))
+      .contains("Can't import issue at line 8")
+      .contains("invalid-severity.xml");
+    assertThat(logTester.logs(LoggerLevel.WARN).get(1))
+      .contains("Can't import issue at line 9")
+      .contains("invalid-severity.xml");
+  }
+

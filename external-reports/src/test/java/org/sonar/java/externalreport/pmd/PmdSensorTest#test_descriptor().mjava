@@ -1,0 +1,11 @@
+  @Test
+  public void test_descriptor() {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.name()).isEqualTo("Import of PMD issues");
+    MapSettings settings = new MapSettings();
+    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isFalse();
+    settings.setProperty(PmdSensor.REPORT_PROPERTY_KEY, "report.xml");
+    assertThat(sensorDescriptor.configurationPredicate().test(settings.asConfig())).isTrue();
+  }
+

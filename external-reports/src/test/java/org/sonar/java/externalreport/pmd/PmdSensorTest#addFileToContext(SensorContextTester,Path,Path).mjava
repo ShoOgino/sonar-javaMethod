@@ -1,0 +1,13 @@
+  private static void addFileToContext(SensorContextTester context, Path projectDir, Path file) {
+    try {
+      context.fileSystem().add(TestInputFileBuilder.create(PROJECT_ID, projectDir.toFile(), file.toFile())
+        .setCharset(UTF_8)
+        .setLanguage(language(file))
+        .setContents(new String(Files.readAllBytes(file), UTF_8))
+        .setType(InputFile.Type.MAIN)
+        .build());
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
