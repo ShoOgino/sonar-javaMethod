@@ -1,0 +1,10 @@
+  @Test
+  public void no_issues_with_invalid_report_path() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-path.txt");
+    assertThat(externalIssues).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+      .startsWith("FileNotFoundException:")
+      .contains("invalid-path.txt (No such file or directory)")
+      .endsWith("invalid-path.txt' can't be read.");
+  }
+

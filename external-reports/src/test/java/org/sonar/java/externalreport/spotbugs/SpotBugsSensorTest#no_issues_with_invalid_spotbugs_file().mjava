@@ -1,0 +1,9 @@
+  @Test
+  public void no_issues_with_invalid_spotbugs_file() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "not-spotbugs-file.xml");
+    assertThat(externalIssues).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+      .startsWith("IOException: Unexpected document root 'html' instead of 'BugCollection'.")
+      .endsWith("not-spotbugs-file.xml' can't be read.");
+  }
+

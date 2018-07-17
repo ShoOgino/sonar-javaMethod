@@ -1,10 +1,10 @@
-  private File generateReport(String fileName) throws IOException {
-    Path filePath = PROJECT_DIR.resolve(fileName);
+  public static File generateReport(Path projectDir, TemporaryFolder tmp, String fileName) throws IOException {
+    Path filePath = projectDir.resolve(fileName);
     if (!filePath.toFile().exists()) {
       return filePath.toFile();
     }
     String reportData = new String(Files.readAllBytes(filePath), UTF_8);
-    reportData = reportData.replace("${PROJECT_DIR}", PROJECT_DIR.toRealPath() + File.separator);
+    reportData = reportData.replace("${PROJECT_DIR}", projectDir.toRealPath() + File.separator);
     File reportFile = tmp.newFile(fileName).getCanonicalFile();
     Files.write(reportFile.toPath(), reportData.getBytes(UTF_8));
     return reportFile;

@@ -1,0 +1,22 @@
+  private void onStartElement(String xpath, StartElement element) {
+    switch (xpath) {
+      case "BugCollection/BugInstance":
+        bugInstanceType = getAttributeValue(element, TYPE_ATTRIBUTE);
+        bugInstanceLongMessage = "";
+        sourceLinePath = "";
+        sourceLineStart = "";
+        break;
+      case "BugCollection/BugInstance/SourceLine":
+        sourceLinePath = getAttributeValue(element, SOURCE_PATH_ATTRIBUTE);
+        sourceLineStart = getAttributeValue(element, START_ATTRIBUTE);
+        break;
+      case "BugCollection/BugInstance/LongMessage":
+      case "BugCollection/Project/SrcDir":
+        textBuilder = new StringBuilder();
+        break;
+      default:
+        // ignore
+        break;
+    }
+  }
+

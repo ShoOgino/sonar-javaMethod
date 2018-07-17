@@ -1,0 +1,23 @@
+  @Test
+  public void issues_when_xml_file_has_errors() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "spotbugsXml-with-errors.xml");
+    assertThat(externalIssues).hasSize(1);
+
+    ExternalIssue first = externalIssues.get(0);
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("spotbugs-project:src/main/java/org/myapp/Main.java");
+    assertThat(first.ruleKey().rule()).isEqualTo("UNKNOWN_RULE");
+    assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.primaryLocation().message()).isEqualTo("Message for unknown rule.");
+    assertThat(first.primaryLocation().textRange()).isNull();
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+      .startsWith("No input file found for '")
+      .endsWith("not-existing-file.java'. No SpotBugs issues will be imported on this file.");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+      "Unexpected empty 'BugCollection/BugInstance/@type'.",
+      "Unexpected empty 'BugCollection/BugInstance/SourceLine/@sourcepath' for bug 'HE_EQUALS_USE_HASHCODE'.",
+      "Unexpected empty 'BugCollection/BugInstance/LongMessage/text()' for bug 'NO_MESSAGE'");
+  }
+

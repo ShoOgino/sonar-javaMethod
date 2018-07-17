@@ -1,0 +1,18 @@
+  @Test
+  public void findsecbugs_issue() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "spotbugsXml-findsecbugs.xml");
+    assertThat(externalIssues).hasSize(1);
+
+    ExternalIssue first = externalIssues.get(0);
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("spotbugs-project:src/main/java/org/myapp/Main.java");
+    assertThat(first.ruleKey().rule()).isEqualTo("RSA_KEY_SIZE");
+    assertThat(first.ruleKey().repository()).isEqualTo("findsecbugs");
+    assertThat(first.type()).isEqualTo(RuleType.VULNERABILITY);
+    assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.remediationEffort().longValue()).isEqualTo(5L);
+    assertThat(first.primaryLocation().message()).isEqualTo("org.myapp.Main defines equals and uses Object.hashCode()");
+    assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(6);
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+  }
+

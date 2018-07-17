@@ -1,0 +1,23 @@
+  private void onEndElement(String xpath) {
+    switch (xpath) {
+      case "BugCollection/BugInstance":
+        consumeBugInstance();
+        break;
+      case "BugCollection/BugInstance/LongMessage":
+        if(textBuilder != null) {
+          bugInstanceLongMessage = textBuilder.toString();
+          textBuilder = null;
+        }
+        break;
+      case "BugCollection/Project/SrcDir":
+        if(textBuilder != null) {
+          sourceDirs.add(textBuilder.toString());
+          textBuilder = null;
+        }
+        break;
+      default:
+        // ignore
+        break;
+    }
+  }
+

@@ -1,24 +1,5 @@
   private static void saveIssue(SensorContext context, InputFile inputFile, String key, String line, String message) {
     RuleKey ruleKey = RuleKey.of(CheckstyleSensor.LINTER_KEY, key);
-    NewExternalIssue newExternalIssue = context.newExternalIssue();
-
-    ExternalRuleLoader ruleLoader = ruleLoader();
-    newExternalIssue
-      .type(ruleLoader.ruleType(ruleKey.rule()))
-      .severity(ruleLoader.ruleSeverity(ruleKey.rule()))
-      .remediationEffortMinutes(ruleLoader.ruleConstantDebtMinutes(ruleKey.rule()));
-
-    NewIssueLocation primaryLocation = newExternalIssue.newLocation()
-      .message(message)
-      .on(inputFile);
-
-    if (!line.isEmpty() && !line.equals("0")) {
-      primaryLocation.at(inputFile.selectLine(Integer.parseInt(line)));
-    }
-
-    newExternalIssue
-      .at(primaryLocation)
-      .forRule(ruleKey)
-      .save();
+    ExternalIssueUtils.saveIssue(context, ruleLoader(), inputFile, ruleKey, line, message);
   }
 

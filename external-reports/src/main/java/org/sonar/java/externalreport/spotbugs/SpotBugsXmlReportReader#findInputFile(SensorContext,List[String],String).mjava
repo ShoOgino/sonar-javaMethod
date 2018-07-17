@@ -1,0 +1,13 @@
+  private static InputFile findInputFile(SensorContext context, List<String> sourceDirs, String relativeLinuxPath) {
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = null;
+    for (String sourceDir : sourceDirs) {
+      File sourceFile = new File(sourceDir, relativeLinuxPath);
+      inputFile = context.fileSystem().inputFile(predicates.hasPath(sourceFile.toString()));
+      if (inputFile != null) {
+        break;
+      }
+    }
+    return inputFile;
+  }
+

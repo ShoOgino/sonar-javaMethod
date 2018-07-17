@@ -1,0 +1,18 @@
+  @Test
+  public void issues_with_sonarqube_72() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "spotbugsXml.xml");
+    assertThat(externalIssues).hasSize(1);
+
+    ExternalIssue first = externalIssues.get(0);
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("spotbugs-project:src/main/java/org/myapp/Main.java");
+    assertThat(first.ruleKey().rule()).isEqualTo("HE_EQUALS_USE_HASHCODE");
+    assertThat(first.ruleKey().repository()).isEqualTo("spotbugs");
+    assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.remediationEffort().longValue()).isEqualTo(60L);
+    assertThat(first.primaryLocation().message()).isEqualTo("org.myapp.Main defines equals and uses Object.hashCode()");
+    assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(6);
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+  }
+

@@ -1,0 +1,34 @@
+  private void consumeBugInstance() {
+    if (sourceDirs.isEmpty()) {
+      LOG.debug("Unexpected missing 'BugCollection/Project/SrcDir/text()'.");
+      return;
+    }
+    if (bugInstanceType.isEmpty()) {
+      LOG.debug("Unexpected empty 'BugCollection/BugInstance/@type'.");
+      return;
+    }
+    if (sourceLinePath.isEmpty()) {
+      LOG.debug("Unexpected empty 'BugCollection/BugInstance/SourceLine/@sourcepath' for bug '{}'.", bugInstanceType);
+      return;
+    }
+    if (bugInstanceLongMessage.isEmpty()) {
+      LOG.debug("Unexpected empty 'BugCollection/BugInstance/LongMessage/text()' for bug '{}'", bugInstanceType);
+      return;
+    }
+    InputFile inputFile = findInputFile(context, sourceDirs, sourceLinePath);
+    if (inputFile == null) {
+      LOG.warn("No input file found for '{}'. No SpotBugs issues will be imported on this file.", sourceLinePath);
+      return;
+    }
+
+    RuleKey ruleKey = RuleKey.of(SpotBugsSensor.SPOTBUGS_KEY, bugInstanceType);
+    ExternalRuleLoader ruleLoader = defaultRuleLoader;
+    for (Map.Entry<String, ExternalRuleLoader> otherLoader : otherLoaders.entrySet()) {
+      if (otherLoader.getValue().ruleKeys().contains(ruleKey.rule())) {
+        ruleLoader = otherLoader.getValue();
+        ruleKey = RuleKey.of(otherLoader.getKey(), bugInstanceType);
+      }
+    }
+    ExternalIssueUtils.saveIssue(context, ruleLoader, inputFile, ruleKey, sourceLineStart, bugInstanceLongMessage);
+  }
+
