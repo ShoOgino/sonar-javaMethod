@@ -1,12 +1,8 @@
     public Expression lookupExpressionFor(@Nullable Tree tree) {
       String id = lookupIdFor(tree);
       if (isConst(id)) {
-        if (tree != null) {
-          if (tree.is(Tree.Kind.STRING_LITERAL)) {
-            return constant(LiteralUtils.trimQuotes(((LiteralTree) tree).value()));
-          } else if (tree.is(IDENTIFIER) && ((IdentifierTree) tree).name().equals("this")) {
-            return Expression.THIS;
-          }
+        if (tree != null && tree.is(Tree.Kind.STRING_LITERAL)) {
+          return constant(LiteralUtils.trimQuotes(((LiteralTree) tree).value()));
         }
         return constant(id);
       }

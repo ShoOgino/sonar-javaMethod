@@ -1,21 +1,12 @@
   @Test
   public void constructors_should_have_a_ucfg() {
-    UCFG ucfg = createUCFG("class A { Object foo(String s) {new A(s); new Object(); new Unknown(\"\"); return new String();} A(String s) {} }")
-        .get("A#foo(Ljava/lang/String;)Ljava/lang/Object;");
+    UCFG ucfg = createUCFG("class A { Object foo(String s) {new A(s); new Object(); new Unknown(\"\"); return new String();} A(String s) {} }");
     assertThat(ucfg.methodId()).isEqualTo("A#foo(Ljava/lang/String;)Ljava/lang/Object;");
-    List<Instruction> calls = ucfg.entryBlocks().iterator().next().instructions();
-    assertThat(calls).hasSize(6);
-    Instruction.NewObject newInstance0 = (Instruction.NewObject)calls.get(0);
-    Instruction.AssignCall newInstanceAssignCall0 = (Instruction.AssignCall)calls.get(1);
-    assertThat(newInstance0.instanceType()).isEqualTo("A");
-    assertThat(newInstanceAssignCall0.getMethodId()).isEqualTo("A#<init>(Ljava/lang/String;)V");
-    Instruction.NewObject newInstance1 = (Instruction.NewObject)calls.get(2);
-    Instruction.AssignCall newInstanceAssignCall1 = (Instruction.AssignCall)calls.get(3);
-    assertThat(newInstance1.instanceType()).isEqualTo("java.lang.Object");
-    assertThat(newInstanceAssignCall1.getMethodId()).isEqualTo("java.lang.Object#<init>()V");
-    Instruction.NewObject newInstance2 = (Instruction.NewObject)calls.get(4);
-    Instruction.AssignCall newInstanceAssignCall2 = (Instruction.AssignCall)calls.get(5);
-    assertThat(newInstance2.instanceType()).isEqualTo("java.lang.String");
-    assertThat(newInstanceAssignCall2.getMethodId()).isEqualTo("java.lang.String#<init>()V");
+    List<Instruction.AssignCall> calls = ucfg.entryBlocks().iterator().next().calls();
+    assertThat(calls).hasSize(2);
+    Instruction.AssignCall assignCall0 = calls.get(0);
+    assertThat(assignCall0.getMethodId()).isEqualTo("A#<init>(Ljava/lang/String;)V");
+    Instruction.AssignCall assignCall1 = calls.get(1);
+    assertThat(assignCall1.getMethodId()).isEqualTo("java.lang.String#<init>()V");
   }
 

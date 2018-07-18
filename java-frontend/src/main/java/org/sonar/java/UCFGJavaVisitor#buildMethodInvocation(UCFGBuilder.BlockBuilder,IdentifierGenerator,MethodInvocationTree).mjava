@@ -3,16 +3,21 @@
       return;
     }
 
-    List<Expression> arguments = new ArrayList<>();
-    if (tree.symbol().isStatic()) {
-      arguments.add(new Expression.ClassName(tree.symbol().type().fullyQualifiedName()));
-    } else if (tree.methodSelect().is(MEMBER_SELECT)) {
-      arguments.add(idGenerator.lookupExpressionFor(((MemberSelectExpressionTree) tree.methodSelect()).expression()));
-    } else if (tree.methodSelect().is(IDENTIFIER)) {
-      arguments.add(Expression.THIS);
-    }
-    arguments.addAll(argumentIds(idGenerator, tree.arguments()));
+    List<Expression> arguments = null;
 
-    buildAssignCall(blockBuilder, idGenerator, arguments, tree, (Symbol.MethodSymbol) tree.symbol());
+    if (isString(tree.symbol().owner().type())) {
+      // myStr.myMethod(args) -> myMethod(myStr, args)
+      arguments = new ArrayList<>();
+      if (tree.methodSelect().is(MEMBER_SELECT)) {
+        arguments.add(idGenerator.lookupExpressionFor(((MemberSelectExpressionTree) tree.methodSelect()).expression()));
+      }
+      arguments.addAll(argumentIds(idGenerator, tree.arguments()));
+    } else if (isString(tree.symbolType()) || tree.arguments().stream().map(ExpressionTree::symbolType).anyMatch(UCFGJavaVisitor::isString)) {
+      arguments = argumentIds(idGenerator, tree.arguments());
+    }
+
+    if (arguments != null) {
+      buildAssignCall(blockBuilder, idGenerator, arguments, tree, (Symbol.MethodSymbol) tree.symbol());
+    }
   }
 

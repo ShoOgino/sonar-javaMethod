@@ -1,4 +1,9 @@
     public String newIdFor(@Nullable Tree tree) {
-      return temps.computeIfAbsent(tree, t -> newId());
+      String id = lookupIdFor(tree);
+      if (isConst(id)) {
+        return temps.computeIfAbsent(tree, t -> newId());
+      } else {
+        return id;
+      }
     }
 

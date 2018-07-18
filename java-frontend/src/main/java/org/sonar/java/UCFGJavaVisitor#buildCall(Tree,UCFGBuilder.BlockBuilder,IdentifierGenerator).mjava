@@ -1,11 +1,12 @@
   private void buildCall(Tree element, UCFGBuilder.BlockBuilder blockBuilder, IdentifierGenerator idGenerator) {
-    if (isObjectVarDeclaration(element)) {
+    if (isStringVarDecl(element)) {
       VariableTree variableTree = (VariableTree) element;
 
       String lhs = idGenerator.lookupIdFor(variableTree.simpleName());
       if (!idGenerator.isConst(lhs)) {
-        Expression source = idGenerator.lookupExpressionFor(variableTree.initializer());
-        blockBuilder.assignTo(variableWithId(lhs), UCFGBuilder.call("__id").withArgs(source), location(element));
+        ExpressionTree initializer = variableTree.initializer();
+        String source = idGenerator.lookupIdFor(initializer);
+        blockBuilder.assignTo(variableWithId(lhs), UCFGBuilder.call("__id").withArgs(variableWithId(source)), location(element));
       }
       return;
     }
@@ -16,26 +17,26 @@
     } else if (element.is(NEW_CLASS)) {
       NewClassTree newClassTree = (NewClassTree) element;
       buildConstructorInvocation(blockBuilder, idGenerator, newClassTree);
-    } else if (element.is(NEW_ARRAY)) {
-      NewArrayTree newArrayTree = (NewArrayTree) element;
-      buildNewArrayInvocation(blockBuilder, idGenerator, newArrayTree);
-    } else if (element.is(PLUS)) {
-      BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) element;
-      buildConcatenationInvocation(blockBuilder, idGenerator, binaryExpressionTree);
-    } else if (element.is(ASSIGNMENT)) {
-      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
-      buildAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
-    } else if (element.is(PLUS_ASSIGNMENT)) {
-      AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
-      buildPlusAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
-    } else if (element.is(ARRAY_ACCESS_EXPRESSION) && !element.parent().is(PLUS_ASSIGNMENT, ASSIGNMENT)) {
-      // PLUS_ASSIGNMENT and ASSIGNMENT might imply an array set, otherwise an array access is always a get
-      ArrayAccessExpressionTree arrayAccessExpressionTree = (ArrayAccessExpressionTree) element;
-      if (isObject(arrayAccessExpressionTree.symbolType())) {
-        Expression.Variable getValue = variableWithId(idGenerator.newId());
-        Expression array = idGenerator.lookupExpressionFor(arrayAccessExpressionTree.expression());
-        blockBuilder.assignTo(getValue, arrayGet(array), location(element));
-        idGenerator.varForExpression(element, getValue.id());
+    } else if (element.is(PLUS, PLUS_ASSIGNMENT, ASSIGNMENT) && isString(((ExpressionTree) element).symbolType())) {
+      if (element.is(PLUS)) {
+        BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) element;
+        Expression lhs = idGenerator.lookupExpressionFor(binaryExpressionTree.leftOperand());
+        Expression rhs = idGenerator.lookupExpressionFor(binaryExpressionTree.rightOperand());
+        Expression.Variable var = variableWithId(idGenerator.newIdFor(binaryExpressionTree));
+        blockBuilder.assignTo(var, call("__concat").withArgs(lhs, rhs), location(element));
+      } else if (element.is(PLUS_ASSIGNMENT)) {
+        Expression var = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).variable());
+        Expression expr = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).expression());
+        if (!var.isConstant()) {
+          idGenerator.varForExpression(element, ((Expression.Variable) var).id());
+          blockBuilder.assignTo((Expression.Variable) var, call("__concat").withArgs(var, expr), location(element));
+        }
+      } else if (element.is(ASSIGNMENT)) {
+        Expression var = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).variable());
+        Expression expr = idGenerator.lookupExpressionFor(((AssignmentExpressionTree) element).expression());
+        if (!var.isConstant()) {
+          blockBuilder.assignTo((Expression.Variable) var, call("__id").withArgs(expr), location(element));
+        }
       }
     }
   }

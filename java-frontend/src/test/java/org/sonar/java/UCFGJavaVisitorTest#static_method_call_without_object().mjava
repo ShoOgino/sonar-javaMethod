@@ -1,11 +1,11 @@
   @Test
   public void static_method_call_without_object() {
-    Expression.Variable arg = variableWithId("arg");
-    Expression.Variable var0 = variableWithId("%0");
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+    Expression.Variable var0 = UCFGBuilder.variableWithId("%0");
     UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Integer;)I").addMethodParam(arg)
       .addStartingBlock(
         newBasicBlock("1")
-          .assignTo(var0, call("java.lang.String#valueOf(Ljava/lang/Object;)Ljava/lang/String;").withArgs(new Expression.ClassName("java.lang.String"), arg),
+          .assignTo(var0, call("java.lang.String#valueOf(Ljava/lang/Object;)Ljava/lang/String;").withArgs(arg),
             new LocationInFile(FILE_KEY, 4,11,4,23))
         .ret(constant("\"\""), new LocationInFile(FILE_KEY, 4,4,4,24)))
       .build();

@@ -1,0 +1,11 @@
+  @Test
+  public void ignore_parameter_annotations_for_non_string() {
+    Expression.Variable arg = UCFGBuilder.variableWithId("arg");
+
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/Integer;)Ljava/lang/String;").addMethodParam(arg)
+      .addBasicBlock(newBasicBlock("1")
+        .ret(constant("foo"), new LocationInFile(FILE_KEY, 1, 66, 1, 79)))
+      .build();
+    assertCodeToUCfg("class A { String method(@javax.annotation.Nullable Integer arg) { return \"foo\";}}", expectedUCFG);
+  }
+
