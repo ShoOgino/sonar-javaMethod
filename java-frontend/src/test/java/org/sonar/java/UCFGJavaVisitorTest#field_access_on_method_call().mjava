@@ -1,0 +1,17 @@
+  @Test
+  public void field_access_on_method_call() {
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo()Ljava/lang/String;")
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("A#getA()LA;").withArgs(Expression.THIS), new LocationInFile(FILE_KEY, 4,24,4,30))
+            .assignTo(aux1, call("__id").withArgs(new Expression.FieldAccess(aux0, variableWithId("field"))), new LocationInFile(FILE_KEY, 4,24,4,36))
+            .ret(aux1, new LocationInFile(FILE_KEY, 4,17,4,37)))
+        .build();
+    assertCodeToUCfg("class A {\n" +
+        "  String field;\n" +
+        "  A getA() { return new A(); }\n" +
+        "  String foo() { return getA().field; }\n" +
+        "}\n", expectedUCFG);
+  }
+

@@ -13,8 +13,8 @@
     Expression.Variable aux9 = variableWithId("%9");
     UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(ZBCS)Ljava/lang/String;")
         .addBasicBlock(newBasicBlock("1")
-            .assignTo(aux0, call("java.io.PrintStream#print(I)V").withArgs(constant("\"\""), constant("\"\"")), new LocationInFile(FILE_KEY, 7,4,7,26))
-            .assignTo(aux1, call("java.io.PrintStream#print(Z)V").withArgs(constant("\"\""), constant("\"\"")), new LocationInFile(FILE_KEY, 8,4,8,26))
+            .assignTo(aux0, call("A#foo(I)V").withArgs(Expression.THIS, constant("\"\"")), new LocationInFile(FILE_KEY, 7,4,7,13))
+            .assignTo(aux1, call("A#bar(Z)V").withArgs(Expression.THIS, constant("\"\"")), new LocationInFile(FILE_KEY, 8,4,8,13))
             .assignTo(aux2, call("__concat").withArgs(constant(""), constant("\"\"")), new LocationInFile(FILE_KEY, 9,15,9,24))
             .assignTo(aux3, call("__concat").withArgs(aux2, constant("\"\"")), new LocationInFile(FILE_KEY, 9,15,9,31))
             .assignTo(aux4, call("__concat").withArgs(aux3, constant("\"\"")), new LocationInFile(FILE_KEY, 9,15,9,38))
@@ -32,11 +32,13 @@
         "    long var6 = 12L;\n" +
         "    float var7 = 1.0;\n" +
         "    double var8 = 1.0;\n" +
-        "    System.out.print(var5);\n" +
-        "    System.out.print(arg1);\n" +
+        "    foo(var5);\n" +
+        "    bar(arg1);\n" +
         "    String s = \"\" + var5 + var6 + var7 + var8;\n" +
         "    return s + arg1 + arg2 + arg3 + arg4;\n" +
         "  }\n" +
+        "  void foo(int i) {}\n" +
+        "  void bar(boolean b) {}\n" +
         "}", expectedUCFG);
   }
 

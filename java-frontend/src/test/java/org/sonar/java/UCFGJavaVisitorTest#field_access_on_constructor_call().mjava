@@ -1,0 +1,20 @@
+  @Test
+  public void field_access_on_constructor_call() {
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    Expression.Variable aux2 = variableWithId("%2");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#bar()Ljava/lang/String;")
+        .addBasicBlock(newBasicBlock("1")
+            .newObject(aux0, "A", new LocationInFile(FILE_KEY, 5, 29, 5, 30))
+            .assignTo(aux1, call("A#<init>()V").withArgs(aux0), new LocationInFile(FILE_KEY, 5,25,5,32))
+            .assignTo(aux2, call("__id").withArgs(new Expression.FieldAccess(aux0, variableWithId("field"))), new LocationInFile(FILE_KEY, 5,24,5,39))
+            .ret(aux2, new LocationInFile(FILE_KEY, 5,17,5,40)))
+        .build();
+    assertCodeToUCfg("class A {\n" +
+        "  String field;\n" +
+        "  A getA() { return new A(); }\n" +
+        "  \n" +
+        "  String bar() { return (new A()).field; }\n" +
+        "}\n", expectedUCFG);
+  }
+

@@ -5,13 +5,16 @@
     ExpressionTree lhsTree = tree.variable();
     ExpressionTree rhsTree = tree.expression();
     Expression rightSide = lookupExpression(blockBuilder, idGenerator, rhsTree);
-    if (lhsTree.is(ARRAY_ACCESS_EXPRESSION)) {
+    Optional<Expression.FieldAccess> leftFieldAccess = buildFieldAccess(idGenerator, lhsTree);
+    if (leftFieldAccess.isPresent()) {
+      blockBuilder.assignTo(leftFieldAccess.get(), call("__id").withArgs(rightSide), location(tree));
+    } else if (lhsTree.is(ARRAY_ACCESS_EXPRESSION)) {
       Expression leftSide = idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree)lhsTree).expression());
       // when an assignment implies both get and set on arrays, the get must be stored in an auxiliary local variable
       blockBuilder.assignTo(variableWithId(idGenerator.newId()), arraySet(leftSide, rightSide), location(tree));
     } else {
       Expression leftSide = idGenerator.lookupExpressionFor(lhsTree);
-      if (leftSide instanceof  Expression.Variable) {
+      if (leftSide.isVariable()) {
         blockBuilder.assignTo((Expression.Variable) leftSide, call("__id").withArgs(rightSide), location(tree));
       }
     }

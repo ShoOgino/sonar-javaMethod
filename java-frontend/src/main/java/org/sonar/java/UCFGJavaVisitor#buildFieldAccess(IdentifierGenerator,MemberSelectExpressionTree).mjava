@@ -1,0 +1,24 @@
+  private static Optional<Expression.FieldAccess> buildFieldAccess(IdentifierGenerator idGenerator, MemberSelectExpressionTree memberSelectTree) {
+    ExpressionTree lhsTree = memberSelectTree.expression();
+    Symbol rhsTreeSymbol = memberSelectTree.identifier().symbol();
+    if (!rhsTreeSymbol.isVariableSymbol()) {
+      return Optional.empty();
+    }
+    Expression.Variable rightSide = variableWithId(rhsTreeSymbol.name());
+    if (!rhsTreeSymbol.isStatic()) {
+      Expression leftSide = idGenerator.lookupExpressionFor(lhsTree);
+      if (leftSide.equals(Expression.THIS)) {
+        return Optional.of(new Expression.FieldAccess(rightSide));
+      } else if (leftSide.isVariable()) {
+        return  Optional.of(new Expression.FieldAccess((Expression.Variable) leftSide, rightSide));
+      }
+    }
+    if (lhsTree.is(IDENTIFIER)) {
+      IdentifierTree lhsIdentifierTree = (IdentifierTree) lhsTree;
+      return Optional.of(new Expression.FieldAccess(
+        new Expression.ClassName(lhsIdentifierTree.symbol().type().fullyQualifiedName()),
+        rightSide));
+    }
+    return Optional.empty();
+  }
+

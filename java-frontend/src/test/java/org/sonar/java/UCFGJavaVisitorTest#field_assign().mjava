@@ -1,9 +1,10 @@
   @Test
-  public void assign_to_field() {
-    // fields are ignored (will change with SONARSEC-121)
+  public void field_assign() {
     Expression.Variable arg = variableWithId("arg");
     UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(Ljava/lang/String;)Ljava/lang/String;").addMethodParam(arg)
-      .addBasicBlock(newBasicBlock("1").ret(arg, new LocationInFile(FILE_KEY, 1,69,1,80)))
+      .addBasicBlock(newBasicBlock("1")
+          .assignTo(new Expression.FieldAccess(variableWithId("field")), call("__id").withArgs(arg), new LocationInFile(FILE_KEY, 1,51,1,67))
+          .ret(arg, new LocationInFile(FILE_KEY, 1,69,1,80)))
       .build();
     assertCodeToUCfg("class A { String field; String method(String arg) {this.field = arg; return arg;}}", expectedUCFG);
   }

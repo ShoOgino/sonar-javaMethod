@@ -1,0 +1,26 @@
+  @Test
+  public void method_call_chain_with_field_access() {
+    Expression.Variable arg = variableWithId("arg");
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    Expression.Variable aux2 = variableWithId("%2");
+    Expression.Variable aux3 = variableWithId("%3");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#bar()LA;").addMethodParam(arg)
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("A#foo()LA;").withArgs(Expression.THIS), new LocationInFile(FILE_KEY, 4,11,4,16))
+            .assignTo(aux1, call("A#foo()LA;").withArgs(aux0), new LocationInFile(FILE_KEY, 4,11,4,22))
+            .assignTo(aux2,
+                call("__id").withArgs(new Expression.FieldAccess(aux1, variableWithId("field"))),
+                new LocationInFile(FILE_KEY, 4,11,4,28))
+            .assignTo(aux3, call("A#foo()LA;").withArgs(aux2), new LocationInFile(FILE_KEY, 4,11,4,34))
+            .ret(aux3, new LocationInFile(FILE_KEY, 4,4,4,35)))
+        .build();
+    assertCodeToUCfg("class A {\n" +
+        "  A foo() { A a = new A(); a.field = new A(); return a; } \n" +
+        "  A bar() {\n" +
+        "    return foo().foo().field.foo();\n" +
+        "  }\n" +
+        "  A field;\n" +
+        "}\n", expectedUCFG);
+  }
+

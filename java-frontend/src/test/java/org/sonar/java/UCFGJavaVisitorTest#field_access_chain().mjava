@@ -1,0 +1,46 @@
+  @Test
+  public void field_access_chain() {
+    Expression.Variable a = variableWithId("a");
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    Expression.Variable aux2 = variableWithId("%2");
+    Expression.Variable aux3 = variableWithId("%3");
+    Expression.Variable aux4 = variableWithId("%4");
+    Expression.Variable aux5 = variableWithId("%5");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#method(LA;)LA;")
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0,
+                call("__id").withArgs(new Expression.FieldAccess(variableWithId("foo"))),
+                new LocationInFile(FILE_KEY, 7,5,7,8))
+            .assignTo(aux1,
+                call("__id").withArgs(new Expression.FieldAccess(aux0, variableWithId("foo"))),
+                new LocationInFile(FILE_KEY, 7,5,7,12))
+            .assignTo(aux2,
+                call("__id").withArgs(new Expression.FieldAccess(aux1, variableWithId("bar"))),
+                new LocationInFile(FILE_KEY, 7,5,7,16))
+            .assignTo(aux3,
+                call("__arrayGet").withArgs(aux2),
+                new LocationInFile(FILE_KEY, 7,5,7,19))
+            .assignTo(aux4,
+                call("__id").withArgs(new Expression.FieldAccess(a, variableWithId("foo"))),
+                new LocationInFile(FILE_KEY, 7,28,7,33))
+            .assignTo(aux5,
+                call("__id").withArgs(new Expression.FieldAccess(aux4, variableWithId("baw"))),
+                new LocationInFile(FILE_KEY, 7,27,7,38))
+            .assignTo(new Expression.FieldAccess(aux3, variableWithId("baz")),
+                call("__id").withArgs(aux5),
+                new LocationInFile(FILE_KEY, 7,4,7,38))
+            .ret(a, new LocationInFile(FILE_KEY, 8,4,8,13)))
+        .build();
+    assertCodeToUCfg("class A {\n" +
+        "  A foo;\n" +
+        "  A[] bar;\n" +
+        "  String baz;\n" +
+        "  String baw;\n" +
+        "  A method(A a) {\n" +
+        "    (foo.foo.bar[0]).baz = (a.foo).baw;\n" +
+        "    return a;\n" +
+        "  }\n" +
+        "}\n", expectedUCFG);
+  }
+

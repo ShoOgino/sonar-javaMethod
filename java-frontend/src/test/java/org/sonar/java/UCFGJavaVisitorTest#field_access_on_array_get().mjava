@@ -1,0 +1,18 @@
+  @Test
+  public void field_access_on_array_get() {
+    Expression.Variable aux0 = variableWithId("%0");
+    Expression.Variable aux1 = variableWithId("%1");
+    Expression.Variable array = variableWithId("array");
+    UCFG expectedUCFG = UCFGBuilder.createUCFGForMethod("A#foo([LA;)Ljava/lang/String;")
+        .addBasicBlock(newBasicBlock("1")
+            .assignTo(aux0, call("__arrayGet").withArgs(array), new LocationInFile(FILE_KEY, 4,33,4,41))
+            .assignTo(aux1, call("__id").withArgs(new Expression.FieldAccess(aux0, variableWithId("field"))), new LocationInFile(FILE_KEY, 4,33,4,47))
+            .ret(aux1, new LocationInFile(FILE_KEY, 4,26,4,48)))
+        .build();
+    assertCodeToUCfg("class A {\n" +
+        "  String field;\n" +
+        "  A getA() { return new A(); }\n" +
+        "  String foo(A[] array) { return array[0].field; }\n" +
+        "}\n", expectedUCFG);
+  }
+

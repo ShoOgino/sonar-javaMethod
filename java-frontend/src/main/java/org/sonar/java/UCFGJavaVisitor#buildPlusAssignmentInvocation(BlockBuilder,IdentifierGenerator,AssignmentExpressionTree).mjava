@@ -4,20 +4,23 @@
     }
     ExpressionTree lhsTree = tree.variable();
     ExpressionTree rhsTree = tree.expression();
-    // '+=' is the only expression which can imply two gets and one set on an array
+    // '+=' is the only expression which can imply two reads and one write on an array / field
     Expression leftSide = lookupExpression(blockBuilder, idGenerator, lhsTree);
     Expression rightSide = lookupExpression(blockBuilder, idGenerator, rhsTree);
-    if (leftSide instanceof Expression.Variable) {
-      if (lhsTree.is(ARRAY_ACCESS_EXPRESSION)) {
-        Expression.Variable concatAux = variableWithId(idGenerator.newId());
-        blockBuilder.assignTo(concatAux, concat(leftSide, rightSide), location(tree));
-        blockBuilder.assignTo(variableWithId(idGenerator.newId()),
-            arraySet(idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree)lhsTree).expression()), concatAux),
-            location(tree));
-      } else {
-        idGenerator.varForExpression(tree, ((Expression.Variable) leftSide).id());
-        blockBuilder.assignTo((Expression.Variable) leftSide, concat(leftSide, rightSide), location(tree));
-      }
+    Optional<Expression.FieldAccess> leftFieldAccess = buildFieldAccess(idGenerator, lhsTree);
+    if (leftFieldAccess.isPresent()) {
+      Expression.Variable concatAux = variableWithId(idGenerator.newId());
+      blockBuilder.assignTo(concatAux, concat(leftSide, rightSide), location(tree));
+      blockBuilder.assignTo(leftFieldAccess.get(), call("__id").withArgs(concatAux), location(tree));
+    } else if (lhsTree.is(ARRAY_ACCESS_EXPRESSION)) {
+      Expression.Variable concatAux = variableWithId(idGenerator.newId());
+      blockBuilder.assignTo(concatAux, concat(leftSide, rightSide), location(tree));
+      blockBuilder.assignTo(variableWithId(idGenerator.newId()),
+          arraySet(idGenerator.lookupExpressionFor(((ArrayAccessExpressionTree) lhsTree).expression()), concatAux),
+          location(tree));
+    } else if (leftSide.isVariable()) {
+      idGenerator.varForExpression(tree, ((Expression.Variable) leftSide).id());
+      blockBuilder.assignTo((Expression.Variable) leftSide, concat(leftSide, rightSide), location(tree));
     }
   }
 

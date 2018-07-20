@@ -28,6 +28,8 @@
     } else if (element.is(PLUS_ASSIGNMENT)) {
       AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) element;
       buildPlusAssignmentInvocation(blockBuilder, idGenerator, assignmentExpressionTree);
+    } else if (element.is(IDENTIFIER, MEMBER_SELECT) && !element.parent().is(PLUS_ASSIGNMENT, ASSIGNMENT)) {
+      buildFieldReadAccessInvocation(blockBuilder, idGenerator, element);
     } else if (element.is(ARRAY_ACCESS_EXPRESSION) && !element.parent().is(PLUS_ASSIGNMENT, ASSIGNMENT)) {
       // PLUS_ASSIGNMENT and ASSIGNMENT might imply an array set, otherwise an array access is always a get
       ArrayAccessExpressionTree arrayAccessExpressionTree = (ArrayAccessExpressionTree) element;

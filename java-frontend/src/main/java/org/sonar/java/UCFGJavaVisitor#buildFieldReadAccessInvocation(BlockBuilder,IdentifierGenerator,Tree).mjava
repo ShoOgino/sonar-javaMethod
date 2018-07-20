@@ -1,0 +1,12 @@
+  /**
+   * Field access can be a read or a write access, depending on the context.
+   * This method should be called for field read access.
+   */
+  private void buildFieldReadAccessInvocation(BlockBuilder blockBuilder, IdentifierGenerator idGenerator, Tree tree) {
+    buildFieldAccess(idGenerator, tree).ifPresent(fieldAccess -> {
+      Expression.Variable aux = variableWithId(idGenerator.newId());
+      blockBuilder.assignTo(aux, call("__id").withArgs(fieldAccess), location(tree));
+      idGenerator.varForExpression(tree, aux.id());
+    });
+  }
+
