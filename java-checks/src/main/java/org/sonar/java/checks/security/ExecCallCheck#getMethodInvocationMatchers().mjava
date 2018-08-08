@@ -1,0 +1,11 @@
+  @Override
+  protected List<MethodMatcher> getMethodInvocationMatchers() {
+    return ImmutableList.of(
+      MethodMatcher.create().typeDefinition("java.lang.Runtime").name("exec").withAnyParameters(),
+      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.exec.Executor")).name("execute").withAnyParameters(),
+      MethodMatcher.create().typeDefinition(PROCESS_BUILDER).name("command").withAnyParameters(),
+      // constructor
+      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(PROCESS_BUILDER)).name("<init>").withAnyParameters()
+    );
+  }
+
