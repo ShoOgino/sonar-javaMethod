@@ -1,0 +1,14 @@
+  private static boolean assignedToLocalVariablesNotInConstructorOrStaticMain(Tree tree) {
+    Tree parent = tree.parent();
+    if (parent.is(Kind.ASSIGNMENT)) {
+      return isLocalVariableNotInConstructorOrStaticMain(((AssignmentExpressionTree) parent).variable()) &&
+        assignedToLocalVariablesNotInConstructorOrStaticMain(parent);
+    } else if (parent.is(Kind.VARIABLE)) {
+      return isLocalVariableNotInConstructorOrStaticMain(((VariableTree) parent).simpleName());
+    } else if (parent.is(Kind.PARENTHESIZED_EXPRESSION)) {
+      return assignedToLocalVariablesNotInConstructorOrStaticMain(parent);
+    } else {
+      return parent.is(Kind.EXPRESSION_STATEMENT);
+    }
+  }
+

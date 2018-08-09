@@ -1,0 +1,9 @@
+  private static boolean isLocalVariableNotInConstructorOrStaticMain(ExpressionTree expression) {
+    if (expression.is(Kind.IDENTIFIER)) {
+      Symbol symbol = ((IdentifierTree) expression).symbol().owner();
+      return symbol.isMethodSymbol() &&
+        !("<init>".equals(symbol.name()) || ("main".equals(symbol.name()) && symbol.isStatic()));
+    }
+    return false;
+  }
+
