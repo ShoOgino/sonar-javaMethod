@@ -1,0 +1,13 @@
+  private static List<JavaFileScannerContext.Location> getSetters(Symbol owner) {
+    if (!owner.isTypeSymbol()) {
+      return Collections.emptyList();
+    }
+    return ((Symbol.TypeSymbol) owner).memberSymbols().stream()
+      .filter(Symbol::isMethodSymbol)
+      .filter(s -> s.name().startsWith("set"))
+      .filter(s -> ((Symbol.MethodSymbol) s).parameterTypes().size() == 1)
+      .map(Symbol::declaration)
+      .map(mt -> new JavaFileScannerContext.Location("", mt))
+      .collect(Collectors.toList());
+  }
+
