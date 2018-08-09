@@ -18,8 +18,8 @@
     Cookie cookie3 = new Cookie("name", "value"); // Noncompliant {{Make sure creating this cookie without the "secure" flag is safe here.}}
     cookie3.setSecure(false);
 
-    Cookie cookie5 = new Cookie("name", "value");
-    cookie5.setSecure(FALSE_CONSTANT); // FN
+    Cookie cookie5 = new Cookie("name", "value"); // Noncompliant
+    cookie5.setSecure(FALSE_CONSTANT);
 
     Cookie c6 = new Cookie("name", "value");
     if (param) {
@@ -29,9 +29,9 @@
       c6.setSecure(true);
     }
 
-    Cookie c7 = new Cookie("name", "value");
+    Cookie c7 = new Cookie("name", "value"); // Noncompliant
     boolean b = false;
-    c7.setSecure(b); // FN
+    c7.setSecure(b);
 
     Cookie c8 = new Cookie("name", "value");
     c8.setSecure(param);
@@ -44,6 +44,10 @@
 
     Object c12;  // Noncompliant [[sc=12;ec=15]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
     c12 = new Cookie("name", "value");
+
+    Cookie c13 = new Cookie("name", "value");
+    boolean value = false;
+    c13.setSecure(!value);
 
     return new Cookie("name", "value"); // Noncompliant
   }
