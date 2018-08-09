@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if(!hasSemantic()) {
+      return;
+    }
+    MethodTree methodTree = (MethodTree) tree;
+    if (methodTree.symbol().owner().type().isSubtypeOf("org.apache.struts.action.Action") && STRUTS_METHOD.anyMatch(methodTree)) {
+      List<IdentifierTree> actionMappingUsages = methodTree.parameters().get(1).symbol().usages();
+      if (!actionMappingUsages.isEmpty()) {
+        reportIssue(methodTree.simpleName(), "Make sure that the ActionForm is used safely here.",
+          actionMappingUsages.stream().map(idTree -> new JavaFileScannerContext.Location("", idTree)).collect(Collectors.toList()), null);
+      }
+    }
+  }
+
