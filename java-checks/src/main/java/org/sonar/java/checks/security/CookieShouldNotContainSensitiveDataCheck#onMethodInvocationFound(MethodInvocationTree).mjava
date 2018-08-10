@@ -1,7 +1,11 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree methodTree) {
-    if (isNotNullOrWhitespace(methodTree.arguments().get(0))) {
-      reportIssue(methodTree.arguments(), MESSAGE);
+    if (methodTree.symbol().name().equals(BUILDER_METHOD)) {
+      if (secondArgumentIsValue(methodTree.arguments())) {
+        reportIssue(methodTree.arguments().get(1), MESSAGE);
+      }
+    } else if (isNotNullOrWhitespace(methodTree.arguments().get(0))) {
+      reportIssue(methodTree.arguments().get(0), MESSAGE);
     }
   }
 
