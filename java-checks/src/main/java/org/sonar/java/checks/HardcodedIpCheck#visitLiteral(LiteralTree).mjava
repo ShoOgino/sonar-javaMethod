@@ -5,7 +5,7 @@
       IP.reset(value);
       if (IP.matches()) {
         String ip = IP.group("ip");
-        if (areAllBelow256(Splitter.on('.').split(ip))) {
+        if (areAllBelow256(Splitter.on('.').split(ip)) && !isLoopbackAddress(ip) && !isNonRoutableAddress(ip) && !isBroadcastAddress(ip)) {
           context.reportIssue(this, tree, MESSAGE);
         }
       }
