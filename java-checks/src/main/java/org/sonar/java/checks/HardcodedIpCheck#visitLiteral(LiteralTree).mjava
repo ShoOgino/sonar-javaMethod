@@ -2,13 +2,9 @@
   public void visitLiteral(LiteralTree tree) {
     if (tree.is(Tree.Kind.STRING_LITERAL)) {
       String value = LiteralUtils.trimQuotes(tree.value());
-      IP.reset(value);
-      if (IP.matches()) {
-        String ip = IP.group("ip");
-        if (areAllBelow256(Splitter.on('.').split(ip)) && !isLoopbackAddress(ip) && !isNonRoutableAddress(ip) && !isBroadcastAddress(ip)) {
-          context.reportIssue(this, tree, MESSAGE);
-        }
-      }
+      extractIPV4(value).map(Optional::of).orElseGet(() -> extractIPV6(value))
+        .filter(ip -> !isLoopbackAddress(ip) && !isNonRoutableAddress(ip) && !isBroadcastAddress(ip))
+        .ifPresent(ip -> context.reportIssue(this, tree, MESSAGE));
     }
   }
 

@@ -1,0 +1,8 @@
+  private static boolean isValidIPV6PartCount(String ip) {
+    int partCount = ip.split("::?").length;
+    int compressionSeparatorCount = StringUtils.countMatches(ip, "::");
+    boolean validUncompressed = compressionSeparatorCount == 0 && partCount == 8;
+    boolean validCompressed = compressionSeparatorCount == 1 && partCount <= 7;
+    return validUncompressed || validCompressed;
+  }
+

@@ -1,0 +1,9 @@
+  private static Optional<String> extractIPV6(String value) {
+    return IP_V6_REGEX_LIST.stream()
+      .map(pattern -> pattern.matcher(value))
+      .filter(Matcher::matches)
+      .map(match -> match.group("ip"))
+      .filter(HardcodedIpCheck::isValidIPV6PartCount)
+      .findFirst();
+  }
+
