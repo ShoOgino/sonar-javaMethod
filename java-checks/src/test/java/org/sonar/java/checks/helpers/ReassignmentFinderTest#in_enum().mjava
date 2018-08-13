@@ -1,0 +1,16 @@
+  @Test
+  public void in_enum() {
+    String code = newCode(
+      "enum E { E1 {} }",
+      "E foo() {",
+      "  return E.E1;",
+      "}");
+    ClassTree classTree = classTree(code);
+    ClassTree enumClass = (ClassTree) classTree.members().get(0);
+    VariableTree constant = (VariableTree) enumClass.members().get(0);
+    List<StatementTree> statements = ((MethodTree) classTree.members().get(1)).block().body();
+    ReturnStatementTree returnStatement = (ReturnStatementTree) statements.get(0);
+    assertThat(ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(returnStatement.expression(), constant.symbol()))
+      .isEqualTo(constant.initializer());
+  }
+
