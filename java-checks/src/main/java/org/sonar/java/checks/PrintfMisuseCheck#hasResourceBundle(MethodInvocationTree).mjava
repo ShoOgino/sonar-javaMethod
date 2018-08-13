@@ -1,0 +1,24 @@
+  private static boolean hasResourceBundle(MethodInvocationTree mit) {
+    Tree id;
+    if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      id = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
+    } else {
+      // defensive programming : cannot be reached : log methods are not static
+      return false;
+    }
+    if (id.is(Tree.Kind.MEMBER_SELECT)) {
+      id = ((MemberSelectExpressionTree) id).identifier();
+    }
+    if (id.is(Tree.Kind.IDENTIFIER)) {
+      Tree decl = ((IdentifierTree) id).symbol().declaration();
+      if (decl != null && decl.is(Tree.Kind.VARIABLE)) {
+        VariableTree var = ((VariableTree) decl);
+        ExpressionTree init = var.initializer();
+        if (init != null && init.is(Tree.Kind.METHOD_INVOCATION)) {
+          return GET_LOGGER.anyMatch((MethodInvocationTree) init);
+        }
+      }
+    }
+    return false;
+  }
+

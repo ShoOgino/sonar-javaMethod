@@ -7,7 +7,7 @@
     }
     if (!isMessageFormat) {
       isMessageFormat = JAVA_UTIL_LOGGER.matches(mit);
-      if (isMessageFormat && mit.arguments().get(mit.arguments().size() - 1).symbolType().isSubtypeOf("java.lang.Throwable")) {
+      if (isMessageFormat && (mit.arguments().get(mit.arguments().size() - 1).symbolType().isSubtypeOf("java.lang.Throwable") || hasResourceBundle(mit))) {
         // ignore formatting issues when last argument is a throwable
         return;
       }
