@@ -1,5 +1,5 @@
   @Test
-  public void perform() throws IOException {
+  public void perform() {
     ORCHESTRATOR.getServer().provisionProject("project", "project");
     ORCHESTRATOR.getServer().associateProjectToQualityProfile("project", "java", "no-rules");
     SonarScanner build = SonarScanner.create(FileLocation.of("../sources/jdk6").getFile())
@@ -7,7 +7,6 @@
       .setProperty("sonar.importSources", "false")
       // Dummy sonar.java.binaries to pass validation
       .setProperty("sonar.java.binaries", "launcher")
-      .setProperty("sonar.showProfiling", "true")
       .setProperty("sonar.preloadFileMetadata", "true")
       .setProjectKey("project")
       .setProjectName("project")
@@ -17,7 +16,7 @@
 
     BuildResult result = ORCHESTRATOR.executeBuild(build);
 
-    double time = sensorTime(build.getProjectDir(), result.getLogs(), SENSOR_NAME);
+    double time = sensorTime(result.getLogs());
 
     double expected = 178;
     assertThat(time).isEqualTo(expected, offset(expected * 0.06));
