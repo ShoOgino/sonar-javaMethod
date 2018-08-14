@@ -8,6 +8,7 @@
         .map(m -> (VariableTree) m)
         .filter(v -> !v.symbol().isStatic())
         .filter(v -> !isSpringInjectionAnnotated(v.symbol().metadata()))
+        .filter(v -> !isCustomInjectionAnnotated(v.symbol().metadata()))
         .forEach(v -> reportIssue(v.simpleName(), "Annotate this member with \"@Autowired\", \"@Resource\", \"@Inject\", or \"@Value\", or remove it."));
     }
   }
