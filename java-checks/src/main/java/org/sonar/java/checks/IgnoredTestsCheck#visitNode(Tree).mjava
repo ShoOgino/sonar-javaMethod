@@ -5,5 +5,16 @@
     if (ignoreAnnotationValues != null && ignoreAnnotationValues.isEmpty()) {
       reportIssue(methodTree.simpleName(), "Fix or remove this skipped unit test");
     }
+    BlockTree block = methodTree.block();
+    if(block != null) {
+      block.body().stream()
+        .filter(s -> s.is(Tree.Kind.EXPRESSION_STATEMENT))
+        .map(s -> ((ExpressionStatementTree) s).expression())
+        .filter(s -> s.is(Tree.Kind.METHOD_INVOCATION))
+        .map(MethodInvocationTree.class::cast)
+        .filter(ASSUME_METHODS::anyMatch)
+        .filter(IgnoredTestsCheck::hasConstantOppositeArg)
+        .forEach(mit -> reportIssue(mit.methodSelect(), "Fix or remove this skipped unit test"));
+    }
   }
 
