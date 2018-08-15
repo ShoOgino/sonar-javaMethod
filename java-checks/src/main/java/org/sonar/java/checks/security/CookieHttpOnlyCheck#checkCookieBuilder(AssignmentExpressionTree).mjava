@@ -1,0 +1,11 @@
+  private void checkCookieBuilder(AssignmentExpressionTree assignment) {
+    if (assignment.expression().is(Tree.Kind.METHOD_INVOCATION)
+      && (assignment.variable().is(Tree.Kind.IDENTIFIER) || assignment.variable().is(Tree.Kind.MEMBER_SELECT))) {
+      MethodInvocationTree mit = (MethodInvocationTree) assignment.expression();
+      VariableSymbol variableSymbol = getVariableSymbol(assignment);
+      if (variableSymbol != null) {
+        addToIgnoredVariables(variableSymbol, mit);
+      }
+    }
+  }
+

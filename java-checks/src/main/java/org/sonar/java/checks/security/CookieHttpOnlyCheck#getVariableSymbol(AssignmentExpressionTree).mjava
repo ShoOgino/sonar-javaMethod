@@ -1,0 +1,17 @@
+  @CheckForNull
+  private static VariableSymbol getVariableSymbol(AssignmentExpressionTree assignment) {
+    VariableSymbol variableSymbol = null;
+    if (assignment.variable().is(Tree.Kind.IDENTIFIER)) {
+      Symbol reference = ((IdentifierTree) assignment.variable()).symbol();
+      if (reference.isVariableSymbol()) {
+        variableSymbol = (VariableSymbol) reference;
+      }
+    } else {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) assignment.variable();
+      if (mse.identifier().symbol().isVariableSymbol()) {
+        variableSymbol = (VariableSymbol) mse.identifier().symbol();
+      }
+    }
+    return variableSymbol;
+  }
+

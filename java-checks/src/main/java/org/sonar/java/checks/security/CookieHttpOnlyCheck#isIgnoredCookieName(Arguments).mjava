@@ -1,0 +1,9 @@
+  private static boolean isIgnoredCookieName(Arguments arguments) {
+    if (arguments.isEmpty()) {
+      return false;
+    }
+    ExpressionTree nameArgument = arguments.get(COOKIE_NAME_ARGUMENT);
+    String name = IdentifierUtils.getValue(nameArgument, ConstantUtils::resolveAsStringConstant);
+    return name != null && IGNORED_COOKIE_NAMES.stream().anyMatch(cookieName -> name.toLowerCase(Locale.ENGLISH).contains(cookieName));
+  }
+

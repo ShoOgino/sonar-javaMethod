@@ -1,0 +1,10 @@
+  private static Stream<MethodInvocationTree> getMethodChain(MethodInvocationTree mit) {
+    if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expressionTree = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
+      if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+        return Stream.concat(Stream.of(mit), getMethodChain((MethodInvocationTree) expressionTree));
+      }
+    }
+    return Stream.of(mit);
+  }
+

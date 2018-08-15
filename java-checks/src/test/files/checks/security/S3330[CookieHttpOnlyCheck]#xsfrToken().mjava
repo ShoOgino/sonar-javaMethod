@@ -1,0 +1,58 @@
+  // SONARJAVA-2772
+  Cookie xsfrToken() {
+    String cookieName = "XSRF-TOKEN";
+
+    Cookie xsfrToken = new Cookie("XSRF-TOKEN", "value"); // OK, used to implement XSRF
+    xsfrToken.setHttpOnly(false);
+
+    Cookie xsfrToken2 = new Cookie("XSRF-TOKEN", "value");
+    xsfrToken2.setHttpOnly(true);
+
+    Cookie xsfrToken3 = new Cookie("XSRF-TOKEN", "value");
+
+    Cookie xsfrToken4 = new Cookie(XSRF_TOKEN, "value");
+
+    HttpCookie xsfrToken5 = new HttpCookie("XSRF-TOKEN", "value");
+
+    javax.ws.rs.core.Cookie xsfrToken6 = new javax.ws.rs.core.Cookie("XSRF-TOKEN", "value");
+
+    NewCookie xsfrToken7 = new NewCookie("XSRF-TOKEN", "value", "path", "domain", "comment", 1, true);
+
+    SimpleCookie xsfrToken8 = new SimpleCookie("XSRF-TOKEN");
+
+    play.mvc.Http.Cookie xsfrToken9 = new play.mvc.Http.Cookie("XSRF-TOKEN", "2", 3, "4", "5", true, false);
+
+    play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2")
+      .withMaxAge(1)
+      .withPath("x")
+      .withDomain("x")
+      .withSecure(true)
+      .withHttpOnly(false)
+      .build();
+
+    play.mvc.Http.CookieBuilder xsfrToken10;
+    xsfrToken10 = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2");
+    xsfrToken10.withHttpOnly(false);
+
+    play.mvc.Http.CookieBuilder xsfrToken11 = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2");
+    xsfrToken11.withHttpOnly(false);
+
+    Cookie xsfrToken12 = new Cookie("CSRFToken", "value");
+    xsfrToken12.setHttpOnly(false);
+
+    Cookie xsfrToken13 = new Cookie("Csrf-token", "value");
+    xsfrToken13.setHttpOnly(false);
+
+    this.xsfrTokenProp = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2");
+    this.xsfrTokenProp.withHttpOnly(false);
+
+    this.getXsfrTokenProp2() = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2");
+    this.getXsfrTokenProp2().withHttpOnly(false);
+
+    this.unknown = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2"); // Coverage
+    unknown = play.mvc.Http.Cookie.builder("XSRF-TOKEN", "2"); // Coverage
+    boolean secure = play.mvc.Http.Cookie.secure(); // Coverage
+
+    return new Cookie("XSRF-TOKEN", "value");
+  }
+

@@ -1,7 +1,8 @@
   private static boolean isExpectedSetter(MethodInvocationTree mit) {
     return mit.arguments().size() == 1
-        && mit.symbol().isMethodSymbol()
-        && CLASSES.stream().anyMatch(mit.symbol().owner().type()::isSubtypeOf)
-        && SETTER_NAMES.contains(getIdentifier(mit).name());
+      && mit.symbol().isMethodSymbol()
+      && CLASSES.stream().anyMatch(mit.symbol().owner().type()::isSubtypeOf)
+      && SETTER_NAMES.contains(getIdentifier(mit).name())
+      && isIgnoredBuilder(mit);
   }
 

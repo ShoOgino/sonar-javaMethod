@@ -1,6 +1,15 @@
   private void updateIssuesToReport(MethodInvocationTree mit) {
     MemberSelectExpressionTree mse = (MemberSelectExpressionTree) mit.methodSelect();
-    VariableSymbol reference = (VariableSymbol) ((IdentifierTree) mse.expression()).symbol();
+    VariableSymbol reference;
+    if (mse.expression().is(Tree.Kind.IDENTIFIER)) {
+      reference = (VariableSymbol) ((IdentifierTree) mse.expression()).symbol();
+    } else {
+      reference = (VariableSymbol) ((MemberSelectExpressionTree) mse.expression()).identifier().symbol();
+    }
+    if (ignoredVariables.contains(reference)) {
+      // ignore XSRF-TOKEN cookies
+      return;
+    }
     if (setterArgumentHasCompliantValue(mit.arguments())) {
       variablesToReport.remove(reference);
     } else if (compliantConstructorInitializations.contains(reference)) {

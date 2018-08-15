@@ -1,0 +1,9 @@
+  private static boolean isIgnoredBuilder(MethodInvocationTree mit) {
+    if (!mit.symbol().owner().type().isSubtypeOf(ClassName.PLAY_COOKIE_BUILDER)) {
+      return true;
+    }
+    return getMethodChain(mit)
+      .filter(method -> "builder".contains(getIdentifier(method).name()))
+      .noneMatch(method -> isIgnoredCookieName(method.arguments()));
+  }
+
