@@ -4,6 +4,12 @@
     if (firstArgument.paramType.equals(secondArgument.paramType)) {
       return functionalInterfaceName("UnaryOperator<%s>", firstArgument.paramType);
     }
+    if (isBoolean(secondArgument)) {
+      return functionalInterfaceName("Predicate<%s>", firstArgument.paramType);
+    }
+    if (isBoolean(firstArgument)) {
+      return Optional.empty();
+    }
     if (firstArgument.paramTypeName != null && secondArgument.paramTypeName != null) {
       return functionalInterfaceName("%sTo%sFunction", firstArgument.paramTypeName, secondArgument.paramTypeName);
     }
