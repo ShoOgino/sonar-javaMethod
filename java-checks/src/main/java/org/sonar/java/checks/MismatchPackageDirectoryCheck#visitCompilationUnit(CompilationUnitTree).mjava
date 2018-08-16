@@ -6,8 +6,14 @@
       File javaFile = context.getFile();
       String dir = javaFile.getParent();
       if (!dir.endsWith(packageName)) {
-        context.reportIssue(
-          this, packageDeclaration.packageName(), "This file \"" + javaFile.getName() + "\" should be located in \"" + packageName + "\" directory, not in \"" + dir + "\".");
+        String dirWithoutDots = dir.replace(".", File.separator);
+        String issueMessage = MessageFormat.format(MESSAGE, javaFile.getName(), packageName, dir);
+        if (dirWithoutDots.endsWith(packageName)) {
+          context.reportIssue(this, packageDeclaration.packageName(), issueMessage + "(Do not use dots in directory names).");
+        } else {
+          context.reportIssue(
+            this, packageDeclaration.packageName(), issueMessage + ".");
+        }
       }
     }
   }
