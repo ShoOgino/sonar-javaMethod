@@ -1,0 +1,10 @@
+  @Override
+  public AnnotationVisitor visitTypeAnnotation(int typeRef, @Nullable TypePath typePath, String descriptor, boolean visible) {
+    if (typePath == null) {
+      return visitAnnotation(descriptor, visible);
+    }
+    // Corner case, limitation: the case when annotation is not set on a field but on a type parameter of this field is not
+    // yet supported. In this case "typePath" is not null. e.g.: List<@Annotation C> field
+    return null;
+  }
+

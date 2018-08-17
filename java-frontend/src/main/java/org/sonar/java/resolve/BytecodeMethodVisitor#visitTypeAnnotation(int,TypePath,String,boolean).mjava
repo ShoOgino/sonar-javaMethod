@@ -1,0 +1,15 @@
+  @Override
+  public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+    TypeReference typeReference = new TypeReference(typeRef);
+    switch (typeReference.getSort()) {
+      case TypeReference.METHOD_FORMAL_PARAMETER:
+        return visitParameterAnnotation(typeReference.getFormalParameterIndex(), descriptor, visible);
+      case TypeReference.METHOD_RETURN:
+        return visitAnnotation(descriptor, visible);
+      default:
+        // Corner case, limitation: the case METHOD_TYPE_PARAMETER is not yet supported. It happens when an annotation
+        // is set on a type parameter. e.g.: <@Annotation T> Object method()
+        return null;
+    }
+  }
+
