@@ -2,6 +2,10 @@
       if (triggeringInvocationMatcher.matches(methodInvocation)) {
         MethodTree enclosingMethod = enclosingMethod(methodInvocation);
         if (enclosingMethod != null) {
+          if (securingInvocationPredicate instanceof AccessExternalDTDOrSchemaPredicate) {
+            ((AccessExternalDTDOrSchemaPredicate) securingInvocationPredicate).externalDTDDisabled = false;
+            ((AccessExternalDTDOrSchemaPredicate) securingInvocationPredicate).externalSchemaDisabled = false;
+          }
           MethodVisitor methodVisitor = new MethodVisitor(securingInvocationPredicate);
           enclosingMethod.accept(methodVisitor);
           if (!methodVisitor.isExternalEntityProcessingDisabled) {

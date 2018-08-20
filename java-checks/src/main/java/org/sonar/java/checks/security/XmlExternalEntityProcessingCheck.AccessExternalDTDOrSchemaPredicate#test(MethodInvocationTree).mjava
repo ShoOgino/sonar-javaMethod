@@ -4,8 +4,13 @@
         Arguments arguments = methodInvocation.arguments();
         String propertyName = resolveAsStringConstant(arguments.get(0));
         String propertyValue = resolveAsStringConstant(arguments.get(1));
-        return "".equals(propertyValue) &&
-          (XMLConstants.ACCESS_EXTERNAL_DTD.equals(propertyName) || XMLConstants.ACCESS_EXTERNAL_SCHEMA.equals(propertyName));
+        if ("".equals(propertyValue) && XMLConstants.ACCESS_EXTERNAL_DTD.equals(propertyName)) {
+          externalDTDDisabled = true;
+        }
+        if ("".equals(propertyValue) && XMLConstants.ACCESS_EXTERNAL_SCHEMA.equals(propertyName)) {
+          externalSchemaDisabled = true;
+        }
+        return externalDTDDisabled && externalSchemaDisabled;
       }
       return false;
     }
