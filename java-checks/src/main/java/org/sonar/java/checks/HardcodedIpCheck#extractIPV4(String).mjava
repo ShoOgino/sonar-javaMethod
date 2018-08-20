@@ -2,6 +2,7 @@
     return Optional.of(IP_V4_REGEX.matcher(value))
       .filter(Matcher::matches)
       .map(match -> match.group("ip"))
-      .filter(HardcodedIpCheck::isValidIPV4Parts);
+      .filter(HardcodedIpCheck::isValidIPV4Parts)
+      .filter(ip -> !looksLikeAsn1ObjectIdentifier(ip));
   }
 
