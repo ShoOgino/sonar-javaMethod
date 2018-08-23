@@ -4,5 +4,11 @@
     JavaAstScanner scanner = defaultJavaAstScanner();
     scanner.setVisitorBridge(new VisitorsBridge(new CheckThrowingSOError()));
     scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerNoParseError.txt")));
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+      .startsWith("A stack overflow error occured while analyzing file")
+      .contains("java.lang.StackOverflowError: boom")
+      .contains("at org.sonar.java.ast.JavaAstScannerTest");
   }
 
