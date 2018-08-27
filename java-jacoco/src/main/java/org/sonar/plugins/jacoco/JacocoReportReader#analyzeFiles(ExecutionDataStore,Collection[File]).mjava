@@ -3,16 +3,9 @@
    */
   public CoverageBuilder analyzeFiles(ExecutionDataStore executionDataStore, Collection<File> classFiles) {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
-    if (useCurrentBinaryFormat) {
-      Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
-      for (File classFile : classFiles) {
-        analyzeClassFile(analyzer, classFile);
-      }
-    } else {
-      org.jacoco.previous.core.analysis.Analyzer analyzer = new org.jacoco.previous.core.analysis.Analyzer(executionDataStore, coverageBuilder);
-      for (File classFile : classFiles) {
-        analyzeClassFile(analyzer, classFile);
-      }
+    Analyzer analyzer = new Analyzer(executionDataStore, coverageBuilder);
+    for (File classFile : classFiles) {
+      analyzeClassFile(analyzer, classFile);
     }
     logNoMatchClasses(coverageBuilder.getNoMatchClasses());
     return coverageBuilder;

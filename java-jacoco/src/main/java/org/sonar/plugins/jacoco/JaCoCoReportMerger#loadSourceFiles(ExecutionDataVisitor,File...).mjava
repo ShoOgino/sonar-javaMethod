@@ -1,16 +1,4 @@
-  private static boolean loadSourceFiles(ExecutionDataVisitor executionDataVisitor, File... reports) {
-    Boolean isCurrentVersionFormat = null;
-    for (File report : reports) {
-      if (report.isFile()) {
-        JacocoReportReader jacocoReportReader = new JacocoReportReader(report).readJacocoReport(executionDataVisitor, executionDataVisitor);
-        boolean reportFormatIsCurrent = jacocoReportReader.useCurrentBinaryFormat();
-        if (isCurrentVersionFormat == null) {
-          isCurrentVersionFormat = reportFormatIsCurrent;
-        } else if (!isCurrentVersionFormat.equals(reportFormatIsCurrent)) {
-          throw new IllegalStateException("You are trying to merge two different JaCoCo binary formats. Please use only one version of JaCoCo.");
-        }
-      }
-    }
-    return BooleanUtils.isNotFalse(isCurrentVersionFormat);
+  private static void loadSourceFiles(ExecutionDataVisitor executionDataVisitor, File... reports) {
+    Arrays.stream(reports).filter(File::isFile).forEach(report -> new JacocoReportReader(report).readJacocoReport(executionDataVisitor, executionDataVisitor));
   }
 

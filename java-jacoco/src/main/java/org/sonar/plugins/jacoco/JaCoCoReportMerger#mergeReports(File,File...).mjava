@@ -5,15 +5,9 @@
    */
   public static void mergeReports(File reportOverall, File... reports) {
     ExecutionDataVisitor edv = new ExecutionDataVisitor();
-    boolean isCurrentVersionFormat = loadSourceFiles(edv, reports);
-
+    loadSourceFiles(edv, reports);
     try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(reportOverall))) {
-      Object visitor;
-      if (isCurrentVersionFormat) {
-        visitor = new ExecutionDataWriter(outputStream);
-      } else {
-        visitor = new org.jacoco.previous.core.data.ExecutionDataWriter(outputStream);
-      }
+      Object visitor = new ExecutionDataWriter(outputStream);
       for (Map.Entry<String, ExecutionDataStore> entry : edv.getSessions().entrySet()) {
         SessionInfo sessionInfo = new SessionInfo(entry.getKey(), 0, 0);
         ((ISessionInfoVisitor) visitor).visitSessionInfo(sessionInfo);

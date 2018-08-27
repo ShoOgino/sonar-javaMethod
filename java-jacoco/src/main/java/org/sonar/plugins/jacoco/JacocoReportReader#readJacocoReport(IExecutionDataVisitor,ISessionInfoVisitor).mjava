@@ -12,17 +12,10 @@
 
     LOG.info("Analysing {}", jacocoExecutionData);
     try (InputStream inputStream = new BufferedInputStream(new FileInputStream(jacocoExecutionData))) {
-      if (useCurrentBinaryFormat) {
-        ExecutionDataReader reader = new ExecutionDataReader(inputStream);
-        reader.setSessionInfoVisitor(sessionInfoStore);
-        reader.setExecutionDataVisitor(executionDataVisitor);
-        reader.read();
-      } else {
-        org.jacoco.previous.core.data.ExecutionDataReader reader = new org.jacoco.previous.core.data.ExecutionDataReader(inputStream);
-        reader.setSessionInfoVisitor(sessionInfoStore);
-        reader.setExecutionDataVisitor(executionDataVisitor);
-        reader.read();
-      }
+      ExecutionDataReader reader = new ExecutionDataReader(inputStream);
+      reader.setSessionInfoVisitor(sessionInfoStore);
+      reader.setExecutionDataVisitor(executionDataVisitor);
+      reader.read();
     } catch (IOException e) {
       throw new AnalysisException(String.format("Unable to read %s", jacocoExecutionData.getAbsolutePath()), e);
     }
