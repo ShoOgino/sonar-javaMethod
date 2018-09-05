@@ -1,11 +1,11 @@
-  private BlockBuilder buildParameterAnnotationsBlock(MethodTree methodTree, IdentifierGenerator idGenerator, CFG cfg) {
+  private BlockBuilder buildParameterAnnotationsBlock(MethodTree methodTree, IdentifierGenerator idGenerator, ControlFlowGraph cfg) {
     LocationInFile parametersLocation = location(methodTree.openParenToken(), methodTree.closeParenToken());
     UCFGBuilder.BlockBuilder blockBuilder = UCFGBuilder.newBasicBlock("paramAnnotations", parametersLocation);
 
     List<AnnotationTree> methodAnnotations = methodTree.modifiers().annotations();
     getObjectParameters(methodTree).forEach(parameter -> buildBlockForParameter(parameter, methodAnnotations, blockBuilder, idGenerator));
 
-    Label nextBlockLabel = UCFGBuilder.createLabel(Integer.toString(cfg.entry().id()));
+    Label nextBlockLabel = UCFGBuilder.createLabel(Integer.toString(cfg.entryBlock().id()));
     blockBuilder.jumpTo(nextBlockLabel);
     return blockBuilder;
   }

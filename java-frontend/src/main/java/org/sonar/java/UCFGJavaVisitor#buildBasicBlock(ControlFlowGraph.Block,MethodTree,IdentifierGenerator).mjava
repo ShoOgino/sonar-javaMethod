@@ -1,4 +1,4 @@
-  private UCFGBuilder.BlockBuilder buildBasicBlock(CFG.Block javaBlock, MethodTree methodTree, IdentifierGenerator idGenerator) {
+  private UCFGBuilder.BlockBuilder buildBasicBlock(ControlFlowGraph.Block javaBlock, MethodTree methodTree, IdentifierGenerator idGenerator) {
     UCFGBuilder.BlockBuilder blockBuilder = UCFGBuilder.newBasicBlock(String.valueOf(javaBlock.id()), location(javaBlock));
 
     javaBlock.elements().forEach(e -> buildCall(e, blockBuilder, idGenerator));
@@ -14,7 +14,7 @@
       return blockBuilder;
     }
 
-    Set<CFG.Block> successors = javaBlock.successors();
+    Set<? extends ControlFlowGraph.Block> successors = javaBlock.successors();
     if (!successors.isEmpty()) {
       blockBuilder.jumpTo(successors.stream().map(b -> UCFGBuilder.createLabel(Integer.toString(b.id()))).toArray(Label[]::new));
       return blockBuilder;

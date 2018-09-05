@@ -1,4 +1,4 @@
-  private UCFG buildUCfg(MethodTree methodTree, CFG cfg) {
+  private UCFG buildUCfg(MethodTree methodTree, ControlFlowGraph cfg) {
     String signature = methodTree.symbol().signature();
 
     IdentifierGenerator idGenerator = new IdentifierGenerator(methodTree);
@@ -9,7 +9,7 @@
       .map(UCFGBuilder::variableWithId)
       .forEach(builder::addMethodParam);
 
-    BlockBuilder entryBlockBuilder = buildBasicBlock(cfg.entry(), methodTree, idGenerator);
+    BlockBuilder entryBlockBuilder = buildBasicBlock(cfg.entryBlock(), methodTree, idGenerator);
 
     if (hasAnnotatedParameters(methodTree)) {
       builder.addStartingBlock(buildParameterAnnotationsBlock(methodTree, idGenerator, cfg));
@@ -19,7 +19,7 @@
     }
 
     cfg.blocks().stream()
-      .filter(b -> !b.equals(cfg.entry()))
+      .filter(b -> !b.equals(cfg.entryBlock()))
       .forEach(b -> builder.addBasicBlock(buildBasicBlock(b, methodTree, idGenerator)));
     return builder.build();
   }

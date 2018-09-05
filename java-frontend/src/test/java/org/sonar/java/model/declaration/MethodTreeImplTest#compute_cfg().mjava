@@ -1,0 +1,12 @@
+  @Test
+  public void compute_cfg() {
+    MethodTree methodWithoutBody = getUniqueMethod("interface A { void foo(int arg) throws Exception; }");
+    ControlFlowGraph cfg = methodWithoutBody.cfg();
+    assertThat(cfg).isNull();
+
+    MethodTree method = getUniqueMethod("class A { void foo(int arg) throws Exception { }}");
+    cfg = method.cfg();
+    assertThat(cfg).isNotNull();
+    assertThat(method.cfg()).isSameAs(cfg);
+  }
+
