@@ -43,7 +43,11 @@
       JavaSquidSensor.class,
       PostAnalysisIssueFilter.class,
       XmlFileSensor.class);
-    context.addExtensions(builder.build());
 
+    if (isAnalysisWarningsSupported(context.getRuntime())) {
+      builder.add(AnalysisWarningsWrapper.class);
+    }
+
+    context.addExtensions(builder.build());
   }
 

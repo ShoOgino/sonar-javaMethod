@@ -1,0 +1,9 @@
+  @Test
+  public void do_not_register_warning_for_missing_bytecode_when_wrapper_not_injected() {
+    javaClasspath = new JavaClasspath(settings.asConfig(), fs);
+    javaClasspath.init();
+    assertThat(javaClasspath.getFilesFromProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES)).isEmpty();
+    assertThat(javaClasspath.hasJavaSources()).isTrue();
+    verifyZeroInteractions(analysisWarnings);
+  }
+
