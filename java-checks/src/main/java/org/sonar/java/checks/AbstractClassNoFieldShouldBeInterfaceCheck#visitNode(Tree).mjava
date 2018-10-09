@@ -1,7 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
-    if (classTree.superClass() == null && classIsAbstract(classTree) && classHasNoFieldAndProtectedMethod(classTree) && supportPrivateMethod(classTree)) {
+    if (classTree.superClass() == null
+            && classIsAbstract(classTree)
+            && classHasNoFieldAndProtectedMethod(classTree)
+            && classHasNoAutoValueOrImmutableAnnotation(classTree)
+            && supportPrivateMethod(classTree)) {
       IdentifierTree simpleName = classTree.simpleName();
       reportIssue(
         simpleName,

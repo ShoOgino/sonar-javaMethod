@@ -1,9 +1,5 @@
   private static boolean classHasNoFieldAndProtectedMethod(ClassTree tree) {
-    for (Tree member : tree.members()) {
-      if (member.is(Tree.Kind.VARIABLE) || (member.is(Tree.Kind.METHOD) && isProtectedOrOverriding((MethodTree) member))) {
-        return false;
-      }
-    }
-    return true;
+    return tree.members().stream()
+      .noneMatch(member -> member.is(Tree.Kind.VARIABLE) || (member.is(Tree.Kind.METHOD) && isProtectedOrOverriding((MethodTree) member)));
   }
 

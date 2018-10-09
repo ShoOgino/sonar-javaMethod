@@ -1,0 +1,7 @@
+  private static boolean classHasNoAutoValueOrImmutableAnnotation(ClassTree tree) {
+    return tree.modifiers().annotations().stream()
+      .map(AnnotationTree::annotationType)
+      .map(TypeTree::symbolType)
+      .noneMatch(type -> type.is("com.google.auto.value.AutoValue") || type.is("org.immutables.value.Value$Immutable"));
+  }
+
