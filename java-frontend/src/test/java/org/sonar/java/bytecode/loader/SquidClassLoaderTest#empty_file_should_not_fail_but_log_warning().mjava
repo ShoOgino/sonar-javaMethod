@@ -1,0 +1,22 @@
+  @Test
+  public void empty_file_should_not_fail_but_log_warning() {
+    File jar = new File("src/test/files/bytecode/lib/emptyFile.jar");
+    classLoader = new SquidClassLoader(Arrays.asList(jar));
+
+    assertThat(classLoader.getResource("dummy.class")).isNull();
+
+    assertThat(logTester.logs()).hasSize(2);
+    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    assertThat(warnings).hasSize(1);
+    assertThat(warnings.get(0))
+      .startsWith("Unable to load classes from '")
+      .endsWith("emptyFile.jar\'");
+    List<String> debugs = logTester.logs(LoggerLevel.DEBUG);
+    assertThat(debugs).hasSize(1);
+    assertThat(debugs.get(0))
+      .startsWith("Unable to open")
+      .endsWith("emptyFile.jar: zip file is empty");
+
+    classLoader.close();
+  }
+
