@@ -4,6 +4,11 @@
       return Optional.empty();
     }
     ParametrizedTypeJavaType ptjt = (ParametrizedTypeJavaType) javaType;
+
+    if (hasAnyUnknownParameterType(ptjt)) {
+      return Optional.empty();
+    }
+
     switch (ptjt.getSymbol().getFullyQualifiedName()) {
       case "java.util.function.Function":
         return handleFunctionInterface(ptjt);
@@ -17,7 +22,7 @@
       case "java.util.function.Predicate":
       case "java.util.function.UnaryOperator":
       case "java.util.function.BinaryOperator":
-        return Optional.ofNullable(new ParameterTypeNameAndTreeType(ptjt, 0).paramTypeName).map(s -> s + javaType.name());
+        return handleSingleParameterFunctions(ptjt);
       default:
         return Optional.empty();
     }
