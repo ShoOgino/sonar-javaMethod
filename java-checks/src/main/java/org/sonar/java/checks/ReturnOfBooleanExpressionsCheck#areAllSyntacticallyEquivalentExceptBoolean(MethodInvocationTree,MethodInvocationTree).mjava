@@ -1,0 +1,31 @@
+  private static boolean areAllSyntacticallyEquivalentExceptBoolean(MethodInvocationTree mit1, MethodInvocationTree mit2) {
+    if (firstNonParenthesesParent(mit1).kind() != firstNonParenthesesParent(mit2).kind()) {
+      // requires to have on both side a return statement, or on both side an expression statement.
+      return false;
+    }
+    if (!SyntacticEquivalence.areEquivalent(mit1.methodSelect(), mit2.methodSelect())) {
+      return false;
+    }
+    List<ExpressionTree> mit1Args = mit1.arguments();
+    List<ExpressionTree> mit2Args = mit2.arguments();
+    if (mit1Args.size() != mit2Args.size()) {
+      return false;
+    }
+    boolean containsBooleanLiteral = false;
+    for (int i = 0; i < mit1Args.size(); i++) {
+      ExpressionTree arg1 = ExpressionUtils.skipParentheses(mit1Args.get(i));
+      ExpressionTree arg2 = ExpressionUtils.skipParentheses(mit2Args.get(i));
+      boolean arg1IsBooleanLiteral = arg1.is(Tree.Kind.BOOLEAN_LITERAL);
+      boolean arg2IsBooleanLiteral = arg2.is(Tree.Kind.BOOLEAN_LITERAL);
+      if (SyntacticEquivalence.areEquivalent(arg1, arg2)) {
+        containsBooleanLiteral |= arg1IsBooleanLiteral;
+      } else {
+        if (!(arg1IsBooleanLiteral && arg2IsBooleanLiteral)) {
+          return false;
+        }
+        containsBooleanLiteral = true;
+      }
+    }
+    return containsBooleanLiteral;
+  }
+

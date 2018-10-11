@@ -2,8 +2,18 @@
   public void visitNode(Tree tree) {
     IfStatementTree ifStatementTree = (IfStatementTree) tree;
     StatementTree elseStatementOrNextStatement = getStatementTree(ifStatementTree);
-    if (hasOneReturnBoolean(elseStatementOrNextStatement) && hasOneReturnBoolean(ifStatementTree.thenStatement())) {
+    StatementTree thenStatement = ifStatementTree.thenStatement();
+
+    if (hasOneReturnBoolean(elseStatementOrNextStatement) && hasOneReturnBoolean(thenStatement)) {
       reportIssue(ifStatementTree.ifKeyword(), "Replace this if-then-else statement by a single return statement.");
+    } else {
+      Optional<MethodInvocationTree> elseMIT = getMethodInvocation(elseStatementOrNextStatement);
+      Optional<MethodInvocationTree> thenMIT = getMethodInvocation(thenStatement);
+      if (elseMIT.isPresent()
+        && thenMIT.isPresent()
+        && areAllSyntacticallyEquivalentExceptBoolean(elseMIT.get(), thenMIT.get())) {
+        reportIssue(ifStatementTree.ifKeyword(), "Replace this if-then-else statement by a single method invocation.");
+      }
     }
   }
 
