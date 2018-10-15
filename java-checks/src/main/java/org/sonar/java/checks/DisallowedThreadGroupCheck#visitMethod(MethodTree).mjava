@@ -1,0 +1,32 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    boolean notOverriding = Boolean.FALSE.equals(tree.isOverriding());
+    boolean reported = false;
+    boolean declaresThreadGroup = false;
+
+    TypeTree returnType = tree.returnType();
+    if (returnType != null && returnType.symbolType().is(JAVA_LANG_THREADGROUP)) {
+      if (notOverriding) {
+        context.reportIssue(this, returnType, MESSAGE);
+        reported = true;
+      }
+      declaresThreadGroup = true;
+    }
+    for (VariableTree variableTree : tree.parameters()) {
+      TypeTree type = variableTree.type();
+      if (type.symbolType().is(JAVA_LANG_THREADGROUP)) {
+        if (notOverriding) {
+          context.reportIssue(this, type, MESSAGE);
+          reported = true;
+        }
+        declaresThreadGroup = true;
+      }
+    }
+
+    if (declaresThreadGroup && !reported) {
+      // skip body of overrides to avoid FPs
+      return;
+    }
+    super.scan(tree.block());
+  }
+
