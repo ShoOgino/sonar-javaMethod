@@ -1,7 +1,7 @@
   private void checkClass(ClassTree classTree) {
     if (!ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.ABSTRACT)) {
       Symbol.TypeSymbol classSymbol = classTree.symbol();
-      Stream<Symbol.MethodSymbol> members = getAllMembers(classSymbol);
+      Stream<Symbol.MethodSymbol> members = getAllMembers(classSymbol, checkRunWith(classSymbol, "Enclosed.class"));
       IdentifierTree simpleName = classTree.simpleName();
       if (classSymbol.metadata().isAnnotatedWith("org.testng.annotations.Test")) {
         checkTestNGmembers(simpleName, members);
