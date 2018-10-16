@@ -1,22 +1,4 @@
   private ProgramState checkConstraint(CheckerContext context, Tree syntaxNode, SymbolicValue currentVal) {
-    ProgramState programState = context.getState();
-    ObjectConstraint constraint = programState.getConstraint(currentVal, ObjectConstraint.class);
-    if (constraint != null && constraint.isNull()) {
-      NullDereferenceIssue issue = new NullDereferenceIssue(context.getNode(), currentVal, syntaxNode);
-      detectedIssues.peek().add(issue);
-
-      // we reported the issue and stopped the exploration, but we still need to create a yield for x-procedural calls
-      context.addExceptionalYield(currentVal, programState, JAVA_LANG_NPE, this);
-      return null;
-    }
-    constraint = programState.getConstraint(currentVal, ObjectConstraint.class);
-    if (constraint == null) {
-      // a NPE will be triggered if the current value would have been null
-      context.addExceptionalYield(currentVal, programState.addConstraint(currentVal, ObjectConstraint.NULL), JAVA_LANG_NPE, this);
-
-      // We dereferenced the target value for the member select, so we can assume it is not null when not already known
-      return programState.addConstraint(currentVal, ObjectConstraint.NOT_NULL);
-    }
-    return programState;
+    return checkConstraint(context.getState(), context, syntaxNode, currentVal);
   }
 

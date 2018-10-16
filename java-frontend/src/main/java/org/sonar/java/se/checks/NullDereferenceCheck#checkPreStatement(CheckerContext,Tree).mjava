@@ -1,6 +1,7 @@
   @Override
   public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
-    if (context.getState().peekValue() == null) {
+    SymbolicValue peekValue = context.getState().peekValue();
+    if (peekValue == null) {
       // stack is empty, nothing to do.
       return context.getState();
     }
@@ -8,9 +9,16 @@
       case METHOD_INVOCATION:
         MethodInvocationTree methodInvocation = (MethodInvocationTree) syntaxNode;
         ExpressionTree methodSelect = methodInvocation.methodSelect();
+        ProgramState ps = context.getState();
+        if (OPTIONAL_OR_ELSE_GET_MATCHER.matches(methodInvocation)) {
+          ps = checkConstraint(context, methodInvocation.arguments().get(0), peekValue);
+          if (ps == null) {
+            return ps;
+          }
+        }
         if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
           SymbolicValue dereferencedSV = context.getState().peekValue(methodInvocation.arguments().size());
-          return checkConstraint(context, methodSelect, dereferencedSV);
+          return checkConstraint(ps, context, methodSelect, dereferencedSV);
         }
         break;
       case ARRAY_ACCESS_EXPRESSION:
@@ -18,9 +26,9 @@
         SymbolicValue arrayAccessSV = context.getState().peekValue(1);
         return checkConstraint(context, arrayAccessNode, arrayAccessSV);
       case MEMBER_SELECT:
-        return checkMemberSelect(context, (MemberSelectExpressionTree) syntaxNode, context.getState().peekValue());
+        return checkMemberSelect(context, (MemberSelectExpressionTree) syntaxNode, peekValue);
       case SYNCHRONIZED_STATEMENT:
-        return checkConstraint(context, syntaxNode, context.getState().peekValue());
+        return checkConstraint(context, syntaxNode, peekValue);
       default:
         // ignore
     }
