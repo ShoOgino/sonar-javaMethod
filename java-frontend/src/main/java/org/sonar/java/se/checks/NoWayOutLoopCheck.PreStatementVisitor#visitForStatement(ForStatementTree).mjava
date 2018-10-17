@@ -1,10 +1,7 @@
     @Override
     public void visitForStatement(ForStatementTree tree) {
       if (tree.condition() == null) {
-        CFGLoop loopBlocks = contexts.peek().getLoop(tree);
-        if (loopBlocks != null && loopBlocks.hasNoWayOut()) {
-          context.reportIssue(tree, NoWayOutLoopCheck.this, "Add an end condition to this loop.");
-        }
+        checkLoopWithAlwaysTrueCondition(context, tree);
       } else if (isConditionUnreachable(tree)) {
         context.reportIssue(tree, NoWayOutLoopCheck.this, "Correct this loop's end condition.");
       }

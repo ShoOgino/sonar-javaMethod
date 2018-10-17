@@ -1,5 +1,11 @@
   @Override
   public void checkEndOfExecution(CheckerContext context) {
+    context.alwaysTrueOrFalseExpressions().alwaysTrue().forEach(tree -> {
+      Tree statementParent = firstStatementParent(tree);
+      if (statementParent != null && statementParent.is(Tree.Kind.WHILE_STATEMENT)) {
+        checkLoopWithAlwaysTrueCondition(context, statementParent);
+      }
+    });
     contexts.pop();
   }
 
