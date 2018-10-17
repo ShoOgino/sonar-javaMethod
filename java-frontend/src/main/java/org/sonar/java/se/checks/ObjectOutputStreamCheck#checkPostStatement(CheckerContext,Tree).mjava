@@ -1,0 +1,38 @@
+  @Override
+  public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
+    ProgramState programState = context.getState();
+    switch (syntaxNode.kind()) {
+      case NEW_CLASS:
+        NewClassTree newClassTree = (NewClassTree) syntaxNode;
+        if (newClassTree.symbolType().is("java.io.FileOutputStream") && newClassTree.arguments().size() == 2) {
+          ProgramState psBeforeInvocation = context.getNode().programState;
+          BooleanConstraint argConstraint = psBeforeInvocation.getConstraint(psBeforeInvocation.peekValue(), BooleanConstraint.class);
+          if (argConstraint == BooleanConstraint.TRUE) {
+            programState = programState.addConstraint(programState.peekValue(), new FileOutputStreamAppendConstraint(newClassTree));
+          }
+        }
+        break;
+      case METHOD_INVOCATION:
+        MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+        if (FILES_NEW_OUTPUT_STREAM.matches(mit)) {
+          ProgramState psBeforeInvocation = context.getNode().programState;
+          int optionsNumber = mit.arguments().size() - 1;
+          for (int i = 0; i < optionsNumber; i++) {
+            FileOutputStreamAppendConstraint argConstraint = psBeforeInvocation.getConstraint(psBeforeInvocation.peekValue(i), FileOutputStreamAppendConstraint.class);
+            if (argConstraint != null) {
+              programState = programState.addConstraint(programState.peekValue(), new FileOutputStreamAppendConstraint(mit));
+              break;
+            }
+          }
+        }
+        break;
+      case MEMBER_SELECT:
+        programState = handleOpenOptionAppend(programState, ((MemberSelectExpressionTree) syntaxNode).identifier());
+        break;
+      case IDENTIFIER:
+        programState = handleOpenOptionAppend(programState, (IdentifierTree) syntaxNode);
+        break;
+    }
+    return programState;
+  }
+

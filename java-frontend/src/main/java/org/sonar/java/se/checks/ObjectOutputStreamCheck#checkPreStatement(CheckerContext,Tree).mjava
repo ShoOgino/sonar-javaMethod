@@ -1,0 +1,19 @@
+  @Override
+  public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree newClassTree = (NewClassTree) syntaxNode;
+      if (newClassTree.symbolType().is("java.io.ObjectOutputStream") && newClassTree.arguments().size() == 1) {
+        ProgramState programState = context.getState();
+        FileOutputStreamAppendConstraint constraint = programState.getConstraint(programState.peekValue(), FileOutputStreamAppendConstraint.class);
+        if (constraint != null) {
+          context.reportIssue(
+            newClassTree.arguments().get(0),
+            this,
+            "Do not use a FileOutputStream in append mode.",
+            ImmutableSet.of(Flow.of(new JavaFileScannerContext.Location("FileOutputStream created here.", constraint.node))));
+        }
+      }
+    }
+    return super.checkPreStatement(context, syntaxNode);
+  }
+

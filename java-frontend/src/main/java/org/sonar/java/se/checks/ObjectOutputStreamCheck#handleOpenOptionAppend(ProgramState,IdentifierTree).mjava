@@ -1,0 +1,7 @@
+  private static ProgramState handleOpenOptionAppend(ProgramState programState, IdentifierTree identifier) {
+    if (identifier.symbolType().is("java.nio.file.StandardOpenOption") && "APPEND".equals(identifier.name())) {
+      return programState.addConstraint(programState.peekValue(), new FileOutputStreamAppendConstraint(identifier));
+    }
+    return programState;
+  }
+
