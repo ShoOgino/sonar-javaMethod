@@ -1,17 +1,33 @@
   private static List<String> getRuleKeys(Orchestrator orchestrator) {
-    String json = new HttpRequestFactory(orchestrator.getServer().getUrl())
-      .get("/api/rules/search", ImmutableMap.<String, Object>of("languages", LANGUAGE, "repositories", REPOSITORY_KEY, "ps", "500"));
-    @SuppressWarnings("unchecked")
-    Map<Object, Object> jsonObject = (Map<Object, Object>) JSONValue.parse(json);
+    List<String> ruleKeys = new ArrayList<>();
+    // pages are 1-based
+    int currentPage = 1;
 
-    Preconditions.checkState((Long) jsonObject.get("total") < 500, "Only collect the 500 first rules. Requires pagination in case of more rules");
+    Long totalNumberRules;
+    int collectedRulesNumber;
+    do {
+      String json = new HttpRequestFactory(orchestrator.getServer().getUrl())
+        .get("/api/rules/search", ImmutableMap.<String, Object>of("languages", LANGUAGE, "repositories", REPOSITORY_KEY, "p", currentPage, "ps", NUMBER_RULES_BY_PAGE));
 
-    @SuppressWarnings("unchecked")
-    List<Map<Object, Object>> jsonRules = (List<Map<Object, Object>>) jsonObject.get("rules");
+      @SuppressWarnings("unchecked")
+      Map<Object, Object> jsonObject = (Map<Object, Object>) JSONValue.parse(json);
 
-    return jsonRules.stream()
-      .map(jsonRule -> (String) jsonRule.get("key"))
-      .map(key -> key.split(":")[1])
-      .collect(Collectors.toList());
+      @SuppressWarnings("unchecked")
+      List<Map<Object, Object>> jsonRules = (List<Map<Object, Object>>) jsonObject.get("rules");
+
+      jsonRules.stream()
+        .map(jsonRule -> (String) jsonRule.get("key"))
+        .map(key -> key.split(":")[1])
+        .forEach(ruleKeys::add);
+
+      // update number of rules
+      collectedRulesNumber = ruleKeys.size();
+      totalNumberRules = (Long) jsonObject.get("total");
+      LOG.info("Collected rule keys: {} / {}", collectedRulesNumber, totalNumberRules);
+      // prepare for next page
+      currentPage++;
+    } while (collectedRulesNumber != totalNumberRules);
+
+    return ruleKeys;
   }
 
