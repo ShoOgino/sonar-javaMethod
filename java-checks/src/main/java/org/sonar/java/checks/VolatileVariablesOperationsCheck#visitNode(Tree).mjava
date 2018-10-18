@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ExpressionTree expression;
+    if (tree instanceof UnaryExpressionTree) {
+      expression = ExpressionUtils.skipParentheses(((UnaryExpressionTree) tree).expression());
+    } else {
+      expression = ((AssignmentExpressionTree) tree).variable();
+    }
+    IdentifierTree identifier = getVariableIdentifier(expression);
+    if (identifier == null || !identifier.symbol().isVolatile()) {
+      return;
+    }
+
+    if (tree.is(Tree.Kind.LOGICAL_COMPLEMENT)) {
+      checkBooleanToggling(tree, identifier.symbol());
+    } else {
+      checkIncrementDecrement(tree, identifier);
+    }
+  }
+

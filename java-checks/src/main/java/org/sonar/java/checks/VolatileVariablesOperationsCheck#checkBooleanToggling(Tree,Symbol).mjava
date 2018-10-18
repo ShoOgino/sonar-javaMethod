@@ -1,0 +1,12 @@
+  private void checkBooleanToggling(Tree tree, Symbol identifierSymbol) {
+    Tree parent = tree.parent();
+    if (parent.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      checkBooleanToggling(parent, identifierSymbol);
+    } else if (parent.is(Tree.Kind.ASSIGNMENT)) {
+      IdentifierTree variableIdentifier = getVariableIdentifier(((AssignmentExpressionTree) parent).variable());
+      if (variableIdentifier != null && identifierSymbol.equals(variableIdentifier.symbol())) {
+        reportIssueIfNotInExcludedContext(tree, "AtomicBoolean");
+      }
+    }
+  }
+
