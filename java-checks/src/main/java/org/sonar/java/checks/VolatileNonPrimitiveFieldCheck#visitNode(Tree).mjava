@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ((ClassTree) tree).members()
+      .stream()
+      .filter(m -> m.is(Tree.Kind.VARIABLE))
+      .map(m -> ((VariableTree) m))
+      .filter(v -> ModifiersUtils.hasModifier(v.modifiers(), Modifier.VOLATILE))
+      .filter(v -> !v.type().symbolType().isPrimitive())
+      .forEach(v -> reportIssue(ModifiersUtils.getModifier(v.modifiers(), Modifier.VOLATILE), v.type(), getMessage(v)));
+  }
+
