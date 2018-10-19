@@ -8,9 +8,10 @@
     if (result.isPresent()) {
       return result.get();
     }
-    if (isMethodAnnotatedWithEclipseNonNullReturnType(symbol)) {
-      return ORG_ECLIPSE_JDT_ANNOTATION_NON_NULL_BY_DEFAULT;
+    String nonNullReturnAnnotation = nonNullReturnTypeAnnotation(symbol);
+    if (nonNullReturnAnnotation != null) {
+      return nonNullReturnAnnotation;
     }
-    return null;
+    return nonNullFieldAnnotation(symbol);
   }
 
