@@ -1,5 +1,7 @@
   public void setJavaVersion(JavaVersion javaVersion) {
     this.javaVersion = javaVersion;
-    this.executableScanners = executableScanners(executableScanners, javaVersion);
+    List<JavaFileScanner> scannersForJavaVersion = executableScanners(allScanners, javaVersion);
+    this.executableScanners = scannersForJavaVersion.stream().filter(isIssuableSubscriptionVisitor.negate()).collect(Collectors.toList());
+    this.scannerRunner = new ScannerRunner(scannersForJavaVersion);
   }
 

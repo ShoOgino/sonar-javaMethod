@@ -1,0 +1,23 @@
+    private void visit(Tree tree) {
+      Consumer<SubscriptionVisitor> callback;
+      boolean isToken = tree.kind() == Tree.Kind.TOKEN;
+      if (isToken) {
+        callback = s -> {
+          SyntaxToken syntaxToken = (SyntaxToken) tree;
+          s.visitToken(syntaxToken);
+        };
+      } else {
+        callback = s -> s.visitNode(tree);
+      }
+      List<SubscriptionVisitor> subscribed = checks.getOrDefault(tree.kind(), Collections.emptyList());
+      subscribed.forEach(callback);
+      if (isToken) {
+        checks.getOrDefault(Tree.Kind.TRIVIA, Collections.emptyList()).forEach(s -> ((SyntaxToken) tree).trivias().forEach(s::visitTrivia));
+      } else {
+        visitChildren(tree);
+      }
+      if(!isToken) {
+        subscribed.forEach(s -> s.leaveNode(tree));
+      }
+    }
+

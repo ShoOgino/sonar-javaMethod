@@ -1,0 +1,23 @@
+  /**
+   * Detects commented-out code in remaining candidates.
+   */
+  @Override
+  public void leaveFile(JavaFileScannerContext context) {
+    List<Integer> commentedOutCodeLines = Lists.newArrayList();
+    for (SyntaxTrivia syntaxTrivia : comments) {
+      commentedOutCodeLines.addAll(handleCommentsForTrivia(syntaxTrivia));
+    }
+
+    // Greedy algorithm to split lines on blocks and to report only one violation per block
+    Collections.sort(commentedOutCodeLines);
+    int prev = Integer.MIN_VALUE;
+    for (Integer commentedOutCodeLine : commentedOutCodeLines) {
+      if (prev + 1 < commentedOutCodeLine) {
+        addIssue(commentedOutCodeLine, "This block of commented-out lines of code should be removed.");
+      }
+      prev = commentedOutCodeLine;
+    }
+
+    comments.clear();
+  }
+

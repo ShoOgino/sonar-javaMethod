@@ -1,0 +1,17 @@
+  @Override
+  public void setContext(JavaFileScannerContext context) {
+    super.context = context;
+    if (isRegularExpression) {
+      if (searchPattern == null) {
+        try {
+          searchPattern = Pattern.compile(getHeaderFormat(), Pattern.DOTALL);
+        } catch (IllegalArgumentException e) {
+          throw new IllegalArgumentException("[" + getClass().getSimpleName() + "] Unable to compile the regular expression: " + headerFormat, e);
+        }
+      }
+    } else {
+      expectedLines = headerFormat.split("(?:\r)?\n|\r");
+    }
+    visitFile();
+  }
+
