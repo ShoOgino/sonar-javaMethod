@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      if (REGEX_HOTSPOTS.anyMatch((MethodInvocationTree) tree)) {
+        reportIssue(ExpressionUtils.methodName((MethodInvocationTree) tree), MESSAGE);
+      }
+    } else if (tree.is(Tree.Kind.METHOD_REFERENCE)) {
+      if (REGEX_HOTSPOTS.anyMatch((MethodReferenceTree) tree)) {
+        reportIssue(((MethodReferenceTree) tree).method(), MESSAGE);
+      }
+    } else {
+      // annotations
+      AnnotationTree annotationTree = (AnnotationTree) tree;
+      if (HOTSPOT_ANNOTATION_TYPES.stream().anyMatch(t -> annotationTree.annotationType().symbolType().is(t))) {
+        annotationTree.arguments().stream().filter(RegexHotspotCheck::isRegexpParameter)
+          .findFirst().ifPresent(e -> reportIssue(e, MESSAGE));
+      }
+    }
+  }
+
