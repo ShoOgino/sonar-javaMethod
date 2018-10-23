@@ -1,0 +1,15 @@
+  private ProgramState handleMinMaxInvocation(CheckerContext context, MethodInvocationTree syntaxNode) {
+    if (!MIN_MAX_MATCHER.matches(syntaxNode)) {
+      return context.getState();
+    }
+    ProgramState programState = context.getState();
+    ProgramState psBeforeInvocation = context.getNode().programState;
+
+    List<SymbolicValue> args = psBeforeInvocation.peekValues(2);
+    List<ConstraintsByDomain> constraintsByArgs = args.stream().map(programState::getConstraints).collect(Collectors.toList());
+
+    checkRangeInconsistencies(context, syntaxNode, constraintsByArgs);
+
+    return context.getState();
+  }
+

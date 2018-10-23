@@ -1,0 +1,16 @@
+  private static ProgramState handleNumericalConstant(CheckerContext context, IdentifierTree syntaxNode) {
+    ProgramState programState = context.getState();
+    Symbol identifier = syntaxNode.symbol();
+    if (isNumericalConstant(identifier)) {
+      SymbolicValue constant = programState.getValue(identifier);
+      if (constant != null) {
+        NumericalConstraint numericalConstraint = programState.getConstraint(constant, NumericalConstraint.class);
+        Optional<Object> constantValue = ((JavaSymbol.VariableJavaSymbol) identifier).constantValue();
+        if (numericalConstraint == null && constantValue.isPresent()) {
+          programState = programState.addConstraint(constant, new NumericalConstraint((Number) constantValue.get()));
+        }
+      }
+    }
+    return programState;
+  }
+

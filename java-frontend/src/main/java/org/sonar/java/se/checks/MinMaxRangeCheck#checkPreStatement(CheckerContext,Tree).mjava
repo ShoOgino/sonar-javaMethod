@@ -1,0 +1,21 @@
+  @Override
+  public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+    ProgramState programState = context.getState();
+    if (!syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
+      return programState;
+    }
+    MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
+    if (!MIN_MAX_MATCHER.matches(mit)) {
+      return programState;
+    }
+    List<SymbolicValue> args = programState.peekValues(2);
+    for (SymbolicValue arg : args) {
+      MinMaxRangeConstraint minMaxConstraint = programState.getConstraint(arg, MinMaxRangeConstraint.class);
+      NumericalConstraint numericalConstraint = programState.getConstraint(arg, NumericalConstraint.class);
+      if (minMaxConstraint == null && numericalConstraint != null) {
+        programState = programState.addConstraint(arg, new MinMaxRangeConstraint(mit));
+      }
+    }
+    return programState;
+  }
+

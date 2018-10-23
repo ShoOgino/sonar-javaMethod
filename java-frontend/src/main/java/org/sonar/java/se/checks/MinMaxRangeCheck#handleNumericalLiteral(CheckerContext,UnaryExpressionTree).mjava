@@ -1,0 +1,24 @@
+  private static ProgramState handleNumericalLiteral(CheckerContext context, UnaryExpressionTree syntaxNode) {
+    ProgramState previousPS = context.getNode().programState;
+    NumericalConstraint knownNumericalConstraint = previousPS.getConstraint(previousPS.peekValue(), NumericalConstraint.class);
+
+    ProgramState programState = context.getState();
+    if (knownNumericalConstraint == null) {
+      return programState;
+    }
+    if (syntaxNode.is(Tree.Kind.UNARY_PLUS)) {
+      return programState.addConstraint(programState.peekValue(), knownNumericalConstraint);
+    }
+    Number value = knownNumericalConstraint.value;
+    if (value instanceof Integer) {
+      value = -1 * value.intValue();
+    } else if (value instanceof Long) {
+      value = -1L * value.longValue();
+    } else if (value instanceof Float) {
+      value = -1.0f * value.floatValue();
+    } else {
+      value = -1.0 * value.doubleValue();
+    }
+    return programState.addConstraint(programState.peekValue(), new NumericalConstraint(value));
+  }
+

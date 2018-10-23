@@ -1,0 +1,13 @@
+    @CheckForNull
+    static MinMaxValue fromConstraints(@Nullable ConstraintsByDomain constraints) {
+      if (constraints == null) {
+        return null;
+      }
+      Constraint minMaxRangeConstraint = constraints.get(MinMaxRangeConstraint.class);
+      Constraint numericalConstraint = constraints.get(NumericalConstraint.class);
+      if (minMaxRangeConstraint != null && numericalConstraint != null) {
+        return new MinMaxValue((NumericalConstraint) numericalConstraint, (MinMaxRangeConstraint) minMaxRangeConstraint);
+      }
+      return null;
+    }
+

@@ -1,0 +1,36 @@
+  private void checkRangeInconsistencies(CheckerContext context, MethodInvocationTree syntaxNode, List<ConstraintsByDomain> constraintsByArgs) {
+    MinMaxValue arg0MinMaxValue = MinMaxValue.fromConstraints(constraintsByArgs.get(0));
+    MinMaxValue arg1MinMaxValue = MinMaxValue.fromConstraints(constraintsByArgs.get(1));
+
+    if (arg0MinMaxValue != null && arg1MinMaxValue != null && arg0MinMaxValue.op != arg1MinMaxValue.op) {
+      // bounds have been inverted
+      Number upperBound = arg0MinMaxValue.op == Operation.MIN ? arg0MinMaxValue.value : arg1MinMaxValue.value;
+      Number lowerBound = arg0MinMaxValue.op == Operation.MAX ? arg0MinMaxValue.value : arg1MinMaxValue.value;
+
+      // all the used values are going to be Numbers
+      @SuppressWarnings("unchecked")
+      int comparedValue = ((Comparable<Number>) lowerBound).compareTo(upperBound);
+
+      if (comparedValue > 0) {
+        String issueMessage;
+        String secondOpMessage;
+        String firstOpMessage;
+        if ("min".equals(syntaxNode.symbol().name())) {
+          issueMessage = String.format(ISSUE_MESSAGE, "min/max", LOWER);
+          firstOpMessage = String.format(FLOW_MESSAGE, UPPER);
+          secondOpMessage = String.format(FLOW_MESSAGE, LOWER);
+        } else {
+          issueMessage = String.format(ISSUE_MESSAGE, "max/min", UPPER);
+          firstOpMessage = String.format(FLOW_MESSAGE, LOWER);
+          secondOpMessage = String.format(FLOW_MESSAGE, UPPER);
+        }
+        MethodInvocationTree flowTree = syntaxNode == arg0MinMaxValue.syntaxNode ? arg1MinMaxValue.syntaxNode : arg0MinMaxValue.syntaxNode;
+        Set<Flow> flow = Collections.singleton(Flow.builder()
+          .add(new JavaFileScannerContext.Location(secondOpMessage, syntaxNode))
+          .add(new JavaFileScannerContext.Location(firstOpMessage, flowTree))
+          .build());
+        context.reportIssue(syntaxNode, this, issueMessage, flow);
+      }
+    }
+  }
+
