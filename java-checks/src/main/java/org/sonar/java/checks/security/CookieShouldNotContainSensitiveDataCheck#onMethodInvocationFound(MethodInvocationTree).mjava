@@ -1,9 +1,12 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree methodTree) {
-    if (methodTree.symbol().name().equals(BUILDER_METHOD)) {
+    String methodName = methodTree.symbol().name();
+    if (methodName.equals(BUILDER_METHOD)) {
       if (secondArgumentIsValue(methodTree.arguments())) {
         reportIssue(methodTree.arguments().get(1), MESSAGE);
       }
+    } else if (methodName.equals(GET_VALUE_METHOD) || methodName.equals("value")) {
+      reportIssue(ExpressionUtils.methodName(methodTree), MESSAGE);
     } else if (isNotNullOrWhitespace(methodTree.arguments().get(0))) {
       reportIssue(methodTree.arguments().get(0), MESSAGE);
     }
