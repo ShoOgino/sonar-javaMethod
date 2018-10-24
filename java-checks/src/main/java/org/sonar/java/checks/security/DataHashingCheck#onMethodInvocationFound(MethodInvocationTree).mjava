@@ -1,0 +1,11 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (mit.symbol().owner().type().is(SECRET_KEY_FACTORY)) {
+      String algorithm = ConstantUtils.resolveAsStringConstant(mit.arguments().get(0));
+      if (algorithm == null || !algorithm.startsWith("PBKDF2")) {
+        return;
+      }
+    }
+    reportIssue(ExpressionUtils.methodName(mit), MESSAGE);
+  }
+
