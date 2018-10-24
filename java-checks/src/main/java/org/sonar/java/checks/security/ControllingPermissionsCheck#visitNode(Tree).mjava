@@ -1,0 +1,26 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    switch (tree.kind()) {
+      case CLASS:
+      case ENUM:
+      case INTERFACE:
+        handleClassTree((ClassTree) tree);
+        break;
+      case NEW_CLASS:
+        handleNewClassTree((NewClassTree) tree);
+        break;
+      case METHOD:
+        handleMethodTree((MethodTree) tree);
+        break;
+      case METHOD_INVOCATION:
+        handleMethodInvocationTree((MethodInvocationTree) tree);
+        break;
+      default:
+        // do nothing - not subscribed
+        break;
+    }
+  }
+

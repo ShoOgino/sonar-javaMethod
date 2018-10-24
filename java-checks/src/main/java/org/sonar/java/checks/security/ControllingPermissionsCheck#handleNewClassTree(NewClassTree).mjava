@@ -1,0 +1,9 @@
+  private void handleNewClassTree(NewClassTree tree) {
+    // only target anonymous classes
+    if (tree.classBody() != null
+      && ((JavaType) tree.symbolType()).directSuperTypes().stream()
+      .anyMatch(dst -> INTERFACES.stream().anyMatch(dst::is) || dst.is(GLOBAL_METHOD_SECURITY_CONFIGURATION))) {
+      reportIssue(tree.identifier());
+    }
+  }
+
