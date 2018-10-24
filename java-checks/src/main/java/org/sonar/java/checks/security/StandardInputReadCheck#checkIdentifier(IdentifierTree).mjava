@@ -1,0 +1,11 @@
+  private void checkIdentifier(IdentifierTree identifier) {
+    Symbol.TypeSymbol enclosingClass = identifier.symbol().enclosingClass();
+    if (enclosingClass != null
+      && enclosingClass.type().is("java.lang.System")
+      && identifier.symbolType().is("java.io.InputStream")
+      && identifier.name().equals("in")
+      && !isClosingStream(identifier.parent())) {
+      reportIssue(identifier);
+    }
+  }
+
