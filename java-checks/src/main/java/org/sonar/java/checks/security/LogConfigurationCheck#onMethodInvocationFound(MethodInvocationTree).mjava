@@ -1,0 +1,12 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (mit.symbol().name().equals("setProperty")) {
+      String stringConstant = ConstantUtils.resolveAsStringConstant(mit.arguments().get(0));
+      if ("logback.configurationFile".equals(stringConstant)) {
+        reportIssue(mit, MESSAGE);
+      }
+    } else {
+      reportIssue(mit, MESSAGE);
+    }
+  }
+
