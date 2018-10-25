@@ -1,10 +1,13 @@
   private static List<String> getRulesFromExpression(ExpressionTree expression) {
     List<String> args = Lists.newArrayList();
-    if (expression.is(Tree.Kind.STRING_LITERAL)) {
-      args.add(LiteralUtils.trimQuotes(((LiteralTree) expression).value()));
-    } else if (expression.is(Tree.Kind.NEW_ARRAY)) {
+    if (expression.is(Tree.Kind.NEW_ARRAY)) {
       for (ExpressionTree initializer : ((NewArrayTree) expression).initializers()) {
         args.addAll(getRulesFromExpression(initializer));
+      }
+    } else {
+      String constant = ConstantUtils.resolveAsStringConstant(expression);
+      if (constant != null) {
+        args.add(constant);
       }
     }
     return args;
