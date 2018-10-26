@@ -10,12 +10,9 @@
         MethodTreeImpl methodTree = (MethodTreeImpl) member;
         if (methodTree.isMainMethod()) {
           checkMainMethodArgsUsage(methodTree);
-        } else {
-          checkArgs4JAnnotation(methodTree.simpleName(), methodTree.symbol());
-          methodTree.parameters().forEach(p -> checkArgs4JAnnotation(p, p.symbol()));
+        } else if ("run".equals(methodTree.simpleName().name())) {
+          checkArgs4J(methodTree.simpleName(), classTree);
         }
-      } else if (member.is(Tree.Kind.VARIABLE)) {
-        checkArgs4JAnnotation(member, ((VariableTree) member).symbol());
       }
     }
   }
