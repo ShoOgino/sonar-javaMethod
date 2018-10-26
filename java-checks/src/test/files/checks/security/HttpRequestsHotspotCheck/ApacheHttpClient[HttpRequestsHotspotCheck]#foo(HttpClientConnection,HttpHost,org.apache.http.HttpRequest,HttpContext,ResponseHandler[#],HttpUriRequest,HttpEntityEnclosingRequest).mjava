@@ -1,0 +1,17 @@
+  void foo(HttpClientConnection con, HttpHost target, org.apache.http.HttpRequest request, HttpContext context,
+    ResponseHandler<?> responseHandler, HttpUriRequest uriRequest, HttpEntityEnclosingRequest eeRequest)
+    throws Exception {
+    HttpClient client = HttpClientBuilder.create().build();
+    client.execute(target, request); // Noncompliant [[sc=12;ec=19]] {{Make sure that this http request is sent safely.}}
+    client.execute(target, request, context); // Noncompliant
+    client.execute(target, request, responseHandler); // Noncompliant
+    client.execute(target, request, responseHandler, context); // Noncompliant
+    client.execute(uriRequest); // Noncompliant
+    client.execute(uriRequest, context); // Noncompliant
+    client.execute(uriRequest, responseHandler); // Noncompliant
+    client.execute(uriRequest, responseHandler, context); // Noncompliant
+
+    con.sendRequestEntity(eeRequest); // Noncompliant
+    con.sendRequestHeader(request); // Noncompliant
+  }
+
