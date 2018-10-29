@@ -1,0 +1,24 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    ClassTree classTree = (ClassTree) tree;
+    Type superType = classTree.symbol().superClass();
+    IdentifierTree className = classTree.simpleName();
+    if (className == null || classTree.symbol().isAbstract() || superType == null || !(superType.is("java.io.InputStream") || superType.is("java.io.FilterInputStream"))) {
+      return;
+    }
+
+    Optional<MethodTree> readByteIntInt = findMethod(classTree, READ_BYTES_INT_INT);
+    if (!readByteIntInt.isPresent()) {
+      String message = findMethod(classTree, READ_INT)
+        .filter(readIntTree -> readIntTree.block().body().isEmpty())
+        .map(readIntTree -> "Provide an empty override of \"read(byte[],int,int)\" for this class as well.")
+        .orElse("Provide an override of \"read(byte[],int,int)\" for this class.");
+      reportIssue(className, message);
+    }
+
+  }
+
