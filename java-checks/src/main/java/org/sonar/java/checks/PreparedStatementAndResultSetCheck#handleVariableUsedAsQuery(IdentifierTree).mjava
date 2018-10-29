@@ -1,7 +1,13 @@
   private static Integer handleVariableUsedAsQuery(IdentifierTree identifier) {
-    ExpressionTree lastAssignment = ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(identifier, identifier.symbol());
-    if (lastAssignment != null && !isPartOfExpression(identifier, lastAssignment)) {
-      return getNumberQuery(lastAssignment);
+    ExpressionTree lastAssignmentExpr = ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(identifier, identifier.symbol());
+    if (lastAssignmentExpr != null) {
+      Tree lastAssignment = lastAssignmentExpr.parent();
+      if (lastAssignment.is(Tree.Kind.PLUS_ASSIGNMENT)) {
+        return zeroIfNull(getNumberQuery(lastAssignmentExpr)) + zeroIfNull(getNumberQuery(((AssignmentExpressionTree) lastAssignment).variable()));
+      }
+      if (!isPartOfExpression(identifier, lastAssignmentExpr)) {
+        return getNumberQuery(lastAssignmentExpr);
+      }
     }
     return null;
   }

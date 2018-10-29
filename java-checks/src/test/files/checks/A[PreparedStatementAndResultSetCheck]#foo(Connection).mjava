@@ -1,14 +1,7 @@
-  void foo(Connection connection) throws SQLException {
-    PreparedStatement ps = connection.prepareStatement("SELECT fname, lname FROM employees where hireDate > ? and salary < ?");
-
-    ps.setDate(0, new Date(0)); // Noncompliant [[sc=16;ec=17]] {{PreparedStatement indices start at 1.}}
-    ps.setDouble(3, 0.0); // Noncompliant [[sc=18;ec=19]] {{This "PreparedStatement" only has 2 parameters.}}
-    ps.setString(getIntValue(), ""); // Compliant - first argument can not be evaluated
-    ps.setInt(1, 0); // Compliant
-
-    ResultSet rs = ps.executeQuery();
-    rs.getString(0); // Noncompliant {{ResultSet indices start at 1.}}
-    rs.getDate(0, new GregorianCalendar()); // Noncompliant {{ResultSet indices start at 1.}}
-    rs.getString(1); // Compliant
+  void foo(Connection conn) throws SQLException {
+    String q = "SELECT * FROM table WHERE name=?";
+    q += " AND c IS NOT NULL";
+    PreparedStatement ps = conn.prepareStatement(q);
+    ps.setString(1, "someValue"); // compliant, += with constant.
   }
 
