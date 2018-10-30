@@ -1,5 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
+    if(tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if (EQUALS_MATCHER.anyMatch(mit)) {
+        reportIssue(mit.methodSelect(), "Equality tests should not be made with floating point values.");
+      }
+      return;
+    }
+
     BinaryExpressionTree binaryExpressionTree = (BinaryExpressionTree) tree;
     if (binaryExpressionTree.is(Tree.Kind.CONDITIONAL_AND, Tree.Kind.CONDITIONAL_OR) && isIndirectEquality(binaryExpressionTree)) {
       binaryExpressionTree = (BinaryExpressionTree) binaryExpressionTree.leftOperand();
