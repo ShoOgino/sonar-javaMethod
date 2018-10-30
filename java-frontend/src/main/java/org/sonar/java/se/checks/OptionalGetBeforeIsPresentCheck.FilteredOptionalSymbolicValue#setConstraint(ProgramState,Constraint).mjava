@@ -1,0 +1,14 @@
+    @Override
+    public List<ProgramState> setConstraint(ProgramState programState, Constraint constraint) {
+      ProgramState ps = programState;
+      if (constraint == OptionalConstraint.PRESENT) {
+        List<ProgramState> programStates = wrappedValue.setConstraint(ps, constraint);
+        // programStates should always have size 1 here as a FilteredOptionalSymbolicValue is only created on top of SV having
+        // either a PRESENT or no constraint. SV having already NOT_PRESENT constraints do not create a new FilteredOptionalSymbolicValue
+        // since the filtering operation will have no effect.
+        Preconditions.checkState(programStates.size() == 1);
+        ps = programStates.get(0);
+      }
+      return super.setConstraint(ps, constraint);
+    }
+

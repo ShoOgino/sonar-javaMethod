@@ -1,0 +1,8 @@
+  private void usingFilter3(Optional<String> op) {
+    if (!op.filter(this::testSomething).isPresent()) {
+      op.get(); // Noncompliant - original optional may or may not be present, cannot know here by only testing the filtered optional
+      return;
+    }
+    op.get(); // Compliant - if op is not present, then filtered value will always be non present ->  unreachable when op not present
+  }
+

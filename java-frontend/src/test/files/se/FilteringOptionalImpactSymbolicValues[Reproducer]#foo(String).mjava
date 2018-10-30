@@ -1,0 +1,13 @@
+  private boolean foo(String x) {
+    if (!java.util.Optional.of(x).filter(s -> s.startsWith("a")).isPresent()) { // Ok - not always true
+      return true;
+    }
+
+    java.util.Optional op = java.util.Optional.empty();
+    if (op.isPresent()) { // Noncompliant {{Change this condition so that it does not always evaluate to "false"}}
+      return true;
+    }
+
+    return false;
+  }
+

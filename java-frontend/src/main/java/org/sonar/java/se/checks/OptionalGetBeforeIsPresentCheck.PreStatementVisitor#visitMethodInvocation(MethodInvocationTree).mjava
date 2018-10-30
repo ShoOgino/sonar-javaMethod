@@ -11,8 +11,13 @@
       } else if (OPTIONAL_FILTER.matches(tree)) {
         // filter has one parameter, so optional is next item on stack
         SymbolicValue optionalSV = programState.peekValue(1);
-        // reuse the same optional - will cause FN as we make filtering a no-op
-        constraintManager.setValueFactory(() -> optionalSV);
+
+        if (programState.getConstraint(optionalSV, OptionalConstraint.class) == OptionalConstraint.NOT_PRESENT) {
+          // reuse the same optional - filtering a non-present optional is a no-op
+          constraintManager.setValueFactory(() -> optionalSV);
+        } else {
+          constraintManager.setValueFactory(() -> new FilteredOptionalSymbolicValue(optionalSV));
+        }
       } else if (OPTIONAL_ORELSE.matches(tree)) {
         ProgramState.Pop pop = programState.unstackValue(2);
         SymbolicValue orElseValue = pop.values.get(0);
