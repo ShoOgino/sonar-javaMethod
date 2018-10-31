@@ -1,0 +1,13 @@
+  public static <T> ValueAndExpression<T> getValueAndExpression(ExpressionTree expression, Function<ExpressionTree,T> resolver) {
+    T value = resolver.apply(expression);
+    if (value == null && expression.is(Tree.Kind.IDENTIFIER)) {
+      ExpressionTree last = ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(expression, ((IdentifierTree) expression).symbol());
+      if (last == null || !isStrictAssignmentOrDeclaration(last) || last == expression) {
+        value = null;
+      } else {
+        return getValueAndExpression(last, resolver);
+      }
+    }
+    return new ValueAndExpression<>(value, expression);
+  }
+

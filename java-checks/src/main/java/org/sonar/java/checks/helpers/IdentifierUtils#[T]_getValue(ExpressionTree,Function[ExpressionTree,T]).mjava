@@ -1,14 +1,5 @@
   @CheckForNull
   public static <T> T getValue(ExpressionTree expression, Function<ExpressionTree,T> resolver) {
-    T value = resolver.apply(expression);
-    if (value == null && expression.is(Tree.Kind.IDENTIFIER)) {
-      ExpressionTree last = ReassignmentFinder.getClosestReassignmentOrDeclarationExpression(expression, ((IdentifierTree) expression).symbol());
-      if (last == null || !isStrictAssignmentOrDeclaration(last) || last == expression) {
-        value = null;
-      } else {
-        value = getValue(last, resolver);
-      }
-    }
-    return value;
+    return getValueAndExpression(expression, resolver).value;
   }
 
