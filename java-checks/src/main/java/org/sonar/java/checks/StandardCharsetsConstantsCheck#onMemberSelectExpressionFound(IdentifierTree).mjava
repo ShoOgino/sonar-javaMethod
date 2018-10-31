@@ -1,0 +1,10 @@
+  private void onMemberSelectExpressionFound(IdentifierTree identifierTree) {
+    Symbol symbol = identifierTree.symbol();
+    if (symbol.isVariableSymbol() && symbol.owner().type().is("com.google.common.base.Charsets")) {
+      String identifier = identifierTree.name();
+      if (STANDARD_CHARSETS.stream().anyMatch(c -> c.name().equals(identifier.replace("_", "-")))) {
+        reportIssue(identifierTree, "Replace \"com.google.common.base.Charsets." + identifier + "\" with \"StandardCharsets." + identifier + "\".");
+      }
+    }
+  }
+
