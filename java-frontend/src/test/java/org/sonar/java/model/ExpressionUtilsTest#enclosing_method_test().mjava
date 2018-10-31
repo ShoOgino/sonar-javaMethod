@@ -1,0 +1,17 @@
+  @Test
+  public void enclosing_method_test() {
+    File file = new File("src/test/files/model/ExpressionEnclosingMethodTest.java");
+    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
+    FindAssignment findAssignment = new FindAssignment();
+    tree.accept(findAssignment);
+    findAssignment.assignments.forEach(a -> {
+      String expectedName = a.firstToken().trivias().get(0).comment().substring(3);
+      MethodTree enclosingMethod = ExpressionUtils.getEnclosingMethod(a);
+      if ("null".equals(expectedName)) {
+        assertThat(enclosingMethod).isNull();
+      } else {
+        assertThat(enclosingMethod.simpleName().name()).isEqualTo(expectedName);
+      }
+    });
+  }
+
