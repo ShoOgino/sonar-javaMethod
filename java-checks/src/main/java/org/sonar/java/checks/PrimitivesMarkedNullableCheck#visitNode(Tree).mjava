@@ -1,0 +1,14 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    MethodTree methodTree = (MethodTree) tree;
+    TypeTree returnType = methodTree.returnType();
+    if (returnType.symbolType().isPrimitive()) {
+      findNullableAnnotation(methodTree)
+        .ifPresent(annotation -> reportIssue(returnType, String.format("\"%s\" annotation should not be used on primitive types", annotation)));
+    }
+  }
+
