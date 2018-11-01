@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    ForEachStatement actualStatement = (ForEachStatement) tree;
+    Type variableType = actualStatement.variable().type().symbolType();
+    Type collectionItemType = getCollectionItemType(actualStatement.expression());
+
+    if (collectionItemType != null && !isMostPreciseType(variableType, collectionItemType)) {
+      // Second pass: check if the variable is down-cast in the statement block
+      DownCastVisitor downCastVisitor = new DownCastVisitor(actualStatement, actualStatement.variable(), collectionItemType);
+      downCastVisitor.setContext(context);
+      downCastVisitor.scanTree(((ForEachStatement) tree).statement());
+    }
+  }
+
