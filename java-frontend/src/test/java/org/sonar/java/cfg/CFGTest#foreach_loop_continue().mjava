@@ -1,11 +1,11 @@
   @Test
   public void foreach_loop_continue() {
-    final CFG cfg = buildCFG("void fun(){ System.out.println('start'); for(String foo:list) {System.out.println(foo); if(foo.length()> 2) {continue;}  System.out.println('');} System.out.println('end'); }");
+    final CFG cfg = buildCFG("void fun(){ System.out.println(\"start\"); for(String foo:list) {System.out.println(foo); if(foo.length()> 2) {continue;}  System.out.println('c');} System.out.println(\"end\"); }");
     final CFGChecker cfgChecker = checker(
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "'start'"),
+          element(Tree.Kind.STRING_LITERAL, "start"),
           element(Tree.Kind.METHOD_INVOCATION)).successors(6),
         block(
             element(Tree.Kind.IDENTIFIER, "list")).successors(2),
@@ -23,14 +23,14 @@
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "''"),
+          element(Tree.Kind.CHAR_LITERAL, "'c'"),
           element(Tree.Kind.METHOD_INVOCATION)).successors(2),
         block(
             element(Tree.Kind.VARIABLE, "foo")).terminator(Tree.Kind.FOR_EACH_STATEMENT).successors(1, 5),
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "'end'"),
+          element(Tree.Kind.STRING_LITERAL, "end"),
           element(Tree.Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);
   }

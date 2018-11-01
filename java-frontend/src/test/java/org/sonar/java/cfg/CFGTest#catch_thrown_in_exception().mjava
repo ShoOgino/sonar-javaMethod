@@ -8,10 +8,10 @@
       "        foo();      \n"+
       "      }\n"+
       "    } catch (MyException e) {\n"+
-      "      System.out.println('outercatch');\n"+
+      "      System.out.println(\"outercatch\");\n"+
       "    }\n"+
       "   }" +
-      " class MyException{}");
+      " class MyException extends Exception {}");
     CFGChecker checker = checker(
       block(
         element(Tree.Kind.TRY_STATEMENT)
@@ -32,7 +32,7 @@
         element(Kind.VARIABLE, "e"),
         element(Kind.IDENTIFIER, "System"),
         element(Kind.MEMBER_SELECT),
-        element(Kind.CHAR_LITERAL, "'outercatch'"),
+        element(Kind.STRING_LITERAL, "outercatch"),
         element(Kind.METHOD_INVOCATION)
       ).successors(0).exceptions(0)
     );

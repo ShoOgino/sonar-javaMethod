@@ -1,6 +1,6 @@
   @Test
   public void three_branch_if() {
-    final CFG cfg = buildCFG("void fun() { foo ? a : b; a.toString();}");
+    final CFG cfg = buildCFG("void fun() { Object c = foo ? a : b; a.toString();}");
     final CFGChecker cfgChecker = checker(
       block(
         element(Tree.Kind.IDENTIFIER, "foo")).terminator(Tree.Kind.CONDITIONAL_EXPRESSION).successors(2, 3),
@@ -9,6 +9,7 @@
       block(
         element(Tree.Kind.IDENTIFIER, "b")).successors(1),
       block(
+        element(Kind.VARIABLE, "c"),
         element(Tree.Kind.IDENTIFIER, "a"),
         element(Tree.Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);

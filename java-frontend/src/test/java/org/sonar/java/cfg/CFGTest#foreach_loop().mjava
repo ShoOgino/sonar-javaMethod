@@ -1,11 +1,11 @@
   @Test
   public void foreach_loop() {
-    CFG cfg = buildCFG("void fun(){ System.out.println(''); for(String foo:list) {System.out.println(foo);} System.out.println(''); }");
+    CFG cfg = buildCFG("void fun(){ System.out.println('c'); for(String foo:list) {System.out.println(foo);} System.out.println('d'); }");
     CFGChecker cfgChecker = checker(
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "''"),
+          element(Tree.Kind.CHAR_LITERAL, "'c'"),
           element(Tree.Kind.METHOD_INVOCATION)).successors(4),
         block(
             element(Tree.Kind.IDENTIFIER, "list")).successors(2),
@@ -19,7 +19,7 @@
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "''"),
+          element(Tree.Kind.CHAR_LITERAL, "'d'"),
           element(Tree.Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);
     cfg = buildCFG("void fun(){ for (String n : dir.list(foo() ? \"**\" : \"\")) {\n" +

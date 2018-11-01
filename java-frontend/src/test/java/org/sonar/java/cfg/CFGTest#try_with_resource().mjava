@@ -1,9 +1,9 @@
   @Test
   public void try_with_resource() throws Exception {
-    final CFG cfg = buildCFG("void fun() { String path = ''; try (BufferedReader br = new BufferedReader(new FileReader(path))) {} }");
+    final CFG cfg = buildCFG("void fun() { String path = \"\"; try (BufferedReader br = new BufferedReader(new FileReader(path))) {} }");
     final CFGChecker cfgChecker = checker(
       block(
-        element(Kind.CHAR_LITERAL, "''"),
+        element(Kind.STRING_LITERAL, ""),
         element(Kind.VARIABLE, "path"),
         element(Kind.TRY_STATEMENT)).successors(3),
       block(

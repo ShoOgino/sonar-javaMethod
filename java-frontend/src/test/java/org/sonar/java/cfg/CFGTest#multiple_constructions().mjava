@@ -1,6 +1,6 @@
   @Test
   public void multiple_constructions() {
-    final CFG cfg = buildCFG("void fun(Object a) {if(a instanceof String) { a::toString;foo(y -> y+1); a += (String) a;  } }");
+    final CFG cfg = buildCFG("void fun(Object a) {if(a instanceof String) { Supplier<String> s = a::toString;foo(y -> y+1); a += (String) a;  } }");
     final CFGChecker cfgChecker = checker(
       block(
         element(Tree.Kind.IDENTIFIER, "a"),
@@ -8,6 +8,7 @@
         ).terminator(Tree.Kind.IF_STATEMENT).successors(0, 1),
       block(
         element(Kind.METHOD_REFERENCE),
+        element(Kind.VARIABLE, "s"),
         element(Tree.Kind.IDENTIFIER, "foo"),
         element(Tree.Kind.LAMBDA_EXPRESSION),
         element(Tree.Kind.METHOD_INVOCATION),

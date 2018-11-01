@@ -1,6 +1,6 @@
   @Test
   public void try_statement() {
-    CFG cfg = buildCFG("void fun() {try {System.out.println('');} finally { System.out.println(''); }}");
+    CFG cfg = buildCFG("void fun() {try {System.out.println('c');} finally { System.out.println('c'); }}");
     CFGChecker cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
@@ -8,18 +8,18 @@
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "''"),
+          element(Tree.Kind.CHAR_LITERAL, "'c'"),
           element(Tree.Kind.METHOD_INVOCATION)
         ).successors(1).exceptions(1),
         block(
           element(Tree.Kind.IDENTIFIER, "System"),
           element(Tree.Kind.MEMBER_SELECT),
-          element(Tree.Kind.CHAR_LITERAL, "''"),
+          element(Tree.Kind.CHAR_LITERAL, "'c'"),
           element(Tree.Kind.METHOD_INVOCATION)
       ).successors(0).isFinallyBlock());
     cfgChecker.check(cfg);
-    cfg = buildCFG("void fun() {try {System.out.println('');} catch(IllegalArgumentException e) { foo('i');} catch(Exception e){bar('e');}" +
-        " finally { System.out.println('finally'); }}");
+    cfg = buildCFG("void fun() {try {System.out.println('c');} catch(IllegalArgumentException e) { foo('i');} catch(Exception e){bar('e');}" +
+        " finally { System.out.println(\"finally\"); }}");
     cfgChecker = checker(
         block(
             element(Tree.Kind.TRY_STATEMENT)
@@ -27,7 +27,7 @@
       block(
         element(Tree.Kind.IDENTIFIER, "System"),
         element(Tree.Kind.MEMBER_SELECT),
-        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.CHAR_LITERAL, "'c'"),
         element(Tree.Kind.METHOD_INVOCATION)
       ).successors(1).exceptions(1, 2, 3),
       block(
@@ -45,7 +45,7 @@
       block(
         element(Tree.Kind.IDENTIFIER, "System"),
         element(Tree.Kind.MEMBER_SELECT),
-        element(Tree.Kind.CHAR_LITERAL, "'finally'"),
+        element(Kind.STRING_LITERAL, "finally"),
         element(Tree.Kind.METHOD_INVOCATION)
       ).successors(0).isFinallyBlock()
     );

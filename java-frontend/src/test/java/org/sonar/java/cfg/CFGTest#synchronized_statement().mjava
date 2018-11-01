@@ -1,6 +1,6 @@
   @Test
   public void synchronized_statement() {
-    final CFG cfg = buildCFG("void fun(Object a) {if(a==null) { synchronized(a) { foo();bar();} } System.out.println(''); }");
+    final CFG cfg = buildCFG("void fun(Object a) {if(a==null) { synchronized(a) { foo();bar();} } System.out.println('c'); }");
     final CFGChecker cfgChecker = checker(
       block(
         element(Tree.Kind.IDENTIFIER, "a"),
@@ -16,7 +16,7 @@
       block(
         element(Tree.Kind.IDENTIFIER, "System"),
         element(Tree.Kind.MEMBER_SELECT),
-        element(Tree.Kind.CHAR_LITERAL, "''"),
+        element(Tree.Kind.CHAR_LITERAL, "'c'"),
         element(Tree.Kind.METHOD_INVOCATION)).successors(0));
     cfgChecker.check(cfg);
   }

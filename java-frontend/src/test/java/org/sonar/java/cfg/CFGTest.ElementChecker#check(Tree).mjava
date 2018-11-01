@@ -11,7 +11,14 @@
           assertThat(((LiteralTree) element).token().text()).as("Integer").isEqualTo(name);
           break;
         case CHAR_LITERAL:
-          assertThat(((LiteralTree) element).token().text()).as("String").isEqualTo(name);
+          assertThat(((LiteralTree) element).token().text()).as("Character").isEqualTo(name);
+          break;
+        case STRING_LITERAL:
+          String value = LiteralUtils.trimQuotes(((LiteralTree) element).token().text());
+          assertThat(value).as("String").isEqualTo(name);
+          break;
+        case BOOLEAN_LITERAL:
+          assertThat(((LiteralTree) element).token().text()).as("Boolean").isEqualTo(name);
           break;
         case METHOD_INVOCATION:
           if (name != null) {
