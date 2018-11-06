@@ -1,0 +1,13 @@
+    @Override
+    public void visitTypeCast(TypeCastTree tree) {
+      if (hasDownCastOfLoopVariable) {
+        return;
+      }
+      ExpressionTree expression = tree.expression();
+      if (expression.is(Tree.Kind.IDENTIFIER) && ((IdentifierTree) expression).symbol().equals(symbol)) {
+        hasDownCastOfLoopVariable = true;
+      } else {
+        super.visitTypeCast(tree);
+      }
+    }
+

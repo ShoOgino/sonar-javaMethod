@@ -10,9 +10,15 @@
 
     if (collectionItemType != null && !isMostPreciseType(variableType, collectionItemType)) {
       // Second pass: check if the variable is down-cast in the statement block
-      DownCastVisitor downCastVisitor = new DownCastVisitor(actualStatement, actualStatement.variable(), collectionItemType);
-      downCastVisitor.setContext(context);
-      downCastVisitor.scanTree(((ForEachStatement) tree).statement());
+      DownCastVisitor downCastVisitor = new DownCastVisitor(actualStatement.variable().symbol());
+      actualStatement.statement().accept(downCastVisitor);
+
+      if (downCastVisitor.hasDownCastOfLoopVariable) {
+        List<JavaFileScannerContext.Location> locations = Collections.singletonList(
+          new JavaFileScannerContext.Location(String.format(SECONDARY_MESSAGE, collectionItemType.name()), actualStatement.expression()));
+        reportIssue(actualStatement.variable().type(), String.format(PRIMARY_MESSAGE, variableType.name()),
+          locations, 0);
+      }
     }
   }
 
