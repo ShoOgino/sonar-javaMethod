@@ -1,0 +1,27 @@
+  private void checkCall(ExpressionTree callExpression, Symbol symbol, Arguments arguments) {
+    getCharsetNameArgument(symbol, arguments).ifPresent((charsetNameArgument) -> {
+      String constantName = getConstantName(charsetNameArgument);
+      if (constantName != null) {
+        String methodRef = getMethodRef(symbol);
+        switch (methodRef) {
+          case "Charset.forName":
+            reportIssue(callExpression, "Replace Charset.forName() call with StandardCharsets." + constantName);
+            break;
+          case "Charsets.toCharset":
+            reportIssue(callExpression, "Replace Charsets.toCharset() call with StandardCharsets." + constantName);
+            break;
+          case "IOUtils.toString":
+            if (arguments.size() == 2 && arguments.get(0).symbolType().is("byte[]")) {
+              reportIssue(callExpression, "Replace IOUtils.toString() call with new String(..., StandardCharsets." + constantName + ");");
+            } else {
+              reportDefaultIssue(charsetNameArgument, constantName);
+            }
+            break;
+          default:
+            reportDefaultIssue(charsetNameArgument, constantName);
+            break;
+        }
+      }
+    });
+  }
+

@@ -1,0 +1,28 @@
+  private Optional<ExpressionTree> getCharsetNameArgument(Symbol symbol, Arguments arguments) {
+    ExpressionTree result = null;
+    List<ExpressionTree> stringArguments = arguments.stream().filter(argument -> argument.symbolType().is(JAVA_LANG_STRING)).collect(Collectors.toList());
+    switch (stringArguments.size()) {
+      case 0:
+        result = null;
+        break;
+      case 1:
+        result = stringArguments.get(0);
+        break;
+      default:
+        String symbolRef = getMethodRef(symbol);
+        switch (symbolRef) {
+          case "FileUtils.writeStringToFile":
+          case "IOUtils.toInputStream":
+          case "IOUtils.write":
+          case "IOUtils.writeLines":
+            result = Iterables.getLast(stringArguments);
+            break;
+          case "LockableFileWriter.<init>":
+            result = stringArguments.get(0);
+            break;
+        }
+        break;
+    }
+    return Optional.ofNullable(result);
+  }
+
