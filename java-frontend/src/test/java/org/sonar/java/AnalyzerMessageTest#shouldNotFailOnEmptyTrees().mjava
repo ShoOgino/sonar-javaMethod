@@ -1,0 +1,28 @@
+  @Test
+  public void shouldNotFailOnEmptyTrees() {
+    CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser()
+      .parse("class A {\n" +
+        "  void foo(java.util.List l) {\n" +
+        "    l.forEach(o -> {});\n" +
+        "  }\n" +
+        "}");
+
+    MethodTree methodTree = (MethodTree) ((ClassTree) cut.types().get(0)).members().get(0);
+    MethodInvocationTree mit = (MethodInvocationTree) ((ExpressionStatementTree) methodTree.block().body().get(0)).expression();
+    VariableTree variableTree = ((LambdaExpressionTree) mit.arguments().get(0)).parameters().get(0);
+    TypeTree type = variableTree.type();
+
+    assertThat(type).isInstanceOf(InferedTypeTree.class);
+    assertThat(AnalyzerMessage.textSpanFor(type))
+      .extracting("startLine", "startCharacter", "endLine", "endCharacter")
+      .contains(3, 14, 3, 15);
+
+    assertThat(AnalyzerMessage.textSpanBetween(type, methodTree))
+      .extracting("startLine", "startCharacter", "endLine", "endCharacter")
+      .contains(3, 14, 4, 3);
+
+    assertThat(AnalyzerMessage.textSpanBetween(methodTree, type))
+      .extracting("startLine", "startCharacter", "endLine", "endCharacter")
+      .contains(2, 2, 3, 15);
+  }
+
