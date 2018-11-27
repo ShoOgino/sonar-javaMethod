@@ -4,9 +4,17 @@
         LOG.warn("File {} is empty and won't be analyzed.", file.getPath());
         return null;
       }
-      Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
       SAXParserFactory factory = SAXParserFactory.newInstance();
-      disableXmlValidation(factory);
+      factory.setValidating(false);
+      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      factory.setFeature("http://xml.org/sax/features/validation", false);
+      factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+      factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+      factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
       factory.newSAXParser().parse(file, new LocationHandler(document));
       return document;
     } catch (ParserConfigurationException | SAXException | IOException e) {
