@@ -1,6 +1,11 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree methodTree) {
-    ExpressionTree setValue = methodTree.arguments().get(0);
-    reportIfTrue(setValue);
+    if (CONSTRUCTOR_NAME.equals(methodTree.symbol().name())) {
+      // when calling super() for classes extending SearchControls
+      checkConstructorArguments(methodTree.arguments());
+    } else {
+      ExpressionTree setValue = methodTree.arguments().get(0);
+      reportIfTrue(setValue);
+    }
   }
 
