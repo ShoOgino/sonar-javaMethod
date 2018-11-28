@@ -1,0 +1,14 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    if (tree.block() == null || tree.is(Tree.Kind.CONSTRUCTOR)) {
+      // skip everything for abstract methods (from interfaces or abstract class) and constructors
+      return;
+    }
+
+    tree.parameters().stream()
+      .filter(p -> IS_ZIP_ENTRY.test(p.symbol().type()))
+      .forEach(p -> context.reportIssue(this, p, ISSUE_MESSAGE));
+
+    super.visitMethod(tree);
+  }
+
