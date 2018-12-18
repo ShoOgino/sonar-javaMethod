@@ -1,0 +1,18 @@
+  @Test
+  public void test() throws Exception {
+    CheckFactory checkFactory = new CheckFactory(new ActiveRulesBuilder().create(XML_RULE_KEY).activate().build());
+    NewXmlFileSensor sensor = new NewXmlFileSensor(checkFactory);
+
+    addFileWithIssue("xml");
+
+    sensor.execute(context);
+
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+
+    assertThat(issue.ruleKey()).isEqualTo(XML_RULE_KEY);
+    assertThat(issue.primaryLocation().message()).isEqualTo("Move this default interceptor to \"ejb-jar.xml\"");
+    assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(5);
+  }
+

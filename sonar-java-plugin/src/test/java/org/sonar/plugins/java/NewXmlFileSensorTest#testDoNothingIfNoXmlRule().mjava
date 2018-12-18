@@ -1,0 +1,11 @@
+  @Test
+  public void testDoNothingIfNoXmlRule() throws Exception {
+    CheckFactory checkFactory = new CheckFactory(new ActiveRulesBuilder().build());
+    NewXmlFileSensor sensor = new NewXmlFileSensor(checkFactory);
+
+    addFileWithIssue("xml");
+    sensor.execute(context);
+
+    assertThat(context.allIssues()).isEmpty();
+  }
+

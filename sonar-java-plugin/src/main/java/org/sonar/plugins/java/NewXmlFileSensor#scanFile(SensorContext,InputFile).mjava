@@ -1,0 +1,15 @@
+  private void scanFile(SensorContext context, InputFile inputFile) {
+    XmlFile xmlFile;
+    try {
+      xmlFile = XmlFile.create(inputFile);
+    } catch (ParseException | IOException e) {
+      LOG.debug("Skipped '{}' due to parsing error", inputFile.toString());
+      return;
+    }
+
+    checks.all().forEach(check -> {
+      RuleKey ruleKey = checks.ruleKey(check);
+      scanFile(context, xmlFile, check, ruleKey);
+    });
+  }
+
