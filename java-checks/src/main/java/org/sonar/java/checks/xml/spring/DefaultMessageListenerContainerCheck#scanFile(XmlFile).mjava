@@ -1,11 +1,9 @@
   @Override
   protected void scanFile(XmlFile xmlFile) {
-    NodeList beanNodes = evaluate(defaultMessageListenerContainerBeanExpression, xmlFile.getNamespaceUnawareDocument());
-    for (int i = 0; i < beanNodes.getLength(); i++) {
-      Node bean = beanNodes.item(i);
+    evaluateAsList(defaultMessageListenerContainerBeanExpression, xmlFile.getNamespaceUnawareDocument()).forEach(bean -> {
       if (!hasAcceptMessagePropertyEnabled(bean) && hasSessionTransactedDisabled(bean)) {
         reportIssue(bean, "Enable \"acceptMessagesWhileStopping\".");
       }
-    }
+    });
   }
 
