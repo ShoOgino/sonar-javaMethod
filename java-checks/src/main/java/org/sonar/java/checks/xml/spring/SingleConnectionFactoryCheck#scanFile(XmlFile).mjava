@@ -1,0 +1,9 @@
+  @Override
+  protected void scanFile(XmlFile file) {
+    evaluateAsList(singleConnectionFactoryBeansExpression, file.getNamespaceUnawareDocument()).forEach(bean -> {
+      if (!hasPropertyAsAttribute(bean) && !hasPropertyAsChild(bean)) {
+        reportIssue(bean, "Add a \"reconnectOnException\" property, set to \"true\"");
+      }
+    });
+  }
+
