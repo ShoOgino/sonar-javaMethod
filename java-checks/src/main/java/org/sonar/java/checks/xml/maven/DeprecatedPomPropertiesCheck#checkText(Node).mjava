@@ -1,0 +1,16 @@
+  private void checkText(Node textNode) {
+    NodeList childNodes = textNode.getChildNodes();
+    for (int j = 0; j < childNodes.getLength(); j++) {
+      Node childNode = childNodes.item(j);
+      if (childNode.getNodeType() != Node.TEXT_NODE) {
+        continue;
+      }
+      String text = childNode.getNodeValue();
+      while (StringUtils.contains(text, POM_PROPERTY_PREFIX)) {
+        String property = extractPropertyName(text);
+        reportIssue(childNode, "Replace \"pom." + property + "\" with \"project." + property + "\".");
+        text = skipFirstProperty(text);
+      }
+    }
+  }
+
