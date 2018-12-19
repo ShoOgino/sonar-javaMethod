@@ -1,0 +1,15 @@
+  @Override
+  protected void scanFile(XmlFile file) {
+    if (!"pom.xml".equalsIgnoreCase(file.getInputFile().filename())) {
+      return;
+    }
+    NodeList groupIds = evaluate(groupIdExpression, file.getNamespaceUnawareDocument());
+    if (groupIds.getLength() != 1) {
+      return;
+    }
+    Node groupId = groupIds.item(0);
+    if (!getPattern().matcher(groupId.getTextContent()).matches()) {
+      reportIssue(groupId, "Update this \"groupId\" to match the provided regular expression: '" + regex + "'");
+    }
+  }
+
