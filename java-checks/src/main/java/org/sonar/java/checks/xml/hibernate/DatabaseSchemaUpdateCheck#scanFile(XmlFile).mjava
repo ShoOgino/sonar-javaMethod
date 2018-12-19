@@ -1,0 +1,12 @@
+  @Override
+  protected void scanFile(XmlFile file) {
+    try {
+      NodeList nodeList = (NodeList) hibernateHbm2ddlAutoProperty.evaluate(file.getNamespaceUnawareDocument(), XPathConstants.NODESET);
+      for (int i = 0; i < nodeList.getLength(); i++) {
+        checkProperty(nodeList.item(i));
+      }
+    } catch (XPathExpressionException e) {
+      throw new AnalysisException("Unable to evaluate XPath expression", e);
+    }
+  }
+
