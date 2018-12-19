@@ -1,0 +1,15 @@
+  @Override
+  protected void scanFile(XmlFile file) {
+    if (!"pom.xml".equalsIgnoreCase(file.getInputFile().filename())) {
+      return;
+    }
+    NodeList artifactIds = evaluate(artifactIdExpression, file.getNamespaceUnawareDocument());
+    if (artifactIds.getLength() != 1) {
+      return;
+    }
+    Node artifactId = artifactIds.item(0);
+    if (!getPattern().matcher(artifactId.getTextContent()).matches()) {
+      reportIssue(artifactId, "Update this \"artifactId\" to match the provided regular expression: '" + regex + "'");
+    }
+  }
+
