@@ -1,0 +1,18 @@
+  private void checkDependency(Element dependency) {
+    Optional<Node> scope = getElementByName("scope", dependency);
+    if (!scope.isPresent() || !"system".equalsIgnoreCase(scope.get().getTextContent())) {
+      return;
+    }
+
+    Optional<Node> systemPathOptional = getElementByName("systemPath", dependency);
+    if (systemPathOptional.isPresent()) {
+      XmlTextRange systemPathLocation = XmlFile.nodeLocation(systemPathOptional.get());
+      reportIssue(
+        XmlFile.nodeLocation(scope.get()),
+        "Update this scope and remove the \"systemPath\".",
+        Collections.singletonList(systemPathLocation));
+    } else {
+      reportIssue(scope.get(), "Update this scope.");
+    }
+  }
+

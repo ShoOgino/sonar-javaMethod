@@ -1,0 +1,10 @@
+  @Override
+  protected void scanFile(XmlFile xmlFile) {
+    if (!"pom.xml".equalsIgnoreCase(xmlFile.getInputFile().filename())) {
+      return;
+    }
+
+    evaluateAsList(dependencyExpression, xmlFile.getNamespaceUnawareDocument())
+      .forEach(dependency -> checkDependency((Element) dependency));
+  }
+
