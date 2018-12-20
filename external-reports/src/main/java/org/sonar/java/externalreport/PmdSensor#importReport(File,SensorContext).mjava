@@ -2,10 +2,8 @@
     try {
       LOG.info("Importing {}", reportFile);
       PmdXmlReportReader.read(context, reportFile, RULE_LOADER);
-    } catch (FileNotFoundException e) {
-      LOG.error("Can't find PMD XML report: {}", reportFile);
-    } catch (XMLStreamException | IOException | RuntimeException e) {
-      LOG.error("Can't read PMD XML report: {}", reportFile, e);
+    } catch (Exception e) {
+      LOG.error("Failed to import external issues report: " + reportFile.getAbsolutePath(), e);
     }
   }
 

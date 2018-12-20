@@ -2,9 +2,8 @@
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
       SpotBugsXmlReportReader.read(context, in, RULE_LOADER, Collections.singletonMap(FINDSECBUGS_KEY, FINDSECBUGS_LOADER));
-    } catch (IOException | XMLStreamException | RuntimeException e) {
-      LOG.error(e.getClass().getSimpleName() + ": " + e.getMessage() +
-        ", no issues information will be saved as the report file '{}' can't be read.", reportPath, e);
+    } catch (Exception e) {
+      LOG.error("Failed to import external issues report: " + reportPath, e);
     }
   }
 
