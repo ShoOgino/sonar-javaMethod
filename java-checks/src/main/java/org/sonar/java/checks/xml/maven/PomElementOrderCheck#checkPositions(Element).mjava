@@ -1,0 +1,38 @@
+  private void checkPositions(Element project) {
+    List<Node> children = XmlFile.children(project);
+    List<Node> expectedOrder = REQUIRED_ORDER.stream()
+      .map(elementName -> getChildElementByName(elementName, children))
+      .filter(Optional::isPresent)
+      .map(Optional::get)
+      .collect(Collectors.toList());
+
+    List<Node> observedOrder = expectedOrder.stream().sorted(LINE_COMPARATOR).collect(Collectors.toList());
+
+    int lastWrongPosition = -1;
+    int firstWrongPosition = -1;
+
+    for (int index = 0; index < expectedOrder.size(); index++) {
+      if (observedOrder.indexOf(expectedOrder.get(index)) != index) {
+        lastWrongPosition = index;
+        if (firstWrongPosition == -1) {
+          firstWrongPosition = index;
+        }
+      }
+    }
+
+    if (lastWrongPosition == -1) {
+      return;
+    }
+
+    List<Secondary> inconsistencies = new ArrayList<>();
+    // only reports between first and last wrong position
+    for (int index = firstWrongPosition; index <= lastWrongPosition; index++) {
+      inconsistencies.add(new Secondary(expectedOrder.get(index), "Expected position: " + (index + 1)));
+    }
+
+    if (!inconsistencies.isEmpty()) {
+      reportIssue(XmlFile.startLocation(project),
+        "Reorder the elements of this pom to match the recommended order.", inconsistencies);
+    }
+  }
+
