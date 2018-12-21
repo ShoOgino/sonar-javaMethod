@@ -1,14 +1,11 @@
   public StaxParser(UnitTestIndex index) {
     this.streamHandler = new SurefireStaxHandler(index);
-    XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
-    if (xmlFactory instanceof WstxInputFactory) {
-      WstxInputFactory wstxInputfactory = (WstxInputFactory) xmlFactory;
+    XMLInputFactory xmlInputFactory = SafetyFactory.createXMLInputFactory();
+    if (xmlInputFactory instanceof WstxInputFactory) {
+      WstxInputFactory wstxInputfactory = (WstxInputFactory) xmlInputFactory;
       wstxInputfactory.configureForLowMemUsage();
       wstxInputfactory.getConfig().setUndeclaredEntityResolver((String publicID, String systemID, String baseURI, String namespace) -> namespace);
     }
-    xmlFactory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-    xmlFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-    inf = new SMInputFactory(xmlFactory);
+    this.inf = new SMInputFactory(xmlInputFactory);
   }
 
