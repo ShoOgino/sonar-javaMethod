@@ -1,0 +1,14 @@
+  @Override
+  public void scanWebXml(XmlFile file) {
+    Set<String> filtersInMapping = new HashSet<>();
+    evaluateAsList(filterNamesFromFilterMappingExpression, file.getNamespaceUnawareDocument())
+      .forEach(node -> getStringValue(node).ifPresent(filtersInMapping::add));
+    evaluateAsList(filterNamesFromFilterExpression, file.getNamespaceUnawareDocument())
+      .forEach(node -> {
+        Optional<String> filterName = getStringValue(node);
+        if (filterName.isPresent() && !filtersInMapping.contains(filterName.get())) {
+          reportIssue(node, "\"" + filterName.get() + "\" should have a mapping.");
+        }
+      });
+  }
+
