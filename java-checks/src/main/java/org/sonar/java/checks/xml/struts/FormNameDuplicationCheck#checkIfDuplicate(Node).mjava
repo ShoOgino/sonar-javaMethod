@@ -1,0 +1,14 @@
+  private void checkIfDuplicate(Node formSet) {
+    Map<String, Node> formsByName = new HashMap<>();
+    evaluateAsList(formsExpression, formSet)
+      .forEach(form -> {
+        String name = getNameAttribute(form);
+        Node original = formsByName.get(name);
+        if (original == null) {
+          formsByName.put(name, form);
+        } else {
+          reportIssue(form, original);
+        }
+      });
+  }
+
