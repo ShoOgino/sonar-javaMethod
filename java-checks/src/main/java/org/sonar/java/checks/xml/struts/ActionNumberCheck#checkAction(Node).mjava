@@ -1,0 +1,12 @@
+  private void checkAction(Node node) {
+    List<Secondary> secondaries = evaluateAsList(forwardsFromActionExpression, node).stream()
+      .skip(maximumForwards)
+      .map(forward -> new Secondary(forward, "Move this forward to another action."))
+      .collect(Collectors.toList());
+    if (!secondaries.isEmpty()) {
+      int numberForward = maximumForwards + secondaries.size();
+      String message = "Reduce the number of forwards in this action from " + numberForward + " to at most " + maximumForwards + ".";
+      reportIssue(XmlFile.nodeLocation(node), message, secondaries);
+    }
+  }
+
