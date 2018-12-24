@@ -1,0 +1,12 @@
+  @Test
+  public void testDescriptor() throws Exception {
+    XmlFileSensor sensor = new XmlFileSensor(new CheckFactory(new ActiveRulesBuilder().build()));
+    DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
+    sensor.describe(descriptor);
+
+    assertThat(descriptor.name()).isEqualTo("XML rules for Java projects");
+    // todo: do we want to run this sensor only for projects containing JVM languages
+    assertThat(descriptor.languages()).isEmpty();
+    assertThat(descriptor.isGlobal()).isFalse();
+  }
+
