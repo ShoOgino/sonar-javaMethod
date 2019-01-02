@@ -1,27 +1,24 @@
   private void checkCall(ExpressionTree callExpression, Symbol symbol, Arguments arguments) {
-    getCharsetNameArgument(symbol, arguments).ifPresent((charsetNameArgument) -> {
-      String constantName = getConstantName(charsetNameArgument);
-      if (constantName != null) {
-        String methodRef = getMethodRef(symbol);
-        switch (methodRef) {
-          case "Charset.forName":
-            reportIssue(callExpression, "Replace Charset.forName() call with StandardCharsets." + constantName);
-            break;
-          case "Charsets.toCharset":
-            reportIssue(callExpression, "Replace Charsets.toCharset() call with StandardCharsets." + constantName);
-            break;
-          case "IOUtils.toString":
-            if (arguments.size() == 2 && arguments.get(0).symbolType().is("byte[]")) {
-              reportIssue(callExpression, "Replace IOUtils.toString() call with new String(..., StandardCharsets." + constantName + ");");
-            } else {
+    getCharsetNameArgument(symbol, arguments)
+      .ifPresent(charsetNameArgument -> getConstantName(charsetNameArgument)
+        .ifPresent(constantName -> {
+          String methodRef = getMethodRef(symbol);
+          switch (methodRef) {
+            case "Charset.forName":
+            case "Charsets.toCharset":
+              reportIssue(callExpression, String.format("Replace %s() call with StandardCharsets.%s", methodRef, constantName));
+              break;
+            case "IOUtils.toString":
+              if (arguments.size() == 2 && arguments.get(0).symbolType().is(BYTE_ARRAY)) {
+                reportIssue(callExpression, "Replace IOUtils.toString() call with new String(..., StandardCharsets." + constantName + ");");
+              } else {
+                reportDefaultIssue(charsetNameArgument, constantName);
+              }
+              break;
+            default:
               reportDefaultIssue(charsetNameArgument, constantName);
-            }
-            break;
-          default:
-            reportDefaultIssue(charsetNameArgument, constantName);
-            break;
-        }
-      }
-    });
+              break;
+          }
+        }));
   }
 
