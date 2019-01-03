@@ -2,14 +2,10 @@
     public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
       Symbol symbol = tree.identifier().symbol();
       if (isField(symbol) && !symbol.isStatic()) {
-
         if (tree.expression().is(Kind.IDENTIFIER)) {
-          String objectName = ((IdentifierTree) tree.expression()).name();
-
-          if (!"this".equals(objectName)) {
+          if (!ExpressionUtils.isThis(tree.expression())) {
             fieldsReadOnAnotherInstance.add(symbol);
           }
-
         } else {
           fieldsReadOnAnotherInstance.add(symbol);
         }

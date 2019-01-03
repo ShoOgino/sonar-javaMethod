@@ -1,7 +1,7 @@
     @Override
     public void visitReturnStatement(ReturnStatementTree tree) {
       ExpressionTree returnedExpression = tree.expression();
-      if (returnedExpression.is(Tree.Kind.IDENTIFIER) && "this".equals(((IdentifierTree) returnedExpression).name())) {
+      if (ExpressionUtils.isThis(returnedExpression)) {
         issueLocations.add(returnedExpression);
       }
       super.visitReturnStatement(tree);
