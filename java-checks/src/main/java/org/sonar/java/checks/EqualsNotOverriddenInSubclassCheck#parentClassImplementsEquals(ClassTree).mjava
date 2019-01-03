@@ -4,10 +4,9 @@
       Type superClassType = superClass.symbolType();
       while (superClassType.symbol().isTypeSymbol() && !superClassType.is("java.lang.Object")) {
         Symbol.TypeSymbol superClassSymbol = superClassType.symbol();
-        if (hasNotFinalEqualsMethod(superClassSymbol)) {
-          return true;
-        } else if (hasFinalEqualsMethod(superClassSymbol)) {
-          return false;
+        Optional<Symbol> equalsMethod = equalsMethod(superClassSymbol);
+        if (equalsMethod.isPresent()) {
+          return !equalsMethod.get().isFinal();
         }
         superClassType = superClassSymbol.superClass();
       }
