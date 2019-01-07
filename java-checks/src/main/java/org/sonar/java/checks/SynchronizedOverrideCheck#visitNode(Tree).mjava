@@ -1,0 +1,22 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    MethodTree methodTree = (MethodTree) tree;
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+    Symbol.MethodSymbol overriddenSymbol =  methodSymbol.overriddenSymbol();
+    if (overriddenSymbol == null || overriddenSymbol.isUnknown()) {
+      return;
+    }
+    if (isSynchronized(overriddenSymbol) && !isSynchronized(methodSymbol)) {
+      List<JavaFileScannerContext.Location> secondaries = Collections.emptyList();
+      MethodTree overridenMethodTree = overriddenSymbol.declaration();
+      if (overridenMethodTree != null) {
+        secondaries = Collections.singletonList(new JavaFileScannerContext.Location("", overridenMethodTree.simpleName()));
+      }
+      reportIssue(methodTree.simpleName(), MESSAGE, secondaries, null);
+    }
+  }
+
