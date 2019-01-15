@@ -1,15 +1,16 @@
   @Test
   public void size_metrics() {
-    setCurrentProject();
-    assertThat(getProjectMeasureAsInteger("files")).isEqualTo(320);
-    assertThat(getPackageMeasureAsInteger("files")).isEqualTo(21);
-    assertThat(getFileMeasureAsInteger("files")).isEqualTo(1);
-    assertThat(getProjectMeasureAsInteger("lines")).isEqualTo(65059);
-    assertThat(getProjectMeasureAsInteger("ncloc")).isEqualTo(27577);
+    assertThat(getMeasureAsInteger(PROJECT_STRUTS, "files")).isEqualTo(320);
+    String directoryKey = componentKey("org/apache/struts/action", "");
+    assertThat(getMeasureAsInteger(directoryKey, "files")).isEqualTo(21);
+    String fileKey = componentKey("org/apache/struts/action/", "Action.java");
+    assertThat(getMeasureAsInteger(fileKey, "files")).isEqualTo(1);
+    assertThat(getMeasureAsInteger(PROJECT_STRUTS, "lines")).isEqualTo(65059);
+    assertThat(getMeasureAsInteger(PROJECT_STRUTS, "ncloc")).isEqualTo(27577);
     // 208 getter/setter
-    assertThat(getProjectMeasureAsInteger("functions")).isEqualTo(2730 + 208);
+    assertThat(getMeasureAsInteger(PROJECT_STRUTS, "functions")).isEqualTo(2730 + 208);
 
-    assertThat(getProjectMeasureAsInteger("classes")).isEqualTo(337);
-    assertThat(getCoreModuleMeasureAsInteger("files")).isEqualTo(134);
+    assertThat(getMeasureAsInteger(PROJECT_STRUTS, "classes")).isEqualTo(337);
+    assertThat(getMeasureAsInteger(moduleKey(), "files")).isEqualTo(134);
   }
 

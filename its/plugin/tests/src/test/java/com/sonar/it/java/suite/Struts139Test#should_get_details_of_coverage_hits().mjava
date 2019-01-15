@@ -1,9 +1,10 @@
   @Test
   public void should_get_details_of_coverage_hits() {
-    setCurrentProject();
-    Measure coverage = getMeasure(JavaTestSuite.keyFor(MODULE_CORE, "org/apache/struts/action/", "ActionForward.java"), "coverage_line_hits_data");
+    String componentKey = componentKey("org/apache/struts/action/", "ActionForward.java");
+    Measure coverage = getMeasure(componentKey, "coverage_line_hits_data");
     assertThat(coverage).isNotNull();
-    assertThat(coverage.getValue().length()).isGreaterThan(10);
-    assertThat(coverage.getValue()).matches("(\\d+=\\d+;{0,1})+");
+    String value = coverage.getValue();
+    assertThat(value.length()).isGreaterThan(10);
+    assertThat(value).matches("(\\d+=\\d+;{0,1})+");
   }
 
