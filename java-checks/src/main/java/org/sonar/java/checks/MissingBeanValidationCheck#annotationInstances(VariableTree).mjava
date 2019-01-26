@@ -1,0 +1,9 @@
+  private static Stream<SymbolMetadata.AnnotationInstance> annotationInstances(VariableTree variable) {
+    if (variable.type().is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      return typeArgumentAnnotationInstances(variable);
+    } else {
+      JavaSymbol.TypeJavaSymbol classSymbol = ((JavaType) variable.symbol().type()).getSymbol();
+      return classAndFieldAnnotationInstances(classSymbol);
+    }
+  }
+
