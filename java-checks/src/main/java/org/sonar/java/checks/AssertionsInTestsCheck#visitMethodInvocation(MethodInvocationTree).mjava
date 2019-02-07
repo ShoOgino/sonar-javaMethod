@@ -1,7 +1,7 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree mit) {
     super.visitMethodInvocation(mit);
-    if (!methodContainsAssertion.peek() && inUnitTest.peek() && isAssertion(mit)) {
+    if (shouldCheckForAssertion() && isAssertion(mit)) {
       methodContainsAssertion.pop();
       methodContainsAssertion.push(true);
     }
