@@ -1,0 +1,10 @@
+  private void checkArguments(Arguments arguments) {
+    if ("Authorization".equals(resolveAsStringConstant(arguments.get(0)))) {
+      ExpressionTree arg = mostLeft(arguments.get(1));
+      String authentication = resolveAsStringConstant(arg);
+      if (authentication != null && authentication.startsWith("Basic")) {
+        reportIssue(arg, "Use a more secure method than basic authentication.");
+      }
+    }
+  }
+
