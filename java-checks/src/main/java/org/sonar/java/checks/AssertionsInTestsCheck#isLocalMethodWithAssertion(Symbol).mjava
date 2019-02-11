@@ -1,13 +1,14 @@
   private boolean isLocalMethodWithAssertion(Symbol symbol) {
-    return assertionInMethod.computeIfAbsent(symbol, key -> {
-      Tree declaration = key.declaration();
-      if (declaration == null) {
-        return false;
-      } else {
-        AssertionVisitor assertionVisitor = new AssertionVisitor(getCustomAssertionMethodsMatcher());
+    if (!assertionInMethod.containsKey(symbol)) {
+      assertionInMethod.put(symbol, false);
+      Tree declaration = symbol.declaration();
+      if (declaration != null) {
+        AssertionVisitor assertionVisitor = new AssertionVisitor();
         declaration.accept(assertionVisitor);
-        return assertionVisitor.hasAssertion;
+        assertionInMethod.put(symbol, assertionVisitor.hasAssertion);
       }
-    });
+    }
+
+    return assertionInMethod.get(symbol);
   }
 
