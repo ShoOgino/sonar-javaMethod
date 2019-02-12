@@ -1,8 +1,14 @@
     private void checkOperand(ExpressionTree expressionTree) {
       if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mset = (MemberSelectExpressionTree) expressionTree;
-        if (isClassExpression(mset) && isClassOfOwner(mset) && !isOwnerFinal()) {
-          reportIssue(expressionTree, "Compare to \"this.getClass()\" instead.");
+        if (isClassExpression(mset)) {
+          if (isClassOfOwner(mset)) {
+            if (!isOwnerFinal()) {
+              reportIssue(expressionTree, "Compare to \"this.getClass()\" instead.");
+            }
+          } else {
+            reportIssue(expressionTree, "Remove this comparison to an unrelated class.");
+          }
         }
       }
     }
