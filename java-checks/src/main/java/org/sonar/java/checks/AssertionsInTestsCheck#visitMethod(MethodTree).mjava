@@ -3,13 +3,8 @@
     if (ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.ABSTRACT)) {
       return;
     }
-    boolean isUnitTest = isUnitTest(methodTree);
-    inUnitTest.push(isUnitTest);
-    methodContainsAssertion.push(false);
-    super.visitMethod(methodTree);
-    Boolean containsAssertion = methodContainsAssertion.pop();
-    inUnitTest.pop();
-    if (isUnitTest && !expectAssertion(methodTree) && !containsAssertion) {
+
+    if (isUnitTest(methodTree) && !expectAssertion(methodTree) && !isLocalMethodWithAssertion(methodTree.symbol())) {
       context.reportIssue(this, methodTree.simpleName(), "Add at least one assertion to this test case.");
     }
   }
