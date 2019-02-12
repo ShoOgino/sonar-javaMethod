@@ -1,9 +1,10 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    ExpressionTree argToCheck = getActualArgument(mit);
-    if (isConstant(argToCheck)) {
-      List<JavaFileScannerContext.Location> secondaries = Collections.singletonList(new JavaFileScannerContext.Location("", previousArg(argToCheck, mit)));
-      context.reportIssue(this, argToCheck, "Swap these 2 arguments so they are in the correct order: expected value, actual value.", secondaries, null);
+    if (mit.symbol().owner().type().is(ORG_JUNIT5_ASSERTIONS)) {
+      checkArguments(mit.arguments().get(0), mit.arguments().get(1));
+    } else {
+      ExpressionTree argToCheck = getActualArgument(mit);
+      checkArguments(previousArg(argToCheck, mit), argToCheck);
     }
   }
 

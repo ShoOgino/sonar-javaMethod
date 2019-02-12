@@ -1,0 +1,8 @@
+  private static boolean isCollectionCreationWithConstants(ExpressionTree actualArgument) {
+    if (actualArgument.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) actualArgument;
+      return COLLECTION_CREATION_CALL.anyMatch(mit) && mit.arguments().stream().allMatch(AssertionArgumentOrderCheck::isConstant);
+    }
+    return false;
+  }
+
