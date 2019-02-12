@@ -1,7 +1,8 @@
   @Test
   public void test() throws Exception {
     PackageInfoCheck check = new PackageInfoCheck();
-    JavaAstScanner.scanSingleFileForTests(new File("src/test/files/checks/packageInfo/HelloWorld.java"), new VisitorsBridge(check));
+    File file = new File("src/test/files/checks/packageInfo/HelloWorld.java");
+    JavaAstScanner.scanSingleFileForTests(file, new VisitorsBridge(Collections.singletonList(check), Collections.emptyList(), sonarComponents(file)));
     assertThat(check.directoriesWithoutPackageFile).isEmpty();
   }
 

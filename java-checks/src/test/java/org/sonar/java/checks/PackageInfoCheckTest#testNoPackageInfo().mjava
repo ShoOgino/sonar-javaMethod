@@ -1,8 +1,10 @@
   @Test
   public void testNoPackageInfo() throws Exception {
     PackageInfoCheck check = new PackageInfoCheck();
-    JavaAstScanner.scanSingleFileForTests(new File("src/test/files/checks/packageInfo/nopackageinfo/nopackageinfo.java"), new VisitorsBridge(check));
-    JavaAstScanner.scanSingleFileForTests(new File("src/test/files/checks/packageInfo/nopackageinfo/HelloWorld.java"), new VisitorsBridge(check));
+    File file = new File("src/test/files/checks/packageInfo/nopackageinfo/nopackageinfo.java");
+    JavaAstScanner.scanSingleFileForTests(file, new VisitorsBridge(Collections.singletonList(check), Collections.emptyList(), sonarComponents(file)));
+    file = new File("src/test/files/checks/packageInfo/nopackageinfo/HelloWorld.java");
+    JavaAstScanner.scanSingleFileForTests(file, new VisitorsBridge(Collections.singletonList(check), Collections.emptyList(), sonarComponents(file)));
     Set<File> set = check.directoriesWithoutPackageFile;
     assertThat(set).hasSize(1);
     assertThat(set.iterator().next().getName()).isEqualTo("nopackageinfo");

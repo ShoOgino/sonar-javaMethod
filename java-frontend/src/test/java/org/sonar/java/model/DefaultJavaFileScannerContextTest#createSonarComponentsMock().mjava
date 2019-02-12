@@ -19,6 +19,9 @@
     doAnswer(invocation -> "content").when(sonarComponents).fileContent(eq(JAVA_FILE));
 
     doAnswer(invocation -> WORK_DIR).when(sonarComponents).workDir();
+    File moduleBaseDir = new File("");
+    SensorContextTester context = SensorContextTester.create(moduleBaseDir);
+    doAnswer(invocation -> context.fileSystem()).when(sonarComponents).getFileSystem();
 
     return sonarComponents;
   }
