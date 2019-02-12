@@ -8,10 +8,12 @@
       FestVisitor visitor = new FestVisitor();
       mit.methodSelect().accept(visitor);
       if (!visitor.useDescription) {
-        reportIssue(mit, "Add a message to this assertion.");
+        reportIssue(mit, MESSAGE);
       }
+    } else if (symbol.owner().type().is("org.junit.jupiter.api.Assertions")) {
+      checkJUnit5(mit);
     } else if (mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
-      reportIssue(mit, "Add a message to this assertion.");
+      reportIssue(mit, MESSAGE);
     }
   }
 
