@@ -3,8 +3,9 @@
     CheckFactory checkFactory = new CheckFactory(new ActiveRulesBuilder().build());
     XmlFileSensor sensor = new XmlFileSensor(checkFactory);
 
-    addFileWithIssue("xml");
+    DefaultInputFile xml = (DefaultInputFile) addFileWithIssue("xml");
     sensor.execute(context);
+    assertThat(xml.isPublished()).isTrue();
 
     assertThat(context.allIssues()).isEmpty();
   }
