@@ -1,0 +1,10 @@
+    private boolean isJUnitSoftAssertions(MethodInvocationTree mit) {
+      ExpressionTree expressionTree = mit.methodSelect();
+      if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
+        Type type = ((MemberSelectExpressionTree) expressionTree).expression().symbolType();
+        return type.isSubtypeOf("org.assertj.core.api.JUnitSoftAssertions") ||
+          type.isSubtypeOf("org.assertj.core.api.Java6JUnitSoftAssertions");
+      }
+      return false;
+    }
+

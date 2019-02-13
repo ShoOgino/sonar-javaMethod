@@ -1,0 +1,24 @@
+    @Override
+    public void visitTryStatement(TryStatementTree tree) {
+      boolean hasAutoCloseableSoftAssertion = tree.resourceList().stream()
+        .map(this::resourceSymbol)
+        .map(Symbol::type)
+        .filter(Objects::nonNull)
+        .anyMatch(type -> type.isSubtypeOf("org.assertj.core.api.AutoCloseableSoftAssertions"));
+      super.visitTryStatement(tree);
+      if (hasAutoCloseableSoftAssertion) {
+        if (assertThatCalled) {
+          assertThatCalled = false;
+        } else {
+          List<Location> secondaries = intermediateMethodInvocations.stream()
+            .map(methodInvocation -> new Location("", methodInvocation.methodSelect()))
+            .collect(Collectors.toList());
+          context.reportIssue(AssertionsCompletenessCheck.this,
+            tree.block().closeBraceToken(),
+            "Add one or more 'assertThat' before the end of this try block.",
+            secondaries,
+            null);
+        }
+      }
+    }
+

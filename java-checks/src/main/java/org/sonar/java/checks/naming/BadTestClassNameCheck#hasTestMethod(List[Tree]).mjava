@@ -1,7 +1,7 @@
   private static boolean hasTestMethod(List<Tree> members) {
     return members.stream()
       .filter(member -> member.is(Tree.Kind.METHOD))
-      .map(tree -> ((MethodTree) tree).symbol().metadata())
-      .anyMatch(metadata -> TEST_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith));
+      .map(MethodTree.class::cast)
+      .anyMatch(UnitTestUtils::hasTestAnnotation);
   }
 

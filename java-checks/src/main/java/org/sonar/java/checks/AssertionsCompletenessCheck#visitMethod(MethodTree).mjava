@@ -3,10 +3,15 @@
     if (ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.ABSTRACT)) {
       return;
     }
-    containsAssertThatWithoutAssertAll.push(false);
     super.visitMethod(methodTree);
-    if (Boolean.TRUE.equals(containsAssertThatWithoutAssertAll.pop())) {
-      context.reportIssue(this, methodTree.block().closeBraceToken(), "Add a call to 'assertAll' after all 'assertThat'.");
+
+    // soft assertions are allowed to be incomplete outside unit tests
+    if (hasTestAnnotation(methodTree)) {
+      SoftAssertionsVisitor softAssertionsVisitor = new SoftAssertionsVisitor();
+      methodTree.accept(softAssertionsVisitor);
+      if (softAssertionsVisitor.assertThatCalled) {
+        context.reportIssue(this, methodTree.block().closeBraceToken(), "Add a call to 'assertAll' after all 'assertThat'.");
+      }
     }
   }
 
