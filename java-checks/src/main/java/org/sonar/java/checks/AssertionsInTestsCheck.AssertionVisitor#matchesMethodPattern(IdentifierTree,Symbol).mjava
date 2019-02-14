@@ -1,0 +1,12 @@
+    private boolean matchesMethodPattern(@Nullable IdentifierTree method, Symbol methodSymbol) {
+      if (method == null) {
+        return false;
+      }
+
+      String methodName = method.name();
+      if (TEST_METHODS_PATTERN.matcher(methodName).matches()) {
+        return !REACTIVE_X_TEST_METHODS.anyMatch(methodSymbol);
+      }
+      return ASSERTION_METHODS_PATTERN.matcher(methodName).matches();
+    }
+
