@@ -1,0 +1,12 @@
+  private static boolean hasSerializableConcreteType(ExpressionTree argument) {
+    if (argument.is(Kind.IDENTIFIER)) {
+      IdentifierTree argument1 = (IdentifierTree) argument;
+      Tree declaration = argument1.symbol().declaration();
+      if (argument1.symbol().isFinal() && declaration != null && declaration.is(Kind.VARIABLE)) {
+        ExpressionTree initializer = ((VariableTree) declaration).initializer();
+        return initializer != null && isAcceptableType(initializer.symbolType());
+      }
+    }
+    return false;
+  }
+
