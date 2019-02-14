@@ -1,19 +1,16 @@
   private static boolean hasConstantInitializer(VariableTree variableTree) {
     ExpressionTree init = variableTree.initializer();
     if (init != null) {
-      if(ExpressionUtils.skipParentheses(init).is(Tree.Kind.METHOD_REFERENCE)) {
+      if (ExpressionUtils.skipParentheses(init).is(Tree.Kind.METHOD_REFERENCE)) {
         MethodReferenceTree methodRef = (MethodReferenceTree) ExpressionUtils.skipParentheses(init);
-        if(isInstanceIdentifier(methodRef.expression())) {
+        if (isInstanceIdentifier(methodRef.expression())) {
           return false;
         }
       }
-      boolean arrayWithInitializer = true;
       if (init.is(Tree.Kind.NEW_ARRAY)) {
-        // exclude allocations : new int[6] but allow initialization new int[]{1,2};
-        NewArrayTree newArrayTree = (NewArrayTree) init;
-        arrayWithInitializer = newArrayTree.dimensions().isEmpty() || newArrayTree.openBraceToken() != null;
+        return false;
       }
-      return arrayWithInitializer && !containsChildrenOfKind((JavaTree) init, Tree.Kind.METHOD_INVOCATION, Tree.Kind.NEW_CLASS);
+      return !containsChildrenOfKind((JavaTree) init, Tree.Kind.METHOD_INVOCATION, Tree.Kind.NEW_CLASS);
     }
     return false;
   }
