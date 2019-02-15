@@ -9,6 +9,8 @@
         context.reportIssue(this, importTree, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
       } else if (isDuplicatedImport(importName)) {
         context.reportIssue(this, importTree, "Remove this duplicated import.");
+      } else if(importTree.isStatic()) {
+        checkSymbolUsage(importTree, importName);
       } else {
         lineByImportReference.put(importName, importTree);
         pendingImports.add(importName);
