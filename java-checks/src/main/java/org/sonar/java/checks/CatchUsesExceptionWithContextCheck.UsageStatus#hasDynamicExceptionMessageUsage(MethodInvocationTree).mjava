@@ -1,0 +1,26 @@
+    private static boolean hasDynamicExceptionMessageUsage(MethodInvocationTree mit) {
+      Arguments arguments = mit.arguments();
+      int argumentsCount = arguments.size();
+      ExpressionTree firstArg = arguments.get(0);
+      ExpressionTree argumentToCheck;
+      if (mit.symbol().owner().type().is(SLF4J_LOGGER)) {
+        if (argumentsCount == 1) {
+          argumentToCheck = firstArg;
+        } else if (argumentsCount == 2 && firstArg.symbolType().is("org.slf4j.Marker")) {
+          argumentToCheck = arguments.get(1);
+        } else {
+          argumentToCheck = null;
+        }
+      } else if (JAVA_UTIL_LOG_METHOD.matches(mit) && argumentsCount == 2) {
+        argumentToCheck = arguments.get(1);
+      } else if (JAVA_UTIL_LOGP_METHOD.matches(mit) && argumentsCount == 4) {
+        argumentToCheck = arguments.get(3);
+      } else if (JAVA_UTIL_LOGRB_METHOD.matches(mit) && argumentsCount == 5) {
+        argumentToCheck = arguments.get(4);
+      } else {
+        argumentToCheck = firstArg;
+      }
+
+      return argumentToCheck == null || !isSimpleExceptionMessage(argumentToCheck);
+    }
+

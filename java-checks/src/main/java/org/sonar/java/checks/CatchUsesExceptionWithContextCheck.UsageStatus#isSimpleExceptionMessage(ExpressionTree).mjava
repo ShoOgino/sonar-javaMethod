@@ -1,0 +1,13 @@
+    private static boolean isSimpleExceptionMessage(ExpressionTree expressionTree) {
+      ExpressionTree innerExpression = skipParentheses(expressionTree);
+      if (innerExpression.is(Kind.IDENTIFIER)) {
+        IdentifierTree variable = (IdentifierTree) innerExpression;
+        List<AssignmentExpressionTree> assignments = getAssignments(variable.symbol().usages());
+        ExpressionTree initializer = getVariableInitializer(variable);
+        return assignments.isEmpty() && initializer != null && isSimpleExceptionMessage(initializer);
+      } else if (innerExpression.is(Kind.METHOD_INVOCATION)) {
+        return GET_MESSAGE_METHODS.anyMatch(((MethodInvocationTree) innerExpression));
+      }
+      return false;
+    }
+

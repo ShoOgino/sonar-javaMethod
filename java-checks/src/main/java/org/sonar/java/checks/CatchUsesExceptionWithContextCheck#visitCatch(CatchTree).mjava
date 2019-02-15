@@ -2,10 +2,9 @@
   public void visitCatch(CatchTree tree) {
     if (!isExcludedType(tree.parameter().type()) && !excludedCatchTrees.contains(tree)) {
       Symbol exception = tree.parameter().symbol();
-      validUsagesStack.addFirst(Lists.newArrayList(exception.usages()));
+      usageStatusStack.addFirst(new UsageStatus(exception.usages()));
       super.visitCatch(tree);
-      Collection<IdentifierTree> usages = validUsagesStack.pop();
-      if (usages.isEmpty()) {
+      if (usageStatusStack.pop().isInvalid()) {
         context.reportIssue(this, tree.parameter(), "Either log or rethrow this exception.");
       }
     }

@@ -1,0 +1,18 @@
+    @CheckForNull
+    private static AssignmentExpressionTree getAssignmentToIdentifier(IdentifierTree usage) {
+      Tree parent = usage.parent();
+      while (parent != null) {
+        if (parent.is(Kind.ASSIGNMENT, Kind.PLUS_ASSIGNMENT)) {
+          AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) parent;
+          if (assignmentExpressionTree.variable().equals(usage)) {
+            return assignmentExpressionTree;
+          } else {
+            return null;
+          }
+        }
+        parent = parent.parent();
+      }
+
+      return null;
+    }
+

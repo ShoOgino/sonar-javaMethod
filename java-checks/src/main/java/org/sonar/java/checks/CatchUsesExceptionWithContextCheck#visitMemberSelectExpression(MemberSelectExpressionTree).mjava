@@ -1,17 +1,17 @@
   @Override
   public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
-    IdentifierTree identifier = null;
+    final IdentifierTree identifier;
     ExpressionTree expression = tree.expression();
     if (expression.is(Kind.IDENTIFIER)) {
       identifier = (IdentifierTree) expression;
     } else if (expression.is(Kind.PARENTHESIZED_EXPRESSION) && ((ParenthesizedTree) expression).expression().is(Kind.IDENTIFIER)) {
       identifier = (IdentifierTree) ((ParenthesizedTree) expression).expression();
+    } else {
+      identifier = null;
     }
-    if (!validUsagesStack.isEmpty() && identifier != null) {
-      Iterator<Collection<IdentifierTree>> iterator = validUsagesStack.iterator();
-      while (iterator.hasNext()) {
-        iterator.next().remove(identifier);
-      }
+
+    if (!usageStatusStack.isEmpty() && identifier != null) {
+      usageStatusStack.forEach(usageStatus -> usageStatus.addInvalidUsage(identifier));
     }
     super.visitMemberSelectExpression(tree);
 

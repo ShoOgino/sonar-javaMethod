@@ -1,0 +1,16 @@
+    private static boolean isGetMessageReferencedByIdentifiers(MethodInvocationTree mit) {
+      ChildrenIdentifierCollector visitor = new ChildrenIdentifierCollector();
+      mit.accept(visitor);
+
+      boolean invocationInInitializer = visitor.identifiersChildren.stream()
+        .map(UsageStatus::getVariableInitializer)
+        .distinct()
+        .anyMatch(UsageStatus::hasGetMessageMethodInvocation);
+
+      return invocationInInitializer || visitor.identifiersChildren.stream()
+        .map(IdentifierTree::symbol)
+        .map(Symbol::usages)
+        .flatMap(usagesList -> getAssignments(usagesList).stream())
+        .anyMatch(assignment -> hasGetMessageMethodInvocation(assignment.expression()));
+    }
+
