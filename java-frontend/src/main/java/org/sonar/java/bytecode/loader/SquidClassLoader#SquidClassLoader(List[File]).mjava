@@ -20,5 +20,14 @@
         }
       }
     }
+
+    loaderCache = CacheBuilder.newBuilder()
+      .maximumSize(5000)
+      .build(new CacheLoader<String, Optional<Loader>>() {
+        @Override
+        public Optional<Loader> load(String key) {
+          return findLoaderWithResource(key);
+        }
+      });
   }
 
