@@ -3,7 +3,7 @@
     Symbol symbol = newClassTree.constructorSymbol();
     if (symbol.isMethodSymbol()) {
       Symbol.MethodSymbol constructor = (Symbol.MethodSymbol) symbol;
-      String signature = constructor.owner().name() + "(" + Joiner.on(',').join(constructor.parameterTypes()) + ")";
+      String signature = constructor.owner().name() + "(" + constructor.parameterTypes().stream().map(Type::toString).collect(Collectors.joining(",")) + ")";
       reportIssue(newClassTree.identifier(), "Remove this use of constructor \"" + signature + "\"");
     }
   }
