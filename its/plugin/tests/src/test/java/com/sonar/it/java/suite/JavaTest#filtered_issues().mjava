@@ -4,8 +4,9 @@
   @Test
   public void filtered_issues() throws Exception {
     MavenBuild build = MavenBuild.create(TestUtils.projectPom("filtered-issues"))
-      .setCleanPackageSonarGoals()
-      .setProperty("sonar.profile", "filtered-issues");
+      .setCleanPackageSonarGoals();
+
+    TestUtils.provisionProject(orchestrator,"org.example:example","filtered-issues","java","filtered-issues");
     orchestrator.executeBuild(build);
 
     assertThat(getMeasureAsInteger("org.example:example", "violations")).isEqualTo(2);
