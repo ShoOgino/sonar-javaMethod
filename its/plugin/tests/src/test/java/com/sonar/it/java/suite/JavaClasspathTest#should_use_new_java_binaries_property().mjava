@@ -1,9 +1,12 @@
   @Test
   public void should_use_new_java_binaries_property() {
+    String projectKey = "should_use_new_java_binaries_property";
     SonarScanner scanner = ditProjectSonarScanner();
     scanner.setProperty("sonar.java.binaries", "target/classes");
-    TestUtils.provisionProject(ORCHESTRATOR, PROJECT_KEY_DIT, PROJECT_KEY_DIT, "java", "dit-check");
+    scanner.setProjectKey(projectKey);
+
+    TestUtils.provisionProject(ORCHESTRATOR, projectKey, projectKey, "java", "dit-check");
     ORCHESTRATOR.executeBuild(scanner);
-    assertThat(getNumberOfViolations(PROJECT_KEY_DIT)).isEqualTo(1);
+    assertThat(getNumberOfViolations(projectKey)).isEqualTo(1);
   }
 

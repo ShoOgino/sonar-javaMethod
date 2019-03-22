@@ -1,21 +1,26 @@
   @Test
   public void should_keep_order_libs() {
+    String projectKey = "should_keep_order_libs";
+
     SonarScanner scanner = ditProjectSonarScanner();
     scanner.setProperty("sonar.java.binaries", "target/classes");
     scanner.setProperty("sonar.java.libraries", guavaJarPath + "," + fakeGuavaJarPath);
     scanner.setProperty("sonar.verbose", "true");
-    TestUtils.provisionProject(ORCHESTRATOR, PROJECT_KEY_DIT, PROJECT_KEY_DIT, "java", "dit-check");
-    ORCHESTRATOR.executeBuild(scanner);
-    assertThat(getNumberOfViolations(PROJECT_KEY_DIT)).isEqualTo(2);
+    scanner.setProjectKey(projectKey);
 
-    ORCHESTRATOR.resetData();
+    TestUtils.provisionProject(ORCHESTRATOR, projectKey, projectKey, "java", "dit-check");
+    ORCHESTRATOR.executeBuild(scanner);
+    assertThat(getNumberOfViolations(projectKey)).isEqualTo(2);
+
+    projectKey = "should_keep_order_libs_2";
 
     scanner = ditProjectSonarScanner();
     scanner.setProperty("sonar.java.binaries", "target/classes");
     scanner.setProperty("sonar.java.libraries", fakeGuavaJarPath + "," + guavaJarPath);
     scanner.setProperty("sonar.verbose", "true");
-    TestUtils.provisionProject(ORCHESTRATOR, PROJECT_KEY_DIT, PROJECT_KEY_DIT, "java", "dit-check");
+    scanner.setProjectKey(projectKey);
+    TestUtils.provisionProject(ORCHESTRATOR, projectKey, projectKey, "java", "dit-check");
     ORCHESTRATOR.executeBuild(scanner);
-    assertThat(getNumberOfViolations(PROJECT_KEY_DIT)).isEqualTo(1);
+    assertThat(getNumberOfViolations(projectKey)).isEqualTo(1);
   }
 
