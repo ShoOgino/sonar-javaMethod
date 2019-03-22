@@ -1,0 +1,33 @@
+  @Test
+  public void switch_and_return_statement() {
+    assertThat(JavaLexer.STATEMENT)
+      // returning values with traditional control flow
+      .matches("" +
+        "switch (i) {" +
+        "  case 1: return 10;" +
+        "  case 2: return 20;" +
+        "  default: return 0;" +
+        "}")
+      // returning values with simplified control flow
+      .matches("" +
+        "return switch (i) {" +
+        "  case 1 -> 10;" +
+        "  case 2 -> 20;" +
+        "  default -> 0;" +
+        "};")
+      // using return inside simplified control flow
+      .matches("" +
+        "switch (i) {" +
+        "  case 1 -> { return 10; }" +
+        "  case 2 -> { return 20; }" +
+        "  default -> { return 0; }" +
+        "}")
+      // Our parser is more tolerant than java 12, we wrongly accept return without block
+      .matches("" +
+        "switch (i) {" +
+        " case 1 -> return 10;" +
+        " case 2 -> return 20;" +
+        " default -> return 0;" +
+        "}");
+  }
+

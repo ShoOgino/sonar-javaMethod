@@ -1,0 +1,64 @@
+  @Test
+  public void break_to_label_and_value_break() {
+    assertThat(JavaLexer.STATEMENT)
+      // break to label n1 and n2
+      .matches("" +
+        "n1:" +
+        "while(i < 0) {" +
+        "  n2:" +
+        "  switch (i) {" +
+        "    case 1: print('A'); break n1;" +
+        "    case 2: print('B'); break n2;" +
+        "    default: break n1;" +
+        "  }" +
+        "}")
+      // value break n1 and n2
+      .matches("" +
+        "{" +
+        "  int n1 = 2;" +
+        "  while(i < 0) {" +
+        "    int n2 = 3;" +
+        "    r = switch (i) {" +
+        "      case 1: print('A'); break n1;" +
+        "      case 2: print('B'); break n2;" +
+        "      default: break n1;" +
+        "    };" +
+        "  }" +
+        "}")
+      // switch statement has no ambiguous reference to 'n1', it always resolve to labels
+      // with traditional control flow
+      .matches("" +
+        "{" +
+        "  int n1 = 3;" +
+        "n1:" +
+        "  switch (i) {" +
+        "    case 1: break n1;" +
+        "    default: break n1;" +
+        "  };" +
+        "}")
+      // or with simplified control flow
+      .matches("" +
+        "{" +
+        "  int n1 = 3;" +
+        "n1:" +
+        "  switch (i) {" +
+        "    case 1 -> { break n1; }" +
+        "    default -> { break n1; }" +
+        "  };" +
+        "}")
+      // but switch expression can be ambiguous between label and value, even if the following statement
+      // is syntactically valid, it is semantically ambiguous and the compiler will produce the following
+      // error: ambiguous reference to 'n1'
+      .matches("" +
+        "{" +
+        "  int n1 = 3;" +
+        "n1:" +
+        "  r = switch (i) {" +
+        "    case 1: break n1;" +
+        "    default: break n1;" +
+        "  };" +
+        "}")
+      // Our parser is more tolerant than java 12, we wrongly accept value break in switch statement
+      .matches("switch (i) { case 1: break 7; }");
+  }
+

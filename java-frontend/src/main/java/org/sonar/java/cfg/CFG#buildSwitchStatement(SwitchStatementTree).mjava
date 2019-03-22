@@ -14,11 +14,10 @@
       CaseGroupTree firstCase = switchStatementTree.cases().get(0);
       for (CaseGroupTree caseGroupTree : Lists.reverse(switchStatementTree.cases())) {
         build(caseGroupTree.body());
-        Lists.reverse(caseGroupTree.labels()).forEach(l -> {
-          if (l.expression() != null) {
-            build(l.expression());
-          }
-        });
+        Lists.reverse(caseGroupTree.labels()).stream()
+          .map(CaseLabelTree::expressions)
+          .flatMap(Collection::stream)
+          .forEach(this::build);
         if (!hasDefaultCase) {
           hasDefaultCase = containsDefaultCase(caseGroupTree.labels());
         }

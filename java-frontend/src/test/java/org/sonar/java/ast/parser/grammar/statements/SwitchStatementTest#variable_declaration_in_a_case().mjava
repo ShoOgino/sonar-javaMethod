@@ -1,0 +1,20 @@
+  @Test
+  public void variable_declaration_in_a_case() {
+    assertThat(JavaLexer.STATEMENT)
+      // with traditional control flow
+      .matches("" +
+        "switch (i) {" +
+        "  case 1: char a = 'A'; print(a); break;" +
+        "}")
+      // with simplified control flow
+      .matches("" +
+        "switch (i) {" +
+        "  case 1 -> { char a = 'A'; print(a); }" +
+        "}")
+      // Our parser is more tolerant than java 12, we wrongly accept variable declaration without block
+      .matches("" +
+        "switch (i) {" +
+        "  case 1 -> char a = 'A';" +
+        "}");
+  }
+

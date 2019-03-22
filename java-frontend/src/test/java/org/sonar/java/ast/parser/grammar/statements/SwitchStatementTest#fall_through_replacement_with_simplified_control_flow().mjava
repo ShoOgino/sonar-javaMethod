@@ -1,0 +1,11 @@
+  @Test
+  public void fall_through_replacement_with_simplified_control_flow() {
+    assertThat(JavaLexer.SWITCH_STATEMENT)
+      .matches("" +
+        "switch (i) {" +
+        "  case 1, 2 -> print('A');" +
+        "}")
+      // Our parser is more tolerant than java 12, we wrongly accept fall through:
+      .matches("switch (i) { case 1 -> case 2 -> print('A'); }");
+  }
+
