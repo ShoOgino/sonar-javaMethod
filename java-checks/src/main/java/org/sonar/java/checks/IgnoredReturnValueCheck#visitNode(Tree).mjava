@@ -7,11 +7,10 @@
         return;
       }
       Symbol methodSymbol = mit.symbol();
-      if (PUT_IF_ABSENT_MATCHER.matches(mit) ||
-        (!isVoidOrUnknown(mit.symbolType())
+      if (!isVoidOrUnknown(mit.symbolType())
           && isCheckedType(methodSymbol.owner().type())
           && methodSymbol.isPublic()
-          && !isConstructor(methodSymbol))) {
+          && !isConstructor(methodSymbol)) {
         IdentifierTree methodName = ExpressionUtils.methodName(mit);
         reportIssue(methodName, "The return value of \"" + methodName.name() + "\" must be used.");
       }
