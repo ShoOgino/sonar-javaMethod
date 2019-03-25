@@ -1,12 +1,13 @@
   private void onViolationStartElement(StartElement element) {
     try {
       TextRange textRange = textRange(element);
-      RuleKey ruleKey = RuleKey.of(PmdSensor.LINTER_KEY, getAttributeValue(element, "rule"));
+      String ruleId = getAttributeValue(element, "rule");
       issue = context.newExternalIssue()
-        .forRule(ruleKey)
+        .engineId(PmdSensor.LINTER_KEY)
+        .ruleId(ruleId)
         .type(RuleType.CODE_SMELL)
         .severity(SEVERITIES.get(getAttributeAsInt(element, "priority")))
-        .remediationEffortMinutes(ruleLoader.ruleConstantDebtMinutes(ruleKey.rule()));
+        .remediationEffortMinutes(ruleLoader.ruleConstantDebtMinutes(ruleId));
       issueLocation = issue.newLocation()
         .on(inputFile)
         .at(textRange);
