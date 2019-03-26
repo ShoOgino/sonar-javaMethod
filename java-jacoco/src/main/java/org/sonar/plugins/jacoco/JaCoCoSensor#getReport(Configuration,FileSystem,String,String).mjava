@@ -1,7 +1,9 @@
-  private static Optional<File> getReport(Configuration settings, FileSystem fs, String reportPathPropertyKey, String msg) {
+  private Optional<File> getReport(Configuration settings, FileSystem fs, String reportPathPropertyKey, String msg) {
     Optional<String> reportPathProp = settings.get(reportPathPropertyKey);
     if (reportPathProp.isPresent()) {
-      warnUsageOfDeprecatedProperty(settings, reportPathPropertyKey);
+      if (!settings.hasKey(REPORT_PATHS_PROPERTY)) {
+        addAnalysisWarning("Property '%s' is deprecated. '%s' should be used instead (JaCoCo XML format).", reportPathPropertyKey, JACOCO_XML_PROPERTY);
+      }
       String reportPathProperty = reportPathProp.get();
       File report = fs.resolvePath(reportPathProperty);
       if (!report.isFile()) {
