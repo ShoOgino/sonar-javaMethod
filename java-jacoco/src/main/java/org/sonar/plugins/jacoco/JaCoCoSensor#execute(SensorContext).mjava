@@ -3,13 +3,14 @@
     if (context.config().hasKey(REPORT_MISSING_FORCE_ZERO)) {
       LOG.warn("Property '{}' is deprecated and its value will be ignored.", REPORT_MISSING_FORCE_ZERO);
     }
+    warnAboutDeprecatedProperties(context.config());
     Set<File> reportPaths = getReportPaths(context);
     if (reportPaths.isEmpty()) {
       return;
     }
     // Merge JaCoCo reports
     File reportMerged;
-    if(reportPaths.size() == 1) {
+    if (reportPaths.size() == 1) {
       reportMerged = reportPaths.iterator().next();
     } else {
       reportMerged = new File(context.fileSystem().workDir(), JACOCO_MERGED_FILENAME);
