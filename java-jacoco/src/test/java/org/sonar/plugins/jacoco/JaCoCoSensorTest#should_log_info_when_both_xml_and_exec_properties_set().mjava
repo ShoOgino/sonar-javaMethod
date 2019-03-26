@@ -2,7 +2,10 @@
   public void should_log_info_when_both_xml_and_exec_properties_set() throws Exception {
     context.settings().setProperty(REPORT_PATHS_PROPERTY, "jacoco.exec");
     context.settings().setProperty(JaCoCoSensor.JACOCO_XML_PROPERTY, "jacoco.xml");
-    runAnalysis();
+    runAnalysisWithoutAssert();
+    List<Integer> coverage = IntStream.range(1, resource.lines()).mapToObj(line -> context.lineHits(resource.key(), line)).collect(Collectors.toList());
+    assertThat(coverage).allMatch(Objects::isNull);
+
     String msg = "Both 'sonar.jacoco.reportPaths' and 'sonar.coverage.jacoco.xmlReportPaths' were set. 'sonar.jacoco.reportPaths' is deprecated therefore, only 'sonar.coverage.jacoco.xmlReportPaths' will be taken into account.";
     assertThat(logTester.logs(LoggerLevel.INFO)).contains(msg);
     assertThat(analysisWarnings.warnings).isEmpty();

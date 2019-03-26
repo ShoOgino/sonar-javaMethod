@@ -1,0 +1,9 @@
+  @Test
+  public void should_log_warning_for_force_coverage() throws Exception {
+    context.settings().setProperty(REPORT_MISSING_FORCE_ZERO, "true");
+    runAnalysis();
+    String msg = "Property 'sonar.jacoco.reportMissing.force.zero' is deprecated and its value will be ignored.";
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains(msg);
+    assertThat(analysisWarnings.warnings).contains(msg);
+  }
+

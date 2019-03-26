@@ -8,6 +8,8 @@
     context = SensorContextTester.create(outputDir);
     context.setRuntime(SonarRuntimeImpl.forSonarQube(SQ_6_7, SonarQubeSide.SCANNER));
     context.fileSystem().setWorkDir(temp.newFolder().toPath());
+    DefaultInputFile inputFile = TestInputFileBuilder.create(context.module().key(), "Hello.java").setLanguage("java").build();
+    context.fileSystem().add(inputFile);
 
     context.settings().setProperty(REPORT_PATH_PROPERTY, "jacoco.exec");
     perspectives = mock(ResourcePerspectives.class);

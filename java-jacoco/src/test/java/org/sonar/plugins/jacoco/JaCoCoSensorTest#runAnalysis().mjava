@@ -1,9 +1,5 @@
   private void runAnalysis() throws IOException {
-    when(javaResourceLocator.findResourceByClassName("org/sonar/plugins/jacoco/tests/Hello")).thenReturn(resource);
-
-    when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
-
-    sensor.execute(context);
+    runAnalysisWithoutAssert();
     for (int zeroHitline : zeroHitlines) {
       assertThat(context.lineHits(resource.key(), zeroHitline)).isEqualTo(0);
     }
