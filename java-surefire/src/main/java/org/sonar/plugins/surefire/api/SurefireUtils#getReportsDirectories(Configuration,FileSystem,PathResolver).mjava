@@ -6,20 +6,10 @@
    * @return The directories containing the surefire reports or default one (target/surefire-reports) if not found (not configured or not found).
    */
   public static List<File> getReportsDirectories(Configuration settings, FileSystem fs, PathResolver pathResolver) {
-    File dir = getReportsDirectoryFromDeprecatedProperty(settings, fs, pathResolver);
     List<File> dirs = getReportsDirectoriesFromProperty(settings, fs, pathResolver);
     if (dirs != null) {
-      if (dir != null) {
-        // both properties are set, deprecated property ignored
-        LOGGER.debug("Property '{}' is deprecated and will be ignored, as property '{}' is also set.", SUREFIRE_REPORTS_PATH_PROPERTY, SUREFIRE_REPORT_PATHS_PROPERTY);
-      }
       return dirs;
     }
-    if (dir != null) {
-      LOGGER.info("Property '{}' is deprecated. Use property '{}' instead.", SUREFIRE_REPORTS_PATH_PROPERTY, SUREFIRE_REPORT_PATHS_PROPERTY);
-      return Collections.singletonList(dir);
-    }
-    // both properties are not set
     return Collections.singletonList(new File(fs.baseDir(), "target/surefire-reports"));
   }
 
