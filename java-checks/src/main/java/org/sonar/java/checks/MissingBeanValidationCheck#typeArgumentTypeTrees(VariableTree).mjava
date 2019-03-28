@@ -1,5 +1,8 @@
   private static Stream<TypeTree> typeArgumentTypeTrees(VariableTree variable) {
-    ParameterizedTypeTree parameterizedType = (ParameterizedTypeTree) variable.type();
-    return parameterizedType.typeArguments().stream().map(TypeTree.class::cast);
+    TypeTree variableType = variable.type();
+    if (!variableType.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      return Stream.empty();
+    }
+    return ((ParameterizedTypeTree) variableType).typeArguments().stream().map(TypeTree.class::cast);
   }
 
