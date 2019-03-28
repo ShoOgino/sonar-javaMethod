@@ -1,0 +1,51 @@
+  private void buildSwitchExpression(SwitchExpressionTree switchExpressionTree, Tree terminator) {
+    if (terminator.is(Tree.Kind.SWITCH_EXPRESSION)) {
+      // force a switch expression in the current block
+      currentBlock.elements.add(terminator);
+    }
+    Block switchSuccessor = currentBlock;
+    // process condition
+    currentBlock = createBlock();
+    currentBlock.terminator = terminator;
+    switches.addLast(currentBlock);
+    build(switchExpressionTree.expression());
+    Block conditionBlock = currentBlock;
+    // process body
+    currentBlock = createBlock(switchSuccessor);
+    breakTargets.addLast(switchSuccessor);
+    boolean hasDefaultCase = false;
+    if (!switchExpressionTree.cases().isEmpty()) {
+      boolean withoutFallTrough = switchWithoutFallThrough(switchExpressionTree);
+      CaseGroupTree firstCase = switchExpressionTree.cases().get(0);
+      for (CaseGroupTree caseGroupTree : Lists.reverse(switchExpressionTree.cases())) {
+        if (withoutFallTrough) {
+          currentBlock.successors().clear();
+          currentBlock.addSuccessor(switchSuccessor);
+        }
+        build(caseGroupTree.body());
+        List<CaseLabelTree> labels = caseGroupTree.labels();
+        Lists.reverse(labels).stream()
+          .map(CaseLabelTree::expressions)
+          .map(Lists::reverse)
+          .flatMap(Collection::stream)
+          .forEach(this::build);
+        if (!hasDefaultCase) {
+          hasDefaultCase = containsDefaultCase(labels);
+        }
+        currentBlock.setCaseGroup(caseGroupTree);
+        switches.getLast().addSuccessor(currentBlock);
+        if (!caseGroupTree.equals(firstCase)) {
+          // No block predecessing the first case group.
+          currentBlock = createBlock(currentBlock);
+        }
+      }
+    }
+    breakTargets.removeLast();
+    // process condition
+    currentBlock = switches.removeLast();
+    if (!hasDefaultCase) {
+      currentBlock.addSuccessor(switchSuccessor);
+    }
+    currentBlock = conditionBlock;
+  }
+

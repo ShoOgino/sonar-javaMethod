@@ -1,0 +1,14 @@
+  /**
+   * A switch expression can use the traditional cases with 'colon' (with fall-through) or,
+   * starting with java 12, the 'arrow' cases (without fall-through). Cases can not be mixed.
+   *
+   * @param switchExpressionTree the switch to evaluate
+   * @return true if the switch uses fall-through
+   */
+  private static boolean switchWithoutFallThrough(SwitchExpressionTree switchExpressionTree) {
+    return switchExpressionTree.cases().stream()
+      .map(CaseGroupTree::labels)
+      .flatMap(List::stream)
+      .noneMatch(CaseLabelTree::isFallThrough);
+  }
+

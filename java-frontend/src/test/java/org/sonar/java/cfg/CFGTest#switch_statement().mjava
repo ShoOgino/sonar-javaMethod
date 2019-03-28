@@ -7,8 +7,19 @@
         "  }");
 
     assertThat(cfg.blocks().get(0).id()).isEqualTo(5);
-    cfg = buildCFG(
-      "void fun(int foo) { int a; switch(foo) { case 1: System.out.println(bar);case 2: System.out.println(qix);break; default: System.out.println(baz);} }");
+
+    cfg = buildCFG("void fun(int foo) {\n" +
+      "  int a;" +
+      "  switch(foo) {\n" +
+      "    case 1:\n" +
+      "      System.out.println(bar);\n" +
+      "    case 2:\n" +
+      "      System.out.println(qix);\n" +
+      "      break;\n" +
+      "    default:\n" +
+      "      System.out.println(baz);\n" +
+      "  }\n" +
+      "}");
     CFGChecker cfgChecker = checker(
       block(
         element(INT_LITERAL, "1"),

@@ -1,0 +1,45 @@
+  @Test
+  public void switch_expression_without_fallthrough() {
+    final CFG cfg = buildCFG("int fun(int foo) throws Exception {\n" +
+      "    int a = switch (foo) {\n" +
+      "      case 1 -> fun(bar1) + fun(bar2);\n" +
+      "      case 2, 3, 4 -> fun(qix);\n" +
+      "      case 5 -> throw new Exception(\"boom\");\n" +
+      "      default -> fun(def);\n" +
+      "    };\n" +
+      "    return a;\n" +
+      "  }");
+    final CFGChecker cfgChecker = checker(
+      block(
+        element(INT_LITERAL, "1"),
+        element(IDENTIFIER, "fun"),
+        element(IDENTIFIER, "bar1"),
+        element(METHOD_INVOCATION),
+        element(IDENTIFIER, "fun"),
+        element(IDENTIFIER, "bar2"),
+        element(METHOD_INVOCATION),
+        element(PLUS)).hasCaseGroup().successors(1),
+      block(
+        element(INT_LITERAL, "2"),
+        element(INT_LITERAL, "3"),
+        element(INT_LITERAL, "4"),
+        element(IDENTIFIER, "fun"),
+        element(IDENTIFIER, "qix"),
+        element(METHOD_INVOCATION)).hasCaseGroup().successors(1),
+      block(
+        element(INT_LITERAL, "5"),
+        element(STRING_LITERAL, "boom"),
+        element(NEW_CLASS)).hasCaseGroup().terminator(THROW_STATEMENT).successors(0),
+      block(
+        element(IDENTIFIER, "fun"),
+        element(IDENTIFIER, "def"),
+        element(METHOD_INVOCATION)).hasCaseGroup().successors(1),
+      block(
+        element(IDENTIFIER, "foo")).terminator(SWITCH_EXPRESSION).successors(3, 4, 5, 6),
+      block(
+        element(SWITCH_EXPRESSION),
+        element(VARIABLE, "a"),
+        element(IDENTIFIER, "a")).terminator(RETURN_STATEMENT).successors(0));
+    cfgChecker.check(cfg);
+  }
+

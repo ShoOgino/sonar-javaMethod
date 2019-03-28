@@ -1,5 +1,6 @@
   private void buildBreakStatement(BreakStatementTree tree) {
     IdentifierTree label = tree.label();
+    boolean isLabel = false;
     Block targetBlock = null;
     if (label == null) {
       if (breakTargets.isEmpty()) {
@@ -10,9 +11,18 @@
         targetBlock = breakTargets.getLast();
       }
     } else {
-      targetBlock = labelsBreakTarget.get(label.name());
+      isLabel = label.symbol() instanceof Symbol.LabelSymbol;
+      if (isLabel) {
+        targetBlock = labelsBreakTarget.get(label.name());
+      } else {
+        targetBlock = breakTargets.getLast();
+      }
     }
     currentBlock = createUnconditionalJump(tree, targetBlock, currentBlock);
+    ExpressionTree value = tree.value();
+    if (value != null && !isLabel) {
+      build(value);
+    }
     if(currentBlock.exitBlock != null) {
       currentBlock.exitBlock = null;
     }

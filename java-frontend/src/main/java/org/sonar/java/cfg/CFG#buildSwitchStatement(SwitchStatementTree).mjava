@@ -1,40 +1,4 @@
   private void buildSwitchStatement(SwitchStatementTree switchStatementTree) {
-    Block switchSuccessor = currentBlock;
-    // process condition
-    currentBlock = createBlock();
-    currentBlock.terminator = switchStatementTree;
-    switches.addLast(currentBlock);
-    build(switchStatementTree.expression());
-    Block conditionBlock = currentBlock;
-    // process body
-    currentBlock = createBlock(switchSuccessor);
-    breakTargets.addLast(switchSuccessor);
-    boolean hasDefaultCase = false;
-    if (!switchStatementTree.cases().isEmpty()) {
-      CaseGroupTree firstCase = switchStatementTree.cases().get(0);
-      for (CaseGroupTree caseGroupTree : Lists.reverse(switchStatementTree.cases())) {
-        build(caseGroupTree.body());
-        Lists.reverse(caseGroupTree.labels()).stream()
-          .map(CaseLabelTree::expressions)
-          .flatMap(Collection::stream)
-          .forEach(this::build);
-        if (!hasDefaultCase) {
-          hasDefaultCase = containsDefaultCase(caseGroupTree.labels());
-        }
-        currentBlock.setCaseGroup(caseGroupTree);
-        switches.getLast().addSuccessor(currentBlock);
-        if (!caseGroupTree.equals(firstCase)) {
-          // No block predecessing the first case group.
-          currentBlock = createBlock(currentBlock);
-        }
-      }
-    }
-    breakTargets.removeLast();
-    // process condition
-    currentBlock = switches.removeLast();
-    if (!hasDefaultCase) {
-      currentBlock.addSuccessor(switchSuccessor);
-    }
-    currentBlock = conditionBlock;
+    buildSwitchExpression(switchStatementTree.asSwitchExpression(), switchStatementTree);
   }
 
