@@ -1,0 +1,10 @@
+  @Nullable
+  public InputComponent inputFromIOFileOrDirectory(File file) {
+    if (file.isDirectory()) {
+      // TODO context.module() is deprecated since SQ 7.6, but it can not yet be replaced by
+      //  context.project() until the oldest "SQ supported version" is >= 7.6
+      return context != null && isInSubDirectory(fs.baseDir().getAbsoluteFile(), file.getAbsoluteFile()) ? context.module() : null;
+    }
+    return inputFromIOFile(file);
+  }
+
