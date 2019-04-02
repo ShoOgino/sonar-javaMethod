@@ -1,0 +1,9 @@
+  private static boolean hasSingleStatement(List<StatementTree> body, Tree.Kind... statement) {
+    if (body.size() != 1) {
+      return false;
+    }
+    StatementTree onlyStatement = body.get(0);
+    return onlyStatement.is(statement) ||
+      (onlyStatement.is(BLOCK) && hasSingleStatement(((BlockTree) onlyStatement).body(), statement));
+  }
+

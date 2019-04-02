@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static Symbol getVariableSymbol(AssignmentExpressionTree expression) {
+    ExpressionTree variable = expression.variable();
+    if (variable.is(Tree.Kind.IDENTIFIER)) {
+      return ((IdentifierTree) variable).symbol();
+    }
+    if (variable.is(MEMBER_SELECT)) {
+      return ((MemberSelectExpressionTree) variable).identifier().symbol();
+    }
+    return null;
+  }
+

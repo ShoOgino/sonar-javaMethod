@@ -1,0 +1,21 @@
+  @CheckForNull
+  private static Symbol variableFromAssignment(List<StatementTree> body) {
+    if (body.isEmpty()) {
+      return null;
+    }
+    StatementTree statementTree = body.get(0);
+    if (statementTree.is(EXPRESSION_STATEMENT)) {
+      ExpressionTree expression = ((ExpressionStatementTree) statementTree).expression();
+      if (expression.is(Tree.Kind.ASSIGNMENT)) {
+        Symbol variable = getVariableSymbol((AssignmentExpressionTree) expression);
+        if (variable != null && !variable.isUnknown()) {
+          return variable;
+        }
+      }
+    }
+    if (statementTree.is(BLOCK)) {
+      return variableFromAssignment(((BlockTree) statementTree).body());
+    }
+    return null;
+  }
+

@@ -1,0 +1,9 @@
+  @CheckForNull
+  private static Symbol isSwitchAssigningVariable(SwitchStatementTree switchStatementTree) {
+    Set<Symbol> assignedVariables = switchStatementTree.cases().stream()
+      .filter(caseGroup -> !hasSingleStatement(caseGroup.body(), THROW_STATEMENT))
+      .map(UseSwitchExpressionCheck::assigningVariable)
+      .collect(Collectors.toSet());
+    return assignedVariables.size() == 1 ? assignedVariables.iterator().next() : null;
+  }
+
