@@ -2,9 +2,8 @@
   public void parse_error() throws Exception {
     SensorContextTester spy = spy(context);
     File file = temp.newFile().getAbsoluteFile();
-    Files.write("ParseError", file, StandardCharsets.UTF_8);
-    fs.add(new TestInputFileBuilder("", file.getName()).build());
-    scan(file);
+    Files.asCharSink(file, StandardCharsets.UTF_8).write("ParseError");
+    scan(TestUtils.inputFile(file));
     verify(spy, never()).newHighlighting();
   }
 

@@ -1,9 +1,12 @@
-  private File generateTestFile(String filename) throws IOException {
-    File file = temp.newFile().getAbsoluteFile();
-    Files.write(Files.toString(new File(filename), StandardCharsets.UTF_8).replaceAll("\\r\\n", "\n").replaceAll("\\n", eol), file, StandardCharsets.UTF_8);
-    lines = Files.readLines(file, StandardCharsets.UTF_8);
-    String content  = Joiner.on(eol).join(lines);
-    fs.add(new TestInputFileBuilder("", file.getName()).initMetadata(content).build());
-    return file;
+  private InputFile generateTestFile(String sourceFile) throws IOException {
+    File source = new File(sourceFile);
+    File target = temp.newFile().getAbsoluteFile();
+    String content = Files.asCharSource(source, StandardCharsets.UTF_8)
+      .read()
+      .replaceAll("\\r\\n", "\n")
+      .replaceAll("\\r", "\n")
+      .replaceAll("\\n", eol);
+    Files.asCharSink(target, StandardCharsets.UTF_8).write(content);
+    return TestUtils.inputFile(target);
   }
 

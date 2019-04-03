@@ -2,10 +2,7 @@
   public void sonar_binaries_should_not_check_for_existence_of_files_when_no_sources() throws Exception {
     settings.setProperty(JavaClasspathProperties.SONAR_JAVA_BINARIES, "toto/**/hello.jar");
     fs = new DefaultFileSystem(new File("src/test/files/classpath/"));
-    TestInputFileBuilder inputFile = new TestInputFileBuilder("", "plop.java");
-    inputFile.setType(InputFile.Type.TEST);
-    inputFile.setLanguage("java");
-    fs.add(inputFile.build());
+    fs.add(TestUtils.emptyInputFile("plop.java", InputFile.Type.TEST));
     javaClasspath = createJavaClasspath();
     assertThat(javaClasspath.getElements()).isEmpty();
   }

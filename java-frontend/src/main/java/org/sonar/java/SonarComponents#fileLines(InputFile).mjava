@@ -1,0 +1,12 @@
+  public List<String> fileLines(InputFile inputFile) {
+    List<String> lines = new ArrayList<>();
+    try (Scanner scanner = new Scanner(inputFile.inputStream(), inputFile.charset().name())) {
+      while (scanner.hasNextLine()) {
+        lines.add(scanner.nextLine());
+      }
+    } catch (IOException e) {
+      throw new AnalysisException(String.format("Unable to read file '%s'", inputFile), e);
+    }
+    return lines;
+  }
+

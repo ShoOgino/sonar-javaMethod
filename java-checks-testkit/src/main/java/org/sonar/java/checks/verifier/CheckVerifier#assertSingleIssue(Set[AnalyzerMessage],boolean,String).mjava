@@ -1,7 +1,7 @@
   private static void assertSingleIssue(Set<AnalyzerMessage> issues, boolean issueOnFile, String expectedMessage) {
     Preconditions.checkState(issues.size() == 1, "A single issue is expected on the file");
     AnalyzerMessage issue = Iterables.getFirst(issues, null);
-    assertThat(!issue.getFile().isDirectory()).isEqualTo(issueOnFile);
+    assertThat(issue.getInputComponent().isFile()).isEqualTo(issueOnFile);
     assertThat(issue.getLine()).isNull();
     assertThat(issue.getMessage()).isEqualTo(expectedMessage);
   }

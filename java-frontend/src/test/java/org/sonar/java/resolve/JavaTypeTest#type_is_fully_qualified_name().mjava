@@ -2,7 +2,7 @@
   public void type_is_fully_qualified_name() {
     JavaSymbol.PackageJavaSymbol packageSymbol = new JavaSymbol.PackageJavaSymbol("org.foo.bar", null);
     JavaSymbol.TypeJavaSymbol typeSymbol = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyType", packageSymbol);
-    JavaSymbol.TypeJavaSymbol typeSymbol2 = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyType", symbols.rootPackage);
+    JavaSymbol.TypeJavaSymbol typeSymbol2 = new JavaSymbol.TypeJavaSymbol(Flags.PUBLIC, "MyType", Symbols.rootPackage);
     ArrayJavaType arrayType = new ArrayJavaType(typeSymbol.type, symbols.arrayClass);
     ClassJavaType classType = (ClassJavaType) typeSymbol.type;
     classType.interfaces = Lists.newArrayList();
@@ -15,6 +15,6 @@
     assertThat(arrayType.is("org.foo.bar.MyType")).isFalse();
     assertThat(arrayType.is("org.foo.bar.SomeClass[]")).isFalse();
     assertThat(symbols.nullType.is("org.foo.bar.SomeClass")).isTrue();
-    assertThat(symbols.unknownType.is("org.foo.bar.SomeClass")).isFalse();
+    assertThat(Symbols.unknownType.is("org.foo.bar.SomeClass")).isFalse();
   }
 

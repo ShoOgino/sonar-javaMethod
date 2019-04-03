@@ -1,0 +1,12 @@
+  protected static AnalyzerMessage createAnalyzerMessage(InputFile inputFile, JavaCheck javaCheck, Tree startTree, @Nullable Tree endTree, String message,
+    Iterable<List<Location>> flows, @Nullable Integer cost) {
+    AnalyzerMessage.TextSpan textSpan = endTree != null ? AnalyzerMessage.textSpanBetween(startTree, endTree) : AnalyzerMessage.textSpanFor(startTree);
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(javaCheck, inputFile, textSpan, message, cost != null ? cost : 0);
+    for (List<Location> flow : flows) {
+      List<AnalyzerMessage> sonarqubeFlow =
+      flow.stream().map(l -> new AnalyzerMessage(javaCheck, inputFile, AnalyzerMessage.textSpanFor(l.syntaxNode), l.msg, 0)).collect(Collectors.toList());
+      analyzerMessage.flows.add(sonarqubeFlow);
+    }
+    return analyzerMessage;
+  }
+

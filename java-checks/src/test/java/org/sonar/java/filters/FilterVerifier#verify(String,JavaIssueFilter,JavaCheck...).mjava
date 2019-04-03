@@ -15,8 +15,9 @@
     Collection<File> classpath = FileUtils.listFiles(new File("target/test-jars"), new String[] {"jar", "zip"}, true);
     List<File> projectClasspath = Lists.newArrayList(classpath);
     projectClasspath.add(new File("target/test-classes"));
+
     VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, projectClasspath, null);
-    JavaAstScanner.scanSingleFileForTests(new File(filename), visitorsBridge);
+    JavaAstScanner.scanSingleFileForTests(CheckTestUtils.inputFile(filename), visitorsBridge);
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
 
     Multimap<Integer, String> issuesByLines = HashMultimap.create();

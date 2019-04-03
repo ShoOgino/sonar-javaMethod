@@ -1,12 +1,11 @@
   private void checkLines(String filename, FileLinesContext context) {
+    InputFile inputFile = TestUtils.inputFile(new File(baseDir, filename));
+
     SonarComponents sonarComponents = mock(SonarComponents.class);
-    when(sonarComponents.fileLength(Mockito.any(File.class))).thenAnswer(invocation -> {
-      File arg = (File) invocation.getArguments()[0];
-      return Files.readLines(arg, StandardCharsets.UTF_8).size();
-    });
-    when(sonarComponents.fileLinesContextFor(Mockito.any(File.class))).thenReturn(context);
+    when(sonarComponents.fileLinesContextFor(Mockito.any(InputFile.class))).thenReturn(context);
 
     JavaSquid squid = new JavaSquid(new JavaVersionImpl(), null, null, null, null, new FileLinesVisitor(sonarComponents));
-    squid.scan(Lists.newArrayList(new File(baseDir, filename)), Collections.emptyList());
+
+    squid.scan(Collections.singletonList(inputFile), Collections.emptyList());
   }
 

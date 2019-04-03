@@ -3,15 +3,9 @@
     Preconditions.checkNotNull(sensorContext);
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
-    InputFile inputFile = fs.inputFile(fs.predicates().is(context.getFile()));
-    if (inputFile == null) {
-      throw new IllegalStateException("resource not found : " + context.getFileKey());
-    }
     for (Map.Entry<String, File> classIOFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      resourcesByClass.put(classIOFileEntry.getKey(), inputFile);
-      if (context.getFileKey() != null) {
-        sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
-      }
+      resourcesByClass.put(classIOFileEntry.getKey(), context.getInputFile());
+      sourceFileByClass.put(classIOFileEntry.getKey(), context.getFileKey());
     }
   }
 

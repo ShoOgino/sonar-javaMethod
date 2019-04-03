@@ -4,8 +4,7 @@
     CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
     RuleKey ruleKey = RuleKey.of("MyRepo", "CustomCheck");
 
-    File file = new File("file.java");
-    DefaultInputFile inputFile = new TestInputFileBuilder("", file.getPath())
+    InputFile inputFile = new TestInputFileBuilder("", "file.java")
     .initMetadata("class A {\n"
       + "  void foo() {\n"
       + "    System.out.println();\n"
@@ -13,19 +12,19 @@
       + "}\n").build();
 
     SensorContextTester context = SensorContextTester.create(new File(""));
-    DefaultFileSystem fileSystem = context.fileSystem();
+    FileSystem fileSystem = context.fileSystem();
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fileSystem, null, null, checkFactory, new CheckRegistrar[] {expectedRegistrar});
     sonarComponents.setSensorContext(context);
 
     AnalyzerMessage.TextSpan emptyTextSpan = new AnalyzerMessage.TextSpan(3, 10, 3, 10);
-    AnalyzerMessage analyzerMessageEmptyLocation = new AnalyzerMessage(expectedCheck, file, emptyTextSpan, "message", 0);
+    AnalyzerMessage analyzerMessageEmptyLocation = new AnalyzerMessage(expectedCheck, inputFile, emptyTextSpan, "message", 0);
 
     assertThatThrownBy(() -> sonarComponents.reportIssue(analyzerMessageEmptyLocation, ruleKey, inputFile, 0.0))
       .isInstanceOf(IllegalStateException.class).hasMessageContaining("Issue location should not be empty");
     assertThat(context.allIssues()).isEmpty();
 
     AnalyzerMessage.TextSpan nonEmptyTextSpan = new AnalyzerMessage.TextSpan(3, 10, 3, 15);
-    AnalyzerMessage analyzerMessageValidLocation = new AnalyzerMessage(expectedCheck, file, nonEmptyTextSpan, "message", 0);
+    AnalyzerMessage analyzerMessageValidLocation = new AnalyzerMessage(expectedCheck, inputFile, nonEmptyTextSpan, "message", 0);
     sonarComponents.reportIssue(analyzerMessageValidLocation, ruleKey, inputFile, 0.0);
     assertThat(context.allIssues()).isNotEmpty();
   }

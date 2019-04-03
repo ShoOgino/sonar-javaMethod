@@ -1,10 +1,7 @@
   @Test
   public void libraries_should_read_dir_of_class_files() {
     fs = new DefaultFileSystem(new File("src/test/files/"));
-    TestInputFileBuilder inputFile = new TestInputFileBuilder("", "foo.java");
-    inputFile.setLanguage("java");
-    inputFile.setType(InputFile.Type.MAIN);
-    fs.add(inputFile.build());
+    fs.add(TestUtils.emptyInputFile("foo.java"));
     settings.setProperty(JavaClasspathProperties.SONAR_JAVA_LIBRARIES, "classpath");
     javaClasspath = createJavaClasspath();
     assertThat(javaClasspath.getElements()).hasSize(4);

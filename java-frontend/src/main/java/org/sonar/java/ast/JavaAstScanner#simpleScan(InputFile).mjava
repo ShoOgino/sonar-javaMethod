@@ -1,0 +1,21 @@
+  private void simpleScan(InputFile inputFile) {
+    visitor.setCurrentFile(inputFile);
+    try {
+      String fileContent = inputFile.contents();
+      Tree ast = parser.parse(fileContent);
+      visitor.visitFile(ast);
+    } catch (RecognitionException e) {
+      checkInterrupted(e);
+      LOG.error(String.format("Unable to parse source file : '%s'", inputFile));
+      LOG.error(e.getMessage());
+
+      parseErrorWalkAndVisit(e, inputFile);
+    } catch (Exception e) {
+      checkInterrupted(e);
+      throw new AnalysisException(getAnalysisExceptionMessage(inputFile), e);
+    } catch (StackOverflowError error) {
+      LOG.error(String.format("A stack overflow error occured while analyzing file: '%s'", inputFile), error);
+      throw error;
+    }
+  }
+

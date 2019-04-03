@@ -1,8 +1,9 @@
   @Test
   public void test() {
+    // test itself
     File file = new File("src/test/java/org/sonar/java/model/TreeTokenCompletenessTest.java");
 
-    List<String> basedOnSyntaxTree = readFileFromSyntaxTree(file);
+    List<String> basedOnSyntaxTree = readFileFromSyntaxTree(TestUtils.inputFile(file));
     List<String> basedOnFileLine = readFile(file);
     Map<Integer, String> differences = getDifferences(basedOnSyntaxTree, basedOnFileLine);
 
@@ -12,6 +13,7 @@
     // printListString(basedOnSyntaxTree);
     // printDifferences(differences);
 
+    // the difference is on parsing on generic: "line 117 : 'Lists.<File>newArrayList(), null));'"
     assertThat(differences).hasSize(1);
   }
 

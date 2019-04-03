@@ -5,8 +5,8 @@
     JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
     ImmutableList<File> javaTestClasspathList = ImmutableList.of();
     when(javaTestClasspath.getElements()).thenReturn(javaTestClasspathList);
-    File file = new File("foo.java");
-    fs.add(new TestInputFileBuilder("", "foo.java").build());
+    InputFile inputFile = TestUtils.emptyInputFile("foo.java");
+    fs.add(inputFile);
     FileLinesContext fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
@@ -17,16 +17,15 @@
     assertThat(visitors).hasSize(0);
     Collection<JavaCheck> testChecks = sonarComponents.testCheckClasses();
     assertThat(testChecks).hasSize(0);
-    assertThat(sonarComponents.getFileSystem()).isEqualTo(fs);
     assertThat(sonarComponents.getJavaClasspath()).isEmpty();
     assertThat(sonarComponents.getJavaTestClasspath()).isEqualTo(javaTestClasspathList);
-    NewHighlighting newHighlighting = sonarComponents.highlightableFor(file);
+    NewHighlighting newHighlighting = sonarComponents.highlightableFor(inputFile);
     assertThat(newHighlighting).isNotNull();
     verify(sensorContextTester, times(1)).newHighlighting();
-    NewSymbolTable newSymbolTable = sonarComponents.symbolizableFor(file);
+    NewSymbolTable newSymbolTable = sonarComponents.symbolizableFor(inputFile);
     assertThat(newSymbolTable ).isNotNull();
     verify(sensorContextTester, times(1)).newSymbolTable();
-    assertThat(sonarComponents.fileLinesContextFor(file)).isEqualTo(fileLinesContext);
+    assertThat(sonarComponents.fileLinesContextFor(inputFile)).isEqualTo(fileLinesContext);
 
     JavaClasspath javaClasspath = mock(JavaClasspath.class);
     List<File> list = mock(List.class);

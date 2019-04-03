@@ -1,6 +1,6 @@
   private SonarComponents collectAnalysisErrors(String code) throws IOException {
     SensorContextTester context = SensorContextTester.create(temp.getRoot().getAbsoluteFile());
-    DefaultInputFile defaultFile = addFile(code, context);
+    InputFile defaultFile = addFile(code, context);
 
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 7)));
     // Mock visitor for metrics.
@@ -16,8 +16,8 @@
     JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, javaTestClasspath, mock(CheckFactory.class));
     sonarComponents.setSensorContext(context);
-    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(fs, context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
-    javaSquid.scan(Collections.singletonList(defaultFile.file()), Collections.emptyList());
+    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
+    javaSquid.scan(Collections.singletonList(defaultFile), Collections.emptyList());
     return sonarComponents;
   }
 

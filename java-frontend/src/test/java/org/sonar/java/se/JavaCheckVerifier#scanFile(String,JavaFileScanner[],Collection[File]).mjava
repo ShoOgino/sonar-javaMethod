@@ -1,9 +1,9 @@
   private void scanFile(String filename, JavaFileScanner[] checks, Collection<File> classpath) {
     List<JavaFileScanner> visitors = new ArrayList<>(Arrays.asList(checks));
     visitors.add(expectations.parser());
-    File file = new File(filename);
-    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, Lists.newArrayList(classpath), sonarComponents(file));
-    JavaAstScanner.scanSingleFileForTests(file, visitorsBridge);
+    InputFile inputFile = TestUtils.inputFile(filename);
+    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, Lists.newArrayList(classpath), sonarComponents());
+    JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge);
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
     checkIssues(testJavaFileScannerContext.getIssues());
   }

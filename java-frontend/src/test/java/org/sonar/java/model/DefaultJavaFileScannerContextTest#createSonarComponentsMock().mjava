@@ -1,4 +1,4 @@
-  private static SonarComponents createSonarComponentsMock() {
+  private SonarComponents createSonarComponentsMock() {
     SonarComponents sonarComponents = mock(SonarComponents.class);
     doAnswer(invocation -> {
       reportedMessage = (AnalyzerMessage) invocation.getArguments()[0];
@@ -8,20 +8,28 @@
     doAnswer(invocation -> {
       Integer cost = invocation.getArgument(4);
       reportedMessage = new AnalyzerMessage(invocation.getArgument(1),
-          invocation.getArgument(0),
-          null,
-          invocation.getArgument(3),
-          cost != null ? cost : 0);
+        JAVA_INPUT_FILE,
+        null,
+        invocation.getArgument(3),
+        cost != null ? cost : 0);
       return null;
     }).when(sonarComponents).addIssue(any(File.class), any(JavaCheck.class), anyInt(), anyString(), any());
 
-    doAnswer(invocation -> new ArrayList<>()).when(sonarComponents).fileLines(eq(JAVA_FILE));
-    doAnswer(invocation -> "content").when(sonarComponents).fileContent(eq(JAVA_FILE));
+    doAnswer(invocation -> {
+      Integer cost = invocation.getArgument(4);
+      reportedMessage = new AnalyzerMessage(invocation.getArgument(1),
+        invocation.getArgument(0),
+        null,
+        invocation.getArgument(3),
+        cost != null ? cost : 0);
+      return null;
+    }).when(sonarComponents).addIssue(any(InputComponent.class), any(JavaCheck.class), anyInt(), anyString(), any());
 
-    doAnswer(invocation -> WORK_DIR).when(sonarComponents).workDir();
-    File moduleBaseDir = new File("");
-    SensorContextTester context = SensorContextTester.create(moduleBaseDir);
-    doAnswer(invocation -> context.fileSystem()).when(sonarComponents).getFileSystem();
+    when(sonarComponents.fileLines(any(InputFile.class))).thenReturn(Collections.emptyList());
+    when(sonarComponents.inputFileContents(any(InputFile.class))).thenReturn("content");
+    when(sonarComponents.baseDir()).thenReturn(BASE_DIR);
+    when(sonarComponents.workDir()).thenReturn(WORK_DIR);
+    when(sonarComponents.project()).thenReturn(PROJECT_BASE_DIR);
 
     return sonarComponents;
   }

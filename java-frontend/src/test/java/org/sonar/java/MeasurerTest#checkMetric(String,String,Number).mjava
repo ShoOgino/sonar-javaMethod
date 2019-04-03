@@ -2,6 +2,16 @@
    * Utility method to quickly get metric out of a file.
    */
   private void checkMetric(String filename, String metric, Number expectedValue) {
-    checkMetric(filename, metric, expectedValue, NB_OF_METRICS);
+    String relativePath = PathUtils.sanitize(new File(BASE_DIR, filename).getPath());
+    InputFile inputFile = TestUtils.inputFile(relativePath);
+    context.fileSystem().add(inputFile);
+
+    Measurer measurer = new Measurer(context, mock(NoSonarFilter.class));
+    JavaSquid squid = new JavaSquid(new JavaVersionImpl(), null, measurer, null, null, new JavaCheck[0]);
+
+    squid.scan(Collections.singletonList(inputFile), Collections.emptyList());
+
+    assertThat(context.measures(inputFile.key())).hasSize(NB_OF_METRICS);
+    assertThat(context.measure(inputFile.key(), metric).value()).isEqualTo(expectedValue);
   }
 

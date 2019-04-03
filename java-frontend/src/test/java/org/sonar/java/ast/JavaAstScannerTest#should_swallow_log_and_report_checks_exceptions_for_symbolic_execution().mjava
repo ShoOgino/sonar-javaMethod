@@ -11,7 +11,7 @@
         throw new NullPointerException("nobody expect the spanish inquisition !");
       }
     }), new ArrayList<>(), sonarComponent, SymbolicExecutionMode.ENABLED_WITHOUT_X_FILE));
-    scanner.scan(ImmutableList.of(new File("src/test/resources/se/MethodBehavior.java")));
+    scanner.scan(Collections.singletonList(TestUtils.inputFile("src/test/resources/se/MethodBehavior.java")));
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith("Unable to run check class org.sonar.java.se.SymbolicExecutionVisitor");
     assertThat(sonarComponent.analysisErrors).hasSize(1);

@@ -3,7 +3,7 @@
     thrown.expect(StackOverflowError.class);
     JavaAstScanner scanner = defaultJavaAstScanner();
     scanner.setVisitorBridge(new VisitorsBridge(new CheckThrowingSOError()));
-    scanner.scan(ImmutableList.of(new File("src/test/resources/AstScannerNoParseError.txt")));
+    scanner.scan(Collections.singletonList(TestUtils.inputFile("src/test/resources/AstScannerNoParseError.txt")));
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0))

@@ -2,7 +2,7 @@
   public void sonarcloud_feedback_metric_should_not_exceed_roughly_200ko() {
     File file = new File("src/test/files/ParseError.java");
     SensorContextTester sensorContext = SensorContextTester.create(file.getParentFile().getAbsoluteFile());
-    sensorContext.settings().setProperty(SonarComponents.COLLECT_ANALYSIS_ERRORS_KEY, true);
+    sensorContext.setSettings(new MapSettings().setProperty(SonarComponents.COLLECT_ANALYSIS_ERRORS_KEY, true));
     Measure<String> feedback = analysisWithAnError(sensorContext);
     Collection<AnalysisError> analysisErrorsDeserialized = new Gson().fromJson(feedback.value(), new TypeToken<Collection<AnalysisError>>(){}.getType());
     assertThat(analysisErrorsDeserialized.size()).isBetween(35, 45);

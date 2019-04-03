@@ -1,10 +1,8 @@
   @Test
   public void comments() {
-    File file = new File("src/test/files/metrics/Comments.java");
-    DefaultInputFile resource = new TestInputFileBuilder("", "src/test/files/metrics/Comments.java").build();
-    fs.add(resource);
+    InputFile inputFile = TestUtils.inputFile("src/test/files/metrics/Comments.java");
     NoSonarFilter noSonarFilter = mock(NoSonarFilter.class);
-    JavaAstScanner.scanSingleFileForTests(file, new VisitorsBridge(new Measurer(fs, context, noSonarFilter)));
-    verify(noSonarFilter).noSonarInFile(resource, ImmutableSet.of(15));
+    JavaAstScanner.scanSingleFileForTests(inputFile, new VisitorsBridge(new Measurer(context, noSonarFilter)));
+    verify(noSonarFilter).noSonarInFile(inputFile, ImmutableSet.of(15));
   }
 

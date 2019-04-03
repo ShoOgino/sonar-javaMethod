@@ -12,7 +12,9 @@
       }
       issue.setPrimaryLocation((InputFile) fileOrProject, analyzerMessage.getMessage(), textSpan.startLine, textSpan.startCharacter, textSpan.endLine, textSpan.endCharacter);
     }
-    issue.addFlow(inputFromIOFile(analyzerMessage.getFile()), analyzerMessage.flows);
+    if (!analyzerMessage.flows.isEmpty()) {
+      issue.addFlow((InputFile) analyzerMessage.getInputComponent(), analyzerMessage.flows);
+    }
     issue.save();
   }
 

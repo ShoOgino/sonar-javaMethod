@@ -1,11 +1,10 @@
   @Test
   public void test() {
     SonarComponents sonarComponents = mock(SonarComponents.class);
-    when(sonarComponents.fileContent(any())).thenCallRealMethod();
-    when(sonarComponents.fileLength(any())).thenCallRealMethod();
+    when(sonarComponents.inputFileContents(any())).thenCallRealMethod();
 
     VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(new ParsingErrorCheck(), sonarComponents);
-    JavaAstScanner.scanSingleFileForTests(new File("src/test/files/checks/ParsingError.java"), visitorsBridge);
+    JavaAstScanner.scanSingleFileForTests(CheckTestUtils.inputFile("src/test/files/checks/ParsingError.java"), visitorsBridge);
     Set<AnalyzerMessage> issues = visitorsBridge.lastCreatedTestContext().getIssues();
     assertThat(issues).hasSize(1);
     AnalyzerMessage issue = issues.iterator().next();
