@@ -1,5 +1,5 @@
-  private static Set<File> getReportPaths(SensorContext context) {
-    Set<File> reportPaths = new HashSet<>();
+  private static List<Report> getReportPaths(SensorContext context) {
+    List<Report> reports = new ArrayList<>();
     Configuration settings = context.config();
     FileSystem fs = context.fileSystem();
     for (String reportPath : settings.getStringArray(REPORT_PATHS_PROPERTY)) {
@@ -9,11 +9,11 @@
           LOG.info("JaCoCo report not found: '{}'", reportPath);
         }
       } else {
-        reportPaths.add(report);
+        reports.add(new Report(report, REPORT_PATHS_PROPERTY));
       }
     }
-    getReport(settings, fs, REPORT_PATH_PROPERTY, "JaCoCo UT report not found: '{}'").ifPresent(reportPaths::add);
-    getReport(settings, fs, IT_REPORT_PATH_PROPERTY, "JaCoCo IT report not found: '{}'").ifPresent(reportPaths::add);
-    return reportPaths;
+    getReport(settings, fs, REPORT_PATH_PROPERTY, "JaCoCo UT report not found: '{}'").ifPresent(file -> reports.add(new Report(file, REPORT_PATH_PROPERTY)));
+    getReport(settings, fs, IT_REPORT_PATH_PROPERTY, "JaCoCo IT report not found: '{}'").ifPresent(file -> reports.add(new Report(file, IT_REPORT_PATH_PROPERTY)));
+    return reports;
   }
 

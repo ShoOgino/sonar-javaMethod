@@ -1,7 +1,7 @@
   @Test
-  public void should_do_nothing_if_output_dir_does_not_exists() {
+  public void should_do_nothing_if_output_dir_does_not_exists() throws Exception {
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(new File("nowhere")));
-    SensorContextTester context = SensorContextTester.create(new File(""));
+    SensorContextTester context = SensorContextTester.create(temp.newFolder());
     context.settings().setProperty(REPORT_PATHS_PROPERTY, jacocoExecutionData.getAbsolutePath());
     sensor.execute(context);
     assertThat(logTester.logs(LoggerLevel.INFO)).contains("No JaCoCo analysis of project coverage can be done since there are no class files.");

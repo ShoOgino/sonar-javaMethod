@@ -1,7 +1,7 @@
   @Test
-  public void do_not_save_measure_on_resource_which_doesnt_exist_in_the_context() {
+  public void do_not_save_measure_on_resource_which_doesnt_exist_in_the_context() throws Exception {
     when(javaClasspath.getBinaryDirs()).thenReturn(ImmutableList.of(outputDir));
-    SensorContextTester context = spy(SensorContextTester.create(new File("")));
+    SensorContextTester context = spy(SensorContextTester.create(temp.newFolder()));
     sensor.execute(context);
     verify(context, never()).newCoverage();
   }

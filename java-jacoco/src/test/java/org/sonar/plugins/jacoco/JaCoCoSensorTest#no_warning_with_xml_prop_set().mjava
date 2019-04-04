@@ -2,9 +2,11 @@
   public void no_warning_with_xml_prop_set() throws Exception {
     context.settings().setProperty(REPORT_PATH_PROPERTY, "jacoco.exec");
     context.settings().setProperty(IT_REPORT_PATH_PROPERTY, "jacoco.exec");
+    context.settings().setProperty(REPORT_PATHS_PROPERTY, "jacoco.exec");
     context.settings().setProperty(JaCoCoSensor.JACOCO_XML_PROPERTY, "jacoco.xml");
     runAnalysisWithoutAssert();
-    assertThat(logTester.logs(LoggerLevel.WARN)).doesNotContain("Property 'sonar.jacoco.reportPath' is deprecated. 'sonar.coverage.jacoco.xmlReportPaths' should be used instead (JaCoCo XML format).");
-    assertThat(logTester.logs(LoggerLevel.WARN)).doesNotContain("Property 'sonar.jacoco.itReportPath' is deprecated. 'sonar.coverage.jacoco.xmlReportPaths' should be used instead (JaCoCo XML format).");
+    assertThat(logTester.logs(LoggerLevel.WARN)).doesNotContain(REPORT_PATH_IS_DEPRECATED);
+    assertThat(logTester.logs(LoggerLevel.WARN)).doesNotContain(IT_REPORT_PATH_IS_DEPRECATED);
+    assertThat(logTester.logs(LoggerLevel.WARN)).doesNotContain(REPORT_PATHS_IS_DEPRECATED);
   }
 

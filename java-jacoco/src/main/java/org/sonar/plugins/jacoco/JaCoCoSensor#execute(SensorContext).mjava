@@ -1,23 +1,20 @@
   @Override
   public void execute(SensorContext context) {
-    warnAboutDeprecatedProperties(context.config());
-    if (context.config().hasKey(JACOCO_XML_PROPERTY)) {
-      LOG.debug("Property '{}' was specified, skipping processing of binary JaCoCo exec report.", JACOCO_XML_PROPERTY);
+    Configuration config = context.config();
+    if (config.hasKey(REPORT_MISSING_FORCE_ZERO)) {
+      addAnalysisWarning("Property '%s' is deprecated and its value will be ignored.", REPORT_MISSING_FORCE_ZERO);
+    }
+    List<Report> reports = getReportPaths(context);
+    if (reports.isEmpty()) {
       return;
     }
-    Set<File> reportPaths = getReportPaths(context);
-    if (reportPaths.isEmpty()) {
+    boolean hasXmlReport = hasXmlReport(context);
+    warnAboutDeprecatedProperties(config, reports, hasXmlReport);
+    if (hasXmlReport) {
+      LOG.debug("JaCoCo XML report found, skipping processing of binary JaCoCo exec report.", JACOCO_XML_PROPERTY);
       return;
     }
-    // Merge JaCoCo reports
-    File reportMerged;
-    if (reportPaths.size() == 1) {
-      reportMerged = reportPaths.iterator().next();
-    } else {
-      reportMerged = new File(context.fileSystem().workDir(), JACOCO_MERGED_FILENAME);
-      reportMerged.getParentFile().mkdirs();
-      JaCoCoReportMerger.mergeReports(reportMerged, reportPaths.toArray(new File[0]));
-    }
+    File reportMerged = mergeJacocoReports(context, reports);
     new UnitTestAnalyzer(reportMerged, perspectives, javaResourceLocator, javaClasspath, analysisWarnings).analyse(context);
   }
 
