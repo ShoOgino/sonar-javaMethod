@@ -1,7 +1,7 @@
   private List<Issue> getExternalIssues(String projectKey) {
-    IssueClient issueClient = SonarClient.create(orchestrator.getServer().getUrl()).issueClient();
-    return issueClient.find(IssueQuery.create().componentRoots(projectKey)).list().stream()
-      .filter(issue -> issue.ruleKey().startsWith("external_"))
+    return TestUtils.issuesForComponent(orchestrator, projectKey)
+      .stream()
+      .filter(issue -> issue.getRule().startsWith("external_"))
       .collect(Collectors.toList());
   }
 

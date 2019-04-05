@@ -11,13 +11,12 @@
 
     assertThat(getMeasureAsInteger("org.example:example", "violations")).isEqualTo(2);
 
-    IssueClient issueClient = orchestrator.getServer().wsClient().issueClient();
-    List<Issue> issues = issueClient.find(IssueQuery.create().components("org.example:example:src/main/java/EclispeI18NFiltered.java")).list();
+    List<Issue> issues = TestUtils.issuesForComponent(orchestrator, "org.example:example:src/main/java/EclispeI18NFiltered.java");
+
     assertThat(issues).hasSize(2);
     for (Issue issue : issues) {
-      assertThat(issue.ruleKey()).matches(value -> "squid:S1444".equals(value) || "squid:ClassVariableVisibilityCheck".equals(value));
-
-      assertThat(issue.line()).isEqualTo(17);
+      assertThat(issue.getRule()).matches(value -> "squid:S1444".equals(value) || "squid:ClassVariableVisibilityCheck".equals(value));
+      assertThat(issue.getLine()).isEqualTo(17);
     }
   }
 

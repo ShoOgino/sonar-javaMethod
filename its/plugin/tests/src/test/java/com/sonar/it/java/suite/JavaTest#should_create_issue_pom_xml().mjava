@@ -9,9 +9,9 @@
       .setCleanPackageSonarGoals();
     orchestrator.executeBuild(build);
 
-    IssueClient issueClient = orchestrator.getServer().wsClient().issueClient();
-    List<Issue> issues = issueClient.find(IssueQuery.create().components("org.sonarsource.java:test-project:pom.xml")).list();
+    List<Issue> issues = TestUtils.issuesForComponent(orchestrator, "org.sonarsource.java:test-project:pom.xml");
+
     assertThat(issues).hasSize(1);
-    assertThat(issues.iterator().next().ruleKey()).isEqualTo("squid:S3423");
+    assertThat(issues.iterator().next().getRule()).isEqualTo("squid:S3423");
   }
 
