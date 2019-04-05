@@ -1,15 +1,8 @@
   @Before
   public void setUp() {
-    File absoluteBaseDir = new File(MODULE_BASE_DIR).getAbsoluteFile();
-    DefaultFileSystem fileSystem = new DefaultFileSystem(absoluteBaseDir);
-    DefaultInputFile inputFile = new TestInputFileBuilder("", absoluteBaseDir, new File(absoluteBaseDir, FILE_KEY))
-    .setLanguage("java")
-    .setType(InputFile.Type.MAIN).build();
-    fileSystem.add(inputFile);
-    postAnalysisIssueFilter = new PostAnalysisIssueFilter(fileSystem);
+    postAnalysisIssueFilter = new PostAnalysisIssueFilter();
 
     context = mock(JavaFileScannerContext.class);
-    when(context.getFile()).thenReturn(inputFile.file());
-    when(context.getFileKey()).thenReturn(inputFile.file().getAbsolutePath());
+    when(context.getInputFile()).thenReturn(INPUT_FILE);
   }
 

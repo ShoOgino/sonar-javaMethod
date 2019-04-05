@@ -11,10 +11,9 @@
     Server server = mock(Server.class);
     when(server.getPublicRootUrl()).thenReturn("https://sonarcloud.io");
 
-    FileSystem fs = context.fileSystem();
     JavaClasspath javaClasspath = mock(JavaClasspath.class);
     JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, javaTestClasspath, mock(CheckFactory.class));
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, context.fileSystem(), javaClasspath, javaTestClasspath, mock(CheckFactory.class));
     sonarComponents.setSensorContext(context);
     JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
     javaSquid.scan(Collections.singletonList(defaultFile), Collections.emptyList());

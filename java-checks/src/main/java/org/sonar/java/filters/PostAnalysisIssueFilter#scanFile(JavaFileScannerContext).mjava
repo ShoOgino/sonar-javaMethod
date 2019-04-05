@@ -1,12 +1,6 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    InputFile component = fileSystem.inputFile(fileSystem.predicates().is(context.getFile()));
-    if (component == null) {
-      throw new AnalysisException("Component not found: " + context.getFileKey());
-    }
-    String componentKey = component.key();
     for (JavaIssueFilter javaIssueFilter : getIssueFilters()) {
-      javaIssueFilter.setComponentKey(componentKey);
       javaIssueFilter.scanFile(context);
     }
   }

@@ -3,12 +3,8 @@
     JavaClasspath javaClasspath = mock(JavaClasspath.class);
     when(javaClasspath.getBinaryDirs()).thenReturn(Lists.newArrayList(new File("target/test-classes")));
     when(javaClasspath.getElements()).thenReturn(Lists.newArrayList(new File("target/test-classes")));
-    SensorContextTester sensorContext = SensorContextTester.create(Paths.get("."));
-    DefaultFileSystem fs = sensorContext.fileSystem();
     InputFile inputFile = TestUtils.inputFile("src/test/java/org/sonar/java/DefaultJavaResourceLocatorTest.java");
-    fs.add(inputFile);
     DefaultJavaResourceLocator jrl = new DefaultJavaResourceLocator(javaClasspath);
-    jrl.setSensorContext(sensorContext);
     JavaAstScanner.scanSingleFileForTests(inputFile, new VisitorsBridge(jrl));
     javaResourceLocator = jrl;
   }

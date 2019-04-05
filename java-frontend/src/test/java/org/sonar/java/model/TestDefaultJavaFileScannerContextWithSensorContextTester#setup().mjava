@@ -1,8 +1,6 @@
   @Before
   public void setup() throws IOException {
     sensorContext = SensorContextTester.create(Paths.get(""));
-    InputFile inputFile = TestUtils.inputFile("src/test/files/api/JavaFileScannerContext.java");
-    sensorContext.fileSystem().add(inputFile);
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, sensorContext.fileSystem(), javaClasspath, javaTestClasspath, checkFactory);
     sonarComponents.setSensorContext(sensorContext);
 
@@ -10,6 +8,7 @@
     sonarComponents = spy(sonarComponents);
     when(sonarComponents.getRuleKey(any())).thenReturn(RuleKey.of("repository", "rule"));
 
+    InputFile inputFile = TestUtils.inputFile("src/test/files/api/JavaFileScannerContext.java");
     CompilationUnitTree cut = (CompilationUnitTree) JavaParser.createParser().parse(inputFile.contents());
     tree = cut.types().get(0);
     scannerContext = new DefaultJavaFileScannerContext(cut, inputFile, null, sonarComponents, null, true);

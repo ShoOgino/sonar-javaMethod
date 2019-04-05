@@ -1,7 +1,4 @@
   public static void verify(String filename, JavaIssueFilter filter, JavaCheck... extraJavaChecks) {
-    // set the component to the filter
-    filter.setComponentKey(filename);
-
     IssueCollector issueCollector = new IssueCollector();
     ArrayList<JavaCheck> visitors = Lists.<JavaCheck>newArrayList(filter, issueCollector);
 
@@ -17,7 +14,8 @@
     projectClasspath.add(new File("target/test-classes"));
 
     VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, projectClasspath, null);
-    JavaAstScanner.scanSingleFileForTests(CheckTestUtils.inputFile(filename), visitorsBridge);
+    InputFile inputFile = CheckTestUtils.inputFile(filename);
+    JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge);
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
 
     Multimap<Integer, String> issuesByLines = HashMultimap.create();
@@ -26,7 +24,7 @@
       String ruleKey = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
       FilterableIssue issue = mock(FilterableIssue.class);
       when(issue.ruleKey()).thenReturn(RuleKey.of("repo", ruleKey));
-      when(issue.componentKey()).thenReturn(filename);
+      when(issue.componentKey()).thenReturn(inputFile.key());
       when(issue.line()).thenReturn(issueLine);
 
       if (issueCollector.rejectedIssuesLines.contains(issueLine)) {

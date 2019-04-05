@@ -1,6 +1,5 @@
   @Override
   public void execute(SensorContext context) {
-    javaResourceLocator.setSensorContext(context);
     sonarComponents.setSensorContext(context);
 
     List<Class<? extends JavaCheck>> checks = ImmutableList.<Class<? extends JavaCheck>>builder()
@@ -9,7 +8,10 @@
       .build();
     sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, checks);
     sonarComponents.registerTestCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getJavaTestChecks());
+
     Measurer measurer = new Measurer(context, noSonarFilter);
+    PostAnalysisIssueFilter postAnalysisIssueFilter = new PostAnalysisIssueFilter();
+
     JavaSquid squid = new JavaSquid(getJavaVersion(), isXFileEnabled(), sonarComponents, measurer, javaResourceLocator, postAnalysisIssueFilter, sonarComponents.checkClasses());
     squid.scan(getSourceFiles(), getTestFiles());
     sonarComponents.saveAnalysisErrors();

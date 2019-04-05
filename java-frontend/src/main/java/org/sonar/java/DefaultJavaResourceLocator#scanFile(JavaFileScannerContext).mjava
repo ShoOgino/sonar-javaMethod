@@ -1,11 +1,8 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    Preconditions.checkNotNull(sensorContext);
+    InputFile inputFile = context.getInputFile();
     JavaFilesCache javaFilesCache = new JavaFilesCache();
     javaFilesCache.scanFile(context);
-    for (Map.Entry<String, File> classIOFileEntry : javaFilesCache.getResourcesCache().entrySet()) {
-      resourcesByClass.put(classIOFileEntry.getKey(), context.getInputFile());
-      sourceFileByClass.put(classIOFileEntry.getKey(), context.getInputFile().key());
-    }
+    javaFilesCache.getClassNames().forEach(className -> resourcesByClass.put(className, inputFile));
   }
 
