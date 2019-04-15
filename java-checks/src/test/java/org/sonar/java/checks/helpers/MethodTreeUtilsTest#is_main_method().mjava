@@ -1,0 +1,12 @@
+  @Test
+  public void is_main_method() {
+    assertTrue(MethodTreeUtils.isMainMethod(parseMethod("class A { public static void main(String[] args){} }")));
+    assertTrue(MethodTreeUtils.isMainMethod(parseMethod("class A { public static void main(String... args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { public void main(String[] args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { static void main(String[] args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { public static void amain(String[] args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { public static void main(String args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { public static int main(String[] args){} }")));
+    assertFalse(MethodTreeUtils.isMainMethod(parseMethod("class A { public static void main(String[] args, String[] second){} }")));
+  }
+

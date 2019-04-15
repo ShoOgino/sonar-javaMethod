@@ -1,0 +1,12 @@
+  @Test
+  public void is_equals_method() {
+    assertTrue(MethodTreeUtils.isEqualsMethod(parseMethod("class A { public boolean equals(Object o){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class A { private boolean equals(Object o){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class A { public static boolean equals(Object o){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class A { public boolean equal(Object o){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class A { public boolean equals(Object o, int a){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class A { public boolean equals(int a){} }")));
+    assertFalse(MethodTreeUtils.isEqualsMethod(parseMethod("class equals { public equals(Object o){} }")));
+    assertTrue(MethodTreeUtils.isEqualsMethod(parseMethod("interface I { public abstract boolean equals(Object o); }")));
+  }
+

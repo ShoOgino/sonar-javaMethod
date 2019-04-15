@@ -4,7 +4,7 @@
     Symbol.TypeSymbol symbol = node.symbol();
     if (isServletOrEjb(symbol)) {
       for (Tree member : node.members()) {
-        if (member.is(Tree.Kind.METHOD) && ((MethodTreeImpl) member).isMainMethod()) {
+        if (member.is(Tree.Kind.METHOD) && MethodTreeUtils.isMainMethod((MethodTree) member)) {
           reportIssue(((MethodTree) member).simpleName(), "Remove this unwanted \"main\" method.");
         }
       }
