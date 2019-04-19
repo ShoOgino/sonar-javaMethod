@@ -1,0 +1,13 @@
+  @Test
+  public void should_throw_exception_when_missing_semicolon_after_enum_constants() {
+    ActionParser<Tree> parser = JavaParser.createParser();
+    parser.parse("enum E { ; int field; }");
+
+    try {
+      parser.parse("enum E { int field; }");
+      fail("exception expected");
+    } catch (RuntimeException e) {
+      assertEquals("missing semicolon after enum constants", e.getCause().getCause().getMessage());
+    }
+  }
+
