@@ -1,0 +1,29 @@
+  void ifStatement(int b) {
+    if (b == 0) {  // Noncompliant [[sc=5;ec=7]] {{Remove this conditional structure or edit its code blocks so that they're not all the same.}}
+      doOneMoreThing();
+    } else {
+      doOneMoreThing();
+    }
+
+    if (b == 0) {  // Compliant
+      doSomething();
+    } else {
+      doOneMoreThing();
+    }
+
+    if (true) { // Noncompliant
+    } else if (true) {
+    } else {
+    }
+
+    if (true) f(); // Noncompliant
+    else f();
+
+    if(b == 0) { // Compliant as there is no "else" clause in this "if" statement, this precise case is handled by RSPEC-1871
+      doSomething();
+    } else if(b == 1) {
+      doSomething();
+    }
+
+  }
+
