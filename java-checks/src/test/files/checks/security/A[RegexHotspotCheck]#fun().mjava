@@ -1,0 +1,20 @@
+  void fun() {
+    input.matches(regex);  // Noncompliant {{Make sure that using a regular expression is safe here.}}
+    Pattern pattern = Pattern.compile(regex);  // Noncompliant
+    pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);  // Noncompliant
+
+    String replacement = "test";
+    input.replaceAll(regex, replacement);  // Noncompliant [[sc=22;ec=27]]
+    input.replaceFirst(regex, replacement);  // Noncompliant
+    input.split(regex);  // compliant
+    input.split(regex, 3);  // compliant
+
+    pattern.split("foo"); //compliant, excluded
+    pattern.split("foo", 12); //compliant, excluded
+    java.util.regex.Matcher matcher = pattern.matcher("someinput"); //compliant, excluded
+    matcher.find(12); //compliant, excluded
+
+    String htmlString = "some input";
+    boolean a = !Pattern.matches(".*<script>.*", htmlString); // Noncompliant, even if the pattern is hard-coded
+  }
+
