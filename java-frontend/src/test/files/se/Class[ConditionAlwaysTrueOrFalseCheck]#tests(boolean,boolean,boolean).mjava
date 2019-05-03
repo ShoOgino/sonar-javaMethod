@@ -1,0 +1,18 @@
+  public void tests(boolean parameter1, boolean parameter2, boolean condition) {
+    if (parameter1 == parameter2) { // Compliant
+    }
+    if (parameter1 == parameter2 && parameter1 == parameter2) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+    }
+    if (parameter1 == parameter2 || parameter1 == parameter2) { // Noncompliant {{Remove this expression which always evaluates to "false"}}
+    }
+    // Noncompliant@+1 {{Remove this expression which always evaluates to "false"}}
+    if (parameter1 == parameter2 && parameter1 != parameter2) {
+    }
+    // Noncompliant@+1 {{Remove this expression which always evaluates to "false"}}
+    if (parameter1 == parameter2 && parameter1 > parameter2) {
+    }
+    // Noncompliant@+1 {{Remove this expression which always evaluates to "false"}}
+    if (parameter1 == parameter2 && parameter1 < parameter2) {
+    }
+  }
+

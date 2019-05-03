@@ -1,0 +1,77 @@
+  // This huge method requires more than 10_000 steps to be analyzed after introduction of try catch flow modelization.
+  static void processCurrentLightweightRequests() {
+    KeyboardFocusManager manager = getCurrentKeyboardFocusManager();
+    LinkedList localLightweightRequests = null;
+
+    Component globalFocusOwner = manager.getGlobalFocusOwner();
+    if ((globalFocusOwner != null) &&
+      (globalFocusOwner.appContext != AppContext.getAppContext())) {
+      return;
+    }
+
+    synchronized (heavyweightRequests) {
+      if (currentLightweightRequests != null) {
+        clearingCurrentLightweightRequests = true;
+        disableRestoreFocus = true;
+        localLightweightRequests = currentLightweightRequests;
+        allowSyncFocusRequests = (localLightweightRequests.size() < 2);
+        currentLightweightRequests = null;
+      } else {
+        return;
+      }
+    }
+
+    Throwable caughtEx = null;
+    try {
+      if (localLightweightRequests != null) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+        Component lastFocusOwner = null;
+        Component currentFocusOwner = null;
+
+        for (Iterator iter = localLightweightRequests.iterator(); iter.hasNext(); ) {
+          currentFocusOwner = manager.getGlobalFocusOwner();
+          LightweightFocusRequest lwFocusRequest = (LightweightFocusRequest) iter.next();
+          if (!iter.hasNext()) {
+            disableRestoreFocus = false;
+          }
+
+          FocusEvent currentFocusOwnerEvent = null;
+          if (currentFocusOwner != null) {
+            currentFocusOwnerEvent = new CausedFocusEvent(currentFocusOwner,
+              FocusEvent.FOCUS_LOST,
+              lwFocusRequest.temporary,
+              lwFocusRequest.component, lwFocusRequest.cause);
+          }
+
+          FocusEvent newFocusOwnerEvent =
+            new CausedFocusEvent(lwFocusRequest.component,
+              FocusEvent.FOCUS_GAINED,
+              lwFocusRequest.temporary,
+              currentFocusOwner == null ? lastFocusOwner : currentFocusOwner, lwFocusRequest.cause);
+
+          if (currentFocusOwner != null) {
+            ((AWTEvent) currentFocusOwnerEvent).isPosted = true;
+            caughtEx = dispatchAndCatchException(caughtEx, currentFocusOwner, currentFocusOwnerEvent);
+          }
+          ((AWTEvent) newFocusOwnerEvent).isPosted = true;
+          caughtEx = dispatchAndCatchException(caughtEx, lwFocusRequest.component, newFocusOwnerEvent);
+
+          if (manager.getGlobalFocusOwner() == lwFocusRequest.component) {
+            lastFocusOwner = lwFocusRequest.component;
+          }
+        }
+      }
+    } finally {
+      clearingCurrentLightweightRequests = false;
+      disableRestoreFocus = false;
+      localLightweightRequests = null;
+      allowSyncFocusRequests = true;
+    }
+
+    if (caughtEx instanceof RuntimeException) {
+      throw (RuntimeException) caughtEx;
+    } else if (caughtEx instanceof Error) {
+      throw (Error) caughtEx;
+    }
+
+  }
+

@@ -1,0 +1,19 @@
+  public void test_instance_fields5(boolean local, boolean local1, boolean local2) {
+
+    super.field1 = false;
+    super.field2 = super.field1;
+    // Noncompliant@+1 {{Remove this expression which always evaluates to "false"}}
+    if (super.field1 || super.field2) { // Noncompliant {{Remove this expression which always evaluates to "false"}}
+    }
+
+    SuperClass instance1, instance2;
+    if (instance1.field && instance1.field1 == instance2.field2) {
+      if (instance1.field && instance1.field1 == instance2.field2) { // false negative Noncompliant
+      }
+    }
+    if (instance1.field && field1 == instance2.field2) {
+      if (field && field1 == instance2.field2) { // Compliant
+      }
+    }
+  }
+

@@ -1,0 +1,17 @@
+  void precise_issue_location(int max, int min, int R, boolean param) {
+
+    if (max != R && (min == R || min > max)) {
+    } else if (min < R || max < R) { // Noncompliant [[sc=27;ec=34]] {{Remove this expression which always evaluates to "false"}}
+    }
+
+    if ((min == R || min > max)) {
+      if (max != R && (min == R || min > max)) { // Noncompliant [[sc=36;ec=45]] {{Remove this expression which always evaluates to "true"}}
+
+      }
+    }
+    while (param && true) { // Noncompliant [[sc=21;ec=25]] {{Remove this expression which always evaluates to "true"}}
+      break;
+    }
+    do{}while (parameter1 && false); // Noncompliant [[sc=30;ec=35]] {{Remove this expression which always evaluates to "false"}}
+  }
+

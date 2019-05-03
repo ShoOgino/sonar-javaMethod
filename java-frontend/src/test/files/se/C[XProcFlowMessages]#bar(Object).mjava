@@ -1,0 +1,8 @@
+  void bar(Object o) {
+    C c = foo(o);                                // flow@flow_c1 {{'foo()' returns null.}} flow@flow_c1 {{Implies 'c' is null.}}
+    // Noncompliant@+1 [[flows=flow_c1]]
+    if (c != null) {                             // flow@flow_c1 {{Expression is always false.}}
+      c = new C();
+    }
+  }
+

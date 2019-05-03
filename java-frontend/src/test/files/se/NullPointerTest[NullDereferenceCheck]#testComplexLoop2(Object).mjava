@@ -1,0 +1,28 @@
+  public void testComplexLoop2(@Nullable Object nullableObject) {
+    Object object2 = null, object21 = null, object22 = null;
+    int i = 0;
+    while(object21 == null) {
+      object21.hashCode(); // Noncompliant {{A "NullPointerException" could be thrown; "object21" is nullable here.}}
+      object22.hashCode(); // no issue, as npe is thrown on previous line
+      nullableObject.hashCode();
+      if(i == 1) {
+        object2.hashCode(); // Compliant
+      } else if(i == 0) {
+        object2 = new Object();
+      }
+      object21 = null;
+    }
+    object2.hashCode();
+
+    Object object3 = null;
+    int j = 0;
+    do {
+      if(j == 1) {
+        object3.hashCode(); // False negative
+      } else if(j == 0) {
+        object3 = new Object();
+      }
+    } while (condition);
+    object3.hashCode(); // False negative
+  }
+

@@ -1,0 +1,24 @@
+  public void test_invalidate_relations(int i, int j, int k) {
+    if (j > i && j < k) {
+      i = 1;
+      if (i < j) { // Compliant
+      }
+      if (j > i) { // Compliant
+      }
+      if (j < k) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+      }
+      if (k > j) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+      }
+    }
+    if (i < j) {
+      ++i;
+      if (i < j) { // Compliant
+      }
+    }
+    if (i < j) {
+      i--;
+      if (i < j) { // Compliant
+      }
+    }
+  }
+

@@ -1,0 +1,14 @@
+  Object parseNullException(String object) throws Exception {
+    Object result = null;
+    Exception ex = null;
+    try {
+      result = parseObject(object);
+    } catch (ParseException e) {
+      ex = e;
+    }
+    if (result == null) {
+      throw ex; // Noncompliant {{A "NullPointerException" could be thrown; "ex" is nullable here.}}
+    }
+    return result;
+  }
+

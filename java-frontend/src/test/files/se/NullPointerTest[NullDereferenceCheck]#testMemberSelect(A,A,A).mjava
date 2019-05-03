@@ -1,0 +1,10 @@
+  public void testMemberSelect(A a1, @CheckForNull A a2, @Nullable A a3) {
+    a1.hashCode(); // No issue
+    a2.hashCode(); // Noncompliant {{A "NullPointerException" could be thrown; "a2" is nullable here.}}
+    a3.hashCode(); // Noncompliant {{A "NullPointerException" could be thrown; "a3" is nullable here.}}
+
+    a1.a.hashCode(); // No issue
+    a1.b.hashCode(); // False negative
+    a1.c.hashCode(); // False negative
+  }
+

@@ -1,0 +1,30 @@
+  public void test_instance_fields4(boolean local, boolean local1, boolean local2) {
+
+    this.field1 = false;
+    this.field2 = this.field1;
+    // Noncompliant@+1 {{Remove this expression which always evaluates to "false"}}
+    if (field1 || field2) { // Noncompliant {{Remove this expression which always evaluates to "false"}}
+    }
+    if (field1 && !field1) { // Noncompliant {{Change this condition so that it does not always evaluate to "false"}}
+    }
+    if (this.field1 && !this.field1) { // Noncompliant {{Change this condition so that it does not always evaluate to "false"}}
+    }
+
+    if (super.field && !super.field) { // Noncompliant {{Remove this expression which always evaluates to "false"}}
+    }
+    if (super.field && !this.field) { // Compliant
+    }
+
+    if (super.field && super.field1 == super.field2) {
+      if (super.field) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+      }
+      if (super.field1 == super.field2) { // Noncompliant {{Remove this expression which always evaluates to "true"}}
+      }
+      otherMethod();
+      if (super.field) { // Compliant
+      }
+      if (super.field1 == super.field2) { // Compliant
+      }
+    }
+  }
+

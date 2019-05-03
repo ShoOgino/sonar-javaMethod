@@ -1,0 +1,22 @@
+  void testComplexSwitch(String str) {
+    Object object1 = null, object2 = null, object3 = null, object4 = new Object();
+    switch(str) {
+      case "ONE":
+        object1 = new Object();
+        break;
+      case "TWO":
+        object1.hashCode(); // Noncompliant
+        break;
+      case "THREE":
+        object2 = new Object();
+      case "FOUR":
+        object2.hashCode(); // Noncompliant
+        break;
+      case "FIVE":
+        object3.hashCode(); // Noncompliant {{A "NullPointerException" could be thrown; "object3" is nullable here.}}
+        object4 = null;
+      case "SIX":
+        object4.hashCode(); // False negative
+    }
+  }
+
