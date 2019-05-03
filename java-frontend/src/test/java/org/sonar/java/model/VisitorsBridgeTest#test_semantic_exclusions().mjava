@@ -3,7 +3,7 @@
     VisitorsBridge visitorsBridgeWithoutSemantic = new VisitorsBridge(Collections.singletonList((JavaFileScanner) context -> {
       assertThat(context.getSemanticModel()).isNull();
       assertThat(context.fileParsed()).isTrue();
-    }), Lists.newArrayList(), null);
+    }), new ArrayList<>(), null);
     checkFile(contstructFileName("java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
     checkFile(contstructFileName("src", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
     checkFile(contstructFileName("home", "user", "oracleSdk", "java", "lang", "someFile.java"), "package java.lang; class A {}", visitorsBridgeWithoutSemantic);
@@ -20,7 +20,7 @@
       public List<Kind> nodesToVisit() {
         return ImmutableList.of(Tree.Kind.METHOD);
       }
-    }), Lists.newArrayList(), null);
+    }), new ArrayList<>(), null);
     checkFile(contstructFileName("org", "foo", "bar", "Foo.java"), "class Foo { arrrrrrgh", visitorsBridgeWithParsingIssue);
   }
 

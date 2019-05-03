@@ -6,7 +6,7 @@
       new VisitorsBridge(Collections.singletonList((JavaFileScanner) context -> {
         assertThat(context.getSemanticModel()).isNotNull();
         ((SemanticModel) context.getSemanticModel()).classesNotFound().addAll(IntStream.range(0, 60).mapToObj(classNotFoundName).collect(Collectors.toList()));
-      }), Lists.newArrayList(), null);
+      }), new ArrayList<>(), null);
     checkFile("Foo.java", "class Foo {}", visitorsBridge);
     visitorsBridge.endOfAnalysis();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsOnly(
