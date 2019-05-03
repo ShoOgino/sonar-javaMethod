@@ -1,7 +1,7 @@
     private Set<Flow> flowFromYields(ExplodedGraph.Edge edge) {
       Set<MethodYield> methodYields = edge.yields();
       if (methodYields.isEmpty()) {
-        return ImmutableSet.of();
+        return Collections.emptySet();
       }
 
       List<Integer> argumentIndices = correspondingArgumentIndices(symbolicValues, edge.parent);
@@ -19,7 +19,7 @@
       }
       if (argumentIndices.isEmpty()) {
         // no need to compute any flow on yields : no arg nor return value are corresponding to tracked SVs
-        return ImmutableSet.of();
+        return Collections.emptySet();
       }
       return methodYields.stream()
         .map(y -> y.flow(argumentIndices, domains))
