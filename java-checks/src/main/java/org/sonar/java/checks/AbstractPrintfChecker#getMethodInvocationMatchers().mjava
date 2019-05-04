@@ -1,6 +1,7 @@
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return ImmutableList.<MethodMatcher>builder().add(
+    ArrayList<MethodMatcher> matchers = new ArrayList<>(slf4jMethods());
+    matchers.addAll(Arrays.asList(
       MethodMatcher.create().typeDefinition("java.lang.String").name(FORMAT_METHOD_NAME).withAnyParameters(),
       MethodMatcher.create().typeDefinition("java.util.Formatter").name(FORMAT_METHOD_NAME).withAnyParameters(),
       MethodMatcher.create().typeDefinition("java.io.PrintStream").name(FORMAT_METHOD_NAME).withAnyParameters(),
@@ -9,8 +10,7 @@
       MethodMatcher.create().typeDefinition("java.io.PrintWriter").name("printf").withAnyParameters(),
       MESSAGE_FORMAT,
       JAVA_UTIL_LOGGER
-      )
-      .addAll(slf4jMethods())
-      .build();
+      ));
+    return matchers;
   }
 

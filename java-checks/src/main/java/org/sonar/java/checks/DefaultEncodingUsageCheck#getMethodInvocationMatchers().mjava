@@ -1,6 +1,6 @@
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
-    ImmutableList.Builder<MethodMatcher> matchers = ImmutableList.<MethodMatcher>builder().add(
+    ArrayList<MethodMatcher> matchers = new ArrayList<>(Arrays.asList(
       method(JAVA_LANG_STRING, "getBytes").withoutParameter(),
       method(JAVA_LANG_STRING, "getBytes").parameters(INT, INT, BYTE_ARRAY, INT),
       constructor(JAVA_LANG_STRING).parameters(BYTE_ARRAY),
@@ -30,11 +30,10 @@
       constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_FILE),
       constructor(JAVA_UTIL_SCANNER).parameters(JAVA_NIO_FILE_PATH),
       constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_INPUTSTREAM)
-    );
+    ));
     matchers.addAll(COMMONS_IO);
     matchers.addAll(COMMONS_IO_WITH_CHARSET);
     matchers.addAll(FILEUTILS_WRITE_WITH_CHARSET);
-
-    return matchers.build();
+    return matchers;
   }
 
