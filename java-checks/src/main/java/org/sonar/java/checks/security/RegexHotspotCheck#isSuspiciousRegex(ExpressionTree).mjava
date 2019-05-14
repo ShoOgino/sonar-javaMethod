@@ -1,0 +1,13 @@
+  /**
+   * This rule flags any execution of a hardcoded regular expression which has at least 3 characters and at least
+   * two instances of any of the following characters: "*+{" (Example: (a+)*)
+   * */
+  private static boolean isSuspiciousRegex(ExpressionTree exp) {
+    String regexp = ConstantUtils.resolveAsStringConstant(exp);
+    if (regexp != null && regexp.length() > 2) {
+      int nOfSuspiciousChars = regexp.length() - regexp.replaceAll("[*+{]", "").length();
+      return nOfSuspiciousChars > 1;
+    }
+    return false;
+  }
+
