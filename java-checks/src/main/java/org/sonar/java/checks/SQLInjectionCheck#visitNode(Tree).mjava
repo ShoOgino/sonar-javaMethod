@@ -4,7 +4,7 @@
       Optional<ExpressionTree> sqlStringArg = arguments(tree)
         .filter(arg -> arg.symbolType().is("java.lang.String"))
         .findFirst();
-      sqlStringArg.filter(arg -> isDynamicString(tree, arg, null, true))
+      sqlStringArg.filter(SQLInjectionCheck::isDynamicString)
         .ifPresent(arg -> reportIssue(arg, "Ensure that string concatenation is required and safe for this SQL query."));
     }
   }
