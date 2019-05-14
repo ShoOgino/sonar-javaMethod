@@ -1,11 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD_INVOCATION) && SET_HEADER_MATCHER.matches(((MethodInvocationTree) tree))) {
-      MethodInvocationTree mit = (MethodInvocationTree) tree;
-      String constantCORS = ConstantUtils.resolveAsStringConstant(mit.arguments().get(0));
-      if (HTTP_HEADERS.contains(constantCORS)) {
-        reportTree(mit.methodSelect());
-      }
+    if (tree.is(Tree.Kind.METHOD)) {
+      checkMethod(tree);
     } else if (tree.is(Tree.Kind.ANNOTATION) && ((AnnotationTree) tree).symbolType().is("org.springframework.web.bind.annotation.CrossOrigin")) {
       reportTree(((AnnotationTree) tree).annotationType());
     }

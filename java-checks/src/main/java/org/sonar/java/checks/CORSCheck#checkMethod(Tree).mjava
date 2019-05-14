@@ -1,0 +1,16 @@
+  private void checkMethod(Tree tree) {
+    MethodInvocationVisitor visitor = new MethodInvocationVisitor();
+    tree.accept(visitor);
+    if (!visitor.addAllowedOrigin.isEmpty() && !visitor.applyPermit.isEmpty()) {
+      visitor.addAllowedOrigin.forEach(mit -> {
+        List<Location> locations = visitor.applyPermit.stream()
+          .map(t -> new Location(MESSAGE, t))
+          .collect(Collectors.toList());
+        reportIssue(mit.methodSelect(), MESSAGE, locations, null);
+      });
+    } else {
+      visitor.addAllowedOrigin.forEach(this::reportTree);
+      visitor.applyPermit.forEach(this::reportTree);
+    }
+  }
+
