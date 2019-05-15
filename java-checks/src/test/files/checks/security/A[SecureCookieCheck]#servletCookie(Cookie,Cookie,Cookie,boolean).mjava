@@ -1,29 +1,29 @@
   Cookie servletCookie(
-      Cookie firstParam, // Noncompliant [[sc=14;ec=24]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
+      Cookie firstParam,
       Cookie secondParam,
       Cookie thirdParam,
       boolean param) {
-    firstParam.setSecure(false);
+    firstParam.setSecure(false); // Noncompliant [[sc=25;ec=32]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
     secondParam.setSecure(true);
 
-    field4 = new Cookie("name, value"); // FN, ignore fields
-    field5.setSecure(false); // FN, ignore fields
-    this.field4 = new Cookie("name", "value"); // FN ignore fields
+    field4 = new Cookie("name, value"); // Noncompliant
+    field5.setSecure(false); // Noncompliant
+    this.field4 = new Cookie("name", "value"); // Noncompliant
 
     Cookie cookie = new Cookie("name", "value");
     cookie.setSecure(true);
 
-    Cookie cookie2 = new Cookie("name", "value"); // Noncompliant [[sc=12;ec=19]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
+    Cookie cookie2 = new Cookie("name", "value"); // Noncompliant [[sc=26;ec=32]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
 
-    Cookie cookie3 = new Cookie("name", "value"); // Noncompliant {{Make sure creating this cookie without the "secure" flag is safe here.}}
-    cookie3.setSecure(false);
+    Cookie cookie3 = new Cookie("name", "value");
+    cookie3.setSecure(false);  // Noncompliant {{Make sure creating this cookie without the "secure" flag is safe here.}}
 
     Cookie cookie5 = new Cookie("name", "value"); // FN
     cookie5.setSecure(FALSE_CONSTANT);
 
     Cookie c6 = new Cookie("name", "value");
     if (param) {
-      c6.setSecure(false); // FN
+      c6.setSecure(false); // Noncompliant
     }
     else {
       c6.setSecure(true);
@@ -42,8 +42,8 @@
     c10 = new Cookie("name", "value");
     c10.setSecure(true);
 
-    Object c12;  // Noncompliant [[sc=12;ec=15]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
-    c12 = new Cookie("name", "value");
+    Object c12;
+    c12 = new Cookie("name", "value"); // Noncompliant [[sc=15;ec=21]] {{Make sure creating this cookie without the "secure" flag is safe here.}}
 
     Cookie c13 = new Cookie("name", "value");
     boolean value = false;

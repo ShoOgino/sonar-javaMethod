@@ -1,12 +1,12 @@
   private void addToUnsecuredCookies(VariableTree variableTree) {
     ExpressionTree initializer = variableTree.initializer();
     Symbol variableTreeSymbol = variableTree.symbol();
-    // Ignore field variables
-    if (initializer != null && variableTreeSymbol.isVariableSymbol() && variableTreeSymbol.owner().isMethodSymbol()) {
+
+    if (initializer != null && variableTreeSymbol.isVariableSymbol()) {
       boolean isInitializedWithConstructor = initializer.is(Tree.Kind.NEW_CLASS);
       boolean isMatchedType = isCookieClass(variableTreeSymbol.type()) || isCookieClass(initializer.symbolType());
       if (isInitializedWithConstructor && isMatchedType && isSecureParamFalse((NewClassTree) initializer)) {
-        unsecuredCookies.add((Symbol.VariableSymbol) variableTreeSymbol);
+        unsecuredCookies.put((Symbol.VariableSymbol) variableTreeSymbol, (NewClassTree) initializer);
       }
     }
   }

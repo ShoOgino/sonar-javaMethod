@@ -1,18 +1,15 @@
   private void checkSecureCall(MethodInvocationTree mit) {
     if (isSetSecureCall(mit) && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      ExpressionTree methodObject = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
       Boolean secureArgument = ConstantUtils.resolveAsBooleanConstant(mit.arguments().get(0));
       boolean isFalse = secureArgument != null && !secureArgument;
+      if (isFalse) {
+        reportIssue(mit.arguments(), MESSAGE);
+      }
+      ExpressionTree methodObject = ((MemberSelectExpressionTree) mit.methodSelect()).expression();
       if (methodObject.is(Tree.Kind.IDENTIFIER)) {
         IdentifierTree identifierTree = (IdentifierTree) methodObject;
-        if (!isFalse) {
-          unsecuredCookies.remove(identifierTree.symbol());
-        } else if (identifierTree.symbol().owner().isMethodSymbol()) {
-          unsecuredCookies.add((Symbol.VariableSymbol) identifierTree.symbol());
-        }
-      } else if (isFalse) {
-        // builder method
-        unsecuredSetters.add(mit);
+        NewClassTree newClassTree = unsecuredCookies.remove(identifierTree.symbol());
+        cookieConstructors.remove(newClassTree);
       }
     }
   }
