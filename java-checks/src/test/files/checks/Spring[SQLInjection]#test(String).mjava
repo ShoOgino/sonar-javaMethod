@@ -1,8 +1,9 @@
   void test(String parameter) {
-    jdbcTemplate.queryForObject("select count(*) from t_actor where column =  " + parameter, Integer.class); // Noncompliant
-    jdbcOperations.queryForObject("select count(*) from t_actor where column =  " + parameter, Integer.class);  // Noncompliant
+    java.lang.String sqlInjection = "select count(*) from t_actor where column =  " + parameter;
+    jdbcTemplate.queryForObject(sqlInjection, Integer.class); // Noncompliant
+    jdbcOperations.queryForObject(sqlInjection, Integer.class);  // Noncompliant
 
-    new PreparedStatementCreatorFactory("select count(*) from t_actor where column =  " + parameter);  // Noncompliant
-    preparedStatementCreatorFactory.newPreparedStatementCreator("select count(*) from t_actor where column =  " + parameter, new int[] {});  // Noncompliant
+    new PreparedStatementCreatorFactory(sqlInjection);  // Noncompliant
+    preparedStatementCreatorFactory.newPreparedStatementCreator(sqlInjection, new int[] {});  // Noncompliant
   }
 
