@@ -1,0 +1,15 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (SEND_BROADCAST.matches(mit) && (mit.arguments().size() < 2 || mit.arguments().get(1).is(NULL_LITERAL))) {
+      reportIssue(mit.methodSelect(), MESSAGE);
+    } else if (SEND_BROADCAST_AS_USER.matches(mit) && (mit.arguments().size() < 3 || mit.arguments().get(2).is(NULL_LITERAL))) {
+      reportIssue(mit.methodSelect(), MESSAGE);
+    } else if (SEND_ORDERED_BROADCAST.matches(mit) && mit.arguments().size() > 1 && mit.arguments().get(1).is(NULL_LITERAL)) {
+      reportIssue(mit.methodSelect(), MESSAGE);
+    } else if (SEND_ORDERED_BROADCAST_AS_USER.matches(mit) && mit.arguments().size() > 2 && mit.arguments().get(2).is(NULL_LITERAL)) {
+      reportIssue(mit.methodSelect(), MESSAGE);
+    } else if (STICKY_BROADCAST.anyMatch(mit)) {
+      reportIssue(mit.methodSelect(), MESSAGE);
+    }
+  }
+
