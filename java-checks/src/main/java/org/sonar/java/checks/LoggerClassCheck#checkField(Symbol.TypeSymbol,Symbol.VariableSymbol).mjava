@@ -1,0 +1,16 @@
+  private void checkField(Symbol.TypeSymbol clazz, Symbol.VariableSymbol field) {
+    VariableTree declaration = field.declaration();
+    if (declaration == null) {
+      return;
+    }
+    ExpressionTree initializer = declaration.initializer();
+    if (initializer != null && initializer.is(Tree.Kind.METHOD_INVOCATION)
+      && LOG_FACTORIES.anyMatch((MethodInvocationTree) initializer)) {
+      ExpressionTree firstArg = ((MethodInvocationTree) initializer).arguments().get(0);
+      Symbol classLiteral = classLiteral(firstArg);
+      if (classLiteral != null && !clazz.equals(classLiteral)) {
+        reportIssue(firstArg, "Update this logger to use \"" + clazz.name() + ".class\".");
+      }
+    }
+  }
+

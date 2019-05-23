@@ -1,0 +1,17 @@
+  @CheckForNull
+  private static Symbol classLiteral(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) expression;
+      if (mset.identifier().name().equals("class")) {
+        return mset.expression().symbolType().symbol();
+      }
+    }
+    if (expression.is(Tree.Kind.METHOD_INVOCATION) && CLAZZ_GETNAME.matches(((MethodInvocationTree) expression))) {
+      MethodInvocationTree mit = (MethodInvocationTree) expression;
+      if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+        return classLiteral(((MemberSelectExpressionTree) mit.methodSelect()).expression());
+      }
+    }
+    return null;
+  }
+
