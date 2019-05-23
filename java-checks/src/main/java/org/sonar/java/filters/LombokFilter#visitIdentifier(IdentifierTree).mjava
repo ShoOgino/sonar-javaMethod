@@ -1,0 +1,10 @@
+  @Override
+  public void visitIdentifier(IdentifierTree tree) {
+    Symbol symbol = tree.symbol();
+    if (symbol.isVariableSymbol() && symbol.type().is(LOMBOK_VAL)) {
+      parentMethodInvocation(tree)
+        .ifPresent(mit -> excludeLines(mit, Arrays.asList(SillyEqualsCheck.class, CollectionInappropriateCallsCheck.class)));
+    }
+    super.visitIdentifier(tree);
+  }
+
