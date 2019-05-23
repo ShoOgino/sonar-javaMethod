@@ -3,15 +3,15 @@
     int line = issue.getLine();
     if (expected.containsKey(line)) {
       Map<IssueAttribute, String> attrs = Iterables.getLast(expected.get(line));
-      assertEquals(issue.getMessage(), attrs, IssueAttribute.MESSAGE);
+      assertEquals(line, issue.getMessage(), attrs, IssueAttribute.MESSAGE);
       Double cost = issue.getCost();
       if (cost != null) {
         Preconditions.checkState(remediationFunction != RemediationFunction.CONST, "Rule with constant remediation function shall not provide cost");
-        assertEquals(Integer.toString(cost.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
+        assertEquals(line, Integer.toString(cost.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
       } else if(remediationFunction == RemediationFunction.LINEAR){
         Fail.fail("A cost should be provided for a rule with linear remediation function");
       }
-      validateAnalyzerMessage(attrs, issue);
+      validateAnalyzerMessage(line, attrs, issue);
       expected.remove(line, attrs);
     } else {
       unexpectedLines.add(line);

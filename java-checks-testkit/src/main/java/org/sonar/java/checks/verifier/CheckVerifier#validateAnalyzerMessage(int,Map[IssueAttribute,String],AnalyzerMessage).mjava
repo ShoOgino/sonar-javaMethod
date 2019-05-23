@@ -1,12 +1,12 @@
-  private static void validateAnalyzerMessage(Map<IssueAttribute, String> attrs, AnalyzerMessage analyzerMessage) {
+  private static void validateAnalyzerMessage(int line, Map<IssueAttribute, String> attrs, AnalyzerMessage analyzerMessage) {
     Double effortToFix = analyzerMessage.getCost();
     if (effortToFix != null) {
-      assertEquals(Integer.toString(effortToFix.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
+      assertEquals(line, Integer.toString(effortToFix.intValue()), attrs, IssueAttribute.EFFORT_TO_FIX);
     }
     AnalyzerMessage.TextSpan textSpan = analyzerMessage.primaryLocation();
-    assertEquals(normalizeColumn(textSpan.startCharacter), attrs, IssueAttribute.START_COLUMN);
-    assertEquals(Integer.toString(textSpan.endLine), attrs, IssueAttribute.END_LINE);
-    assertEquals(normalizeColumn(textSpan.endCharacter), attrs, IssueAttribute.END_COLUMN);
+    assertEquals(line, normalizeColumn(textSpan.startCharacter), attrs, IssueAttribute.START_COLUMN);
+    assertEquals(line, Integer.toString(textSpan.endLine), attrs, IssueAttribute.END_LINE);
+    assertEquals(line, normalizeColumn(textSpan.endCharacter), attrs, IssueAttribute.END_COLUMN);
     if (attrs.containsKey(IssueAttribute.SECONDARY_LOCATIONS)) {
       List<AnalyzerMessage> secondaryLocations = analyzerMessage.flows.stream().map(l -> l.get(0)).collect(Collectors.toList());
       Multiset<String> actualLines = HashMultiset.create();
