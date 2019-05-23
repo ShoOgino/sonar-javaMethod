@@ -2,6 +2,10 @@
   protected void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
     String newFormatString = cleanupDoubleQuote(formatString);
     Set<Integer> indexes = getMessageFormatIndexes(newFormatString, mit);
+    if (indexes.isEmpty() && formatArgumentsCount(mit) > 1) {
+      reportIssue(mit, "String contains no format specifiers.");
+      return;
+    }
     List<ExpressionTree> newArgs = args;
     if (newArgs.size() == 1) {
       ExpressionTree firstArg = newArgs.get(0);
@@ -13,9 +17,6 @@
           return;
         }
       }
-    }
-    if (checkEmptyParams(mit, indexes)) {
-      return;
     }
     checkToStringInvocation(newArgs);
     verifyParameters(mit, newArgs, indexes);
