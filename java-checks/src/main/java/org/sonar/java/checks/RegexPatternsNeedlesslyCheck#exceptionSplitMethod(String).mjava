@@ -1,5 +1,20 @@
+  /**
+   * Following code is copy of actual {@link java.lang.String#split(String, int)} condition for fastpath
+   * Condition is checking for one of the following cases:
+   *
+   * (1) one-char String and this character is not one of the RegEx's meta characters ".$|()[{^?*+\\", or
+   * (2) two-char String and the first char is the backslash and the second is not the ascii digit or ascii letter.
+   *
+   */
   private static boolean exceptionSplitMethod(String argValue) {
-    int strLength = argValue.length();
-    return strLength == 1 || (strLength == 2 && argValue.charAt(0) == '\\');
+    String regex = StringEscapeUtils.unescapeJava(argValue);
+    char ch;
+    return ((regex.length() == 1 && ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
+      (regex.length() == 2 &&
+        regex.charAt(0) == '\\' &&
+        (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
+        ((ch - 'a') | ('z' - ch)) < 0 &&
+        ((ch - 'A') | ('Z' - ch)) < 0)) &&
+      (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE);
   }
 
