@@ -1,0 +1,15 @@
+  private static <T> ValueResolution<T> valueResolution(ExpressionTree expression, Function<ExpressionTree,T> resolver, ValueResolution<T> valueResolution) {
+    T value = resolver.apply(expression);
+    if (value == null && expression.is(Tree.Kind.IDENTIFIER)) {
+      ExpressionTree singleWriteUsage = getSingleWriteUsage(((IdentifierTree) expression).symbol());
+      if (singleWriteUsage == null || !isStrictAssignmentOrDeclaration(singleWriteUsage) || singleWriteUsage == expression) {
+        value = null;
+      } else {
+        valueResolution.addLocation(singleWriteUsage);
+        return valueResolution(singleWriteUsage, resolver, valueResolution);
+      }
+    }
+    valueResolution.value = value;
+    return valueResolution;
+  }
+

@@ -1,0 +1,13 @@
+  @CheckForNull
+  private static ExpressionTree getSingleWriteUsage(Symbol symbol) {
+    ExpressionTree initializerOrExpression = getInitializerOrExpression(symbol.declaration());
+    List<AssignmentExpressionTree> reassignments = getReassignments(symbol.owner().declaration(), symbol.usages());
+    if (initializerOrExpression == null && reassignments.size() == 1) {
+      return reassignments.get(0).expression();
+    }
+    if (initializerOrExpression != null && reassignments.isEmpty()) {
+      return initializerOrExpression;
+    }
+    return null;
+  }
+
