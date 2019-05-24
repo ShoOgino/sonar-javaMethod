@@ -1,11 +1,12 @@
   private Iterable<ProgramState> startingStates(MethodTree tree, ProgramState currentState) {
     Stream<ProgramState> stateStream = Stream.of(currentState);
+    int numberStartingStates = 1;
     boolean isEqualsMethod = EQUALS.matches(tree);
     boolean nonNullParameters = isGloballyAnnotatedParameterNonNull(methodTree.symbol());
     boolean nullableParameters = isGloballyAnnotatedParameterNullable(methodTree.symbol());
     boolean hasMethodBehavior = methodBehavior != null;
+
     for (final VariableTree variableTree : tree.parameters()) {
-      // create
       final SymbolicValue sv = constraintManager.createSymbolicValue(variableTree);
       Symbol variableSymbol = variableTree.symbol();
       if (hasMethodBehavior) {
@@ -13,6 +14,11 @@
       }
       stateStream = stateStream.map(ps -> ps.put(variableSymbol, sv));
       if (isEqualsMethod || parameterCanBeNull(variableSymbol, nullableParameters)) {
+        // each nullable parameter generate 2 starting states, combined with all the others
+        numberStartingStates *= 2;
+        if (numberStartingStates > MAX_STARTING_STATES) {
+          throwMaximumStartingStates(methodTree);
+        }
         stateStream = stateStream.flatMap((ProgramState ps) ->
           Stream.concat(
             sv.setConstraint(ps, ObjectConstraint.NULL).stream(),
