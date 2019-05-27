@@ -9,8 +9,8 @@
         if (!apacheVisitor.isSecured) {
           reportIssue(mit, "Enable server identity validation on this SMTP SSL connection.");
         }
-      } else if (HASHTABLE_PUT.matches(mit) && "mail.smtp.socketFactory.class".equals(ConstantUtils.resolveAsStringConstant(args.get(0)))
-        && "javax.net.ssl.SSLSocketFactory".equals(ConstantUtils.resolveAsStringConstant(args.get(1)))) {
+      } else if (HASHTABLE_PUT.matches(mit) && "mail.smtp.socketFactory.class".equals(ExpressionsHelper.getConstantValueAsString(args.get(0)).value())
+        && "javax.net.ssl.SSLSocketFactory".equals(ExpressionsHelper.getConstantValueAsString(args.get(1)).value())) {
         MethodBodyHashtableVisitor hashVisitor = new MethodBodyHashtableVisitor();
         method.accept(hashVisitor);
         if (!hashVisitor.isSecured) {

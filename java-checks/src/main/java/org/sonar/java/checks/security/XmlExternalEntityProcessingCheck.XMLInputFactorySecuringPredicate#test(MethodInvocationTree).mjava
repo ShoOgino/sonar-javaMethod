@@ -2,10 +2,10 @@
     public boolean test(MethodInvocationTree methodInvocation) {
       Arguments arguments = methodInvocation.arguments();
       if (SET_PROPERTY.matches(methodInvocation)) {
-        String propertyName = resolveAsStringConstant(arguments.get(0));
+        String propertyName = ExpressionsHelper.getConstantValueAsString(arguments.get(0)).value();
         if (XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES.equals(propertyName) || XMLInputFactory.SUPPORT_DTD.equals(propertyName)) {
           ExpressionTree propertyValue = arguments.get(1);
-          return Boolean.FALSE.equals(resolveAsBooleanConstant(propertyValue)) || "false".equalsIgnoreCase(resolveAsStringConstant(propertyValue));
+          return Boolean.FALSE.equals(ExpressionsHelper.getConstantValueAsBoolean(propertyValue).value()) || "false".equalsIgnoreCase(ExpressionsHelper.getConstantValueAsString(propertyValue).value());
         }
       }
       return false;

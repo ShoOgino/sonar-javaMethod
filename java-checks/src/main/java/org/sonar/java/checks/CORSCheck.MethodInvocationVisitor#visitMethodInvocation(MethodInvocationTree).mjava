@@ -1,7 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
       if (SET_HEADER_MATCHER.matches(mit)) {
-        String constantCORS = ConstantUtils.resolveAsStringConstant(mit.arguments().get(0));
+        String constantCORS = ExpressionsHelper.getConstantValueAsString(mit.arguments().get(0)).value();
         if (HTTP_HEADERS.contains(constantCORS)) {
           reportTree(mit.methodSelect());
         }

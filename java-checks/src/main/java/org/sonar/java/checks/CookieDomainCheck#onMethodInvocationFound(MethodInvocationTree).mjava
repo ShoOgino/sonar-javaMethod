@@ -1,7 +1,7 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree arg = mit.arguments().get(0);
-    String domain = ConstantUtils.resolveAsStringConstant(arg);
+    String domain = ExpressionsHelper.getConstantValueAsString(arg).value();
     if (domain != null && !domain.isEmpty() && !domain.substring(1).contains(".")) {
       reportIssue(arg, "Specify at least a second-level cookie domain.");
     }

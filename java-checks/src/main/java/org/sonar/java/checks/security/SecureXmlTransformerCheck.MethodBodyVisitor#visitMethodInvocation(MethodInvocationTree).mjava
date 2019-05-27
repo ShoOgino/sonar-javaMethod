@@ -3,15 +3,15 @@
       Arguments arguments = methodInvocation.arguments();
 
       if (SET_FEATURE.matches(methodInvocation)
-        && XMLConstants.FEATURE_SECURE_PROCESSING.equals(resolveAsStringConstant(arguments.get(0)))
+        && XMLConstants.FEATURE_SECURE_PROCESSING.equals(ExpressionsHelper.getConstantValueAsString(arguments.get(0)).value())
         && LiteralUtils.isTrue(arguments.get(1))) {
 
         hasSecureProcessingFeature = true;
       }
 
       if (SET_ATTRIBUTE.matches(methodInvocation)) {
-        String attributeName = resolveAsStringConstant(arguments.get(0));
-        String attributeValue = resolveAsStringConstant(arguments.get(1));
+        String attributeName = ExpressionsHelper.getConstantValueAsString(arguments.get(0)).value();
+        String attributeValue = ExpressionsHelper.getConstantValueAsString(arguments.get(1)).value();
         if ("".equals(attributeValue)) {
           if (XMLConstants.ACCESS_EXTERNAL_DTD.equals(attributeName)) {
             hasSecuredExternalDtd = true;
