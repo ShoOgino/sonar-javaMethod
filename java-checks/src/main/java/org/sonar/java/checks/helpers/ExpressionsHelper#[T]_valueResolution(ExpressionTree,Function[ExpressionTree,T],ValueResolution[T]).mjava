@@ -1,11 +1,10 @@
   private static <T> ValueResolution<T> valueResolution(ExpressionTree expression, Function<ExpressionTree,T> resolver, ValueResolution<T> valueResolution) {
     T value = resolver.apply(expression);
     if (value == null && expression.is(Tree.Kind.IDENTIFIER)) {
-      ExpressionTree singleWriteUsage = getSingleWriteUsage(((IdentifierTree) expression).symbol());
-      if (singleWriteUsage == null || !isStrictAssignmentOrDeclaration(singleWriteUsage) || singleWriteUsage == expression) {
-        value = null;
-      } else {
-        valueResolution.addLocation(singleWriteUsage);
+      Symbol symbol = ((IdentifierTree) expression).symbol();
+      ExpressionTree singleWriteUsage = getSingleWriteUsage(symbol);
+      if (singleWriteUsage != null && !valueResolution.evaluatedSymbols.contains(symbol)) {
+        valueResolution.addLocation(singleWriteUsage, symbol);
         return valueResolution(singleWriteUsage, resolver, valueResolution);
       }
     }

@@ -2,11 +2,15 @@
   private static ExpressionTree getSingleWriteUsage(Symbol symbol) {
     ExpressionTree initializerOrExpression = getInitializerOrExpression(symbol.declaration());
     List<AssignmentExpressionTree> reassignments = getReassignments(symbol.owner().declaration(), symbol.usages());
+    ExpressionTree singleWriteUsage = null;
     if (initializerOrExpression == null && reassignments.size() == 1) {
-      return reassignments.get(0).expression();
+      singleWriteUsage = reassignments.get(0).expression();
     }
     if (initializerOrExpression != null && reassignments.isEmpty()) {
-      return initializerOrExpression;
+      singleWriteUsage = initializerOrExpression;
+    }
+    if (singleWriteUsage != null && isStrictAssignmentOrDeclaration(singleWriteUsage)) {
+      return singleWriteUsage;
     }
     return null;
   }
