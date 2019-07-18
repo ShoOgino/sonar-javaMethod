@@ -1,0 +1,11 @@
+  private static boolean isInsideEquals(Tree tree) {
+    Tree parent = tree.parent();
+    while (parent != null && !parent.is(Tree.Kind.CLASS)) {
+      if (parent.is(Tree.Kind.METHOD) && MethodTreeUtils.isEqualsMethod((MethodTree) parent)) {
+        return true;
+      }
+      parent = parent.parent();
+    }
+    return false;
+  }
+
