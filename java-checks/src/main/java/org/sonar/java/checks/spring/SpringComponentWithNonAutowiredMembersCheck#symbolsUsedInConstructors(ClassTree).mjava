@@ -1,0 +1,9 @@
+  private Set<Symbol> symbolsUsedInConstructors(ClassTree clazzTree) {
+    List<Symbol.MethodSymbol> constructors = constructors(clazzTree);
+    return constructors.stream()
+      .filter(ctor -> isAutowired(constructors, ctor))
+      .map(Symbol.MethodSymbol::declaration)
+      .flatMap(ctorTree -> symbolsUsedInMethod(ctorTree.symbol()).stream())
+      .collect(Collectors.toSet());
+  }
+

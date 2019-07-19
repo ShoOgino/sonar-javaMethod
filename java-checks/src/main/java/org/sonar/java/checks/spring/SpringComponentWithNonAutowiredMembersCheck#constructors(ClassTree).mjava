@@ -1,9 +1,9 @@
-  private static boolean hasUniqueConstructor(ClassTree clazzTree) {
+  private static List<Symbol.MethodSymbol> constructors(ClassTree clazzTree) {
     return clazzTree.symbol().memberSymbols().stream()
       .filter(Symbol::isMethodSymbol)
       .map(s -> (Symbol.MethodSymbol) s)
       .filter(m -> m.name().equals("<init>"))
       .filter(m -> m.declaration() != null)
-      .count() == 1;
+      .collect(Collectors.toList());
   }
 

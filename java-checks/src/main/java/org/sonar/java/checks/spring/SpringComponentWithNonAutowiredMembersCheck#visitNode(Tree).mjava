@@ -2,13 +2,15 @@
   public void visitNode(Tree tree) {
     ClassTree clazzTree = (ClassTree) tree;
     SymbolMetadata clazzMeta = clazzTree.symbol().metadata();
+    Set<Symbol> symbolsUsedInConstructors = symbolsUsedInConstructors(clazzTree);
 
-    if (isSpringComponent(clazzMeta) && !hasUniqueConstructor(clazzTree)) {
+    if (isSpringComponent(clazzMeta)) {
       clazzTree.members().stream().filter(v -> v.is(Kind.VARIABLE))
         .map(m -> (VariableTree) m)
         .filter(v -> !v.symbol().isStatic())
         .filter(v -> !isSpringInjectionAnnotated(v.symbol().metadata()))
         .filter(v -> !isCustomInjectionAnnotated(v.symbol().metadata()))
+        .filter(v -> !symbolsUsedInConstructors.contains(v.symbol()))
         .forEach(v -> reportIssue(v.simpleName(), "Annotate this member with \"@Autowired\", \"@Resource\", \"@Inject\", or \"@Value\", or remove it."));
     }
   }
