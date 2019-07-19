@@ -9,6 +9,7 @@
 
     if (isRequestMappingAnnotated(methodSymbol)) {
       methodTree.parameters().stream()
+        .filter(PersistentEntityUsedAsRequestParameterCheck::hasNoPathVariableAnnotation)
         .filter(PersistentEntityUsedAsRequestParameterCheck::isPersistentEntity)
         .forEach(p -> reportIssue(p.simpleName(), "Replace this persistent entity with a simple POJO or DTO object."));
     }
