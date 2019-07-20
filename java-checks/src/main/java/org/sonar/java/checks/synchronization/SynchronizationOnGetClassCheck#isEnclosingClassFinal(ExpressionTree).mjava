@@ -1,10 +1,11 @@
   private static boolean isEnclosingClassFinal(ExpressionTree expressionTree) {
     if (expressionTree.is(IDENTIFIER)) {
-      Tree parent = expressionTree.parent();
-      while (!parent.is(METHOD, CONSTRUCTOR)) {
-        parent = parent.parent();
+      MethodTree methodTree = findMethodTreeAncestor(expressionTree);
+      if (methodTree != null) {
+        return methodTree.symbol().owner().isFinal();
+      } else {
+        return findClassTreeAncestor(expressionTree).symbol().isFinal();
       }
-      return ((MethodTree) parent).symbol().owner().isFinal();
     }
     return ((MemberSelectExpressionTree) expressionTree).expression().symbolType().symbol().isFinal();
   }
