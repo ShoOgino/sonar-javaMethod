@@ -1,0 +1,10 @@
+  @Override
+  public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+    // Disallowed new class are already reported in visitNewClass
+    if(!tree.expression().is(Tree.Kind.NEW_CLASS)) {
+      String memberSelectTypeName = tree.expression().symbolType().fullyQualifiedName();
+      checkIfDisallowed(memberSelectTypeName, tree);
+    }
+    super.visitMemberSelectExpression(tree);
+  }
+
