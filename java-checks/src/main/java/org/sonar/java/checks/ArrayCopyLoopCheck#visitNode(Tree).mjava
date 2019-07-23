@@ -1,0 +1,16 @@
+  @Override
+  public void visitNode(Tree tree) {
+    boolean issue;
+    if (tree.is(Kind.FOR_STATEMENT)) {
+      issue = checkFor((ForStatementTree) tree);
+    } else if (tree.is(Kind.WHILE_STATEMENT)) {
+      issue = checkWhile((WhileStatementTree) tree);
+    } else {
+      issue = checkForEach((ForEachStatement) tree);
+    }
+    if (issue) {
+      StatementTree statement = getStatement(tree);
+      reportIssue(statement, "Use \"Arrays.copyOf\", \"Arrays.asList\", \"Collections.addAll\" or \"System.arraycopy\" instead.");
+    }
+  }
+

@@ -1,0 +1,19 @@
+  private static boolean checkWhile(WhileStatementTree tree) {
+    if (tree.statement().is(Kind.BLOCK)) {
+      BlockTree block = (BlockTree) tree.statement();
+      List<StatementTree> body = block.body();
+      if (body.size() == 2) {
+        StatementTree update = body.get(1);
+        Symbol counter = checkUpdate(update);
+        if (counter != null) {
+          ExpressionTree condition = tree.condition();
+          if (checkCondition(condition, counter)) {
+            StatementTree statement = body.get(0);
+            return checkStatement(statement, counter);
+          }
+        }
+      }
+    }
+    return false;
+  }
+

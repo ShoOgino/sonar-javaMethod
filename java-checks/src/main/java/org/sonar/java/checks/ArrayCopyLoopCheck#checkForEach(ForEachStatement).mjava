@@ -1,0 +1,12 @@
+  private static boolean checkForEach(ForEachStatement tree) {
+    ExpressionTree expression = tree.expression();
+    if (expression.symbolType().isArray()) {
+      StatementTree statement = getStatement(tree);
+      if (statement != null && statement.is(Kind.EXPRESSION_STATEMENT)) {
+        expression = ((ExpressionStatementTree) statement).expression();
+        return isArrayToListCopy(expression, tree.variable());
+      }
+    }
+    return false;
+  }
+

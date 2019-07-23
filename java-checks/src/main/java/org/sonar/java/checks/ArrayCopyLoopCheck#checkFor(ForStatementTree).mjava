@@ -1,0 +1,16 @@
+  private static boolean checkFor(ForStatementTree tree) {
+    ListTree<StatementTree> updates = tree.update();
+    if (updates.size() == 1) {
+      StatementTree update = updates.get(0);
+      Symbol counter = checkUpdate(update);
+      if (counter != null) {
+        ExpressionTree condition = tree.condition();
+        if (condition != null && checkCondition(condition, counter)) {
+          StatementTree statement = getStatement(tree);
+          return statement != null && checkStatement(statement, counter);
+        }
+      }
+    }
+    return false;
+  }
+

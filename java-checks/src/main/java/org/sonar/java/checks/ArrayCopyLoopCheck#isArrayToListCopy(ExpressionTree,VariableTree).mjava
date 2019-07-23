@@ -1,0 +1,18 @@
+  private static boolean isArrayToListCopy(ExpressionTree expression, VariableTree iterated) {
+    if (expression.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree invocation = (MethodInvocationTree) expression;
+      if (COLLECTION_ADD.matches(invocation)) {
+        expression = invocation.methodSelect();
+        if (expression.is(Kind.MEMBER_SELECT)) {
+          MemberSelectExpressionTree select = (MemberSelectExpressionTree) expression;
+          if (select.expression().is(Kind.IDENTIFIER)) {
+            ExpressionTree argument = invocation.arguments().get(0);
+            Symbol identifier = getIdentifier(argument);
+            return identifier != null && identifier.equals(iterated.symbol());
+          }
+        }
+      }
+    }
+    return false;
+  }
+

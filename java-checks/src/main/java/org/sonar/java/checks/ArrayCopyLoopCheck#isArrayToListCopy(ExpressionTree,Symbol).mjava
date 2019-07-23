@@ -1,0 +1,17 @@
+  private static boolean isArrayToListCopy(ExpressionTree expression, Symbol counter) {
+    if (expression.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree invocation = (MethodInvocationTree) expression;
+      if (COLLECTION_ADD.matches(invocation)) {
+        MemberSelectExpressionTree select = (MemberSelectExpressionTree) invocation.methodSelect();
+        if (select.expression().is(Kind.IDENTIFIER)) {
+          ExpressionTree argument = invocation.arguments().get(0);
+          if (argument.is(Kind.ARRAY_ACCESS_EXPRESSION)) {
+            ArrayAccessExpressionTree access = (ArrayAccessExpressionTree) argument;
+            return access.expression().is(Kind.IDENTIFIER) && isCounter(access.dimension().expression(), counter);
+          }
+        }
+      }
+    }
+    return false;
+  }
+

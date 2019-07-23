@@ -1,0 +1,14 @@
+  private static boolean isArrayToArrayCopy(ExpressionTree expression, Symbol counter) {
+    if (expression.is(Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) expression;
+      ExpressionTree lhs = assignment.variable();
+      ExpressionTree rhs = assignment.expression();
+      if (lhs.is(Kind.ARRAY_ACCESS_EXPRESSION) && rhs.is(Kind.ARRAY_ACCESS_EXPRESSION)) {
+        ArrayAccessExpressionTree src = (ArrayAccessExpressionTree) rhs;
+        ArrayAccessExpressionTree dst = (ArrayAccessExpressionTree) lhs;
+        return isCounter(src.dimension().expression(), counter) && isCounter(dst.dimension().expression(), counter);
+      }
+    }
+    return false;
+  }
+

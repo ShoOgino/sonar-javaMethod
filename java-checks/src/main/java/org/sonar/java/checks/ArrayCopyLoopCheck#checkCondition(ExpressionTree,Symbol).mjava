@@ -1,0 +1,11 @@
+  private static boolean checkCondition(ExpressionTree tree, Symbol counter) {
+    if (tree.is(Kind.LESS_THAN, Kind.LESS_THAN_OR_EQUAL_TO, Kind.GREATER_THAN, Kind.GREATER_THAN_OR_EQUAL_TO, Kind.NOT_EQUAL_TO)) {
+      BinaryExpressionTree comparison = (BinaryExpressionTree) tree;
+      ExpressionTree lhs = comparison.leftOperand();
+      ExpressionTree rhs = comparison.rightOperand();
+      // the XOR makes sure we don't allow `i < i` as the loop termination condition
+      return isCounter(lhs, counter) ^ isCounter(rhs, counter);
+    }
+    return false;
+  }
+

@@ -1,0 +1,21 @@
+  @CheckForNull
+  private static Symbol isAssignment(ExpressionStatementTree update) {
+    if (update.expression().is(Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) update.expression();
+      ExpressionTree lhs = assignment.variable();
+      ExpressionTree rhs = assignment.expression();
+      if (lhs.is(Kind.IDENTIFIER) && isIntegerType(lhs)) {
+        Symbol counter = ((IdentifierTree) lhs).symbol();
+        if (rhs.is(Kind.PLUS)) {
+          BinaryExpressionTree addition = (BinaryExpressionTree) rhs;
+          lhs = addition.leftOperand();
+          rhs = addition.rightOperand();
+          if ((isCounter(lhs, counter) && isOne(rhs)) || (isOne(lhs) && isCounter(rhs, counter))) {
+            return counter;
+          }
+        }
+      }
+    }
+    return null;
+  }
+

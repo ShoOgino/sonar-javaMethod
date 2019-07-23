@@ -1,0 +1,16 @@
+  @CheckForNull
+  private static Symbol checkUpdate(StatementTree tree) {
+    Symbol counter = null;
+    if (tree.is(Kind.EXPRESSION_STATEMENT)) {
+      ExpressionStatementTree update = (ExpressionStatementTree) tree;
+      counter = isIncrement(update);
+      if (counter == null) {
+        counter = isPlusAssignment(update);
+        if (counter == null) {
+          counter = isAssignment(update);
+        }
+      }
+    }
+    return counter;
+  }
+

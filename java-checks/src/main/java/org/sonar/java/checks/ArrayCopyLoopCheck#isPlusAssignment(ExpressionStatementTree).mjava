@@ -1,0 +1,16 @@
+  @CheckForNull
+  private static Symbol isPlusAssignment(ExpressionStatementTree update) {
+    if (update.expression().is(Kind.PLUS_ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) update.expression();
+      ExpressionTree lhs = assignment.variable();
+      ExpressionTree rhs = assignment.expression();
+      if (lhs.is(Kind.IDENTIFIER)) {
+        IdentifierTree identifier = (IdentifierTree) lhs;
+        if (isOne(rhs)) {
+          return identifier.symbol();
+        }
+      }
+    }
+    return null;
+  }
+
