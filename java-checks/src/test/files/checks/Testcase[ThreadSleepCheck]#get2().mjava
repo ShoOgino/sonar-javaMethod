@@ -1,0 +1,8 @@
+  public synchronized Consumer<Object> get2() {
+    return s -> {
+      synchronized(new Object()) {
+        Thread.sleep(200);    // Noncompliant [[sc=16;ec=21]] {{Replace the call to "Thread.sleep(...)" with a call to "wait(...)".}}
+      }
+    };
+  }
+
