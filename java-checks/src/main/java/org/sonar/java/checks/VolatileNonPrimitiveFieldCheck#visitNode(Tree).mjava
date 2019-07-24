@@ -6,6 +6,7 @@
       .map(m -> ((VariableTree) m))
       .filter(v -> ModifiersUtils.hasModifier(v.modifiers(), Modifier.VOLATILE))
       .filter(v -> !v.type().symbolType().isPrimitive())
+      .filter(v -> !isImmutableType(v.type().symbolType()))
       .forEach(v -> reportIssue(ModifiersUtils.getModifier(v.modifiers(), Modifier.VOLATILE), v.type(), getMessage(v)));
   }
 
