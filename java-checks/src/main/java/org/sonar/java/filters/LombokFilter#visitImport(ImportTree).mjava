@@ -1,0 +1,12 @@
+  @Override
+  public void visitImport(ImportTree tree) {
+    String fullyQualifiedName = ExpressionsHelper.concatenate((ExpressionTree) tree.qualifiedIdentifier());
+    if (fullyQualifiedName.startsWith("lombok.")) {
+      excludeLines(tree, UselessImportCheck.class);
+    } else {
+      acceptLines(tree, UselessImportCheck.class);
+    }
+
+    super.visitImport(tree);
+  }
+
