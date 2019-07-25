@@ -1,10 +1,5 @@
   private static boolean usesAnnotation(ClassTree classTree, List<String> annotations) {
-    SymbolMetadata metadata = classTree.symbol().metadata();
-    for (String annotation : annotations) {
-      if (metadata.isAnnotatedWith(annotation)) {
-        return true;
-      }
-    }
-    return false;
+    SymbolMetadata classMetadata = classTree.symbol().metadata();
+    return annotations.stream().anyMatch(classMetadata::isAnnotatedWith);
   }
 
