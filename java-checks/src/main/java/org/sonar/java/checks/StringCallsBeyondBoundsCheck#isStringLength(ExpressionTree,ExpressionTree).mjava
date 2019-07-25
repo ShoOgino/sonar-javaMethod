@@ -1,0 +1,13 @@
+  private static boolean isStringLength(ExpressionTree str, ExpressionTree tree) {
+    if (str.is(Kind.IDENTIFIER) && tree.is(Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree invocation = (MethodInvocationTree) tree;
+      if (STRING_LENGTH.matches(invocation) && invocation.methodSelect().is(Kind.MEMBER_SELECT)) {
+        ExpressionTree expr = ((MemberSelectExpressionTree) invocation.methodSelect()).expression();
+        if (expr.is(Kind.IDENTIFIER)) {
+          return ((IdentifierTree) str).symbol().equals(((IdentifierTree) expr).symbol());
+        }
+      }
+    }
+    return false;
+  }
+

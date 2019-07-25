@@ -1,0 +1,9 @@
+  private static boolean check(MethodInvocationTree invocation, BiPredicate<ExpressionTree, Arguments> condition) {
+    if (invocation.methodSelect().is(Kind.MEMBER_SELECT)) {
+      ExpressionTree string = ((MemberSelectExpressionTree) invocation.methodSelect()).expression();
+      Arguments arguments = invocation.arguments();
+      return condition.test(string, arguments);
+    }
+    return false;
+  }
+

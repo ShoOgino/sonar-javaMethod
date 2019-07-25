@@ -1,0 +1,53 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree invocation) {
+    boolean issue;
+    String method = invocation.symbol().name();
+    switch (method) {
+      case "charAt":
+      case "codePointAt":
+        issue = check(invocation, (str, args) ->
+          isInvalidStringIndex(str, args.get(0)) ||
+          isStringLength(str, args.get(0)));
+        break;
+      case "codePointBefore":
+        issue = check(invocation, (str, args) ->
+          isInvalidInclusiveStringIndex(str, args.get(0), 1));
+        break;
+      case "getChars":
+        issue = check(invocation, (str, args) ->
+          isInvalidInclusiveStringIndex(str, args.get(0))   ||
+          isInvalidInclusiveStringIndex(str, args.get(1))   ||
+          isInvalidIndex(args.get(3), 0, Integer.MAX_VALUE) ||
+          isInverted(args.get(0), args.get(1)));
+        break;
+      case "offsetByCodePoints":
+        issue = check(invocation, (str, args) ->
+          isInvalidInclusiveStringIndex(str, args.get(0)));
+        break;
+      case "codePointCount":
+      case "subSequence":
+        issue = check(invocation, (str, args) ->
+          isInvalidInclusiveStringIndex(str, args.get(0)) ||
+          isInvalidInclusiveStringIndex(str, args.get(1)) ||
+          isInverted(args.get(0), args.get(1)));
+        break;
+      case "substring":
+        int arity = invocation.arguments().size();
+        if (arity == 1) {
+          issue = check(invocation, (str, args) ->
+            isInvalidInclusiveStringIndex(str, args.get(0)));
+        } else {
+          issue = check(invocation, (str, args) ->
+            isInvalidInclusiveStringIndex(str, args.get(0)) ||
+            isInvalidInclusiveStringIndex(str, args.get(1)) ||
+            isInverted(args.get(0), args.get(1)));
+        }
+        break;
+      default:
+        issue = false;
+    }
+    if (issue) {
+      reportIssue(invocation, String.format("Refactor this \"%s\" call; it will result in an \"StringIndexOutOfBounds\" exception at runtime.", invocation.symbol().name()));
+    }
+  }
+
