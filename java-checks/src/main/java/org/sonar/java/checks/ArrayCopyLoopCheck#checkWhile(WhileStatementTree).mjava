@@ -1,4 +1,5 @@
-  private static boolean checkWhile(WhileStatementTree tree) {
+  @CheckForNull
+  private static StatementTree checkWhile(WhileStatementTree tree) {
     if (tree.statement().is(Kind.BLOCK)) {
       BlockTree block = (BlockTree) tree.statement();
       List<StatementTree> body = block.body();
@@ -9,11 +10,13 @@
           ExpressionTree condition = tree.condition();
           if (checkCondition(condition, counter)) {
             StatementTree statement = body.get(0);
-            return checkStatement(statement, counter);
+            if (checkStatement(statement, counter)) {
+              return statement;
+            }
           }
         }
       }
     }
-    return false;
+    return null;
   }
 

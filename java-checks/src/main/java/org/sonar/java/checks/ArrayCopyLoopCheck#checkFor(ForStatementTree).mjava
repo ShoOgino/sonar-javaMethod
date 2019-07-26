@@ -1,4 +1,5 @@
-  private static boolean checkFor(ForStatementTree tree) {
+  @CheckForNull
+  private static StatementTree checkFor(ForStatementTree tree) {
     ListTree<StatementTree> updates = tree.update();
     if (updates.size() == 1) {
       StatementTree update = updates.get(0);
@@ -7,10 +8,12 @@
         ExpressionTree condition = tree.condition();
         if (condition != null && checkCondition(condition, counter)) {
           StatementTree statement = getStatement(tree);
-          return statement != null && checkStatement(statement, counter);
+          if (statement != null && checkStatement(statement, counter)) {
+            return statement;
+          }
         }
       }
     }
-    return false;
+    return null;
   }
 
