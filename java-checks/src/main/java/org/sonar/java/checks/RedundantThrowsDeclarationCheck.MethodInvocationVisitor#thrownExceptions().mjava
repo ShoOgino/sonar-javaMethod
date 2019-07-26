@@ -4,6 +4,11 @@
         // as soon as there is an unknown type, we discard any attempt to find an issue
         return null;
       }
+      if (methodTree.is(Tree.Kind.CONSTRUCTOR) && !visitedOtherConstructor) {
+        getImplicitlyCalledConstructor(methodTree)
+          .map(Symbol.MethodSymbol::thrownTypes)
+          .ifPresent(thrownExceptions::addAll);
+      }
       return thrownExceptions;
     }
 

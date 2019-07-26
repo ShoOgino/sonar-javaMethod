@@ -1,0 +1,17 @@
+    private static boolean isDefaultConstructor(Symbol symbol) {
+      if (symbol.isMethodSymbol()) {
+        Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
+        if (CONSTRUCTOR_NAME.equals(methodSymbol.name())) {
+          if (methodSymbol.declaration() != null) {
+            // Constructor is inside this file, in case of nested class, parameterTypes() will include an extra implicit
+            // parameter type. We hopefully have access to the declaration that does not include implicit parameter.
+            return methodSymbol.declaration().parameters().isEmpty();
+          } else {
+            // The declaration is in another class, we can use parameterTypes() safely since it can not be nested.
+            return  methodSymbol.parameterTypes().isEmpty();
+          }
+        }
+      }
+      return false;
+    }
+
