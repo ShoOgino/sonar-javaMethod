@@ -1,0 +1,12 @@
+  @CheckForNull
+  private static Symbol findLoopCounter(ForStatementTree forStatementTree) {
+    if (forStatementTree.initializer().size() != 1) {
+      return null;
+    }
+    StatementTree initializer = forStatementTree.initializer().get(0);
+    if (!initializer.is(Tree.Kind.VARIABLE)) {
+      return null;
+    }
+    return  ((VariableTree) initializer).symbol();
+  }
+

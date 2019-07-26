@@ -1,0 +1,13 @@
+  private static boolean isIncrementingLoop(ForStatementTree forStatementTree, Symbol counter) {
+    if (forStatementTree.update().size() != 1) {
+      return false;
+    }
+    StatementTree loopUpdate = forStatementTree.update().get(0);
+    if (loopUpdate.is(Tree.Kind.EXPRESSION_STATEMENT)
+      && ((ExpressionStatementTree) loopUpdate).expression().is(Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_INCREMENT)) {
+      ExpressionTree expression = ((UnaryExpressionTree) ((ExpressionStatementTree) loopUpdate).expression()).expression();
+      return expression.is(Tree.Kind.IDENTIFIER) && counter.equals(((IdentifierTree) expression).symbol());
+    }
+    return false;
+  }
+

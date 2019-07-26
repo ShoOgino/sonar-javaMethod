@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    ForStatementTree forStatementTree = (ForStatementTree) tree;
+    Symbol counter = findLoopCounter(forStatementTree);
+    if (counter == null || !isIncrementingLoop(forStatementTree, counter)) {
+      return;
+    }
+    StatementTree loopBody = forStatementTree.statement();
+    LoopBodyVisitor loopBodyVisitor = new LoopBodyVisitor(counter);
+    loopBody.accept(loopBodyVisitor);
+    if (loopBodyVisitor.hasIssue()) {
+      reportIssue(loopBodyVisitor.listRemove, "Verify that \"remove()\" is used correctly.");
+    }
+  }
+
