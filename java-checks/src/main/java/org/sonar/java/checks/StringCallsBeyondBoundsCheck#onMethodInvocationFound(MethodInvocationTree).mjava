@@ -5,43 +5,23 @@
     switch (method) {
       case "charAt":
       case "codePointAt":
-        issue = check(invocation, (str, args) ->
-          isInvalidStringIndex(str, args.get(0)) ||
-          isStringLength(str, args.get(0)));
+        issue = checkCodePointAt(invocation);
         break;
       case "codePointBefore":
-        issue = check(invocation, (str, args) ->
-          isInvalidInclusiveStringIndex(str, args.get(0), 1));
+        issue = checkCodePointBefore(invocation);
         break;
       case "getChars":
-        issue = check(invocation, (str, args) ->
-          isInvalidInclusiveStringIndex(str, args.get(0))   ||
-          isInvalidInclusiveStringIndex(str, args.get(1))   ||
-          isInvalidIndex(args.get(3), 0, Integer.MAX_VALUE) ||
-          isInverted(args.get(0), args.get(1)));
+        issue = checkGetChars(invocation);
         break;
       case "offsetByCodePoints":
-        issue = check(invocation, (str, args) ->
-          isInvalidInclusiveStringIndex(str, args.get(0)));
+        issue = checkOffsetByCodePoints(invocation);
         break;
       case "codePointCount":
       case "subSequence":
-        issue = check(invocation, (str, args) ->
-          isInvalidInclusiveStringIndex(str, args.get(0)) ||
-          isInvalidInclusiveStringIndex(str, args.get(1)) ||
-          isInverted(args.get(0), args.get(1)));
+        issue = checkSubsequence(invocation);
         break;
       case "substring":
-        int arity = invocation.arguments().size();
-        if (arity == 1) {
-          issue = check(invocation, (str, args) ->
-            isInvalidInclusiveStringIndex(str, args.get(0)));
-        } else {
-          issue = check(invocation, (str, args) ->
-            isInvalidInclusiveStringIndex(str, args.get(0)) ||
-            isInvalidInclusiveStringIndex(str, args.get(1)) ||
-            isInverted(args.get(0), args.get(1)));
-        }
+        issue = checkSubstring(invocation);
         break;
       default:
         issue = false;

@@ -1,0 +1,18 @@
+  private static boolean checkSubstring(MethodInvocationTree tree) {
+    int arity = tree.arguments().size();
+    if (arity == 2) {
+      return checkSubsequence(tree);
+    }
+    return check(tree, (str, args) -> {
+      Integer index = constant(args.get(0));
+      if (index != null && index < 0) {
+        return true;
+      }
+      Integer strlen = length(str);
+      if (index != null && strlen != null && index > strlen) {
+        return true;
+      }
+      return false;
+    });
+  }
+

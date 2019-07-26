@@ -1,0 +1,14 @@
+  private static boolean checkOffsetByCodePoints(MethodInvocationTree tree) {
+    return check(tree, (str, args) -> {
+      Integer index = constant(args.get(0));
+      if (index != null && index < 0) {
+        return true;
+      }
+      Integer strlen = length(str);
+      if (index != null && strlen != null && index > strlen) {
+        return true;
+      }
+      return false;
+    });
+  }
+

@@ -1,0 +1,18 @@
+  private static boolean checkSubsequence(MethodInvocationTree tree) {
+    return check(tree, (str, args) -> {
+      Integer beginIndex = constant(args.get(0));
+      if (beginIndex != null && beginIndex < 0) {
+        return true;
+      }
+      Integer endIndex = constant(args.get(1));
+      if (beginIndex != null && endIndex != null && beginIndex > endIndex) {
+        return true;
+      }
+      Integer strlen = length(str);
+      if (endIndex != null && strlen != null && endIndex > strlen) {
+        return true;
+      }
+      return false;
+    });
+  }
+

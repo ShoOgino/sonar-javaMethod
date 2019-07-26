@@ -1,0 +1,22 @@
+  private static boolean checkGetChars(MethodInvocationTree tree) {
+    return check(tree, (str, args) -> {
+      Integer srcBegin = constant(args.get(0));
+      if (srcBegin != null && srcBegin < 0) {
+        return true;
+      }
+      Integer srcEnd = constant(args.get(1));
+      if (srcBegin != null && srcEnd != null && srcBegin > srcEnd) {
+        return true;
+      }
+      Integer strlen = length(str);
+      if (srcEnd != null && strlen != null && srcEnd > strlen) {
+        return true;
+      }
+      Integer dstBegin = constant(args.get(3));
+      if (dstBegin != null && dstBegin < 0) {
+        return true;
+      }
+      return false;
+    });
+  }
+
