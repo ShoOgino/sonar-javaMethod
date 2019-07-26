@@ -1,4 +1,5 @@
   private static boolean isVisibleForTesting(VariableTree variableTree) {
-    return variableTree.symbol().metadata().isAnnotatedWith(GUAVA_FQCN);
+    return variableTree.modifiers().annotations().stream()
+      .anyMatch(annotation -> "VisibleForTesting".equals(annotation.annotationType().lastToken().text()));
   }
 
