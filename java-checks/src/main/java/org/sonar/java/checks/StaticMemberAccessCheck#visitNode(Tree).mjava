@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
+    Symbol symbol = mse.identifier().symbol();
+    if (symbol.isStatic()  && !isListOrSetOf(mse)) {
+      ExpressionTree expression = mse.expression();
+      Type staticType = symbol.owner().type();
+      if (!expression.symbolType().equals(staticType)) {
+        reportIssue(mse.identifier(),
+          format("Use static access with \"%s\" for \"%s\".", staticType.fullyQualifiedName(), symbol.name()));
+      }
+    }
+  }
+

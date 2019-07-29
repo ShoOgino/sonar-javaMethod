@@ -1,0 +1,7 @@
+  private static boolean isListOrSetOf(MemberSelectExpressionTree mse) {
+    // this is necessary because we incorrectly resolve to Set#of List#of methods on JDK11
+    // see SONARJAVA-3095
+    Tree parent = mse.parent();
+    return parent.is(Tree.Kind.METHOD_INVOCATION) && LIST_SET_OF.anyMatch((MethodInvocationTree) parent);
+  }
+
