@@ -1,0 +1,6 @@
+  private void checkThreadLocalField(Symbol field) {
+    if (field.usages().stream().noneMatch(ThreadLocalCleanupCheck::usageIsRemove)) {
+      reportIssue(((VariableTree) field.declaration()).simpleName(), "Call \"remove()\" on \"" + field.name() + "\".");
+    }
+  }
+

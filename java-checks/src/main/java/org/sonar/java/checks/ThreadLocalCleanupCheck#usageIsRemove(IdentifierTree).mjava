@@ -1,0 +1,10 @@
+  private static boolean usageIsRemove(IdentifierTree usage) {
+    Tree parent = usage.parent();
+    if (parent.is(Tree.Kind.MEMBER_SELECT)) {
+      Tree mseParent = parent.parent();
+      return mseParent != null && mseParent.is(Tree.Kind.METHOD_INVOCATION)
+        && THREADLOCAL_REMOVE.matches((MethodInvocationTree) mseParent);
+    }
+    return false;
+  }
+

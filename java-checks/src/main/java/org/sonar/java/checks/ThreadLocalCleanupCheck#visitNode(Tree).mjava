@@ -1,0 +1,22 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    if (tree.is(Tree.Kind.CLASS)) {
+      Symbol.TypeSymbol clazz = ((ClassTree) tree).symbol();
+      if (clazz.type().isSubtypeOf(THREAD_LOCAL)) {
+        return;
+      }
+      clazz.memberSymbols().stream()
+        .filter(Symbol::isVariableSymbol)
+        .filter(s -> s.isPrivate() && s.type().is(THREAD_LOCAL))
+        .forEach(this::checkThreadLocalField);
+    } else {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if (THREADLOCAL_SET.matches(mit) && mit.arguments().get(0).is(Tree.Kind.NULL_LITERAL)) {
+        reportIssue(mit, "Use \"remove()\" instead of \"set(null)\".");
+      }
+    }
+  }
+
