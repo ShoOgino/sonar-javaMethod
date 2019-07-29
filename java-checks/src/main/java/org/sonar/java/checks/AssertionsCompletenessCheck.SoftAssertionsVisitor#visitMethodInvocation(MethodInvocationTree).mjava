@@ -1,6 +1,10 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
+      boolean assertThatStateBeforeInvocation = assertThatCalled;
       super.visitMethodInvocation(mit);
+      if (ASSERTJ_ASSERT_SOFTLY.matches(mit)) {
+        assertThatCalled = assertThatStateBeforeInvocation;
+      }
 
       if (ASSERTJ_ASSERT_ALL.matches(mit)) {
         if (assertThatCalled) {
