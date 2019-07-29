@@ -1,0 +1,35 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree tree) {
+    if (tree.methodSelect().is(Kind.MEMBER_SELECT)) {
+      boolean issue;
+      ExpressionTree str = ((MemberSelectExpressionTree) tree.methodSelect()).expression();
+      Arguments args = tree.arguments();
+      String method = tree.symbol().name();
+      switch (method) {
+        case "contains":
+        case "compareTo":
+        case "compareToIgnoreCase":
+        case "endsWith":
+        case "indexOf":
+        case "lastIndexOf":
+        case "matches":
+        case "split":
+        case "startsWith":
+          issue = checkStartsWith(str, args);
+          break;
+        case "replaceAll":
+        case "replaceFirst":
+          issue = checkReplaceFirst(str, args);
+          break;
+        case "substring":
+          issue = checkSubstring(str, args);
+          break;
+        default:
+          issue = false;
+      }
+      if (issue) {
+        reportIssue(tree, format("Remove this \"%s\" call; it has predictable results.", method));
+      }
+    }
+  }
+
