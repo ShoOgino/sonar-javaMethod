@@ -1,0 +1,13 @@
+    private String parseStackForCheck(Throwable realCause2) {
+      String stackTrace = ExceptionUtils.getStackTrace(realCause);
+      return Arrays.stream(stackTrace.split("\n"))
+        // try to retrieve the rule class name in 'checks' package
+        .filter(line -> line.contains("org.sonar.java.checks."))
+        // check that it's a rule
+        .filter(line -> line.substring(0, line.lastIndexOf(".java:")).endsWith("Check"))
+        .findFirst()
+        // drop parenthesis to get location
+        .map(line -> line.substring(line.lastIndexOf('(') + 1, line.length() - 1))
+        .orElse(null);
+    }
+

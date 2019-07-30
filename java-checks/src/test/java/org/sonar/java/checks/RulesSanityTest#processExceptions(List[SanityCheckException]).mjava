@@ -1,0 +1,17 @@
+  private static String processExceptions(List<SanityCheckException> exceptions) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("At least one rule failed for the following ").append(exceptions.size()).append(" file(s):\n\n");
+
+    int i = 1;
+    for (SanityCheckException sanityCheckException : exceptions) {
+      sb.append(i).append(")")
+        .append("\t").append("File: \"").append(sanityCheckException.inputFile).append("\"\n")
+        .append("\t").append("Rule: \"").append(sanityCheckException.failingCheck).append("\"\n")
+        .append("\t").append("Exception: \"").append(sanityCheckException.realCause).append("\"\n")
+        .append("\n");
+      i++;
+    }
+
+    return sb.toString();
+  }
+

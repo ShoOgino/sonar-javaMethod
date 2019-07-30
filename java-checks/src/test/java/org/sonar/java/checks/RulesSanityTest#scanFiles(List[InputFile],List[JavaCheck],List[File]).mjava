@@ -1,0 +1,14 @@
+  private static List<SanityCheckException> scanFiles(List<InputFile> inputFiles, List<JavaCheck> checks, List<File> classpath) {
+    List<SanityCheckException> exceptions = new ArrayList<>();
+    SonarComponents sonarComponents = sonarComponents(inputFiles);
+    for (InputFile inputFile : inputFiles) {
+      try {
+        VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(checks, classpath, sonarComponents);
+        JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge);
+      } catch (Exception e) {
+        exceptions.add(new SanityCheckException(inputFile, e));
+      }
+    }
+    return exceptions;
+  }
+

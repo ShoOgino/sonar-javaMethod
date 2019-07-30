@@ -1,0 +1,26 @@
+  /**
+   * Verifies that playing all the checks on all the test files does not trigger any exceptions.
+   *
+   * This relies on the fact that a lot of tricky cases are covered in unit tests, on a rule by rule and case by case basis.
+   * It does not prevent other rules to fail if similar construct of the language, but not yet encountered. 
+   */
+  @Test
+  public void test() throws Exception {
+    logTester.setLevel(LoggerLevel.WARN);
+
+    List<JavaCheck> checks = getJavaCheckInstances();
+    assertThat(checks).isNotEmpty();
+
+    List<InputFile> inputFiles = getJavaInputFiles();
+    assertThat(inputFiles.size()).isGreaterThanOrEqualTo(checks.size());
+
+    List<File> classpath = getClassPath();
+    assertThat(classpath).isNotEmpty();
+
+    List<SanityCheckException> exceptions = scanFiles(inputFiles, checks, classpath);
+    if (!exceptions.isEmpty()) {
+      LOG.error(processExceptions(exceptions));
+      fail(String.format("Should have been able to execute all the rules on all the test files. %d file(s) made at least 1 rule fail.", exceptions.size()));
+    }
+  }
+

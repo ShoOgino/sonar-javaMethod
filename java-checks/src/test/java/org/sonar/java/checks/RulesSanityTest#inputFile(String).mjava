@@ -1,0 +1,13 @@
+  private static DefaultInputFile inputFile(String filename) {
+    File file = new File(filename);
+    try {
+      return new TestInputFileBuilder("", file.getPath())
+        .setContents(new String(Files.readAllBytes(file.toPath()), UTF_8))
+        .setCharset(UTF_8)
+        .setLanguage("java")
+        .build();
+    } catch (Exception e) {
+      throw new IllegalStateException(String.format("Unable to lead file '%s", file.getAbsolutePath()));
+    }
+  }
+

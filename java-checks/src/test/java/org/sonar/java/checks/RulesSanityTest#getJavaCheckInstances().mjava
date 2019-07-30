@@ -1,0 +1,22 @@
+  private static List<JavaCheck> getJavaCheckInstances() {
+    List<Class<? extends JavaCheck>> checkClasses = new ArrayList<>();
+    checkClasses.addAll(CheckList.getJavaChecks());
+    checkClasses.addAll(CheckList.getJavaTestChecks());
+
+    List<JavaCheck> javaChecks = new ArrayList<>();
+    for (Class<? extends JavaCheck> checkClass : checkClasses) {
+      String ruleKey = AnnotationUtils.getAnnotation(checkClass, org.sonar.check.Rule.class).key();
+      if (TEMPLATE_RULES_KEYS.contains(ruleKey) || EXCLUDED_RULES.contains(ruleKey)) {
+        // FIXME initialize a new template rule with some default parameter ?!
+      } else {
+        try {
+          javaChecks.add(checkClass.newInstance());
+        } catch (Exception e) {
+          fail(String.format("Unable to initialize rule %s", ruleKey), e);
+        }
+      }
+    }
+
+    return javaChecks;
+  }
+
