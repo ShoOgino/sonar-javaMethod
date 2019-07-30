@@ -1,0 +1,9 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree regexArg = mit.arguments().get(0);
+    String regexValue = ConstantUtils.resolveAsStringConstant(regexArg);
+    if (regexValue != null && !isRegex(regexValue)) {
+      reportIssue(((MemberSelectExpressionTree) mit.methodSelect()).identifier(), "Replace this call to \"replaceAll()\" by a call to the \"replace()\" method.");
+    }
+  }
+
