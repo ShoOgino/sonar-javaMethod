@@ -1,6 +1,8 @@
   private void checkClassTree(ClassTree tree) {
     IdentifierTree simpleName = tree.simpleName();
-    if (simpleName != null && !ModifiersUtils.hasModifier(tree.modifiers(), Modifier.ABSTRACT) && isNotEJBAnnotated(tree.symbol())) {
+    if (simpleName != null && !ModifiersUtils.hasModifier(tree.modifiers(), Modifier.ABSTRACT)
+      && !isAnnotationExcluded(tree.symbol())
+      && !isBuilderPatternName(simpleName.name())) {
       List<JavaFileScannerContext.Location> uninitializedVariables = new ArrayList<>();
       for (Tree member : tree.members()) {
         if (member.is(Kind.CONSTRUCTOR)) {
