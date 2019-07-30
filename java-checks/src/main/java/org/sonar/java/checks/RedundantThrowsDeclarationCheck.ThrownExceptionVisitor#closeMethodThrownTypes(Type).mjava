@@ -1,0 +1,14 @@
+    @CheckForNull
+    private static List<Type> closeMethodThrownTypes(Type classType) {
+      return classType.symbol().lookupSymbols("close").stream()
+        .filter(Symbol::isMethodSymbol)
+        .map(Symbol.MethodSymbol.class::cast)
+        .filter(method -> method.parameterTypes().isEmpty())
+        .map(Symbol.MethodSymbol::thrownTypes)
+        .findFirst()
+        .orElseGet(() -> directSuperTypeStream(classType).map(ThrownExceptionVisitor::closeMethodThrownTypes)
+          .filter(Objects::nonNull)
+          .findFirst()
+          .orElse(null));
+    }
+

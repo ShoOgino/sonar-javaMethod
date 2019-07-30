@@ -1,17 +1,11 @@
   private void checkMethodThrownList(MethodTree methodTree, ListTree<TypeTree> thrownList) {
     Set<Type> thrownExceptions = thrownExceptionsFromBody(methodTree);
-    boolean hasTryWithResourceInBody = hasTryWithResourceInBody(methodTree);
     boolean isOverridableMethod = ((JavaSymbol.MethodJavaSymbol) methodTree.symbol()).isOverridable();
     List<String> undocumentedExceptionNames = new Javadoc(methodTree).undocumentedThrownExceptions();
     Set<String> reported = new HashSet<>();
 
     for (TypeTree typeTree : thrownList) {
       Type exceptionType = typeTree.symbolType();
-      if (hasTryWithResourceInBody && (exceptionType.is("java.io.IOException") || exceptionType.is("java.lang.Exception"))) {
-        // method 'close()' from 'java.lang.AutoCloseable' interface throws 'java.lang.Exception'
-        // method 'close()' from 'java.io.Closeable' interface throws 'java.io.IOException"
-        continue;
-      }
       if (exceptionType.isUnknown()) {
         continue;
       }

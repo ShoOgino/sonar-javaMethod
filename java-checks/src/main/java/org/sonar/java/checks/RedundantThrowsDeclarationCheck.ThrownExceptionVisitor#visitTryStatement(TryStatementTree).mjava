@@ -1,0 +1,14 @@
+    @Override
+    public void visitTryStatement(TryStatementTree tree) {
+      for (Tree resource : tree.resourceList()) {
+        Type resourceType = resourceType(resource);
+        List<Type> thrownTypes = closeMethodThrownTypes(resourceType);
+        if (thrownTypes == null) {
+          visitedUnknown = true;
+        } else {
+          thrownExceptions.addAll(thrownTypes);
+        }
+      }
+      super.visitTryStatement(tree);
+    }
+
