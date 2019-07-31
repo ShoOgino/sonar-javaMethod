@@ -1,0 +1,29 @@
+  protected final void checkFormatting(MethodInvocationTree mit, boolean isMessageFormat) {
+    Arguments arguments = mit.arguments();
+    if (arguments.stream().map(ExpressionTree::symbolType).anyMatch(Type::isUnknown)) {
+      // method resolved but not all the parameters are
+      return;
+    }
+    ExpressionTree formatTree;
+    List<ExpressionTree> args;
+    // Check type of first argument:
+    if (arguments.get(0).symbolType().is(JAVA_LANG_STRING)) {
+      formatTree = arguments.get(0);
+      args = arguments.subList(1, arguments.size());
+    } else {
+      // format method with "Locale" first argument, skip that one.
+      formatTree = arguments.get(1);
+      args = arguments.subList(2, arguments.size());
+    }
+    if (formatTree.is(Tree.Kind.STRING_LITERAL)) {
+      String formatString = LiteralUtils.trimQuotes(((LiteralTree) formatTree).value());
+      if (isMessageFormat) {
+        handleMessageFormat(mit, formatString, args);
+      } else {
+        handlePrintfFormat(mit, formatString, args);
+      }
+    } else {
+      handleOtherFormatTree(mit, formatTree);
+    }
+  }
+
