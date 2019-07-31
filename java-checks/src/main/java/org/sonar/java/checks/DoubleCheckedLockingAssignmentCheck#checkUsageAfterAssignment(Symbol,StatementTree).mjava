@@ -1,0 +1,20 @@
+  private void checkUsageAfterAssignment(Symbol symbol, StatementTree thenStatement) {
+    if (thenStatement.is(Tree.Kind.BLOCK)) {
+      List<StatementTree> body = ((BlockTree) thenStatement).body();
+      AssignmentExpressionTree foundAssignment = null;
+      UsageVisitor usageVisitor = new UsageVisitor(symbol);
+      for (StatementTree statementTree : body) {
+        if (foundAssignment != null) {
+          statementTree.accept(usageVisitor);
+        }
+        AssignmentExpressionTree assignment = isAssignmentToSymbol(statementTree, symbol);
+        if (assignment != null) {
+          foundAssignment = assignment;
+        }
+      }
+      if (foundAssignment != null && !usageVisitor.usages.isEmpty()) {
+        reportIssue(foundAssignment, "Fully initialize \"" + symbol.name() + "\" before assigning it.", usageVisitor.locations(), null);
+      }
+    }
+  }
+

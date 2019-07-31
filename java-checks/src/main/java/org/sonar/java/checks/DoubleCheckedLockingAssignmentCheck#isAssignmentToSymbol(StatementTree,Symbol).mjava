@@ -1,0 +1,15 @@
+  @CheckForNull
+  private AssignmentExpressionTree isAssignmentToSymbol(StatementTree statementTree, Symbol symbol) {
+    if (!statementTree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      return null;
+    }
+    ExpressionTree expr = ((ExpressionStatementTree) statementTree).expression();
+    if (expr.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) expr;
+      if (symbol.equals(symbol(assignment.variable()))) {
+        return assignment;
+      }
+    }
+    return null;
+  }
+

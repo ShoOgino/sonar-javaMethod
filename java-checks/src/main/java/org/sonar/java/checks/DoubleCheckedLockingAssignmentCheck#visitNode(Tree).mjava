@@ -1,0 +1,29 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+    IfStatementTree ifStatementTree = (IfStatementTree) tree;
+    StatementTree body = getOnlyStatement(ifStatementTree);
+    if (body == null || !body.is(Tree.Kind.SYNCHRONIZED_STATEMENT)) {
+      return;
+    }
+    List<StatementTree> synchronizedBody = ((SynchronizedStatementTree) body).block().body();
+    if (synchronizedBody.isEmpty()) {
+      return;
+    }
+    Symbol symbol = nullCheck(ifStatementTree.condition());
+    if (symbol == null || !symbol.owner().isTypeSymbol()) {
+      return;
+    }
+    for (StatementTree statementTree : synchronizedBody) {
+      if (statementTree.is(Tree.Kind.IF_STATEMENT)) {
+        IfStatementTree secondIf = (IfStatementTree) statementTree;
+        Symbol secondIfSymbol = nullCheck(secondIf.condition());
+        if (symbol.equals(secondIfSymbol)) {
+          checkUsageAfterAssignment(symbol, secondIf.thenStatement());
+        }
+      }
+    }
+  }
+

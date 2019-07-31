@@ -1,0 +1,15 @@
+  @CheckForNull
+  private static StatementTree getOnlyStatement(IfStatementTree ifStatementTree) {
+    StatementTree thenStatement = ifStatementTree.thenStatement();
+    if (thenStatement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      return thenStatement;
+    }
+    if (thenStatement.is(Tree.Kind.BLOCK)) {
+      BlockTree blockTree = (BlockTree) thenStatement;
+      if (blockTree.body().size() == 1) {
+        return blockTree.body().get(0);
+      }
+    }
+    return null;
+  }
+

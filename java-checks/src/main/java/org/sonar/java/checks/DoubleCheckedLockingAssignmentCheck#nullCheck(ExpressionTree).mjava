@@ -1,0 +1,19 @@
+  @CheckForNull
+  private static Symbol nullCheck(ExpressionTree tree) {
+    if (!tree.is(Tree.Kind.EQUAL_TO)) {
+      return null;
+    }
+    BinaryExpressionTree equalTo = (BinaryExpressionTree) tree;
+    ExpressionTree lhs = equalTo.leftOperand();
+    ExpressionTree rhs = equalTo.rightOperand();
+    Symbol symbol = symbol(lhs);
+    if (symbol != null && rhs.is(Tree.Kind.NULL_LITERAL)) {
+      return symbol;
+    }
+    symbol = symbol(rhs);
+    if (symbol != null && lhs.is(Tree.Kind.NULL_LITERAL)) {
+      return symbol;
+    }
+    return null;
+  }
+

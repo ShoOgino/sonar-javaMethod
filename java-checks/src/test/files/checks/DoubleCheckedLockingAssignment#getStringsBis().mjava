@@ -1,0 +1,14 @@
+  public List<String> getStringsBis() {
+    if (null == strings) {
+      synchronized (this) {
+        if (null == this.strings) {
+          strings = new ArrayList<>();  // Noncompliant [[sc=11;ec=38;secondary=28,30]] {{Fully initialize "strings" before assigning it.}}
+          strings.add("Hello");
+          System.out.println();
+          strings.add("World");
+        }
+      }
+    }
+    return strings;
+  }
+

@@ -1,0 +1,17 @@
+  public List<String> lambda() {
+    if (strings == null) {
+      synchronized (this) {
+        if (strings == null) {
+          strings = new ArrayList<>();  // Compliant
+          Runnable run = () -> System.out.println(strings);
+          run = new Runnable() {
+            public void run() {
+              System.out.println(strings);
+            }
+          };
+        }
+      }
+    }
+    return strings;
+  }
+
