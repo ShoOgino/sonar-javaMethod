@@ -3,9 +3,7 @@
       MethodInvocationTree invocation = (MethodInvocationTree) tree;
       if (STRING_LENGTH.matches(invocation) && invocation.methodSelect().is(Kind.MEMBER_SELECT)) {
         ExpressionTree expr = ((MemberSelectExpressionTree) invocation.methodSelect()).expression();
-        if (expr.is(Kind.IDENTIFIER)) {
-          return ((IdentifierTree) str).symbol().equals(((IdentifierTree) expr).symbol());
-        }
+        return expr.is(Kind.IDENTIFIER) && ((IdentifierTree) str).symbol().equals(((IdentifierTree) expr).symbol());
       }
     }
     return false;
