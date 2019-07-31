@@ -1,4 +1,7 @@
   private static boolean isDynamicString(ExpressionTree arg) {
+    if (arg.is(Tree.Kind.PLUS_ASSIGNMENT)) {
+      return ConstantUtils.resolveAsConstant(((AssignmentExpressionTree)arg).expression()) == null;
+    }
     if (arg.is(Tree.Kind.IDENTIFIER)) {
       Symbol symbol = ((IdentifierTree) arg).symbol();
       ExpressionTree initializerOrExpression = getInitializerOrExpression(symbol.declaration());
