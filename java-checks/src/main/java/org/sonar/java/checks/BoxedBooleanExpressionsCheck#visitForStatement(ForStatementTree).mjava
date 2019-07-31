@@ -1,0 +1,11 @@
+  @Override
+  public void visitForStatement(ForStatementTree tree) {
+    if (tree.condition() != null && !isSafeBooleanExpression(tree.condition())) {
+      scan(tree.initializer());
+      scan(tree.update());
+      scan(tree.statement());
+    } else {
+      super.visitForStatement(tree);
+    }
+  }
+

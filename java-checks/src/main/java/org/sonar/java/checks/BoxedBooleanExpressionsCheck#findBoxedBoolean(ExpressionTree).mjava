@@ -1,0 +1,20 @@
+  @CheckForNull
+  private static ExpressionTree findBoxedBoolean(ExpressionTree tree) {
+    if (tree.symbolType().is(BOOLEAN) && !isOptionalInvocation(tree)) {
+      return tree;
+    }
+    if (tree.is(Kind.LOGICAL_COMPLEMENT)) {
+      return findBoxedBoolean(((UnaryExpressionTree) tree).expression());
+    }
+    if (tree instanceof BinaryExpressionTree) {
+      BinaryExpressionTree expr = (BinaryExpressionTree) tree;
+      if (findBoxedBoolean(expr.leftOperand()) != null && expr.rightOperand().symbolType().isPrimitive(Primitives.BOOLEAN)) {
+        return expr.leftOperand();
+      }
+      if (findBoxedBoolean(expr.rightOperand()) != null && expr.leftOperand().symbolType().isPrimitive(Primitives.BOOLEAN) && !isNullCheck(expr.leftOperand())) {
+        return expr.rightOperand();
+      }
+    }
+    return null;
+  }
+
