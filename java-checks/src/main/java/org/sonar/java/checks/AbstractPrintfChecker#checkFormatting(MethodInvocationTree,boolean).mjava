@@ -11,12 +11,20 @@
       formatTree = arguments.get(0);
       args = arguments.subList(1, arguments.size());
     } else {
-      // format method with "Locale" first argument, skip that one.
+      if (arguments.size() < 2) {
+        // probably use a lambda or any other supplier form to get a message
+        return;
+      }
+      // format method with "Locale" or "Level" as first argument, skip that one.
       formatTree = arguments.get(1);
       args = arguments.subList(2, arguments.size());
     }
     if (formatTree.is(Tree.Kind.STRING_LITERAL)) {
       String formatString = LiteralUtils.trimQuotes(((LiteralTree) formatTree).value());
+      if (mit.symbol().owner().type().is(ORG_APACHE_LOGGING_LOG4J_LOGGER)) {
+        // Log4J supports both approaches
+        isMessageFormat = formatString.contains("{}");
+      }
       if (isMessageFormat) {
         handleMessageFormat(mit, formatString, args);
       } else {
