@@ -1,0 +1,8 @@
+  private static Tree parseTypeArgument(String s) {
+    CompilationUnitTree compilationUnit = (CompilationUnitTree) JavaParser.createParser().parse("class C { List<" + s + "> f; }");
+    ClassTree cls = (ClassTree) compilationUnit.types().get(0);
+    VariableTree field = (VariableTree) cls.members().get(0);
+    ParameterizedTypeTree type = (ParameterizedTypeTree) field.type();
+    return type.typeArguments().get(0);
+  }
+
