@@ -1,0 +1,36 @@
+  public void doFilter(ServletRequest servletRequest) { // Noncompliant {{Refactor this method to reduce its Cognitive Complexity from 13 to the 0 allowed.}}
+
+    if (consumedByStaticFile) {                             // 1
+      return;
+    }
+
+    try {
+
+    } catch (HaltException halt) {                          // 1
+
+    } catch (Exception generalException) {                  // 1
+
+    }
+
+    if (body.notSet() && responseWrapper.isRedirected()) {  // 2
+      body.set("");
+    }
+
+    if (body.notSet() && hasOtherHandlers) {                // 2
+      if (servletRequest instanceof HttpRequestWrapper) {   // 2 (nesting=1)
+        ((HttpRequestWrapper) servletRequest).notConsumed(true);
+        return;
+      }
+    }
+
+    if (body.notSet() && !externalContainer) {               // 2
+      LOG.info("The requested route [" + uri + "] has not been mapped in Spark");
+    }
+
+    if (body.isSet()) {                                      // 1
+      body.serializeTo(httpResponse, serializerChain, httpRequest);
+    } else if (chain != null) {                              // 1
+      chain.doFilter(httpRequest, httpResponse);
+    }
+  }
+
