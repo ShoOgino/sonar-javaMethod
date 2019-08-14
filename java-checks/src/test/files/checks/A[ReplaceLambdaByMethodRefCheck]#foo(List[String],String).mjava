@@ -1,0 +1,13 @@
+  void foo(List<String> list, String a) {
+    list.stream().map(String::toLowerCase).close();
+
+    list.stream().map(s -> s.toLowerCase()).close(); // Noncompliant
+    list.stream().map(s -> { return s.toLowerCase(); }).close(); // Noncompliant
+
+    list.stream().map(s -> new String()).close(); // Compliant
+    list.stream().map(s -> a.toLowerCase()).close(); // Compliant
+    list.stream().map(s -> s.toLowerCase().toUpperCase()).close(); // Compliant
+    list.stream().forEach(s -> fun()); // Compliant
+    list.stream().reduce((x, y) -> x.toLowerCase()); // Compliant
+  }
+
