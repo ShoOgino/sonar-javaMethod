@@ -6,6 +6,11 @@
       public boolean reportAnalysisError(RecognitionException re, InputFile inputFile) {
         return false;
       }
+
+      @Override
+      public void addAnalysisError(AnalysisError analysisError) {
+        Fail.fail(String.format("Should not fail analysis (%s)", analysisError.getKind().name()));
+      }
     };
     sonarComponents.setSensorContext(context);
     context.fileSystem().add(inputFile);
