@@ -1,0 +1,18 @@
+  @Nullable
+  private TypeArgumentListTreeImpl convertTypeArguments(List list) {
+    if (list.isEmpty()) {
+      return null;
+    }
+    ASTNode last = (ASTNode) list.get(list.size() - 1);
+    int tokenIndex = tokenManager.firstIndexAfter(last, ANY_TOKEN);
+    while (tokenManager.get(tokenIndex).isComment()) {
+      tokenIndex++;
+    }
+    return convertTypeArguments(
+      firstTokenBefore((ASTNode) list.get(0), TerminalTokens.TokenNameLESS),
+      list,
+      // TerminalTokens.TokenNameUNSIGNED_RIGHT_SHIFT vs TerminalTokens.TokenNameGREATER
+      createSpecialToken(tokenIndex)
+    );
+  }
+

@@ -1,0 +1,17 @@
+  private List<SyntaxTrivia> collectComments(int tokenIndex) {
+    int commentIndex = tokenIndex;
+    while (commentIndex > 0 && tokenManager.get(commentIndex - 1).isComment()) {
+      commentIndex--;
+    }
+    List<SyntaxTrivia> comments = new ArrayList<>();
+    for (int i = commentIndex; i < tokenIndex; i++) {
+      Token t = tokenManager.get(i);
+      comments.add(new InternalSyntaxTrivia(
+        t.toString(tokenManager.getSource()),
+        compilationUnit.getLineNumber(t.originalStart),
+        compilationUnit.getColumnNumber(t.originalStart)
+      ));
+    }
+    return comments;
+  }
+

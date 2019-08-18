@@ -1,0 +1,14 @@
+  private InternalSyntaxToken createSpecialToken(int tokenIndex) {
+    Token t = tokenManager.get(tokenIndex);
+    List<SyntaxTrivia> comments = t.tokenType == TerminalTokens.TokenNameGREATER
+      ? collectComments(tokenIndex)
+      : Collections.emptyList();
+    return new InternalSyntaxToken(
+      compilationUnit.getLineNumber(t.originalEnd),
+      compilationUnit.getColumnNumber(t.originalEnd),
+      ">",
+      comments,
+      0, 0, false
+    );
+  }
+

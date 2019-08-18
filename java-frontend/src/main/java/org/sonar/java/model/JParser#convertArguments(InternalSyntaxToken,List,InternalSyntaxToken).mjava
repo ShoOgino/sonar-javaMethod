@@ -1,0 +1,16 @@
+  private ArgumentListTreeImpl convertArguments(
+    InternalSyntaxToken openParen,
+    List list,
+    InternalSyntaxToken closeParen
+  ) {
+    ArgumentListTreeImpl arguments = new ArgumentListTreeImpl(new ArrayList<>(), new ArrayList<>()).complete(openParen, closeParen);
+    for (int i = 0; i < list.size(); i++) {
+      Expression o = (Expression) list.get(i);
+      arguments.add(convertExpression(o));
+      if (i < list.size() - 1) {
+        arguments.separators().add(firstTokenAfter(o, TerminalTokens.TokenNameCOMMA));
+      }
+    }
+    return arguments;
+  }
+

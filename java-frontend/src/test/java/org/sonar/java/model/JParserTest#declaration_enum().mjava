@@ -1,0 +1,17 @@
+  @Test
+  public void declaration_enum() {
+    test("enum E { C1 , C2 }");
+    test("enum E { C1 , C2 ; }");
+
+    test("enum E { C() }");
+    test("enum E { C { } }");
+
+    CompilationUnitTree cu = test("enum E { C }");
+    ClassTree t = (ClassTree) cu.types().get(0);
+    EnumConstantTree c = (EnumConstantTree) t.members().get(0);
+    assertSame(
+      c.simpleName(),
+      c.initializer().identifier()
+    );
+  }
+

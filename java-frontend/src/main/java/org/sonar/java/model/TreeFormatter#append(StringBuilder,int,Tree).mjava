@@ -1,0 +1,33 @@
+  private void append(StringBuilder out, int indent, Tree node) {
+    for (int i = 0; i < indent; i++) {
+      out.append(' ');
+    }
+    out.append(node.kind());
+
+    if (node.is(Tree.Kind.TRIVIA)) {
+      SyntaxTrivia trivia = (SyntaxTrivia) node;
+      out.append(' ').append(trivia.startLine()).append(':').append(trivia.column());
+      out.append(' ').append(trivia.comment());
+
+    } else if (node.is(Tree.Kind.TOKEN)) {
+      SyntaxToken token = (SyntaxToken) node;
+      out.append(' ').append(token.line()).append(':').append(token.column());
+      out.append(' ').append(token.text());
+
+    } else if (node.is(Tree.Kind.IDENTIFIER)) {
+      out.append(" name=").append(((IdentifierTree) node).name());
+    }
+
+    out.append('\n');
+    indent += 2;
+
+    Iterator<? extends Tree> i = iteratorFor(node);
+    while (i.hasNext()) {
+      Tree child = i.next();
+      if (child.is(Tree.Kind.TOKEN) && !showTokens) {
+        continue;
+      }
+      append(out, indent, child);
+    }
+  }
+

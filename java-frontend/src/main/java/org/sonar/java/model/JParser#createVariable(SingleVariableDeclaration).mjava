@@ -1,0 +1,28 @@
+  private VariableTreeImpl createVariable(SingleVariableDeclaration e) {
+    // TODO are extraDimensions and varargs mutually exclusive?
+    TypeTree type = convertType(e.getType());
+    type = applyExtraDimensions(type, e.extraDimensions());
+    if (e.isVarargs()) {
+      type = new JavaTree.ArrayTypeTreeImpl(
+        type,
+        (List) convertAnnotations(e.varargsAnnotations()),
+        firstTokenAfter(e.getType(), TerminalTokens.TokenNameELLIPSIS)
+      );
+    }
+
+    VariableTreeImpl t = new VariableTreeImpl(
+      e.isVarargs(),
+      convertModifiers(e.modifiers()),
+      type,
+      convertSimpleName(e.getName())
+    );
+    if (e.getInitializer() != null) {
+      t.completeTypeAndInitializer(
+        t.type(),
+        firstTokenAfter(e.getName(), TerminalTokens.TokenNameEQUAL),
+        convertExpression(e.getInitializer())
+      );
+    }
+    return t;
+  }
+

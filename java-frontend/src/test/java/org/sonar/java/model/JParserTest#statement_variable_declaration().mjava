@@ -1,0 +1,12 @@
+  @Test
+  public void statement_variable_declaration() {
+    CompilationUnitTree t = test("class C { void m() { int a, b; } }");
+    ClassTree c = (ClassTree) t.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    BlockTree s = m.block();
+    assertNotNull(s);
+    VariableTree s1 = (VariableTree) s.body().get(0);
+    VariableTree s2 = (VariableTree) s.body().get(1);
+    assertSame(s1.type(), s2.type());
+  }
+

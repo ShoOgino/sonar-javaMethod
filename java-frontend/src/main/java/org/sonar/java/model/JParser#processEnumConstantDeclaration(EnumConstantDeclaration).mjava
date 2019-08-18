@@ -1,0 +1,57 @@
+  private EnumConstantTreeImpl processEnumConstantDeclaration(EnumConstantDeclaration e) {
+    final int openParTokenIndex = firstTokenIndexAfter(e.getName());
+    final InternalSyntaxToken openParToken;
+    final InternalSyntaxToken closeParToken;
+    if (tokenManager.get(openParTokenIndex).tokenType == TerminalTokens.TokenNameLPAREN) {
+      openParToken = createSyntaxToken(openParTokenIndex);
+      closeParToken = e.arguments().isEmpty()
+        ? firstTokenAfter(e.getName(), TerminalTokens.TokenNameRPAREN)
+        : firstTokenAfter((ASTNode) e.arguments().get(e.arguments().size() - 1), TerminalTokens.TokenNameRPAREN);
+    } else {
+      openParToken = null;
+      closeParToken = null;
+    }
+
+    final ArgumentListTreeImpl arguments = convertArguments(openParToken, e.arguments(), closeParToken);
+    ClassTreeImpl classBody = null;
+    if (e.getAnonymousClassDeclaration() != null) {
+      List<Tree> members = new ArrayList<>();
+      for (Object o : e.getAnonymousClassDeclaration().bodyDeclarations()) {
+        processBodyDeclaration((BodyDeclaration) o, members);
+      }
+      classBody = new ClassTreeImpl(
+        Tree.Kind.CLASS,
+        firstTokenIn(e.getAnonymousClassDeclaration(), TerminalTokens.TokenNameLBRACE),
+        members,
+        lastTokenIn(e.getAnonymousClassDeclaration(), TerminalTokens.TokenNameRBRACE)
+      );
+    }
+
+    final int separatorTokenIndex = firstTokenIndexAfter(e);
+    final InternalSyntaxToken separatorToken;
+    switch (tokenManager.get(separatorTokenIndex).tokenType) {
+      default:
+        throw new IllegalStateException();
+      case TerminalTokens.TokenNameCOMMA:
+      case TerminalTokens.TokenNameSEMICOLON:
+        separatorToken = createSyntaxToken(separatorTokenIndex);
+        break;
+      case TerminalTokens.TokenNameRBRACE:
+        separatorToken = null;
+        break;
+    }
+
+    IdentifierTree identifier = convertSimpleName(e.getName());
+    return new EnumConstantTreeImpl(
+      convertModifiers(e.modifiers()),
+      identifier,
+      new NewClassTreeImpl(
+        arguments,
+        classBody
+      ).completeWithIdentifier(
+        identifier
+      ),
+      separatorToken
+    );
+  }
+

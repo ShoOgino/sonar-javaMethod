@@ -1,0 +1,163 @@
+  private TypeTree convertType(@Nullable Type node) {
+    if (node == null) {
+      // e.g. return type of constructor
+      return null;
+    }
+    switch (node.getNodeType()) {
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
+      case ASTNode.PRIMITIVE_TYPE: {
+        PrimitiveType e = (PrimitiveType) node;
+        final JavaTree.PrimitiveTypeTreeImpl t;
+        switch (e.getPrimitiveTypeCode().toString()) {
+          default:
+            throw new IllegalStateException(e.getPrimitiveTypeCode().toString());
+          case "byte":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamebyte));
+            break;
+          case "short":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNameshort));
+            break;
+          case "char":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamechar));
+            break;
+          case "int":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNameint));
+            break;
+          case "long":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamelong));
+            break;
+          case "float":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamefloat));
+            break;
+          case "double":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamedouble));
+            break;
+          case "boolean":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNameboolean));
+            break;
+          case "void":
+            t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamevoid));
+            break;
+        }
+        t.complete(
+          convertAnnotations(e.annotations())
+        );
+        return t;
+      }
+      case ASTNode.SIMPLE_TYPE: {
+        SimpleType e = (SimpleType) node;
+        List<AnnotationTree> annotations = new ArrayList<>();
+        for (Object o : e.annotations()) {
+          annotations.add((AnnotationTree) convertExpression(
+            ((Annotation) o)
+          ));
+        }
+        JavaTree.AnnotatedTypeTree t = (JavaTree.AnnotatedTypeTree) convertExpression(e.getName());
+        if (t instanceof IdentifierTree && ((IdentifierTree) t).name().equals("var")) {
+          // TODO can't be annotated?
+          return new VarTypeTreeImpl((InternalSyntaxToken) ((IdentifierTree) t).identifierToken());
+        }
+        t.complete(annotations);
+        return t;
+      }
+      case ASTNode.UNION_TYPE: {
+        UnionType e = (UnionType) node;
+        TypeUnionListTreeImpl alternatives = new TypeUnionListTreeImpl(
+          new ArrayList<>(), new ArrayList<>()
+        );
+        for (int i = 0; i < e.types().size(); i++) {
+          Type o = (Type) e.types().get(i);
+          alternatives.add(convertType(o));
+          if (i < e.types().size() - 1) {
+            alternatives.separators().add(firstTokenAfter(o, TerminalTokens.TokenNameOR));
+          }
+        }
+        return new JavaTree.UnionTypeTreeImpl(alternatives);
+      }
+      case ASTNode.ARRAY_TYPE: {
+        ArrayType e = (ArrayType) node;
+        TypeTree t = convertType(e.getElementType());
+        int tokenIndex = tokenManager.firstIndexAfter(e.getElementType(), TerminalTokens.TokenNameLBRACKET);
+        for (int i = 0; i < e.dimensions().size(); i++) {
+          if (i > 0) {
+            tokenIndex = nextTokenIndex(tokenIndex, TerminalTokens.TokenNameLBRACKET);
+          }
+          t = new JavaTree.ArrayTypeTreeImpl(
+            t,
+            (List) convertAnnotations(((Dimension) e.dimensions().get(i)).annotations()),
+            createSyntaxToken(tokenIndex),
+            createSyntaxToken(nextTokenIndex(tokenIndex, TerminalTokens.TokenNameRBRACKET))
+          );
+        }
+        return t;
+      }
+      case ASTNode.PARAMETERIZED_TYPE: {
+        ParameterizedType e = (ParameterizedType) node;
+        int pos = e.getStartPosition() + e.getLength() - 1;
+        return new JavaTree.ParameterizedTypeTreeImpl(
+          convertType(e.getType()),
+          convertTypeArguments(
+            firstTokenAfter(e.getType(), TerminalTokens.TokenNameLESS),
+            e.typeArguments(),
+            new InternalSyntaxToken(
+              compilationUnit.getLineNumber(pos),
+              compilationUnit.getColumnNumber(pos),
+              ">",
+              /* TODO */ Collections.emptyList(),
+              0, 0, false
+            )
+          )
+        );
+      }
+      case ASTNode.QUALIFIED_TYPE: {
+        QualifiedType e = (QualifiedType) node;
+        MemberSelectExpressionTreeImpl t = new MemberSelectExpressionTreeImpl(
+          (ExpressionTree) convertType(e.getQualifier()),
+          firstTokenAfter(e.getQualifier(), TerminalTokens.TokenNameDOT),
+          convertSimpleName(e.getName())
+        );
+        ((IdentifierTreeImpl) t.identifier()).complete(
+          convertAnnotations(e.annotations())
+        );
+        return t;
+      }
+      case ASTNode.NAME_QUALIFIED_TYPE: {
+        NameQualifiedType e = (NameQualifiedType) node;
+        MemberSelectExpressionTreeImpl t = new MemberSelectExpressionTreeImpl(
+          convertExpression(e.getQualifier()),
+          firstTokenAfter(e.getQualifier(), TerminalTokens.TokenNameDOT),
+          convertSimpleName(e.getName())
+        );
+        ((IdentifierTreeImpl) t.identifier()).complete(
+          convertAnnotations(e.annotations())
+        );
+        return t;
+      }
+      case ASTNode.WILDCARD_TYPE: {
+        WildcardType e = (WildcardType) node;
+        final InternalSyntaxToken questionToken = e.annotations().isEmpty()
+          ? firstTokenIn(e, TerminalTokens.TokenNameQUESTION)
+          : firstTokenAfter((ASTNode) e.annotations().get(e.annotations().size() - 1), TerminalTokens.TokenNameQUESTION);
+        JavaTree.WildcardTreeImpl t;
+        if (e.getBound() == null) {
+          t = new JavaTree.WildcardTreeImpl(
+            questionToken
+          );
+        } else {
+          t = new JavaTree.WildcardTreeImpl(
+            e.isUpperBound() ? Tree.Kind.EXTENDS_WILDCARD : Tree.Kind.SUPER_WILDCARD,
+            e.isUpperBound() ? firstTokenBefore(e.getBound(), TerminalTokens.TokenNameextends) : firstTokenBefore(e.getBound(), TerminalTokens.TokenNamesuper),
+            convertType(e.getBound())
+          ).complete(
+            questionToken
+          );
+        }
+        t.complete(
+          convertAnnotations(e.annotations())
+        );
+        return t;
+      }
+    }
+  }
+

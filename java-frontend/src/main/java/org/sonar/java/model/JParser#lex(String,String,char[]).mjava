@@ -1,0 +1,28 @@
+  private static List<Token> lex(String version, String unitName, char[] sourceChars) {
+    List<Token> tokens = new ArrayList<>();
+    Scanner scanner = new Scanner(
+      true,
+      false,
+      false,
+      CompilerOptions.versionToJdkLevel(version),
+      null,
+      null,
+      false
+    );
+    scanner.fakeInModule = "module-info.java".equals(unitName);
+    scanner.setSource(sourceChars);
+    while (true) {
+      try {
+        int tokenType = scanner.getNextToken();
+        Token token = Token.fromCurrent(scanner, tokenType);
+        tokens.add(token);
+        if (tokenType == TerminalTokens.TokenNameEOF) {
+          break;
+        }
+      } catch (InvalidInputException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+    return tokens;
+  }
+

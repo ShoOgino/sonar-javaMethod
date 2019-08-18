@@ -1,0 +1,23 @@
+  private ModuleNameTreeImpl convertModuleName(Name node) {
+    switch (node.getNodeType()) {
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
+      case ASTNode.QUALIFIED_NAME: {
+        QualifiedName e = (QualifiedName) node;
+        ModuleNameTreeImpl t = convertModuleName(e.getQualifier());
+        t.add(
+          new IdentifierTreeImpl(firstTokenIn(e.getName(), TerminalTokens.TokenNameIdentifier))
+        );
+        return t;
+      }
+      case ASTNode.SIMPLE_NAME: {
+        SimpleName e = (SimpleName) node;
+        ModuleNameTreeImpl t = new ModuleNameTreeImpl(new ArrayList<>(), Collections.emptyList());
+        t.add(
+          new IdentifierTreeImpl(firstTokenIn(e, TerminalTokens.TokenNameIdentifier))
+        );
+        return t;
+      }
+    }
+  }
+

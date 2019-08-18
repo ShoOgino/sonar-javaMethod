@@ -1,0 +1,22 @@
+  @Nullable
+  private ModuleDeclarationTree convertModuleDeclaration(@Nullable ModuleDeclaration e) {
+    if (e == null) {
+      return null;
+    }
+    List<ModuleDirectiveTree> moduleDirectives = new ArrayList<>();
+    for (Object o : e.moduleStatements()) {
+      moduleDirectives.add(
+        convertModuleDirective((ModuleDirective) o)
+      );
+    }
+    return new ModuleDeclarationTreeImpl(
+      convertAnnotations(e.annotations()),
+      e.isOpen() ? firstTokenIn(e, TerminalTokens.TokenNameopen) : null,
+      firstTokenBefore(e.getName(), TerminalTokens.TokenNamemodule),
+      convertModuleName(e.getName()),
+      firstTokenAfter(e.getName(), TerminalTokens.TokenNameLBRACE),
+      moduleDirectives,
+      lastTokenIn(e, TerminalTokens.TokenNameRBRACE)
+    );
+  }
+

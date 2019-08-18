@@ -1,0 +1,27 @@
+  private InternalSyntaxToken createSyntaxToken(int tokenIndex) {
+    Token t = tokenManager.get(tokenIndex);
+    if (t.tokenType == TerminalTokens.TokenNameEOF) {
+      if (t.originalStart == 0) {
+        return new InternalSyntaxToken(1, 0, "", collectComments(tokenIndex), 0, 0, true);
+      }
+      final int position = t.originalStart - 1;
+      final char c = tokenManager.getSource().charAt(position);
+      int line = compilationUnit.getLineNumber(position);
+      int column = compilationUnit.getColumnNumber(position);
+      if (c == '\n' || c == '\r') {
+        line++;
+        column = 0;
+      } else {
+        column++;
+      }
+      return new InternalSyntaxToken(line, column, "", collectComments(tokenIndex), 0, 0, true);
+    }
+    return new InternalSyntaxToken(
+      compilationUnit.getLineNumber(t.originalStart),
+      compilationUnit.getColumnNumber(t.originalStart),
+      t.toString(tokenManager.getSource()),
+      collectComments(tokenIndex),
+      0, 0, false
+    );
+  }
+

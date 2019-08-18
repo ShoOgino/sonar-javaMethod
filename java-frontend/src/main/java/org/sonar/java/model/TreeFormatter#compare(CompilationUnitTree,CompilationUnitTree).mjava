@@ -1,0 +1,18 @@
+  /**
+   * Only for testing.
+   */
+  @Deprecated
+  public static void compare(CompilationUnitTree newTree, CompilationUnitTree oldTree) {
+    String actual = new TreeFormatter().toString(newTree);
+    String expected = new TreeFormatter().toString(oldTree);
+    if (!expected.equals(actual)) {
+      try {
+        throw (AssertionError) Class.forName("org.junit.ComparisonFailure")
+          .getConstructor(String.class, String.class, String.class)
+          .newInstance("", expected, actual);
+      } catch (ReflectiveOperationException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+  }
+

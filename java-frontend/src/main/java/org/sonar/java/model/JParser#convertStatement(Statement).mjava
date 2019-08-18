@@ -1,0 +1,334 @@
+  private StatementTree convertStatement(@Nullable Statement node) {
+    if (node == null) {
+      // e.g. else-statement
+      return null;
+    }
+    switch (node.getNodeType()) {
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
+      case ASTNode.BLOCK:
+        return convertBlock((Block) node);
+      case ASTNode.EMPTY_STATEMENT: {
+        EmptyStatement e = (EmptyStatement) node;
+        return new EmptyStatementTreeImpl(
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.RETURN_STATEMENT: {
+        ReturnStatement e = (ReturnStatement) node;
+        return new ReturnStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamereturn),
+          convertExpression(e.getExpression()),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.FOR_STATEMENT: {
+        ForStatement e = (ForStatement) node;
+
+        StatementExpressionListTreeImpl forInitStatement = new StatementExpressionListTreeImpl(new ArrayList<>(), new ArrayList<>());
+        for (int i = 0; i < e.initializers().size(); i++) {
+          Expression o = (Expression) e.initializers().get(i);
+          if (i > 0) {
+            forInitStatement.separators().add(firstTokenBefore(o, TerminalTokens.TokenNameCOMMA));
+          }
+          if (ASTNode.VARIABLE_DECLARATION_EXPRESSION == o.getNodeType()) {
+            addVariableToList(
+              (VariableDeclarationExpression) o,
+              forInitStatement
+            );
+          } else {
+            forInitStatement.add(new ExpressionStatementTreeImpl(
+              convertExpression(o),
+              null
+            ));
+          }
+        }
+
+        StatementExpressionListTreeImpl forUpdateStatement = new StatementExpressionListTreeImpl(new ArrayList<>(), new ArrayList<>());
+        for (int i = 0; i < e.updaters().size(); i++) {
+          Expression o = (Expression) e.updaters().get(i);
+          if (i > 0) {
+            forUpdateStatement.separators().add(firstTokenBefore(o, TerminalTokens.TokenNameCOMMA));
+          }
+          forUpdateStatement.add(new ExpressionStatementTreeImpl(
+            convertExpression(o),
+            null
+          ));
+        }
+
+        final int firstSemicolonTokenIndex = e.initializers().isEmpty()
+          ? tokenManager.firstIndexIn(e, TerminalTokens.TokenNameSEMICOLON)
+          : tokenManager.firstIndexAfter((ASTNode) e.initializers().get(e.initializers().size() - 1), TerminalTokens.TokenNameSEMICOLON);
+        final int secondSemicolonTokenIndex = e.getExpression() == null
+          ? nextTokenIndex(firstSemicolonTokenIndex, TerminalTokens.TokenNameSEMICOLON)
+          : tokenManager.firstIndexAfter(e.getExpression(), TerminalTokens.TokenNameSEMICOLON);
+
+        return new ForStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamefor),
+          firstTokenIn(e, TerminalTokens.TokenNameLPAREN),
+          forInitStatement,
+          createSyntaxToken(firstSemicolonTokenIndex),
+          convertExpression(e.getExpression()),
+          createSyntaxToken(secondSemicolonTokenIndex),
+          forUpdateStatement,
+          firstTokenBefore(e.getBody(), TerminalTokens.TokenNameRPAREN),
+          convertStatement(e.getBody())
+        );
+      }
+      case ASTNode.WHILE_STATEMENT: {
+        WhileStatement e = (WhileStatement) node;
+        return new WhileStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamewhile),
+          firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+          convertStatement(e.getBody())
+        );
+      }
+      case ASTNode.IF_STATEMENT: {
+        IfStatement e = (IfStatement) node;
+        if (e.getElseStatement() != null) {
+          return new IfStatementTreeImpl(
+            firstTokenAfter(e.getThenStatement(), TerminalTokens.TokenNameelse),
+            convertStatement(e.getElseStatement())
+          ).complete(
+            firstTokenIn(e, TerminalTokens.TokenNameif),
+            firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+            convertExpression(e.getExpression()),
+            firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+            convertStatement(e.getThenStatement())
+          );
+        } else {
+          return new IfStatementTreeImpl(
+            firstTokenIn(e, TerminalTokens.TokenNameif),
+            firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+            convertExpression(e.getExpression()),
+            firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+            convertStatement(e.getThenStatement())
+          );
+        }
+      }
+      case ASTNode.BREAK_STATEMENT: {
+        BreakStatement e = (BreakStatement) node;
+        if (e.isImplicit()) {
+          return new ExpressionStatementTreeImpl(
+            convertExpression(e.getExpression()),
+            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+          );
+        }
+        return new BreakStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamebreak),
+          e.getExpression() == null ? convertSimpleName(e.getLabel()) : convertExpression(e.getExpression()),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.DO_STATEMENT: {
+        DoStatement e = (DoStatement) node;
+        return new DoWhileStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamedo),
+          convertStatement(e.getBody()),
+          firstTokenAfter(e.getBody(), TerminalTokens.TokenNamewhile),
+          firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.ASSERT_STATEMENT: {
+        AssertStatement e = (AssertStatement) node;
+        if (e.getMessage() != null) {
+          return new AssertStatementTreeImpl(
+            firstTokenBefore(e.getMessage(), TerminalTokens.TokenNameCOLON),
+            convertExpression(e.getMessage())
+          ).complete(
+            firstTokenIn(e, TerminalTokens.TokenNameassert),
+            convertExpression(e.getExpression()),
+            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+          );
+        } else {
+          return new AssertStatementTreeImpl(
+            firstTokenIn(e, TerminalTokens.TokenNameassert),
+            convertExpression(e.getExpression()),
+            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+          );
+        }
+      }
+      case ASTNode.SWITCH_STATEMENT: {
+        SwitchStatement e = (SwitchStatement) node;
+        return new SwitchStatementTreeImpl(new SwitchExpressionTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNameswitch),
+          firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameLBRACE),
+          convertSwitchStatements(e.statements()),
+          lastTokenIn(e, TerminalTokens.TokenNameRBRACE)
+        ));
+      }
+      case ASTNode.SYNCHRONIZED_STATEMENT: {
+        SynchronizedStatement e = (SynchronizedStatement) node;
+        return new SynchronizedStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamesynchronized),
+          firstTokenBefore(e.getExpression(), TerminalTokens.TokenNameLPAREN),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+          convertBlock(e.getBody())
+        );
+      }
+      case ASTNode.EXPRESSION_STATEMENT: {
+        ExpressionStatement e = (ExpressionStatement) node;
+        return new ExpressionStatementTreeImpl(
+          convertExpression(e.getExpression()),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.CONTINUE_STATEMENT: {
+        ContinueStatement e = (ContinueStatement) node;
+        return new ContinueStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamecontinue),
+          convertSimpleName(e.getLabel()),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.LABELED_STATEMENT: {
+        LabeledStatement e = (LabeledStatement) node;
+        return new LabeledStatementTreeImpl(
+          convertSimpleName(e.getLabel()),
+          firstTokenAfter(e.getLabel(), TerminalTokens.TokenNameCOLON),
+          convertStatement(e.getBody())
+        );
+      }
+      case ASTNode.ENHANCED_FOR_STATEMENT: {
+        EnhancedForStatement e = (EnhancedForStatement) node;
+        return new ForEachStatementImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamefor),
+          firstTokenBefore(e.getParameter(), TerminalTokens.TokenNameLPAREN),
+          createVariable(e.getParameter()),
+          firstTokenAfter(e.getParameter(), TerminalTokens.TokenNameCOLON),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameRPAREN),
+          convertStatement(e.getBody())
+        );
+      }
+      case ASTNode.THROW_STATEMENT: {
+        ThrowStatement e = (ThrowStatement) node;
+        return new ThrowStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNamethrow),
+          convertExpression(e.getExpression()),
+          firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.TRY_STATEMENT: {
+        TryStatement e = (TryStatement) node;
+
+        List<CatchTree> catches = new ArrayList<>();
+        for (Object o : e.catchClauses()) {
+          CatchClause e2 = (CatchClause) o;
+          catches.add(new CatchTreeImpl(
+            firstTokenIn(e2, TerminalTokens.TokenNamecatch),
+            firstTokenBefore(e2.getException(), TerminalTokens.TokenNameLPAREN),
+            createVariable(e2.getException()),
+            firstTokenAfter(e2.getException(), TerminalTokens.TokenNameRPAREN),
+            convertBlock(e2.getBody())
+          ));
+        }
+
+        ResourceListTreeImpl resources = new ResourceListTreeImpl(
+          new ArrayList<>(), new ArrayList<>()
+        );
+        for (int i = 0; i < e.resources().size(); i++) {
+          Expression o = (Expression) e.resources().get(i);
+          if (ASTNode.VARIABLE_DECLARATION_EXPRESSION == o.getNodeType()) {
+            addVariableToList(
+              (VariableDeclarationExpression) o,
+              resources
+            );
+          } else {
+            resources.add(convertExpression(o));
+          }
+          if (i < e.resources().size() - 1) {
+            resources.separators().add(firstTokenAfter(o, TerminalTokens.TokenNameSEMICOLON));
+          } else {
+            int tokenIndex = tokenManager.firstIndexBefore(e.getBody(), TerminalTokens.TokenNameRPAREN);
+            while (true) {
+              Token token;
+              do {
+                tokenIndex--;
+                token = tokenManager.get(tokenIndex);
+              } while (token.isComment());
+              if (token.tokenType == TerminalTokens.TokenNameSEMICOLON) {
+                resources.separators().add(
+                  createSyntaxToken(tokenIndex)
+                );
+              } else {
+                break;
+              }
+            }
+          }
+        }
+
+        return new TryStatementTreeImpl(
+          firstTokenIn(e, TerminalTokens.TokenNametry),
+          e.resources().isEmpty() ? null : firstTokenIn(e, TerminalTokens.TokenNameLPAREN),
+          resources,
+          e.resources().isEmpty() ? null : firstTokenBefore(e.getBody(), TerminalTokens.TokenNameRPAREN),
+          convertBlock(e.getBody()),
+          catches,
+          e.getFinally() == null ? null : firstTokenBefore(e.getFinally(), TerminalTokens.TokenNamefinally),
+          convertBlock(e.getFinally())
+        );
+      }
+      case ASTNode.TYPE_DECLARATION_STATEMENT: {
+        TypeDeclarationStatement e = (TypeDeclarationStatement) node;
+        return convertTypeDeclaration(e.getDeclaration());
+      }
+      case ASTNode.CONSTRUCTOR_INVOCATION: {
+        ConstructorInvocation e = (ConstructorInvocation) node;
+
+        ArgumentListTreeImpl arguments = convertArguments(
+          e.arguments().isEmpty() ? lastTokenIn(e, TerminalTokens.TokenNameLPAREN) : firstTokenBefore((ASTNode) e.arguments().get(0), TerminalTokens.TokenNameLPAREN),
+          e.arguments(),
+          lastTokenIn(e, TerminalTokens.TokenNameRPAREN)
+        );
+
+        return new ExpressionStatementTreeImpl(
+          new MethodInvocationTreeImpl(
+            new IdentifierTreeImpl(e.arguments().isEmpty()
+              ? lastTokenIn(e, TerminalTokens.TokenNamethis)
+              : firstTokenBefore((ASTNode) e.arguments().get(0), TerminalTokens.TokenNamethis)),
+            convertTypeArguments(e.typeArguments()),
+            arguments
+          ),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.SUPER_CONSTRUCTOR_INVOCATION: {
+        SuperConstructorInvocation e = (SuperConstructorInvocation) node;
+
+        ExpressionTree methodSelect = new IdentifierTreeImpl(firstTokenIn(e, TerminalTokens.TokenNamesuper));
+        if (e.getExpression() != null) {
+          methodSelect = new MemberSelectExpressionTreeImpl(
+            convertExpression(e.getExpression()),
+            firstTokenAfter(e.getExpression(), TerminalTokens.TokenNameDOT),
+            (IdentifierTreeImpl) methodSelect
+          );
+        }
+
+        ArgumentListTreeImpl arguments = convertArguments(
+          firstTokenIn(e, TerminalTokens.TokenNameLPAREN),
+          e.arguments(),
+          lastTokenIn(e, TerminalTokens.TokenNameRPAREN)
+        );
+
+        return new ExpressionStatementTreeImpl(
+          new MethodInvocationTreeImpl(
+            methodSelect,
+            convertTypeArguments(e.typeArguments()),
+            arguments
+          ),
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+    }
+  }
+

@@ -1,0 +1,42 @@
+  private ModifierTree convertModifier(IExtendedModifier node) {
+    switch (((ASTNode) node).getNodeType()) {
+      default:
+        throw new IllegalStateException();
+      case ASTNode.NORMAL_ANNOTATION:
+      case ASTNode.MARKER_ANNOTATION:
+      case ASTNode.SINGLE_MEMBER_ANNOTATION:
+        return (AnnotationTree) convertExpression((Expression) node);
+      case ASTNode.MODIFIER: {
+        org.eclipse.jdt.core.dom.Modifier e = (org.eclipse.jdt.core.dom.Modifier) node;
+        switch (e.getKeyword().toString()) {
+          default:
+            throw new IllegalStateException(e.getKeyword().toString());
+          case "public":
+            return new ModifierKeywordTreeImpl(Modifier.PUBLIC, firstTokenIn(e, TerminalTokens.TokenNamepublic));
+          case "protected":
+            return new ModifierKeywordTreeImpl(Modifier.PROTECTED, firstTokenIn(e, TerminalTokens.TokenNameprotected));
+          case "private":
+            return new ModifierKeywordTreeImpl(Modifier.PRIVATE, firstTokenIn(e, TerminalTokens.TokenNameprivate));
+          case "static":
+            return new ModifierKeywordTreeImpl(Modifier.STATIC, firstTokenIn(e, TerminalTokens.TokenNamestatic));
+          case "abstract":
+            return new ModifierKeywordTreeImpl(Modifier.ABSTRACT, firstTokenIn(e, TerminalTokens.TokenNameabstract));
+          case "final":
+            return new ModifierKeywordTreeImpl(Modifier.FINAL, firstTokenIn(e, TerminalTokens.TokenNamefinal));
+          case "native":
+            return new ModifierKeywordTreeImpl(Modifier.NATIVE, firstTokenIn(e, TerminalTokens.TokenNamenative));
+          case "synchronized":
+            return new ModifierKeywordTreeImpl(Modifier.SYNCHRONIZED, firstTokenIn(e, TerminalTokens.TokenNamesynchronized));
+          case "transient":
+            return new ModifierKeywordTreeImpl(Modifier.TRANSIENT, firstTokenIn(e, TerminalTokens.TokenNametransient));
+          case "volatile":
+            return new ModifierKeywordTreeImpl(Modifier.VOLATILE, firstTokenIn(e, TerminalTokens.TokenNamevolatile));
+          case "strictfp":
+            return new ModifierKeywordTreeImpl(Modifier.STRICTFP, firstTokenIn(e, TerminalTokens.TokenNamestrictfp));
+          case "default":
+            return new ModifierKeywordTreeImpl(Modifier.DEFAULT, firstTokenIn(e, TerminalTokens.TokenNamedefault));
+        }
+      }
+    }
+  }
+

@@ -1,0 +1,17 @@
+  private void addEmptyDeclarationsToList(int tokenIndex, List list) {
+    while (true) {
+      Token token;
+      do {
+        tokenIndex++;
+        token = tokenManager.get(tokenIndex);
+      } while (token.isComment());
+      if (token.tokenType == TerminalTokens.TokenNameSEMICOLON) {
+        list.add(
+          new EmptyStatementTreeImpl(createSyntaxToken(tokenIndex))
+        );
+      } else {
+        break;
+      }
+    }
+  }
+

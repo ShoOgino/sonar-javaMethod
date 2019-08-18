@@ -1,0 +1,53 @@
+  private CompilationUnitTree convertCompilationUnit(CompilationUnit e) {
+    PackageDeclarationTree packageDeclaration = null;
+    if (e.getPackage() != null) {
+      packageDeclaration = new JavaTree.PackageDeclarationTreeImpl(
+        convertAnnotations(e.getPackage().annotations()),
+        firstTokenIn(e.getPackage(), TerminalTokens.TokenNamepackage),
+        convertExpression(e.getPackage().getName()),
+        firstTokenIn(e.getPackage(), TerminalTokens.TokenNameSEMICOLON)
+      );
+    }
+
+    List<ImportClauseTree> imports = new ArrayList<>();
+    for (int i = 0; i < e.imports().size(); i++) {
+      ImportDeclaration e2 = (ImportDeclaration) e.imports().get(i);
+      ExpressionTree name = convertExpression(e2.getName());
+      if (e2.isOnDemand()) {
+        name = new MemberSelectExpressionTreeImpl(
+          name,
+          lastTokenIn(e2, TerminalTokens.TokenNameDOT),
+          new IdentifierTreeImpl(lastTokenIn(e2, TerminalTokens.TokenNameMULTIPLY))
+        );
+      }
+      imports.add(new JavaTree.ImportTreeImpl(
+        firstTokenIn(e2, TerminalTokens.TokenNameimport),
+        e2.isStatic() ? firstTokenIn(e2, TerminalTokens.TokenNamestatic) : null,
+        name,
+        lastTokenIn(e2, TerminalTokens.TokenNameSEMICOLON)
+      ));
+
+      addEmptyDeclarationsToList(
+        tokenManager.lastIndexIn(e2, TerminalTokens.TokenNameSEMICOLON),
+        imports
+      );
+    }
+
+    List<Tree> types = new ArrayList<>();
+    for (Object type : e.types()) {
+      processBodyDeclaration((AbstractTypeDeclaration) type, types);
+    }
+
+    if (e.imports().isEmpty() && e.types().isEmpty()) {
+      addEmptyDeclarationsToList(-1, imports);
+    }
+
+    return new JavaTree.CompilationUnitTreeImpl(
+      packageDeclaration,
+      imports,
+      types,
+      convertModuleDeclaration(compilationUnit.getModule()),
+      firstTokenAfter(e, TerminalTokens.TokenNameEOF)
+    );
+  }
+

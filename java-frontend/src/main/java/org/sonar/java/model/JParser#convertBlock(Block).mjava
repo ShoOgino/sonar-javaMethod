@@ -1,0 +1,16 @@
+  private BlockTreeImpl convertBlock(@Nullable Block e) {
+    if (e == null) {
+      // e.g. abstract method or finally
+      return null;
+    }
+    List<StatementTree> statements = new ArrayList<>();
+    for (Object o : e.statements()) {
+      addStatementToList((Statement) o, statements);
+    }
+    return new BlockTreeImpl(
+      firstTokenIn(e, TerminalTokens.TokenNameLBRACE),
+      statements,
+      lastTokenIn(e, TerminalTokens.TokenNameRBRACE)
+    );
+  }
+

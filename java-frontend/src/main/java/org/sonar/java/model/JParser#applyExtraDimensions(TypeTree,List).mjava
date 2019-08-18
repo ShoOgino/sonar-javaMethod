@@ -1,0 +1,16 @@
+  /**
+   * @param extraDimensions list of {@link org.eclipse.jdt.core.dom.Dimension}
+   */
+  private TypeTree applyExtraDimensions(TypeTree type, List extraDimensions) {
+    for (Object o : extraDimensions) {
+      Dimension e = (Dimension) o;
+      type = new JavaTree.ArrayTypeTreeImpl(
+        type,
+        (List) convertAnnotations(e.annotations()),
+        firstTokenIn(e, TerminalTokens.TokenNameLBRACKET),
+        firstTokenIn(e, TerminalTokens.TokenNameRBRACKET)
+      );
+    }
+    return type;
+  }
+

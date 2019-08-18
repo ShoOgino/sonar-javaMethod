@@ -1,0 +1,121 @@
+  private ClassTreeImpl convertTypeDeclaration(AbstractTypeDeclaration e) {
+    List<Tree> members = new ArrayList<>();
+    if (e.getNodeType() == ASTNode.ENUM_DECLARATION) {
+      for (Object o : ((EnumDeclaration) e).enumConstants()) {
+        members.add(processEnumConstantDeclaration((EnumConstantDeclaration) o));
+      }
+    }
+
+    // TODO try to simplify, note that type annotations can contain LBRACE
+    final int leftBraceTokenIndex;
+    if (e.getNodeType() == ASTNode.ENUM_DECLARATION) {
+      EnumDeclaration enumDeclaration = (EnumDeclaration) e;
+      if (!enumDeclaration.enumConstants().isEmpty()) {
+        leftBraceTokenIndex = tokenManager.firstIndexBefore((ASTNode) enumDeclaration.enumConstants().get(0), TerminalTokens.TokenNameLBRACE);
+      } else if (!enumDeclaration.bodyDeclarations().isEmpty()) {
+        leftBraceTokenIndex = tokenManager.firstIndexBefore((ASTNode) e.bodyDeclarations().get(0), TerminalTokens.TokenNameLBRACE);
+      } else {
+        leftBraceTokenIndex = tokenManager.lastIndexIn(e, TerminalTokens.TokenNameLBRACE);
+      }
+    } else if (!e.bodyDeclarations().isEmpty()) {
+      leftBraceTokenIndex = tokenManager.firstIndexBefore((ASTNode) e.bodyDeclarations().get(0), TerminalTokens.TokenNameLBRACE);
+    } else {
+      leftBraceTokenIndex = tokenManager.lastIndexIn(e, TerminalTokens.TokenNameLBRACE);
+    }
+    addEmptyDeclarationsToList(leftBraceTokenIndex, members);
+    for (Object o : e.bodyDeclarations()) {
+      processBodyDeclaration((BodyDeclaration) o, members);
+    }
+
+    Tree.Kind kind;
+    switch (e.getNodeType()) {
+      default:
+        throw new IllegalStateException();
+      case ASTNode.ENUM_DECLARATION:
+        kind = Tree.Kind.ENUM;
+        break;
+      case ASTNode.ANNOTATION_TYPE_DECLARATION:
+        kind = Tree.Kind.ANNOTATION_TYPE;
+        break;
+      case ASTNode.TYPE_DECLARATION:
+        kind = ((TypeDeclaration) e).isInterface() ? Tree.Kind.INTERFACE : Tree.Kind.CLASS;
+        break;
+    }
+    ClassTreeImpl t = new ClassTreeImpl(
+      kind,
+      createSyntaxToken(leftBraceTokenIndex),
+      members,
+      lastTokenIn(e, TerminalTokens.TokenNameRBRACE)
+    ).completeModifiers(
+      convertModifiers(e.modifiers())
+    );
+    switch (kind) {
+      default:
+        break;
+      case ENUM:
+        t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameenum));
+        t.completeIdentifier(convertSimpleName(e.getName()));
+        break;
+      case CLASS:
+        t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameclass));
+        t.completeIdentifier(convertSimpleName(e.getName()));
+        break;
+      case INTERFACE:
+        t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameinterface));
+        t.completeIdentifier(convertSimpleName(e.getName()));
+        break;
+      case ANNOTATION_TYPE:
+        t.complete(
+          firstTokenBefore(e.getName(), TerminalTokens.TokenNameAT),
+          firstTokenBefore(e.getName(), TerminalTokens.TokenNameinterface),
+          convertSimpleName(e.getName())
+        );
+        break;
+    }
+
+    if (kind == Tree.Kind.CLASS || kind == Tree.Kind.INTERFACE) {
+      TypeDeclaration ee = (TypeDeclaration) e;
+      t.completeTypeParameters(
+        convertTypeParameters(ee.typeParameters())
+      );
+    }
+
+    switch (kind) {
+      default:
+        break;
+      case CLASS: {
+        TypeDeclaration ee = (TypeDeclaration) e;
+        if (ee.getSuperclassType() != null) {
+          t.completeSuperclass(
+            firstTokenBefore(ee.getSuperclassType(), TerminalTokens.TokenNameextends),
+            convertType(ee.getSuperclassType())
+          );
+        }
+        // fall through
+      }
+      case INTERFACE:
+      case ENUM: {
+        List superInterfaceTypes = kind == Tree.Kind.ENUM ? ((EnumDeclaration) e).superInterfaceTypes() : ((TypeDeclaration) e).superInterfaceTypes();
+        if (!superInterfaceTypes.isEmpty()) {
+          QualifiedIdentifierListTreeImpl superInterfaces = new QualifiedIdentifierListTreeImpl(
+            new ArrayList<>(),
+            new ArrayList<>()
+          );
+          for (int i = 0; i < superInterfaceTypes.size(); i++) {
+            Type o = (Type) superInterfaceTypes.get(i);
+            if (i > 0) {
+              superInterfaces.separators().add(firstTokenBefore(o, TerminalTokens.TokenNameCOMMA));
+            }
+            superInterfaces.add(convertType(o));
+          }
+          t.completeInterfaces(
+            firstTokenBefore((ASTNode) superInterfaceTypes.get(0), kind == Tree.Kind.INTERFACE ? TerminalTokens.TokenNameextends : TerminalTokens.TokenNameimplements),
+            superInterfaces
+          );
+        }
+        break;
+      }
+    }
+    return t;
+  }
+
