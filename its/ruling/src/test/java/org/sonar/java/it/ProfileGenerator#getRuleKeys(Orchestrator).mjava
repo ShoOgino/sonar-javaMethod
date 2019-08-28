@@ -3,14 +3,19 @@
     // pages are 1-based
     int currentPage = 1;
 
-    Long totalNumberRules;
+    Double totalNumberRules;
     int collectedRulesNumber;
     do {
-      String json = new HttpRequestFactory(orchestrator.getServer().getUrl())
-        .get("/api/rules/search", ImmutableMap.<String, Object>of("languages", LANGUAGE, "repositories", REPOSITORY_KEY, "p", currentPage, "ps", NUMBER_RULES_BY_PAGE));
+      HttpResponse response = orchestrator.getServer()
+        .newHttpCall("/api/rules/search")
+        .setMethod(HttpMethod.GET)
+        .setParam("languages", LANGUAGE)
+        .setParam("repositories", REPOSITORY_KEY)
+        .setParam("p", Integer.toString(currentPage))
+        .setParam("ps", Integer.toString(NUMBER_RULES_BY_PAGE)).execute();
 
       @SuppressWarnings("unchecked")
-      Map<Object, Object> jsonObject = (Map<Object, Object>) JSONValue.parse(json);
+      Map<Object, Object> jsonObject = GSON.fromJson(response.getBodyAsString(), Map.class);
 
       @SuppressWarnings("unchecked")
       List<Map<Object, Object>> jsonRules = (List<Map<Object, Object>>) jsonObject.get("rules");
@@ -22,7 +27,7 @@
 
       // update number of rules
       collectedRulesNumber = ruleKeys.size();
-      totalNumberRules = (Long) jsonObject.get("total");
+      totalNumberRules = (Double) jsonObject.get("total");
       LOG.info("Collected rule keys: {} / {}", collectedRulesNumber, totalNumberRules);
       // prepare for next page
       currentPage++;
