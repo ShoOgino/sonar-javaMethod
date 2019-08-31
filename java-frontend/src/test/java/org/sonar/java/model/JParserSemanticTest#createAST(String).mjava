@@ -1,0 +1,21 @@
+  private CompilationUnit createAST(String source) {
+    String version = "12";
+    ASTParser astParser = ASTParser.newParser(AST.JLS12);
+    Map<String, String> options = new HashMap<>();
+    options.put(JavaCore.COMPILER_COMPLIANCE, version);
+    options.put(JavaCore.COMPILER_SOURCE, version);
+    options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, "enabled");
+    astParser.setCompilerOptions(options);
+    astParser.setEnvironment(
+      new String[]{},
+      new String[]{},
+      new String[]{},
+      true
+    );
+    astParser.setUnitName("File.java");
+    astParser.setResolveBindings(true);
+    astParser.setBindingsRecovery(true);
+    astParser.setSource(source.toCharArray());
+    return (CompilationUnit) astParser.createAST(null);
+  }
+

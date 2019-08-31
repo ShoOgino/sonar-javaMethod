@@ -1,44 +1,4 @@
-  /**
-   * @param unitName see {@link ASTParser#setUnitName(String)}
-   * @throws RecognitionException in case of syntax errors
-   */
   public static CompilationUnitTree parse(String version, String unitName, String source, List<File> classpath) {
-    ASTParser astParser = ASTParser.newParser(AST.JLS12);
-    Map<String, String> options = new HashMap<>();
-    options.put(JavaCore.COMPILER_SOURCE, version);
-    options.put(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, "enabled");
-    astParser.setCompilerOptions(options);
-
-    astParser.setEnvironment(
-      classpath.stream().map(File::getAbsolutePath).toArray(String[]::new),
-      new String[]{},
-      new String[]{},
-      true
-    );
-    astParser.setUnitName(unitName);
-
-    astParser.setResolveBindings(false);
-    astParser.setBindingsRecovery(true);
-
-    char[] sourceChars = source.toCharArray();
-    astParser.setSource(sourceChars);
-
-    CompilationUnit astNode = (CompilationUnit) astParser.createAST(null);
-    for (IProblem problem : astNode.getProblems()) {
-      if (!problem.isError()) {
-        continue;
-      }
-      final int line = problem.getSourceLineNumber();
-      final int column = astNode.getColumnNumber(problem.getSourceStart());
-      throw new RecognitionException(line, "Parse error at line " + line + " column " + column + ": " + problem.getMessage());
-    }
-
-    JParser converter = new JParser();
-    converter.compilationUnit = astNode;
-    converter.tokenManager = new TokenManager(lex(version, unitName, sourceChars), source, new DefaultCodeFormatterOptions(new HashMap<>()));
-
-    CompilationUnitTree tree = converter.convertCompilationUnit(astNode);
-    setParents(tree);
-    return tree;
+    return parse(version, unitName, source, false, classpath);
   }
 

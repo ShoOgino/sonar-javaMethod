@@ -1,0 +1,8 @@
+  private ExpressionTree expression(String expression) {
+    CompilationUnitTree cu = test("class C { Object m() { return " + expression + " ; } }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+    return Objects.requireNonNull(s.expression());
+  }
+
