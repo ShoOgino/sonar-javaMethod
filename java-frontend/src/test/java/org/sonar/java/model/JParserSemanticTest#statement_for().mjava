@@ -1,0 +1,10 @@
+  @Test
+  void statement_for() {
+    CompilationUnitTree cu = test("class C { void m() { for (int v;;) ; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ForStatementTreeImpl s = (ForStatementTreeImpl) m.block().body().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) s.initializer().get(0);
+    assertThat(v.variableBinding).isNotNull();
+  }
+
