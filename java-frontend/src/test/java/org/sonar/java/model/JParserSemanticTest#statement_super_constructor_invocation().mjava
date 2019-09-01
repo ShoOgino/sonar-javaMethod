@@ -1,0 +1,10 @@
+  @Test
+  void statement_super_constructor_invocation() {
+    CompilationUnitTree cu = test("class C { C() { super(); } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ExpressionStatementTree s = (ExpressionStatementTree) m.block().body().get(0);
+    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) s.expression();
+    assertThat(e.methodBinding).isNotNull();
+  }
+
