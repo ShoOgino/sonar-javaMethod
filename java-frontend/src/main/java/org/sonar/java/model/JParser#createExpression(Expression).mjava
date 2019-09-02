@@ -372,9 +372,17 @@
         List<VariableTree> parameters = new ArrayList<>();
         for (int i = 0; i < e.parameters().size(); i++) {
           VariableDeclaration o = (VariableDeclaration) e.parameters().get(i);
-          VariableTreeImpl t = o.getNodeType() == ASTNode.VARIABLE_DECLARATION_FRAGMENT
-            ? new VariableTreeImpl(convertSimpleName(o.getName()))
-            : createVariable((SingleVariableDeclaration) o);
+          VariableTreeImpl t;
+          if (o.getNodeType() == ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
+            t = new VariableTreeImpl(convertSimpleName(o.getName()));
+            IVariableBinding variableBinding = o.resolveBinding();
+            if (variableBinding != null) {
+              t.variableBinding = o.resolveBinding();
+              ((InferedTypeTree) t.type()).typeBinding = variableBinding.getType();
+            }
+          } else {
+            t = createVariable((SingleVariableDeclaration) o);
+          }
           parameters.add(t);
           if (i < e.parameters().size() - 1) {
             t.setEndToken(
