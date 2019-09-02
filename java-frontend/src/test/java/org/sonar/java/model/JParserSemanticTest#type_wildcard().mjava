@@ -1,0 +1,10 @@
+  @Test
+  void type_wildcard() {
+    CompilationUnitTree cu = test("interface I<T> { I<? extends Object> v; }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) c.members().get(0);
+    ParameterizedTypeTree p = (ParameterizedTypeTree) v.type();
+    AbstractTypedTree t = ((AbstractTypedTree) p.typeArguments().get(0));
+    assertThat(t.typeBinding).isNotNull();
+  }
+

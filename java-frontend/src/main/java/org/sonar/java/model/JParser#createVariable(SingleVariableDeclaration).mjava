@@ -3,11 +3,15 @@
     TypeTree type = convertType(e.getType());
     type = applyExtraDimensions(type, e.extraDimensions());
     if (e.isVarargs()) {
+      ITypeBinding typeBinding = ((AbstractTypedTree) type).typeBinding;
       type = new JavaTree.ArrayTypeTreeImpl(
         type,
         (List) convertAnnotations(e.varargsAnnotations()),
         firstTokenAfter(e.getType(), TerminalTokens.TokenNameELLIPSIS)
       );
+      if (typeBinding != null) {
+        ((JavaTree.ArrayTypeTreeImpl) type).typeBinding = typeBinding.createArrayType(1);
+      }
     }
 
     VariableTreeImpl t = new VariableTreeImpl(

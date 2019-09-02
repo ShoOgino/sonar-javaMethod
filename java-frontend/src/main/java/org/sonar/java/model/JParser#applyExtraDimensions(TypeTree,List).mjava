@@ -2,14 +2,22 @@
    * @param extraDimensions list of {@link org.eclipse.jdt.core.dom.Dimension}
    */
   private TypeTree applyExtraDimensions(TypeTree type, List extraDimensions) {
-    for (Object o : extraDimensions) {
-      Dimension e = (Dimension) o;
+    if (type == null) {
+      // e.g. return type of constructor
+      return null;
+    }
+    ITypeBinding typeBinding = ((AbstractTypedTree) type).typeBinding;
+    for (int i = 0; i < extraDimensions.size(); i++) {
+      Dimension e = (Dimension) extraDimensions.get(i);
       type = new JavaTree.ArrayTypeTreeImpl(
         type,
         (List) convertAnnotations(e.annotations()),
         firstTokenIn(e, TerminalTokens.TokenNameLBRACKET),
         firstTokenIn(e, TerminalTokens.TokenNameRBRACKET)
       );
+      if (typeBinding != null) {
+        ((JavaTree.ArrayTypeTreeImpl) type).typeBinding = typeBinding.createArrayType(i + 1);
+      }
     }
     return type;
   }

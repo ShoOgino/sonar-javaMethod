@@ -1,0 +1,11 @@
+  @Test
+  void type_union() {
+    CompilationUnitTree cu = test("class C { void m() { try { } catch (E1 | E2 v) { } } }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    TryStatementTree s = (TryStatementTree) m.block().body().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) s.catches().get(0).parameter();
+    AbstractTypedTree t = (AbstractTypedTree) v.type();
+    assertThat(t.typeBinding).isNotNull();
+  }
+

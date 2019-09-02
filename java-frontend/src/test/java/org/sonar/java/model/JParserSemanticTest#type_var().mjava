@@ -1,0 +1,13 @@
+  /**
+   * @see Tree.Kind#VAR_TYPE
+   */
+  @Test
+  void type_var() {
+    CompilationUnitTree cu = test("class C { void m() { var v = 42; } }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) m.block().body().get(0);
+    AbstractTypedTree t = (AbstractTypedTree) v.type();
+    assertThat(t.typeBinding).isNotNull();
+  }
+

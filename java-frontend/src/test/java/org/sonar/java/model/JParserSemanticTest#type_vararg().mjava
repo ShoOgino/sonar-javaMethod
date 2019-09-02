@@ -1,0 +1,11 @@
+  @Test
+  void type_vararg() {
+    CompilationUnitTree cu = test("interface I { void m(int[]... v); }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) m.parameters().get(0);
+    AbstractTypedTree t = (AbstractTypedTree) v.type();
+    assertThat(t.typeBinding).isNotNull();
+    assertThat(t.typeBinding.getDimensions()).isEqualTo(2);
+  }
+
