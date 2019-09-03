@@ -1,0 +1,20 @@
+  @Nullable
+  ITypeBinding resolveType(String name) {
+    int dimensions = 0;
+    int end = name.length() - 1;
+    while (name.charAt(end) == ']') {
+      end -= 2;
+      dimensions++;
+    }
+    name = name.substring(0, end + 1);
+
+    ITypeBinding typeBinding = ast.resolveWellKnownType(name);
+    if (typeBinding == null) {
+      typeBinding = resolveType(ast, name);
+      if (typeBinding == null) {
+        return null;
+      }
+    }
+    return dimensions == 0 ? typeBinding : typeBinding.createArrayType(dimensions);
+  }
+
