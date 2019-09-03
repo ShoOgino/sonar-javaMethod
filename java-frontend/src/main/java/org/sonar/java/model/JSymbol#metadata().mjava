@@ -1,5 +1,12 @@
   @Override
   public final SymbolMetadata metadata() {
-    return null; // FIXME stub for future implementation
+    return new JSymbolMetadata() {
+      @Override
+      public List<AnnotationInstance> annotations() {
+        return Arrays.stream(binding.getAnnotations())
+          .map(sema::annotation)
+          .collect(Collectors.toList());
+      }
+    };
   }
 
