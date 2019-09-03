@@ -1,9 +1,10 @@
   @Test
   void statement_variable_declaration() {
-    CompilationUnitTree cu = test("class C { void m() { int v; } }");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { void m() { int v; } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     VariableTreeImpl s = (VariableTreeImpl) m.block().body().get(0);
     assertThat(s.variableBinding).isNotNull();
+    assertThat(cu.sema.declarations.get(s.variableBinding)).isSameAs(s);
   }
 

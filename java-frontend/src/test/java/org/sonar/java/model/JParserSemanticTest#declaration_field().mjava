@@ -1,8 +1,9 @@
   @Test
   void declaration_field() {
-    CompilationUnitTree cu = test("class C { int f; }");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { int f; }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     VariableTreeImpl f = (VariableTreeImpl) c.members().get(0);
     assertThat(f.variableBinding).isNotNull();
+    assertThat(cu.sema.declarations.get(f.variableBinding)).isSameAs(f);
   }
 

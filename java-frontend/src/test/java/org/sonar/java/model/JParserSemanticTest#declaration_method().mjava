@@ -1,8 +1,9 @@
   @Test
   void declaration_method() {
-    CompilationUnitTree cu = test("class C { void m() {} }");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { void m() {} }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     assertThat(m.methodBinding).isNotNull();
+    assertThat(cu.sema.declarations.get(m.methodBinding)).isSameAs(m);
   }
 

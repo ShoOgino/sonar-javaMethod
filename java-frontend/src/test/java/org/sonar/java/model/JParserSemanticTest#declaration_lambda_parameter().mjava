@@ -1,6 +1,6 @@
   @Test
   void declaration_lambda_parameter() {
-    CompilationUnitTree cu = test("class C { void m() { lambda(v -> {}); } void lambda(java.util.function.Consumer x) { } }");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { void m() { lambda(v -> {}); } void lambda(java.util.function.Consumer x) { } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     ExpressionStatementTree s = (ExpressionStatementTree) m.block().body().get(0);
@@ -10,5 +10,6 @@
     assertThat(v.variableBinding).isNotNull();
     AbstractTypedTree t = (AbstractTypedTree) v.type();
     assertThat(t.typeBinding).isNotNull();
+    assertThat(cu.sema.declarations.get(v.variableBinding)).isSameAs(v);
   }
 

@@ -43,10 +43,12 @@
     }
 
     JParser converter = new JParser();
+    converter.sema = new JSema();
     converter.compilationUnit = astNode;
     converter.tokenManager = new TokenManager(lex(version, unitName, sourceChars), source, new DefaultCodeFormatterOptions(new HashMap<>()));
 
-    CompilationUnitTree tree = converter.convertCompilationUnit(astNode);
+    JavaTree.CompilationUnitTreeImpl tree = converter.convertCompilationUnit(astNode);
+    tree.sema = converter.sema;
     setParents(tree);
     return tree;
   }
