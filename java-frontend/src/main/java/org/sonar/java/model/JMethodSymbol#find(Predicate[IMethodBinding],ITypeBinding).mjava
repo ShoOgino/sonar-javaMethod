@@ -1,0 +1,23 @@
+  @Nullable
+  private IMethodBinding find(Predicate<IMethodBinding> predicate, ITypeBinding t) {
+    for (IMethodBinding candidate : t.getDeclaredMethods()) {
+      if (predicate.test(candidate)) {
+        return candidate;
+      }
+    }
+    for (ITypeBinding i : t.getInterfaces()) {
+      IMethodBinding r = find(predicate, i);
+      if (r != null) {
+        return r;
+      }
+    }
+    if (t.getSuperclass() != null) {
+      return find(predicate, t.getSuperclass());
+    }
+    ITypeBinding objectTypeBinding = Objects.requireNonNull(sema.resolveType("java.lang.Object"));
+    if (t != objectTypeBinding) {
+      return find(predicate, objectTypeBinding);
+    }
+    return null;
+  }
+
