@@ -1,9 +1,14 @@
   @Test
   void expression_super_method_invocation() {
-    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) expression("super.toString()");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return " + "super.toString()" + " ; } }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m1 = (MethodTree) c.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m1.block()).body().get(0);
+    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) Objects.requireNonNull(s.expression());
     assertThat(e.methodBinding).isNotNull();
     MemberSelectExpressionTreeImpl m = (MemberSelectExpressionTreeImpl) e.methodSelect();
     IdentifierTreeImpl i = (IdentifierTreeImpl) m.identifier();
     assertThat(i.binding).isSameAs(e.methodBinding);
+    assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
   }
 

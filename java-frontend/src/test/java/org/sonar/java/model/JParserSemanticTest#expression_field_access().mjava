@@ -1,6 +1,6 @@
   @Test
   void expression_field_access() {
-    CompilationUnitTree cu = test("class C { int f; Object m() { return this.f; } }");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { int f; Object m() { return this.f; } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(1);
     ReturnStatementTree s = (ReturnStatementTree) m.block().body().get(0);
@@ -9,5 +9,6 @@
     IdentifierTreeImpl i = (IdentifierTreeImpl) e.identifier();
     assertThat(i.typeBinding).isSameAs(e.typeBinding);
     assertThat(i.binding).isNotNull();
+    assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
   }
 

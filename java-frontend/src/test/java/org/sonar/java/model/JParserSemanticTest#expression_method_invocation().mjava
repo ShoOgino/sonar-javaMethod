@@ -1,6 +1,13 @@
   @Test
   void expression_method_invocation() {
-    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) expression("m()");
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return m(); } }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) s.expression();
     assertThat(e.methodBinding).isNotNull();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) e.methodSelect();
+    assertThat(i.binding).isSameAs(e.methodBinding);
+    assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
   }
 

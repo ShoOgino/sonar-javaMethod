@@ -1,0 +1,11 @@
+  @Test
+  void expression_simple_name() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { int f; Object m() { return f; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(1);
+    ReturnStatementTree s = (ReturnStatementTree) m.block().body().get(0);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) s.expression();
+    assertThat(i.binding).isNotNull();
+    assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
+  }
+
