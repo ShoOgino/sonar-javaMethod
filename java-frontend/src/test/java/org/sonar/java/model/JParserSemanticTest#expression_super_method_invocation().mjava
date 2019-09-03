@@ -2,5 +2,8 @@
   void expression_super_method_invocation() {
     MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) expression("super.toString()");
     assertThat(e.methodBinding).isNotNull();
+    MemberSelectExpressionTreeImpl m = (MemberSelectExpressionTreeImpl) e.methodSelect();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) m.identifier();
+    assertThat(i.binding).isSameAs(e.methodBinding);
   }
 

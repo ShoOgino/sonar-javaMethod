@@ -291,10 +291,12 @@
           lastTokenIn(e, TerminalTokens.TokenNameRPAREN)
         );
 
+        IdentifierTreeImpl i = new IdentifierTreeImpl(e.arguments().isEmpty()
+          ? lastTokenIn(e, TerminalTokens.TokenNamethis)
+          : firstTokenBefore((ASTNode) e.arguments().get(0), TerminalTokens.TokenNamethis));
+        i.binding = e.resolveConstructorBinding();
         MethodInvocationTreeImpl t = new MethodInvocationTreeImpl(
-          new IdentifierTreeImpl(e.arguments().isEmpty()
-            ? lastTokenIn(e, TerminalTokens.TokenNamethis)
-            : firstTokenBefore((ASTNode) e.arguments().get(0), TerminalTokens.TokenNamethis)),
+          i,
           convertTypeArguments(e.typeArguments()),
           arguments
         );
@@ -308,6 +310,8 @@
         SuperConstructorInvocation e = (SuperConstructorInvocation) node;
 
         ExpressionTree methodSelect = new IdentifierTreeImpl(firstTokenIn(e, TerminalTokens.TokenNamesuper));
+        ((IdentifierTreeImpl) methodSelect).binding = e.resolveConstructorBinding();
+
         if (e.getExpression() != null) {
           methodSelect = new MemberSelectExpressionTreeImpl(
             convertExpression(e.getExpression()),
