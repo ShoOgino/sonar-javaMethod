@@ -42,7 +42,7 @@
     }
 
     IdentifierTree identifier = convertSimpleName(e.getName());
-    return new EnumConstantTreeImpl(
+    EnumConstantTreeImpl t = new EnumConstantTreeImpl(
       convertModifiers(e.modifiers()),
       identifier,
       new NewClassTreeImpl(
@@ -53,5 +53,8 @@
       ),
       separatorToken
     );
+    t.variableBinding = e.resolveVariable();
+    declaration(t.variableBinding, t);
+    return t;
   }
 
