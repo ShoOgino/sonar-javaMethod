@@ -1,0 +1,22 @@
+    @Test
+    void isEnum() {
+      JavaTree.CompilationUnitTreeImpl cu = test("class C1 { int a; void foo() { }} enum E1 { ACONST; }");
+
+      ClassTreeImpl c1 = (ClassTreeImpl) cu.types().get(0);
+      JTypeSymbol c1Symbol = cu.sema.typeSymbol(c1.typeBinding);
+      assertThat(c1Symbol.isEnum()).isFalse();
+
+      JVariableSymbol a = cu.sema.variableSymbol(((VariableTreeImpl) c1.members().get(0)).variableBinding);
+      assertThat(a.isEnum()).isFalse();
+
+      JMethodSymbol foo = cu.sema.methodSymbol(((MethodTreeImpl) c1.members().get(1)).methodBinding);
+      assertThat(foo.isEnum()).isFalse();
+
+      ClassTreeImpl e1 = (ClassTreeImpl) cu.types().get(1);
+      JTypeSymbol e1Symbol = cu.sema.typeSymbol(e1.typeBinding);
+      assertThat(e1Symbol.isEnum()).isTrue();
+
+      JVariableSymbol aconst = cu.sema.variableSymbol(((EnumConstantTreeImpl) e1.members().get(0)).variableBinding);
+      assertThat(aconst.isEnum()).isTrue();
+    }
+

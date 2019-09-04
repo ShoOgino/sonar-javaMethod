@@ -1,0 +1,14 @@
+    @Test
+    void isVolatile() {
+      JavaTree.CompilationUnitTreeImpl cu = test("class C1 {"
+        + "  volatile int a;"
+        + "  int b;"
+        + "}");
+
+      JVariableSymbol a = variable(cu, 0);
+      assertThat(a.isVolatile()).isTrue();
+
+      JVariableSymbol b = variable(cu, 1);
+      assertThat(b.isVolatile()).isFalse();
+    }
+
