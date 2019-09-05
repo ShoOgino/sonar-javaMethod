@@ -1,12 +1,22 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.ConstructorInvocation
+   */
   @Test
   void statement_constructor_invocation() {
     CompilationUnitTree cu = test("class C { C() { this(null); } C(Object p) { } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    MethodTreeImpl constructor2 = (MethodTreeImpl) c.members().get(1);
     ExpressionStatementTree s = (ExpressionStatementTree) m.block().body().get(0);
-    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) s.expression();
-    assertThat(e.methodBinding).isNotNull();
-    IdentifierTreeImpl i = (IdentifierTreeImpl) e.methodSelect();
-    assertThat(i.binding).isSameAs(e.methodBinding);
+
+    MethodInvocationTreeImpl constructorInvocation = (MethodInvocationTreeImpl) s.expression();
+    assertThat(constructorInvocation.methodBinding)
+      .isNotNull()
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) constructorInvocation.symbol().declaration()).methodBinding)
+      .isSameAs(constructor2.methodBinding);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) constructorInvocation.methodSelect();
+    assertThat(i.binding)
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) i.symbol().declaration()).methodBinding)
+      .isSameAs(constructorInvocation.methodBinding);
   }
 

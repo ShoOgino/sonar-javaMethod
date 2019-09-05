@@ -1,13 +1,22 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.MethodInvocation
+   */
   @Test
   void expression_method_invocation() {
     JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return m(); } }");
-    ClassTree c = (ClassTree) cu.types().get(0);
-    MethodTree m = (MethodTree) c.members().get(0);
-    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m.block()).body().get(0);
-    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) s.expression();
-    assertThat(e.methodBinding).isNotNull();
-    IdentifierTreeImpl i = (IdentifierTreeImpl) e.methodSelect();
-    assertThat(i.binding).isSameAs(e.methodBinding);
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl method = (MethodTreeImpl) c.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(method.block()).body().get(0);
+
+    MethodInvocationTreeImpl methodInvocation = (MethodInvocationTreeImpl) s.expression();
+    assertThat(methodInvocation.methodBinding)
+      .isNotNull()
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) methodInvocation.symbol().declaration()).methodBinding)
+      .isSameAs(method.methodBinding);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) methodInvocation.methodSelect();
+    assertThat(i.binding)
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) i.symbol().declaration()).methodBinding)
+      .isSameAs(methodInvocation.methodBinding);
     assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
   }
 

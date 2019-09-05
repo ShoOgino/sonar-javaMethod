@@ -1,12 +1,23 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.SuperConstructorInvocation
+   */
   @Test
   void statement_super_constructor_invocation() {
-    CompilationUnitTree cu = test("class C { C() { super(); } }");
+    CompilationUnitTree cu = test("class C extends S { C() { super(); } } class S { S() { } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ClassTreeImpl superClass = (ClassTreeImpl) cu.types().get(1);
+    MethodTreeImpl superClassConstructor = (MethodTreeImpl) superClass.members().get(0);
     ExpressionStatementTree s = (ExpressionStatementTree) m.block().body().get(0);
-    MethodInvocationTreeImpl e = (MethodInvocationTreeImpl) s.expression();
-    assertThat(e.methodBinding).isNotNull();
-    IdentifierTreeImpl i = (IdentifierTreeImpl) e.methodSelect();
-    assertThat(i.binding).isSameAs(e.methodBinding);
+
+    MethodInvocationTreeImpl superConstructorInvocation = (MethodInvocationTreeImpl) s.expression();
+    assertThat(superConstructorInvocation.methodBinding)
+      .isNotNull()
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) superConstructorInvocation.symbol().declaration()).methodBinding)
+      .isSameAs(superClassConstructor.methodBinding);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) superConstructorInvocation.methodSelect();
+    assertThat(i.binding)
+      .isSameAs(Objects.requireNonNull((MethodTreeImpl) i.symbol().declaration()).methodBinding)
+      .isSameAs(superConstructorInvocation.methodBinding);
   }
 
