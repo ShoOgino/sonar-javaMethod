@@ -30,11 +30,17 @@
         if (declaringMethod != null) { // local variable
           return sema.typeSymbol(declaringMethod.getDeclaringClass());
         }
-        // FIXME
+        Tree node = sema.declarations.get(variableBinding);
+        if (node == null) {
+          // array.length
+          return Symbols.unknownSymbol;
+        }
+        do {
+          node = node.parent();
+        } while (node.kind() != Tree.Kind.CLASS);
         // variable declaration in a static or instance initializer
         // or local variable declaration in recovered method
-        // or array.length
-        return Symbols.unknownSymbol;
+        return sema.typeSymbol(((ClassTreeImpl) node).typeBinding);
       }
       default:
         throw new IllegalStateException("Kind: " + binding.getKind());

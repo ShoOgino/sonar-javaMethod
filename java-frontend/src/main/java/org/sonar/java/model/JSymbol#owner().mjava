@@ -32,11 +32,24 @@
         if (declaringClass != null) { // field
           return sema.typeSymbol(declaringClass);
         }
-        // FIXME
-        // variable declaration in a static or instance initializer
-        // or local variable declaration in recovered method
-        // or array.length
-        return Symbols.unknownSymbol;
+        Tree node = sema.declarations.get(variableBinding);
+        if (node == null) {
+          // array.length
+          return Symbols.unknownSymbol;
+        }
+        do {
+          node = node.parent();
+          switch (node.kind()) {
+            case CLASS:
+              // variable declaration in a static or instance initializer
+              return sema.typeSymbol(((ClassTreeImpl) node).typeBinding);
+            case METHOD:
+            case CONSTRUCTOR:
+              // local variable declaration in recovered method
+              // and recovered methods do not have bindings
+              return Symbols.unknownMethodSymbol;
+          }
+        } while (true);
       }
       default:
         throw new IllegalStateException("Kind: " + binding.getKind());
