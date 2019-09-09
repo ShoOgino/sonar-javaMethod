@@ -20,6 +20,8 @@
     assertThat(i.binding)
       .isSameAs(Objects.requireNonNull((MethodTreeImpl) i.symbol().declaration()).methodBinding)
       .isSameAs(superMethodInvocation.methodBinding);
-    assertThat(cu.sema.usages.get(i.binding)).containsOnly(i);
+    assertThat(cu.sema.usages.get(i.binding))
+      .containsOnlyElementsOf(superMethodInvocation.symbol().usages())
+      .containsOnly(i);
   }
 
