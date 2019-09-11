@@ -1,0 +1,23 @@
+  /**
+   * {@link org.eclipse.jdt.core.dom.ITypeBinding#getTypeDeclaration()} should be used
+   * for {@link JSymbol#usages()} and {@link JSymbol#declaration()}
+   */
+  @Test
+  void declaration_type_parameterized() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C<T> { C<String> field; }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    AbstractTypedTree fieldType = (AbstractTypedTree) ((VariableTreeImpl) c.members().get(0)).type();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) ((ParameterizedTypeTree) fieldType).type();
+
+    assertThat(cu.sema.usages.get(c.typeBinding))
+      .containsOnly(i);
+    assertThat(fieldType.typeBinding)
+      .isNotNull();
+    assertThat(cu.sema.typeSymbol(fieldType.typeBinding).declaration())
+      .isSameAs(fieldType.symbolType().symbol().declaration())
+      .isSameAs(c);
+    assertThat(cu.sema.typeSymbol(fieldType.typeBinding).usages())
+      .containsExactlyElementsOf(fieldType.symbolType().symbol().usages())
+      .containsOnly(i);
+  }
+

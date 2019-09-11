@@ -1,0 +1,25 @@
+  /**
+   * {@link org.eclipse.jdt.core.dom.IMethodBinding#getMethodDeclaration()} should be used
+   * for {@link JSymbol#usages()} and {@link JSymbol#declaration()}
+   */
+  @Test
+  void declaration_method_parameterized() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { <T> void m(T t) { m(42); } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ExpressionStatementTree s = (ExpressionStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+    MethodInvocationTreeImpl methodInvocation = (MethodInvocationTreeImpl) s.expression();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) methodInvocation.methodSelect();
+
+    assertThat(cu.sema.usages.get(m.methodBinding))
+      .containsOnly(i);
+    assertThat(methodInvocation.methodBinding)
+      .isNotNull();
+    assertThat(cu.sema.methodSymbol(methodInvocation.methodBinding).declaration())
+      .isSameAs(methodInvocation.symbol().declaration())
+      .isSameAs(m);
+    assertThat(cu.sema.methodSymbol(methodInvocation.methodBinding).usages())
+      .containsExactlyElementsOf(methodInvocation.symbol().usages())
+      .containsOnly(i);
+  }
+
