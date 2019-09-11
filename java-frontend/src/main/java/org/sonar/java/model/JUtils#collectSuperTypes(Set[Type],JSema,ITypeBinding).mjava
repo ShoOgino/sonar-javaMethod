@@ -1,0 +1,12 @@
+  private static void collectSuperTypes(Set<Type> result, JSema sema, ITypeBinding typeBinding) {
+    ITypeBinding s = typeBinding.getSuperclass();
+    if (s != null) {
+      result.add(sema.type(s));
+      collectSuperTypes(result, sema, s);
+    }
+    for (ITypeBinding i : typeBinding.getInterfaces()) {
+      result.add(sema.type(i));
+      collectSuperTypes(result, sema, i);
+    }
+  }
+

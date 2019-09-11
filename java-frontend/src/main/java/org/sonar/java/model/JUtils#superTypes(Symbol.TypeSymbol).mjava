@@ -1,0 +1,12 @@
+  /**
+   * Replacement for {@link TypeJavaSymbol#superTypes()}
+   */
+  public static Set<Type> superTypes(Symbol.TypeSymbol typeSymbol) {
+    if (!(typeSymbol instanceof JSymbol)) {
+      return (Set<Type>) (Set) ((TypeJavaSymbol) typeSymbol).superTypes();
+    }
+    Set<Type> result = new HashSet<>();
+    collectSuperTypes(result, ((JTypeSymbol) typeSymbol).sema, ((JTypeSymbol) typeSymbol).typeBinding());
+    return result;
+  }
+
