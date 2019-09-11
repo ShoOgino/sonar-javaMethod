@@ -1,14 +1,14 @@
-  private static boolean hasSingleAbstractMethodInHierarchy(Set<ClassJavaType> superTypes) {
+  private static boolean hasSingleAbstractMethodInHierarchy(Set<Type> superTypes) {
     return superTypes.stream()
       .filter(type -> !type.is(JAVA_LANG_OBJECT))
-      .map(ClassJavaType::getSymbol)
+      .map(Type::symbol)
       // collect all the methods declared in hierarchy
       .flatMap(superType -> superType.memberSymbols().stream().filter(Symbol::isMethodSymbol).filter(Symbol::isAbstract))
-      .map(JavaSymbol.MethodJavaSymbol.class::cast)
+      .map(Symbol.MethodSymbol.class::cast)
       // remove objects methods redefined in interfaces
       .filter(symbol -> !isObjectMethod(symbol))
       // remove generic methods, which can not be written as lambda (JLS-11 §15.27)
-      .filter(symbol -> !symbol.isParametrized())
+      .filter(symbol -> !JUtils.isParametrizedMethod(symbol))
       // always take same symbol if method is redeclared over and over in hierarchy
       .map(symbol -> symbol.overriddenSymbol() != null ? symbol.overriddenSymbol() : symbol)
       .collect(Collectors.toSet())

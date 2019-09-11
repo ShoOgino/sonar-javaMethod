@@ -2,11 +2,11 @@
     if (hasOnlyOneMethod(classBody.members())) {
       // When overriding only one method of a functional interface, it can only be the single abstract method
       // and not one of the default methods. No need to check that the method signature matches.
-      JavaSymbol.TypeJavaSymbol symbol = (JavaSymbol.TypeJavaSymbol) classBody.symbol();
+      Symbol.TypeSymbol symbol = classBody.symbol();
       // should be anonymous class of interface and not abstract class
-      return symbol.getInterfaces().size() == 1
-        && symbol.getSuperclass().is(JAVA_LANG_OBJECT)
-        && hasSingleAbstractMethodInHierarchy(symbol.superTypes());
+      return symbol.interfaces().size() == 1
+        && symbol.superClass().is(JAVA_LANG_OBJECT)
+        && hasSingleAbstractMethodInHierarchy(JUtils.superTypes(symbol));
     }
     return false;
   }
