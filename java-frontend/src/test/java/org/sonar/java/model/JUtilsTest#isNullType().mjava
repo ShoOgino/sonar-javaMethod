@@ -1,0 +1,13 @@
+  @Test
+  void isNullType() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return null; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl method = (MethodTreeImpl) c.members().get(0);
+    ReturnStatementTreeImpl s = (ReturnStatementTreeImpl) Objects.requireNonNull(method.block()).body().get(0);
+    AbstractTypedTree e = (AbstractTypedTree) Objects.requireNonNull(s.expression());
+
+    assertThat(JUtils.isNullType(cu.sema.type(e.typeBinding)))
+      .isEqualTo(JUtils.isNullType(e.symbolType()))
+      .isTrue();
+  }
+
