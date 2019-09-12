@@ -12,7 +12,7 @@
     }
     Stream<Symbol.MethodSymbol> defaultMethodsFromInterfaces = symbol.interfaces().stream()
       .flatMap(i -> getAllMembers(i.symbol(), false, visitedSymbols))
-      .filter(m -> ((JavaSymbol.MethodJavaSymbol) m).isDefault());
+      .filter(JUtils::isDefaultMethod);
     members = Stream.concat(members, defaultMethodsFromInterfaces);
     for (Symbol s : symbol.memberSymbols()) {
       if (isNested(s) || isPublicStaticConcrete(s)) {
