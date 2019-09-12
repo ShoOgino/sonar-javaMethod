@@ -1,28 +1,26 @@
   private static Optional<String> matchFunctionalInterface(Type type) {
-    JavaType javaType = (JavaType) type;
-    if (!javaType.isParameterized()) {
-      return Optional.empty();
-    }
-    ParametrizedTypeJavaType ptjt = (ParametrizedTypeJavaType) javaType;
-
-    if (hasAnyUnknownParameterType(ptjt)) {
+    if (!JUtils.isParametrized(type)) {
       return Optional.empty();
     }
 
-    switch (ptjt.getSymbol().getFullyQualifiedName()) {
+    if (hasAnyUnknownTypeArgument(type)) {
+      return Optional.empty();
+    }
+
+    switch (type.fullyQualifiedName()) {
       case "java.util.function.Function":
-        return handleFunctionInterface(ptjt);
+        return handleFunctionInterface(type);
       case "java.util.function.BiFunction":
-        return handleBiFunctionInterface(ptjt);
+        return handleBiFunctionInterface(type);
       case "java.util.function.BiConsumer":
-        return handleBiConsumerInterface(ptjt);
+        return handleBiConsumerInterface(type);
       case "java.util.function.Supplier":
-        return handleSupplier(ptjt);
+        return handleSupplier(type);
       case "java.util.function.Consumer":
       case "java.util.function.Predicate":
       case "java.util.function.UnaryOperator":
       case "java.util.function.BinaryOperator":
-        return handleSingleParameterFunctions(ptjt);
+        return handleSingleParameterFunctions(type);
       default:
         return Optional.empty();
     }
