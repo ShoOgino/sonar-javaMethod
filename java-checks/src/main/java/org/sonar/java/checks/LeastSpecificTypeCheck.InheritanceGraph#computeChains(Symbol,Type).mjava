@@ -1,12 +1,12 @@
     private List<List<Type>> computeChains(Symbol m, Type type) {
-      Symbol.TypeSymbol typeSymbol = type.symbol();
-      Set<ClassJavaType> superTypes = ((JavaSymbol.TypeJavaSymbol) typeSymbol).directSuperTypes();
       List<List<Type>> result = new ArrayList<>();
-      for (ClassJavaType superType : superTypes) {
-        for (List<Type> chain : computeChains(m, superType)) {
-          chain.add(type);
-          result.add(chain);
-        }
+      Symbol.TypeSymbol typeSymbol = type.symbol();
+      Type superClass = typeSymbol.superClass();
+      if (superClass != null) {
+        computeChainsForSuperType(result, m, type, superClass);
+      }
+      for (Type i : typeSymbol.interfaces()) {
+        computeChainsForSuperType(result, m, type, i);
       }
 
       boolean definesSymbol = definesSymbol(m, typeSymbol);
