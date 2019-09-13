@@ -1,7 +1,7 @@
   private static boolean isCallToParametrizedOrUnknownMethod(ExpressionTree expressionTree) {
     if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
-      Symbol symbol = ((MethodInvocationTree) expressionTree).symbol();
-      return symbol.isUnknown() || ((JavaSymbol.MethodJavaSymbol) symbol).isParametrized();
+      Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) ((MethodInvocationTree) expressionTree).symbol();
+      return symbol.isUnknown() || JUtils.isParametrizedMethod(symbol);
     }
     return false;
   }
