@@ -6,13 +6,12 @@
       id = ((MemberSelectExpressionTree) importTree.qualifiedIdentifier()).identifier();
     }
     if (id != null) {
-      SemanticModel semanticModel = (SemanticModel) context.getSemanticModel();
-      if (semanticModel != null) {
-        Symbol symbol = semanticModel.getSymbol(importTree);
+      if (context.getSemanticModel() != null) {
+        Symbol symbol = JUtils.importTreeSymbol(importTree);
         if (symbol != null) {
           Symbol owner = symbol.owner();
           // Exclude method symbols : they could be ambiguous or unresolved and lead to FP.
-          if (symbol.isVariableSymbol() && symbol.usages().stream().allMatch(identifierTree -> semanticModel.getEnclosingClass(identifierTree) == owner)) {
+          if (symbol.isVariableSymbol() && symbol.usages().stream().allMatch(identifierTree -> JUtils.enclosingClass(identifierTree) == owner)) {
             context.reportIssue(this, importTree, "Remove this unused import '" + importName + "'.");
           }
         }
