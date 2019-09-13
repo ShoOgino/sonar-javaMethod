@@ -1,0 +1,13 @@
+  private void usageLabel(@Nullable IdentifierTreeImpl node) {
+    if (node == null) {
+      return;
+    }
+    labels.stream()
+      .filter(symbol -> symbol.name().equals(node.name()))
+      .findFirst()
+      .ifPresent(labelSymbol -> {
+        labelSymbol.usages.add(node);
+        node.labelSymbol = labelSymbol;
+      });
+  }
+

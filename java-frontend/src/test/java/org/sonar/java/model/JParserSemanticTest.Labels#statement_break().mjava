@@ -1,0 +1,34 @@
+    /**
+     * @see org.eclipse.jdt.core.dom.BreakStatement
+     */
+    @Test
+    void statement_break() {
+      CompilationUnitTree cu = test("class C { void m() { i: break i; } }");
+      ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+      MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+      LabeledStatementTreeImpl l = (LabeledStatementTreeImpl) m.block().body().get(0);
+      BreakStatementTreeImpl b = (BreakStatementTreeImpl) l.statement();
+      IdentifierTreeImpl i = (IdentifierTreeImpl) b.label();
+
+      assertThat(l.labelSymbol)
+        .isInstanceOf(Symbol.LabelSymbol.class);
+      assertThat(i.labelSymbol)
+        .isNotNull()
+        .isInstanceOf(Symbol.LabelSymbol.class)
+        .isInstanceOf(Symbol.class)
+        .isSameAs(l.labelSymbol);
+      assertThat(i.binding)
+        .isNull();
+
+      assertThat(i.symbol())
+        .isInstanceOf(Symbol.LabelSymbol.class)
+        .isInstanceOf(Symbol.class)
+        .isSameAs(l.symbol());
+
+      assertThat(i.labelSymbol.declaration())
+        .isSameAs(i.symbol().declaration());
+      assertThat(i.labelSymbol.usages())
+        .containsExactlyElementsOf(l.symbol().usages())
+        .containsOnly(i);
+    }
+

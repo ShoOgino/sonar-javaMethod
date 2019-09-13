@@ -116,9 +116,17 @@
             lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
           );
         }
+        ExpressionTree expression;
+        if (e.getExpression() == null) {
+          IdentifierTreeImpl i = convertSimpleName(e.getLabel());
+          usageLabel(i);
+          expression = i;
+        } else {
+          expression = convertExpression(e.getExpression());
+        }
         return new BreakStatementTreeImpl(
           firstTokenIn(e, TerminalTokens.TokenNamebreak),
-          e.getExpression() == null ? convertSimpleName(e.getLabel()) : convertExpression(e.getExpression()),
+          expression,
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
       }
@@ -184,19 +192,31 @@
       }
       case ASTNode.CONTINUE_STATEMENT: {
         ContinueStatement e = (ContinueStatement) node;
+        IdentifierTreeImpl i = convertSimpleName(e.getLabel());
+        usageLabel(i);
         return new ContinueStatementTreeImpl(
           firstTokenIn(e, TerminalTokens.TokenNamecontinue),
-          convertSimpleName(e.getLabel()),
+          i,
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
       }
       case ASTNode.LABELED_STATEMENT: {
         LabeledStatement e = (LabeledStatement) node;
-        return new LabeledStatementTreeImpl(
-          convertSimpleName(e.getLabel()),
+        IdentifierTreeImpl i = convertSimpleName(e.getLabel());
+
+        JLabelSymbol symbol = new JLabelSymbol(i.name());
+        labels.push(symbol);
+
+        LabeledStatementTreeImpl t = new LabeledStatementTreeImpl(
+          i,
           firstTokenAfter(e.getLabel(), TerminalTokens.TokenNameCOLON),
           convertStatement(e.getBody())
         );
+
+        labels.pop();
+        symbol.declaration = t;
+        t.labelSymbol = symbol;
+        return t;
       }
       case ASTNode.ENHANCED_FOR_STATEMENT: {
         EnhancedForStatement e = (EnhancedForStatement) node;

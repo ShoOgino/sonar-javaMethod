@@ -1,0 +1,26 @@
+    /**
+     * @see org.eclipse.jdt.core.dom.ContinueStatement
+     */
+    @Test
+    void statement_continue() {
+      CompilationUnitTree cu = test("class C { void m() { i: for(;;) continue i; } }");
+      ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+      MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+      LabeledStatementTreeImpl l = (LabeledStatementTreeImpl) m.block().body().get(0);
+      ForStatementTreeImpl f = (ForStatementTreeImpl) l.statement();
+      ContinueStatementTreeImpl co = (ContinueStatementTreeImpl) f.statement();
+      IdentifierTreeImpl i = (IdentifierTreeImpl) co.label();
+
+      assertThat(l.labelSymbol)
+        .isNotNull()
+        .isSameAs(i.labelSymbol);
+      assertThat(i.binding)
+        .isNull();
+      assertThat(l.labelSymbol.declaration)
+        .isSameAs(i.labelSymbol.declaration)
+        .isSameAs(l);
+      assertThat(l.labelSymbol.usages())
+        .containsExactlyElementsOf(l.symbol().usages())
+        .containsOnly(i);
+    }
+

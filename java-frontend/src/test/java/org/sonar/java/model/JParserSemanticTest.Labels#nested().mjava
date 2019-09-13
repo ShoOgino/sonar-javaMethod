@@ -1,0 +1,41 @@
+    @Test
+    void nested() {
+      CompilationUnitTree cu = test("class C { void m1() { i: { new C() { void m2() { i: break i; } }; break i; } } }");
+      MethodTreeImpl m1 = (MethodTreeImpl) ((ClassTreeImpl) cu.types().get(0)).members().get(0);
+      LabeledStatementTreeImpl l1 = (LabeledStatementTreeImpl) m1.block().body().get(0);
+      BlockTreeImpl block = (BlockTreeImpl) l1.statement();
+      BreakStatementTreeImpl b1 = (BreakStatementTreeImpl) block.body().get(1);
+      IdentifierTreeImpl i1 = (IdentifierTreeImpl) b1.label();
+
+      assertThat(l1.labelSymbol)
+        .isNotNull()
+        .isSameAs(i1.labelSymbol);
+      assertThat(i1.binding)
+        .isNull();
+      assertThat(l1.labelSymbol.declaration)
+        .isSameAs(i1.labelSymbol.declaration)
+        .isSameAs(l1);
+      assertThat(l1.labelSymbol.usages())
+        // .containsExactlyElementsOf(l1.symbol().usages()) // TODO Broken old implementation...
+        .containsOnly(i1);
+
+      ExpressionStatementTreeImpl e = (ExpressionStatementTreeImpl) block.body().get(0);
+      NewClassTreeImpl n = (NewClassTreeImpl) e.expression();
+      MethodTreeImpl m2 = (MethodTreeImpl) n.classBody().members().get(0);
+      LabeledStatementTreeImpl l2 = (LabeledStatementTreeImpl) m2.block().body().get(0);
+      BreakStatementTreeImpl b2 = (BreakStatementTreeImpl) l2.statement();
+      IdentifierTreeImpl i2 = (IdentifierTreeImpl) b2.label();
+
+      assertThat(l2.labelSymbol)
+        .isNotNull()
+        .isSameAs(i2.labelSymbol);
+      assertThat(i2.binding)
+        .isNull();
+      assertThat(l2.labelSymbol.declaration)
+        .isSameAs(i2.labelSymbol.declaration)
+        .isSameAs(l2);
+      assertThat(l2.labelSymbol.usages())
+        // .containsExactlyElementsOf(l2.symbol().usages()) // TODO Broken old implementation...
+        .containsOnly(i2);
+    }
+
