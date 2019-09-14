@@ -1,0 +1,14 @@
+  @Test
+  void test() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { C m(C p) throws Exception { return null; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+    assertThat(symbol.parameterTypes())
+      .containsOnly(cu.sema.type(Objects.requireNonNull(c.typeBinding)));
+    assertThat(symbol.returnType())
+      .isSameAs(cu.sema.typeSymbol(Objects.requireNonNull(c.typeBinding)));
+    assertThat(symbol.thrownTypes())
+      .containsOnly(cu.sema.type(Objects.requireNonNull(cu.sema.resolveType("java.lang.Exception"))));
+  }
+
