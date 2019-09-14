@@ -1,0 +1,30 @@
+  @Test
+  void superClass() {
+    JavaTree.CompilationUnitTreeImpl cu = test("interface I { } class C implements I { } class C2 extends C { }");
+    ITypeBinding javaLangObject = Objects.requireNonNull(cu.sema.resolveType("java.lang.Object"));
+    ITypeBinding i = Objects.requireNonNull(((ClassTreeImpl) cu.types().get(0)).typeBinding);
+    ITypeBinding c = Objects.requireNonNull(((ClassTreeImpl) cu.types().get(1)).typeBinding);
+    ITypeBinding c2 = Objects.requireNonNull(((ClassTreeImpl) cu.types().get(2)).typeBinding);
+    assertAll(
+      // for java.lang.Object
+      () ->
+        assertThat(cu.sema.typeSymbol(javaLangObject).superClass())
+          .isNull(),
+      // for interfaces
+      () ->
+        assertThat(cu.sema.typeSymbol(i).superClass())
+          .isSameAs(cu.sema.type(javaLangObject)),
+      // for classes
+      () ->
+        assertThat(cu.sema.typeSymbol(c).superClass())
+          .isSameAs(cu.sema.type(javaLangObject)),
+      () ->
+        assertThat(cu.sema.typeSymbol(c2).superClass())
+          .isSameAs(cu.sema.type(c)),
+      // for arrays
+      () ->
+        assertThat(cu.sema.typeSymbol(javaLangObject.createArrayType(1)).superClass())
+          .isSameAs(cu.sema.type(javaLangObject))
+    );
+  }
+

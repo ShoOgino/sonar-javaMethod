@@ -1,0 +1,15 @@
+  @Test
+  void memberSymbols() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { int f; C() {} class N {} }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    VariableTreeImpl f = (VariableTreeImpl) c.members().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(1);
+    ClassTreeImpl n = (ClassTreeImpl) c.members().get(2);
+    assertThat(cu.sema.typeSymbol(c.typeBinding).memberSymbols())
+      .containsOnly(
+        cu.sema.variableSymbol(f.variableBinding),
+        cu.sema.methodSymbol(m.methodBinding),
+        cu.sema.typeSymbol(n.typeBinding)
+      );
+  }
+

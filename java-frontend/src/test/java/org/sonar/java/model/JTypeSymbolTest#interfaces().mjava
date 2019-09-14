@@ -1,0 +1,11 @@
+  @Test
+  void interfaces() {
+    JavaTree.CompilationUnitTreeImpl cu = test("interface I { } class C implements I { }");
+    ITypeBinding i = Objects.requireNonNull(((ClassTreeImpl) cu.types().get(0)).typeBinding);
+    ITypeBinding c = Objects.requireNonNull(((ClassTreeImpl) cu.types().get(1)).typeBinding);
+    assertThat(cu.sema.typeSymbol(i).interfaces())
+      .isEmpty();
+    assertThat(cu.sema.typeSymbol(c).interfaces())
+      .containsOnly(cu.sema.type(i));
+  }
+
