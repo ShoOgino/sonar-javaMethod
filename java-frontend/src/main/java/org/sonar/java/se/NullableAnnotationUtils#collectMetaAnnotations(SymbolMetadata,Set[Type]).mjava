@@ -1,13 +1,13 @@
-  private static ArrayList<Symbol> collectMetaAnnotations(Symbol symbol, Set<Type> knownTypes) {
+  private static ArrayList<Symbol> collectMetaAnnotations(SymbolMetadata metadata, Set<Type> knownTypes) {
     List<Symbol> result = new ArrayList<>();
-    for (SymbolMetadata.AnnotationInstance annotationInstance : symbol.metadata().annotations()) {
+    for (SymbolMetadata.AnnotationInstance annotationInstance : metadata.annotations()) {
       Symbol annotationSymbol = annotationInstance.symbol();
       Type annotationType = annotationSymbol.type();
       if (!knownTypes.contains(annotationType)) {
         knownTypes.add(annotationType);
         result.add(annotationSymbol);
         result.addAll(
-          collectMetaAnnotations(annotationSymbol, knownTypes)
+          collectMetaAnnotations(annotationSymbol.metadata(), knownTypes)
         );
       }
     }

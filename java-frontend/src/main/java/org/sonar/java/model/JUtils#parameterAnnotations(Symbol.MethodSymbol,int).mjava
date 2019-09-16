@@ -1,0 +1,10 @@
+  public static SymbolMetadata parameterAnnotations(Symbol.MethodSymbol method, int param) {
+    if (!(method instanceof JSymbol)) {
+      return ((MethodJavaSymbol) method).getParameters().scopeSymbols().get(param).metadata();
+    }
+    return new JSymbolMetadata(
+      ((JSymbol) method).sema,
+      ((IMethodBinding) ((JSymbol) method).binding).getParameterAnnotations(param)
+    );
+  }
+

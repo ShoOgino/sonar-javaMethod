@@ -1,18 +1,9 @@
   @Override
   public final SymbolMetadata metadata() {
-    IAnnotationBinding[] annotations;
     if (binding.getKind() == IBinding.PACKAGE) {
-      annotations = sema.resolvePackageAnnotations(binding.getName());
+      return new JSymbolMetadata(sema, sema.resolvePackageAnnotations(binding.getName()));
     } else {
-      annotations = binding.getAnnotations();
+      return new JSymbolMetadata(sema, binding.getAnnotations());
     }
-    return new JSymbolMetadata() {
-      @Override
-      public List<AnnotationInstance> annotations() {
-        return Arrays.stream(annotations)
-          .map(sema::annotation)
-          .collect(Collectors.toList());
-      }
-    };
   }
 
