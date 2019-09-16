@@ -1,4 +1,4 @@
-  public static Pair<SymbolicExecutionVisitor, SemanticModel> createSymbolicExecutionVisitorAndSemantic(String fileName, boolean crossFileEnabled, SECheck... checks) {
+  public static Pair<SymbolicExecutionVisitor, Sema> createSymbolicExecutionVisitorAndSemantic(String fileName, boolean crossFileEnabled, SECheck... checks) {
     InputFile inputFile = TestUtils.inputFile(fileName);
     CompilationUnitTree cut;
     try {
@@ -6,7 +6,7 @@
     } catch (IOException e) {
       throw new IllegalStateException(String.format("Unable to load file for test: '%s'", inputFile));
     }
-    SemanticModel semanticModel = SemanticModel.createFor(cut, CLASSLOADER);
+    Sema semanticModel = SemanticModel.createFor(cut, CLASSLOADER);
     SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Arrays.asList(checks), new BehaviorCache(CLASSLOADER, crossFileEnabled));
     sev.scanFile(new DefaultJavaFileScannerContext(cut, inputFile, semanticModel, null, new JavaVersionImpl(8), true));
     return new Pair<>(sev, semanticModel);
