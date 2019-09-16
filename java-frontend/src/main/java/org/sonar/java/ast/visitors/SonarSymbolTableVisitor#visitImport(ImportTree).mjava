@@ -8,7 +8,10 @@
     }
     // Exclude on demands imports
     if (!"*".equals(identifierTree.name())) {
-      createSymbol(identifierTree, tree);
+      Symbol symbol = JUtils.importTreeSymbol(tree);
+      if (symbol != null) {
+        createSymbol(identifierTree, symbol.usages());
+      }
     }
     super.visitImport(tree);
   }
