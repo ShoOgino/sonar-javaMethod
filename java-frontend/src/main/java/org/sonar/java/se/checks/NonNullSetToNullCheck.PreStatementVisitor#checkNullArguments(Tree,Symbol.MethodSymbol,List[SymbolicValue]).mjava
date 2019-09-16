@@ -1,12 +1,11 @@
     private void checkNullArguments(Tree syntaxTree, Symbol.MethodSymbol symbol, List<SymbolicValue> argumentValues) {
-      List<JavaSymbol> scopeSymbols = ((JavaSymbol.MethodJavaSymbol) symbol).getParameters().scopeSymbols();
       int parametersToTest = argumentValues.size();
-      if (scopeSymbols.size() < parametersToTest) {
+      if (symbol.parameterTypes().size() < parametersToTest) {
         // The last parameter is a variable length argument: the non-null condition does not apply to its values
-        parametersToTest = scopeSymbols.size() - 1;
+        parametersToTest = symbol.parameterTypes().size() - 1;
       }
       for (int i = 0; i < parametersToTest; i++) {
-        checkNullArgument(syntaxTree, symbol, scopeSymbols.get(i), argumentValues.get(i), i);
+        checkNullArgument(syntaxTree, symbol, i, argumentValues.get(i), i);
       }
     }
 
