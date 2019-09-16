@@ -5,10 +5,9 @@
     }
     for (int i = 0; i < methodTree.parameters().size(); i++) {
       VariableTree parameter = methodTree.parameters().get(i);
-      Symbol overrideeParamSymbol = ((JavaSymbol.MethodJavaSymbol) overridee).getParameters().scopeSymbols().get(i);
-      checkParameter(parameter, overrideeParamSymbol);
+      checkParameter(parameter, JUtils.parameterAnnotations(overridee, i));
     }
-    if (nonNullVsNull(overridee, methodTree.symbol())) {
+    if (nonNullVsNull(overridee, methodTree.symbol().metadata())) {
       for (AnnotationTree annotationTree : methodTree.modifiers().annotations()) {
         if(annotationTree.symbolType().is(JAVAX_ANNOTATION_NULLABLE) || annotationTree.symbolType().is(JAVAX_ANNOTATION_CHECK_FOR_NULL)) {
           reportIssue(annotationTree, "Remove this \""+ annotationTree.symbolType().name() +"\" annotation to honor the overridden method's contract.");
