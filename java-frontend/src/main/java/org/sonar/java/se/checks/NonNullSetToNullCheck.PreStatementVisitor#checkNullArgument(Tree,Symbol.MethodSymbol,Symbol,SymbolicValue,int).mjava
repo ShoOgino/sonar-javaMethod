@@ -1,10 +1,10 @@
-    private void checkNullArgument(Tree syntaxTree, JavaSymbol.MethodJavaSymbol symbol, JavaSymbol argumentSymbol, SymbolicValue argumentValue, int index) {
+    private void checkNullArgument(Tree syntaxTree, Symbol.MethodSymbol symbol, Symbol argumentSymbol, SymbolicValue argumentValue, int index) {
       ObjectConstraint constraint = programState.getConstraint(argumentValue, ObjectConstraint.class);
       if (constraint != null && constraint.isNull()) {
         String nonNullAnnotation = nonNullAnnotation(argumentSymbol);
         if (nonNullAnnotation != null) {
           String message = "Parameter {0} to this {1} is marked \"{2}\" but null could be passed.";
-          reportIssue(syntaxTree, message, index + 1, (symbol.isConstructor() ? "constructor" : "call"), nonNullAnnotation);
+          reportIssue(syntaxTree, message, index + 1, ("<init>".equals(symbol.name()) ? "constructor" : "call"), nonNullAnnotation);
         }
       }
     }

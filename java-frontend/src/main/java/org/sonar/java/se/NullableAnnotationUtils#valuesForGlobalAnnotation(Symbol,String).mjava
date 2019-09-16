@@ -1,0 +1,9 @@
+  @CheckForNull
+  private static List<SymbolMetadata.AnnotationValue> valuesForGlobalAnnotation(Symbol symbol, String annotation) {
+    return Stream.of(symbol, symbol.enclosingClass(), ((JavaSymbol) symbol).packge())
+      .map(s -> s.metadata().valuesForAnnotation(annotation))
+      .filter(Objects::nonNull)
+      .findFirst()
+      .orElse(null);
+  }
+
