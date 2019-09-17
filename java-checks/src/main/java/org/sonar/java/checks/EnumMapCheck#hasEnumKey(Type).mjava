@@ -3,12 +3,8 @@
     if (type instanceof MethodJavaType) {
       type = ((MethodJavaType) type).resultType();
     }
-    if (type instanceof ParametrizedTypeJavaType) {
-      ParametrizedTypeJavaType parametrizedTypeJavaType = (ParametrizedTypeJavaType) type;
-      List<TypeVariableJavaType> typeParameters = parametrizedTypeJavaType.typeParameters();
-      if (!typeParameters.isEmpty()) {
-        return parametrizedTypeJavaType.substitution(typeParameters.get(0)).symbol().isEnum();
-      }
+    if (JUtils.isParametrized(type)) {
+      return JUtils.typeArguments(type).get(0).symbol().isEnum();
     }
     return false;
   }
