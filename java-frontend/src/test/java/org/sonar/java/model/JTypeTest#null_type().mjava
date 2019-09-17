@@ -1,0 +1,20 @@
+  @Test
+  void null_type() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return null; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ReturnStatementTreeImpl s = (ReturnStatementTreeImpl) Objects.requireNonNull(m.block()).body().get(0);
+    AbstractTypedTree e = Objects.requireNonNull((AbstractTypedTree) s.expression());
+    JType nullType = cu.sema.type(Objects.requireNonNull(e.typeBinding));
+
+    assertThat(nullType.name())
+      .isEqualTo(e.symbolType().name())
+      .isEqualTo("<nulltype>");
+    assertThat(nullType.fullyQualifiedName())
+      .isEqualTo(e.symbolType().fullyQualifiedName())
+      .isEqualTo("<nulltype>");
+    assertThat(nullType.is("<nulltype>"))
+      .isEqualTo(e.symbolType().is("<nulltype>"))
+      .isTrue();
+  }
+
