@@ -1,7 +1,23 @@
   private boolean isNotLoopLocalVar(AssignmentExpressionTree tree) {
     IdentifierTree idTree = getIdentifierTree(tree.variable());
-    Tree envTree = semanticModel.getTree(semanticModel.getEnv(idTree.symbol()));
-    Tree loopTree = loopLevel.peek();
-    return envTree == null || !(envTree.equals(loopTree) || envTree.equals(loopStatement(loopTree)));
+    Tree declaration = idTree.symbol().declaration();
+    if (declaration == null) {
+      return true;
+    }
+    Tree parent = declaration.parent();
+    Tree parentLoop = loopLevel.peek();
+    while (parent != null && !parent.equals(parentLoop)) {
+      if (parent.is(
+        Tree.Kind.CLASS,
+        Tree.Kind.ENUM,
+        Tree.Kind.INTERFACE,
+        Tree.Kind.METHOD,
+        Tree.Kind.LAMBDA_EXPRESSION)) {
+        // declaration is necessarily not part of a loop
+        return true;
+      }
+      parent = parent.parent();
+    }
+    return parent == null;
   }
 
