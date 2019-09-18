@@ -1,4 +1,9 @@
   private static boolean useRawTypeOfParametrizedType(Type methodParam, Type overrideeParam) {
-    return overrideeParam instanceof ParametrizedTypeJavaType && methodParam.equals(overrideeParam.erasure());
+    if (overrideeParam instanceof ParametrizedTypeJavaType) {
+      return methodParam.equals(overrideeParam.erasure());
+    }
+    return !JUtils.isParametrized(methodParam)
+      && JUtils.isParametrized(overrideeParam)
+      && methodParam.erasure().equals(overrideeParam.erasure());
   }
 
