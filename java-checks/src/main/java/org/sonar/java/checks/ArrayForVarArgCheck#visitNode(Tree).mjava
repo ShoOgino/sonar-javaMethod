@@ -17,9 +17,13 @@
 
     if (sym.isMethodSymbol() && !args.isEmpty()) {
       ExpressionTree lastArg = args.get(args.size() - 1);
-      JavaSymbol.MethodJavaSymbol methodSymbol = (JavaSymbol.MethodJavaSymbol) sym;
-      MethodJavaType methodType = getMethodType(methodSymbol, methodName);
-      checkInvokedMethod(methodSymbol, methodType, lastArg);
+      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) sym;
+      Type methodType = getMethodType(methodSymbol, methodName);
+      if (methodType instanceof MethodJavaType) {
+        checkInvokedMethod(methodSymbol, (MethodJavaType) methodType, lastArg);
+      } else {
+        checkInvokedMethod(methodSymbol, lastArg);
+      }
     }
   }
 

@@ -1,6 +1,6 @@
-  private void checkInvokedMethod(JavaSymbol.MethodJavaSymbol methodSymbol, @Nullable MethodJavaType methodType, ExpressionTree lastArg) {
-    if (methodSymbol.isVarArgs() && lastArg.is(Tree.Kind.NEW_ARRAY)) {
-      if (lastParamHasSameType(methodSymbol, methodType, lastArg.symbolType())) {
+  private void checkInvokedMethod(Symbol.MethodSymbol methodSymbol, ExpressionTree lastArg) {
+    if (JUtils.isVarArgsMethod(methodSymbol) && lastArg.is(Tree.Kind.NEW_ARRAY)) {
+      if (lastParamHasSameType(methodSymbol, lastArg.symbolType())) {
         String message = "Remove this array creation";
         NewArrayTree newArrayTree = (NewArrayTree) lastArg;
         if (newArrayTree.openBraceToken() == null) {
