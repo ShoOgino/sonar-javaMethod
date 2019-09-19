@@ -1,23 +1,20 @@
   /**
-   * @see org.eclipse.jdt.core.dom.FieldAccess
+   * @see org.eclipse.jdt.core.dom.SuperFieldAccess
    */
   @Test
-  void expression_field_access() {
-    JavaTree.CompilationUnitTreeImpl cu = test("class C { int f; Object m() { return this.f; } }");
+  void expression_super_field_access() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C extends S { Object m() { return super.f; } } class S { int f; }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
-    VariableTreeImpl field = (VariableTreeImpl) c.members().get(0);
-    MethodTreeImpl m = (MethodTreeImpl) c.members().get(1);
+    ClassTreeImpl superClass = (ClassTreeImpl) cu.types().get(1);
+    VariableTreeImpl superField = (VariableTreeImpl) superClass.members().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m.block()).body().get(0);
     MemberSelectExpressionTreeImpl expression = Objects.requireNonNull((MemberSelectExpressionTreeImpl) s.expression());
-    assertThat(expression.typeBinding)
-      .isNotNull();
     IdentifierTreeImpl identifier = (IdentifierTreeImpl) expression.identifier();
-    assertThat(identifier.typeBinding)
-      .isSameAs(expression.typeBinding);
     assertThat(identifier.binding)
       .isNotNull()
       .isSameAs(Objects.requireNonNull((VariableTreeImpl) identifier.symbol().declaration()).variableBinding)
-      .isSameAs(field.variableBinding);
+      .isSameAs(superField.variableBinding);
     assertThat(cu.sema.usages.get(identifier.binding))
       .containsExactlyElementsOf(identifier.symbol().usages())
       .containsOnly(identifier);
