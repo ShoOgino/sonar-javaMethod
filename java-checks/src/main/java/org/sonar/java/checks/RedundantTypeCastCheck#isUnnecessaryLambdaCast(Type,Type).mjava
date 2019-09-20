@@ -1,13 +1,13 @@
   private static boolean isUnnecessaryLambdaCast(Type childType, Type parentType) {
-    if (parentType.isSubtypeOf(childType)) {
+    if (parentType.isSubtypeOf(childType) && !isRawTypeOfParameterizedType(parentType, childType)) {
       return true;
     }
     // intersection type on lambda should not raise an issue : required to make lambda serializable for instance
-    if (((JavaType) childType).isTagged(JavaType.INTERSECTION)) {
+    if (JUtils.isIntersectionType(childType)) {
       return false;
     }
 
-    List<MethodJavaSymbol> childMethods = getMethodSymbolsOf(childType).collect(Collectors.toList());
+    List<Symbol.MethodSymbol> childMethods = getMethodSymbolsOf(childType).collect(Collectors.toList());
     return childMethods.isEmpty() || (childMethods.size() == 1 && isSingleAbstractMethodOverride(childMethods.get(0), parentType));
   }
 

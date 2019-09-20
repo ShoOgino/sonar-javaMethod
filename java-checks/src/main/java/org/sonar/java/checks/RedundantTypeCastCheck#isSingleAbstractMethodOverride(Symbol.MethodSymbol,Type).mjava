@@ -1,0 +1,7 @@
+  private static boolean isSingleAbstractMethodOverride(Symbol.MethodSymbol childMethod, Type parentType) {
+    Symbol.MethodSymbol overriddenSymbol = childMethod.overriddenSymbol();
+    return !JUtils.isDefaultMethod(childMethod)
+      && overriddenSymbol != null
+      && getMethodSymbolsOf(parentType).filter(NON_DEFAULT_METHOD_PREDICATE).anyMatch(overriddenSymbol::equals);
+  }
+
