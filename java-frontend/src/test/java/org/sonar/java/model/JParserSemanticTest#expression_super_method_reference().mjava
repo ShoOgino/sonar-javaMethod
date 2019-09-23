@@ -9,7 +9,13 @@
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl method = (MethodTreeImpl) c.members().get(0);
     ReturnStatementTreeImpl s = (ReturnStatementTreeImpl) method.block().body().get(0);
-    MethodReferenceTreeImpl creationReference = (MethodReferenceTreeImpl) s.expression();
+    MethodReferenceTreeImpl creationReference = Objects.requireNonNull((MethodReferenceTreeImpl) s.expression());
+
+    UnqualifiedKeywordSuper keywordSuper = (UnqualifiedKeywordSuper) creationReference.expression();
+    assertThat(keywordSuper.resolveType().symbol().declaration())
+      .isSameAs(keywordSuper.symbolType().symbol().declaration())
+      .isSameAs(superClass.symbol().declaration());
+
     IdentifierTreeImpl identifier = (IdentifierTreeImpl) creationReference.method();
     assertThat(identifier.binding)
       .isNotNull()

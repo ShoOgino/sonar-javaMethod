@@ -16,6 +16,12 @@
       .isSameAs(Objects.requireNonNull((MethodTreeImpl) superMethodInvocation.symbol().declaration()).methodBinding)
       .isSameAs(superClassMethod.methodBinding);
     MemberSelectExpressionTreeImpl e2 = (MemberSelectExpressionTreeImpl) superMethodInvocation.methodSelect();
+
+    UnqualifiedKeywordSuper keywordSuper = (UnqualifiedKeywordSuper) e2.expression();
+    assertThat(keywordSuper.resolveType().symbol().declaration())
+      .isSameAs(keywordSuper.symbolType().symbol().declaration())
+      .isSameAs(superClass.symbol().declaration());
+
     IdentifierTreeImpl i = (IdentifierTreeImpl) e2.identifier();
     assertThat(i.binding)
       .isSameAs(Objects.requireNonNull((MethodTreeImpl) i.symbol().declaration()).methodBinding)
