@@ -29,11 +29,12 @@
       .isSameAs(Objects.requireNonNull((ClassTreeImpl) qualifiedSuper.symbolType().symbol().declaration()).typeBinding)
       .isSameAs(superClass.typeBinding);
 
-    IdentifierTreeImpl keywordSuper = (IdentifierTreeImpl) qualifiedSuper.identifier();
-    assertThat(keywordSuper.typeBinding)
-      .isNotNull()
-      .isSameAs(Objects.requireNonNull((ClassTreeImpl) qualifiedSuper.symbolType().symbol().declaration()).typeBinding)
-      .isSameAs(superClass.typeBinding);
+    KeywordSuper keywordSuper = (KeywordSuper) qualifiedSuper.identifier();
+    assertThat(keywordSuper.resolveType().symbol().declaration())
+      .isSameAs((ClassTreeImpl) qualifiedSuper.symbolType().symbol().declaration())
+      .isSameAs(superClass);
+    assertThat(keywordSuper.resolveSymbol())
+      .isSameAs(cu.sema.typeSymbol(t.typeBinding).superSymbol);
 
     IdentifierTreeImpl identifier = (IdentifierTreeImpl) qualifiedMethodName.identifier();
     assertThat(identifier.binding)
