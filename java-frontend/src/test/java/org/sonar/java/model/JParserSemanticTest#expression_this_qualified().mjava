@@ -13,10 +13,15 @@
       .isNotNull()
       .isSameAs(Objects.requireNonNull((ClassTreeImpl) e.symbolType().symbol().declaration()).typeBinding)
       .isSameAs(c1.typeBinding);
-    IdentifierTreeImpl keywordThis = (IdentifierTreeImpl) e.identifier();
+    KeywordThis keywordThis = (KeywordThis) e.identifier();
     assertThat(keywordThis.typeBinding)
       .isNotNull()
       .isSameAs(Objects.requireNonNull((ClassTreeImpl) keywordThis.symbolType().symbol().declaration()).typeBinding)
       .isSameAs(c1.typeBinding);
+    assertThat(keywordThis.resolveSymbol())
+      .isSameAs(cu.sema.typeSymbol(c1.typeBinding).thisSymbol);
+    assertThat(keywordThis.resolveSymbol().isVariableSymbol())
+      .isSameAs(keywordThis.symbol().isVariableSymbol())
+      .isTrue();
   }
 
