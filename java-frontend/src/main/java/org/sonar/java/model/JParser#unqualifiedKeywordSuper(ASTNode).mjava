@@ -1,0 +1,12 @@
+  private UnqualifiedKeywordSuper unqualifiedKeywordSuper(ASTNode node) {
+    InternalSyntaxToken token = firstTokenIn(node, TerminalTokens.TokenNamesuper);
+    do {
+      if (node instanceof AbstractTypeDeclaration) {
+        return new UnqualifiedKeywordSuper(token, ((AbstractTypeDeclaration) node).resolveBinding());
+      } else if (node instanceof AnonymousClassDeclaration) {
+        return new UnqualifiedKeywordSuper(token, ((AnonymousClassDeclaration) node).resolveBinding());
+      }
+      node = node.getParent();
+    } while (true);
+  }
+
