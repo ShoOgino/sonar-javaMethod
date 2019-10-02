@@ -1,0 +1,10 @@
+  @Nullable
+  public static SemanticModel createFor(String fileName, CompilationUnitTree tree, SquidClassLoader classLoader) {
+    if (isJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"), fileName)) {
+      SemanticModel.handleMissingTypes(tree);
+      return null;
+    } else {
+      return createFor(tree, classLoader);
+    }
+  }
+
