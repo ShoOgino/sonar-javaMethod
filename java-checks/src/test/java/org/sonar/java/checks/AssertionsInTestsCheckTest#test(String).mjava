@@ -1,0 +1,29 @@
+  @ParameterizedTest
+  @ValueSource(strings = {
+    "Junit3",
+    "Junit4",
+    "Junit5",
+    "AssertJ",
+    "Hamcrest",
+    "Spring",
+    "EasyMock",
+    "Truth",
+    "ReactiveX1",
+    "ReactiveX2",
+    "RestAssured",
+    "Mockito",
+    "JMock",
+    "WireMock",
+    "VertX",
+    "Selenide",
+    "JMockit",
+    "Custom"
+  })
+  void test(String framework) {
+    JavaCheckVerifier.verify("src/test/files/checks/AssertionsInTestsCheck/" + framework + ".java", check);
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains(
+      "Unable to create a corresponding matcher for custom assertion method, please check the format of the following symbol: 'blabla'",
+      "Unable to create a corresponding matcher for custom assertion method, please check the format of the following symbol: 'bla# '",
+      "Unable to create a corresponding matcher for custom assertion method, please check the format of the following symbol: ' #bla'");
+  }
+
