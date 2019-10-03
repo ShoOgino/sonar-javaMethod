@@ -1,13 +1,11 @@
-  @Test(expected = IllegalArgumentException.class)
-  public void checkBadRegex() throws Throwable {
+  @Test
+  public void checkBadRegex() {
     DisallowedClassCheck visitor = new DisallowedClassCheck();
     // bad regex
     visitor.disallowedClass = "java.lang(";
-    try {
-      JavaCheckVerifier.verify("src/test/files/checks/DisallowedClassCheckRegex.java", visitor);
-      Fail.fail("Should have failed");
-    } catch (AnalysisException e) {
-      throw e.getCause();
-    }
+
+    AnalysisException e = assertThrows(AnalysisException.class,
+      () -> JavaCheckVerifier.verify("src/test/files/checks/DisallowedClassCheckRegex.java", visitor));
+    assertThat(e.getCause()).isInstanceOf(IllegalArgumentException.class);
   }
 

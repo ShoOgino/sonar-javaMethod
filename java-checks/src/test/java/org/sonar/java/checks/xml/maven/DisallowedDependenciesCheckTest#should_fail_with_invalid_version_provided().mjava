@@ -1,7 +1,9 @@
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void should_fail_with_invalid_version_provided() {
     check.dependencyName = "org.sonar.*:*";
     check.version = "version-0";
-    SonarXmlCheckVerifier.verifyIssues("noVersion/pom.xml", check);
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+      () -> SonarXmlCheckVerifier.verifyIssues("noVersion/pom.xml", check));
+    assertThat(e.getMessage()).isEqualTo("[S3417] Unable to build matchers from provided dependency name: org.sonar.*:*");
   }
 

@@ -1,5 +1,7 @@
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void fail_with_invalid_version() {
-    new RangedVersionMatcher("1.2.3", "invalid");
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+      () -> new RangedVersionMatcher("1.2.3", "invalid"));
+    assertThat(e.getMessage()).isEqualTo("Provided version does not match expected pattern: <major version>.<minor version>.<incremental version> (recieved: invalid)");
   }
 
