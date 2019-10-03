@@ -1,11 +1,11 @@
   @Test
   public void should_fail_with_bad_regular_expression() {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("[" + FileHeaderCheck.class.getSimpleName() + "] Unable to compile the regular expression: *");
-
     FileHeaderCheck check = new FileHeaderCheck();
     check.headerFormat = "**";
     check.isRegularExpression = true;
-    check.scanFile(mock(JavaFileScannerContext.class));
+
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+      () -> check.scanFile(mock(JavaFileScannerContext.class)));
+    assertThat(e.getMessage()).isEqualTo("[FileHeaderCheck] Unable to compile the regular expression: **");
   }
 

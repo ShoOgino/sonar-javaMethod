@@ -1,10 +1,10 @@
   @Test
   public void invalid_regex() {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("[S3420] Unable to compile the regular expression: *");
-
     ArtifactIdNamingConventionCheck check = new ArtifactIdNamingConventionCheck();
     check.regex = "*";
-    SonarXmlCheckVerifier.verifyNoIssue("defaultOK/pom.xml", check);
+
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+      () -> SonarXmlCheckVerifier.verifyNoIssue("defaultOK/pom.xml", check));
+    assertThat(e.getMessage()).isEqualTo("[S3420] Unable to compile the regular expression: *");
   }
 
