@@ -1,8 +1,10 @@
   public void forLoopHandling(int maxLoop) {
-    Reader reader = null;
-    for (int i = 0; i < MAX_LOOP; i++) {
-      reader = new FileReader(""); // Noncompliant {{Use try-with-resources or close this "FileReader" in a "finally" clause.}}
+    FileInputStream stream = new FileInputStream("myFile"); // Noncompliant {{Use try-with-resources or close this "FileInputStream" in a "finally" clause.}}
+    for(int i = 0; i < maxLoop; i++) {
+      stream = new FileInputStream("myFile"); // Noncompliant {{Use try-with-resources or close this "FileInputStream" in a "finally" clause.}}
+      stream.read();  // can fail
+      stream.close();
     }
-    reader.close();
+   return;
   }
 
