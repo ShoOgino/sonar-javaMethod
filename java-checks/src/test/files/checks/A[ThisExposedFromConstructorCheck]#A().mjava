@@ -1,16 +1,25 @@
   public A() {
-    this.location = ""; // Compliant
-    foo2(this);  // Noncompliant
-    foo2(); // Compliant
-    foo3(); //  Compliant
-    foo1(new A());  // Compliant
-    B.foo2();  // Compliant
-    B.foo1(this);  // Noncompliant
-    B.field = this;  // Noncompliant
-    B.field3 = this; // Noncompliant
-    this.Instance2.foo3(this); // Noncompliant
-    this.foo3(this);  // Compliant
-    this.Instance = (this); // Noncompliant
-    this.tempVal = (this); // Compliant
+    list.add(this); // Noncompliant [sc=16;ec=20] {{Make sure the use of "this" doesn't expose partially-constructed instances of this class in multi-threaded environments.}}
+
+    tempVal = this; // Compliant
+    this.tempVal = this; // Compliant
+    A.tempVal = this; // Compliant
+
+    Instance = this; // Noncompliant
+    new A().Instance = this; // Noncompliant
+
+    Instance2 = this; // Noncompliant
+    super.field = this; // Noncompliant
+
+    Instance.method(this); // Compliant
+    Instance2.method(this); // Noncompliant
+    tempVal = method(this); // Compliant
+
+    as[0] = this; // Noncompliant
+
+    new A() {
+      @Override
+      void notAConstructor() { }
+    };
   }
 
