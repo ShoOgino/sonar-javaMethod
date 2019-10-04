@@ -1,0 +1,13 @@
+  private static boolean isSuppressingEquals(Object object) {
+    if (object instanceof LiteralTree) {
+      LiteralTree literal = (LiteralTree) object;
+      return "serial".equals(LiteralUtils.trimQuotes(literal.value()));
+    } else if (object instanceof Object[]) {
+      return Arrays.stream((Object[]) object)
+        .filter(String.class::isInstance)
+        .map(String.class::cast)
+        .anyMatch("serial"::equals);
+    }
+    return false;
+  }
+

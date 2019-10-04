@@ -1,12 +1,7 @@
   private static boolean hasSuppressWarningAnnotation(Symbol.TypeSymbol symbol) {
     List<SymbolMetadata.AnnotationValue> annotations = symbol.metadata().valuesForAnnotation("java.lang.SuppressWarnings");
-    if (annotations != null) {
-      for (SymbolMetadata.AnnotationValue annotationValue : annotations) {
-        if ("serial".equals(stringLiteralValue(annotationValue.value()))) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return annotations != null && annotations.stream()
+        .map(SymbolMetadata.AnnotationValue::value)
+        .anyMatch(SerialVersionUidCheck::isSuppressingEquals);
   }
 
