@@ -2,10 +2,17 @@
     List<SymbolMetadata.AnnotationValue> annotationValues = symbol.metadata().valuesForAnnotation("org.junit.runner.RunWith");
     if (annotationValues != null && annotationValues.size() == 1) {
       Object value = annotationValues.get(0).value();
-      if (value instanceof MemberSelectExpressionTree) {
+      if (value instanceof Symbol.TypeSymbol) {
+        Symbol.TypeSymbol runnerParam = (Symbol.TypeSymbol) value;
+        for (String runnerClass : runnerClasses) {
+          if (runnerClass.equals(runnerParam.name())) {
+            return true;
+          }
+        }
+      } else if (value instanceof MemberSelectExpressionTree) {
         String runnerParam = ExpressionsHelper.concatenate((ExpressionTree) value);
         for (String runnerClass : runnerClasses) {
-          if (runnerParam.endsWith(runnerClass)) {
+          if (runnerParam.endsWith(runnerClass + ".class")) {
             return true;
           }
         }
