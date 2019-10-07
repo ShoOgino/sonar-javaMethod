@@ -1,0 +1,16 @@
+  @Nullable
+  private static IMethodBinding findConstructorForAnonymousClass(AST ast, @Nullable ITypeBinding typeBinding, @Nullable IMethodBinding methodBinding) {
+    if (typeBinding == null || methodBinding == null) {
+      return null;
+    }
+    if (typeBinding.isInterface()) {
+      typeBinding = ast.resolveWellKnownType("java.lang.Object");
+    }
+    for (IMethodBinding m : typeBinding.getDeclaredMethods()) {
+      if (methodBinding.isSubsignature(m)) {
+        return m;
+      }
+    }
+    return null;
+  }
+

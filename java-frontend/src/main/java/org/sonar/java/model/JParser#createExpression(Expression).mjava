@@ -256,8 +256,11 @@
         }
 
         IdentifierTreeImpl i = (IdentifierTreeImpl) t.getConstructorIdentifier();
-        // TODO should be constructor of i.typeBinding instead of constructor of anonymous class ?
-        i.binding = e.resolveConstructorBinding();
+        if (e.getAnonymousClassDeclaration() == null) {
+          i.binding = e.resolveConstructorBinding();
+        } else {
+          i.binding = findConstructorForAnonymousClass(e.getAST(), i.typeBinding, e.resolveConstructorBinding());
+        }
         usage(i.binding, i);
 
         return t;
