@@ -1,0 +1,14 @@
+  @Test
+  void symbol_unknown() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class A implements UnknownInterface { }");
+    ClassTree c = (ClassTree) cu.types().get(0);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) c.superInterfaces().get(0);
+    Symbol s = cu.sema.typeSymbol(Objects.requireNonNull((ITypeBinding) i.binding));
+    assertThat(s.isUnknown())
+      .isEqualTo(i.symbol().isUnknown())
+      .isTrue();
+    assertThat(s.isTypeSymbol())
+      .isEqualTo(i.symbol().isTypeSymbol())
+      .isFalse();
+  }
+
