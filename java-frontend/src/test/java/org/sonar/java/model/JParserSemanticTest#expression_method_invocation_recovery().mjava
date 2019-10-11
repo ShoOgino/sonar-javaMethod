@@ -1,0 +1,19 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.MethodInvocation
+   */
+  @Test
+  void expression_method_invocation_recovery() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { Object m() { return m(42); } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl method = (MethodTreeImpl) c.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(method.block()).body().get(0);
+    MethodInvocationTreeImpl methodInvocation = Objects.requireNonNull((MethodInvocationTreeImpl) s.expression());
+    assertThat(methodInvocation.methodBinding)
+      .isNull();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) methodInvocation.methodSelect();
+    assertThat(i.binding)
+      .isNull();
+    assertThat(cu.sema.usages.get(Objects.requireNonNull(method.methodBinding)))
+      .isNull();
+  }
+

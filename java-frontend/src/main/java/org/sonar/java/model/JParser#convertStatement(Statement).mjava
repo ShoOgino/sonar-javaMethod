@@ -314,8 +314,6 @@
         IdentifierTreeImpl i = new IdentifierTreeImpl(e.arguments().isEmpty()
           ? lastTokenIn(e, TerminalTokens.TokenNamethis)
           : firstTokenBefore((ASTNode) e.arguments().get(0), TerminalTokens.TokenNamethis));
-        i.binding = e.resolveConstructorBinding();
-        usage(i.binding, i);
         MethodInvocationTreeImpl t = new MethodInvocationTreeImpl(
           i,
           convertTypeArguments(e.typeArguments()),
@@ -324,7 +322,10 @@
         t.methodBinding = e.resolveConstructorBinding();
         if (t.methodBinding != null) {
           t.typeBinding = t.methodBinding.getDeclaringClass();
+          t.methodBinding = excludeRecovery(t.methodBinding, arguments.size());
         }
+        i.binding = t.methodBinding;
+        usage(i.binding, i);
         return new ExpressionStatementTreeImpl(
           t,
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
@@ -334,9 +335,6 @@
         SuperConstructorInvocation e = (SuperConstructorInvocation) node;
 
         IdentifierTreeImpl i = new IdentifierTreeImpl(firstTokenIn(e, TerminalTokens.TokenNamesuper));
-        i.binding = e.resolveConstructorBinding();
-        usage(i.binding, i);
-
         ExpressionTree methodSelect = i;
         if (e.getExpression() != null) {
           methodSelect = new MemberSelectExpressionTreeImpl(
@@ -360,7 +358,10 @@
         t.methodBinding = e.resolveConstructorBinding();
         if (t.methodBinding != null) {
           t.typeBinding = t.methodBinding.getDeclaringClass();
+          t.methodBinding = excludeRecovery(t.methodBinding, arguments.size());
         }
+        i.binding = t.methodBinding;
+        usage(i.binding, i);
         return new ExpressionStatementTreeImpl(
           t,
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)

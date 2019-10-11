@@ -307,8 +307,6 @@
         );
 
         IdentifierTreeImpl rhs = convertSimpleName(e.getName());
-        usage(rhs.binding, rhs);
-
         ExpressionTree memberSelect;
         if (e.getExpression() == null) {
           memberSelect = rhs;
@@ -324,7 +322,9 @@
           convertTypeArguments(e.typeArguments()),
           arguments
         );
-        t.methodBinding = e.resolveMethodBinding();
+        t.methodBinding = excludeRecovery(e.resolveMethodBinding(), arguments.size());
+        rhs.binding = t.methodBinding;
+        usage(rhs.binding, rhs);
         return t;
       }
       case ASTNode.SUPER_METHOD_INVOCATION: {
@@ -337,7 +337,6 @@
         );
 
         IdentifierTreeImpl rhs = convertSimpleName(e.getName());
-        usage(rhs.binding, rhs);
 
         ExpressionTree outermostSelect;
         if (e.getQualifier() == null) {
@@ -371,7 +370,9 @@
           null,
           arguments
         );
-        t.methodBinding = e.resolveMethodBinding();
+        t.methodBinding = excludeRecovery(e.resolveMethodBinding(), arguments.size());
+        rhs.binding = t.methodBinding;
+        usage(rhs.binding, rhs);
         return t;
       }
       case ASTNode.PARENTHESIZED_EXPRESSION: {

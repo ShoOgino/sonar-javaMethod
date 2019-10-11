@@ -1,0 +1,23 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.SuperMethodInvocation
+   */
+  @Test
+  void expression_super_method_invocation_recovery() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C extends S { Object m() { return super.m(42); } } class S { Object m() { return null; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ClassTreeImpl superClass = (ClassTreeImpl) cu.types().get(1);
+    MethodTreeImpl superClassMethod = (MethodTreeImpl) superClass.members().get(0);
+    ReturnStatementTree s = (ReturnStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+
+    MethodInvocationTreeImpl superMethodInvocation = (MethodInvocationTreeImpl) Objects.requireNonNull(s.expression());
+    assertThat(superMethodInvocation.methodBinding)
+      .isNull();
+    MemberSelectExpressionTreeImpl e = (MemberSelectExpressionTreeImpl) superMethodInvocation.methodSelect();
+    IdentifierTreeImpl i = (IdentifierTreeImpl) e.identifier();
+    assertThat(i.binding)
+      .isNull();
+    assertThat(cu.sema.usages.get(Objects.requireNonNull(superClassMethod.methodBinding)))
+      .isNull();
+  }
+

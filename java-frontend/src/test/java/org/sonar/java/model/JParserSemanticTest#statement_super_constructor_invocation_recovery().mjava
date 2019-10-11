@@ -1,0 +1,25 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.SuperConstructorInvocation
+   */
+  @Test
+  void statement_super_constructor_invocation_recovery() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C extends S { C() { super(42); } } class S { S() { } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ClassTreeImpl superClass = (ClassTreeImpl) cu.types().get(1);
+    MethodTreeImpl superClassConstructor = (MethodTreeImpl) superClass.members().get(0);
+    ExpressionStatementTree s = (ExpressionStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+
+    MethodInvocationTreeImpl superConstructorInvocation = (MethodInvocationTreeImpl) s.expression();
+    assertThat(superConstructorInvocation.methodBinding)
+      .isNull();
+    assertThat(superConstructorInvocation.typeBinding)
+      .isNotNull()
+      .isSameAs(superClass.typeBinding);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) superConstructorInvocation.methodSelect();
+    assertThat(i.binding)
+      .isNull();
+    assertThat(cu.sema.usages.get(Objects.requireNonNull(superClassConstructor.methodBinding)))
+      .isNull();
+  }
+

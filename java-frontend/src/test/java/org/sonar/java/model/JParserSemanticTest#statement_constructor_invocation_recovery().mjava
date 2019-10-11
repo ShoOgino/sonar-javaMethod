@@ -1,0 +1,23 @@
+  /**
+   * @see org.eclipse.jdt.core.dom.ConstructorInvocation
+   */
+  @Test
+  void statement_constructor_invocation_recovery() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { C() { this(42); } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ExpressionStatementTree s = (ExpressionStatementTree) Objects.requireNonNull(m.block()).body().get(0);
+
+    MethodInvocationTreeImpl constructorInvocation = (MethodInvocationTreeImpl) s.expression();
+    assertThat(constructorInvocation.methodBinding)
+      .isNull();
+    assertThat(constructorInvocation.typeBinding)
+      .isNotNull()
+      .isSameAs(c.typeBinding);
+    IdentifierTreeImpl i = (IdentifierTreeImpl) constructorInvocation.methodSelect();
+    assertThat(i.binding)
+      .isNull();
+    assertThat(cu.sema.usages.get(Objects.requireNonNull(m.methodBinding)))
+      .isNull();
+  }
+

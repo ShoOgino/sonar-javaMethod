@@ -1,0 +1,17 @@
+  @Nullable
+  private static IMethodBinding excludeRecovery(@Nullable IMethodBinding methodBinding, int arguments) {
+    if (methodBinding == null) {
+      return null;
+    }
+    if (methodBinding.isVarargs()) {
+      if (arguments + 1 < methodBinding.getParameterTypes().length) {
+        return null;
+      }
+    } else {
+      if (arguments != methodBinding.getParameterTypes().length) {
+        return null;
+      }
+    }
+    return methodBinding;
+  }
+
