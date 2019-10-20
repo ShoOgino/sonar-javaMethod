@@ -1,0 +1,10 @@
+  static ITypeBinding normalize(ITypeBinding typeBinding) {
+    ITypeBinding typeDeclaration = typeBinding.getTypeDeclaration();
+    if (typeBinding.isLocal()) {
+      return typeDeclaration;
+    }
+    return typeBinding.isParameterizedType() && Arrays.equals(typeDeclaration.getTypeParameters(), typeBinding.getTypeArguments())
+      ? typeDeclaration
+      : typeBinding;
+  }
+

@@ -1,0 +1,17 @@
+  static boolean areEqual(@Nullable ITypeBinding binding1, @Nullable ITypeBinding binding2) {
+    if (binding1 == null || binding2 == null) {
+      return binding1 == binding2;
+    }
+    if (binding1.isWildcardType()) {
+      return binding2.isWildcardType()
+        && binding1.isUpperbound() == binding2.isUpperbound()
+        && areEqual(binding1.getBound(), binding2.getBound());
+    }
+    // TODO compare declaring class, method, member
+    return binding1.getTypeDeclaration().equals(binding2.getTypeDeclaration())
+      && isParameterizedOrGeneric(binding1) == isParameterizedOrGeneric(binding2)
+      && binding1.isRawType() == binding2.isRawType()
+      && Arrays.equals(binding1.getTypeParameters(), binding2.getTypeParameters())
+      && Arrays.equals(binding1.getTypeArguments(), binding2.getTypeArguments());
+  }
+
