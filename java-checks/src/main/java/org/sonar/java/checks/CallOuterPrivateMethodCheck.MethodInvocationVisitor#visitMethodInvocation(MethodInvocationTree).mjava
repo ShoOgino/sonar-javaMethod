@@ -4,6 +4,10 @@
       if(symbol.isUnknown()) {
         unknownInvocations.put(ExpressionUtils.methodName(tree).name(), tree);
       } else if (isPrivateMethodOfOuterClass(symbol)) {
+        if (JUtils.isParametrizedMethod((Symbol.MethodSymbol) symbol) && symbol.declaration() != null) {
+          // generic methods requires to use their declaration symbol rather than the parameterized one
+          symbol = ((Symbol.MethodSymbol) symbol).declaration().symbol();
+        }
         usages.add(symbol);
       }
       super.visitMethodInvocation(tree);
