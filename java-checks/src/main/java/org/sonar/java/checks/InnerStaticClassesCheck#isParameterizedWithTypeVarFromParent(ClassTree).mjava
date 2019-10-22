@@ -1,0 +1,22 @@
+  private static boolean isParameterizedWithTypeVarFromParent(ClassTree tree) {
+    if (!tree.typeParameters().isEmpty()) {
+      return false;
+    }
+    List<ParameterizedTypeTree> parameterizedSuperTypes = new LinkedList<>();
+    TypeTree superClass = tree.superClass();
+    if (superClass != null && superClass.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      parameterizedSuperTypes.add((ParameterizedTypeTree) superClass);
+    }
+    for (TypeTree typeTree : tree.superInterfaces()) {
+      if (typeTree.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+        parameterizedSuperTypes.add((ParameterizedTypeTree) typeTree);
+      }
+    }
+
+    return parameterizedSuperTypes.stream()
+      .flatMap(parameterizedTypeTree -> parameterizedTypeTree.typeArguments().stream())
+      .filter(typeArgument -> typeArgument instanceof TypeTree)
+      .map(typeArgument -> ((TypeTree) typeArgument).symbolType())
+      .anyMatch(JUtils::isTypeVar);
+  }
+
