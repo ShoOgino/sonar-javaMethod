@@ -11,8 +11,10 @@
       return;
     }
 
-    Set<Type> superTypes = JUtils.superTypes(classTree.symbol());
     List<Type> superInterfacesTypes = getTypes(superInterfaces);
+    List<Type> superTypes = new ArrayList<>(JUtils.superTypes(classTree.symbol()));
+    superTypes.sort(new SuperTypeComparator(superInterfacesTypes));
+
     Set<String> reportedNames = new HashSet<>();
     for (TypeTree superInterface : superInterfaces) {
       String superInterfaceName = extractInterfaceName(superInterface);
