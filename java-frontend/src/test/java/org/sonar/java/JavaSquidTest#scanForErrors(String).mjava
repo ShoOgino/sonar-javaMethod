@@ -1,23 +1,24 @@
-  private SensorContextTester setupAnalysisError(String code) throws IOException {
+  private InputFile scanForErrors(String code) throws IOException {
     File baseDir = temp.getRoot().getAbsoluteFile();
-    SensorContextTester context = SensorContextTester.create(baseDir);
-
-    InputFile inputFile = addFile(code, context);
+    context = SensorContextTester.create(baseDir);
 
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 7)));
 
+    InputFile inputFile = addFile(code, context);
+
     // Mock visitor for metrics.
-    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
+    fileLinesContext = mock(FileLinesContext.class);
     FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
-    JavaClasspath javaClasspath = mock(JavaClasspath.class);
-    JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, context.fileSystem(), javaClasspath, javaTestClasspath, mock(CheckFactory.class));
+    javaClasspath = mock(JavaClasspath.class);
+    javaTestClasspath = mock(JavaTestClasspath.class);
+    sonarComponents = new SonarComponents(fileLinesContextFactory, context.fileSystem(), javaClasspath, javaTestClasspath, mock(CheckFactory.class));
     sonarComponents.setSensorContext(context);
     JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
     javaSquid.scan(Collections.singletonList(inputFile), Collections.emptyList());
-    return context;
+
+    return inputFile;
   }
 

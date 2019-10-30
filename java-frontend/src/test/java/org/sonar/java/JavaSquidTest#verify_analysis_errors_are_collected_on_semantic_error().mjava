@@ -2,7 +2,8 @@
   @Test
   public void verify_analysis_errors_are_collected_on_semantic_error() throws Exception {
     String code = "/***/\nclass A {\n String foo() {\n  return foo();\n }\n}\nclass A {}";
-    SonarComponents sonarComponents = collectAnalysisErrors(code);
+    scanForErrors(code);
+
     assertThat(sonarComponents.analysisErrors).hasSize(1);
     AnalysisError analysisError = sonarComponents.analysisErrors.get(0);
     assertThat(analysisError.getMessage()).startsWith("Registering class 2 times : A");
