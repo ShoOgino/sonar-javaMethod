@@ -1,11 +1,11 @@
   private List<CaseGroupTreeImpl> convertSwitchStatements(List list) {
     List<CaseGroupTreeImpl> groups = new ArrayList<>();
-    List<CaseLabelTreeImpl> labels = null;
+    List<CaseLabelTreeImpl> caselabels = null;
     BlockStatementListTreeImpl body = null;
     for (Object o : list) {
       if (o instanceof SwitchCase) {
-        if (labels == null) {
-          labels = new ArrayList<>();
+        if (caselabels == null) {
+          caselabels = new ArrayList<>();
           body = new BlockStatementListTreeImpl(new ArrayList<>());
         }
 
@@ -18,25 +18,25 @@
           );
         }
 
-        labels.add(new CaseLabelTreeImpl(
+        caselabels.add(new CaseLabelTreeImpl(
           firstTokenIn(c, c.isDefault() ? TerminalTokens.TokenNamedefault : TerminalTokens.TokenNamecase),
           expressions,
           lastTokenIn(c, /* TerminalTokens.TokenNameCOLON or TerminalTokens.TokenNameARROW */ ANY_TOKEN)
         ));
       } else {
-        if (labels != null) {
+        if (caselabels != null) {
           groups.add(new CaseGroupTreeImpl(
-            labels,
+            caselabels,
             body
           ));
         }
-        labels = null;
+        caselabels = null;
         addStatementToList((Statement) o, body);
       }
     }
-    if (labels != null) {
+    if (caselabels != null) {
       groups.add(new CaseGroupTreeImpl(
-        labels,
+        caselabels,
         body
       ));
     }

@@ -2,8 +2,6 @@
     final int lastTokenIndex;
 
     switch (node.getNodeType()) {
-      default:
-        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
       case ASTNode.ANNOTATION_TYPE_DECLARATION:
       case ASTNode.ENUM_DECLARATION:
       case ASTNode.TYPE_DECLARATION: {
@@ -133,6 +131,8 @@
         lastTokenIndex = tokenManager.lastIndexIn(node, TerminalTokens.TokenNameSEMICOLON);
         break;
       }
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
     }
 
     addEmptyDeclarationsToList(lastTokenIndex, members);

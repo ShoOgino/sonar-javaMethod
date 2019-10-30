@@ -29,8 +29,6 @@
 
     Tree.Kind kind;
     switch (e.getNodeType()) {
-      default:
-        throw new IllegalStateException();
       case ASTNode.ENUM_DECLARATION:
         kind = Tree.Kind.ENUM;
         break;
@@ -40,6 +38,8 @@
       case ASTNode.TYPE_DECLARATION:
         kind = ((TypeDeclaration) e).isInterface() ? Tree.Kind.INTERFACE : Tree.Kind.CLASS;
         break;
+      default:
+        throw new IllegalStateException();
     }
     ClassTreeImpl t = new ClassTreeImpl(
       kind,
@@ -50,8 +50,6 @@
       convertModifiers(e.modifiers())
     );
     switch (kind) {
-      default:
-        break;
       case ENUM:
         t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameenum));
         t.completeIdentifier(convertSimpleName(e.getName()));
@@ -71,6 +69,8 @@
           convertSimpleName(e.getName())
         );
         break;
+      default:
+        break;
     }
 
     if (kind == Tree.Kind.CLASS || kind == Tree.Kind.INTERFACE) {
@@ -81,8 +81,6 @@
     }
 
     switch (kind) {
-      default:
-        break;
       case CLASS: {
         TypeDeclaration ee = (TypeDeclaration) e;
         if (ee.getSuperclassType() != null) {
@@ -115,6 +113,8 @@
         }
         break;
       }
+      default:
+        break;
     }
 
     t.typeBinding = e.resolveBinding();

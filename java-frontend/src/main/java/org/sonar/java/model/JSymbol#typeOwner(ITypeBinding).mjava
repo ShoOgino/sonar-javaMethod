@@ -1,0 +1,15 @@
+  private Symbol typeOwner(ITypeBinding typeBinding) {
+    IMethodBinding declaringMethod = typeBinding.getDeclaringMethod();
+    if (declaringMethod != null) {
+      // local type
+      return sema.methodSymbol(declaringMethod);
+    }
+    ITypeBinding declaringClass = typeBinding.getDeclaringClass();
+    if (declaringClass != null) {
+      // member type
+      return sema.typeSymbol(declaringClass);
+    }
+    // top-level type
+    return sema.packageSymbol(typeBinding.getPackage());
+  }
+

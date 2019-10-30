@@ -1,20 +1,18 @@
   private ModuleDirectiveTree convertModuleDirective(ModuleDirective node) {
     switch (node.getNodeType()) {
-      default:
-        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
       case ASTNode.REQUIRES_DIRECTIVE: {
         RequiresDirective e = (RequiresDirective) node;
         ModifiersTreeImpl modifiers = new ModifiersTreeImpl(new ArrayList<>());
         for (Object o : e.modifiers()) {
           switch (((ModuleModifier) o).getKeyword().toString()) {
-            default:
-              throw new IllegalStateException();
             case "static":
               modifiers.add(new ModifierKeywordTreeImpl(Modifier.STATIC, firstTokenIn((ASTNode) o, ANY_TOKEN)));
               break;
             case "transitive":
               modifiers.add(new ModifierKeywordTreeImpl(Modifier.TRANSITIVE, firstTokenIn((ASTNode) o, ANY_TOKEN)));
               break;
+            default:
+              throw new IllegalStateException();
           }
         }
         return new RequiresDirectiveTreeImpl(
@@ -70,6 +68,8 @@
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
       }
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
     }
   }
 

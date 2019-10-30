@@ -1,7 +1,5 @@
   private ModuleNameTreeImpl convertModuleName(Name node) {
     switch (node.getNodeType()) {
-      default:
-        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
       case ASTNode.QUALIFIED_NAME: {
         QualifiedName e = (QualifiedName) node;
         ModuleNameTreeImpl t = convertModuleName(e.getQualifier());
@@ -18,6 +16,8 @@
         );
         return t;
       }
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
     }
   }
 

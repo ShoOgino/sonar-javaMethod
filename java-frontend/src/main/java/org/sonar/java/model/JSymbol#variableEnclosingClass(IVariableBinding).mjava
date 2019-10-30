@@ -1,0 +1,31 @@
+  private TypeSymbol variableEnclosingClass(IVariableBinding variableBinding) {
+    ITypeBinding declaringClass = variableBinding.getDeclaringClass();
+    if (declaringClass != null) {
+      // field
+      return sema.typeSymbol(declaringClass);
+    }
+    IMethodBinding declaringMethod = variableBinding.getDeclaringMethod();
+    if (declaringMethod != null) {
+      // local variable
+      return sema.typeSymbol(declaringMethod.getDeclaringClass());
+    }
+    Tree node = sema.declarations.get(variableBinding);
+    if (node == null) {
+      // array.length
+      return Symbols.unknownSymbol;
+    }
+    do {
+      node = node.parent();
+      switch (node.kind()) {
+        case CLASS:
+        case ENUM:
+          // variable declaration in a static or instance initializer
+          // or local variable declaration in recovered method
+          return sema.typeSymbol(((ClassTreeImpl) node).typeBinding);
+        default:
+          // continue exploring parent
+          break;
+      }
+    } while (true);
+  }
+

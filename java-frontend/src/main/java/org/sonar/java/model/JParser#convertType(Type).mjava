@@ -1,17 +1,14 @@
+  @Nullable
   private TypeTree convertType(@Nullable Type node) {
     if (node == null) {
       // e.g. return type of constructor
       return null;
     }
     switch (node.getNodeType()) {
-      default:
-        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
       case ASTNode.PRIMITIVE_TYPE: {
         PrimitiveType e = (PrimitiveType) node;
         final JavaTree.PrimitiveTypeTreeImpl t;
         switch (e.getPrimitiveTypeCode().toString()) {
-          default:
-            throw new IllegalStateException(e.getPrimitiveTypeCode().toString());
           case "byte":
             t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamebyte));
             break;
@@ -39,6 +36,8 @@
           case "void":
             t = new JavaTree.PrimitiveTypeTreeImpl(lastTokenIn(e, TerminalTokens.TokenNamevoid));
             break;
+          default:
+            throw new IllegalStateException(e.getPrimitiveTypeCode().toString());
         }
         t.complete(
           convertAnnotations(e.annotations())
@@ -173,6 +172,8 @@
         t.typeBinding = e.resolveBinding();
         return t;
       }
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
     }
   }
 

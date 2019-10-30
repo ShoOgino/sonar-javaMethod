@@ -1,7 +1,5 @@
   private ExpressionTree createExpression(Expression node) {
     switch (node.getNodeType()) {
-      default:
-        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
       case ASTNode.SIMPLE_NAME: {
         SimpleName e = (SimpleName) node;
         IdentifierTreeImpl t = convertSimpleName(e);
@@ -529,8 +527,6 @@
         }
         ExpressionTree result;
         switch (tokenType) {
-          default:
-            throw new IllegalStateException();
           case TerminalTokens.TokenNameIntegerLiteral:
             result = new LiteralTreeImpl(Tree.Kind.INT_LITERAL, createSyntaxToken(tokenIndex));
             break;
@@ -543,6 +539,8 @@
           case TerminalTokens.TokenNameDoubleLiteral:
             result = new LiteralTreeImpl(Tree.Kind.DOUBLE_LITERAL, createSyntaxToken(tokenIndex));
             break;
+          default:
+            throw new IllegalStateException();
         }
         ((LiteralTreeImpl) result).typeBinding = e.resolveTypeBinding();
         if (unaryMinus) {
@@ -612,6 +610,8 @@
           arguments
         );
       }
+      default:
+        throw new IllegalStateException(ASTNode.nodeClassForType(node.getNodeType()).toString());
     }
   }
 
