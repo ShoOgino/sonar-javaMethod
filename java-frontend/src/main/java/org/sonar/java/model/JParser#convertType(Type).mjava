@@ -1,9 +1,4 @@
-  @Nullable
-  private TypeTree convertType(@Nullable Type node) {
-    if (node == null) {
-      // e.g. return type of constructor
-      return null;
-    }
+  private TypeTree convertType(Type node) {
     switch (node.getNodeType()) {
       case ASTNode.PRIMITIVE_TYPE: {
         PrimitiveType e = (PrimitiveType) node;
@@ -153,15 +148,16 @@
           ? firstTokenIn(e, TerminalTokens.TokenNameQUESTION)
           : firstTokenAfter((ASTNode) e.annotations().get(e.annotations().size() - 1), TerminalTokens.TokenNameQUESTION);
         JavaTree.WildcardTreeImpl t;
-        if (e.getBound() == null) {
+        Type bound = e.getBound();
+        if (bound == null) {
           t = new JavaTree.WildcardTreeImpl(
             questionToken
           );
         } else {
           t = new JavaTree.WildcardTreeImpl(
             e.isUpperBound() ? Tree.Kind.EXTENDS_WILDCARD : Tree.Kind.SUPER_WILDCARD,
-            e.isUpperBound() ? firstTokenBefore(e.getBound(), TerminalTokens.TokenNameextends) : firstTokenBefore(e.getBound(), TerminalTokens.TokenNamesuper),
-            convertType(e.getBound())
+            e.isUpperBound() ? firstTokenBefore(bound, TerminalTokens.TokenNameextends) : firstTokenBefore(bound, TerminalTokens.TokenNamesuper),
+            convertType(bound)
           ).complete(
             questionToken
           );

@@ -79,14 +79,16 @@
           thrownExceptionTypes.add(convertType(o));
         }
 
+        Block body = e.getBody();
+        Type returnType = e.getReturnType2();
         MethodTreeImpl t = new MethodTreeImpl(
-          applyExtraDimensions(convertType(e.getReturnType2()), e.extraDimensions()),
+          returnType == null ? null : applyExtraDimensions(convertType(returnType), e.extraDimensions()),
           convertSimpleName(e.getName()),
           parameters,
           e.thrownExceptionTypes().isEmpty() ? null : firstTokenBefore((Type) e.thrownExceptionTypes().get(0), TerminalTokens.TokenNamethrows),
           thrownExceptionTypes,
-          convertBlock(e.getBody()),
-          e.getBody() == null ? lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON) : null
+          body == null ? null : convertBlock(body),
+          body == null ? lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON) : null
         ).completeWithModifiers(
           convertModifiers(e.modifiers())
         ).completeWithTypeParameters(
@@ -96,7 +98,7 @@
         declaration(t.methodBinding, t);
 
         members.add(t);
-        lastTokenIndex = tokenManager.lastIndexIn(node, e.getBody() == null ? TerminalTokens.TokenNameSEMICOLON : TerminalTokens.TokenNameRBRACE);
+        lastTokenIndex = tokenManager.lastIndexIn(node, body == null ? TerminalTokens.TokenNameSEMICOLON : TerminalTokens.TokenNameRBRACE);
         break;
       }
       case ASTNode.FIELD_DECLARATION: {
