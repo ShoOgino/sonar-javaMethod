@@ -1,0 +1,13 @@
+  @Override
+  public void visitLambdaExpression(LambdaExpressionTree lambdaExpressionTree) {
+    int lines = getNumberOfLines(lambdaExpressionTree);
+    if (lines > max) {
+      SyntaxToken firstToken = lambdaExpressionTree.firstToken();
+      SyntaxToken lastSyntaxToken = lambdaExpressionTree.lastToken();
+      JavaFileScannerContext.Location lastTokenLocation = new JavaFileScannerContext.Location(lines + " lines", lastSyntaxToken);
+      context.reportIssue(this, firstToken, lambdaExpressionTree.arrowToken(),
+        "Reduce this lambda expression number of lines from " + lines + " to at most " + max + ".", Lists.newArrayList(lastTokenLocation), null);
+    }
+    super.visitLambdaExpression(lambdaExpressionTree);
+  }
+
