@@ -8,7 +8,11 @@
     scan(tree.parameters());
     scan(tree.block());
     MethodReference reference = methodReferences.pop();
-    if (symbol.isPrivate() && !symbol.isStatic() && !reference.hasNonStaticReference()) {
+    ClassTree classTree = (ClassTree) tree.parent();
+    if (Boolean.TRUE.equals(tree.isOverriding()) || classTree.is(Tree.Kind.ENUM)) {
+      return;
+    }
+    if ((symbol.isPrivate() || symbol.isFinal() || classTree.symbol().isFinal()) && !symbol.isStatic() && !reference.hasNonStaticReference()) {
       context.reportIssue(this, tree.simpleName(), "Make \"" + symbol.name() + "\" a \"static\" method.");
     }
   }
