@@ -19,15 +19,16 @@
         return null;
       case VARIABLE:
         return ((VariableTree) parent).symbol().type();
-      case METHOD_INVOCATION:
-        // FIXME(SONARJAVA-3191) dead code
-        // If placed in invocation arguments, parent of typecast will be ARGUMENTS, not METHOD_INVOCATION
-        MethodInvocationTree mit = (MethodInvocationTree) parent;
-        if (mit.symbol().isMethodSymbol()) {
-          Symbol.MethodSymbol sym = (Symbol.MethodSymbol) mit.symbol();
-          int castArgIndex = mit.arguments().indexOf(typeCastTree);
-          return sym.parameterTypes().get(castArgIndex);
+      case ARGUMENTS:
+        Arguments arguments = (Arguments) parent;
+        Tree invocation = arguments.parent();
+        if (invocation.is(Tree.Kind.METHOD_INVOCATION)) {
+          return targetTypeFromMethodSymbol(((MethodInvocationTree) invocation).symbol(), arguments, typeCastTree);
         }
+        if (invocation.is(Tree.Kind.NEW_CLASS)) {
+          return targetTypeFromMethodSymbol(((NewClassTree) invocation).constructorSymbol(), arguments, typeCastTree);
+        }
+        // Last possible case is AnnotationTree which we do not consider
         return null;
       case MEMBER_SELECT:
       case CONDITIONAL_EXPRESSION:

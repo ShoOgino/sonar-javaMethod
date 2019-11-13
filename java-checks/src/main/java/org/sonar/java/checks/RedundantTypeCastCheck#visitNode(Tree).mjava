@@ -1,16 +1,16 @@
   @Override
   public void visitNode(Tree tree) {
-    if(!hasSemantic()) {
+    if (!hasSemantic()) {
       return;
     }
     TypeCastTree typeCastTree = (TypeCastTree) tree;
-    Type cast = typeCastTree.type().symbolType();
-    Type target = targetType(typeCastTree);
     Type expressionType = typeCastTree.expression().symbolType();
     if (isPrimitiveWrapperInConditional(expressionType, typeCastTree) || requiredForMemberAccess(typeCastTree)) {
       // Primitive wrappers excluded because covered by S2154
       return;
     }
+    Type cast = typeCastTree.type().symbolType();
+    Type target = targetType(typeCastTree);
     if (target != null && (isRedundantNumericalCast(cast, expressionType) || isUnnecessarySubtypeCast(expressionType, typeCastTree, target))) {
       reportIssue(typeCastTree.type(), "Remove this unnecessary cast to \"" + cast.erasure() + "\".");
     }
