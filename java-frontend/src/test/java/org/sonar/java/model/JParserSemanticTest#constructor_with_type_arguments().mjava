@@ -1,0 +1,25 @@
+  @Test
+  public void constructor_with_type_arguments() {
+    String source =
+      "class MyClass {\n" +
+        "  <T extends I> MyClass(T t) {}\n" +
+        "  <T extends J & I> MyClass(T t) {}\n" +
+        "  void foo(B b, C c) {\n" +
+        "    new<B>MyClass((I) b);\n" +
+        "    new<C>MyClass(c);\n" +
+        "  }\n" +
+        "}\n" +
+        "interface I {}\n" +
+        "interface J {}\n" +
+        "class B implements I {}\n" +
+        "class C implements I, J {}\n";
+
+    JavaTree.CompilationUnitTreeImpl cu = test(source);
+    ClassTree c = (ClassTree) cu.types().get(0);
+    MethodTree firstConstructor = (MethodTree) c.members().get(0);
+    MethodTree secondConstructor = (MethodTree) c.members().get(1);
+
+    assertThat(firstConstructor.symbol().usages()).hasSize(1);
+    assertThat(secondConstructor.symbol().usages()).hasSize(1);
+  }
+
