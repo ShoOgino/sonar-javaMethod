@@ -1,0 +1,8 @@
+  protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    try {
+      foo(request, response); // Noncompliant [[sc=7;ec=10]] {{Handle the following exceptions that could be thrown by "foo": IOException, ServletException.}}
+    } catch (NamingException ne) {
+      throw new ServletException(ne); // Noncompliant {{Handle the "ServletException" thrown here in a "try/catch" block.}}
+    }
+  }
+

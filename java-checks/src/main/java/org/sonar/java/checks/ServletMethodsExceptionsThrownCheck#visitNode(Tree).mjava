@@ -7,12 +7,12 @@
       shouldCheck.push(IS_SERVLET_DO_METHOD.matches((MethodTree) tree));
     } else if (shouldCheck()) {
       if (tree.is(Tree.Kind.TRY_STATEMENT)) {
-        tryCatches.add(getCatchedExceptions(((TryStatementTree) tree).catches()));
+        tryCatches.add(getCaughtExceptions(((TryStatementTree) tree).catches()));
       } else if (tree.is(Tree.Kind.CATCH)) {
         tryCatches.pop();
         tryCatches.add(Collections.emptyList());
       } else if (tree.is(Tree.Kind.THROW_STATEMENT)) {
-        addIssueIfNotCatched(Collections.singletonList(((ThrowStatementTree) tree).expression().symbolType()), tree, "Add a \"try/catch\" block.");
+        addIssueIfNotCaught(((ThrowStatementTree) tree).expression().symbolType(), tree);
       } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
         checkMethodInvocation((MethodInvocationTree) tree);
       }
