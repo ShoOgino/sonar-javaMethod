@@ -13,8 +13,8 @@
     List<File> projectClasspath = Lists.newArrayList(classpath);
     projectClasspath.add(new File("target/test-classes"));
 
-    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, projectClasspath, null);
     InputFile inputFile = CheckTestUtils.inputFile(filename);
+    VisitorsBridgeForTests visitorsBridge = new VisitorsBridgeForTests(visitors, projectClasspath, sonarComponents(inputFile));
     JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge);
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
 
