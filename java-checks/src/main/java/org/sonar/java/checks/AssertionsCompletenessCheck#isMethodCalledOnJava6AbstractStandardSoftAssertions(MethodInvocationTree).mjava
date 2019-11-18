@@ -1,0 +1,12 @@
+  private static boolean isMethodCalledOnJava6AbstractStandardSoftAssertions(MethodInvocationTree mit) {
+    // Java6AbstractStandardSoftAssertions does not contain 'assertAll()' method so this class should not be used
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      Type type = ((MemberSelectExpressionTree) methodSelect).expression().symbolType();
+      if (type.is(JAVA6_ABSTRACT_SOFT_ASSERT)) {
+        return true;
+      }
+    }
+    return false;
+  }
+

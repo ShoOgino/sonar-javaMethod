@@ -1,12 +1,17 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
+      if (isMethodCalledOnJava6AbstractStandardSoftAssertions(mit)) {
+        return;
+      }
+
       boolean assertThatStateBeforeInvocation = assertThatCalled;
       super.visitMethodInvocation(mit);
+
       if (ASSERTJ_ASSERT_SOFTLY.matches(mit)) {
         assertThatCalled = assertThatStateBeforeInvocation;
       }
 
-      if (ASSERTJ_ASSERT_ALL.matches(mit)) {
+      if (ASSERTJ_ASSERT_ALL.anyMatch(mit)) {
         if (assertThatCalled) {
           assertThatCalled = false;
         } else {
