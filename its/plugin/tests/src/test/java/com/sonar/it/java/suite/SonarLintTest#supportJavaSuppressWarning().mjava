@@ -2,7 +2,7 @@
   public void supportJavaSuppressWarning() throws Exception {
     ClientInputFile inputFile = prepareInputFile("Foo.java",
       "public class Foo {\n"
-        + "  @SuppressWarnings(\"squid:S106\")\n"
+        + "  @SuppressWarnings(\"java:S106\")\n"
         + "  public void foo() {\n"
         + "    int x;\n"
         + "    System.out.println(\"Foo\");\n"
@@ -19,7 +19,7 @@
     sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-      tuple("squid:S1220", null, inputFile.getPath(), "MINOR"),
-      tuple("squid:S1481", 4, inputFile.getPath(), "MINOR"));
+      tuple("java:S1220", null, inputFile.getPath(), "MINOR"),
+      tuple("java:S1481", 4, inputFile.getPath(), "MINOR"));
   }
 

@@ -1,7 +1,7 @@
   private static void copyDumpSubset(Path srcProjectDir, Path dstProjectDir) {
     Try.of(() -> Files.createDirectory(dstProjectDir)).orElseThrow(Throwables::propagate);
     SUBSET_OF_ENABLED_RULES.stream()
-      .map(ruleKey -> srcProjectDir.resolve("squid-" + ruleKey + ".json"))
+      .map(ruleKey -> srcProjectDir.resolve("java-" + ruleKey + ".json"))
       .filter(p -> p.toFile().exists())
       .forEach(srcJsonFile -> Try.of(() -> Files.copy(srcJsonFile, dstProjectDir.resolve(srcJsonFile.getFileName()), StandardCopyOption.REPLACE_EXISTING))
         .orElseThrow(Throwables::propagate));
