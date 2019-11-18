@@ -1,0 +1,17 @@
+  @Test
+  void capture_type() {
+    CompilationUnitTreeImpl cu = test("class A {\n" +
+      "  Object foo(java.util.List<? extends A> list) {\n" +
+      "    return list.get(0);\n" +
+      "  }\n" +
+      "}");
+    cu.types().get(0);
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    ReturnStatementTreeImpl s = (ReturnStatementTreeImpl) Objects.requireNonNull(m.block()).body().get(0);
+    AbstractTypedTree e = Objects.requireNonNull((AbstractTypedTree) s.expression());
+    Type captureType = e.symbolType();
+
+    assertThat(captureType.fullyQualifiedName()).isEqualTo("!capture!");
+  }
+
