@@ -12,6 +12,10 @@
     if (rule == null) {
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
+    DeprecatedRuleKey deprecatedRuleKeyAnnotation = AnnotationUtils.getAnnotation(ruleClass, DeprecatedRuleKey.class);
+    if (deprecatedRuleKeyAnnotation != null) {
+      rule.addDeprecatedRuleKey(repository.key(), deprecatedRuleKeyAnnotation.ruleKey());
+    }
     String rspecKey = rspecKey(ruleClass, rule);
     RuleMetadata ruleMetadata = readRuleMetadata(rspecKey);
     addMetadata(rule, ruleMetadata);
