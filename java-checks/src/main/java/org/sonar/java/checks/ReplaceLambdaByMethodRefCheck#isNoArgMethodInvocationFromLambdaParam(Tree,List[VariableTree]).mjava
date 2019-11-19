@@ -5,7 +5,11 @@
     ExpressionTree methodSelect = ((MethodInvocationTree) tree).methodSelect();
     if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
       ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
-      return expression.is(Tree.Kind.IDENTIFIER) && parameters.get(0).symbol().equals(((IdentifierTree) expression).symbol());
+      Symbol parameterSymbol = parameters.get(0).symbol();
+      return expression.is(Tree.Kind.IDENTIFIER) &&
+        !parameterSymbol.isUnknown() &&
+        !isAmbiguous((MethodInvocationTree) tree, parameterSymbol) &&
+        parameterSymbol.equals(((IdentifierTree) expression).symbol());
     }
     return false;
   }

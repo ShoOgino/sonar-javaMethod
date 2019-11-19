@@ -1,0 +1,10 @@
+  public static void main(String[] args) {
+    Function<Ambiguous, String> f = a -> a.f();  // Compliant, A::f is ambiguous
+
+    Function<NotAmbiguous1, String> f2 = a -> a.f();  // Noncompliant
+    Function<NotAmbiguous2, String> f3 = a -> a.f(a);  // FN, could be replaced by NotAmbiguous2::f
+
+    Function<Ambiguous, String> f4 = a -> a.unknown();  // Compliant, A::f is ambiguous
+    Function<Unknown, String> f4 = a -> a.unknown();  // Compliant, A::f is ambiguous
+  }
+
