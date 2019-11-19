@@ -48,15 +48,9 @@
             ((Annotation) o)
           ));
         }
-        JavaTree.AnnotatedTypeTree t = (JavaTree.AnnotatedTypeTree) convertExpression(e.getName());
-        if (t instanceof IdentifierTree && ((IdentifierTree) t).name().equals("var")) {
-          // TODO can't be annotated?
-          VarTypeTreeImpl t2 = new VarTypeTreeImpl((InternalSyntaxToken) ((IdentifierTree) t).identifierToken());
-          t2.typeBinding = e.resolveBinding();
-          return t2;
-        }
+        JavaTree.AnnotatedTypeTree t = e.isVar() ? convertVarType(e) : (JavaTree.AnnotatedTypeTree) convertExpression(e.getName());
         t.complete(annotations);
-        // typeBinding is assigned by convertExpression
+        // typeBinding is assigned by convertVarType or convertExpression
         return t;
       }
       case ASTNode.UNION_TYPE: {

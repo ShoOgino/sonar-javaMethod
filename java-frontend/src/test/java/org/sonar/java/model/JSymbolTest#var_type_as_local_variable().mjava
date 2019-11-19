@@ -1,0 +1,17 @@
+  @Test
+  void var_type_as_local_variable() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C {void m() { var v = new java.util.ArrayList<String>(); }}");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl method = (MethodTreeImpl) c.members().get(0);
+    VariableTreeImpl variable = (VariableTreeImpl) method.block().body().get(0);
+
+    assertThat(variable.type().symbolType().fullyQualifiedName())
+      .isEqualTo("java.util.ArrayList");
+
+    assertThat(variable.symbol().type().fullyQualifiedName())
+      .isEqualTo("java.util.ArrayList");
+
+    assertThat(cu.sema.variableSymbol(variable.variableBinding).type())
+      .isSameAs(cu.sema.type(variable.variableBinding.getType()));
+  }
+

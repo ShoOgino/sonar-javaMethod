@@ -1,0 +1,13 @@
+  @Test
+  void annotation_on_var_type_local_variable() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C { void m() { @Annotation var v = 42; } }" +
+      " @java.lang.annotation.Target({java.lang.annotation.ElementType.LOCAL_VARIABLE}) @interface Annotation { }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    VariableTreeImpl variable = (VariableTreeImpl) m.block().body().get(0);
+
+    List<SymbolMetadata.AnnotationInstance> annotations = variable.symbol().metadata().annotations();
+    assertThat(annotations).hasSize(1);
+    assertThat(annotations.get(0).symbol().name()).isEqualTo("Annotation");
+  }
+
