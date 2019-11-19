@@ -1,0 +1,14 @@
+  @Test
+  public void test() throws Exception {
+    SensorContextTester contextTester = SensorContextTester.create(tmp.newFolder());
+    MapSettings mapSettings = new MapSettings().setProperty("sonar.jacoco.reportPaths", "/path");
+    contextTester.setSettings(mapSettings);
+    List<String> analysisWarnings = new ArrayList<>();
+    DroppedPropertiesSensor sensor = new DroppedPropertiesSensor(analysisWarnings::add);
+    sensor.execute(contextTester);
+
+    String msg = "Property 'sonar.jacoco.reportPaths' is no longer supported. Use JaCoCo's xml report and sonar-jacoco plugin.";
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains(msg);
+    assertThat(analysisWarnings).containsExactly(msg);
+  }
+

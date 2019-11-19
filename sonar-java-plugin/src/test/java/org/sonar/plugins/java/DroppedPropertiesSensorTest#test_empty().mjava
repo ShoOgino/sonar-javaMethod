@@ -1,0 +1,11 @@
+  @Test
+  public void test_empty() throws Exception {
+    SensorContextTester contextTester = SensorContextTester.create(tmp.newFolder());
+    List<String> analysisWarnings = new ArrayList<>();
+    DroppedPropertiesSensor sensor = new DroppedPropertiesSensor(analysisWarnings::add);
+    sensor.execute(contextTester);
+
+    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+    assertThat(analysisWarnings).isEmpty();
+  }
+

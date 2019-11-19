@@ -1,0 +1,13 @@
+  @Test
+  public void test_descriptor() throws Exception {
+    DroppedPropertiesSensor sensor = new DroppedPropertiesSensor(w -> {
+    });
+    DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
+    sensor.describe(descriptor);
+    assertThat(descriptor.name()).isNotBlank();
+    Configuration emptyConfig = new MapSettings().asConfig();
+    assertThat(descriptor.configurationPredicate().test(emptyConfig)).isFalse();
+    Configuration removedProperty = new MapSettings().setProperty("sonar.jacoco.reportPaths", "/path").asConfig();
+    assertThat(descriptor.configurationPredicate().test(removedProperty)).isTrue();
+  }
+
