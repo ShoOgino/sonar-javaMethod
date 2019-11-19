@@ -1,14 +1,12 @@
-  @Override
-  public void visitLambdaExpression(LambdaExpressionTree tree) {
+  private void visitLambdaExpression(LambdaExpressionTree tree) {
     if (isReplaceableSingleMethodInvocation(tree) || isBodyBlockInvokingMethod(tree)) {
       context.reportIssue(this, tree.arrowToken(), "Replace this lambda with a method reference." + context.getJavaVersion().java8CompatibilityMessage());
     } else {
       getNullCheck(tree)
-        .ifPresent(nullMethod -> 
+        .ifPresent(nullMethod ->
           context.reportIssue(this, tree.arrowToken(),
             "Replace this lambda with method reference 'Objects::" + nullMethod + "'." + context.getJavaVersion().java8CompatibilityMessage())
-      );
+        );
     }
-    super.visitLambdaExpression(tree);
   }
 
