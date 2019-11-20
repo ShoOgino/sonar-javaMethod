@@ -2,9 +2,19 @@
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.TRY_STATEMENT)) {
       withinTry.push((TryStatementTree) tree);
-      toReport.push(new ArrayList<>());
-    } else if (withinStandardTryWithFinally() && ((NewClassTree) tree).symbolType().isSubtypeOf("java.lang.AutoCloseable")) {
-      toReport.peek().add(tree);
+      if (withinTry.size() != toReport.size()) {
+        toReport.push(new ArrayList<>());
+      }
+    } else if (((NewClassTree) tree).symbolType().isSubtypeOf("java.lang.AutoCloseable")) {
+      if (withinStandardTryWithFinally()) {
+        toReport.peek().add(tree);
+      } else if (isFollowedByTryWithFinally(tree)) {
+        if (toReport.isEmpty() || withinTry.size() == toReport.size()) {
+          // This newClass will be reported with the following tryStatement
+          toReport.push(new ArrayList<>());
+        }
+        toReport.peek().add(tree);
+      }
     }
   }
 

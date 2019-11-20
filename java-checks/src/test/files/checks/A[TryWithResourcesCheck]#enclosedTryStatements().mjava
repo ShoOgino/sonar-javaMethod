@@ -1,0 +1,14 @@
+  void enclosedTryStatements() {
+    Auto a1 = new Auto();
+    try { // Noncompliant [[sc=5;ec=8;secondary=128,131]] {{Change this "try" to a try-with-resources.}}
+      a1.doSomething();
+      Auto a2 = new Auto();
+      try {
+        a2.doSomething();
+        a2.close();
+      } catch (Exception e) {}
+    }  finally {
+      a1.close();
+    }
+  }
+

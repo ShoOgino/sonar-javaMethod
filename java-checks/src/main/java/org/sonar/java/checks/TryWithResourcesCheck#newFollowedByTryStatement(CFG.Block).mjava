@@ -1,0 +1,29 @@
+  private static boolean newFollowedByTryStatement(CFG.Block cfgBlock) {
+    boolean foundNewAutoCloseable = false;
+    for (Tree element : cfgBlock.elements()) {
+      switch (element.kind()) {
+        case NEW_CLASS:
+          boolean isAutoCloseable = ((NewClassTree) element).symbolType().isSubtypeOf("java.lang.AutoCloseable");
+          if (!isAutoCloseable && foundNewAutoCloseable) {
+            return false;
+          }
+          foundNewAutoCloseable = isAutoCloseable;
+          break;
+        case TRY_STATEMENT:
+          if (((TryStatementTree) element).resourceList().isEmpty() && ((TryStatementTree) element).finallyBlock() != null) {
+            return foundNewAutoCloseable;
+          }
+          return false;
+        case VARIABLE:
+          break;
+        default:
+          if (foundNewAutoCloseable) {
+            return false;
+          }
+          break;
+      }
+    }
+    // Unreachable: by construction at least one element of the CFG.Block is a NewClass of type "java.lang.AutoCloseable"
+    return false;
+  }
+

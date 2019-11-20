@@ -1,0 +1,17 @@
+  private static boolean isFollowedByTryWithFinally(Tree tree) {
+    Tree blockParent = tree.parent();
+    while (blockParent != null && !blockParent.is(Tree.Kind.BLOCK)) {
+      blockParent = blockParent.parent();
+    }
+
+    if (blockParent != null) {
+      CFG cfg = CFG.buildCFG(Collections.singletonList(blockParent));
+      if (!cfg.blocks().isEmpty()) {
+        return newFollowedByTryStatement(cfg.blocks().get(0));
+      }
+    }
+
+    // Unreachable by construction because the CFG has been built on top of a NewClass element
+    return false;
+  }
+
