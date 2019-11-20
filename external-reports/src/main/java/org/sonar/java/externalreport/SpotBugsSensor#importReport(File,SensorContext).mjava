@@ -1,7 +1,11 @@
   private static void importReport(File reportPath, SensorContext context) {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
-      SpotBugsXmlReportReader.read(context, in, RULE_LOADER, Collections.singletonMap(FINDSECBUGS_KEY, FINDSECBUGS_LOADER));
+
+      Map<String, ExternalRuleLoader> otherLoaders = new HashMap<>();
+      otherLoaders.put(FINDSECBUGS_KEY, FINDSECBUGS_LOADER);
+      otherLoaders.put(FBCONTRIB_KEY, FBCONTRIB_LOADER);
+      SpotBugsXmlReportReader.read(context, in, RULE_LOADER, otherLoaders);
     } catch (Exception e) {
       LOG.error("Failed to import external issues report: " + reportPath, e);
     }
