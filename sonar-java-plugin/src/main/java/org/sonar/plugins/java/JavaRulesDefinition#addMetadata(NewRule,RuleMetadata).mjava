@@ -5,18 +5,13 @@
     rule.setSeverity(metadata.defaultSeverity.toUpperCase(Locale.US));
     rule.setName(metadata.title);
     rule.addTags(metadata.tags);
-    if (metadata.isSecurityHotspot() && !supportsSecurityHotspots) {
-      rule.setType(RuleType.VULNERABILITY);
-    } else {
-      rule.setType(RuleType.valueOf(metadata.type));
-    }
+    rule.setType(RuleType.valueOf(metadata.type));
+
     rule.setStatus(RuleStatus.valueOf(metadata.status.toUpperCase(Locale.US)));
     if (metadata.remediation != null) {
       rule.setDebtRemediationFunction(metadata.remediation.remediationFunction(rule.debtRemediationFunctions()));
       rule.setGapDescription(metadata.remediation.linearDesc);
     }
-    if (supportsSecurityHotspots) {
-      addSecurityStandards(rule, metadata.securityStandards);
-    }
+    addSecurityStandards(rule, metadata.securityStandards);
   }
 

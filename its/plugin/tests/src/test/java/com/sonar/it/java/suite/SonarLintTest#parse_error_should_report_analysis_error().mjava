@@ -2,8 +2,11 @@
   public void parse_error_should_report_analysis_error() throws Exception {
     ClientInputFile inputFile = prepareInputFile("ParseError.java", "class ParseError {", false);
     final List<Issue> issues = new ArrayList<>();
-    AnalysisResults analysisResults = sonarlintEngine.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), ImmutableMap.<String, String>of()), issues::add, null, null);
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFile(inputFile)
+      .build();
+    AnalysisResults analysisResults = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
     assertThat(issues).isEmpty();
     assertThat(analysisResults.failedAnalysisFiles()).hasSize(1);
   }

@@ -1,8 +1,8 @@
-  public static SensorContextTester createContext(Path projectDir, SonarRuntime sonarRuntime) throws IOException {
+  public static SensorContextTester createContext(Path projectDir) throws IOException {
     SensorContextTester context = SensorContextTester.create(projectDir);
     Files.list(projectDir)
+      .filter(Files::isRegularFile)
       .forEach(file -> addFileToContext(context, projectDir, file));
-    context.setRuntime(sonarRuntime);
     return context;
   }
 

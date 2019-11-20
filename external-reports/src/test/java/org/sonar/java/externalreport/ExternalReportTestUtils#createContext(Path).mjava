@@ -1,4 +1,4 @@
-  public static SensorContextTester createContext(Path projectDir, int majorVersion, int minorVersion) throws IOException {
+  public static SensorContextTester createContext(Path projectDir) throws IOException {
     SensorContextTester context = SensorContextTester.create(projectDir);
 
     try (Stream<Path> pathStream = Files.walk(projectDir)) {
@@ -7,7 +7,6 @@
         .forEach(path -> addFileToContext(context, projectDir, path));
     }
 
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER));
     return context;
   }
 

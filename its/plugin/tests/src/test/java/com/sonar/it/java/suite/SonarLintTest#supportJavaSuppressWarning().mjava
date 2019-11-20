@@ -12,8 +12,11 @@
       false);
 
     final List<Issue> issues = new ArrayList<>();
-    sonarlintEngine.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), ImmutableMap.<String, String>of()), issues::add, null, null);
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFile(inputFile)
+      .build();
+    sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("squid:S1220", null, inputFile.getPath(), "MINOR"),
