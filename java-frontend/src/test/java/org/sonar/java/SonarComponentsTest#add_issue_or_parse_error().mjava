@@ -28,15 +28,11 @@
     sonarComponents.addIssue(inputFile, expectedCheck, 42, "message on line 42", 1);
     sonarComponents.reportIssue(new AnalyzerMessage(expectedCheck, inputFile, 35, "other message", 0));
 
-    sonarComponents.addIssue(new File(fileSystem.baseDir().toString()), expectedCheck, -1, "message on project directory", 1);
-    sonarComponents.addIssue(new File(".."), expectedCheck, -1, "message on non-project directory", 1);
-
     List<Issue> issues = new ArrayList<>(context.allIssues());
-    assertThat(issues).hasSize(4);
+    assertThat(issues).hasSize(3);
     assertThat(issues.get(0).primaryLocation().message()).isEqualTo("message on wrong line");
     assertThat(issues.get(1).primaryLocation().message()).isEqualTo("message on line 42");
     assertThat(issues.get(2).primaryLocation().message()).isEqualTo("other message");
-    assertThat(issues.get(3).primaryLocation().message()).isEqualTo("message on project directory");
 
     RecognitionException parseError = new RecognitionException(new LexerException("parse error"));
 
