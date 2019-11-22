@@ -1,0 +1,15 @@
+  @Test
+  public void rules_should_not_have_legacy_key() {
+    JavaRulesDefinition definition = new JavaRulesDefinition();
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    definition.define(context);
+    Pattern pattern = Pattern.compile("^S[0-9]{3,5}$");
+    RulesDefinition.Repository repository = context.repository(REPOSITORY_KEY);
+    repository.rules().forEach(r -> {
+      // NoSonar key can't be changed to RSPEC key
+      if (!r.key().equals("NoSonar")) {
+        assertThat(pattern.matcher(r.key()).matches()).isTrue();
+      }
+    });
+  }
+
