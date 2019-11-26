@@ -1,9 +1,15 @@
   @Nullable
   public static ITypeBinding resolveType(AST ast, String name) {
-    BindingResolver bindingResolver = ast.getBindingResolver();
-    ReferenceBinding referenceBinding = bindingResolver
-      .lookupEnvironment()
-      .getType(CharOperation.splitOn('.', name.toCharArray()));
-    return bindingResolver.getTypeBinding(referenceBinding);
+    try {
+      BindingResolver bindingResolver = ast.getBindingResolver();
+      ReferenceBinding referenceBinding = bindingResolver
+        .lookupEnvironment()
+        .getType(CharOperation.splitOn('.', name.toCharArray()));
+      return bindingResolver.getTypeBinding(referenceBinding);
+    } catch (Exception e) {
+      // exception on ECJ side when trying to resolve a Type, recover on null type
+      LOG.error(String.format("ECJ Unable to resolve type %s", name), e);
+      return null;
+    }
   }
 
