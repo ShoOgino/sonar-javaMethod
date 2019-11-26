@@ -30,7 +30,13 @@
     char[] sourceChars = source.toCharArray();
     astParser.setSource(sourceChars);
 
-    CompilationUnit astNode = (CompilationUnit) astParser.createAST(null);
+    CompilationUnit astNode;
+    try {
+      astNode = (CompilationUnit) astParser.createAST(null);
+    } catch (Exception e) {
+      LOG.error("ECJ: Unable to parse file", e);
+      throw new RecognitionException(-1, "ECJ: Unable to parse file.", e);
+    }
     for (IProblem problem : astNode.getProblems()) {
       if (!problem.isError()) {
         continue;
