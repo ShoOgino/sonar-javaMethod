@@ -1,8 +1,7 @@
   @BeforeClass
   public static void setup() {
     File file = new File("src/test/files/checks/helpers/JavadocTest.java");
-    tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel.createFor(tree, new SquidClassLoader(Collections.emptyList()));
+    tree = JParserTestUtils.parse(file);
 
     Map<String, MethodTree> methods = ((ClassTree) tree.types().get(0)).members().stream()
       .filter(member -> member.is(Tree.Kind.METHOD))

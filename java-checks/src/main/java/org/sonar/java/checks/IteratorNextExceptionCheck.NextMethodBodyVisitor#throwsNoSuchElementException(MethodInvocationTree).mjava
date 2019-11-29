@@ -3,12 +3,6 @@
       if (!symbol.isMethodSymbol()) {
         return false;
       }
-      if (throwsNoSuchElementException(((Symbol.MethodSymbol) symbol).thrownTypes())) {
-        return true;
-      }
-      Type methodType = ExpressionUtils.methodName(methodInvocationTree).symbolType();
-        // not covered with new semantic - thrown types from method symbol are already correct
-      return methodType instanceof MethodJavaType
-        && throwsNoSuchElementException(((MethodJavaType) methodType).thrownTypes());
+      return throwsNoSuchElementException(((Symbol.MethodSymbol) symbol).thrownTypes());
     }
 

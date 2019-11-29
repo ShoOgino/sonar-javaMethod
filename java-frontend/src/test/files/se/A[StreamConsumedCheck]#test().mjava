@@ -1,5 +1,6 @@
   void test() {
-    list.stream().count();
-    list.stream().filter(e -> true).collect(Collectors.toList());
+    Stream<Integer> stream = Stream.of(1, 2, 3);
+    stream.count(); // flow@stream {{Pipeline is consumed here.}}
+    stream.findAny(); // Noncompliant [[flows=stream]] {{Refactor this code so that this consumed stream pipeline is not reused.}}
   }
 

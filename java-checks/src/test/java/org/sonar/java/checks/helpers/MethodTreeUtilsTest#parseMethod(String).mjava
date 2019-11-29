@@ -1,7 +1,5 @@
   private MethodTree parseMethod(String code) {
-    ActionParser parser = JavaParser.createParser();
-    CompilationUnitTree compilationUnitTree = (CompilationUnitTree) parser.parse(code);
-    SemanticModel.createFor(compilationUnitTree, new SquidClassLoader(Collections.emptyList()));
+    CompilationUnitTree compilationUnitTree = JParserTestUtils.parse(code);
     ClassTree classTree = (ClassTree) compilationUnitTree.types().get(0);
     return (MethodTree) classTree.members().get(0);
   }

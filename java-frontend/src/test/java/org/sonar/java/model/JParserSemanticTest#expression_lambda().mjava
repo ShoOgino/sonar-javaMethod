@@ -10,15 +10,6 @@
     LambdaExpressionTreeImpl lambda = (LambdaExpressionTreeImpl) f.initializer();
     VariableTreeImpl p = (VariableTreeImpl) lambda.parameters().get(0);
 
-    // FIXME remove after drop of old engine: owner of lambda parameter was the enclosing class/method where the lambda was declared
-    Symbol oldSymbol = cu.oldSema.getSymbol(p);
-    assertThat(oldSymbol.declaration().firstToken().line()).isEqualTo(3);
-    Symbol oldOwner = oldSymbol.owner();
-    assertThat(oldOwner).isNotNull();
-    assertThat(oldOwner.isMethodSymbol()).isFalse();
-    assertThat(oldOwner.isTypeSymbol()).isTrue();
-    assertThat(oldOwner.type().fullyQualifiedName()).isEqualTo("org.foo.A");
-
     // owner of lambda parameter is the method which defines the functional interface
     Symbol newSymbol = cu.sema.variableSymbol(p.variableBinding);
     assertThat(newSymbol.declaration().firstToken().line()).isEqualTo(3);

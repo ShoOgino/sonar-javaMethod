@@ -8,10 +8,7 @@
     if (expressionType.isArray()) {
       return ((Type.ArrayType) expressionType).elementType();
     } else if(expressionType.isClass()) {
-      // FIXME when dropping old semantic, can be replaced by:
-      // return JUtils.superTypes(expressionType.symbol()).stream()...
-      return superTypes(expressionType)
-        .stream()
+      return JUtils.superTypes(expressionType.symbol()).stream()
         .filter(t -> t.is("java.lang.Iterable") && JUtils.isParametrized(t))
         .findFirst()
         .map(iter -> JUtils.typeArguments(iter).get(0))

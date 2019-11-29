@@ -1,8 +1,7 @@
   public static BytecodeCFG getBytecodeCFG(String methodName, String filename) {
     SquidClassLoader squidClassLoader = new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")));
     File file = new File(filename);
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(file);
-    SemanticModel.createFor(tree, squidClassLoader);
+    CompilationUnitTree tree = JParserTestUtils.parse(file);
     List<Tree> classMembers = ((ClassTree) tree.types().get(0)).members();
     Symbol.MethodSymbol symbol = classMembers.stream()
       .filter( m-> m instanceof MethodTree)

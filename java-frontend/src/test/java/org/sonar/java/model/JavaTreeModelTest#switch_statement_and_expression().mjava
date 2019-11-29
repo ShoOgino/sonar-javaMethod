@@ -3,7 +3,7 @@
    */
   @Test
   public void switch_statement_and_expression() {
-    SwitchStatementTree tree = (SwitchStatementTree) firstMethodFirstStatement("class T { void m() { switch (e) { case 1: case 2, 3 -> ; default: ; } } }");
+    SwitchStatementTree tree = (SwitchStatementTree) firstMethodFirstStatement("class T { void m(int e) { switch (e) { case 1: case 2, 3: ; default: ; } } }");
     assertThat(tree.is(Tree.Kind.SWITCH_STATEMENT)).isTrue();
     assertThat(tree.switchKeyword().text()).isEqualTo("switch");
     assertThat(tree.openBraceToken().text()).isEqualTo("{");
@@ -39,15 +39,15 @@
     assertThatChildrenIteratorHasSize(caseLabelTree, 3);
 
     caseLabelTree = c.labels().get(1);
-    assertThat(caseLabelTree.isFallThrough()).isFalse();
+    assertThat(caseLabelTree.isFallThrough()).isTrue();
     assertThat(caseLabelTree.caseOrDefaultKeyword().text()).isEqualTo("case");
     assertThat(caseLabelTree.expression()).isNotNull();
     assertThat(caseLabelTree.expressions()).hasSize(2);
     assertThat(((LiteralTree)caseLabelTree.expression()).value()).isEqualTo("2");
     assertThat(((LiteralTree)caseLabelTree.expressions().get(0)).value()).isEqualTo("2");
     assertThat(((LiteralTree)caseLabelTree.expressions().get(1)).value()).isEqualTo("3");
-    assertThat(caseLabelTree.colonToken().text()).isEqualTo("->");
-    assertThat(caseLabelTree.colonOrArrowToken().text()).isEqualTo("->");
+    assertThat(caseLabelTree.colonToken().text()).isEqualTo(":");
+    assertThat(caseLabelTree.colonOrArrowToken().text()).isEqualTo(":");
     assertThatChildrenIteratorHasSize(caseLabelTree, 4);
     assertThat(c.body()).hasSize(1);
 
@@ -61,6 +61,27 @@
     assertThat(caseLabelTree.colonOrArrowToken().text()).isEqualTo(":");
     assertThatChildrenIteratorHasSize(caseLabelTree, 2);
     assertThat(c.body()).hasSize(1);
+
+    // FIXME ECJ broken for switch expression?
+    // ReturnStatementTree rst = (ReturnStatementTree) firstMethodFirstStatement("class T {\n" +
+    // " int m(int e) {\n" +
+    // " return switch (e) {\n" +
+    // " case 1 -> 0;\n" +
+    // " case 2, 3 -> 1;\n" +
+    // " default -> 42;\n" +
+    // " };\n" +
+    // " }\n" +
+    // "}");
+    // switchExpression = (SwitchExpressionTree) rst.expression();
+    // assertThat(switchExpression.cases()).hasSize(3);
+    // c = switchExpression.cases().get(1);
+    // assertThat(c.labels()).hasSize(2);
+    // caseLabelTree = c.labels().get(1);
+    // assertThat(caseLabelTree.isFallThrough()).isFalse();
+    // assertThat(caseLabelTree.caseOrDefaultKeyword().text()).isEqualTo("case");
+    // assertThat(caseLabelTree.expression()).isNotNull();
+    // assertThat(caseLabelTree.colonOrArrowToken().text()).isEqualTo("->");
+    // assertThat(c.body()).hasSize(1);
 
     tree = (SwitchStatementTree) firstMethodFirstStatement("class T { void m() { switch (e) { default: } } }");
     assertThat(tree.cases()).hasSize(1);

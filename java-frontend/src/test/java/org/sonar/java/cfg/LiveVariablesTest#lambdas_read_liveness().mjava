@@ -1,15 +1,9 @@
   @Test
   public void lambdas_read_liveness() {
-    CFG cfg = buildCFG("boolean foo(int a) { if(true) { System.out.println(''); }foo(x -> a + 1);}");
+    CFG cfg = buildCFG("void foo(int a) { if (true) { System.out.println(); } bar(x -> a + 1); } void bar(java.util.function.IntFunction<Integer> func) {}");
     LiveVariables liveVariables = LiveVariables.analyze(cfg);
     assertThat(liveVariables.getOut(cfg.reversedBlocks().get(0))).isEmpty();
     assertThat(liveVariables.getOut(cfg.reversedBlocks().get(2))).hasSize(1);
     assertThat(liveVariables.getOut(cfg.reversedBlocks().get(3))).hasSize(1);
-
-    cfg = buildCFG("boolean foo(int a) { if(true) { System.out.println(''); }foo(x -> a = 2);}");
-    liveVariables = LiveVariables.analyze(cfg);
-    assertThat(liveVariables.getOut(cfg.reversedBlocks().get(0))).isEmpty();
-    assertThat(liveVariables.getOut(cfg.reversedBlocks().get(2))).isEmpty();
-    assertThat(liveVariables.getOut(cfg.reversedBlocks().get(3))).isEmpty();
   }
 

@@ -1,6 +1,6 @@
   @Test
   public void method_ref_liveness() throws Exception {
-    CFG cfg = buildCFG("boolean foo(Object a) { if(true) { System.out.println(''); }foo(a::toString);}");
+    CFG cfg = buildCFG("void foo(Object a) { if(true) { System.out.println(); } bar(a::toString);} void bar(java.util.function.Supplier<String> func) {}");
     LiveVariables liveVariables = LiveVariables.analyze(cfg);
     assertThat(liveVariables.getOut(cfg.reversedBlocks().get(0))).isEmpty();
     assertThat(liveVariables.getOut(cfg.reversedBlocks().get(2))).hasSize(1);

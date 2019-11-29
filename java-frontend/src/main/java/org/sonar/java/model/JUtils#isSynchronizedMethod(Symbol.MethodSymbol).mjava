@@ -1,7 +1,4 @@
   public static boolean isSynchronizedMethod(Symbol.MethodSymbol method) {
-    if (!(method instanceof JMethodSymbol)) {
-      return Flags.isFlagged(((MethodJavaSymbol) method).flags(), Flags.SYNCHRONIZED);
-    }
-    return Modifier.isSynchronized(((JMethodSymbol) method).binding.getModifiers());
+    return !method.isUnknown() && Modifier.isSynchronized(((JMethodSymbol) method).binding.getModifiers());
   }
 

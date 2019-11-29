@@ -34,7 +34,7 @@
     assertThat(issues.get(1).primaryLocation().message()).isEqualTo("message on line 42");
     assertThat(issues.get(2).primaryLocation().message()).isEqualTo("other message");
 
-    RecognitionException parseError = new RecognitionException(new LexerException("parse error"));
+    RecognitionException parseError = new RecognitionException(-1, "invalid code", new Exception("parse error"));
 
     context.setRuntime(SonarRuntimeImpl.forSonarLint(V6_7));
     assertThat(sonarComponents.reportAnalysisError(parseError, inputFile)).isTrue();

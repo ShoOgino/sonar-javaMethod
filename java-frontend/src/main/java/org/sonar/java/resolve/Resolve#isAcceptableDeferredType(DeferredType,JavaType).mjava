@@ -1,9 +1,0 @@
-  private boolean isAcceptableDeferredType(DeferredType arg, JavaType formal) {
-    AbstractTypedTree tree = arg.tree();
-    if(tree.is(Tree.Kind.METHOD_REFERENCE, Tree.Kind.LAMBDA_EXPRESSION) && (!formal.symbol.isFlag(Flags.INTERFACE) || !findSamMethodArgsRecursively(formal).isPresent())) {
-      return false;
-    }
-    // we accept all deferred type as we will resolve this later, but reject lambdas with incorrect arity
-    return !tree.is(Tree.Kind.LAMBDA_EXPRESSION) || ((LambdaExpressionTree) tree).parameters().size() == findSamMethodArgs(formal).size();
-  }
-

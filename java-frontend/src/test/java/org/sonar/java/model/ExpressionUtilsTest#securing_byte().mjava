@@ -1,17 +1,19 @@
   @Test
   public void securing_byte() {
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse(
-      "class A {static{\n" +
-        "12;\n" +
-        "12 & 0xFF;\n" +
-        "0xff & 12;\n" +
-        "12 & 12;\n" +
-        "}}\n");
+    CompilationUnitTree tree = JParserTestUtils.parse(
+      "class A {\n" +
+        "  static {\n" +
+        "    int i1 = 12;\n" +
+        "    int i2 = 12 & 0xFF;\n" +
+        "    int i3 = 0xff & 12;\n" +
+        "    int i4 = 12 & 12;\n" +
+        "  }\n" +
+        "}");
 
     StaticInitializerTree staticInitializer = (StaticInitializerTree) ((ClassTree) tree.types().get(0)).members().get(0);
     List<ExpressionTree> expressions = staticInitializer.body().stream()
-      .map(ExpressionStatementTree.class::cast)
-      .map(ExpressionStatementTree::expression)
+      .map(VariableTree.class::cast)
+      .map(VariableTree::initializer)
       .collect(Collectors.toList());
 
     assertThat(ExpressionUtils.isSecuringByte(expressions.get(0))).isFalse();

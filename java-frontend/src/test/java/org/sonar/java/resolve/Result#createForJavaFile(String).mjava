@@ -1,9 +1,8 @@
   public static Result createForJavaFile(String filePath) {
     File file = new File(filePath + ".java");
-    CompilationUnitTree compilationUnitTree = (CompilationUnitTree) parser.parse(file);
-    SemanticModel semanticModel = SemanticModel.createFor(compilationUnitTree, new SquidClassLoader(Lists.newArrayList(new File("target/test-classes"), new File("target/classes"))));
+    CompilationUnitTree compilationUnitTree = JParserTestUtils.parse(file);
     UsageVisitor usageVisitor = new UsageVisitor();
     compilationUnitTree.accept(usageVisitor);
-    return new Result(semanticModel, usageVisitor.symbolsUsed);
+    return new Result(usageVisitor.symbolsUsed, usageVisitor.symbolsTree);
   }
 

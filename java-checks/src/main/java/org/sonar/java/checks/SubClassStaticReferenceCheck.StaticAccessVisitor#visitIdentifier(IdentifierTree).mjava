@@ -1,9 +1,6 @@
     @Override
     public void visitIdentifier(IdentifierTree tree) {
       Type type = tree.symbolType();
-      if (type instanceof MethodJavaType) {
-        type = ((MethodJavaType) type).resultType();
-      }
       if (!sameErasure(type) && type.isSubtypeOf(classType.erasure())) {
         reportIssue(tree, String.format("Remove this reference to \"%s\".", type.symbol().name()));
       }

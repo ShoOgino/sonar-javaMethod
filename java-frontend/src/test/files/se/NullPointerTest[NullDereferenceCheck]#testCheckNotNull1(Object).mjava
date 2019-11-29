@@ -1,0 +1,13 @@
+  public void testCheckNotNull1(@CheckForNull Object parameter) {
+    int i;
+    Object o;
+
+    Object[] array1 = checkForNullField;
+    i = array1.length; // False negative
+
+    i = checkForNullField.length; // False negative, instance and static fields are not checked
+
+    Object[] array2 = checkForNullMethod(); // flow@array {{'checkForNullMethod()' can return null.}} flow@array {{Implies 'array2' can be null.}}
+    i = array2.length; // Noncompliant [[flows=array]] {{A "NullPointerException" could be thrown; "array2" is nullable here.}} flow@array
+  }
+

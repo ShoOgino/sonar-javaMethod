@@ -5,7 +5,7 @@
   public void try_statement() {
     TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } finally { } } }");
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
-    assertThat(tree.resources()).isEmpty();
+    assertThat(tree.resourceList()).isEmpty();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).isEmpty();
     assertThat(tree.finallyKeyword().text()).isEqualTo("finally");
@@ -16,7 +16,7 @@
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
     assertThat(tree.tryKeyword().text()).isEqualTo("try");
     assertThat(tree.openParenToken()).isNull();
-    assertThat(tree.resources()).isEmpty();
+    assertThat(tree.resourceList()).isEmpty();
     assertThat(tree.closeParenToken()).isNull();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.finallyKeyword()).isNull();
@@ -44,7 +44,7 @@
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (Exception e) { } finally { } } }");
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
-    assertThat(tree.resources()).isEmpty();
+    assertThat(tree.resourceList()).isEmpty();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).hasSize(1);
     assertThat(tree.finallyKeyword().text()).isEqualTo("finally");
@@ -54,7 +54,7 @@
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (final @Foo Exception e) { } } }");
     assertThat(tree.is(Tree.Kind.TRY_STATEMENT)).isTrue();
-    assertThat(tree.resources()).isEmpty();
+    assertThat(tree.resourceList()).isEmpty();
     assertThat(tree.block()).isNotNull();
     assertThat(tree.catches()).hasSize(1);
     assertThat(tree.finallyKeyword()).isNull();
@@ -77,10 +77,10 @@
     assertThat(tree.finallyKeyword()).isNull();
     assertThat(tree.finallyBlock()).isNull();
     assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.resources()).hasSize(1);
+    assertThat(tree.resourceList()).hasSize(1);
     assertThat(tree.closeParenToken().text()).isEqualTo(")");
     assertThatChildrenIteratorHasSize(tree, 5);
-    VariableTree resource = tree.resources().get(0);
+    VariableTree resource = (VariableTree) tree.resourceList().get(0);
     assertThat(resource.simpleName().name()).isEqualTo("r");
     assertThat(resource.initializer()).isNotNull();
     assertThat(resource.modifiers()).hasSize(2);
@@ -93,13 +93,13 @@
     assertThatChildrenIteratorHasSize(tree.catches().get(0), 5);
     assertThat(tree.finallyBlock()).isNotNull();
     assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.resources()).hasSize(2);
-    assertThat(tree.resources().separators()).hasSize(1);
+    assertThat(tree.resourceList()).hasSize(2);
+    assertThat(tree.resourceList().separators()).hasSize(1);
     assertThat(tree.closeParenToken().text()).isEqualTo(")");
-    resource = tree.resources().get(0);
+    resource = (VariableTree) tree.resourceList().get(0);
     assertThat(resource.simpleName().name()).isEqualTo("r1");
     assertThat(resource.initializer()).isNotNull();
-    resource = tree.resources().get(1);
+    resource = (VariableTree) tree.resourceList().get(1);
     assertThat(resource.simpleName().name()).isEqualTo("r2");
     assertThat(resource.initializer()).isNotNull();
     assertThatChildrenIteratorHasSize(tree, 8);
@@ -114,34 +114,22 @@
     assertThatChildrenIteratorHasSize(tree, 3);
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (r1) { } } }");
-    assertThat(tree.resources()).isEmpty();
-    assertThat(tree.resources().separators()).isEmpty();
     assertThat(tree.resourceList()).hasSize(1);
     assertThat(tree.resourceList().separators()).isEmpty();
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (r1; super.field; new A().f) { } } }");
-    assertThat(tree.resources()).isEmpty();
-    assertThat(tree.resources().separators()).isEmpty();
     assertThat(tree.resourceList()).hasSize(3);
     assertThat(tree.resourceList().separators()).hasSize(2);
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (r1; Resource r2 = open();) { } } }");
-    assertThat(tree.resources()).hasSize(1);
-    assertThat(tree.resources().separators()).hasSize(1);
-    assertThat(tree.resources().separators().get(0).column()).isEqualTo(50);
     assertThat(tree.resourceList()).hasSize(2);
     assertThat(tree.resourceList().separators()).hasSize(2);
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (r1; Resource r2 = open()) { } } }");
-    assertThat(tree.resources()).hasSize(1);
-    assertThat(tree.resources().separators()).isEmpty();
     assertThat(tree.resourceList()).hasSize(2);
     assertThat(tree.resourceList().separators()).hasSize(1);
 
     tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (Resource r2 = open(); r1;) { } } }");
-    assertThat(tree.resources()).hasSize(1);
-    assertThat(tree.resources().separators()).hasSize(1);
-    assertThat(tree.resources().separators().get(0).column()).isEqualTo(46);
     assertThat(tree.resourceList()).hasSize(2);
     assertThat(tree.resourceList().separators()).hasSize(2);
   }

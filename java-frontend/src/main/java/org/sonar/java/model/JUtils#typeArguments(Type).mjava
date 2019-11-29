@@ -1,12 +1,6 @@
-  /**
-   * Replacement for {@link ParametrizedTypeJavaType#substitution(TypeVariableJavaType)}
-   */
   public static List<Type> typeArguments(Type type) {
-    if (!(type instanceof JType)) {
-      ParametrizedTypeJavaType t = (ParametrizedTypeJavaType) type;
-      return t.typeParameters().stream()
-        .map(t::substitution)
-        .collect(Collectors.toList());
+    if (type.isUnknown()) {
+      return Collections.emptyList();
     }
     JType t = (JType) type;
     ITypeBinding[] typeArguments = t.typeBinding.getTypeArguments();

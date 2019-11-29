@@ -1,8 +1,7 @@
   @Test
   public void athrow_should_not_be_linked_to_next_label() throws Exception {
-    CompilationUnitTree tree = (CompilationUnitTree) JavaParser.createParser().parse("class A {int field;}");
+    CompilationUnitTree tree = JParserTestUtils.parse("class A {int field;}");
     SquidClassLoader classLoader = new SquidClassLoader(Collections.singletonList(new File("src/test/JsrRet")));
-    Sema semanticModel = SemanticModel.createFor(tree, classLoader);
     BehaviorCache behaviorCache = new BehaviorCache(classLoader);
     behaviorCache.setFileContext(null, semanticModel);
     BytecodeEGWalker walker = new BytecodeEGWalker(behaviorCache, semanticModel);

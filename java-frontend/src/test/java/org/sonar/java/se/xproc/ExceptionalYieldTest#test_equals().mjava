@@ -15,7 +15,7 @@
     yield.setExceptionType("java.lang.Exception");
     assertThat(yield).isEqualTo(otherYield);
 
-    Sema semanticModel = SemanticModel.createFor((CompilationUnitTree) JavaParser.createParser().parse("class A{}"), new SquidClassLoader(new ArrayList<>()));
+    Sema semanticModel = ((JavaTree.CompilationUnitTreeImpl) JParserTestUtils.parse("class A{}")).sema;
     assertThat(yield.exceptionType(semanticModel)).isEqualTo(otherYield.exceptionType(semanticModel));
 
     // same arity and parameters but happy yield

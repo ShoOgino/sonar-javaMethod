@@ -2,28 +2,19 @@
   public void visitNode(Tree tree) {
     Symbol sym;
     Arguments args;
-    Tree methodName;
     if (tree.is(Tree.Kind.NEW_CLASS)) {
       NewClassTree nct = (NewClassTree) tree;
       sym = nct.constructorSymbol();
       args = nct.arguments();
-      methodName = nct.identifier();
     } else {
       MethodInvocationTree mit = (MethodInvocationTree) tree;
       sym = mit.symbol();
       args = mit.arguments();
-      methodName = mit.methodSelect();
     }
 
     if (sym.isMethodSymbol() && !args.isEmpty()) {
       ExpressionTree lastArg = args.get(args.size() - 1);
-      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) sym;
-      Type methodType = getMethodType(methodSymbol, methodName);
-      if (methodType instanceof MethodJavaType) {
-        checkInvokedMethod(methodSymbol, (MethodJavaType) methodType, lastArg);
-      } else {
-        checkInvokedMethod(methodSymbol, lastArg);
-      }
+      checkInvokedMethod((Symbol.MethodSymbol) sym, lastArg);
     }
   }
 

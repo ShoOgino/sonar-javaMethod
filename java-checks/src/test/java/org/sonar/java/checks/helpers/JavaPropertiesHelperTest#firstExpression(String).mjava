@@ -1,6 +1,5 @@
   private ExpressionTree firstExpression(String code) {
-    CompilationUnitTree compilationUnitTree = (CompilationUnitTree) p.parse("class A { " + code + "}");
-    SemanticModel.createFor(compilationUnitTree, new SquidClassLoader(Collections.emptyList()));
+    CompilationUnitTree compilationUnitTree = JParserTestUtils.parse("class A { " + code + "}");
     ClassTree firstType = (ClassTree) compilationUnitTree.types().get(0);
     StatementTree firstStatement = ((MethodTree) firstType.members().get(0)).block().body().get(0);
     return ((ExpressionStatementTree) firstStatement).expression();

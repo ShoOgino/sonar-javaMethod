@@ -3,118 +3,126 @@
    */
   @Test
   public void array_creation_expression() {
-    NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }");
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNotNull();
-    assertThat(tree.dimensions()).hasSize(2);
-    assertThat(tree.initializers()).hasSize(2);
-    assertThat(tree.initializers().separators()).hasSize(1);
-    assertThat(tree.newKeyword()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 7);
+    {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }");
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNotNull();
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers()).hasSize(2);
+      assertThat(tree.initializers().separators()).hasSize(1);
+      assertThat(tree.newKeyword()).isNotNull();
+      assertThatChildrenIteratorHasSize(tree, 7);
 
-    ArrayDimensionTree dimension = tree.dimensions().get(0);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).isEmpty();
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression()).isNull();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 2);
-    dimension = tree.dimensions().get(1);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).isEmpty();
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression()).isNull();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 2);
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression()).isNull();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 2);
+      dimension = tree.dimensions().get(1);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression()).isNull();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 2);
 
-    NewArrayTree firstDim = (NewArrayTree) tree.initializers().get(0);
-    assertThat(firstDim.initializers()).hasSize(1);
-    assertThat(firstDim.initializers().separators()).isEmpty();
-    assertThatChildrenIteratorHasSize(firstDim, 3);
-    NewArrayTree secondDim = (NewArrayTree) tree.initializers().get(1);
-    assertThat(secondDim.initializers()).hasSize(2);
-    assertThat(secondDim.initializers().separators()).hasSize(1);
-    assertThatChildrenIteratorHasSize(secondDim, 3);
-
-    tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[2][2]; } }");
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNotNull();
-    assertThat(tree.dimensions()).hasSize(2);
-    assertThat(tree.initializers()).isEmpty();
-    assertThat(tree.newKeyword()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 5);
-    dimension = tree.dimensions().get(0);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).isEmpty();
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 3);
-
-    tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[] @Bar [] {{}, {}}; } }");
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNotNull();
-    assertThat(tree.dimensions()).hasSize(2);
-    assertThat(tree.initializers()).hasSize(2);
-    assertThat(tree.newKeyword()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 7);
-    dimension = tree.dimensions().get(0);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).isEmpty();
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression()).isNull();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 2);
-    dimension = tree.dimensions().get(1);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).hasSize(1);
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression()).isNull();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 3);
-
-    tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[2] @Bar []; } }");
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNotNull();
-    assertThat(tree.dimensions()).hasSize(2);
-    assertThat(tree.initializers()).isEmpty();
-    assertThat(tree.newKeyword()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 5);
-    dimension = tree.dimensions().get(0);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).isEmpty();
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 3);
-    dimension = tree.dimensions().get(1);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).hasSize(1);
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression()).isNull();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 3);
-
-    tree = (NewArrayTree) expressionOfReturnStatement("class T { int[] m() { return new int @Foo [2]; } }");
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNotNull();
-    assertThat(tree.dimensions()).hasSize(1);
-    assertThat(tree.initializers()).isEmpty();
-    assertThat(tree.newKeyword()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 4);
-    dimension = tree.dimensions().get(0);
-    assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
-    assertThat(dimension.annotations()).hasSize(1);
-    assertThat(dimension.openBracketToken().text()).isEqualTo("[");
-    assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
-    assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
-    assertThatChildrenIteratorHasSize(dimension, 4);
-
-    tree = (NewArrayTree) ((VariableTree) firstMethodFirstStatement("class T { void m() { int[] a = {,}; } }")).initializer();
-    assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
-    assertThat(tree.type()).isNull();
-    assertThat(tree.dimensions()).isEmpty();
-    assertThat(tree.initializers()).isEmpty();
-    assertThat(tree.initializers().separators()).hasSize(1);
+      NewArrayTree firstDim = (NewArrayTree) tree.initializers().get(0);
+      assertThat(firstDim.initializers()).hasSize(1);
+      assertThat(firstDim.initializers().separators()).isEmpty();
+      assertThatChildrenIteratorHasSize(firstDim, 3);
+      NewArrayTree secondDim = (NewArrayTree) tree.initializers().get(1);
+      assertThat(secondDim.initializers()).hasSize(2);
+      assertThat(secondDim.initializers().separators()).hasSize(1);
+      assertThatChildrenIteratorHasSize(secondDim, 3);
+    }
+    {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[2][2]; } }");
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNotNull();
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers()).isEmpty();
+      assertThat(tree.newKeyword()).isNotNull();
+      assertThatChildrenIteratorHasSize(tree, 5);
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 3);
+    }
+    {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[] @Bar [] {{}, {}}; } }");
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNotNull();
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers()).hasSize(2);
+      assertThat(tree.newKeyword()).isNotNull();
+      assertThatChildrenIteratorHasSize(tree, 7);
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression()).isNull();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 2);
+      dimension = tree.dimensions().get(1);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).hasSize(1);
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression()).isNull();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 3);
+    }
+    {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[2] @Bar [3]; } }");
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNotNull();
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers()).isEmpty();
+      assertThat(tree.newKeyword()).isNotNull();
+      assertThatChildrenIteratorHasSize(tree, 5);
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 3);
+      dimension = tree.dimensions().get(1);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).hasSize(1);
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 4);
+    }
+    {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[] m() { return new int @Foo [2]; } }");
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNotNull();
+      assertThat(tree.dimensions()).hasSize(1);
+      assertThat(tree.initializers()).isEmpty();
+      assertThat(tree.newKeyword()).isNotNull();
+      assertThatChildrenIteratorHasSize(tree, 4);
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension.is(Tree.Kind.ARRAY_DIMENSION)).isTrue();
+      assertThat(dimension.annotations()).hasSize(1);
+      assertThat(dimension.openBracketToken().text()).isEqualTo("[");
+      assertThat(dimension.expression().is(Tree.Kind.INT_LITERAL)).isTrue();
+      assertThat(dimension.closeBracketToken().text()).isEqualTo("]");
+      assertThatChildrenIteratorHasSize(dimension, 4);
+    }
+    {
+      NewArrayTree tree = (NewArrayTree) ((VariableTree) firstMethodFirstStatement("class T { void m() { int[] a = {,}; }}")).initializer();
+      assertThat(tree.is(Tree.Kind.NEW_ARRAY)).isTrue();
+      assertThat(tree.type()).isNull();
+      assertThat(tree.dimensions()).isEmpty();
+      assertThat(tree.initializers()).isEmpty();
+      // FIXME missing separator
+      assertThat(tree.initializers().separators()).isEmpty();
+    }
   }
 

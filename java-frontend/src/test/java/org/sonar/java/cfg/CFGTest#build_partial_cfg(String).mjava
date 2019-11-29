@@ -1,7 +1,6 @@
   private void build_partial_cfg(String breakOrContinue) {
     String methodCode = "void meth(){ try {fun(); } catch ( Exception e) {e.printStackTrace(); "+breakOrContinue+"; } }";
-    CompilationUnitTree cut = (CompilationUnitTree) parser.parse("class A {" + methodCode + "}");
-    SemanticModel.createFor(cut, new SquidClassLoader(Collections.emptyList()));
+    CompilationUnitTree cut = JParserTestUtils.parse("class A {" + methodCode + "}");
     MethodTree methodTree = (MethodTree) ((ClassTree) cut.types().get(0)).members().get(0);
     List<StatementTree> body = methodTree.block().body();
     CFG cfg = CFG.buildCFG(body, true);
