@@ -4,12 +4,9 @@
     }
 
     allowedWarnings = new ArrayList<>();
-    Iterable<String> listOfWarnings = Splitter.on(",").trimResults().split(warningsCommaSeparated);
-    for (String warning : listOfWarnings) {
-      if (StringUtils.isNotBlank(warning)) {
-        allowedWarnings.add(warning);
-      }
-    }
+    Arrays.stream(warningsCommaSeparated.split(","))
+      .filter(StringUtils::isNotBlank)
+      .forEach(allowedWarnings::add);
 
     return allowedWarnings;
   }
