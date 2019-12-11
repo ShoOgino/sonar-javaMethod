@@ -1,12 +1,11 @@
   @Test
-  @org.junit.Ignore("meta-annotations not properly handled with ECJ")
   public void testIsAnnotatedNonNull() {
     Symbol foo = getSymbol("foo");
     assertThat(isAnnotatedNonNull(foo)).isFalse();
 
     getSymbols("nonnull").forEach(s -> {
-      assertThat(isAnnotatedNonNull(s)).as(s + " should be recognized as Nonnull.").isTrue();
-      assertThat(isAnnotatedNullable(s.metadata())).as(s + " should NOT be recognized as Nullable.").isFalse();
+      assertThat(isAnnotatedNonNull(s)).as(s.name() + " should be recognized as Nonnull.").isTrue();
+      assertThat(isAnnotatedNullable(s.metadata())).as(s.name() + " should NOT be recognized as Nullable.").isFalse();
     });
   }
 
