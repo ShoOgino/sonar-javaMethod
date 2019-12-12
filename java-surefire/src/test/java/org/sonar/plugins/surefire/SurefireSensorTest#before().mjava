@@ -3,11 +3,10 @@
     fs = new DefaultFileSystem(new File("src/test/resources"));
     DefaultInputFile javaFile = new TestInputFileBuilder("", "src/org/foo/java").setLanguage("java").build();
     fs.add(javaFile);
-    perspectives = mock(ResourcePerspectives.class);
 
     javaResourceLocator = mock(JavaResourceLocator.class);
     when(javaResourceLocator.findResourceByClassName(anyString())).thenAnswer(invocation -> resource((String) invocation.getArguments()[0]));
 
-    surefireSensor = new SurefireSensor(new SurefireJavaParser(perspectives, javaResourceLocator), new MapSettings().asConfig(), fs, pathResolver);
+    surefireSensor = new SurefireSensor(new SurefireJavaParser(javaResourceLocator), new MapSettings().asConfig(), fs, pathResolver);
   }
 
