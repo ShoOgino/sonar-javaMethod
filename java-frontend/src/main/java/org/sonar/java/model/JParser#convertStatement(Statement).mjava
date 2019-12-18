@@ -108,24 +108,11 @@
       }
       case ASTNode.BREAK_STATEMENT: {
         BreakStatement e = (BreakStatement) node;
-        if (e.isImplicit()) {
-          return new ExpressionStatementTreeImpl(
-            convertExpression(e.getExpression()),
-            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
-          );
-        }
-        ExpressionTree expression;
-        if (e.getExpression() == null) {
-          SimpleName label = e.getLabel();
-          IdentifierTreeImpl i = label == null ? null : convertSimpleName(label);
-          usageLabel(i);
-          expression = i;
-        } else {
-          expression = convertExpression(e.getExpression());
-        }
+        IdentifierTreeImpl identifier = e.getLabel() == null ? null : convertSimpleName(e.getLabel());
+        usageLabel(identifier);
         return new BreakStatementTreeImpl(
           firstTokenIn(e, TerminalTokens.TokenNamebreak),
-          expression,
+          identifier,
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
       }
@@ -365,6 +352,20 @@
         usage(i.binding, i);
         return new ExpressionStatementTreeImpl(
           t,
+          lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+        );
+      }
+      case ASTNode.YIELD_STATEMENT: {
+        YieldStatement e = (YieldStatement) node;
+        if (e.isImplicit()) {
+          return new ExpressionStatementTreeImpl(
+            convertExpression(e.getExpression()),
+            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
+          );
+        }
+        return new BreakStatementTreeImpl(
+          firstTokenIn(e, ANY_TOKEN),
+          convertExpression(e.getExpression()),
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
       }

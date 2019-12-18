@@ -8,8 +8,13 @@
     Block block = (Block) s.statements().get(1);
     BreakStatement breakStatement = (BreakStatement) block.statements().get(0);
     assertThat(breakStatement.getLength())
-      .isZero();
+      .isEqualTo(2);
 
-    test(source);
+    CompilationUnitTree compilationUnit = test(source);
+    ClassTree cls = (ClassTree) compilationUnit.types().get(0);
+    MethodTree method = (MethodTree) cls.members().get(0);
+    SwitchStatementTree switchStatement = (SwitchStatementTree) Objects.requireNonNull(method.block()).body().get(0);
+    BlockTree blockStatement = (BlockTree) switchStatement.cases().get(0).body().get(0);
+    assertThat(blockStatement.body()).isEmpty();
   }
 

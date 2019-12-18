@@ -1,0 +1,16 @@
+  /**
+   * Text Blocks (Preview) http://openjdk.java.net/jeps/355
+   *
+   * @see org.eclipse.jdt.core.dom.TextBlock
+   */
+  @Test
+  public void expression_text_block() {
+    LiteralTree tree = (LiteralTree) expressionOfReturnStatement("class T { Object m() { return \"\"\"\ntext block\"\"\"; } }");
+    assertThat(tree.kind()).isEqualTo(Tree.Kind.STRING_LITERAL);
+    assertThat(tree.value()).isEqualTo("\"\"\"\ntext block\"\"\"");
+    SyntaxToken token = tree.token();
+    assertThat(token).isNotNull();
+    assertThat(token.line()).isEqualTo(1);
+    assertThat(token.column()).isEqualTo(30);
+  }
+
