@@ -1,0 +1,13 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree methodInvocation) {
+      Arguments arguments = methodInvocation.arguments();
+      if (SET_TRUSTED_PACKAGES.matches(methodInvocation)) {
+        hasTrustedPackages |= !arguments.get(0).is(Kind.NULL_LITERAL);
+        callArgumentsOfSetTrustedPackages = true;
+      } else if (SET_TRUST_ALL_PACKAGES.matches(methodInvocation)) {
+        hasTrustAllPackages |= Boolean.TRUE.equals(ConstantUtils.resolveAsBooleanConstant(arguments.get(0)));
+      }
+      super.visitMethodInvocation(methodInvocation);
+      callArgumentsOfSetTrustedPackages = false;
+    }
+

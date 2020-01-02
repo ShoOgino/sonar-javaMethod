@@ -1,0 +1,12 @@
+	ActiveMQConnectionFactory conditional_trust_all_packages(boolean condition) {
+		ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616"); // Noncompliant
+    if (condition) {
+      factory.setTrustAllPackages(true);
+    } else {
+      // ignore "setTrustAllPackages(false)" because there's a path where it can be "true"
+      factory.setTrustAllPackages(false);
+      factory.setTrustedPackages(Arrays.asList("org.apache.activemq.test"));
+    }
+		return factory;
+	}
+
