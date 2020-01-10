@@ -1,7 +1,10 @@
   private static boolean isRuleKey(String rule, RuleKey ruleKey) {
     try {
       // format of the rules requires a repository: "repo:key"
-      return ruleKey.equals(RuleKey.parse(rule));
+      RuleKey parsed = RuleKey.parse(rule);
+      RuleKey deprecatedRuleKey = DEPRRECATED_RULE_KEYS.get(ruleKey.rule());
+      RuleKey squidRuleKey = RuleKey.of("squid", ruleKey.rule());
+      return ruleKey.equals(parsed) || squidRuleKey.equals(parsed) || parsed.equals(deprecatedRuleKey);
     } catch (IllegalArgumentException e) {
       return false;
     }

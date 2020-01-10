@@ -1,0 +1,12 @@
+  private static Map<String, RuleKey> getDeprecatedRuleKeys() {
+    Map<String, RuleKey> deprecatedRuleKeys = new HashMap<>();
+    CheckList.getChecks().forEach(c -> {
+      String key = AnnotationUtils.getAnnotation(c, Rule.class).key();
+      DeprecatedRuleKey deprecatedRuleKeyAnnotation = AnnotationUtils.getAnnotation(c, DeprecatedRuleKey.class);
+      if (deprecatedRuleKeyAnnotation != null) {
+        deprecatedRuleKeys.put(key, RuleKey.of(deprecatedRuleKeyAnnotation.repositoryKey(), deprecatedRuleKeyAnnotation.ruleKey()));
+      }
+    });
+    return deprecatedRuleKeys;
+  }
+
