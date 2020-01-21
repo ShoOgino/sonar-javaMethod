@@ -1,0 +1,12 @@
+    IssuableSubsciptionVisitorsRunner(List<JavaFileScanner> executableScanners) {
+      checks = new EnumMap<>(Tree.Kind.class);
+      subscriptionVisitors = executableScanners.stream()
+        .filter(IS_ISSUABLE_SUBSCRIPTION_VISITOR)
+        .map(SubscriptionVisitor.class::cast)
+        .collect(Collectors.toList());
+
+      subscriptionVisitors
+        .forEach(s -> s.nodesToVisit()
+          .forEach(k -> checks.computeIfAbsent(k, key -> new ArrayList<>()).add(s)));
+    }
+

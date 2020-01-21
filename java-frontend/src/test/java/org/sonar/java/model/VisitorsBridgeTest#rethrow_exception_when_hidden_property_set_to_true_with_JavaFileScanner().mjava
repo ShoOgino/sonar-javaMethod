@@ -1,0 +1,19 @@
+  @Test
+  public void rethrow_exception_when_hidden_property_set_to_true_with_JavaFileScanner() {
+    try {
+      visitorsBridge(new JFS_ThrowingNPEJavaFileScanner(), true)
+        .visitFile(COMPILATION_UNIT_TREE);
+      Fail.fail("scanning of file should have raise an exception");
+    } catch (AnalysisException e) {
+      assertThat(e.getMessage()).contains("Failing check");
+      assertThat(e.getCause()).isInstanceOf(CheckFailureException.class);
+      assertThat(e.getCause().getCause()).isSameAs(NPE);
+    } catch (Exception e) {
+      Fail.fail("Should have been an AnalysisException");
+    }
+    assertThat(sonarComponents.analysisErrors).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSameSizeAs(sonarComponents.analysisErrors);
+    assertThat(logTester.logs(LoggerLevel.ERROR).stream().map(VisitorsBridgeTest::ruleKeyFromErrorLog))
+      .containsExactlyInAnyOrder("JFS_ThrowingNPEJavaFileScanner - JFS");
+  }
+

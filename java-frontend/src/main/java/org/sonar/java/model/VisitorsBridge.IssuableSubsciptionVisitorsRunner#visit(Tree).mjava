@@ -1,0 +1,21 @@
+    private void visit(Tree tree) throws CheckFailureException {
+      Kind kind = tree.kind();
+      List<SubscriptionVisitor> subscribed = checks.getOrDefault(kind, Collections.emptyList());
+      Consumer<SubscriptionVisitor> callback;
+      boolean isToken = (kind == Tree.Kind.TOKEN);
+      if (isToken) {
+        callback = s -> s.visitToken((SyntaxToken) tree);
+      } else {
+        callback = s -> s.visitNode(tree);
+      }
+      forEach(subscribed, callback);
+      if (isToken) {
+        forEach(checks.getOrDefault(Tree.Kind.TRIVIA, Collections.emptyList()), s -> ((SyntaxToken) tree).trivias().forEach(s::visitTrivia));
+      } else {
+        visitChildren(tree);
+      }
+      if(!isToken) {
+        forEach(subscribed, s -> s.leaveNode(tree));
+      }
+    }
+

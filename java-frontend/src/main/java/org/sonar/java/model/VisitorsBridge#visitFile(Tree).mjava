@@ -7,12 +7,29 @@
     }
 
     JavaFileScannerContext javaFileScannerContext = createScannerContext(tree, tree.sema, sonarComponents, fileParsed);
+
     // Symbolic execution checks
     if (symbolicExecutionEnabled) {
-      runScanner(javaFileScannerContext, new SymbolicExecutionVisitor(executableScanners, behaviorCache), AnalysisError.Kind.SE_ERROR);
-      behaviorCache.cleanup();
+      try {
+        runScanner(javaFileScannerContext, new SymbolicExecutionVisitor(executableScanners, behaviorCache), AnalysisError.Kind.SE_ERROR);
+        behaviorCache.cleanup();
+      } catch (CheckFailureException e) {
+        interruptIfFailFast(e);
+      }
     }
-    executableScanners.forEach(scanner -> runScanner(javaFileScannerContext, scanner, AnalysisError.Kind.CHECK_ERROR));
-    scannerRunner.run(javaFileScannerContext);
+
+    for (JavaFileScanner scanner : executableScanners) {
+      try {
+        runScanner(javaFileScannerContext, scanner, AnalysisError.Kind.CHECK_ERROR);
+      } catch (CheckFailureException e) {
+        interruptIfFailFast(e);
+      }
+    }
+
+    try {
+      issuableSubscriptionVisitorsRunner.run(javaFileScannerContext);
+    } catch (CheckFailureException e) {
+      interruptIfFailFast(e);
+    }
   }
 

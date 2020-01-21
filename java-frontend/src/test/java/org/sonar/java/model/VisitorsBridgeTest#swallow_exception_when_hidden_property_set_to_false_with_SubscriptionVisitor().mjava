@@ -1,0 +1,24 @@
+  @Test
+  public void swallow_exception_when_hidden_property_set_to_false_with_SubscriptionVisitor() {
+    try {
+      visitorsBridge(Arrays.asList(
+        new SV1_ThrowingNPEVisitingClass(),
+        new SV2_ThrowingNPELeavingClass(),
+        new SV3_ThrowingNPEVisitingToken(),
+        new SV4_ThrowingNPEVisitingTrivia()),
+        false)
+        .visitFile(COMPILATION_UNIT_TREE);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Fail.fail("Exceptions should be swallowed when property is not set");
+    }
+    assertThat(sonarComponents.analysisErrors).hasSize(4);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSameSizeAs(sonarComponents.analysisErrors);
+    assertThat(logTester.logs(LoggerLevel.ERROR).stream().map(VisitorsBridgeTest::ruleKeyFromErrorLog))
+      .containsExactlyInAnyOrder(
+        "SV1_ThrowingNPEVisitingClass - SV1",
+        "SV2_ThrowingNPELeavingClass - SV2",
+        "SV3_ThrowingNPEVisitingToken - SV3",
+        "SV4_ThrowingNPEVisitingTrivia - SV4");
+  }
+

@@ -21,9 +21,11 @@
       LOG.error(e.getMessage());
 
       parseErrorWalkAndVisit(e, inputFile);
+    } catch (AnalysisException e) {
+      throw e;
     } catch (Exception e) {
       checkInterrupted(e);
-      throw new AnalysisException(getAnalysisExceptionMessage(inputFile), e);
+      interruptIfFailFast(e, inputFile);
     } catch (StackOverflowError error) {
       LOG.error(String.format("A stack overflow error occurred while analyzing file: '%s'", inputFile), error);
       throw error;

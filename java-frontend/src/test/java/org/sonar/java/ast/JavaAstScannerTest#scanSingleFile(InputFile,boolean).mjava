@@ -1,0 +1,12 @@
+  private final void scanSingleFile(InputFile file, boolean failOnException) {
+    SensorContextTester sensorContextTester = SensorContextTester.create(new File(""));
+    sensorContextTester.setSettings(new MapSettings().setProperty(SonarComponents.FAIL_ON_EXCEPTION_KEY, failOnException));
+
+    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, null);
+    sonarComponents.setSensorContext(sensorContextTester);
+
+    VisitorsBridge visitorsBridge = new VisitorsBridge(new ArrayList(), new ArrayList<>(), sonarComponents);
+
+    JavaAstScanner.scanSingleFileForTests(file, visitorsBridge, new JavaVersionImpl(), sonarComponents);
+  }
+
