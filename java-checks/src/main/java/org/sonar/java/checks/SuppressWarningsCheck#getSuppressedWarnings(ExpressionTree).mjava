@@ -1,12 +1,12 @@
   private static List<String> getSuppressedWarnings(ExpressionTree argument) {
     List<String> result = new ArrayList<>();
     if (argument.is(Tree.Kind.STRING_LITERAL)) {
-      result.add(LiteralUtils.trimQuotes(((LiteralTree) argument).value()));
+      result.add(getAnnotationArgument((LiteralTree) argument));
     } else if (argument.is(Tree.Kind.NEW_ARRAY)) {
       NewArrayTree array = (NewArrayTree) argument;
       for (ExpressionTree expressionTree : array.initializers()) {
         if (expressionTree.is(Kind.STRING_LITERAL)) {
-          result.add(LiteralUtils.trimQuotes(((LiteralTree) expressionTree).value()));
+          result.add(getAnnotationArgument((LiteralTree) expressionTree));
         }
       }
     }
