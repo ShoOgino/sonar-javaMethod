@@ -1,0 +1,11 @@
+  @Override
+  protected void onConstructorFound(NewClassTree newClassTree) {
+    String firstArgument = ExpressionsHelper.getConstantValueAsString(newClassTree.arguments().get(0)).value();
+    if (firstArgument != null) {
+      Matcher matcher = EC_KEY_PATTERN.matcher(firstArgument);
+      if (matcher.find() && Integer.valueOf(matcher.group(2)) < EC_MIN_KEY) {
+        reportIssue(newClassTree, "Use a key length of at least " + EC_MIN_KEY + " bits for EC cipher algorithm.");
+      }
+    }
+  }
+
