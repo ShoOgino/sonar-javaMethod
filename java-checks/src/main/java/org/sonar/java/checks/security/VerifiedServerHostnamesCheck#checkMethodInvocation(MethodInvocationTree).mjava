@@ -1,0 +1,20 @@
+  private void checkMethodInvocation(MethodInvocationTree mit) {
+    MethodTree method = ExpressionUtils.getEnclosingMethod(mit);
+    if (method == null) {
+      return;
+    }
+    if (ENABLING_SSL_METHODS.matches(mit) && LiteralUtils.isTrue(mit.arguments().get(0))) {
+      MethodBodyApacheVisitor apacheVisitor = new MethodBodyApacheVisitor();
+      method.accept(apacheVisitor);
+      if (!apacheVisitor.isSecured) {
+        reportIssue(mit, ISSUE_MESSAGE);
+      }
+    } else if (HASHTABLE_PUT.matches(mit) && isSettingSSL(mit.arguments())) {
+      MethodBodyHashtableVisitor hashtableVisitor = new MethodBodyHashtableVisitor();
+      method.accept(hashtableVisitor);
+      if (!hashtableVisitor.isSecured) {
+        reportIssue(mit, "Enable server hostname verification on this SSL/TLS connection, by setting \"mail.smtp.ssl.checkserveridentity\" to true.");
+      }
+    }
+  }
+

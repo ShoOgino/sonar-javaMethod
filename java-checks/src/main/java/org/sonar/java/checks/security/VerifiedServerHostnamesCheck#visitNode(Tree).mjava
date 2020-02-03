@@ -1,9 +1,18 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.METHOD)) {
-      checkMethodDefinition((MethodTree) tree);
-    } else {
-      checkLambdaDefinition(((LambdaExpressionTree) tree));
+    switch (tree.kind()) {
+      case METHOD:
+        checkMethodDefinition((MethodTree) tree);
+        break;
+      case LAMBDA_EXPRESSION:
+        checkLambdaDefinition(((LambdaExpressionTree) tree));
+        break;
+      case METHOD_INVOCATION:
+        checkMethodInvocation((MethodInvocationTree) tree);
+        break;
+      default:
+        // can not happen
+        break;
     }
   }
 
