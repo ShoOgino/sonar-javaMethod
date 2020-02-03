@@ -1,0 +1,14 @@
+  private void checkBlock(BlockTree blockTree) {
+    List<StatementTree> innerBlock = blockTree.body();
+    while (innerBlock.size() == 1 && innerBlock.get(0).is(Tree.Kind.BLOCK)) {
+      innerBlock = ((BlockTree) innerBlock.get(0)).body();
+    }
+
+    List<StatementTree> statementTreeList = innerBlock.stream()
+      .filter(statementTree -> !statementTree.is(Tree.Kind.EMPTY_STATEMENT))
+      .collect(Collectors.toList());
+    if (isReturnTrueStatement(statementTreeList)) {
+      reportIssue(statementTreeList.get(0), ISSUE_MESSAGE);
+    }
+  }
+

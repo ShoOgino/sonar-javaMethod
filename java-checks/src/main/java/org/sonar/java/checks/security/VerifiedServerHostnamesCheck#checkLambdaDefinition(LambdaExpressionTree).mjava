@@ -1,0 +1,11 @@
+  private void checkLambdaDefinition(LambdaExpressionTree lambdaExpression) {
+    Tree lambdaBody = lambdaExpression.body();
+    if (isHostnameVerifierSignature(lambdaExpression)) {
+      if (lambdaBody.is(Tree.Kind.BLOCK)) {
+        checkBlock((BlockTree) lambdaBody);
+      } else if (isTrueLiteral(lambdaBody)) {
+        reportIssue(lambdaBody, ISSUE_MESSAGE);
+      }
+    }
+  }
+
