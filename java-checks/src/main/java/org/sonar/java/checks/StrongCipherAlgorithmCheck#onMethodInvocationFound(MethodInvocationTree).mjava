@@ -1,0 +1,10 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree firstArg = mit.arguments().get(0);
+    ExpressionTree defaultValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(firstArg);
+    String firstArgStringValue = ExpressionsHelper.getConstantValueAsString(defaultValue != null ? defaultValue : firstArg).value();
+    if (firstArgStringValue != null) {
+      checkIssue(firstArg, firstArgStringValue);
+    }
+  }
+

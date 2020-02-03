@@ -1,0 +1,26 @@
+  void usingJavaUtilProperties(java.util.Properties props, String otherAlgo) throws NoSuchAlgorithmException, NoSuchPaddingException {
+    String algo = props.getProperty("myAlgo", "DES/ECB/PKCS5Padding");
+    Cipher.getInstance(algo); // Noncompliant
+    Cipher.getInstance(props.getProperty("myAlgo", "DES/ECB/PKCS5Padding")); // Noncompliant
+    Cipher.getInstance(getAlgo()); // Compliant
+    Cipher.getInstance("/"); // Compliant
+
+    String algo2 = props.getProperty("myAlgo");
+    Cipher.getInstance(algo2); // Compliant
+
+    String algo3 = props.getProperty("myAlgo", "DES/ECB/PKCS5Padding");
+    algo3 = "myOtherAlgo";
+    Cipher.getInstance(algo3); // Compliant
+
+    String algo4 = getAlgo();
+    Cipher.getInstance(algo4); // Compliant
+
+    Cipher.getInstance(otherAlgo); // Compliant
+
+    String algo5 = "myAlgo";
+    Cipher.getInstance(algo5); // Compliant
+
+    String algo6 = props.getProperty("myAlgo", getAlgo());
+    Cipher.getInstance(algo6); // Compliant
+  }
+
