@@ -1,0 +1,22 @@
+  private static boolean isInsecureAlgorithm(String algorithmName) {
+    Matcher matcher = ALGORITHM_PATTERN.matcher(algorithmName);
+    if (matcher.matches()) {
+      String algorithm = matcher.group(1);
+      String mode = matcher.group(2);
+      String padding = matcher.group(3);
+
+      if ("ECB".equals(mode)) {
+        return true;
+      } else if ("CBC".equals(mode)) {
+        return "PKCS5Padding".equals(padding) || "PKCS7Padding".equals(padding);
+      }
+
+      if ("RSA".equals(algorithm)) {
+        return !("OAEPWITHSHA-256ANDMGF1PADDING".equals(padding) || "OAEPWithSHA-1AndMGF1Padding".equals(padding));
+      }
+      return false;
+    }
+    // By default, ECB is used.
+    return true;
+  }
+

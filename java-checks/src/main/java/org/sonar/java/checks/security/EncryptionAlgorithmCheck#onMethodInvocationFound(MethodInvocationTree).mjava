@@ -1,0 +1,14 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (mit.arguments().isEmpty()) {
+      return;
+    }
+    ExpressionTree firstArgument = mit.arguments().get(0);
+    ExpressionTree defaultPropertyValue = JavaPropertiesHelper.retrievedPropertyDefaultValue(firstArgument);
+    ExpressionTree algorithmTree = defaultPropertyValue == null ? firstArgument : defaultPropertyValue;
+    String algorithmName = ExpressionsHelper.getConstantValueAsString(algorithmTree).value();
+    if (algorithmName != null && isInsecureAlgorithm(algorithmName)) {
+      reportIssue(firstArgument, "Use secure mode and padding scheme.");
+    }
+  }
+
