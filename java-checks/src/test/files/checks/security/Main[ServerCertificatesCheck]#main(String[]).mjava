@@ -39,13 +39,17 @@
 
     trustManager = new X509TrustManager() {
       @Override
-      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Compliant, FN, it throws another kind of Exception
         java.lang.Integer.parseInt("error");
       }
 
       @Override
-      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-        new java.io.FileInputStream(null);
+      public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Compliant, FN, Exception is catched
+        try {
+          throw new CertificateException();
+        } catch (CertificateException e) {
+          e.printStackTrace();
+        }
       }
 
       @Override
@@ -56,7 +60,7 @@
 
     trustManager = new X509TrustManager() {
       @Override
-      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+      public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { // Compliant, to avoid FP, assumes it throws exceptions
         unResolvedMethod();
       }
 
