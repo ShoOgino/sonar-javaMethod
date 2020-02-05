@@ -1,5 +1,9 @@
   @Override
   protected void onConstructorFound(NewClassTree newClassTree) {
+    if (newClassTree.arguments().isEmpty() || isDynamicallyGenerated(newClassTree.arguments().get(0))) {
+      return;
+    }
+
     Tree mTree = ExpressionUtils.getEnclosingMethod(newClassTree);
     if (mTree != null) {
       MethodInvocationVisitor mitVisit = new MethodInvocationVisitor(newClassTree);
