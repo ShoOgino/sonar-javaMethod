@@ -3,7 +3,7 @@
     if (hasSemantic()) {
       Symbol.TypeSymbol classSymbol = ((ClassTree) tree).symbol();
       Type superclass = classSymbol.superClass();
-      if (isSerializable(classSymbol.type()) && isNotSerializableMissingNoArgConstructor(superclass)) {
+      if (isSerializable(classSymbol.type()) && isNotSerializableMissingNoArgConstructor(superclass) && !implementsSerializableMethods(classSymbol)) {
         reportIssue(tree, "Add a no-arg constructor to \"" + superclass + "\".");
       }
     }
