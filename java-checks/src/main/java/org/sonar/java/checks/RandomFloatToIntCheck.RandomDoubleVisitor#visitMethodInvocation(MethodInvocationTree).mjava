@@ -1,7 +1,9 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      if(methodMatchers.anyMatch(tree)) {
+      if (mathRandomMethodMatcher.matches(tree)) {
         reportIssue(tree.methodSelect(), "Use \"java.util.Random.nextInt()\" instead.");
+      } else if (methodMatchers.anyMatch(tree)) {
+        reportIssue(tree.methodSelect(), "Use \"nextInt()\" instead.");
       }
       super.visitMethodInvocation(tree);
     }
