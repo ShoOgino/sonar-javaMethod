@@ -6,7 +6,7 @@
 
     Cookie c1 = new Cookie("name", "value");
     if (param) {
-      c1.setHttpOnly(false); // FN
+      c1.setHttpOnly(false); // Noncompliant
     }
     else {
       c1.setHttpOnly(true);
@@ -14,15 +14,15 @@
 
     Cookie c2 = new Cookie("name", "value"); // Noncompliant [[sc=12;ec=14]]
 
-    Cookie c3 = new Cookie("name", "value"); // Noncompliant
-    c3.setHttpOnly(false);
+    Cookie c3 = new Cookie("name", "value");
+    c3.setHttpOnly(false); // Noncompliant
 
-    Cookie c4 = new Cookie("name", "value"); // Noncompliant
-    c4.setHttpOnly(FALSE_CONSTANT);
+    Cookie c4 = new Cookie("name", "value");
+    c4.setHttpOnly(FALSE_CONSTANT); // Noncompliant
 
-    Cookie c5 = new Cookie("name", "value"); // Noncompliant
+    Cookie c5 = new Cookie("name", "value");
     boolean b = false;
-    c5.setHttpOnly(b);
+    c5.setHttpOnly(b); // Noncompliant
 
     Cookie c6 = new Cookie("name", "value");
     c6.setHttpOnly(param);
@@ -30,9 +30,9 @@
     Cookie c7 = new UnknownCookie("name", "value"); // Noncompliant
     Object c8 = new Cookie("name", "value"); // Noncompliant
 
-    Cookie c9; // Noncompliant
+    Cookie c9;
     c9 = new Cookie("name", "value");
-    c9.setHttpOnly(false);
+    c9.setHttpOnly(false); // Noncompliant
 
     Cookie c10;  // Noncompliant
     c10 = new Cookie("name", "value");
@@ -49,7 +49,7 @@
 
     Cookie c14 = new Cookie("name", "value");
     boolean bValue = true;
-    c14.setHttpOnly(!bValue);
+    c14.setHttpOnly(!bValue); // FN
 
     field4 = new Cookie("name, value"); // FN
 
