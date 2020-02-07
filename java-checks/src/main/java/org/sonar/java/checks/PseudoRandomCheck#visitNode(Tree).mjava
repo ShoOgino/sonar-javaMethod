@@ -2,12 +2,19 @@
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) tree;
+      IdentifierTree reportLocation = ExpressionUtils.methodName(mit);
+
       if (MATH_RANDOM_MATCHER.matches(mit)) {
-        reportIssue(ExpressionUtils.methodName(mit), MESSAGE);
+        reportIssue(reportLocation, MESSAGE);
+      } else if (mit.methodSelect().is(Tree.Kind.MEMBER_SELECT) && !isChainedMethodInvocation(mit)) {
+        Type expressionType = ((MemberSelectExpressionTree) mit.methodSelect()).expression().symbolType();
+        if (RANDOM_STATIC_TYPES.contains(expressionType.fullyQualifiedName())) {
+          reportIssue(reportLocation, MESSAGE);
+        }
       }
     } else {
       NewClassTree newClass = (NewClassTree) tree;
-      if (newClass.symbolType().is("java.util.Random")) {
+      if (RANDOM_CONSTRUCTOR_TYPES.contains(newClass.symbolType().fullyQualifiedName())) {
         reportIssue(newClass.identifier(), MESSAGE);
       }
     }
