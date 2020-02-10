@@ -1,0 +1,9 @@
+  private void categorizeBasedOnConstructor(@Nullable ExpressionTree expressionTree) {
+    if (expressionTree != null && expressionTree.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree newClass = (NewClassTree) expressionTree;
+      if (!isIgnoredCookieName(newClass.arguments()) && !isCompliantConstructorCall(newClass) && CLASSES.stream().anyMatch(newClass.symbolType()::isSubtypeOf)) {
+        newClassToReport.add(newClass.identifier());
+      }
+    }
+  }
+

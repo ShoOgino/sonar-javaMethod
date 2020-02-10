@@ -1,16 +1,13 @@
   @Override
   public void leaveFile(JavaFileScannerContext context) {
-    for (VariableSymbol var : variablesToReport) {
-      VariableTree declaration = var.declaration();
-      if (declaration != null) {
-        reportIssue(declaration.simpleName(), MESSAGE);
-      }
+    for (TypeTree typeTree : symbolConstructorMapToReport.values()) {
+      reportIssue(typeTree, MESSAGE);
     }
     for (MethodInvocationTree mit : settersToReport) {
       reportIssue(mit.arguments(), MESSAGE);
     }
-    for (NewClassTree newClassTree : newClassToReport) {
-      reportIssue(newClassTree, MESSAGE);
+    for (TypeTree typeTree : newClassToReport) {
+      reportIssue(typeTree, MESSAGE);
     }
   }
 

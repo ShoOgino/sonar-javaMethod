@@ -6,9 +6,11 @@
       } else if (tree.is(Tree.Kind.ASSIGNMENT)) {
         checkAssignment((AssignmentExpressionTree) tree);
       } else if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-        checkSetterInvocation((MethodInvocationTree) tree);
+        MethodInvocationTree invocationTree = (MethodInvocationTree) tree;
+        checkSetterInvocation(invocationTree);
+        invocationTree.arguments().forEach(this::categorizeBasedOnConstructor);
       } else {
-        categorizeBasedOnConstructor((ReturnStatementTree) tree);
+        categorizeBasedOnConstructor(((ReturnStatementTree) tree).expression());
       }
     }
   }
