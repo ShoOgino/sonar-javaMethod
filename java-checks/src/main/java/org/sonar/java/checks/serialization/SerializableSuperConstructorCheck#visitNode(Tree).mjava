@@ -1,11 +1,17 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      Symbol.TypeSymbol classSymbol = ((ClassTree) tree).symbol();
-      Type superclass = classSymbol.superClass();
-      if (isSerializable(classSymbol.type()) && isNotSerializableMissingNoArgConstructor(superclass) && !implementsSerializableMethods(classSymbol)) {
-        reportIssue(tree, "Add a no-arg constructor to \"" + superclass + "\".");
-      }
+    if (!hasSemantic()) {
+      return;
+    }
+    ClassTree classTree = (ClassTree) tree;
+    if (classTree.simpleName() == null) {
+      // do not cover anonymous classes
+      return;
+    }
+    Symbol.TypeSymbol classSymbol = classTree.symbol();
+    Type superclass = classSymbol.superClass();
+    if (isSerializable(classSymbol.type()) && isNotSerializableMissingNoArgConstructor(superclass) && !implementsSerializableMethods(classSymbol)) {
+      reportIssue(classTree.superClass(), "Add a no-arg constructor to \"" + superclass.name() + "\".");
     }
   }
 
