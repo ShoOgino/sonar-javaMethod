@@ -1,8 +1,8 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
-      if (SET_HEADER_MATCHER.matches(mit)) {
+      if (SET_ADD_HEADER_MATCHER.anyMatch(mit)) {
         String constantCORS = ExpressionsHelper.getConstantValueAsString(mit.arguments().get(0)).value();
-        if (HTTP_HEADERS.contains(constantCORS)) {
+        if (constantCORS != null && HTTP_HEADERS.contains(constantCORS.toLowerCase(Locale.ENGLISH))) {
           reportTree(mit.methodSelect());
         }
       } else if (APPLY_PERMIT_DEFAULT_VALUES.matches(mit)) {
