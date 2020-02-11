@@ -1,0 +1,11 @@
+  private static boolean setSpecificOrigins(Tree tree) {
+    if (tree.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
+      ExpressionTree variable = assignment.variable();
+      return variable.is(Tree.Kind.IDENTIFIER) &&
+        ANNOTATION_ORIGINS_KEY_ALIAS.contains(((IdentifierTree) variable).name()) &&
+        !isStar(assignment.expression());
+    }
+    return !isStar((LiteralTree) tree);
+  }
+
