@@ -1,7 +1,11 @@
   public void addVariables(List<StatementTree> statementTrees) {
+    UNRESOLVED_IDENTIFIERS_VISITOR.check(statementTrees);
     for (StatementTree statementTree : statementTrees) {
       if (statementTree.is(Tree.Kind.VARIABLE)) {
-        addVariable((VariableTree) statementTree);
+        VariableTree variableTree = (VariableTree) statementTree;
+        if (!UNRESOLVED_IDENTIFIERS_VISITOR.isUnresolved(variableTree.simpleName().name())) {
+          addVariable(variableTree);
+        }
       }
     }
   }
