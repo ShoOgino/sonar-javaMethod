@@ -1,7 +1,10 @@
   private void handleVariable(Set<Symbol> out, VariableTree localVar) {
     Symbol symbol = localVar.symbol();
     ExpressionTree initializer = localVar.initializer();
-    if (initializer != null && !isUsualDefaultValue(initializer) && !out.contains(symbol)) {
+    if (initializer != null
+      && !isUsualDefaultValue(initializer)
+      && !out.contains(symbol)
+      && !hasUnresolvedSymbol(symbol.name())) {
       createIssue(localVar.equalToken(), initializer, symbol);
     }
     out.remove(symbol);
