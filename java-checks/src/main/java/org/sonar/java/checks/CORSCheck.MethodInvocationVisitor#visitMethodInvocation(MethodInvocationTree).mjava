@@ -3,12 +3,13 @@
       if (SET_ADD_HEADER_MATCHER.anyMatch(mit)) {
         String headerName = ExpressionsHelper.getConstantValueAsString(mit.arguments().get(0)).value();
         if (ACCESS_CONTROL_ALLOW_ORIGIN.equalsIgnoreCase(headerName) && isStar(mit.arguments().get(1))) {
-          reportTree(mit.methodSelect());
+          reportTree(mit);
         }
       } else if (APPLY_PERMIT_DEFAULT_VALUES.matches(mit)) {
         applyPermit.add(mit);
-      } else if (ADD_ALLOWED_ORIGIN.matches(mit) && isStar(mit.arguments().get(0))) {
+      } else if (ADD_ALLOWED_ORIGIN_MATCHER.anyMatch(mit) && isStar(mit.arguments().get(0))) {
         addAllowedOrigin.add(mit);
       }
+      super.visitMethodInvocation(mit);
     }
 
