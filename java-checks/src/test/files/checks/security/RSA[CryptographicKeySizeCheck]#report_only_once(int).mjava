@@ -1,0 +1,16 @@
+  public void report_only_once(int size) throws NoSuchAlgorithmException {
+    if (size == 1) {
+      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
+      keyGen.initialize(1); // Noncompliant {{Use a key length of at least 2048 bits for DH cipher algorithm.}}
+    } else if(size == 2) {
+      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+      keyGen.initialize(2); // Noncompliant {{Use a key length of at least 2048 bits for RSA cipher algorithm.}}
+    } else if(size == 3) {
+      KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+      keyGen.init(3); // Noncompliant {{Use a key length of at least 128 bits for AES cipher algorithm.}}
+    } else {
+      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
+      keyGen.initialize(2048); // Compliant
+    }
+  }
+
