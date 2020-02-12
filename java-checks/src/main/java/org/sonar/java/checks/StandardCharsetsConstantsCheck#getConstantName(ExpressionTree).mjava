@@ -1,5 +1,6 @@
   private static Optional<String> getConstantName(ExpressionTree argument) {
-    String constantValue = ConstantUtils.resolveAsStringConstant(argument);
-    return Optional.ofNullable(ALIAS_TO_CONSTANT.get(constantValue));
+    return argument.asConstant(String.class)
+      .map(ALIAS_TO_CONSTANT::get)
+      .flatMap(Optional::ofNullable);
   }
 

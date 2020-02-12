@@ -5,10 +5,7 @@
         args.addAll(getRulesFromExpression(initializer));
       }
     } else {
-      String constant = ConstantUtils.resolveAsStringConstant(expression);
-      if (constant != null) {
-        args.add(constant);
-      }
+      expression.asConstant(String.class).ifPresent(args::add);
     }
     return args;
   }

@@ -1,5 +1,5 @@
   private static boolean hasConstantOppositeArg(MethodInvocationTree mit) {
-    Boolean result = ConstantUtils.resolveAsBooleanConstant(mit.arguments().get(0));
-    return result != null && !result.equals(mit.symbol().name().contains("True"));
+    Optional<Boolean> result = mit.arguments().get(0).asConstant(Boolean.class);
+    return result.isPresent() && !result.get().equals(mit.symbol().name().contains("True"));
   }
 

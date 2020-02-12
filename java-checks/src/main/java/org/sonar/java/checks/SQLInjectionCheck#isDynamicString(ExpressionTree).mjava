@@ -1,6 +1,6 @@
   private static boolean isDynamicString(ExpressionTree arg) {
     if (arg.is(Tree.Kind.PLUS_ASSIGNMENT)) {
-      return ConstantUtils.resolveAsConstant(((AssignmentExpressionTree)arg).expression()) == null;
+      return !((AssignmentExpressionTree) arg).expression().asConstant().isPresent();
     }
     if (arg.is(Tree.Kind.IDENTIFIER)) {
       Symbol symbol = ((IdentifierTree) arg).symbol();
@@ -8,6 +8,6 @@
       return (initializerOrExpression != null && isDynamicString(initializerOrExpression)) || getReassignments(symbol.owner().declaration(), symbol.usages()).stream()
         .anyMatch(SQLInjectionCheck::isDynamicString);
     }
-    return arg.is(Tree.Kind.PLUS) && ConstantUtils.resolveAsConstant(arg) == null;
+    return arg.is(Tree.Kind.PLUS) && !arg.asConstant().isPresent();
   }
 

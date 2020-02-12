@@ -1,8 +1,6 @@
   private static Optional<ExpressionTree> findEmptyString(ExpressionTree expression) {
-    String stringValue = ConstantUtils.resolveAsStringConstant(expression);
-    if (stringValue != null && stringValue.isEmpty()) {
-      return Optional.of(expression);
-    }
-    return Optional.empty();
+    return expression.asConstant(String.class)
+      .filter(String::isEmpty)
+      .map(s -> expression);
   }
 

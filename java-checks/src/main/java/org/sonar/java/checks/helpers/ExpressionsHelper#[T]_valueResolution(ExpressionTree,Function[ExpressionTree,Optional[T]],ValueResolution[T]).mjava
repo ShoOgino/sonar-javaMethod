@@ -1,6 +1,6 @@
-  private static <T> ValueResolution<T> valueResolution(ExpressionTree expression, Function<ExpressionTree,T> resolver, ValueResolution<T> valueResolution) {
-    T value = resolver.apply(expression);
-    if (value == null && expression.is(Tree.Kind.IDENTIFIER)) {
+  private static <T> ValueResolution<T> valueResolution(ExpressionTree expression, Function<ExpressionTree, Optional<T>> resolver, ValueResolution<T> valueResolution) {
+    Optional<T> value = resolver.apply(expression);
+    if (!value.isPresent() && expression.is(Tree.Kind.IDENTIFIER)) {
       Symbol symbol = ((IdentifierTree) expression).symbol();
       ExpressionTree singleWriteUsage = getSingleWriteUsage(symbol);
       if (singleWriteUsage != null && !valueResolution.evaluatedSymbols.contains(symbol)) {
@@ -8,7 +8,7 @@
         return valueResolution(singleWriteUsage, resolver, valueResolution);
       }
     }
-    valueResolution.value = value;
+    valueResolution.value = value.orElse(null);
     return valueResolution;
   }
 
