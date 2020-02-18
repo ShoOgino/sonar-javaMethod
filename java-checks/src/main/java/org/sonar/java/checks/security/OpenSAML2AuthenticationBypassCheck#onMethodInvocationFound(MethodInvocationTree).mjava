@@ -1,0 +1,8 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree arg0 = mit.arguments().get(0);
+    arg0.asConstant(Boolean.class)
+      .filter(Boolean.FALSE::equals)
+      .ifPresent(value -> reportIssue(arg0, "Change \"setIgnoreComments\" to \"true\" or remove the call to \"setIgnoreComments\" to prevent the authentication bypass."));
+  }
+
