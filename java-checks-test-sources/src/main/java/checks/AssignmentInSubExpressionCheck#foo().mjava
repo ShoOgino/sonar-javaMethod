@@ -1,0 +1,57 @@
+  AssignmentInSubExpressionCheck foo() {
+    int a = 0;                   // Compliant
+    a = 0;                       // Compliant
+    System.out.println(a);       // Compliant
+    System.out.println(a = 0);   // Noncompliant [[sc=26;ec=27]] {{Extract the assignment out of this expression.}}
+    System.out.println(a += 0);  // Noncompliant [[sc=26;ec=28]] {{Extract the assignment out of this expression.}}
+    System.out.println(a == 0);  // Compliant
+
+    a = b = 0;                   // Compliant
+    a += foo[i];                 // Compliant
+
+    _stack[
+           index = 0             // Noncompliant
+           ] = node;
+
+    while ((foo = bar()) != null) { // Compliant
+    }
+
+    if ((plop = something) != null) { // Compliant
+    }
+
+    if ((a = b = 0) != 1) { // Noncompliant
+    }
+
+    while ((foo = bar()) == null) { // Compliant
+    }
+
+    while ((foo = bar())[0] <= 0) { // Compliant
+    }
+
+    while ((foo = bar())[0] < 0) { // Compliant
+    }
+
+    while ((foo = bar())[0] >= 0) { // Compliant
+    }
+
+    while ((foo = bar())[0] > 0) { // Compliant
+    }
+
+    while ((obj = foo()).index != 0) { // Compliant
+    }
+
+    while ((a += 0) > 42) { // Compliant
+    }
+
+    i = a + 0;
+    i = (a = bar()[0]) + 5; // Noncompliant
+
+    while (null != (foo = bar())) { // Compliant
+    }
+
+    if ((a += b) > 0) { // Noncompliant
+    }
+
+    return null;
+  }
+

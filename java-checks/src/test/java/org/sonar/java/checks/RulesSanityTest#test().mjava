@@ -11,13 +11,14 @@
     List<JavaCheck> checks = getJavaCheckInstances();
     assertThat(checks).isNotEmpty();
 
-    List<InputFile> inputFiles = getJavaInputFiles();
+    File moduleBaseDir = new File(".").getCanonicalFile().getParentFile();
+    List<InputFile> inputFiles = getJavaInputFiles(moduleBaseDir);
     assertThat(inputFiles.size()).isGreaterThanOrEqualTo(checks.size());
 
     List<File> classpath = getClassPath();
     assertThat(classpath).isNotEmpty();
 
-    List<SanityCheckException> exceptions = scanFiles(inputFiles, checks, classpath);
+    List<SanityCheckException> exceptions = scanFiles(moduleBaseDir, inputFiles, checks, classpath);
     if (!exceptions.isEmpty()) {
       LOG.error(processExceptions(exceptions));
       fail(String.format("Should have been able to execute all the rules on all the test files. %d file(s) made at least 1 rule fail.", exceptions.size()));
