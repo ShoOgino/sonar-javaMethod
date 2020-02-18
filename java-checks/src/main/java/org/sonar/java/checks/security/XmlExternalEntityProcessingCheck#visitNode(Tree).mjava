@@ -1,5 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
-    xxeChecks.forEach(check -> check.checkMethodInvocation((MethodInvocationTree) tree));
+    MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
+    triggeringSecuringHelpers.forEach(check -> {
+      if (check.test(methodInvocationTree)) {
+        reportIssue(methodInvocationTree.methodSelect(), "Disable XML external entity (XXE) processing.");
+      }
+    });
   }
 

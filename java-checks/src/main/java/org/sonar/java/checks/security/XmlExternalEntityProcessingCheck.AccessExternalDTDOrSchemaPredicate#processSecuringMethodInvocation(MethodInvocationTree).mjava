@@ -1,0 +1,15 @@
+    @Override
+    public void processSecuringMethodInvocation(MethodInvocationTree methodInvocation) {
+      if (methodMatcher.matches(methodInvocation)) {
+        Arguments arguments = methodInvocation.arguments();
+        String propertyName = getConstantValueAsString(arguments.get(0)).value();
+        String propertyValue = getConstantValueAsString(arguments.get(1)).value();
+        if ("".equals(propertyValue) && ACCESS_EXTERNAL_DTD_PROPERTY.equals(propertyName)) {
+          externalDTDDisabled = true;
+        }
+        if ("".equals(propertyValue) && ACCESS_EXTERNAL_SCHEMA_PROPERTY.equals(propertyName)) {
+          externalSchemaDisabled = true;
+        }
+      }
+    }
+

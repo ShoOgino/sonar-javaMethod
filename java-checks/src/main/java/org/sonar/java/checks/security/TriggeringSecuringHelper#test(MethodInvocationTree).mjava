@@ -1,0 +1,16 @@
+  @Override
+  public boolean test(MethodInvocationTree mit) {
+    if (triggeringInvocationMatcher.matches(mit)) {
+      MethodTree enclosingMethod = ExpressionUtils.getEnclosingMethod(mit);
+      if (enclosingMethod != null) {
+        Optional<Symbol> assignedSymbol = getAssignedSymbol(mit);
+        if (assignedSymbol.isPresent()) {
+          resetState();
+          enclosingMethod.accept(new MethodVisitor(assignedSymbol.get()));
+          return !isSecured();
+        }
+      }
+    }
+    return false;
+  }
+

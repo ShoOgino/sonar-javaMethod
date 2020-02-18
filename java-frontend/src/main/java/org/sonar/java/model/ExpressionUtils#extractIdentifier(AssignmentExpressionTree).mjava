@@ -1,17 +1,12 @@
   public static IdentifierTree extractIdentifier(AssignmentExpressionTree tree) {
-    ExpressionTree variable = skipParentheses(tree.variable());
-    if (variable.is(Tree.Kind.IDENTIFIER)) {
-      return (IdentifierTree) variable;
-    }
+    Optional<IdentifierTree> identifier = extractIdentifier(tree.variable());
 
-    if (variable.is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree selectTree = (MemberSelectExpressionTree) variable;
-      if (isSelectOnThisOrSuper(selectTree)) {
-        return selectTree.identifier();
-      }
+    if (identifier.isPresent()) {
+      return identifier.get();
     }
 
     // This should not be possible.
+    // If it happens anyway, you should make sure the assignment is simple (by calling isSimpleAssignment) before.
     throw new IllegalArgumentException("Can not extract identifier.");
   }
 

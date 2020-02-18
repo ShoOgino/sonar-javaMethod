@@ -1,0 +1,13 @@
+  private static Optional<IdentifierTree> extractIdentifier(ExpressionTree tree) {
+    ExpressionTree cleanedExpression = ExpressionUtils.skipParentheses(tree);
+    if (cleanedExpression.is(Tree.Kind.IDENTIFIER)) {
+      return Optional.of(((IdentifierTree) cleanedExpression));
+    } else if (cleanedExpression.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree selectTree = (MemberSelectExpressionTree) cleanedExpression;
+      if (isSelectOnThisOrSuper(selectTree)) {
+        return Optional.of(selectTree.identifier());
+      }
+    }
+    return Optional.empty();
+  }
+

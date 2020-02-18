@@ -1,0 +1,15 @@
+    @Override
+    public void processSecuringMethodInvocation(MethodInvocationTree methodInvocation) {
+      Arguments arguments = methodInvocation.arguments();
+      if (SET_PROPERTY.matches(methodInvocation)) {
+        String propertyName = getConstantValueAsString(arguments.get(0)).value();
+        if (IS_SUPPORTING_EXTERNAL_ENTITIES_PROPERTY.equals(propertyName) || SUPPORT_DTD_PROPERTY.equals(propertyName)) {
+          ExpressionTree propertyValue = arguments.get(1);
+          if (Boolean.FALSE.equals(getConstantValueAsBoolean(propertyValue).value())
+            || "false".equalsIgnoreCase(getConstantValueAsString(propertyValue).value())) {
+            foundSecuringCall = true;
+          }
+        }
+      }
+    }
+
