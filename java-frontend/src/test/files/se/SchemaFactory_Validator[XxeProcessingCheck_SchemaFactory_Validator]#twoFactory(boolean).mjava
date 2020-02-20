@@ -1,0 +1,16 @@
+  Validator twoFactory(boolean b) throws SAXException {
+    if (b) {
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); // Noncompliant
+      Schema schema = schemaFactory.newSchema();
+      Validator validator = schema.newValidator();
+      return validator;
+    } else {
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); // Compliant
+      Schema schema = schemaFactory.newSchema();
+      Validator validator = schema.newValidator();
+      validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+      return validator;
+    }
+  }
+

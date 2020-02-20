@@ -1,0 +1,34 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+
+      // Test initialisation of XML processing API
+      for (Map.Entry<MethodMatcher, Predicate<ConstraintsByDomain>> entry : CONDITIONS_FOR_SECURED_BY_TYPE.entrySet()) {
+        if (entry.getKey().matches(mit)) {
+          constraintManager
+            .setValueFactory(() -> new XxeSymbolicValue(programState.peekValue(), mit, entry.getValue()));
+          break;
+        }
+      }
+
+      if (TRANSFERRING_METHOD_CALLS.anyMatch(mit)) {
+        // transfer same SV to the result of the method invocation.
+        constraintManager.setValueFactory(() -> programState.peekValue());
+      } else if (FEATURES_AND_PROPERTIES_SETTERS.anyMatch(mit)) {
+        // check secured by attribute or feature
+        Arguments arguments = mit.arguments();
+        for (XxeProperty property : PROPERTIES_TO_CHECK) {
+          programState = checkArguments(programState, arguments, property);
+        }
+      }
+
+      // Test if API is used without any protection against XXE.
+      if (PARSING_METHODS.anyMatch(mit)) {
+        SymbolicValue peek = programState.peekValue(mit.arguments().size());
+
+        if (peek instanceof XxeSymbolicValue) {
+          XxeSymbolicValue xxeSymbolicValue = (XxeSymbolicValue) peek;
+          reportIfNotSecured(context, xxeSymbolicValue, programState.getConstraints(xxeSymbolicValue));
+        }
+      }
+    }
+

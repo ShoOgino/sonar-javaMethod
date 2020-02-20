@@ -1,0 +1,10 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      SymbolicValueSymbol peek = programState.peekValueSymbol();
+      Symbol symbol = peek.symbol();
+      SymbolicValue sv = peek.symbolicValue();
+      if (symbol != null && sv instanceof XxeSymbolicValue) {
+        ((XxeSymbolicValue) sv).setField(ProgramState.isField(symbol));
+      }
+    }
+

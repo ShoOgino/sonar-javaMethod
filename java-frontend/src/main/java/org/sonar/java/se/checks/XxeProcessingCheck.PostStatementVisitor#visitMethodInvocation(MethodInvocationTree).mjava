@@ -1,0 +1,8 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree mit) {
+      SymbolicValue peek = programState.peekValue();
+      if (peek != null && CONDITIONS_FOR_SECURED_BY_TYPE.keySet().stream().anyMatch(mm -> mm.matches(mit))) {
+        programState = programState.addConstraint(peek, XxeSensitive.SENSITIVE);
+      }
+    }
+

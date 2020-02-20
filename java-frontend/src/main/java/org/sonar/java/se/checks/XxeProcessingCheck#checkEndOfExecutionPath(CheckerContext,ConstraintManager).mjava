@@ -1,0 +1,16 @@
+  @Override
+  public void checkEndOfExecutionPath(CheckerContext context, ConstraintManager constraintManager) {
+
+    ProgramState endState = context.getState();
+    if (endState.exitingOnRuntimeException() || endState.peekValue() instanceof ExceptionalSymbolicValue) {
+      return;
+    }
+
+    for (SymbolicValue sv : endState.getValuesWithConstraints(XxeSensitive.SENSITIVE)) {
+      if (sv instanceof XxeSymbolicValue) {
+        XxeSymbolicValue xxeSV = (XxeSymbolicValue) sv;
+        reportIfNotSecured(context, xxeSV, endState.getConstraints(xxeSV));
+      }
+    }
+  }
+
