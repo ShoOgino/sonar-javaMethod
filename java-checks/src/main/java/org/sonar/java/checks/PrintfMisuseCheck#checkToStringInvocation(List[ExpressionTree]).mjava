@@ -1,6 +1,9 @@
   private void checkToStringInvocation(List<ExpressionTree> args) {
     args.stream()
-      .filter(arg -> arg.is(Tree.Kind.METHOD_INVOCATION) && TO_STRING.matches((MethodInvocationTree) arg))
+      .filter(arg -> arg.is(Tree.Kind.METHOD_INVOCATION))
+      .map(MethodInvocationTree.class::cast)
+      .filter(TO_STRING::matches)
+      .filter(arg -> arg != args.get(args.size() - 1) || !isMethodOfThrowable(arg))
       .forEach(arg -> reportIssue(arg, getToStringMessage(arg)));
   }
 

@@ -6,18 +6,13 @@
       return;
     }
     if (!isMessageFormat) {
-      isMessageFormat = JAVA_UTIL_LOGGER.matches(mit);
-      if (isMessageFormat && (mit.arguments().get(mit.arguments().size() - 1).symbolType().isSubtypeOf("java.lang.Throwable") || hasResourceBundle(mit))) {
-        // ignore formatting issues when last argument is a throwable
+      isMessageFormat = JAVA_UTIL_LOGGER_LOG_MATCHER.anyMatch(mit);
+      if (isMessageFormat && hasResourceBundle(mit)) {
         return;
       }
     }
     if(!isMessageFormat) {
       isMessageFormat = isLoggingMethod(mit);
-      if (isMessageFormat && mit.arguments().get(mit.arguments().size() - 1).symbolType().isSubtypeOf("java.lang.Throwable")) {
-        // ignore formatting issues when last argument is a throwable
-        return;
-      }
     }
     super.checkFormatting(mit, isMessageFormat);
   }

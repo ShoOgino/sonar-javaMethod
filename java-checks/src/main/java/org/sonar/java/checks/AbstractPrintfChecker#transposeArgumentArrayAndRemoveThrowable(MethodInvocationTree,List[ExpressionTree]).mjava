@@ -1,0 +1,20 @@
+  @Nullable
+  protected static List<ExpressionTree> transposeArgumentArrayAndRemoveThrowable(MethodInvocationTree mit, List<ExpressionTree> args) {
+    List<ExpressionTree> transposedArgs = args;
+    if (args.size() == 1) {
+      ExpressionTree firstArg = args.get(0);
+      if (firstArg.symbolType().isArray()) {
+        if (isNewArrayWithInitializers(firstArg)) {
+          transposedArgs = ((NewArrayTree) firstArg).initializers();
+        } else {
+          // size is unknown
+          return null;
+        }
+      }
+    }
+    if (lastArgumentShouldBeIgnored(mit, args, transposedArgs)) {
+      transposedArgs = transposedArgs.subList(0, transposedArgs.size() - 1);
+    }
+    return transposedArgs;
+  }
+

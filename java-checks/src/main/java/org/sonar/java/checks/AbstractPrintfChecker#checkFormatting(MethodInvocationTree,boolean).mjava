@@ -21,9 +21,8 @@
     }
     if (formatTree.is(Tree.Kind.STRING_LITERAL)) {
       String formatString = LiteralUtils.trimQuotes(((LiteralTree) formatTree).value());
-      if (mit.symbol().owner().type().is(ORG_APACHE_LOGGING_LOG4J_LOGGER)) {
-        // Log4J supports both approaches
-        isMessageFormat = formatString.contains("{}");
+      if (isMessageFormat && isProbablyLog4jFormatterLogger(mit, formatString)) {
+        isMessageFormat = false;
       }
       if (isMessageFormat) {
         handleMessageFormat(mit, formatString, args);
@@ -31,7 +30,7 @@
         handlePrintfFormat(mit, formatString, args);
       }
     } else {
-      handleOtherFormatTree(mit, formatTree);
+      handleOtherFormatTree(mit, formatTree, args);
     }
   }
 

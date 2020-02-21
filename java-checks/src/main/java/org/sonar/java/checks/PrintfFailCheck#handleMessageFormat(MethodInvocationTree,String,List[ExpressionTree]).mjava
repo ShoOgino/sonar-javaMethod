@@ -2,23 +2,13 @@
   protected void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
     String newFormatString = cleanupDoubleQuote(formatString);
     Set<Integer> indexes = getMessageFormatIndexes(newFormatString, mit);
-    List<ExpressionTree> newArgs = args;
-    if (newArgs.size() == 1) {
-      ExpressionTree firstArg = newArgs.get(0);
-      if (firstArg.symbolType().isArray()) {
-        if (isNewArrayWithInitializers(firstArg)) {
-          newArgs = ((NewArrayTree) firstArg).initializers();
-        } else {
-          // size is unknown
-          return;
-        }
-      }
-    }
-    if (checkArgumentNumber(mit, indexes.size(), newArgs.size())
+    List<ExpressionTree> transposedArgs = transposeArgumentArrayAndRemoveThrowable(mit, args);
+    if (transposedArgs == null
+      || checkArgumentNumber(mit, indexes.size(), transposedArgs.size())
       || checkUnbalancedQuotes(mit, newFormatString)
       || checkUnbalancedBraces(mit, newFormatString)) {
       return;
     }
-    verifyParameters(mit, newArgs, indexes);
+    verifyParameters(mit, transposedArgs, indexes);
   }
 
