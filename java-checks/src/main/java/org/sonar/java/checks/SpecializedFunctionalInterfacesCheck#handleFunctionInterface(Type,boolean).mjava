@@ -1,25 +1,25 @@
-  private static Optional<String> handleFunctionInterface(Type parametrizedType) {
+  private static Optional<String> handleFunctionInterface(Type parametrizedType, boolean usedAsMethodReference) {
     ParameterTypeNameAndTreeType firstArgument = new ParameterTypeNameAndTreeType(parametrizedType, 0);
     ParameterTypeNameAndTreeType secondArgument = new ParameterTypeNameAndTreeType(parametrizedType, 1);
     if (firstArgument.paramType.equals(secondArgument.paramType)) {
-      if (firstArgument.paramTypeName != null) {
+      if (firstArgument.paramTypeName != null && !usedAsMethodReference) {
         return functionalInterfaceName("%sUnaryOperator", firstArgument.paramTypeName);
       }
       return functionalInterfaceName("UnaryOperator<%s>", firstArgument.paramType);
     }
-    if (isBoolean(secondArgument)) {
+    if (isBoolean(secondArgument) && !usedAsMethodReference) {
       return functionalInterfaceName("Predicate<%s>", firstArgument.paramType);
     }
     if (isBoolean(firstArgument)) {
       return Optional.empty();
     }
-    if (firstArgument.paramTypeName != null && secondArgument.paramTypeName != null) {
+    if (firstArgument.paramTypeName != null && secondArgument.paramTypeName != null && !usedAsMethodReference) {
       return functionalInterfaceName("%sTo%sFunction", firstArgument.paramTypeName, secondArgument.paramTypeName);
     }
-    if (firstArgument.paramTypeName == null && secondArgument.paramTypeName != null) {
+    if (secondArgument.paramTypeName != null && !usedAsMethodReference) {
       return functionalInterfaceName("To%sFunction<%s>", secondArgument.paramTypeName, firstArgument.paramType);
     }
-    if (firstArgument.paramTypeName != null) {
+    if (firstArgument.paramTypeName != null && !usedAsMethodReference) {
       return functionalInterfaceName("%sFunction<%s>", firstArgument.paramTypeName, secondArgument.paramType);
     }
     return Optional.empty();

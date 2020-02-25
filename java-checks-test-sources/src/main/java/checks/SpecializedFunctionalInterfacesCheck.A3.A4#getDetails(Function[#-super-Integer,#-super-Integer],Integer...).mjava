@@ -1,0 +1,24 @@
+      private static String getDetails(Function<? super Integer, ? super Integer> function, Integer... inT) { // Noncompliant {{Refactor this code to use the more specialised Functional Interface 'UnaryOperator<? super Integer>'}}
+
+        Function<?, String> a; // Compliant
+        Function<? super A, ? super A> foo1 = new Function() { // Noncompliant {{Refactor this code to use the more specialised Functional Interface 'UnaryOperator<? super A>'}}
+          @Override
+          public Object apply(Object t) {
+            return null;
+          }
+        };
+        Function<?, ?> foo2 = new Function() { // Noncompliant {{Refactor this code to use the more specialised Functional Interface 'UnaryOperator<?>'}}
+          @Override
+          public Object apply(Object t) {
+            return null;
+          }
+        };
+        Function<Entry<?, ? super A>, ? extends A> foo3 = new Function() { // Compliant
+          @Override
+          public Object apply(Object t) {
+            return null;
+          }
+        };
+        return null;
+      }
+

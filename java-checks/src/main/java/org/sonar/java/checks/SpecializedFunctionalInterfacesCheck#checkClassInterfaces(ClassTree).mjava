@@ -1,6 +1,7 @@
   private void checkClassInterfaces(ClassTree tree) {
     List<InterfaceTreeAndStringPairReport> reportTreeAndStringInterfaces = tree.superInterfaces().stream()
-      .map(typeTree -> matchFunctionalInterface(typeTree.symbolType()).map(rs -> new InterfaceTreeAndStringPairReport(rs, typeTree)).orElse(null))
+      .map(typeTree -> matchFunctionalInterface(typeTree.symbolType(), false)
+      .map(rs -> new InterfaceTreeAndStringPairReport(rs, typeTree)).orElse(null))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
     if (reportTreeAndStringInterfaces.isEmpty()) {
