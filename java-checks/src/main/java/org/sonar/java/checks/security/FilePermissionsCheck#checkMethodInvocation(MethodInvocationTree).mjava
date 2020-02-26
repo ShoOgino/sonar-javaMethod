@@ -1,0 +1,18 @@
+  private void checkMethodInvocation(MethodInvocationTree mit) {
+    if (POSIX_FILE_PERMISSIONS_FROM_STRING.matches(mit)) {
+      ExpressionTree arg0 = mit.arguments().get(0);
+      if (sensitivePermissionsAsString(arg0)) {
+        reportIssue(arg0, ISSUE_MESSAGE);
+      }
+    } else if (RUNTIME_EXEC.matches(mit)) {
+      ExpressionTree arg0 = mit.arguments().get(0);
+      Type arg0Type = arg0.symbolType();
+      if (arg0Type.is(JAVA_LANG_STRING)) {
+        checkExecSingleStringArgument(arg0);
+      } else if (arg0Type.is(JAVA_LANG_STRING + "[]") && arg0.is(Tree.Kind.NEW_ARRAY)) {
+        // only consider explicit array declaration
+        checkExecStringArrayArgument((NewArrayTree) arg0);
+      }
+    }
+  }
+

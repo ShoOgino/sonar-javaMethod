@@ -1,0 +1,16 @@
+  public void setOthersPermissionsHardCoded(Path filePath) throws Exception {
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwx---")); // Compliant
+
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwxr--")); // Noncompliant [[sc=77;ec=88]] {{Make sure this permission is safe.}}
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwx-w-")); // Noncompliant
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwx--x")); // Noncompliant
+
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwxrw-")); // Noncompliant
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwxr-x")); // Noncompliant
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwx-wx")); // Noncompliant
+
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("rwxrwxrwx")); // Noncompliant
+
+    Files.setPosixFilePermissions(filePath, PosixFilePermissions.fromString("invalid")); // Compliant
+  }
+

@@ -1,0 +1,15 @@
+  private void checkExecStringArrayArgument(NewArrayTree newArrayTree) {
+    List<ExpressionTree> initializers = newArrayTree.initializers();
+    if (initializers.size() < 3 || !chmodCommand(initializers.get(0)).isPresent()) {
+      // malformed or not chmod
+      return;
+    }
+    // check all other arguments against sensitive configuration
+    for (int i = 1; i < initializers.size(); i++) {
+      ExpressionTree arg = initializers.get(i);
+      if (arg.asConstant(String.class).filter(FilePermissionsCheck::isSensisitiveChmodMode).isPresent()) {
+        reportIssue(arg, ISSUE_MESSAGE);
+      }
+    }
+  }
+

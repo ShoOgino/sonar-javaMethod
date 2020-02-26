@@ -1,0 +1,21 @@
+  // using PosixFilePermission to set file permissions 757
+  public void setPermissions(Path filePath) throws Exception {
+
+    Set<PosixFilePermission> perms = new HashSet<>();
+    // user permission
+    perms.add(PosixFilePermission.OWNER_READ);
+    perms.add(PosixFilePermission.OWNER_WRITE);
+    perms.add(PosixFilePermission.OWNER_EXECUTE);
+    // group permissions
+    perms.add(PosixFilePermission.GROUP_READ);
+    perms.add(PosixFilePermission.GROUP_EXECUTE);
+    // others permissions
+    perms.add(PosixFilePermission.OTHERS_READ); // Noncompliant {{Make sure this permission is safe.}}
+    perms.add(PosixFilePermission.OTHERS_WRITE); // Noncompliant
+    perms.add(PosixFilePermission.OTHERS_EXECUTE); // Noncompliant
+
+    Files.setPosixFilePermissions(filePath, perms);
+
+    System.out.println(MyEnum.OTHERS_EXECUTE);
+  }
+
