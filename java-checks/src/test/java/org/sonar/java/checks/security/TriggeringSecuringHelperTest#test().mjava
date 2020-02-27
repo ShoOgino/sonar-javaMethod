@@ -1,0 +1,16 @@
+  @Test
+  public void test() {
+    CompilationUnitTree cut = JParserTestUtils.parse(new File("src/test/resources/checks/security/TriggeringSecuringHelperTest.java"));
+    List<Tree> members = ((ClassTreeImpl) cut.types().get(1)).members();
+
+    // Field doesn't have enclosing method
+    assertFalse(containsUnsecuredTrigger(members.get(0)));
+
+    assertFalse(containsUnsecuredTrigger(members.get(1)));
+    assertFalse(containsUnsecuredTrigger(members.get(2)));
+    assertTrue(containsUnsecuredTrigger(members.get(3)));
+    assertTrue(containsUnsecuredTrigger(members.get(4)));
+    assertFalse(containsUnsecuredTrigger(members.get(5)));
+    assertTrue(containsUnsecuredTrigger(members.get(6)));
+  }
+

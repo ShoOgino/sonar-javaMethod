@@ -1,0 +1,11 @@
+  private boolean containsUnsecuredTrigger(Tree method) {
+    FindMethodInvocation methodInvocation = new FindMethodInvocation();
+    method.accept(methodInvocation);
+    for (MethodInvocationTree mit: methodInvocation.methodInvocationTrees) {
+      if (simpleTriggeringSecuring.test(mit)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
