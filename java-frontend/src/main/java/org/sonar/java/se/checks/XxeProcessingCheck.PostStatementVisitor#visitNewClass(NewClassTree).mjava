@@ -1,0 +1,8 @@
+    @Override
+    public void visitNewClass(NewClassTree newClass) {
+      SymbolicValue peek = programState.peekValue();
+      if (peek != null && CONDITIONS_FOR_SECURED_BY_TYPE_NEW_CLASS.keySet().stream().anyMatch(mm -> mm.matches(newClass))) {
+        programState = programState.addConstraint(peek, XxeSensitive.SENSITIVE);
+      }
+    }
+
