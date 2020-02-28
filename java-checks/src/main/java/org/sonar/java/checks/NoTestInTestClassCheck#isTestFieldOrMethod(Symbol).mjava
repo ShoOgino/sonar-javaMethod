@@ -1,0 +1,9 @@
+  private boolean isTestFieldOrMethod(Symbol member) {
+    return member.metadata().annotations().stream().anyMatch(input -> {
+      Type type = input.symbol().type();
+      return type.isUnknown() ||
+        (member.isMethodSymbol() && isTestMethodAnnotation(type)) ||
+        (member.isVariableSymbol() && testFieldAnnotations.contains(type.fullyQualifiedName()));
+    });
+  }
+

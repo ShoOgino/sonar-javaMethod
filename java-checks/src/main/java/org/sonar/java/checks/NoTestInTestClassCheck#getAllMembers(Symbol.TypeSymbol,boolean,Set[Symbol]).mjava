@@ -1,18 +1,18 @@
-  private static Stream<Symbol.MethodSymbol> getAllMembers(Symbol.TypeSymbol symbol, boolean isEnclosed, Set<Symbol> visitedSymbols) {
+  private static Stream<Symbol> getAllMembers(Symbol.TypeSymbol symbol, boolean isEnclosed, Set<Symbol> visitedSymbols) {
     if (!visitedSymbols.add(symbol) || symbol.type().is("java.lang.Object")) {
       return Stream.empty();
     }
-    Stream<Symbol.MethodSymbol> members = Stream.empty();
+    Stream<Symbol> members = Stream.empty();
     if (!isEnclosed) {
-      members = symbol.memberSymbols().stream().filter(Symbol::isMethodSymbol).map(Symbol.MethodSymbol.class::cast);
+      members = symbol.memberSymbols().stream().filter(m -> m.isMethodSymbol() || m.isVariableSymbol());
     }
     Type superClass = symbol.superClass();
     if (superClass != null) {
       members = Stream.concat(members, getAllMembers(superClass.symbol(), isEnclosed, visitedSymbols));
     }
-    Stream<Symbol.MethodSymbol> defaultMethodsFromInterfaces = symbol.interfaces().stream()
+    Stream<Symbol> defaultMethodsFromInterfaces = symbol.interfaces().stream()
       .flatMap(i -> getAllMembers(i.symbol(), false, visitedSymbols))
-      .filter(JUtils::isDefaultMethod);
+      .filter(m -> m.isMethodSymbol() && JUtils.isDefaultMethod((Symbol.MethodSymbol)m));
     members = Stream.concat(members, defaultMethodsFromInterfaces);
     for (Symbol s : symbol.memberSymbols()) {
       if (isNested(s) || isPublicStaticConcrete(s)) {
