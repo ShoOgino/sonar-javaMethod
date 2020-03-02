@@ -1,0 +1,7 @@
+  XMLInputFactory setProperty_dtd_schema_non_empty_2(Object value) {
+    XMLInputFactory myFactory = XMLInputFactory.newInstance(); // Noncompliant [[flows=dtd21]]
+    myFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "all");  // flow@dtd21 [[sc=5;ec=67]] {{Implies 'myFactory' is unsecured. Set to "" (empty string) to protect against XXE.}}
+    myFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "all"); // flow@dtd21 [[sc=5;ec=70]] {{Implies 'myFactory' is unsecured. Set to "" (empty string) to protect against XXE.}}
+    return myFactory;
+  }
+

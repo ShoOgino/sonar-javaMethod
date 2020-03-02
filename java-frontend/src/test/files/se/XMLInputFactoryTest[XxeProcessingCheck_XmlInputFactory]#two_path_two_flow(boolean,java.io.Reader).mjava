@@ -1,0 +1,12 @@
+  void two_path_two_flow(boolean b, java.io.Reader reader) throws XMLStreamException {
+    XMLInputFactory factory = XMLInputFactory.newInstance(); // Noncompliant [[flows=flow1,flow2]]
+    if (b) {
+      factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "all"); // flow@flow1 [[sc=7;ec=67]] {{Implies 'factory' is unsecured. Set to "" (empty string) to protect against XXE.}}
+      factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "all"); // flow@flow1 [[sc=7;ec=70]] {{Implies 'factory' is unsecured. Set to "" (empty string) to protect against XXE.}}
+      XMLEventReader eventReader = factory.createXMLEventReader(reader);
+    } else {
+      factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "all"); // flow@flow2 [[sc=7;ec=70]] {{Implies 'factory' is unsecured. Set to "" (empty string) to protect against XXE.}}
+      XMLEventReader eventReader = factory.createXMLEventReader(reader);
+    }
+  }
+
