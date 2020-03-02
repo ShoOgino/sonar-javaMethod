@@ -1,9 +1,9 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     ExpressionTree firstArgument = ExpressionUtils.skipParentheses(mit.arguments().get(0));
-    if (SPLIT_MATCHER.matches(mit) && firstArgument.is(Tree.Kind.STRING_LITERAL)) {
-      String argValue = LiteralUtils.trimQuotes(((LiteralTree) firstArgument).value());
-      if (exceptionSplitMethod(argValue)) {
+    if (SPLIT_MATCHER.matches(mit)) {
+      Optional<String> constantValue = firstArgument.asConstant(String.class);
+      if (constantValue.filter(RegexPatternsNeedlesslyCheck::exceptionSplitMethod).isPresent()) {
         return;
       }
     }
