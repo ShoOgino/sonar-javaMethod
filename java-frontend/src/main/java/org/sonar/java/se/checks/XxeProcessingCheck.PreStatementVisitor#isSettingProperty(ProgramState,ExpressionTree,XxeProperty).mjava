@@ -1,0 +1,9 @@
+    boolean isSettingProperty(ProgramState state, ExpressionTree arg0, XxeProperty property) {
+      if (arg0.asConstant(String.class).filter(property::isNamed).isPresent()) {
+        return true;
+      }
+
+      ConstraintsByDomain constraintsByDomain = state.getConstraints(state.peekValue(1));
+      return constraintsByDomain != null && constraintsByDomain.hasConstraint(property.namedConstraint());
+    }
+

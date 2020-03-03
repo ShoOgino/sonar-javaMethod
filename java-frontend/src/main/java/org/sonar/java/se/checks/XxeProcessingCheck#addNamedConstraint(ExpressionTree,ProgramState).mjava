@@ -1,0 +1,17 @@
+  private static ProgramState addNamedConstraint(@Nullable ExpressionTree expressionTree, ProgramState state) {
+    if (expressionTree != null) {
+      SymbolicValue sv = state.peekValue();
+      if (sv != null) {
+        Optional<String> value = expressionTree.asConstant(String.class);
+        if (value.isPresent()) {
+          for (XxeProperty property : PROPERTIES_TO_CHECK) {
+            if (property.isNamed(value.get())) {
+              return state.addConstraint(sv, property.namedConstraint());
+            }
+          }
+        }
+      }
+    }
+    return state;
+  }
+
