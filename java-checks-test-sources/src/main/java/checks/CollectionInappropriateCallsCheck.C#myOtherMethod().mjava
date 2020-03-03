@@ -1,0 +1,21 @@
+    private void myOtherMethod() {
+      Set mySet = new HashSet<B>();
+      A myA = new A();
+
+      mySet.contains(myA); // Compliant
+      mySet.remove(new B()); // Compliant
+
+      List<Integer> myIntegerList = new ArrayList<Integer>();
+      myIntegerList.contains(0); // Compliant (boxing)
+      myIntegerList.remove(0L); // Noncompliant {{A "List<Integer>" cannot contain a "long".}}
+      myIntegerList.indexOf(0L); // Noncompliant {{A "List<Integer>" cannot contain a "long".}}
+      myIntegerList.lastIndexOf(0L); // Noncompliant {{A "List<Integer>" cannot contain a "long".}}
+
+      List<String> myStringList = new ArrayList<String>();
+      myStringList.contains(0); // Noncompliant {{A "List<String>" cannot contain a "int".}}
+      myStringList.contains(new Object()); // Compliant
+
+      List<String[]> myListArrayString = new ArrayList<String[]>();
+      myListArrayString.contains("myString"); // Noncompliant
+    }
+

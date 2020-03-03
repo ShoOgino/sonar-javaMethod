@@ -1,0 +1,11 @@
+  private static Type findSuperTypeMatching(Type type, String genericTypeName) {
+    if (type.is(genericTypeName)) {
+      return type;
+    }
+    return JUtils.superTypes(type.symbol())
+      .stream()
+      .filter(superType -> superType.is(genericTypeName))
+      .findFirst()
+      .orElse(Symbols.unknownType);
+  }
+

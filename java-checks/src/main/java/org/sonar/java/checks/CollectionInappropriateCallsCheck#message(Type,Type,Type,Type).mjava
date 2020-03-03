@@ -1,0 +1,14 @@
+  private static String message(Type actualMethodType, Type checkedMethodType, Type parameterType, Type argumentType) {
+    String actualType = typeNameWithParameters(actualMethodType);
+    boolean actualTypeHasTheParameterType = JUtils.typeArguments(actualMethodType).stream().anyMatch(typeArg -> typeArg.equals(parameterType));
+    boolean checkedTypeHasSeveralParameters = JUtils.typeArguments(checkedMethodType).size() > 1;
+    String typeDescription = checkedTypeHasSeveralParameters ? (" in a \"" + parameterType + "\" type") : "";
+    if (actualTypeHasTheParameterType) {
+      return MessageFormat.format("A \"{0}\" cannot contain a \"{1}\"{2}.", actualType, argumentType.name(), typeDescription);
+    } else {
+      String checkedType = typeNameWithParameters(checkedMethodType);
+      return MessageFormat.format("\"{0}\" is a \"{1}\" which cannot contain a \"{2}\"{3}.",
+        actualType, checkedType, argumentType.name(), typeDescription);
+    }
+  }
+

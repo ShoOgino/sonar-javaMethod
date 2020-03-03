@@ -1,0 +1,27 @@
+  private void checkMethodInvocation(MethodInvocationTree tree, TypeChecker typeChecker) {
+    ExpressionTree argument = tree.arguments().get(typeChecker.argumentIndex);
+    Type argumentTypeToCheck = argument.symbolType();
+    if (typeChecker.argumentIsACollection) {
+      argumentTypeToCheck = getTypeArgumentAt(findSuperTypeMatching(argumentTypeToCheck, JAVA_UTIL_COLLECTION), 0);
+    }
+    if (argumentTypeToCheck.isUnknown()) {
+      // could happen with type inference.
+      return;
+    }
+
+    Type actualMethodType = getMethodOwnerType(tree);
+    Type checkedMethodType = findSuperTypeMatching(actualMethodType, typeChecker.methodOwnerType);
+    Type parameterType = getTypeArgumentAt(checkedMethodType, typeChecker.parametrizedTypeIndex);
+
+    boolean isCallToParametrizedOrUnknownMethod = isCallToParametrizedOrUnknownMethod(argument);
+    if (!isCallToParametrizedOrUnknownMethod && tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      isCallToParametrizedOrUnknownMethod = isCallToParametrizedOrUnknownMethod(((MemberSelectExpressionTree) tree.methodSelect()).expression());
+    }
+    if (!checkedMethodType.isUnknown()
+      && !parameterType.isUnknown()
+      && !isCallToParametrizedOrUnknownMethod
+      && !isArgumentCompatible(argumentTypeToCheck, parameterType)) {
+      reportIssue(ExpressionUtils.methodName(tree), message(actualMethodType, checkedMethodType, parameterType, argumentTypeToCheck));
+    }
+  }
+
