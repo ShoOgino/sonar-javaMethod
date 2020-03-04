@@ -1,0 +1,15 @@
+  public static Stream<ExpressionTree> initializedAndAssignedExpressionStream(Symbol symbol) {
+    Tree declaration = symbol.declaration();
+    if (declaration == null) {
+      return Stream.empty();
+    }
+    Stream<ExpressionTree> assignedExpressionStream = getReassignments(declaration, symbol.usages()).stream()
+      .map(AssignmentExpressionTree::expression);
+    ExpressionTree initializer = getInitializerOrExpression(declaration);
+    if (initializer == null) {
+      return assignedExpressionStream;
+    } else {
+      return Stream.concat(Stream.of(initializer), assignedExpressionStream);
+    }
+  }
+

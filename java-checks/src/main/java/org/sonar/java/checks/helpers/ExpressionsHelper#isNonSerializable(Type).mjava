@@ -1,0 +1,23 @@
+  private static boolean isNonSerializable(Type type) {
+    if (type.isArray()) {
+      return isNonSerializable(((Type.ArrayType) type).elementType());
+    }
+    if (JUtils.typeArguments(type).stream().anyMatch(ExpressionsHelper::isNonSerializable)) {
+      return true;
+    }
+    if (type.isPrimitive() ||
+      type.is("java.lang.Object") ||
+      type.isSubtypeOf("java.io.Serializable")) {
+      return false;
+    }
+    // note: this is assuming that custom implementors of Collection
+    // have the good sense to make it serializable just like all implementations in the JDK
+    if(type.isSubtypeOf("java.lang.Iterable") ||
+      type.isSubtypeOf("java.util.Map") ||
+      type.isSubtypeOf("java.util.Enumeration")) {
+      return false;
+    }
+    Type erasedType = type.erasure();
+    return erasedType.equals(type) || isNonSerializable(erasedType);
+  }
+

@@ -1,0 +1,58 @@
+  void myMethod(ObjectOutputStream out, Object x, byte[] array) throws IOException {
+    out.writeObject(new Object());
+    out.writeObject("x");
+    out.writeObject(1);
+    MySerializable mySerializable = new MySerializable();
+    out.writeObject(mySerializable);
+    MyNonSerializable myNonSerializable1 = new MyNonSerializable();
+    MyNonSerializable myNonSerializable2 = new MyNonSerializable();
+    if (myNonSerializable2 instanceof Runnable) {
+      out.writeObject(myNonSerializable1); // Noncompliant {{Make the "checks.MyNonSerializable" class "Serializable" or don't write it.}}
+    }
+    if (myNonSerializable2 instanceof Serializable) {
+      out.writeObject(myNonSerializable2);
+    }
+    if (x.toString() instanceof Serializable) {
+      out.writeObject(new MyNonSerializable()); // Noncompliant [[sc=23;ec=46]] {{Make the "checks.MyNonSerializable" class "Serializable" or don't write it.}}
+    }
+    out.writeObject(array);
+
+    out.writeObject(java.util.Arrays.asList("one", "two"));
+
+    Iterable<String> iterable = new ArrayList<>();
+    out.writeObject(iterable);
+
+    Collection<String> collection = new ArrayList<>();
+    out.writeObject(collection);
+
+    List<String> list = new ArrayList<>();
+    out.writeObject(list);
+
+    Set<String> set = new HashSet<>();
+    out.writeObject(set);
+
+    SortedSet<String> sortedSet = new TreeSet<>();
+    out.writeObject(sortedSet);
+
+    NavigableSet<String> navigableSet = new TreeSet<>();
+    out.writeObject(navigableSet);
+
+    Queue<String> queue = new LinkedList<>();
+    out.writeObject(queue);
+
+    Deque<String> deque = new ArrayDeque<>();
+    out.writeObject(deque);
+
+    Map<String, String> map = new HashMap<>();
+    out.writeObject(map);
+
+    SortedMap<String, String> sortedMap = new TreeMap<>();
+    out.writeObject(sortedMap);
+
+    NavigableMap<String, String> navigableMap = new TreeMap<>();
+    out.writeObject(navigableMap);
+
+    Enumeration<String> enumeration = Collections.emptyEnumeration();
+    out.writeObject(enumeration);
+  }
+
