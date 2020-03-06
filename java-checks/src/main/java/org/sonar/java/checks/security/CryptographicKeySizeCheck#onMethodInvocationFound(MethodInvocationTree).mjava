@@ -4,10 +4,8 @@
     String getInstanceArg = ExpressionsHelper.getConstantValueAsString(mit.arguments().get(0)).value();
     if (methodTree != null && getInstanceArg != null) {
       Optional<Symbol> assignedSymbol = getAssignedSymbol(mit);
-      assignedSymbol.ifPresent(symbol -> {
-        MethodVisitor methodVisitor = new MethodVisitor(getInstanceArg, symbol);
-        methodTree.accept(methodVisitor);
-      });
+      MethodVisitor methodVisitor = new MethodVisitor(getInstanceArg, assignedSymbol.orElse(null));
+      methodTree.accept(methodVisitor);
     }
   }
 

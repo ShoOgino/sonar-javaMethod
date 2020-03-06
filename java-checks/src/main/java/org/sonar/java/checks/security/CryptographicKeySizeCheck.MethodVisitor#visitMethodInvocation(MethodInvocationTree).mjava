@@ -2,7 +2,7 @@
     public void visitMethodInvocation(MethodInvocationTree mit) {
       if (minKeySize != null && (KEY_GEN_INIT.matches(mit) || KEY_PAIR_GEN_INITIALIZE.matches(mit) || KEY_PAIR_GEN_INITIALIZE_WITH_SOURCE.matches(mit))) {
         Integer keySize = LiteralUtils.intLiteralValue(mit.arguments().get(0));
-        if (keySize != null && keySize < minKeySize && isInvocationOnVariable(mit, variable)) {
+        if (keySize != null && keySize < minKeySize && isInvocationOnVariable(mit, variable, false)) {
           reportIssue(mit, "Use a key length of at least " + minKeySize + " bits for " + algorithm + " cipher algorithm.");
         }
       }

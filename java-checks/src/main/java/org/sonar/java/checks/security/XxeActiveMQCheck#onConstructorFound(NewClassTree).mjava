@@ -5,7 +5,8 @@
       return;
     }
 
-    MethodBodyVisitor visitor = new MethodBodyVisitor();
+    Optional<Symbol> assignedSymbol = getAssignedSymbol(newClassTree);
+    MethodBodyVisitor visitor = new MethodBodyVisitor(assignedSymbol.orElse(null));
     enclosingMethod.accept(visitor);
     if (!visitor.foundCallsToSecuringMethods()) {
       reportIssue(newClassTree,

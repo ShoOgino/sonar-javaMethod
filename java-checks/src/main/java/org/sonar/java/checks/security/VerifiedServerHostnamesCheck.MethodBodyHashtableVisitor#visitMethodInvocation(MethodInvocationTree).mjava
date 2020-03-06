@@ -1,10 +1,12 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
-      Arguments args = mit.arguments();
-      if (HASHTABLE_PUT.matches(mit)
-        && "mail.smtp.ssl.checkserveridentity".equals(getConstantValueAsString(args.get(0)).value())
-        && isNotFalse(args.get(1))) {
-        this.isSecured = true;
+      if (isInvocationOnVariable(mit, variable, true)) {
+        Arguments args = mit.arguments();
+        if (HASHTABLE_PUT.matches(mit)
+          && "mail.smtp.ssl.checkserveridentity".equals(getConstantValueAsString(args.get(0)).value())
+          && isNotFalse(args.get(1))) {
+          this.isSecured = true;
+        }
       }
       super.visitMethodInvocation(mit);
     }

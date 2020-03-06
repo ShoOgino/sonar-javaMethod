@@ -3,14 +3,23 @@
     if (method == null) {
       return;
     }
+
+    ExpressionTree methodSelect = mit.methodSelect();
+
+    if (!methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      return;
+    }
+
+    Symbol extractedIdentifier = extractIdentifierSymbol(((MemberSelectExpressionTree) methodSelect).expression()).orElse(null);
+
     if (ENABLING_SSL_METHODS.matches(mit) && LiteralUtils.isTrue(mit.arguments().get(0))) {
-      MethodBodyApacheVisitor apacheVisitor = new MethodBodyApacheVisitor();
+      MethodBodyApacheVisitor apacheVisitor = new MethodBodyApacheVisitor(extractedIdentifier);
       method.accept(apacheVisitor);
       if (!apacheVisitor.isSecured) {
         reportIssue(mit, ISSUE_MESSAGE);
       }
     } else if (HASHTABLE_PUT.matches(mit) && isSettingSSL(mit.arguments())) {
-      MethodBodyHashtableVisitor hashtableVisitor = new MethodBodyHashtableVisitor();
+      MethodBodyHashtableVisitor hashtableVisitor = new MethodBodyHashtableVisitor(extractedIdentifier);
       method.accept(hashtableVisitor);
       if (!hashtableVisitor.isSecured) {
         reportIssue(mit, "Enable server hostname verification on this SSL/TLS connection, by setting \"mail.smtp.ssl.checkserveridentity\" to true.");

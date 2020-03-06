@@ -1,0 +1,16 @@
+  /**
+   * Return whether we are sure that the method invocation is on a given variable.
+   *
+   * If unsure (variable is null, or we can not extract an identifier from the method invocation),
+   * return a default value
+   */
+  public static boolean isInvocationOnVariable(MethodInvocationTree mit, @Nullable Symbol variable, boolean defaultReturn) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (variable == null || !methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      return defaultReturn;
+    }
+    return extractIdentifierSymbol(((MemberSelectExpressionTree) methodSelect).expression())
+      .map(variable::equals)
+      .orElse(defaultReturn);
+  }
+
