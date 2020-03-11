@@ -1,0 +1,14 @@
+  private static boolean generatesFinalFields(ClassTree classTree) {
+    if (usesAnnotation(classTree, Collections.singletonList(LOMBOK_VALUE)) && !usesAnnotation(classTree, NON_FINAL)) {
+      return true;
+    }
+    // Annotated with @lombok.experimental.FieldDefaults(makeFinal=true)
+    List<SymbolMetadata.AnnotationValue> annotationValues = classTree.symbol().metadata().valuesForAnnotation(LOMBOK_FIELD_DEFAULTS);
+    return annotationValues != null &&
+      annotationValues.stream()
+        .filter(Objects::nonNull)
+        .anyMatch(
+          av -> "makeFinal".equals(av.name()) && getMakeFinalValue(av.value())
+        );
+  }
+

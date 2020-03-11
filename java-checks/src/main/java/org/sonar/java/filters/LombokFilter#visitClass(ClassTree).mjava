@@ -7,7 +7,22 @@
     excludeLinesIfTrue(generatesEquals, tree, EqualsNotOverriddenInSubclassCheck.class, EqualsNotOverridenWithCompareToCheck.class);
     excludeLinesIfTrue(generatesPrivateConstructor(tree), tree, UtilityClassWithPublicConstructorCheck.class);
     excludeLinesIfTrue(usesAnnotation(tree, UTILITY_CLASS), tree, BadFieldNameCheck.class, ConstantsShouldBeStaticFinalCheck.class);
-    excludeLinesIfTrue(usesAnnotation(tree, Collections.singletonList("lombok.Value")), tree, FieldModifierCheck.class);
+
+    if (generatesPrivateFields(tree)) {
+      tree.members().stream()
+        .filter(t -> t.is(Tree.Kind.VARIABLE))
+        .map(VariableTree.class::cast)
+        .filter(v -> !generatesPackagePrivateAccess(v))
+        .forEach(v -> excludeLines(v, FieldModifierCheck.class));
+    }
+
+    if (generatesFinalFields(tree)) {
+      tree.members().stream()
+        .filter(t -> t.is(Tree.Kind.VARIABLE))
+        .map(VariableTree.class::cast)
+        .filter(v -> !generatesNonFinal(v))
+        .forEach(v -> excludeLines(v, ExceptionsShouldBeImmutableCheck.class));
+    }
 
     super.visitClass(tree);
   }

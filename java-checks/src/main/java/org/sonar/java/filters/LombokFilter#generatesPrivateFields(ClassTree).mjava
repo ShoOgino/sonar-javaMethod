@@ -1,0 +1,14 @@
+  private static boolean generatesPrivateFields(ClassTree tree) {
+    if (usesAnnotation(tree, Collections.singletonList(LOMBOK_VALUE))) {
+      return true;
+    }
+    // Annotated with @lombok.experimental.FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+    List<SymbolMetadata.AnnotationValue> annotationValues = tree.symbol().metadata().valuesForAnnotation(LOMBOK_FIELD_DEFAULTS);
+    return annotationValues != null &&
+      annotationValues.stream()
+        .filter(Objects::nonNull)
+        .anyMatch(
+          av -> "level".equals(av.name()) && "PRIVATE".equals(getAccessLevelValue(av.value()))
+        );
+  }
+
