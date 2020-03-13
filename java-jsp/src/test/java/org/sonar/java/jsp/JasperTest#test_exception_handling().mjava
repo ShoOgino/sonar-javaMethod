@@ -1,0 +1,8 @@
+  @Test
+  void test_exception_handling() throws Exception {
+    SensorContextTester ctx = jspContext("<%=");
+    List<InputFile> inputFiles = new Jasper().generateFiles(ctx, emptyList());
+    assertThat(inputFiles).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Failed to transpile JSP files.");
+  }
+

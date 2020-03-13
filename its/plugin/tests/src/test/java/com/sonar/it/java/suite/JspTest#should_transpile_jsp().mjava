@@ -1,0 +1,13 @@
+  @Test
+  public void should_transpile_jsp() throws Exception {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom(PROJECT))
+      .setCleanPackageSonarGoals()
+      .setDebugLogs(true)
+      .setProperty("sonar.scm.disabled", "true");
+    TestUtils.provisionProject(ORCHESTRATOR, "org.sonarsource.it.projects:" + PROJECT, PROJECT, "java", "jsp");
+    ORCHESTRATOR.executeBuild(build);
+    Path actual = TestUtils.projectDir(PROJECT).toPath().resolve("target/sonar/visit.txt");
+    List<String> lines = Files.readAllLines(actual);
+    assertThat(lines).containsExactlyInAnyOrder("GreetingServlet", "greeting_jsp", "index_jsp");
+  }
+

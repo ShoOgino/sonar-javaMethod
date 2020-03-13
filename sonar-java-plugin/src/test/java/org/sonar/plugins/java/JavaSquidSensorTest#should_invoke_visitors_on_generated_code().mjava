@@ -1,0 +1,28 @@
+  @Test
+  public void should_invoke_visitors_on_generated_code() throws Exception {
+    Path base = tmp.newFolder().toPath();
+    Path generatedFilePath = tmp.newFile("Generated.java").toPath();
+    Files.write(generatedFilePath, "class Generated {}".getBytes());
+    InputFile generatedFile = new GeneratedFile(generatedFilePath, mock(InputFile.class));
+
+    SensorContextTester context = SensorContextTester.create(base);
+    SonarComponents sonarComponents = createSonarComponentsMock(context);
+    JavaFileScanner javaFileScanner = mock(JavaFileScanner.class);
+    JspCodeScanner testCodeVisitor = mock(JspCodeScanner.class);
+    when(sonarComponents.jspCodeVisitors()).thenReturn(asList(testCodeVisitor));
+    when(sonarComponents.checkClasses()).thenReturn(new JavaCheck[]{javaFileScanner});
+
+    Jasper jasper = mock(Jasper.class);
+    when(jasper.generateFiles(any(), any())).thenReturn(asList(generatedFile));
+    JavaSquidSensor jss = new JavaSquidSensor(sonarComponents, context.fileSystem(), mock(JavaResourceLocator.class),
+      new MapSettings().asConfig(), mock(NoSonarFilter.class), jasper);
+    jss.execute(context);
+
+    ArgumentCaptor<JavaFileScannerContext> scannerContext = ArgumentCaptor.forClass(JavaFileScannerContext.class);
+    verify(testCodeVisitor, times(1)).scanFile(scannerContext.capture());
+    assertThat(scannerContext.getValue().getInputFile()).isSameAs(generatedFile);
+
+    // normal visitors are not invoked on generated files
+    verify(javaFileScanner, never()).scanFile(any());
+  }
+

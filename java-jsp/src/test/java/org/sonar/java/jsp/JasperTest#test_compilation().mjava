@@ -1,0 +1,15 @@
+  @Test
+  void test_compilation() throws Exception {
+    SensorContextTester ctx = jspContext("<html>\n" +
+      "<body>\n" +
+      "<h2>Hello World!</h2>\n" +
+      "</body>\n" +
+      "</html>");
+    List<InputFile> generatedFiles = new Jasper().generateFiles(ctx, emptyList());
+
+    assertThat(generatedFiles).hasSize(1);
+    InputFile generatedFile = generatedFiles.iterator().next();
+    List<String> generatedCode = Files.readAllLines(generatedFile.path());
+    assertThat(generatedCode).contains("      out.write(\"<html>\\n<body>\\n<h2>Hello World!</h2>\\n</body>\\n</html>\");");
+  }
+

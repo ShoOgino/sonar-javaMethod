@@ -1,0 +1,17 @@
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		String unsafeName = req.getParameter("name");
+		if (unsafeName != null) {
+			String safeName = Encode.forHtml(unsafeName);
+
+			req.setAttribute("unsafeName", unsafeName);
+			req.setAttribute("safeName", safeName);
+		} else {
+			req.setAttribute("unsafeName", "World");
+			req.setAttribute("safeName", "World");
+		}
+
+		RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/greeting.jsp");
+		requestDispatcher.forward(req, resp);
+	}
+

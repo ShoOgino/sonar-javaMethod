@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Path visitedClasses = new File(context.getWorkingDirectory(), "visit.txt").toPath();
+    String name = ((ClassTree) tree).simpleName().name();
+    try {
+      Files.write(visitedClasses, (name + "\n").getBytes(), APPEND, CREATE);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+

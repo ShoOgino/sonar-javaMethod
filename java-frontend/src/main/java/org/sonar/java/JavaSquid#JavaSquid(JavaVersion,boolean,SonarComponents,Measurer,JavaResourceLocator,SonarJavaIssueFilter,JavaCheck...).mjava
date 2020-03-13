@@ -16,6 +16,7 @@
     }
     List<File> classpath = new ArrayList<>();
     List<File> testClasspath = new ArrayList<>();
+    List<JavaCheck> jspCodeVisitors = new ArrayList<>();
     if (sonarComponents != null) {
       if(!sonarComponents.isSonarLintContext()) {
         codeVisitors = Iterables.concat(codeVisitors, Arrays.asList(new FileLinesVisitor(sonarComponents), new SyntaxHighlighterVisitor(sonarComponents)));
@@ -24,6 +25,7 @@
       classpath = sonarComponents.getJavaClasspath();
       testClasspath = sonarComponents.getJavaTestClasspath();
       testCodeVisitors.addAll(sonarComponents.testCheckClasses());
+      jspCodeVisitors = sonarComponents.jspCodeVisitors();
     }
 
     //AstScanner for main files
@@ -34,5 +36,8 @@
     astScannerForTests = new JavaAstScanner(sonarComponents);
     astScannerForTests.setVisitorBridge(createVisitorBridge(testCodeVisitors, testClasspath, javaVersion, sonarComponents, SymbolicExecutionMode.DISABLED));
 
+    //AstScanner for generated files
+    astScannerForGeneratedFiles = new JavaAstScanner(sonarComponents);
+    astScannerForGeneratedFiles.setVisitorBridge(createVisitorBridge(jspCodeVisitors, classpath, javaVersion, sonarComponents, SymbolicExecutionMode.DISABLED));
   }
 

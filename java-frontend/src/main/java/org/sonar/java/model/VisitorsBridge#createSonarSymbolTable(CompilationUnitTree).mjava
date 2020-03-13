@@ -1,5 +1,8 @@
   private void createSonarSymbolTable(CompilationUnitTree tree) {
-    if (sonarComponents != null && !sonarComponents.isSonarLintContext()) {
+    if (sonarComponents != null
+      && !sonarComponents.isSonarLintContext()
+      // don't provide semantic data (symbol highlighting) to SQ for generated files (jsp)
+      && !(currentFile instanceof GeneratedFile)) {
       SonarSymbolTableVisitor symVisitor = new SonarSymbolTableVisitor(sonarComponents.symbolizableFor(currentFile));
       symVisitor.visitCompilationUnit(tree);
     }
