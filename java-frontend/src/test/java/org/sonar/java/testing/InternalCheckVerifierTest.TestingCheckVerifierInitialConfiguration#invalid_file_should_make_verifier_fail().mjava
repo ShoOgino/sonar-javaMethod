@@ -1,0 +1,12 @@
+    @Test
+    void invalid_file_should_make_verifier_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .withCheck(NO_EFFECT_CHECK)
+        .onFile(TEST_FILE_PARSE_ERROR)
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("Should not fail analysis (PARSE_ERROR)");
+    }
+

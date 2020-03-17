@@ -1,0 +1,11 @@
+  @Test
+  public void issue_with_attributes() {
+    Map<Expectations.IssueAttribute, Object> issue = new Expectations().parser().parseIssue("// Noncompliant [[flows=f1,f2,f3;sc=3;ec=7;el=4;secondary=5]]", LINE).issue;
+    assertThat(issue.get(FLOWS)).isEqualTo(ImmutableList.of("f1", "f2", "f3"));
+    assertThat(issue.get(START_COLUMN)).isEqualTo(3);
+    assertThat(issue.get(END_COLUMN)).isEqualTo(7);
+    assertThat(issue.get(END_LINE)).isEqualTo(Expectations.Parser.LineRef.fromString("4"));
+    assertThat(issue.get(SECONDARY_LOCATIONS)).isEqualTo(Collections.singletonList(5));
+    assertThat(issue.get(MESSAGE)).isNull();
+  }
+

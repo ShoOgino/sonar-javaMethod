@@ -1,0 +1,12 @@
+    @Test
+    void not_raising_issues_should_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE)
+        .withCheck(NO_EFFECT_CHECK)
+        .verifyIssueOnFile("issueOnFile"));
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("A single issue is expected on the file, but none has been raised");
+    }
+

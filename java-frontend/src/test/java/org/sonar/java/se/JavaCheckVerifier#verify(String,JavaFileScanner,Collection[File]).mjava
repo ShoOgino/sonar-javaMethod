@@ -7,6 +7,10 @@
    * @param classpath The files to be used as classpath
    */
   public static void verify(String filename, JavaFileScanner check, Collection<File> classpath) {
-    new JavaCheckVerifier().scanFile(filename, new JavaFileScanner[] {check}, classpath);
+    CheckVerifier.newVerifier()
+      .onFile(filename)
+      .withCheck(check)
+      .withClassPath(classpath)
+      .verifyIssues();
   }
 

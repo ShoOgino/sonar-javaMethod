@@ -1,0 +1,23 @@
+  @CheckForNull
+  static RemediationFunction remediationFunction(AnalyzerMessage issue) {
+    String ruleKey = ruleKey(issue);
+    try {
+      RuleJSON rule = getRuleJSON(ruleKey);
+      if (rule.remediation == null) {
+        return null;
+      }
+      switch (rule.remediation.func) {
+        case "Linear":
+          return RemediationFunction.LINEAR;
+        case "Constant/Issue":
+          return RemediationFunction.CONST;
+        default:
+          return null;
+      }
+    } catch (IOException | JsonParseException e) {
+      // Failed to open JSON file, as this is not part of API yet, we should not fail because of this
+      // Remediation function and cost not provided, "constant" is assumed.
+      return null;
+    }
+  }
+

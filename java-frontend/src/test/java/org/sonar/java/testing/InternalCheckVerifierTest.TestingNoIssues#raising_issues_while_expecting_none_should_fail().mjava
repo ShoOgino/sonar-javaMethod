@@ -1,0 +1,19 @@
+    @Test
+    void raising_issues_while_expecting_none_should_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE)
+        .withChecks(
+          FILE_ISSUE_CHECK,
+          PROJECT_ISSUE_CHECK,
+          FILE_LINE_ISSUE_CHECK,
+          FILE_LINE_ISSUE_CHECK)
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessageStartingWith("No issues expected but got 4 issue(s):")
+        .hasMessageContaining("--> 'issueOnLine'")
+        .hasMessageContaining("--> 'issueOnProject'")
+        .hasMessageContaining("--> 'issueOnFile'");
+    }
+

@@ -1,0 +1,16 @@
+    @Test
+    void raissing_a_different_message_should_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE)
+        .withChecks(FILE_ISSUE_CHECK)
+        .verifyIssueOnFile("expected"));
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage(String.format("%s%n%s%n%s%n%s",
+          "Expected the issue message to be:",
+          "\t\"expected\"",
+          "but was:",
+          "\t\"issueOnFile\""));
+    }
+

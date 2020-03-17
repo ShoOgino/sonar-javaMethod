@@ -1,0 +1,12 @@
+    @Test
+    void raising_an_issue_line_instead_of_project_should_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE)
+        .withChecks(FILE_LINE_ISSUE_CHECK)
+        .verifyIssueOnProject("issueOnProject"));
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("Expected an issue directly on project but was raised on line 1");
+    }
+

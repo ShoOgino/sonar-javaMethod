@@ -1,0 +1,11 @@
+  private static void assertNoIssues(Set<AnalyzerMessage> issues) {
+    if (issues.isEmpty()) {
+      return;
+    }
+    String issuesAsString = issues.stream()
+      .sorted(issueLineSorter())
+      .map(issue -> String.format("'%s' in %s%s", issue.getMessage(), issue.getInputComponent(), (issue.getLine() == null ? "" : (":" + issue.getLine()))))
+      .collect(Collectors.joining("\n--> ", "\n--> ", ""));
+    throw new AssertionError(String.format("No issues expected but got %d issue(s):%s", issues.size(), issuesAsString));
+  }
+

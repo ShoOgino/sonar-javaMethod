@@ -1,7 +1,7 @@
   @Test
   public void verify_superfluous_flows() {
     FakeVisitor fakeVisitor = new FakeVisitor()
-      .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here", 5, 11, 15)
+      .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here.", 5, 11, 15)
         .flow()
           .flowItem(3, "a is assigned to null here", 12, 20)
           .flowItem(9, "a is assigned to b here", 7, 12)
@@ -9,7 +9,7 @@
     ;
     try {
       JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlowsSuperfluous.java", fakeVisitor);
-      Fail.fail("");
+      Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Following flow comments were observed, but not referenced by any issue: {superfluous=8,6,4, npe2=7}");
     }

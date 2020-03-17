@@ -1,0 +1,20 @@
+    @Test
+    public void rule_with_constant_remediation_function_should_not_provide_cost() {
+      @Rule(key = "ConstantJSON")
+      class ConstantCostCheck implements JavaFileScanner {
+        @Override
+        public void scanFile(JavaFileScannerContext context) {
+          context.addIssue(1, this, "message", 42);
+        }
+      }
+
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE_NONCOMPLIANT)
+        .withCheck(new ConstantCostCheck())
+        .verifyIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessageContaining("Rule with constant remediation function shall not provide cost");
+    }
+

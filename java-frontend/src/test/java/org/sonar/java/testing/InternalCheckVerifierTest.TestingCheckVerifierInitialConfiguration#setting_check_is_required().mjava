@@ -1,0 +1,12 @@
+    @Test
+    void setting_check_is_required() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .withJavaVersion(11)
+        .onFile(TEST_FILE)
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("Set check(s) before calling any verification method!");
+    }
+

@@ -1,0 +1,15 @@
+    @Test
+    void setting_custom_verifier_which_fails() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE)
+        .withCheck(FILE_ISSUE_CHECK)
+        .withCustomIssueVerifier(issues -> {
+          throw new IllegalStateException("Rejected");
+        })
+        .verifyIssueOnFile("issueOnFile"));
+
+      assertThat(e)
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("Rejected");
+    }
+

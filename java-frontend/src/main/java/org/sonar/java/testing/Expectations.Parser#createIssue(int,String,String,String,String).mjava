@@ -1,0 +1,13 @@
+    private static ParsedComment createIssue(int line, @Nullable String shift, @Nullable String attributes, @Nullable String message, @Nullable String flow) {
+      Issue issue = new Issue();
+      issue.put(LINE, parseLineShifting(shift).getLine(line));
+      Map<IssueAttribute, Object> attrs = parseAttributes(attributes);
+      attrs = adjustEndLine(attrs, line);
+      issue.putAll(attrs);
+      if (message != null) {
+        issue.put(MESSAGE, message);
+      }
+      List<FlowComment> flows = parseFlows(flow, line);
+      return new ParsedComment(issue, flows);
+    }
+

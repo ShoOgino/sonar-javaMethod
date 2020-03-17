@@ -1,0 +1,13 @@
+    private static Map.Entry<IssueAttribute, Object> parseAttribute(String attribute) {
+      try (Scanner scanner = new Scanner(attribute)) {
+        scanner.useDelimiter("[=]+");
+        String name = scanner.next();
+        if (!ATTRIBUTE_MAP.containsKey(name)) {
+          throw new AssertionError(String.format("// Noncompliant attributes not valid: '%s'", attribute));
+        }
+        IssueAttribute key = ATTRIBUTE_MAP.get(name);
+        Object value = key.setter.apply(scanner.hasNext() ? scanner.next() : null);
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
+      }
+    }
+

@@ -1,0 +1,21 @@
+  private static void validateSecondaryLocations(AnalyzerMessage parentIssue, List<AnalyzerMessage> actual, List<Integer> expected) {
+    Multiset<Integer> actualLines = HashMultiset.create();
+    actualLines.addAll(actual.stream().map(AnalyzerMessage::getLine).collect(Collectors.toList()));
+    List<Integer> unexpected = new ArrayList<>();
+    for (Integer actualLine : actualLines) {
+      if (expected.contains(actualLine)) {
+        expected.remove(actualLine);
+      } else {
+        unexpected.add(actualLine);
+      }
+    }
+    if (!expected.isEmpty() || !unexpected.isEmpty()) {
+      throw new AssertionError(
+        String.format("Secondary locations: expected: %s unexpected: %s. In %s:%d",
+          expected,
+          unexpected,
+          ((InputFile) parentIssue.getInputComponent()).filename(),
+          parentIssue.getLine()));
+    }
+  }
+

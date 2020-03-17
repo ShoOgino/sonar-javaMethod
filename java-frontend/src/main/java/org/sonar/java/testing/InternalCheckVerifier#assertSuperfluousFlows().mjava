@@ -1,0 +1,10 @@
+  private void assertSuperfluousFlows() {
+    Set<String> unseenFlowIds = expectations.unseenFlowIds();
+    Map<String, String> unseenFlowWithLines = unseenFlowIds.stream()
+      .collect(Collectors.toMap(Function.identity(), expectations::flowToLines));
+
+    if (!unseenFlowWithLines.isEmpty()) {
+      throw new AssertionError(String.format("Following flow comments were observed, but not referenced by any issue: %s", unseenFlowWithLines));
+    }
+  }
+

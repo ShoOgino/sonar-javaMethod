@@ -1,0 +1,16 @@
+    @Test
+    public void absent_rule_matadata_does_not_make_verifier_fail() {
+      @Rule(key = "DoesntExists")
+      class DoesntExistsMetadata implements JavaFileScanner {
+        @Override
+        public void scanFile(JavaFileScannerContext context) {
+          context.addIssue(1, this, "message", 42);
+        }
+      }
+
+      InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE_NONCOMPLIANT)
+        .withCheck(new DoesntExistsMetadata())
+        .verifyIssues();
+    }
+

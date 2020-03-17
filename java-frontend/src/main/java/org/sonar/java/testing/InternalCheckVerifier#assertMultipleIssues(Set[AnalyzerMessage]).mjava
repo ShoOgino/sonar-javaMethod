@@ -1,0 +1,23 @@
+  private void assertMultipleIssues(Set<AnalyzerMessage> issues) throws AssertionError {
+    if (issues.isEmpty()) {
+      throw new AssertionError("No issue raised. At least one issue expected");
+    }
+    List<Integer> unexpectedLines = new LinkedList<>();
+    Expectations.RemediationFunction remediationFunction = Expectations.remediationFunction(issues.iterator().next());
+    Multimap<Integer, Expectations.Issue> expected = expectations.issues;
+
+    for (AnalyzerMessage issue : issues) {
+      validateIssue(expected, unexpectedLines, issue, remediationFunction);
+    }
+    if (!expected.isEmpty() || !unexpectedLines.isEmpty()) {
+      Collections.sort(unexpectedLines);
+      List<Integer> expectedLines = expected.keys().stream().sorted().collect(Collectors.toList());
+      throw new AssertionError(new StringBuilder()
+        .append(expectedLines.isEmpty() ? "" : String.format("Expected at %s", expectedLines))
+        .append(expectedLines.isEmpty() || unexpectedLines.isEmpty() ? "" : ", ")
+        .append(unexpectedLines.isEmpty() ? "" : String.format("Unexpected at %s", unexpectedLines))
+        .toString());
+    }
+    assertSuperfluousFlows();
+  }
+

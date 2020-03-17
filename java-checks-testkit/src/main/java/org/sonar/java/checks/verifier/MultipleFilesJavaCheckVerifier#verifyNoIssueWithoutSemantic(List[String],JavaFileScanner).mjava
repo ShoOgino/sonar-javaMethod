@@ -5,12 +5,10 @@
    * @param check The check to be used for the analysis
    */
   public static void verifyNoIssueWithoutSemantic(List<String> filesToScan, JavaFileScanner check) {
-    MultipleFilesJavaCheckVerifier verifier = new MultipleFilesJavaCheckVerifier() {
-      @Override
-      public String getExpectedIssueTrigger() {
-        return "// NOSEMANTIC_ISSUE";
-      }
-    };
-    verify(verifier, filesToScan, check, true, false);
+    JavaCheckVerifier.newVerifier()
+      .onFiles(filesToScan)
+      .withCheck(check)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

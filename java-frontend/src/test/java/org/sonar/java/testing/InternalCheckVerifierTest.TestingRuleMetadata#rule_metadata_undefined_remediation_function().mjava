@@ -1,0 +1,16 @@
+    @Test
+    public void rule_metadata_undefined_remediation_function() {
+      @Rule(key = "UndefinedRemediationFunc")
+      class UndefinedRemediationFunctionCheck implements JavaFileScanner {
+        @Override
+        public void scanFile(JavaFileScannerContext context) {
+          context.addIssue(1, this, "message", 42);
+        }
+      }
+
+      InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE_NONCOMPLIANT)
+        .withCheck(new UndefinedRemediationFunctionCheck())
+        .verifyIssues();
+    }
+

@@ -1,0 +1,16 @@
+    @Test
+    public void test_rspec_key_with_no_metadata_should_not_fail() throws Exception {
+      @RspecKey("Dummy_fake_JSON")
+      class DoesntExistsMetadataCheck implements JavaFileScanner {
+        @Override
+        public void scanFile(JavaFileScannerContext context) {
+          context.addIssue(1, this, "message");
+        }
+      }
+
+      InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE_NONCOMPLIANT)
+        .withCheck(new DoesntExistsMetadataCheck())
+        .verifyIssues();
+    }
+

@@ -1,0 +1,9 @@
+  @Test
+  public void issue_and_flow_message2() {
+    Expectations.Parser.ParsedComment iaf = new Expectations().parser().parseIssue("// Noncompliant flow@id {{flow msg}}", LINE);
+    assertThat(iaf.issue.get(Expectations.IssueAttribute.MESSAGE)).isNull();
+    assertThat(iaf.flows).hasSize(1);
+    Expectations.FlowComment flow = iaf.flows.iterator().next();
+    assertThat(flow.attributes.get(MESSAGE)).isEqualTo("flow msg");
+  }
+

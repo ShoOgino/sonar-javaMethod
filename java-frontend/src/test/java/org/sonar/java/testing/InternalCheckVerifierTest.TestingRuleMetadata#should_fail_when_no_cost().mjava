@@ -1,0 +1,20 @@
+    @Test
+    public void should_fail_when_no_cost() throws Exception {
+      @Rule(key = "LinearJSON")
+      class LinearRemediationFunctionCheck implements JavaFileScanner {
+        @Override
+        public void scanFile(JavaFileScannerContext context) {
+          context.addIssue(1, this, "message");
+        }
+      }
+
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile(TEST_FILE_NONCOMPLIANT)
+        .withCheck(new LinearRemediationFunctionCheck())
+        .verifyIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("A cost should be provided for a rule with linear remediation function");
+    }
+

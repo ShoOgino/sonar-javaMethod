@@ -1,0 +1,19 @@
+    private int compareTo(FlowComment other) {
+      if (this == other) {
+        return 0;
+      }
+      Integer thisOrder = ORDER.get(attributes);
+      Integer otherOrder = ORDER.get(other.attributes);
+      if (thisOrder != null && otherOrder != null) {
+        if(thisOrder.equals(otherOrder)) {
+          throw new AssertionError(String.format("Same explicit ORDER=%s provided for two comments.%n%s%n%s", thisOrder, this, other));
+        }
+        return thisOrder.compareTo(otherOrder);
+      }
+      if (thisOrder == null && otherOrder == null) {
+        int compareLines = Integer.compare(line, other.line);
+        return compareLines != 0 ? compareLines : Integer.compare(startColumn, other.startColumn);
+      }
+      throw new AssertionError(String.format("Mixed explicit and implicit order in same flow.%n%s%n%s", this, other));
+    }
+

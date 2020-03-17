@@ -1,0 +1,8 @@
+  private static void validateLocation(AnalyzerMessage analyzerMessage, Map<Expectations.IssueAttribute, Object> attrs) {
+    AnalyzerMessage.TextSpan textSpan = analyzerMessage.primaryLocation();
+    Objects.requireNonNull(textSpan);
+    assertAttributeMatch(analyzerMessage, normalizeColumn(textSpan.startCharacter), attrs, START_COLUMN);
+    assertAttributeMatch(analyzerMessage, textSpan.endLine, attrs, END_LINE);
+    assertAttributeMatch(analyzerMessage, normalizeColumn(textSpan.endCharacter), attrs, END_COLUMN);
+  }
+

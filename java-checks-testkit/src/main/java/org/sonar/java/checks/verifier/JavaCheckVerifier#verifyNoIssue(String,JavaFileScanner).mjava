@@ -3,10 +3,14 @@
    *
    * @param filename The file to be analyzed
    * @param check The check to be used for the analysis
+   *
+   * @deprecated use {@link #newVerifier()} instead
    */
+  @Deprecated
   public static void verifyNoIssue(String filename, JavaFileScanner check) {
-    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier();
-    javaCheckVerifier.expectNoIssues();
-    scanFile(filename, check, javaCheckVerifier);
+    newVerifier()
+      .onFile(filename)
+      .withCheck(check)
+      .verifyNoIssues();
   }
 

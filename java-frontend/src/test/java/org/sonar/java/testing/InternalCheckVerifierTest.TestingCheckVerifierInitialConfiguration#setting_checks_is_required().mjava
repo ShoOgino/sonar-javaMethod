@@ -1,0 +1,13 @@
+    @Test
+    void setting_checks_is_required() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .withJavaVersion(11)
+        .withChecks(new JavaFileScanner[0])
+        .onFile(TEST_FILE)
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("Provide at least one check!");
+    }
+

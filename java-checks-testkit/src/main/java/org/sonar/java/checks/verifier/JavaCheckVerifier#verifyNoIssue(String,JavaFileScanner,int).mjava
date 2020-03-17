@@ -4,12 +4,15 @@
    * @param filename The file to be analyzed
    * @param check The check to be used for the analysis
    * @param javaVersion The version to consider for the analysis (6 for java 1.6, 7 for 1.7, etc.)
+   *
+   * @deprecated use {@link #newVerifier()} instead
    */
+  @Deprecated
   public static void verifyNoIssue(String filename, JavaFileScanner check, int javaVersion) {
-    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier();
-    javaCheckVerifier.expectNoIssues();
-    javaCheckVerifier.providedJavaVersion = true;
-    javaCheckVerifier.javaVersion = new JavaVersionImpl(javaVersion);
-    scanFile(filename, check, javaCheckVerifier);
+    newVerifier()
+      .onFile(filename)
+      .withCheck(check)
+      .withJavaVersion(javaVersion)
+      .verifyNoIssues();
   }
 

@@ -1,0 +1,16 @@
+  private static String ruleKey(AnalyzerMessage issue) {
+    String ruleKey;
+    RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), RspecKey.class);
+    if (rspecKeyAnnotation != null) {
+      ruleKey = rspecKeyAnnotation.value();
+    } else {
+      Rule ruleAnnotation = AnnotationUtils.getAnnotation(issue.getCheck().getClass(), Rule.class);
+      if (ruleAnnotation != null) {
+        ruleKey = ruleAnnotation.key();
+      } else {
+        throw new AssertionError("Rules should be annotated with '@Rule(key = \"...\")' annotation (org.sonar.check.Rule).");
+      }
+    }
+    return ruleKey;
+  }
+

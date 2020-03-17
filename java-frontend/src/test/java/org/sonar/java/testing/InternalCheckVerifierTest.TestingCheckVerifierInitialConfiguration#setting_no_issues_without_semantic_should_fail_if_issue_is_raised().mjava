@@ -1,0 +1,16 @@
+    @Test
+    void setting_no_issues_without_semantic_should_fail_if_issue_is_raised() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .withJavaVersion(11)
+        .onFile(TEST_FILE)
+        .withCheck(FILE_LINE_ISSUE_CHECK)
+        .withoutSemantic()
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessageStartingWith("No issues expected but got 1 issue(s):")
+        .hasMessageContaining("--> 'issueOnLine' in")
+        .hasMessageEndingWith("Compliant.java:1");
+    }
+

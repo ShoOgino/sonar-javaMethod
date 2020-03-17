@@ -1,16 +1,18 @@
   @Test
   public void test_flows_with_single_msg_not_reported() throws Exception {
-    JavaCheckVerifier noFlowsVerifier = new JavaCheckVerifier() {
-      @Override
-      protected void checkIssues(Set<AnalyzerMessage> issues) {
+    ((InternalCheckVerifier) CheckVerifier.newVerifier())
+      .withCustomIssueVerifier(issues -> {
         assertThat(issues).hasSize(4);
         issues.forEach(issue -> assertThat(issue.flows.stream().allMatch(List::isEmpty))
           .as("No flows expected, but %s was reported.", issue.flows)
           .isTrue());
-      }
-    };
-
-    noFlowsVerifier.scanFile("src/test/files/se/FlowsWithSingleMsg.java",new SECheck[] { new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck(),
-      new BooleanGratuitousExpressionsCheck(), new DivisionByZeroCheck()});
+      })
+      .onFile("src/test/files/se/FlowsWithSingleMsg.java")
+      .withChecks(
+        new NullDereferenceCheck(),
+        new ConditionalUnreachableCodeCheck(),
+        new BooleanGratuitousExpressionsCheck(),
+        new DivisionByZeroCheck())
+      .verifyIssues();
   }
 

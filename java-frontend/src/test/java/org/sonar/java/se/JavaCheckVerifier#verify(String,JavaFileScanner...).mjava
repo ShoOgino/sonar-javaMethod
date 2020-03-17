@@ -11,6 +11,10 @@
    * @param check The check to be used for the analysis
    */
   public static void verify(String filename, JavaFileScanner... check) {
-    new JavaCheckVerifier().scanFile(filename, check);
+    CheckVerifier.newVerifier()
+      .onFile(filename)
+      .withChecks(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

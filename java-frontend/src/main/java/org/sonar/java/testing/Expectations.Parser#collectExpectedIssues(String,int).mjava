@@ -1,0 +1,12 @@
+    @VisibleForTesting
+    void collectExpectedIssues(String comment, int line) {
+      if (nonCompliantComment.matcher(comment).find()) {
+        ParsedComment parsedComment = parseIssue(comment, line);
+        issues.put(LINE.get(parsedComment.issue), parsedComment.issue);
+        parsedComment.flows.forEach(f -> flows.put(f.id, f));
+      }
+      if (FLOW_COMMENT.matcher(comment).find()) {
+        parseFlows(comment, line).forEach(f -> flows.put(f.id, f));
+      }
+    }
+

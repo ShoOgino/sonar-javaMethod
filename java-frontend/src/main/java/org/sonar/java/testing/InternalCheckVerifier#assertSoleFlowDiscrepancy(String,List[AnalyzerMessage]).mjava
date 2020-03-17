@@ -1,0 +1,9 @@
+  private void assertSoleFlowDiscrepancy(String expectedId, List<AnalyzerMessage> actualFlow) {
+    Set<Expectations.FlowComment> expected = expectations.flows.get(expectedId);
+    List<Integer> expectedLines = expected.stream().map(flow -> flow.line).collect(Collectors.toList());
+    List<Integer> actualLines = actualFlow.stream().map(AnalyzerMessage::getLine).collect(Collectors.toList());
+    if (!actualLines.equals(expectedLines)) {
+      throw new AssertionError(String.format("Flow %s has line differences. Expected: %s but was: %s", expectedId, expectedLines, actualLines));
+    }
+  }
+

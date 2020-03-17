@@ -5,7 +5,10 @@
    * @param check The check to be used for the analysis
    */
   public static void verifyNoIssue(String filename, JavaFileScanner check) {
-    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier(new Expectations(true, null, null));
-    javaCheckVerifier.scanFile(filename, new JavaFileScanner[] {check});
+    CheckVerifier.newVerifier()
+      .onFile(filename)
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

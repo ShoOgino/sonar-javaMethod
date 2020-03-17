@@ -1,0 +1,17 @@
+  private void validateIssue(
+    Multimap<Integer, Expectations.Issue> expected,
+    List<Integer> unexpectedLines,
+    AnalyzerMessage issue,
+    @Nullable Expectations.RemediationFunction remediationFunction) {
+
+    int line = issue.getLine();
+    if (expected.containsKey(line)) {
+      Expectations.Issue attrs = Iterables.getLast(expected.get(line));
+      validateRemediationFunction(attrs, issue, remediationFunction);
+      validateAnalyzerMessageAttributes(attrs, issue);
+      expected.remove(line, attrs);
+    } else {
+      unexpectedLines.add(line);
+    }
+  }
+

@@ -1,0 +1,14 @@
+    @Test
+    void setting_valid_file_is_required() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile("dummy.test")
+        .withoutSemantic()
+        .withCheck(NO_EFFECT_CHECK)
+        .verifyNoIssues());
+
+      assertThat(e)
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageStartingWith("Unable to read file")
+        .hasMessageEndingWith("dummy.test");
+    }
+

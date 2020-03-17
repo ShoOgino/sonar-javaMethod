@@ -1,0 +1,25 @@
+  private void verifyAll() {
+    List<JavaFileScanner> visitors = new ArrayList<>(checks);
+    if (withoutSemantic && expectations.expectNoIssues()) {
+      visitors.add(expectations.noEffectParser());
+    } else {
+      visitors.add(expectations.parser());
+    }
+    SonarComponents sonarComponents = sonarComponents();
+    VisitorsBridgeForTests visitorsBridge;
+    if (withoutSemantic) {
+      visitorsBridge = new VisitorsBridgeForTests(visitors, sonarComponents);
+    } else {
+      List<File> actualClasspath = classpath == null ? DEFAULT_CLASSPATH : classpath;
+      visitorsBridge = new VisitorsBridgeForTests(visitors, actualClasspath, sonarComponents);
+    }
+
+    JavaAstScanner astScanner = new JavaAstScanner(sonarComponents);
+    visitorsBridge.setJavaVersion(javaVersion == null ? DEFAULT_JAVA_VERSION : javaVersion);
+    astScanner.setVisitorBridge(visitorsBridge);
+    astScanner.scan(files);
+
+    VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
+    checkIssues(testJavaFileScannerContext.getIssues());
+  }
+

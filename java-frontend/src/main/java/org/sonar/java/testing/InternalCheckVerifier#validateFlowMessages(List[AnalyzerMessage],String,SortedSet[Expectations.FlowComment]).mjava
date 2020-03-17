@@ -1,0 +1,21 @@
+  private void validateFlowMessages(List<AnalyzerMessage> actual, String flowId, SortedSet<Expectations.FlowComment> expected) {
+    List<String> actualMessages = actual.stream()
+      .map(AnalyzerMessage::getMessage)
+      .map(InternalCheckVerifier::addQuotes)
+      .collect(Collectors.toList());
+    List<String> expectedMessages = expected.stream()
+      .map(Expectations.FlowComment::message)
+      .map(InternalCheckVerifier::addQuotes)
+      .collect(Collectors.toList());
+
+    replaceExpectedNullWithActual(actualMessages, expectedMessages);
+    if (!actualMessages.equals(expectedMessages)) {
+      throw new AssertionError(
+        String.format("Wrong messages in flow %s [%s]. Expected: %s but was: %s",
+          flowId,
+          expectations.flowToLines(flowId),
+          expectedMessages,
+          actualMessages));
+    }
+  }
+

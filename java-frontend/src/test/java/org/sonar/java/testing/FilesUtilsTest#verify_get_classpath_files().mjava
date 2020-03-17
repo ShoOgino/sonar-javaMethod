@@ -1,0 +1,15 @@
+  @Test
+  public void verify_get_classpath_files() throws IOException {
+    Path tmp = temp.newFolder().toPath();
+    Path jar = tmp.resolve("test.jar");
+    Path zip = tmp.resolve("test.zip");
+    Path invalid = tmp.resolve("test.txt");
+
+    Files.createFile(jar);
+    Files.createFile(zip);
+    Files.createFile(invalid);
+
+    List<File> list = FilesUtils.getFilesRecursively(temp.getRoot().toPath(), new String[] {"zip", "jar"});
+    assertThat(list).containsOnly(jar.toFile(), zip.toFile());
+  }
+

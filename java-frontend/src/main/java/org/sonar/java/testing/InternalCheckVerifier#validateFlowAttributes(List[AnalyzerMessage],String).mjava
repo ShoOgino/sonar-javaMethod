@@ -1,0 +1,16 @@
+  private void validateFlowAttributes(List<AnalyzerMessage> actual, String flowId) {
+    SortedSet<Expectations.FlowComment> expected = expectations.flows.get(flowId);
+
+    validateFlowMessages(actual, flowId, expected);
+
+    Iterator<AnalyzerMessage> actualIterator = actual.iterator();
+    Iterator<Expectations.FlowComment> expectedIterator = expected.iterator();
+    while (actualIterator.hasNext() && expectedIterator.hasNext()) {
+      AnalyzerMessage actualFlow = actualIterator.next();
+      if (actualFlow.primaryLocation() == null) {
+        throw new AssertionError(String.format("Flow without location: %s", actualFlow));
+      }
+      validateLocation(actualFlow, expectedIterator.next().attributes);
+    }
+  }
+

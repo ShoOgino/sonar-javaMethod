@@ -4,10 +4,14 @@
    * @param filename The file to be analyzed
    * @param message The message expected to be raised on the file
    * @param check The check to be used for the analysis
+   *
+   * @deprecated use {@link #newVerifier()} instead
    */
+  @Deprecated
   public static void verifyIssueOnFile(String filename, String message, JavaFileScanner check) {
-    JavaCheckVerifier javaCheckVerifier = new JavaCheckVerifier();
-    javaCheckVerifier.setExpectedFileIssue(message);
-    scanFile(filename, check, javaCheckVerifier);
+    CheckVerifier.newVerifier()
+      .onFile(filename)
+      .withCheck(check)
+      .verifyIssueOnFile(message);
   }
 

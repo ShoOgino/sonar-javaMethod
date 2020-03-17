@@ -1,0 +1,11 @@
+    @VisibleForTesting
+    ParsedComment parseIssue(String comment, int line) {
+      Matcher shiftMatcher = shift.matcher(comment);
+      Matcher flowMatcher = FLOW.matcher(comment);
+      return createIssue(line,
+        shiftMatcher.find() ? shiftMatcher.group(1) : null,
+        comment,
+        parseMessage(comment, flowMatcher.find() ? flowMatcher.start() : comment.length()),
+        comment);
+    }
+
