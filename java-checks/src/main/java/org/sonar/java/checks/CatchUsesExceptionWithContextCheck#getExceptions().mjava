@@ -1,6 +1,11 @@
   private List<String> getExceptions() {
     if (exceptions == null) {
-      exceptions = Stream.of(exceptionsCommaSeparated.split(",")).map(String::trim).collect(Collectors.toList());
+      if ("-".equals(exceptionsCommaSeparated.trim())) {
+        // explicitly handle '-' as discarding character
+        exceptions = Collections.emptyList();
+      } else {
+        exceptions = Stream.of(exceptionsCommaSeparated.split(",")).map(String::trim).collect(Collectors.toList());
+      }
     }
     return exceptions;
   }
