@@ -1,0 +1,10 @@
+  @Test
+  void test_outputdir() throws Exception {
+    SensorContextTester ctx = SensorContextTester.create(tempFolder);
+    ctx.fileSystem().setWorkDir(workDir);
+    Files.createFile(workDir.resolve("jsp"));
+    assertThatThrownBy(() -> Jasper.outputDir(ctx))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Failed to create output dir for jsp files");
+  }
+

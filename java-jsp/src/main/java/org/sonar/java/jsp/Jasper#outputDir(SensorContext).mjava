@@ -1,4 +1,10 @@
-  private static Path outputDir(SensorContext sensorContext) {
-    return sensorContext.fileSystem().workDir().toPath().resolve("jsp");
+  static Path outputDir(SensorContext sensorContext) {
+    Path path = sensorContext.fileSystem().workDir().toPath().resolve("jsp");
+    try {
+      Files.createDirectories(path);
+    } catch (IOException ex) {
+      throw new IllegalStateException("Failed to create output dir for jsp files", ex);
+    }
+    return path;
   }
 

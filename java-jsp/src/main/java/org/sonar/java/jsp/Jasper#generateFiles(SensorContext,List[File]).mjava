@@ -1,20 +1,23 @@
   public List<InputFile> generateFiles(SensorContext context, List<File> javaClasspath) {
+    List<Path> jspFiles = jspFiles(context.fileSystem());
+    LOG.debug("Found {} JSP files.", jspFiles.size());
+    if (jspFiles.isEmpty()) {
+      return Collections.emptyList();
+    }
+    Path outputDir = outputDir(context);
     try {
-      List<Path> jspFiles = jspFiles(context.fileSystem());
-      LOG.debug("Found {} JSP files.", jspFiles.size());
-      Path outputDir = outputDir(context);
       Jasper.compileJspFiles(jspFiles, javaClasspath, outputDir);
-      try (Stream<Path> fileStream = Files.walk(outputDir)) {
-        List<InputFile> generatedFiles = fileStream
-          .filter(p -> p.toString().endsWith(".java"))
-          .map(path -> new GeneratedFile(path, findSource(path, context.fileSystem())))
-          .collect(Collectors.toList());
-        LOG.debug("Generated {} Java files.", generatedFiles.size());
-        return generatedFiles;
-      }
     } catch (Exception e) {
       LOG.warn("Failed to transpile JSP files.", e);
       return Collections.emptyList();
+    }
+    try (Stream<Path> fileStream = walk(outputDir)) {
+      List<InputFile> generatedFiles = fileStream
+        .filter(p -> p.toString().endsWith(".java"))
+        .map(path -> new GeneratedFile(path, findSource(path, context.fileSystem())))
+        .collect(Collectors.toList());
+      LOG.debug("Generated {} Java files.", generatedFiles.size());
+      return generatedFiles;
     }
   }
 
