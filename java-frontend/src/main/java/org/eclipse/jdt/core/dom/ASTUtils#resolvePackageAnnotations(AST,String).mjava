@@ -1,0 +1,31 @@
+  public static IAnnotationBinding[] resolvePackageAnnotations(AST ast, String packageName) {
+    // See org.eclipse.jdt.core.dom.PackageBinding#getAnnotations()
+    BindingResolver bindingResolver = ast.getBindingResolver();
+    LookupEnvironment lookupEnvironment = bindingResolver.lookupEnvironment();
+    NameEnvironmentAnswer answer = lookupEnvironment.nameEnvironment.findType(
+      TypeConstants.PACKAGE_INFO_NAME,
+      CharOperation.splitOn('.', packageName.toCharArray())
+    );
+    if (answer == null) {
+      return NO_ANNOTATIONS;
+    }
+    IBinaryType type = answer.getBinaryType();
+    if (type == null) {
+      // Can happen for instance with ant, as ant only generates 'package-info.class'
+      // when there is annotations in the package-info.java file.
+      return NO_ANNOTATIONS;
+    }
+    IBinaryAnnotation[] binaryAnnotations = type.getAnnotations();
+    AnnotationBinding[] binaryInstances =
+      BinaryTypeBinding.createAnnotations(binaryAnnotations, lookupEnvironment, type.getMissingTypeNames());
+    AnnotationBinding[] allInstances =
+      AnnotationBinding.addStandardAnnotations(binaryInstances, type.getTagBits(), lookupEnvironment);
+
+    IAnnotationBinding[] domInstances = new IAnnotationBinding[allInstances.length];
+    for (int i = 0; i < allInstances.length; i++) {
+      // FIXME can be null if annotation can not be resolved e.g. due to incomplete classpath
+      domInstances[i] = bindingResolver.getAnnotationInstance(allInstances[i]);
+    }
+    return domInstances;
+  }
+
