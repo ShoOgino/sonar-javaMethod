@@ -11,7 +11,7 @@
     // Symbolic execution checks
     if (symbolicExecutionEnabled) {
       try {
-        runScanner(javaFileScannerContext, new SymbolicExecutionVisitor(executableScanners, behaviorCache), AnalysisError.Kind.SE_ERROR);
+        runScanner(javaFileScannerContext, new SymbolicExecutionVisitor(executableScanners, behaviorCache));
         behaviorCache.cleanup();
       } catch (CheckFailureException e) {
         interruptIfFailFast(e);
@@ -20,7 +20,7 @@
 
     for (JavaFileScanner scanner : executableScanners) {
       try {
-        runScanner(javaFileScannerContext, scanner, AnalysisError.Kind.CHECK_ERROR);
+        runScanner(javaFileScannerContext, scanner);
       } catch (CheckFailureException e) {
         interruptIfFailFast(e);
       }
