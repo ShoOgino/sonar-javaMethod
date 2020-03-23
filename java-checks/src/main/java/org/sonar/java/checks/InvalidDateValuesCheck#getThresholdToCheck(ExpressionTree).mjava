@@ -2,11 +2,9 @@
   private static String getThresholdToCheck(ExpressionTree tree) {
     if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) tree;
-      String name = getMethodName(mit);
-      for (MethodMatcher methodInvocationMatcher : DATE_METHODS_COMPARISON) {
-        if (methodInvocationMatcher.matches(mit)) {
-          return getName(mit, name);
-        }
+      if (DATE_METHODS_COMPARISON.matches(mit)) {
+        String name = getMethodName(mit);
+        return getName(mit, name);
       }
     }
     return null;

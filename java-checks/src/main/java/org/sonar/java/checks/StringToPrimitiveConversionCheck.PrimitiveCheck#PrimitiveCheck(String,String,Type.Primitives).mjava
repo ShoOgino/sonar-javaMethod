@@ -3,13 +3,15 @@
       this.className = className;
       this.tag = tag;
       this.message = "Use \"" + parseMethodName() + "\" for this string-to-" + primitiveName + " conversion.";
-      this.unboxingInvocationMatcher = MethodMatcher.create()
-        .typeDefinition("java.lang." + className)
-        .name(primitiveName + "Value")
-        .withoutParameter();
-      this.valueOfInvocationMatcher = MethodMatcher.create()
-        .typeDefinition("java.lang." + className)
-        .name("valueOf")
-        .addParameter("java.lang.String");
+      this.unboxingInvocationMatcher = MethodMatchers.create()
+        .ofTypes("java.lang." + className)
+        .names(primitiveName + "Value")
+        .addWithoutParametersMatcher()
+        .build();
+      this.valueOfInvocationMatcher = MethodMatchers.create()
+        .ofTypes("java.lang." + className)
+        .names("valueOf")
+        .addParametersMatcher("java.lang.String")
+        .build();
     }
 

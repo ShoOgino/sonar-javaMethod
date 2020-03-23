@@ -1,8 +1,8 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition("javax.servlet.http.Cookie").name("setDomain").addParameter("java.lang.String"),
-      MethodMatcher.create().typeDefinition("java.net.HttpCookie").name("setDomain").addParameter("java.lang.String")
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes("javax.servlet.http.Cookie").names("setDomain").addParametersMatcher("java.lang.String").build(),
+      MethodMatchers.create().ofTypes("java.net.HttpCookie").names("setDomain").addParametersMatcher("java.lang.String").build()
     );
   }
 

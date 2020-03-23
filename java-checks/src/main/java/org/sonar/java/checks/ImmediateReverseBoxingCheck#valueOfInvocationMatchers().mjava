@@ -1,12 +1,12 @@
-  private static MethodMatcherCollection valueOfInvocationMatchers() {
-    MethodMatcherCollection matchers = MethodMatcherCollection.create();
+  private static MethodMatchers valueOfInvocationMatchers() {
+    List<MethodMatchers> matchers = new ArrayList<>();
     for (Entry<String, String> primitiveMapping : PRIMITIVE_TYPES_BY_WRAPPER.entrySet()) {
       matchers.add(
-        MethodMatcher.create()
-          .typeDefinition(primitiveMapping.getKey())
-          .name("valueOf")
-          .addParameter(primitiveMapping.getValue()));
+        MethodMatchers.create()
+          .ofTypes(primitiveMapping.getKey())
+          .names("valueOf")
+          .addParametersMatcher(primitiveMapping.getValue()).build());
     }
-    return matchers;
+    return MethodMatchers.or(matchers);
   }
 

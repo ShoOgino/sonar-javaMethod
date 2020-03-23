@@ -1,12 +1,9 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    ArrayList<MethodMatcher> matchers = new ArrayList<>();
-    for (String dateSetMethod : DATE_SET_METHODS) {
-      matchers.add(dateMethodInvocationMatcherSetter(JAVA_UTIL_DATE, dateSetMethod));
-      matchers.add(dateMethodInvocationMatcherSetter(JAVA_SQL_DATE, dateSetMethod));
-    }
-    matchers.add(MethodMatcher.create().typeDefinition(JAVA_UTIL_CALENDAR).name("set").addParameter("int").addParameter("int"));
-    matchers.add(MethodMatcher.create().typeDefinition("java.util.GregorianCalendar").name("<init>").withAnyParameters());
-    return matchers;
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes(JAVA_UTIL_DATE, JAVA_SQL_DATE).names(DATE_SET_METHODS).addParametersMatcher("int").build(),
+      MethodMatchers.create().ofTypes(JAVA_UTIL_CALENDAR).names("set").addParametersMatcher("int", "int").build(),
+      MethodMatchers.create().ofTypes("java.util.GregorianCalendar").constructor().withAnyParameters().build()
+    );
   }
 

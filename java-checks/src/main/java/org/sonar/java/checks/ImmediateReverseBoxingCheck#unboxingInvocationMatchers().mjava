@@ -1,15 +1,15 @@
-  private static MethodMatcherCollection unboxingInvocationMatchers() {
-    MethodMatcherCollection matchers = MethodMatcherCollection.create();
+  private static MethodMatchers unboxingInvocationMatchers() {
+    List<MethodMatchers> matchers = new ArrayList<>();
     for (Entry<String, String> type : PRIMITIVE_TYPES_BY_WRAPPER.entrySet()) {
       String primitiveType = type.getValue();
-      TypeCriteria typeCriteria;
+      Predicate<Type> typeCriteria;
       if ("char".equals(primitiveType) || "boolean".equals(primitiveType)) {
-        typeCriteria = TypeCriteria.is(type.getKey());
+        typeCriteria = t -> t.is(type.getKey());
       } else {
-        typeCriteria = TypeCriteria.subtypeOf("java.lang.Number");
+        typeCriteria = t -> t.isSubtypeOf("java.lang.Number");
       }
-      matchers.add(MethodMatcher.create().callSite(typeCriteria).name(primitiveType + "Value").withoutParameter());
+      matchers.add(MethodMatchers.create().ofType(typeCriteria).names(primitiveType + "Value").addWithoutParametersMatcher().build());
     }
-    return matchers;
+    return MethodMatchers.or(matchers);
   }
 

@@ -1,6 +1,6 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree) {
-    if (TO_STRING_MATCHERS.anyMatch(tree)) {
+    if (TO_STRING_MATCHERS.matches(tree)) {
       ExpressionTree abstractTypedTree = ((MemberSelectExpressionTree) tree.methodSelect()).expression();
       if (abstractTypedTree.is(Kind.NEW_CLASS) || isValueOfInvocation(abstractTypedTree)) {
         String typeName = abstractTypedTree.symbolType().toString();

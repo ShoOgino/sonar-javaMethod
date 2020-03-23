@@ -1,39 +1,36 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    ArrayList<MethodMatcher> matchers = new ArrayList<>();
+  protected MethodMatchers getMethodInvocationMatchers() {
+    ArrayList<MethodMatchers> matchers = new ArrayList<>();
     matchers
-      .add(MethodMatcher.create()
-        .typeDefinition("org.apache.commons.codec.digest.DigestUtils")
-        .name("getDigest")
-        .addParameter(JAVA_LANG_STRING));
-    for (String methodName : ALGORITHM_BY_METHOD_NAME.keySet()) {
-      matchers.add(MethodMatcher.create()
-        .typeDefinition("org.apache.commons.codec.digest.DigestUtils")
-        .name(methodName)
-        .withAnyParameters());
-    }
-    for (String cryptoApi : CRYPTO_APIS) {
-      matchers
-        .add(MethodMatcher.create()
-          .typeDefinition(cryptoApi)
-          .name(GET_INSTANCE)
-          .addParameter(JAVA_LANG_STRING));
-      matchers
-        .add(MethodMatcher.create()
-          .typeDefinition(cryptoApi)
-          .name(GET_INSTANCE)
-          .addParameter(JAVA_LANG_STRING)
-          .addParameter(TypeCriteria.anyType()));
-    }
+      .add(MethodMatchers.create()
+        .ofTypes("org.apache.commons.codec.digest.DigestUtils")
+        .names("getDigest")
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .build());
+
+    matchers.add(MethodMatchers.create()
+      .ofTypes("org.apache.commons.codec.digest.DigestUtils")
+      .name(ALGORITHM_BY_METHOD_NAME::containsKey)
+      .withAnyParameters()
+      .build());
+
+    matchers
+      .add(MethodMatchers.create()
+        .ofTypes(CRYPTO_APIS)
+        .names(GET_INSTANCE)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .addParametersMatcher(JAVA_LANG_STRING, ANY)
+        .build());
+
     for (DeprecatedSpringPasswordEncoder pe : DeprecatedSpringPasswordEncoder.values()) {
-      matchers.add(MethodMatcher.create().typeDefinition(pe.classFqn).name(pe.methodName).withAnyParameters());
+      matchers.add(MethodMatchers.create().ofTypes(pe.classFqn).names(pe.methodName).withAnyParameters().build());
     }
-    for (String methodName : ImmutableList.of("md5", "sha1")) {
-      matchers.add(MethodMatcher.create()
-        .typeDefinition("com.google.common.hash.Hashing")
-        .name(methodName)
-        .withoutParameter());
-    }
-    return matchers;
+
+    matchers.add(MethodMatchers.create()
+      .ofTypes("com.google.common.hash.Hashing")
+      .names("md5", "sha1")
+      .addWithoutParametersMatcher().build());
+
+    return MethodMatchers.or(matchers);
   }
 

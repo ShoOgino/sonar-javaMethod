@@ -1,15 +1,15 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(MethodMatcher.create().typeDefinition(ORG_JUNIT_ASSERT).name("assertEquals").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT_ASSERT).name("assertSame").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT_ASSERT).name("assertNotSame").withAnyParameters(),
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes(ORG_JUNIT_ASSERT)
+        .names("assertEquals", "assertSame", "assertNotSame")
+        .withAnyParameters()
+        .build(),
       // JUnit 5
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertArrayEquals").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertEquals").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertIterableEquals").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertLinesMatch").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertNotEquals").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertNotSame").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(ORG_JUNIT5_ASSERTIONS).name("assertSame").withAnyParameters());
+      MethodMatchers.create().ofTypes(ORG_JUNIT5_ASSERTIONS)
+        .names("assertArrayEquals", "assertEquals", "assertIterableEquals", "assertLinesMatch", "assertNotEquals", "assertNotSame", "assertSame")
+        .withAnyParameters()
+        .build()
+    );
   }
 

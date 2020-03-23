@@ -1,24 +1,24 @@
-  private MethodMatcherCollection getCustomAssertionMethodsMatcher() {
+  private MethodMatchers getCustomAssertionMethodsMatcher() {
     if (customAssertionMethodsMatcher == null) {
       String[] fullyQualifiedMethodSymbols = customAssertionMethods.isEmpty() ? new String[0] : customAssertionMethods.split(",");
-      List<MethodMatcher> customMethodMatchers = new ArrayList<>(fullyQualifiedMethodSymbols.length);
+      List<MethodMatchers> customMethodMatchers = new ArrayList<>(fullyQualifiedMethodSymbols.length);
       for (String fullyQualifiedMethodSymbol : fullyQualifiedMethodSymbols) {
         String[] methodMatcherParts = fullyQualifiedMethodSymbol.split("#");
         if (methodMatcherParts.length == 2 && !isEmpty(methodMatcherParts[0].trim()) && !isEmpty(methodMatcherParts[1].trim())) {
           String methodName = methodMatcherParts[1].trim();
-          NameCriteria nameCriteria;
+          Predicate<String> namePredicate;
           if (methodName.endsWith("*")) {
-            nameCriteria = NameCriteria.startsWith(methodName.substring(0, methodName.length() - 1));
+            namePredicate = name -> name.startsWith(methodName.substring(0, methodName.length() - 1));
           } else {
-            nameCriteria = NameCriteria.is(methodName);
+            namePredicate = name -> name.equals(methodName);
           }
-          customMethodMatchers.add(method(methodMatcherParts[0].trim(), nameCriteria).withAnyParameters());
+          customMethodMatchers.add(MethodMatchers.create().ofSubTypes(methodMatcherParts[0].trim()).name(namePredicate).withAnyParameters().build());
         } else {
           LOG.warn("Unable to create a corresponding matcher for custom assertion method, please check the format of the following symbol: '{}'", fullyQualifiedMethodSymbol);
         }
       }
 
-      customAssertionMethodsMatcher = MethodMatcherCollection.create(customMethodMatchers.toArray(new MethodMatcher[0]));
+      customAssertionMethodsMatcher = MethodMatchers.or(customMethodMatchers);
     }
 
     return customAssertionMethodsMatcher;

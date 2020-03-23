@@ -1,8 +1,8 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.util.concurrent.ThreadPoolExecutor")).name("setCorePoolSize").addParameter("int"),
-      MethodMatcher.create().typeDefinition("java.util.concurrent.ScheduledThreadPoolExecutor").name("<init>").addParameter("int")
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofSubTypes("java.util.concurrent.ThreadPoolExecutor").names("setCorePoolSize").addParametersMatcher("int").build(),
+      MethodMatchers.create().ofTypes("java.util.concurrent.ScheduledThreadPoolExecutor").constructor().addParametersMatcher("int").build()
     );
   }
 

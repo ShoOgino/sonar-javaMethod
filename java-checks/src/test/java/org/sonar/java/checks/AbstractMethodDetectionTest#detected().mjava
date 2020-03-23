@@ -1,9 +1,10 @@
   @Test
   public void detected() {
-    Visitor visitor = new Visitor(ImmutableList.of(
-      MethodMatcher.create().typeDefinition("A").name("method").addParameter("int"),
-      MethodMatcher.create().typeDefinition("A").name("method").addParameter("java.lang.String[]")
-      ));
+    Visitor visitor = new Visitor(
+      MethodMatchers.create().ofTypes("A").names("method")
+        .addParametersMatcher("int")
+        .addParametersMatcher("java.lang.String[]")
+        .build());
     JavaAstScanner.scanSingleFileForTests(CheckTestUtils.inputFile("src/test/files/checks/AbstractMethodDetection.java"), new VisitorsBridge(visitor));
 
     assertThat(visitor.lines).hasSize(3);

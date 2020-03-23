@@ -1,39 +1,62 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    ArrayList<MethodMatcher> matchers = new ArrayList<>(Arrays.asList(
-      method(JAVA_LANG_STRING, "getBytes").withoutParameter(),
-      method(JAVA_LANG_STRING, "getBytes").parameters(INT, INT, BYTE_ARRAY, INT),
-      constructor(JAVA_LANG_STRING).parameters(BYTE_ARRAY),
-      constructor(JAVA_LANG_STRING).parameters(BYTE_ARRAY, INT, INT),
-      method(JAVA_IO_BYTEARRAYOUTPUTSTREAM, "toString").withoutParameter(),
-      constructor(JAVA_IO_FILEREADER).parameters("java.io.FileDescriptor"),
-      constructor(JAVA_IO_FILEREADER).parameters(JAVA_IO_FILE),
-      constructor(JAVA_IO_FILEREADER).parameters(JAVA_LANG_STRING),
-      constructor(JAVA_IO_FILEWRITER).parameters("java.io.FileDescriptor"),
-      constructor(JAVA_IO_FILEWRITER).parameters(JAVA_IO_FILE),
-      constructor(JAVA_IO_FILEWRITER).parameters(JAVA_IO_FILE, BOOLEAN),
-      constructor(JAVA_IO_FILEWRITER).parameters(JAVA_LANG_STRING),
-      constructor(JAVA_IO_FILEWRITER).parameters(JAVA_LANG_STRING, BOOLEAN),
-      constructor(JAVA_IO_INPUTSTREAMREADER).parameters(JAVA_IO_INPUTSTREAM),
-      constructor(JAVA_IO_OUTPUTSTREAMWRITER).parameters(JAVA_IO_OUTPUTSTREAM),
-      constructor(JAVA_IO_PRINTSTREAM).parameters(JAVA_IO_FILE),
-      constructor(JAVA_IO_PRINTSTREAM).parameters(JAVA_IO_OUTPUTSTREAM),
-      constructor(JAVA_IO_PRINTSTREAM).parameters(JAVA_IO_OUTPUTSTREAM, BOOLEAN),
-      constructor(JAVA_IO_PRINTSTREAM).parameters(JAVA_LANG_STRING),
-      constructor(JAVA_IO_PRINTWRITER).parameters(JAVA_IO_FILE),
-      constructor(JAVA_IO_PRINTWRITER).parameters(JAVA_IO_OUTPUTSTREAM),
-      constructor(JAVA_IO_PRINTWRITER).parameters(JAVA_IO_OUTPUTSTREAM, BOOLEAN),
-      constructor(JAVA_IO_PRINTWRITER).parameters(JAVA_LANG_STRING),
-      constructor(JAVA_UTIL_FORMATTER).parameters(JAVA_LANG_STRING),
-      constructor(JAVA_UTIL_FORMATTER).parameters(JAVA_IO_FILE),
-      constructor(JAVA_UTIL_FORMATTER).parameters(JAVA_IO_OUTPUTSTREAM),
-      constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_FILE),
-      constructor(JAVA_UTIL_SCANNER).parameters(JAVA_NIO_FILE_PATH),
-      constructor(JAVA_UTIL_SCANNER).parameters(JAVA_IO_INPUTSTREAM)
+  protected MethodMatchers getMethodInvocationMatchers() {
+    ArrayList<MethodMatchers> matchers = new ArrayList<>(Arrays.asList(
+      MethodMatchers.create().ofTypes(JAVA_LANG_STRING).names("getBytes")
+        .addWithoutParametersMatcher()
+        .addParametersMatcher(INT, INT, BYTE_ARRAY, INT)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_LANG_STRING).constructor()
+        .addParametersMatcher(BYTE_ARRAY)
+        .addParametersMatcher(BYTE_ARRAY, INT, INT)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_BYTEARRAYOUTPUTSTREAM).names(TO_STRING)
+        .addWithoutParametersMatcher()
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_FILEREADER).constructor()
+        .addParametersMatcher("java.io.FileDescriptor")
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_FILEWRITER).constructor()
+        .addParametersMatcher("java.io.FileDescriptor")
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .addParametersMatcher(JAVA_IO_FILE, BOOLEAN)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .addParametersMatcher(JAVA_LANG_STRING, BOOLEAN)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_INPUTSTREAMREADER).constructor()
+        .addParametersMatcher(JAVA_IO_INPUTSTREAM)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_OUTPUTSTREAMWRITER).constructor()
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_PRINTSTREAM).constructor()
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM)
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM, BOOLEAN)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_IO_PRINTWRITER).constructor()
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM)
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM, BOOLEAN)
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_UTIL_FORMATTER).constructor()
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_IO_OUTPUTSTREAM)
+        .build(),
+      MethodMatchers.create().ofTypes(JAVA_UTIL_SCANNER).constructor()
+        .addParametersMatcher(JAVA_IO_FILE)
+        .addParametersMatcher(JAVA_NIO_FILE_PATH)
+        .addParametersMatcher(JAVA_IO_INPUTSTREAM)
+        .build()
     ));
     matchers.addAll(COMMONS_IO);
     matchers.addAll(COMMONS_IO_WITH_CHARSET);
-    matchers.addAll(FILEUTILS_WRITE_WITH_CHARSET);
-    return matchers;
+    matchers.add(FILEUTILS_WRITE_WITH_CHARSET);
+    return MethodMatchers.or(matchers);
   }
 

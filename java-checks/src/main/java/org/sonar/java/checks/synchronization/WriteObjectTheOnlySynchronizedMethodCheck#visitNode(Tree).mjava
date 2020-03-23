@@ -6,7 +6,7 @@
     MethodTree methodTree = (MethodTree) tree;
     Symbol.TypeSymbol enclosingClass = methodTree.symbol().enclosingClass();
     String className = enclosingClass.type().fullyQualifiedName();
-    MethodMatcher writeObjectMatcher = SerializableContract.writeObjectMatcher(className);
+    MethodMatchers writeObjectMatcher = SerializableContract.writeObjectMatcher(className);
     if (writeObjectMatcher.matches(methodTree) && hasModifier(methodTree.modifiers(), SYNCHRONIZED)) {
       SynchronizationVisitor visitor = new SynchronizationVisitor(methodTree);
       enclosingClass.declaration().accept(visitor);

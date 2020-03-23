@@ -1,10 +1,10 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    if (COMMONS_IO_CHARSET_MATCHERS.anyMatch(mit)) {
+    if (COMMONS_IO_CHARSET_MATCHERS.matches(mit)) {
       Arguments arguments = mit.arguments();
       ExpressionTree lastArgument = arguments.get(arguments.size() - 1);
       testNullLiteralPassedForEncoding(lastArgument);
-    } else if (FILEUTILS_WRITE_WITH_CHARSET_MATCHERS.anyMatch(mit)) {
+    } else if (FILEUTILS_WRITE_WITH_CHARSET_MATCHERS.matches(mit)) {
       testNullLiteralPassedForEncoding(mit.arguments().get(2));
     } else {
       reportIssue(ExpressionUtils.methodName(mit), "Remove this use of \"" + mit.symbol().name() + "\"");

@@ -1,0 +1,11 @@
+  private static void withAndWithoutCharset(String type, String methodName, String... parameters) {
+    MethodMatchers.ParametersBuilder nameBuilder = MethodMatchers.create().ofTypes(type).names(methodName);
+    COMMONS_IO.add(nameBuilder.addParametersMatcher(parameters).build());
+    int originalSize = parameters.length;
+    String[] copy = Arrays.copyOf(parameters, originalSize + 1);
+    copy[originalSize] = JAVA_LANG_STRING;
+    COMMONS_IO_WITH_CHARSET.add(nameBuilder.addParametersMatcher(copy).build());
+    copy[originalSize] = JAVA_NIO_CHARSET;
+    COMMONS_IO_WITH_CHARSET.add(nameBuilder.addParametersMatcher(copy).build());
+  }
+

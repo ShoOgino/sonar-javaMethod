@@ -1,8 +1,8 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition("java.sql.PreparedStatement").name(NameCriteria.startsWith("set")).addParameter(INT).addParameter(TypeCriteria.anyType()),
-      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NameCriteria.startsWith("get")).addParameter(INT),
-      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NameCriteria.startsWith("get")).addParameter(INT).addParameter(TypeCriteria.anyType()));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes("java.sql.PreparedStatement").name(name -> name.startsWith("set")).addParametersMatcher(INT, ANY).build(),
+      MethodMatchers.create().ofTypes(JAVA_SQL_RESULTSET).name(name -> name.startsWith("get")).addParametersMatcher(INT).addParametersMatcher(INT, ANY).build()
+    );
   }
 
