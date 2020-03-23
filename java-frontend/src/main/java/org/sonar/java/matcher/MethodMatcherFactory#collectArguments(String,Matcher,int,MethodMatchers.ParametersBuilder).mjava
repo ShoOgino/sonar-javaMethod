@@ -1,0 +1,26 @@
+  public static MethodMatchers collectArguments(String descriptor, Matcher initialMatcher, int groupOffset, MethodMatchers.ParametersBuilder methodMatcher) {
+    if ("(".equals(initialMatcher.group(groupOffset))) {
+      String remainder = descriptor.substring(initialMatcher.group().length());
+      if (!")".equals(remainder)) {
+        Matcher matcher = ARGUMENT_PATTERN.matcher(remainder);
+        int matchedLength = 0;
+        List<String> argumentTypes = new ArrayList<>();
+        while (matcher.find()) {
+          argumentTypes.add(matcher.group(1));
+          matchedLength = matcher.end();
+        }
+        if (matchedLength < remainder.length()) {
+          throw new IllegalArgumentException("Illegal method or constructor arguments specification: " + descriptor);
+        }
+        return methodMatcher.addParametersMatcher(argumentTypes.toArray(new String[0])).build();
+      } else {
+        return methodMatcher.addWithoutParametersMatcher().build();
+      }
+    } else {
+      if (initialMatcher.end() < descriptor.length()) {
+        throw new IllegalArgumentException("Illegal method or constructor arguments specification: " + descriptor);
+      }
+      return methodMatcher.withAnyParameters().build();
+    }
+  }
+

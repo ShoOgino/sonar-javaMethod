@@ -1,0 +1,8 @@
+  @Override
+  public NameBuilder ofSubTypes(String... fullyQualifiedTypeNames) {
+    return ofType(substituteAnyAndCreateEfficientPredicate(
+      fullyQualifiedTypeNames,
+      name -> (type -> type.isSubtypeOf(name)),
+      names -> (type -> names.stream().anyMatch(type::isSubtypeOf))));
+  }
+

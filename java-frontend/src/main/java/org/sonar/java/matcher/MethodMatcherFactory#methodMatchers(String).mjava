@@ -1,0 +1,9 @@
+  public static MethodMatchers methodMatchers(String descriptor) {
+    Matcher matcher = METHOD_PATTERN.matcher(descriptor);
+    if (!matcher.find()) {
+      throw new IllegalArgumentException("Illegal method specification: " + descriptor);
+    }
+    MethodMatchers.ParametersBuilder methodMatcher = MethodMatchers.create().ofTypes(matcher.group(1)).names(matcher.group(2));
+    return collectArguments(descriptor, matcher, 3, methodMatcher);
+  }
+

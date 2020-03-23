@@ -1,7 +1,7 @@
   @Test
   public void fail_arg() throws Exception {
     try {
-      MethodMatcherFactory.methodMatcher("org.sonar.test.Test$match");
+      MethodMatcherFactory.methodMatchers("org.sonar.test.Test$match");
       fail("Argument should not be accepted.");
     } catch (IllegalArgumentException iae) {
       assertThat(iae.getMessage()).contains("method");
@@ -15,20 +15,20 @@
     }
 
     try {
-      MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(java.lang.String;int)");
+      MethodMatcherFactory.methodMatchers("org.sonar.test.Test#match(java.lang.String;int)");
       fail("Argument should not be accepted.");
     } catch (IllegalArgumentException iae) {
       assertThat(iae.getMessage()).contains("constructor").contains("method");
     }
 
     try {
-      MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match(java.lang.String,int)followed by anything");
+      MethodMatcherFactory.methodMatchers("org.sonar.test.Test#match(java.lang.String,int)followed by anything");
       fail("Argument should not be accepted.");
     } catch (IllegalArgumentException iae) {
       assertThat(iae.getMessage()).contains("constructor").contains("method");
     }
     try {
-      MethodMatcherFactory.methodMatcher("org.sonar.test.Test#match this is an error");
+      MethodMatcherFactory.methodMatchers("org.sonar.test.Test#match this is an error");
       fail("Argument should not be accepted.");
     } catch (IllegalArgumentException iae) {
       assertThat(iae.getMessage()).contains("method");

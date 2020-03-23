@@ -1,0 +1,34 @@
+    @Override
+    public void visitNode(Tree tree) {
+      super.visitNode(tree);
+      boolean match = false;
+      if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+        if (useSymbol) {
+          match = matcher.matches(((MethodInvocationTree) tree).symbol());
+        } else {
+          match = matcher.matches((MethodInvocationTree) tree);
+        }
+      } else if (tree.is(Tree.Kind.METHOD, Tree.Kind.CONSTRUCTOR)) {
+        if (useSymbol) {
+          match = matcher.matches(((MethodTree) tree).symbol());
+        } else {
+          match = matcher.matches((MethodTree) tree);
+        }
+      } else if (tree.is(Tree.Kind.NEW_CLASS)) {
+        if (useSymbol) {
+          match = matcher.matches(((NewClassTree) tree).constructorSymbol());
+        } else {
+          match = matcher.matches((NewClassTree) tree);
+        }
+      } else if (tree.is(Tree.Kind.METHOD_REFERENCE)) {
+        if (useSymbol) {
+          match = matcher.matches(((MethodReferenceTree) tree).symbolType().symbol());
+        } else {
+          match = matcher.matches((MethodReferenceTree) tree);
+        }
+      }
+      if (match) {
+        matches.add(((JavaTree) tree).getLine());
+      }
+    }
+

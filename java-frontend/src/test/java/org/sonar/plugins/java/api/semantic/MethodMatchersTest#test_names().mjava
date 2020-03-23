@@ -1,0 +1,48 @@
+  @Test
+  public void test_names() {
+    String source = "" +
+      /* 01 */ "interface A {\n" +
+      /* 02 */ "  void a(int x);\n" +
+      /* 03 */ "  void aa(int x);\n" +
+      /* 04 */ "  void b(int x);\n" +
+      /* 05 */ "}\n" +
+      /* 06 */ "class Main {\n" +
+      /* 07 */ "  void main(A a) {\n" +
+      /* 08 */ "    a.a(12);\n" +
+      /* 09 */ "    a.aa(12);\n" +
+      /* 10 */ "    a.b(12);\n" +
+      /* 11 */ "    new Main();\n" +
+      /* 12 */ "  }\n" +
+      /* 13 */ "} \n";
+
+    // one name
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("a").withAnyParameters().build()))
+      .containsExactly(2, 8);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("aa").withAnyParameters().build()))
+      .containsExactly(3, 9);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("b").withAnyParameters().build()))
+      .containsExactly(4, 10);
+
+    // several names
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("a", "b").withAnyParameters().build()))
+      .containsExactly(2, 4, 8, 10);
+
+    // start with
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").name(name -> name.startsWith("a")).withAnyParameters().build()))
+      .containsExactly(2, 3, 8, 9);
+
+    // any names
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").anyName().withAnyParameters().build()))
+      .containsExactly(2, 3, 4, 8, 9, 10);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names(ANY).withAnyParameters().build()))
+      .containsExactly(2, 3, 4, 8, 9, 10);
+
+    // predicate
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").name("B"::equalsIgnoreCase).withAnyParameters().build()))
+      .containsExactly(4, 10);
+
+    // constructor
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("Main").constructor().withAnyParameters().build()))
+      .containsExactly(11);
+  }
+

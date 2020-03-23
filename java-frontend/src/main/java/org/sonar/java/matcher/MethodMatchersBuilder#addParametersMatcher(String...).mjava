@@ -1,0 +1,7 @@
+  @Override
+  public ParametersBuilder addParametersMatcher(String... parametersType) {
+    return addParametersMatcher(Arrays.stream(parametersType)
+      .<Predicate<Type>>map(parameterType -> substituteAny(type -> type.is(parameterType), parameterType))
+      .collect(Collectors.toList()));
+  }
+

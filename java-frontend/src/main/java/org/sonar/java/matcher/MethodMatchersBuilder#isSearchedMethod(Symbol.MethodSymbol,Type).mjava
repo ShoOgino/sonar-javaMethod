@@ -1,0 +1,14 @@
+  private boolean isSearchedMethod(Symbol.MethodSymbol symbol, @Nullable Type callSiteType) {
+    Type type = callSiteType;
+    if (type == null) {
+      Symbol owner = symbol.owner();
+      if (owner != null) {
+        type = owner.type();
+      }
+    }
+    return type != null &&
+      namePredicate.test(symbol.name()) &&
+      parametersPredicate.test(symbol.parameterTypes()) &&
+      typePredicate.test(type);
+  }
+

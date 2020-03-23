@@ -1,0 +1,16 @@
+  private static <T> Predicate<T> substituteAnyAndCreateEfficientPredicate(
+    String[] elements,
+    Function<String, Predicate<T>> singleElementPredicate,
+    Function<List<String>, Predicate<T>> multiElementsPredicate) {
+    if (elements.length == 0) {
+      throw new IllegalStateException("Method arguments can not be empty, otherwise the predicate would be always false.");
+    }
+    if (elements.length == 1) {
+      String singleElement = elements[0];
+      return substituteAny(singleElementPredicate.apply(singleElement), elements);
+    } else {
+      List<String> multiElements = Arrays.asList(elements);
+      return substituteAny(multiElementsPredicate.apply(multiElements), elements);
+    }
+  }
+

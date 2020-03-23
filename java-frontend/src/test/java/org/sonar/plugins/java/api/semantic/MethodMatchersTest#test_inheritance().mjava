@@ -1,0 +1,92 @@
+  @Test
+  public void test_inheritance() {
+    String source = "" +
+      /* 01 */ "package pkg;\n" +
+      /* 02 */ "class A { }\n" +
+      /* 03 */ "interface I {\n" +
+      /* 04 */ "  void f();\n" +
+      /* 05 */ "  void f(int x);\n" +
+      /* 06 */ "}\n" +
+      /* 07 */ "@FunctionalInterface\n" +
+      /* 08 */ "interface J {\n" +
+      /* 09 */ "  void f(int x);\n" +
+      /* 10 */ "}\n" +
+      /* 11 */ "abstract class B extends A implements I, J {\n" +
+      /* 12 */ "  public void f() { }\n" +
+      /* 13 */ "}\n" +
+      /* 14 */ "class C extends B {\n" +
+      /* 15 */ "  @Override\n" +
+      /* 16 */ "  public void f(int x) { }\n" +
+      /* 17 */ "}\n" +
+      /* 18 */ "class D extends C {\n" +
+      /* 19 */ "  @Override\n" +
+      /* 20 */ "  public void f(int x) { }\n" +
+      /* 21 */ "}\n" +
+      /* 22 */ "class E extends D { }\n" +
+      /* 23 */ "class F extends E { }\n" +
+      /* 24 */ "class Main {\n" +
+      /* 25 */ "  void main(Object o, A a, B b, C c, D d, E e, F f) {\n" +
+      /* 26 */ "    o.toString();\n" +
+      /* 27 */ "    a.toString();\n" +
+      /* 28 */ "    b.f();\n" +
+      /* 29 */ "    b.f(42);\n" +
+      /* 30 */ "    c.f(42);\n" +
+      /* 31 */ "    d.f(42);\n" +
+      /* 32 */ "    e.f(42);\n" +
+      /* 33 */ "    f.f(42);\n" +
+      /* 34 */ "    f.f();\n" +
+      /* 35 */ "    J j = d::f;\n" +
+      /* 36 */ "    j = e::f;\n" +
+      /* 37 */ "    j.f(42);\n" +
+      /* 38 */ "  }\n" +
+      /* 39 */ "}\n";
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("java.lang.Object").names("toString").addWithoutParametersMatcher().build()))
+      .containsExactly(26);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("java.lang.Object").names("toString").addWithoutParametersMatcher().build()))
+      .containsExactly(26, 27);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofType(type -> type.is("pkg.B")).names("f").addWithoutParametersMatcher().build()))
+      .containsExactly(12, 28);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.B").names("f").addWithoutParametersMatcher().build()))
+      .containsExactly(12, 28, 34);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.B").names("f").addParametersMatcher("int").build()))
+      .containsExactly(16, 20, 29, 30, 31, 32, 33, 35, 36);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.F").names("f").addWithoutParametersMatcher().build()))
+      .containsExactly(34);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.A").names("f").addParametersMatcher("int").build()))
+      .isEmpty();
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.B").names("f").addParametersMatcher("int").build()))
+      .containsExactly(29);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.C").names("f").addParametersMatcher("int").build()))
+      .containsExactly(16, 30);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.D").names("f").addParametersMatcher("int").build()))
+      .containsExactly(20, 31, 32, 33, 35, 36);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.D").names("f").addParametersMatcher("int").build()))
+      .containsExactly(20, 31, 35);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.E").names("f").addParametersMatcher("int").build()))
+      .containsExactly(32, 36);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.F").names("f").addParametersMatcher("int").build()))
+      .containsExactly(33);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.A").names("f").addParametersMatcher("int").build()))
+      .containsExactly(16, 20, 29, 30, 31, 32, 33, 35, 36);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.I").names("f").addParametersMatcher("int").build()))
+      .containsExactly(5, 16, 20, 29, 30, 31, 32, 33, 35, 36);
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofSubTypes("pkg.J").names("f").addParametersMatcher("int").build()))
+      .containsExactly(9, 16, 20, 29, 30, 31, 32, 33, 35, 36, 37);
+  }
+

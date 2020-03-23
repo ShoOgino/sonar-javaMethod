@@ -1,0 +1,58 @@
+  @Test
+  public void test_parameters() {
+    String source = "" +
+      /* 01 */ "interface A { \n" +
+      /* 02 */ "  void f();\n" +
+      /* 03 */ "  void f(int x);\n" +
+      /* 04 */ "  void f(int x, long y);\n" +
+      /* 05 */ "  void f(String x);\n" +
+      /* 06 */ "  static void main(A a) {\n" +
+      /* 07 */ "    a.f();\n" +
+      /* 08 */ "    a.f(12);\n" +
+      /* 09 */ "    a.f(12, 15L);\n" +
+      /* 10 */ "    java.util.function.Consumer<Integer> c = a::f;\n" +
+      /* 11 */ "  }\n" +
+      /* 12 */ "} \n";
+
+    // without parameters
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addWithoutParametersMatcher().build()))
+      .containsExactly(2, 7);
+
+    // with parameters
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher("int").build()))
+      .containsExactly(3, 8, 10);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher("int", "long").build()))
+      .containsExactly(4, 9);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher("int", ANY).build()))
+      .containsExactly(4, 9);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher(ANY).build()))
+      .containsExactly(3, 5, 8, 10);
+
+    // several with parameters
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f")
+      .addParametersMatcher("int")
+      .addParametersMatcher("int", "long").build()))
+      .containsExactly(3, 4, 8, 9, 10);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f")
+      .addWithoutParametersMatcher()
+      .addParametersMatcher("int")
+      .addParametersMatcher("int", "long").build()))
+      .containsExactly(2, 3, 4, 7, 8, 9, 10);
+
+    // start with parameters
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f")
+      .addParametersMatcher(types -> types.size() >= 1 && types.get(0).is("int")).build()))
+      .containsExactly(3, 4, 8, 9, 10);
+
+    // with any parameters
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").withAnyParameters().build()))
+      .containsExactly(2, 3, 4, 5, 7, 8, 9, 10);
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher(type -> true).build()))
+      .containsExactly(2, 3, 4, 5, 7, 8, 9, 10);
+
+    // predicate
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f")
+      .addParametersMatcher(types -> types.size() == 2 && types.get(0).is("int") && !types.get(1).is("int")).build()))
+      .containsExactly(4, 9);
+  }
+

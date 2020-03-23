@@ -1,0 +1,43 @@
+  @Test
+  public void test_tree_and_symbol_and_or() {
+    String source = "" +
+      /* 01 */ "package pkg;\n" +
+      /* 02 */ "import java.util.function.*;\n" +
+      /* 03 */ "class A { \n" +
+      /* 04 */ "  A(int x) { }\n" +
+      /* 05 */ "  void f(int x) { }\n" +
+      /* 06 */ "  void main() {\n" +
+      /* 07 */ "    A a = new A(12);\n" +
+      /* 08 */ "    a.f(12);\n" +
+      /* 09 */ "    Consumer<Integer> c = a::f;\n" +
+      /* 10 */ "    Supplier<A> s = A::new;\n" +
+      /* 11 */ "  }\n" +
+      /* 12 */ "} \n";
+
+    // method f(int)
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.A").names("f").addParametersMatcher("int").build()))
+      .containsExactly(5, 8, 9);
+    assertThat(findMatchesOnSymbol(source, MethodMatchers.create().ofTypes("pkg.A").names("f").addParametersMatcher("int").build()))
+      .containsExactly(5, 8); // missing 9 because symbol.isMethodSymbol() of method reference return false
+
+    // constructor
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("pkg.A").constructor().addParametersMatcher("int").build()))
+      .containsExactly(4, 7); // missing 10 because "A::new" is an unknown type
+    assertThat(findMatchesOnSymbol(source, MethodMatchers.create().ofTypes("pkg.A").constructor().addParametersMatcher("int").build()))
+      .containsExactly(4, 7);
+
+    // or
+    assertThat(findMatchesOnTree(source, MethodMatchers.or(
+      MethodMatchers.create().ofTypes("pkg.A").constructor().addParametersMatcher("int").build(),
+      MethodMatchers.create().ofTypes("pkg.A").names("f").addParametersMatcher("int").build())))
+      .containsExactly(4, 5, 7, 8, 9);
+    assertThat(findMatchesOnSymbol(source, MethodMatchers.or(
+      MethodMatchers.create().ofTypes("pkg.A").constructor().addParametersMatcher("int").build(),
+      MethodMatchers.create().ofTypes("pkg.A").names("f").addParametersMatcher("int").build())))
+      .containsExactly(4, 5, 7, 8);
+
+    // empty
+    assertThat(findMatchesOnTree(source, MethodMatchers.none())).isEmpty();
+    assertThat(findMatchesOnSymbol(source, MethodMatchers.none())).isEmpty();
+  }
+

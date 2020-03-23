@@ -1,10 +1,9 @@
-  public static MethodMatcher constructorMatcher(String descriptor) {
+  public static MethodMatchers constructorMatcher(String descriptor) {
     Matcher matcher = CLASS_PATTERN.matcher(descriptor);
     if (!matcher.find()) {
       throw new IllegalArgumentException("Illegal constructor specification: " + descriptor);
     }
-    MethodMatcher constructorMatcher = MethodMatcher.create().typeDefinition(matcher.group(1)).name("<init>");
-    collectArguments(descriptor, matcher, 2, constructorMatcher);
-    return constructorMatcher;
+    MethodMatchers.ParametersBuilder constructorMatcher = MethodMatchers.create().ofTypes(matcher.group(1)).constructor();
+    return collectArguments(descriptor, matcher, 2, constructorMatcher);
   }
 

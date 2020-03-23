@@ -1,0 +1,14 @@
+  @Test
+  public void test_method_selector_and_method_identifier() {
+    String source = "" +
+      /* 01 */ "class A {\n" +
+      /* 02 */ "  void f(A a) {\n" +
+      /* 03 */ "    f(this);\n" +
+      /* 04 */ "    a.f(a);\n" +
+      /* 05 */ "  }\n" +
+      /* 06 */ "}\n";
+
+    assertThat(findMatchesOnTree(source, MethodMatchers.create().ofTypes("A").names("f").addParametersMatcher("A").build()))
+      .containsExactly(2, 3, 4);
+  }
+

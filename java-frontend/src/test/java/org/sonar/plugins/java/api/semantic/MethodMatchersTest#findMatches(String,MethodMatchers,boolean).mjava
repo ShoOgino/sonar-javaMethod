@@ -1,0 +1,8 @@
+  private static List<Integer> findMatches(String fileContent, MethodMatchers matcher, boolean useSymbol) {
+    Visitor visitor = new Visitor(matcher, useSymbol);
+    JavaAstScanner.scanSingleFileForTests(
+      inputFile(fileContent),
+      new VisitorsBridge(Collections.singletonList(visitor), new ArrayList<>(), null));
+    return visitor.matches;
+  }
+
