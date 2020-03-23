@@ -1,9 +1,16 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(JAVA_SECURITY_SECURE_RANDOM).name("<init>").parameters("byte[]"),
-      MethodMatcher.create().typeDefinition(JAVA_SECURITY_SECURE_RANDOM).name("setSeed").parameters("byte[]"),
-      MethodMatcher.create().typeDefinition(JAVA_SECURITY_SECURE_RANDOM).name("setSeed").parameters("long")
-      );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes(JAVA_SECURITY_SECURE_RANDOM)
+        .constructor()
+        .addParametersMatcher("byte[]")
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(JAVA_SECURITY_SECURE_RANDOM)
+        .names("setSeed")
+        .addParametersMatcher("byte[]")
+        .addParametersMatcher("long")
+        .build());
   }
 

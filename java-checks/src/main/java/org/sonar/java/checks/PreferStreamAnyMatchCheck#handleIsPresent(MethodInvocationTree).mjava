@@ -1,8 +1,8 @@
   private void handleIsPresent(MethodInvocationTree isPresentMIT) {
     previousMITInChain(isPresentMIT)
-      .filter(FIND_METHODS::anyMatch)
+      .filter(FIND_METHODS::matches)
       .ifPresent(findMIT ->
-        previousMITInChain(findMIT).filter(FILTER_METHODS::anyMatch)
+        previousMITInChain(findMIT).filter(FILTER_METHODS::matches)
           .ifPresent(filterMIT ->
     context.reportIssue(this, ExpressionUtils.methodName(filterMIT), ExpressionUtils.methodName(isPresentMIT),
       "Replace this \"filter()." + ExpressionUtils.methodName(findMIT).name() + "().isPresent()\" chain with \"anyMatch()\".")));

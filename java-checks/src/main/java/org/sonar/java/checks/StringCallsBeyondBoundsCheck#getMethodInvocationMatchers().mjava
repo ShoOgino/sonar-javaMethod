@@ -1,15 +1,26 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(STRING).name("charAt").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("codePointAt").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("codePointBefore").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("codePointCount").addParameter("int").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("getChars").addParameter("int").addParameter("int").addParameter("char[]").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("offsetByCodePoints").addParameter("int").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("substring").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("substring").addParameter("int").addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("subSequence").addParameter("int").addParameter("int")
-    );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes(STRING)
+        .names("charAt", "codePointAt", "codePointBefore")
+        .addParametersMatcher("int")
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(STRING)
+        .names("codePointCount", "offsetByCodePoints", "subSequence")
+        .addParametersMatcher("int", "int")
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(STRING)
+        .names("substring")
+        .addParametersMatcher("int")
+        .addParametersMatcher("int", "int")
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(STRING)
+        .names("getChars")
+        .addParametersMatcher("int", "int", "char[]", "int")
+        .build());
   }
 

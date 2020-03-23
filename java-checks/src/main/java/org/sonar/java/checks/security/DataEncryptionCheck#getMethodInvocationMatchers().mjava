@@ -1,13 +1,15 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create()
-        .typeDefinition("javax.crypto.Cipher")
-        .name("getInstance")
-        .withAnyParameters(),
-      MethodMatcher.create()
-        .typeDefinition("org.apache.commons.crypto.utils.Utils")
-        .name("getCipherInstance")
-        .withAnyParameters());
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes("javax.crypto.Cipher")
+        .names("getInstance")
+        .withAnyParameters()
+        .build(),
+      MethodMatchers.create()
+        .ofTypes("org.apache.commons.crypto.utils.Utils")
+        .names("getCipherInstance")
+        .withAnyParameters()
+        .build());
   }
 

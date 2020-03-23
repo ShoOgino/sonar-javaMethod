@@ -1,8 +1,12 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      truncateMethodMatcher("java.util.Date"),
-      truncateMethodMatcher("java.util.Calendar"),
-      truncateMethodMatcher("java.lang.Object"));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.create()
+      .ofTypes("org.apache.commons.lang.time.DateUtils")
+      .names("truncate")
+      .addParametersMatcher(
+        params -> params.size() == 2 &&
+          FIRST_PARAMETER_TYPES.contains(params.get(0).fullyQualifiedName()) &&
+          params.get(1).is("int"))
+      .build();
   }
 

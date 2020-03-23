@@ -1,11 +1,8 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(GUAVA_BASE_ENCODING).name("base64").withoutParameter(),
-      MethodMatcher.create().typeDefinition(GUAVA_BASE_ENCODING).name("base64Url").withoutParameter(),
-      MethodMatcher.create().typeDefinition(GUAVA_OPTIONAL).name("absent").withoutParameter(),
-      MethodMatcher.create().typeDefinition(GUAVA_OPTIONAL).name("fromNullable").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(GUAVA_OPTIONAL).name("of").withAnyParameters()
-    );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes(GUAVA_BASE_ENCODING).names("base64", "base64Url").addWithoutParametersMatcher().build(),
+      MethodMatchers.create().ofTypes(GUAVA_OPTIONAL).names("absent").addWithoutParametersMatcher().build(),
+      MethodMatchers.create().ofTypes(GUAVA_OPTIONAL).names("fromNullable", "of").withAnyParameters().build());
   }
 

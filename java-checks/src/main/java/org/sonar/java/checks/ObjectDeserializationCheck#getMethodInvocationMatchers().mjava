@@ -1,8 +1,9 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(OBJECT_INPUT_STREAM).name("readObject").withoutParameter(),
-      MethodMatcher.create().typeDefinition(OBJECT_INPUT_STREAM).name("readUnshared").withoutParameter()
-    );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.create()
+      .ofSubTypes("java.io.ObjectInputStream")
+      .names("readObject", "readUnshared")
+      .addWithoutParametersMatcher()
+      .build();
   }
 

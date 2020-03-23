@@ -1,8 +1,15 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(KEY_GENERATOR).name(GET_INSTANCE_METHOD).addParameter(STRING),
-      MethodMatcher.create().typeDefinition(KEY_PAIR_GENERATOR).name(GET_INSTANCE_METHOD).addParameter(STRING),
-      MethodMatcher.create().typeDefinition(EC_GEN_PARAMETER_SPEC).name("<init>").addParameter(STRING));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes(KEY_GENERATOR, KEY_PAIR_GENERATOR)
+        .names(GET_INSTANCE_METHOD)
+        .addParametersMatcher(STRING)
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(EC_GEN_PARAMETER_SPEC)
+        .constructor()
+        .addParametersMatcher(STRING)
+        .build());
   }
 

@@ -1,7 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       SymbolicValue peek = programState.peekValue();
-      if (OPTIONAL_TEST_METHODS.anyMatch(tree)) {
+      if (OPTIONAL_TEST_METHODS.matches(tree)) {
         constraintManager.setValueFactory(() -> new OptionalTestMethodSymbolicValue(peek, tree.symbol()));
       } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(peek)) {
         context.addExceptionalYield(peek, programState, "java.util.NoSuchElementException", check);

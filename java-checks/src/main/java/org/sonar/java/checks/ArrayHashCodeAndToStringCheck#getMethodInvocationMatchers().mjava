@@ -1,7 +1,9 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      arrayMethodInvocation("toString"),
-      arrayMethodInvocation("hashCode"));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.create()
+      .ofType(Type::isArray)
+      .names("toString", "hashCode")
+      .addWithoutParametersMatcher()
+      .build();
   }
 

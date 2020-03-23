@@ -1,10 +1,12 @@
-  private static Collection<MethodMatcher> log4jMethods() {
-    List<MethodMatcher> matchers = new ArrayList<>();
-    matchers.add(ORG_APACHE_LOGGING_LOG4J_LOGGER_PRINTF);
-    matchers.add(MethodMatcher.create().typeDefinition(ORG_APACHE_LOGGING_LOG4J_LOGGER).name("log").withAnyParameters());
-    matchers.addAll(LEVELS.stream()
-      .map(l -> MethodMatcher.create().typeDefinition(ORG_APACHE_LOGGING_LOG4J_LOGGER).name(l).withAnyParameters())
-      .collect(Collectors.toList()));
-    return matchers;
+  private static MethodMatchers log4jMethods() {
+    List<String> methodNames = new ArrayList<>();
+    methodNames.add(PRINTF_METHOD_NAME);
+    methodNames.add("log");
+    methodNames.addAll(LEVELS);
+    return MethodMatchers.create()
+      .ofTypes(ORG_APACHE_LOGGING_LOG4J_LOGGER)
+      .names(methodNames.toArray(new String[0]))
+      .withAnyParameters()
+      .build();
   }
 

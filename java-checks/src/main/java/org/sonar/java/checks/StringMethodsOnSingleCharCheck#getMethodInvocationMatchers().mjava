@@ -1,10 +1,9 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(STRING).name("indexOf").addParameter(STRING),
-      MethodMatcher.create().typeDefinition(STRING).name("indexOf").addParameter(STRING).addParameter("int"),
-      MethodMatcher.create().typeDefinition(STRING).name("lastIndexOf").addParameter(STRING),
-      MethodMatcher.create().typeDefinition(STRING).name("lastIndexOf").addParameter(STRING).addParameter("int")
-      );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.create()
+      .ofTypes(STRING)
+      .names("indexOf", "lastIndexOf")
+      .addParametersMatcher(STRING)
+      .addParametersMatcher(STRING, "int").build();
   }
 

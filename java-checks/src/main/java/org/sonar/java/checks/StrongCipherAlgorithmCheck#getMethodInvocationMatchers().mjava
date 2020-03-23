@@ -1,7 +1,7 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition("javax.crypto.Cipher").name("getInstance").withAnyParameters(),
-      MethodMatcher.create().typeDefinition("javax.crypto.NullCipher").name("<init>").withAnyParameters());
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes("javax.crypto.Cipher").names("getInstance").withAnyParameters().build(),
+      MethodMatchers.create().ofTypes("javax.crypto.NullCipher").constructor().withAnyParameters().build());
   }
 

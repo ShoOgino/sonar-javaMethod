@@ -1,8 +1,7 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.lang.Class")).name("forName").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.lang.ClassLoader")).name("loadClass").withAnyParameters()
-    );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofSubTypes("java.lang.Class").names("forName").withAnyParameters().build(),
+      MethodMatchers.create().ofSubTypes("java.lang.ClassLoader").names("loadClass").withAnyParameters().build());
   }
 

@@ -1,11 +1,15 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(JAVA_LANG_STRING).name("indexOf").parameters(JAVA_LANG_STRING),
-      MethodMatcher.create().typeDefinition(JAVA_LANG_STRING).name("indexOf").parameters(INT),
-      MethodMatcher.create().typeDefinition(JAVA_LANG_STRING).name("lastIndexOf").parameters(JAVA_LANG_STRING),
-      MethodMatcher.create().typeDefinition(JAVA_LANG_STRING).name("lastIndexOf").parameters(INT),
-      MethodMatcher.create().typeDefinition(JAVA_LANG_STRING).name("startsWith").parameters(JAVA_LANG_STRING)
-      );
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes(JAVA_LANG_STRING)
+        .names("indexOf", "lastIndexOf")
+        .addParametersMatcher(INT)
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(JAVA_LANG_STRING)
+        .names("indexOf", "lastIndexOf", "startsWith")
+        .addParametersMatcher(JAVA_LANG_STRING)
+        .build());
   }
 

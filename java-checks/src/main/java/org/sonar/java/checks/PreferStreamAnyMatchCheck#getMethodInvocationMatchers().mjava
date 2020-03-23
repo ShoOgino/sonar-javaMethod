@@ -1,12 +1,15 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    List<MethodMatcher> matchers = new ArrayList<>();
-    Stream.of("java.util.Optional", "java.util.OptionalInt", "java.util.OptionalLong", "java.util.OptionalDouble")
-      .map(type -> MethodMatcher.create().typeDefinition(type).name("isPresent").withoutParameter())
-      .forEach(matchers::add);
-    STREAM_TYPES.stream()
-      .map(type -> MethodMatcher.create().typeDefinition(type).name("anyMatch").addParameter("java.util.function.Predicate"))
-      .forEach(matchers::add);
-    return matchers;
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes("java.util.Optional", "java.util.OptionalInt", "java.util.OptionalLong", "java.util.OptionalDouble")
+        .names("isPresent")
+        .addWithoutParametersMatcher()
+        .build(),
+      MethodMatchers.create()
+        .ofTypes(STREAM_TYPES)
+        .names("anyMatch")
+        .addParametersMatcher("java.util.function.Predicate")
+        .build());
   }
 

@@ -1,7 +1,7 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(CLASS_NAME)).name(CONSTRUCTOR_NAME).withAnyParameters(),
-      MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(CLASS_NAME)).name("setReturningObjFlag").parameters("boolean"));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofSubTypes(CLASS_NAME).names(CONSTRUCTOR_NAME).withAnyParameters().build(),
+      MethodMatchers.create().ofSubTypes(CLASS_NAME).names("setReturningObjFlag").addParametersMatcher("boolean").build());
   }
 

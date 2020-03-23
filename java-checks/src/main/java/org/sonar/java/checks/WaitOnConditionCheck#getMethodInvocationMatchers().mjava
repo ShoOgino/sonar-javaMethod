@@ -1,9 +1,11 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    TypeCriteria conditionSubType = TypeCriteria.subtypeOf("java.util.concurrent.locks.Condition");
-    return Arrays.asList(
-      MethodMatcher.create().callSite(conditionSubType).name("wait").withoutParameter(),
-      MethodMatcher.create().callSite(conditionSubType).name("wait").addParameter("long"),
-      MethodMatcher.create().callSite(conditionSubType).name("wait").addParameter("long").addParameter("int"));
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.create()
+      .ofSubTypes("java.util.concurrent.locks.Condition")
+      .names("wait")
+      .addWithoutParametersMatcher()
+      .addParametersMatcher("long")
+      .addParametersMatcher("long", "int")
+      .build();
   }
 

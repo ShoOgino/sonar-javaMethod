@@ -1,11 +1,16 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition("org.apache.http.message.AbstractHttpMessage").name("setHeader").withAnyParameters(),
-      MethodMatcher.create().typeDefinition("org.apache.http.message.AbstractHttpMessage").name("addHeader").addParameter(LANG_STRING).addParameter(LANG_STRING),
-      MethodMatcher.create().typeDefinition("org.apache.http.message.BasicHeader").name("<init>").addParameter(LANG_STRING).addParameter(LANG_STRING),
-      MethodMatcher.create().typeDefinition("java.net.URLConnection").name("setRequestProperty").withAnyParameters(),
-      MethodMatcher.create().typeDefinition("java.net.URLConnection").name("addRequestProperty").withAnyParameters()
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofSubTypes("org.apache.http.message.AbstractHttpMessage").names("setHeader").withAnyParameters().build(),
+      MethodMatchers.create()
+        .ofSubTypes("org.apache.http.message.AbstractHttpMessage").names("addHeader").addParametersMatcher(LANG_STRING, LANG_STRING).build(),
+      MethodMatchers.create()
+        .ofSubTypes("org.apache.http.message.BasicHeader").constructor().addParametersMatcher(LANG_STRING, LANG_STRING).build(),
+      MethodMatchers.create()
+        .ofSubTypes("java.net.URLConnection").names("setRequestProperty").withAnyParameters().build(),
+      MethodMatchers.create()
+        .ofSubTypes("java.net.URLConnection").names("addRequestProperty").withAnyParameters().build()
       );
   }
 

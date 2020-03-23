@@ -1,8 +1,9 @@
   private void h() {
+    Object someContextVariable = null;
     try {
       /* ... */
-    } catch (Exception e) {                     // Compliant
-      throw Throwables.propagate(e);
+    } catch (Error e) {                     // Compliant
+      throw com.google.common.base.Throwables.propagate(e);
     } catch (RuntimeException e) {              // Compliant - propagation
       throw e;
     } catch (Exception e) {                     // Noncompliant
@@ -28,21 +29,23 @@
     }
 
     try {
+      Files.read("");
     } catch (IOException e) {                    // Compliant
-      throw Throwables.propagate(e);
+      throw com.google.common.base.Throwables.propagate(e);
     }
 
     try {
+      Files.read("");
     } catch (IOException e) {                    // Compliant
       throw new RuntimeException(e);
     } catch (Exception e) {                      // Noncompliant
       throw new RuntimeException(e.getMessage());
-    } catch (Exception e) {                      // Compliant
-      throw Throwables.propagate(e);
+    } catch (Error e) {                      // Compliant
+      throw com.google.common.base.Throwables.propagate(e);
     }
 
     try {
-    } catch (Exception e) {                      // Compliant
+    } catch (RuntimeException e) {                      // Compliant
       throw e;
     } catch (Exception ex) {
       throw new XNIException(ex);
@@ -50,11 +53,17 @@
 
 
     try {
+      if (true) {
+        throw new java.text.ParseException("", 0);
+      } else {
+        throw new MalformedURLException();
+      }
+      Thread.currentThread().join();
     } catch (NumberFormatException e) {          // Compliant
-      return 0;
+      return;
     } catch (InterruptedException e) {           // Compliant
       /* do nothing */
-    } catch (ParseException e) {                 // Compliant
+    } catch (java.text.ParseException e) {                 // Compliant
     } catch (MalformedURLException e) {          // Compliant
     } catch (java.time.format.DateTimeParseException e) {          // Compliant
     }

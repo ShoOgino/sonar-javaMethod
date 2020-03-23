@@ -1,10 +1,8 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().typeDefinition(PATTERN).name("compile").addParameter(STRING),
-      MethodMatcher.create().typeDefinition(STRING).name("matches").withAnyParameters(),
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create().ofTypes(PATTERN).names("compile").addParametersMatcher(STRING).build(),
       SPLIT_MATCHER,
-      MethodMatcher.create().typeDefinition(STRING).name("replaceAll").withAnyParameters(),
-      MethodMatcher.create().typeDefinition(STRING).name("replaceFirst").withAnyParameters());
+      MethodMatchers.create().ofTypes(STRING).names("matches", "replaceAll", "replaceFirst").withAnyParameters().build());
   }
 

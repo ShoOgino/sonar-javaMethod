@@ -1,10 +1,16 @@
   @Override
-  protected List<MethodMatcher> getMethodInvocationMatchers() {
-    return Arrays.asList(
-      MethodMatcher.create().name("wait").withoutParameter(),
-      MethodMatcher.create().name("wait").addParameter("long"),
-      MethodMatcher.create().name("wait").addParameter("long").addParameter("int"),
-      MethodMatcher.create().name("notify").withoutParameter(),
-      MethodMatcher.create().name("notifyAll").withoutParameter());
+  protected MethodMatchers getMethodInvocationMatchers() {
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofAnyType().names("wait")
+        .addWithoutParametersMatcher()
+        .addParametersMatcher("long")
+        .addParametersMatcher("long", "int")
+        .build(),
+      MethodMatchers.create()
+        .ofAnyType()
+        .names("notify", "notifyAll")
+        .addWithoutParametersMatcher()
+        .build());
   }
 
