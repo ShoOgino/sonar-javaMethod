@@ -1,6 +1,8 @@
   @Override
   public Type getClassType(String fullyQualifiedName) {
-    ITypeBinding typeBinding = resolveType(fullyQualifiedName);
-    return typeBinding != null ? type(typeBinding) : Symbols.unknownType;
+    return nameToTypeCache.computeIfAbsent(fullyQualifiedName, (t) -> {
+      ITypeBinding typeBinding = resolveType(t);
+      return typeBinding != null ? type(typeBinding) : Symbols.unknownType;
+    });
   }
 
