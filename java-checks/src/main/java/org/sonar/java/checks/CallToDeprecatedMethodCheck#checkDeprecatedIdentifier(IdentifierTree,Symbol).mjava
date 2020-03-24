@@ -1,0 +1,13 @@
+  @Override
+  void checkDeprecatedIdentifier(IdentifierTree identifierTree, Symbol deprecatedSymbol) {
+    if (isFlaggedForRemoval(deprecatedSymbol)) {
+      // do not overlap with S5738
+      return;
+    }
+    String name = deprecatedSymbol.name();
+    if (isConstructor(deprecatedSymbol)) {
+      name = deprecatedSymbol.owner().name();
+    }
+    reportIssue(identifierTree, String.format("Remove this use of \"%s\"; it is deprecated.", name));
+  }
+

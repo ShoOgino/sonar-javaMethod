@@ -1,0 +1,17 @@
+  @Override
+  void checkDeprecatedIdentifier(IdentifierTree identifierTree, Symbol deprecatedSymbol) {
+    if (!isFlaggedForRemoval(deprecatedSymbol)) {
+      // do not overlap with S1874
+      return;
+    }
+    String deprecatedCode = "code";
+    if (deprecatedSymbol.isMethodSymbol()) {
+      deprecatedCode = "method";
+    } else if (deprecatedSymbol.isTypeSymbol()) {
+      deprecatedCode = "class";
+    } else if (deprecatedSymbol.isVariableSymbol()) {
+      deprecatedCode = "field";
+    }
+    reportIssue(identifierTree, String.format(MESSAGE, deprecatedCode));
+  }
+

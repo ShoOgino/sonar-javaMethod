@@ -1,0 +1,14 @@
+  private static Optional<Symbol> tryGetDeprecatedSymbol(IdentifierTree identifierTree) {
+    Symbol symbol = identifierTree.symbol();
+    if (symbol.isDeprecated()) {
+      return Optional.of(symbol);
+    }
+    if (isConstructor(symbol) && symbol.owner().isDeprecated()) {
+      return Optional.of(symbol.owner());
+    }
+    if (isDeprecatedEnumConstant(symbol)) {
+      return Optional.of(symbol.type().symbol());
+    }
+    return Optional.empty();
+  }
+

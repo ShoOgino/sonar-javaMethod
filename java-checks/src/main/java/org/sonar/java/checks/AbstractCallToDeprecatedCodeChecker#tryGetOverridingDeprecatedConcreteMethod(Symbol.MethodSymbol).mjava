@@ -1,14 +1,14 @@
-  private static boolean isOverridingDeprecatedConcreteMethod(Symbol.MethodSymbol symbol) {
+  private static Optional<Symbol.MethodSymbol> tryGetOverridingDeprecatedConcreteMethod(Symbol.MethodSymbol symbol) {
     Symbol.MethodSymbol overriddenMethod = symbol.overriddenSymbol();
     while(overriddenMethod != null && !overriddenMethod.isUnknown()) {
       if (overriddenMethod.isAbstract()) {
-        return false;
+        return Optional.empty();
       }
       if (overriddenMethod.isDeprecated()) {
-        return true;
+        return Optional.of(overriddenMethod);
       }
       overriddenMethod = overriddenMethod.overriddenSymbol();
     }
-    return false;
+    return Optional.empty();
   }
 

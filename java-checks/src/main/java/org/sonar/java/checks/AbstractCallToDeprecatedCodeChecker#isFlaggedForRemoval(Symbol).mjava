@@ -1,0 +1,10 @@
+  boolean isFlaggedForRemoval(Symbol deprecatedSymbol) {
+    List<AnnotationValue> valuesForAnnotation = deprecatedSymbol.metadata().valuesForAnnotation("java.lang.Deprecated");
+    if (valuesForAnnotation == null) {
+      return false;
+    }
+    return valuesForAnnotation.stream()
+      .filter(annotationValue -> "forRemoval".equals(annotationValue.name()))
+      .anyMatch(annotationValue -> Boolean.TRUE.equals(annotationValue.value()));
+  }
+
