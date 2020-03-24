@@ -1,0 +1,24 @@
+  @Test
+  public void invalid_file() {
+    Path p = Paths.get("file.class.smap");
+    assertThatThrownBy(() -> new SmapFile(p, new Scanner("not a smap file")))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Not a source map");
+
+    assertThatThrownBy(() -> new SmapFile(p, new Scanner("SMAP\ntest.groovy\nGroovy\n\n")))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Not a JSP source map");
+
+    assertThatThrownBy(() -> new SmapFile(p, new Scanner("SMAP\ntest.jsp\nJSP\n*E")))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Section *S JSP not found");
+
+    assertThatThrownBy(() -> new SmapFile(p, new Scanner("SMAP\ntest.jsp\nJSP\n*S JSP\n*E")))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Section *F not found");
+
+    assertThatThrownBy(() -> new SmapFile(p, new Scanner("SMAP\ntest.jsp\nJSP\n*S JSP\n*F\n")))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Section *L not found");
+  }
+

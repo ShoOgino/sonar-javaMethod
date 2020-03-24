@@ -1,0 +1,20 @@
+    @VisibleForTesting
+    Optional<Location> getLocation(int startLine, int endLine) {
+      Location startLoc = lines.get(startLine);
+      if (startLoc == null) {
+        return Optional.empty();
+      }
+      int inputStartLine = startLoc.startLine();
+      Path startFile = startLoc.inputFile();
+      Location endLoc = lines.get(endLine);
+      if (endLoc == null) {
+        return Optional.empty();
+      }
+      int inputEndLine = endLoc.endLine();
+      Path endFile = endLoc.inputFile();
+      if (!startFile.equals(endFile)) {
+        return Optional.empty();
+      }
+      return Optional.of(new LocationImpl(startFile, inputStartLine, inputEndLine));
+    }
+

@@ -1,0 +1,17 @@
+  @Test
+  public void fileinfo_hashcode_equals_tostring() {
+    SmapFile.FileInfo fileInfo = new SmapFile.FileInfo(0, "file.jsp", "path/file.jsp");
+    SmapFile.FileInfo fileInfo2 = new SmapFile.FileInfo(0, "file.jsp", "path/file.jsp");
+    assertThat(fileInfo).isEqualTo(fileInfo);
+    assertThat(fileInfo).isEqualTo(fileInfo2);
+    assertThat(fileInfo).isNotEqualTo(null);
+    assertThat(fileInfo).isNotEqualTo(0);
+    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(1, "file.jsp", "path/file.jsp"));
+    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(0, "file2.jsp", "path/file.jsp"));
+    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(0, "file.jsp", "path/file2.jsp"));
+    Set<SmapFile.FileInfo> set = new HashSet<>();
+    set.add(fileInfo);
+    assertThat(set.add(fileInfo2)).isFalse();
+    assertThat(fileInfo.toString()).isEqualTo("FileInfo{fileId=0, sourceName='file.jsp', sourcePath='path/file.jsp'}");
+  }
+

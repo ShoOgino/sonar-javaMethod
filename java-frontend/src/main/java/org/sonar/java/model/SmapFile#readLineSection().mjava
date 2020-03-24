@@ -1,0 +1,25 @@
+  private List<LineInfo> readLineSection() {
+    List<LineInfo> result = new ArrayList<>();
+    int lineFileId = 0;
+    while (sc.hasNext() && !sc.hasNext("\\*.")) {
+      String line = sc.nextLine();
+      Matcher matcher = LINE_INFO.matcher(line);
+      if (matcher.matches()) {
+        int inputStartLine = parseInt(matcher.group("inputStartLine"));
+        String lineFileIdGroup = matcher.group("lineFileId");
+        if (lineFileIdGroup != null) {
+          lineFileId = parseInt(lineFileIdGroup);
+        }
+        String repeatCountGroup = matcher.group("repeatCount");
+        int repeatCount = repeatCountGroup != null ? parseInt(repeatCountGroup) : 1;
+        int outputStartLine = parseInt(matcher.group("outputStartLine"));
+        String outputIncrementGroup = matcher.group("outputIncrement");
+        int outputIncrement = outputIncrementGroup != null ? parseInt(outputIncrementGroup) : 1;
+        result.add(new LineInfo(inputStartLine, lineFileId, repeatCount, outputStartLine, outputIncrement));
+      } else {
+        LOG.warn("Invalid line info {}", line);
+      }
+    }
+    return result;
+  }
+

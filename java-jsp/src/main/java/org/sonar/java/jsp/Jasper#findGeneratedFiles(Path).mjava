@@ -1,0 +1,15 @@
+  private static Collection<GeneratedFile> findGeneratedFiles(Path outputDir) {
+    Map<Path, GeneratedFile> generatedFiles = new HashMap<>();
+    try (Stream<Path> fileStream = walk(outputDir)) {
+      fileStream
+        .filter(p -> Files.isRegularFile(p) && p.toString().endsWith(".smap"))
+        .map(SmapFile::fromPath)
+        .forEach(smap -> {
+          GeneratedFile generatedFile = generatedFiles.computeIfAbsent(smap.getGeneratedFile(), p -> new GeneratedFile(smap.getGeneratedFile()));
+          generatedFile.addSmap(smap);
+        });
+      LOG.debug("Generated {} Java files.", generatedFiles.size());
+      return generatedFiles.values();
+    }
+  }
+

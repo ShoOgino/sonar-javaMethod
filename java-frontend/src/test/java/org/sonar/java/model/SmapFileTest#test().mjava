@@ -1,0 +1,38 @@
+  @Test
+  public void test() throws Exception {
+    String sourceMap = "SMAP\n" +
+      "test_jsp.java\n" +
+      "JSP\n" +
+      "*S JSP\n" +
+      "*F\n" +
+      "+ 0 test.jsp\n" +
+      "WEB-INF/test.jsp\n" +
+      "2 Incl.xyz\n" +
+      "*L\n" +
+      "1,5:116,0\n" +
+      "123:207\n" +
+      "130,3:210\n" +
+      "140:250,7\n" +
+      "160,3:300,2\n" +
+      "160#2,3:300,2\n" +
+      "160,3:300,2\n" +
+      "*E\n";
+    Path path = temporaryFolder.newFile("test_jsp.class.smap").toPath();
+    Files.write(path, sourceMap.getBytes(StandardCharsets.UTF_8));
+    SmapFile smap = SmapFile.fromPath(path);
+    assertThat(smap.getGeneratedFile()).isEqualTo(path.resolveSibling("test_jsp.java"));
+    assertThat(smap.getFileSection()).containsExactly(
+      entry(0, new SmapFile.FileInfo(0, "test.jsp", "WEB-INF/test.jsp")),
+      entry(2, new SmapFile.FileInfo(2, "Incl.xyz", null))
+      );
+    assertThat(smap.getLineSection()).containsExactly(
+      new SmapFile.LineInfo(1, 0, 5, 116, 0),
+      new SmapFile.LineInfo(123, 0, 1, 207, 1),
+      new SmapFile.LineInfo(130, 0, 3, 210, 1),
+      new SmapFile.LineInfo(140, 0, 1, 250, 7),
+      new SmapFile.LineInfo(160, 0, 3, 300, 2),
+      new SmapFile.LineInfo(160, 2, 3, 300, 2),
+      new SmapFile.LineInfo(160, 2, 3, 300, 2)
+    );
+  }
+

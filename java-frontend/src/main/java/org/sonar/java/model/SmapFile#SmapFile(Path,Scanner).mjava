@@ -1,0 +1,19 @@
+  SmapFile(Path sourceMapPath, Scanner scanner) {
+    this.sc = scanner;
+    String header = sc.nextLine();
+    if (!"SMAP".equals(header)) {
+      throw new IllegalStateException("Not a source map");
+    }
+    String generatedFileName = sc.nextLine();
+    generatedFile = sourceMapPath.resolveSibling(generatedFileName);
+    String defaultStratum = sc.nextLine();
+    if (!"JSP".equals(defaultStratum)) {
+      throw new IllegalStateException("Not a JSP source map");
+    }
+    findSection("*S JSP");
+    findSection("*F");
+    fileSection = readFileSection();
+    findSection("*L");
+    lineSection = readLineSection();
+  }
+
