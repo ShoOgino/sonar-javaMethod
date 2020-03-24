@@ -1,9 +1,10 @@
     @Override
     public List<AnnotationValue> values() {
-      List<AnnotationValue> r = new ArrayList<>();
-      for (IMemberValuePairBinding pair : annotationBinding.getDeclaredMemberValuePairs()) {
-        r.add(new AnnotationValueResolve(pair.getName(), convertAnnotationValue(pair.getValue())));
+      if (values == null) {
+        values = Arrays.stream(annotationBinding.getDeclaredMemberValuePairs())
+          .map(p -> new AnnotationValueResolve(p.getName(), convertAnnotationValue(p.getValue())))
+          .collect(Collectors.toList());
       }
-      return r;
+      return values;
     }
 
