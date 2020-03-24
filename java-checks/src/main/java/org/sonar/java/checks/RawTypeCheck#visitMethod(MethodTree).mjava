@@ -1,0 +1,11 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    if (tree.symbol().overriddenSymbol() != null) {
+      // only scan body of the method
+      scan(tree.block());
+    } else {
+      checkTypeTree(tree.returnType());
+      super.visitMethod(tree);
+    }
+  }
+

@@ -1,0 +1,17 @@
+  @Test
+  void declaringType() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C<T> { void foo(C d, Unknown u) {} }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    VariableTreeImpl cRaw = (VariableTreeImpl) m.parameters().get(0);
+    VariableTreeImpl unknown = (VariableTreeImpl) m.parameters().get(1);
+
+    assertThat(JUtils.declaringType(unknown.symbol().type()))
+      .isSameAs(unknown.symbol().type());
+
+    assertThat(JUtils.declaringType(cRaw.type().symbolType()))
+      .isSameAs(JUtils.declaringType(c.symbol().type()))
+      .isSameAs(c.symbol().type());
+  }
+

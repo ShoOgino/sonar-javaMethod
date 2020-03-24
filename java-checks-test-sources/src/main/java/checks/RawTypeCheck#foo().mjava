@@ -1,0 +1,15 @@
+  void foo() {
+    GenericClass v; // Noncompliant [[sc=5;ec=17]] {{Provide the parametrized type for this generic.}}
+    v = new GenericClass(); // Noncompliant [[sc=13;ec=25]] {{Provide the parametrized type for this generic.}}
+    v = new RawTypeCheck.GenericClass(); // Noncompliant [[sc=26;ec=38]]
+
+    v = new GenericClass<>(); // Compliant
+    v = new GenericClass<String>(); // Compliant
+
+    RawTypeCheck t;
+
+    @SuppressWarnings("rawtypes")
+    Optional o2; // Noncompliant - should be handled by SONARJAVA-2410 and filtered out
+    Optional<String> o1 = Optional.empty(); // Compliant
+  }
+

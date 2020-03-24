@@ -1,0 +1,20 @@
+  @Test
+  void isRawType() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class C {} class D<T> { void foo(D d, Unknown u) {} }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+
+    ClassTreeImpl dGeneric = (ClassTreeImpl) cu.types().get(1);
+    MethodTreeImpl m = (MethodTreeImpl) dGeneric.members().get(0);
+    VariableTreeImpl dRaw = (VariableTreeImpl) m.parameters().get(0);
+    VariableTreeImpl unknown = (VariableTreeImpl) m.parameters().get(1);
+
+    assertThat(JUtils.isRawType(c.symbol().type()))
+      .isSameAs(JUtils.isRawType(dGeneric.symbol().type()))
+      .isSameAs(JUtils.isRawType(unknown.symbol().type()))
+      .isFalse();
+
+    assertThat(JUtils.isRawType(dRaw.type()
+      .symbolType()))
+      .isTrue();
+  }
+
