@@ -6,11 +6,11 @@
     CheckFactory checkFactory = new CheckFactory(activeRules);
 
     JspCodeCheck check = new JspCodeCheck();
-    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, checkFactory, new CheckRegistrar[]{getRegistrar(check)});
+    SonarComponents sonarComponents = new SonarComponents(null, null, null, null, checkFactory, new CheckRegistrar[]{getRegistrar(check)}, null);
     List<JavaCheck> checks = sonarComponents.jspCodeVisitors();
     assertThat(checks).extracting(Object::getClass).containsExactly(JspCodeCheck.class);
 
-    sonarComponents = new SonarComponents(null, null, null, null, checkFactory);
+    sonarComponents = new SonarComponents(null, null, null, null, checkFactory, null);
     assertThat(sonarComponents.jspCodeVisitors()).isEmpty();
   }
 

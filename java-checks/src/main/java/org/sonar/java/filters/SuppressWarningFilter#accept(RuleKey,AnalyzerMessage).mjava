@@ -1,0 +1,10 @@
+  @Override
+  public boolean accept(RuleKey ruleKey, AnalyzerMessage analyzerMessage) {
+    Multimap<String, Integer> excludedLinesByRule = HashMultimap.create();
+    String componentKey = analyzerMessage.getInputComponent().key();
+    if (excludedLinesByComponent.containsKey(componentKey)) {
+      excludedLinesByRule = excludedLinesByComponent.get(componentKey);
+    }
+    return !issueShouldNotBeReported(ruleKey, analyzerMessage, excludedLinesByRule);
+  }
+

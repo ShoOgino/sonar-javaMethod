@@ -1,9 +1,8 @@
-  private static boolean issueShouldNotBeReported(FilterableIssue issue, Multimap<String, Integer> excludedLineByRule) {
-    RuleKey issueRuleKey = issue.ruleKey();
+  private static boolean issueShouldNotBeReported(RuleKey issueRuleKey, AnalyzerMessage analyzerMessage, Multimap<String, Integer> excludedLineByRule) {
     for (String excludedRule : excludedLineByRule.keySet()) {
       if (("all".equals(excludedRule) || isRuleKey(excludedRule, issueRuleKey)) && !isSuppressWarningRule(issueRuleKey)) {
         Collection<Integer> excludedLines = excludedLineByRule.get(excludedRule);
-        if (excludedLines.contains(issue.line())) {
+        if (excludedLines.contains(analyzerMessage.getLine())) {
           return true;
         }
       }

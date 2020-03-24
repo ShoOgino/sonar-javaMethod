@@ -1,0 +1,25 @@
+  @Test
+  public void test_filtered_issue_are_not_reported() throws Exception {
+    JavaCheck expectedCheck = new CustomCheck();
+    CheckRegistrar expectedRegistrar = getRegistrar(expectedCheck);
+    SensorContextTester context = SensorContextTester.create(new File("."));
+    DefaultFileSystem fileSystem = context.fileSystem();
+    InputFile inputFile = createInputFile();
+    fileSystem.add(inputFile);
+
+    when(this.checks.ruleKey(any(JavaCheck.class))).thenReturn(mock(RuleKey.class));
+
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fileSystem, null, null, checkFactory, new CheckRegistrar[] {
+      expectedRegistrar
+    }, new FakeJavaIssueFilter());
+
+    sonarComponents.setSensorContext(context);
+
+    sonarComponents.addIssue(inputFile, expectedCheck, 42, "message on line 42", null);
+    sonarComponents.addIssue(inputFile, expectedCheck, 35, "message on line 35", null);
+
+    List<Issue> issues = new ArrayList<>(context.allIssues());
+    assertThat(issues).hasSize(1);
+    assertThat(issues.get(0).primaryLocation().message()).isEqualTo("message on line 35");
+  }
+

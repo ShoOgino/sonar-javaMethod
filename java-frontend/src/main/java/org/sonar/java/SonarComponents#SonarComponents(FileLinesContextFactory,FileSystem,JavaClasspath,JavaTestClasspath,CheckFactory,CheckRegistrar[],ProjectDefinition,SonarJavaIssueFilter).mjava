@@ -3,7 +3,8 @@
    */
   public SonarComponents(FileLinesContextFactory fileLinesContextFactory, FileSystem fs,
                          JavaClasspath javaClasspath, JavaTestClasspath javaTestClasspath, CheckFactory checkFactory,
-                         @Nullable CheckRegistrar[] checkRegistrars, @Nullable ProjectDefinition projectDefinition) {
+                         @Nullable CheckRegistrar[] checkRegistrars, @Nullable ProjectDefinition projectDefinition,
+                         SonarJavaIssueFilter postAnalysisIssueFilter) {
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.fs = fs;
     this.javaClasspath = javaClasspath;
@@ -13,6 +14,7 @@
     this.checks = new ArrayList<>();
     this.testChecks = new ArrayList<>();
     this.allChecks = new ArrayList<>();
+    this.issueFilter = postAnalysisIssueFilter;
     if (checkRegistrars != null) {
       CheckRegistrar.RegistrarContext registrarContext = new CheckRegistrar.RegistrarContext();
       for (CheckRegistrar checkClassesRegister : checkRegistrars) {
