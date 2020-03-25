@@ -5,7 +5,13 @@
         args.addAll(getRulesFromExpression(initializer));
       }
     } else {
-      expression.asConstant(String.class).ifPresent(args::add);
+      expression.asConstant(String.class).ifPresent(rule -> {
+        if (JAVAC_WARNING_SUPPRESSING_RULES.containsKey(rule)) {
+          args.addAll(JAVAC_WARNING_SUPPRESSING_RULES.get(rule));
+        } else {
+          args.add(rule);
+        }
+      });
     }
     return args;
   }
