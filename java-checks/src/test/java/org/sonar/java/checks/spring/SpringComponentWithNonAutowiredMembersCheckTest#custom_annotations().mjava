@@ -1,6 +1,10 @@
   @Test
   public void custom_annotations() {
     check.customInjectionAnnotations = "com.mycompany.myproject.MyController$MyInjectionAnnotation ,,";
-    JavaCheckVerifier.verify(basePath + "CustomAnnotations.java", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath(basePath + "CustomAnnotations.java"))
+      .withCheck(check)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

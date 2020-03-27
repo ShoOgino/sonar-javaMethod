@@ -1,6 +1,14 @@
   @Test
   public void default_annotations() {
-    JavaCheckVerifier.verify(basePath + "DefaultAnnotations.java", check);
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic(basePath + "DefaultAnnotations.java", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath(basePath + "DefaultAnnotations.java"))
+      .withCheck(check)
+      .verifyIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath(basePath + "DefaultAnnotations.java"))
+      .withCheck(check)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 
