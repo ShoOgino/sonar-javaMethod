@@ -1,0 +1,19 @@
+  void testSecondaryLocations(String param) throws SQLException {
+    Connection conn = DriverManager.getConnection("url", "user1", "password");
+
+    String query1 = "SELECT"; // secondary location
+    query1 += param; // secondary location
+    conn.prepareStatement(query1); // Noncompliant [[secondary=128,127]]]
+
+
+    boolean bool = false;
+    String query2 = "Select Lname ";
+    if(bool) {
+      query2 += "FROM Customers";
+    } else {
+      query2 += param;
+    }
+    query2 = query2 + " WHERE Snum =2001";
+    conn.prepareStatement(query2); // Noncompliant [[secondary=133,135,137,139]]
+  }
+

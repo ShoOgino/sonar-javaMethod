@@ -1,0 +1,12 @@
+  private static List<JavaFileScannerContext.Location> secondaryLocations(@Nullable ExpressionTree initializerOrExpression, List<AssignmentExpressionTree> reassignments) {
+    List<JavaFileScannerContext.Location> secondaryLocations = reassignments.stream()
+      .map(AssignmentExpressionTree::expression)
+      .map(expr -> new JavaFileScannerContext.Location("Sensitive update", expr))
+      .collect(Collectors.toList());
+
+    if (initializerOrExpression != null) {
+      secondaryLocations.add(new JavaFileScannerContext.Location("Sensitive variable manipulation", initializerOrExpression));
+    }
+    return secondaryLocations;
+  }
+

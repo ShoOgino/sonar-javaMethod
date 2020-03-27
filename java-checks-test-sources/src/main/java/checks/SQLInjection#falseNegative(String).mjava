@@ -1,0 +1,16 @@
+  void falseNegative(String param) throws SQLException {
+    Connection conn = DriverManager.getConnection("url", "user1", "password");
+    String s;
+    s = "SELECT FROM " + param;
+    conn.prepareStatement(s); // Compliant, false negative
+
+    String s2 = "SELECT";
+    s2 = s2 + param;
+    conn.prepareStatement(s2); // Compliant, true negative
+
+    String s3;
+    s3 = "SELECT";
+    s3 += param;
+    conn.prepareStatement(s3); // Noncompliant, true positive
+  }
+

@@ -4,8 +4,22 @@
       Optional<ExpressionTree> sqlStringArg = arguments(tree)
         .filter(arg -> arg.symbolType().is("java.lang.String"))
         .findFirst();
-      sqlStringArg.filter(SQLInjectionCheck::isDynamicString)
-        .ifPresent(arg -> reportIssue(arg, "Ensure that string concatenation is required and safe for this SQL query."));
+
+      if (sqlStringArg.isPresent()) {
+        ExpressionTree sqlArg = sqlStringArg.get();
+        if (isDynamicConcatenation(sqlArg)) {
+          reportIssue(sqlArg, "Ensure that string concatenation is required and safe for this SQL query.");
+        } else if (sqlArg.is(Tree.Kind.IDENTIFIER)) {
+          Symbol symbol = ((IdentifierTree) sqlArg).symbol();
+          ExpressionTree initializerOrExpression = getInitializerOrExpression(symbol.declaration());
+          List<AssignmentExpressionTree> reassignments = getReassignments(symbol.owner().declaration(), symbol.usages());
+
+          if ((initializerOrExpression != null && isDynamicConcatenation(initializerOrExpression)) ||
+            reassignments.stream().anyMatch(SQLInjectionCheck::isDynamicPlusAssignment)) {
+            reportIssue(sqlArg, "Ensure that string concatenation is required and safe for this SQL query.", secondaryLocations(initializerOrExpression, reassignments), null);
+          }
+        }
+      }
     }
   }
 
