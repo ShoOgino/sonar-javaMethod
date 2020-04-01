@@ -1,9 +1,9 @@
   private static boolean isSerializableAndValueBased(Type type) {
     // we check first the ParametrizedTypeJavaType, in order to filter out the non-serializable
     // generic value-based class Optional<T>
-    if (JUtils.isParametrized(type)) {
+    if (type.isParameterized()) {
       return isSubtypeOfCollectionApi(type) &&
-        JUtils.typeArguments(type).stream().anyMatch(ValueBasedObjectsShouldNotBeSerializedCheck::isSerializableAndValueBased);
+        type.typeArguments().stream().anyMatch(ValueBasedObjectsShouldNotBeSerializedCheck::isSerializableAndValueBased);
     }
     return ValueBasedUtils.isValueBased(type);
   }

@@ -1,0 +1,29 @@
+  @Test
+  public void unknown_type() {
+    Type unknownType = Symbols.unknownType;
+
+    assertThat(unknownType.isUnknown()).isTrue();
+    assertThat(unknownType).isEqualTo(Symbols.unknownType);
+
+    assertThat(unknownType.is("!Unknown!")).isFalse();
+    assertThat(unknownType.isSubtypeOf("!Unknown!")).isFalse();
+    assertThat(unknownType.isSubtypeOf(Symbols.unknownType)).isFalse();
+
+    assertThat(unknownType.isArray()).isFalse();
+    assertThat(unknownType.isClass()).isFalse();
+    assertThat(unknownType.isVoid()).isFalse();
+    assertThat(unknownType.isPrimitive()).isFalse();
+    assertThat(unknownType.isPrimitive(Primitives.BOOLEAN)).isFalse();
+    assertThat(unknownType.isNumerical()).isFalse();
+
+    assertThat(unknownType.fullyQualifiedName()).isEqualTo("!Unknown!");
+    assertThat(unknownType.name()).isEqualTo("!Unknown!");
+
+    assertThat(unknownType.symbol()).isEqualTo(Symbols.unknownTypeSymbol);
+    assertThat(unknownType.erasure()).isEqualTo(Symbols.unknownType);
+
+    // since SonarJava 6.3
+    assertThat(unknownType.typeArguments()).isEmpty();
+    assertThat(unknownType.isParameterized()).isFalse();
+  }
+
