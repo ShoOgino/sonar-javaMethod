@@ -1,16 +1,46 @@
-  public Collection<GeneratedFile> generateFiles(SensorContext context, List<File> javaClasspath) {
-    List<Path> jspFiles = jspFiles(context.fileSystem());
+  public Collection<GeneratedFile> generateFiles(SensorContext sensorContext, List<File> javaClasspath) {
+    List<Path> jspFiles = jspFiles(sensorContext.fileSystem());
     LOG.debug("Found {} JSP files.", jspFiles.size());
     if (jspFiles.isEmpty()) {
       return Collections.emptyList();
     }
-    Path outputDir = outputDir(context);
+    Path outputDir = outputDir(sensorContext);
+    File baseDir = sensorContext.fileSystem().baseDir();
+    // Jasper internally calls Thread#getContextClassLoader to instantiate some classes. ContextClassLoader is set by scanner
+    // and doesn't contain plugin jar, so we need to configure ContextClassLoader with the class loader of the plugin to be able
+    // to run Jasper. Original classloader is restored in finally.
+    ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
     try {
-      Jasper.compileJspFiles(jspFiles, javaClasspath, outputDir, context.fileSystem().baseDir());
+      ClassLoader classLoader = initClassLoader(javaClasspath);
+      Thread.currentThread().setContextClassLoader(classLoader);
+      JspFactory.setDefaultFactory(new JspFactoryImpl());
+      JspCServletContext servletContext = new ServletContext(toUrl(baseDir), classLoader);
+      JasperOptions options = new JasperOptions(servletContext, outputDir);
+      JspRuntimeContext runtimeContext = new JspRuntimeContext(servletContext, options);
+
+      boolean errorTranspiling = false;
+      for (Path file : jspFiles) {
+        LOG.debug("Transpiling JSP: {}", file);
+        try {
+          String relativePath = file.toAbsolutePath().toString().substring(baseDir.getAbsolutePath().length());
+          JspCompilationContext compilationContext = new JspCompilationContext(relativePath, options, servletContext, null, runtimeContext);
+          compilationContext.setClassLoader(classLoader);
+          Compiler compiler = compilationContext.createCompiler();
+          compiler.compile(false, true);
+        } catch (Exception e) {
+          errorTranspiling = true;
+          LOG.debug("Error transpiling " + file, e);
+        }
+      }
+      if (errorTranspiling) {
+        LOG.warn("Some JSP pages failed to transpile. Enable debug log for details.");
+      }
+      return findGeneratedFiles(outputDir);
     } catch (Exception e) {
       LOG.warn("Failed to transpile JSP files.", e);
       return Collections.emptyList();
+    } finally {
+      Thread.currentThread().setContextClassLoader(originalClassLoader);
     }
-    return findGeneratedFiles(outputDir);
   }
 

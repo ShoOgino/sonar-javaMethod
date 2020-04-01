@@ -3,6 +3,7 @@
     SensorContextTester ctx = jspContext("<%=");
     Collection<GeneratedFile> inputFiles = new Jasper().generateFiles(ctx, emptyList());
     assertThat(inputFiles).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Failed to transpile JSP files.");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Error transpiling " + jspFile.toAbsolutePath());
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Some JSP pages failed to transpile. Enable debug log for details.");
   }
 

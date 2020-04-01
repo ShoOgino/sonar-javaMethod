@@ -1,0 +1,8 @@
+  @Test
+  void test_failure() throws Exception {
+    TldScanner tldScanner = mock(TldScanner.class);
+    JspCServletContext servletContext = new Jasper.ServletContext(baseDir.toUri().toURL(), this.getClass().getClassLoader());
+    doThrow(new IOException()).when(tldScanner).scan();
+    assertThatThrownBy(() -> new JasperOptions(servletContext, output, tldScanner)).isInstanceOf(AnalysisException.class);
+  }
+
