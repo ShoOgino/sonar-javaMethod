@@ -1,10 +1,11 @@
   @Test
   public void exceptionType_cannot_be_changed() {
-    thrown.expect(UnsupportedOperationException.class);
     final Class<? extends SECheck> seCheckClass = new SECheck() {
     }.getClass();
     String exceptionType = "someException";
     ExceptionalCheckBasedYield yield = new ExceptionalCheckBasedYield(SV_CAUSING_EXCEPTION, exceptionType, seCheckClass, null, mockMethodBehavior());
-    yield.setExceptionType("anotherException");
+
+    assertThrows(UnsupportedOperationException.class,
+      () -> yield.setExceptionType("anotherException"));
   }
 

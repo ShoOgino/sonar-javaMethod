@@ -9,8 +9,8 @@
 
     loader.close();
 
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("Loader closed");
-    loader.loadBytes("tags/TagName.class");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> loader.loadBytes("tags/TagName.class"));
+    assertThat(e.getMessage()).isEqualTo("Loader closed");
   }
 

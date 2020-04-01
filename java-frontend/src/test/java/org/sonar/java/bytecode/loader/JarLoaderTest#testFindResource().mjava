@@ -19,8 +19,8 @@
 
     loader.close();
 
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("zip file closed");
-    loader.findResource("META-INF/MANIFEST.MF");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> loader.findResource("META-INF/MANIFEST.MF"));
+    assertThat(e.getMessage()).isEqualTo("zip file closed");
   }
 

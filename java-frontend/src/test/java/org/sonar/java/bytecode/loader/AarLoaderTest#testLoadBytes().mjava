@@ -10,8 +10,8 @@
 
     loader.close();
 
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("zip file closed");
-    loader.loadBytes("com/github/simonpercic/oklog/BuildConfig.class");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> loader.loadBytes("com/github/simonpercic/oklog/BuildConfig.class"));
+    assertThat(e.getMessage()).isEqualTo("zip file closed");
   }
 

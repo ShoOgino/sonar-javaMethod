@@ -6,7 +6,7 @@
     assertThat(classLoader.loadClass("org.sonar.tests.Hello")).isNotNull();
     assertThat(classLoader.getResource("org/sonar/tests/Hello.class")).isNotNull();
     assertThat(Iterators.forEnumeration(classLoader.findResources("org/sonar/tests/Hello.class"))).hasSize(1);
-    thrown.expect(ClassNotFoundException.class);
-    classLoader.loadClass("foo.Unknown");
+    assertThrows(ClassNotFoundException.class,
+      () -> classLoader.loadClass("foo.Unknown"));
   }
 

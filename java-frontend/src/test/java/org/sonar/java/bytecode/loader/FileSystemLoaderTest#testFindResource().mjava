@@ -14,8 +14,8 @@
 
     loader.close();
 
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("Loader closed");
-    loader.findResource("tags/TagName.class");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> loader.findResource("tags/TagName.class"));
+    assertThat(e.getMessage()).isEqualTo("Loader closed");
   }
 

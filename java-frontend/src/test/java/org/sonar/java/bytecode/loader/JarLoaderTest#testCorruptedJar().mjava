@@ -1,8 +1,8 @@
   @Test
   public void testCorruptedJar() {
     File jar = new File("src/test/files/bytecode/src/tags/TagName.java");
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("Unable to open " + jar.getAbsolutePath());
-    new JarLoader(jar);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> new JarLoader(jar));
+    assertThat(e.getMessage()).isEqualTo("Unable to open " + jar.getAbsolutePath());
   }
 

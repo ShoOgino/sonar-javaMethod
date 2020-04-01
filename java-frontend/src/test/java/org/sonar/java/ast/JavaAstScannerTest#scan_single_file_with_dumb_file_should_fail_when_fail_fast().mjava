@@ -1,8 +1,9 @@
   @Test
   public void scan_single_file_with_dumb_file_should_fail_when_fail_fast() throws Exception {
-    thrown.expect(AnalysisException.class);
     String filename = "!!dummy";
-    thrown.expectMessage("SonarQube is unable to analyze file : '!!dummy'");
-    scanSingleFile(TestUtils.emptyInputFile(filename), true);
+    InputFile inputFile = TestUtils.emptyInputFile(filename);
+    AnalysisException e = assertThrows(AnalysisException.class,
+      () -> scanSingleFile(inputFile, true));
+    assertThat(e.getMessage()).isEqualTo("SonarQube is unable to analyze file : '!!dummy'");
   }
 

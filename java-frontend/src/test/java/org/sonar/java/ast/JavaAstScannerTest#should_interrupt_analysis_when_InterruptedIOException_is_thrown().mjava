@@ -1,10 +1,10 @@
   @Test
   public void should_interrupt_analysis_when_InterruptedIOException_is_thrown() {
     InputFile inputFile = TestUtils.inputFile("src/test/files/metrics/NoSonar.java");
-
-    thrown.expectMessage("Analysis cancelled");
-    thrown.expect(new AnalysisExceptionBaseMatcher(RecognitionException.class, "instanceof AnalysisException with RecognitionException cause"));
-
-    JavaAstScanner.scanSingleFileForTests(inputFile, new VisitorsBridge(new CheckThrowingException(new RecognitionException(42, "interrupted", new InterruptedIOException()))));
+    VisitorsBridge visitorsBridge = new VisitorsBridge(new CheckThrowingException(new RecognitionException(42, "interrupted", new InterruptedIOException())));
+    AnalysisException e = assertThrows(AnalysisException.class,
+      () -> JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge));
+    assertThat(e.getMessage()).isEqualTo("Analysis cancelled");
+    assertThat(e.getCause().getClass()).isEqualTo(RecognitionException.class);
   }
 

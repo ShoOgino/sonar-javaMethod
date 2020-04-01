@@ -1,9 +1,11 @@
   @Test
   public void exceptionType_is_required() {
-    thrown.expect(IllegalArgumentException.class);
     final Class<? extends SECheck> seCheckClass = new SECheck() {
     }.getClass();
     String exceptionType = null;
-    new ExceptionalCheckBasedYield(SV_CAUSING_EXCEPTION, exceptionType, seCheckClass, null, mockMethodBehavior());
+    MethodBehavior methodBehavior = mockMethodBehavior();
+
+    assertThrows(IllegalArgumentException.class,
+      () -> new ExceptionalCheckBasedYield(SV_CAUSING_EXCEPTION, exceptionType, seCheckClass, null, methodBehavior));
   }
 
