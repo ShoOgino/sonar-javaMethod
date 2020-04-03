@@ -1,20 +1,6 @@
   @Test
   void test_compilation_without_webinf() throws Exception {
-    Path path = tempFolder.resolve("test.jsp");
-    String code = "<html>\n" +
-      "<body>\n" +
-      "<h2>Hello World!</h2>\n" +
-      "</body>\n" +
-      "</html>";
-    Files.write(path, code.getBytes(StandardCharsets.UTF_8));
-    jspFile = path;
-    SensorContextTester ctx = SensorContextTester.create(tempFolder);
-    DefaultInputFile inputFile = TestInputFileBuilder.create("", tempFolder.toFile(), jspFile.toFile())
-      .setLanguage("jsp")
-      .setContents(code)
-      .build();
-    ctx.fileSystem().add(inputFile);
-    ctx.fileSystem().setWorkDir(workDir);
+    SensorContext ctx = jspContext(JSP_SOURCE, tempFolder.resolve("test.jsp"));
     Collection<GeneratedFile> generatedFiles = new Jasper().generateFiles(ctx, emptyList());
 
     assertThat(generatedFiles).hasSize(1);

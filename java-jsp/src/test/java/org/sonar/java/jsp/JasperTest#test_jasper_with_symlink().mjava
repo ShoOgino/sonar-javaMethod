@@ -1,0 +1,23 @@
+  /**
+   * Following test tests execution of Jasper in directory which is a symlink. This was an issue in
+   * rev. 24936c9eed88b9886cea36246aae32f6432d2cc9 , but was fixed later on by explicitly setting the context
+   * directory instead of relying on automatic lookup.
+   */
+  @Test
+  void test_jasper_with_symlink() throws Exception {
+    Path output = tempFolder.resolve("out").toAbsolutePath();
+    Files.createDirectories(output);
+    Path link = tempFolder.resolve("link");
+    Files.createSymbolicLink(link, output);
+
+    Path path = link.resolve("WEB-INF/test.jsp");
+    SensorContextTester ctx = jspContext(JSP_SOURCE, path);
+    Collection<GeneratedFile> generatedFiles = new Jasper().generateFiles(ctx, emptyList());
+
+    assertThat(generatedFiles).hasSize(1);
+    InputFile generatedFile = generatedFiles.iterator().next();
+    List<String> generatedCode = Files.readAllLines(generatedFile.path());
+    assertThat(generatedCode).contains("      out.write(\"<html>\\n<body>\\n<h2>Hello World!</h2>\\n</body>\\n</html>\");");
+
+  }
+
