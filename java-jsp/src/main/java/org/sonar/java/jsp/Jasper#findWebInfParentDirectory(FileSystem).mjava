@@ -1,0 +1,18 @@
+  private static Optional<Path> findWebInfParentDirectory(FileSystem fs) {
+    FilePredicates predicates = fs.predicates();
+    List<InputFile> inputFiles = new ArrayList<>();
+    fs.inputFiles(predicates.matchesPathPattern("**/WEB-INF/**")).forEach(inputFiles::add);
+    if (!inputFiles.isEmpty()) {
+      Path path = Paths.get(inputFiles.get(0).absolutePath());
+      Path parent = path.getParent();
+      while (parent != null) {
+        if (parent.endsWith("WEB-INF")) {
+          return Optional.ofNullable(parent.getParent());
+        }
+        parent = parent.getParent();
+      }
+    }
+    LOG.debug("WEB-INF directory not found, will use basedir as context root");
+    return Optional.empty();
+  }
+

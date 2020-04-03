@@ -1,12 +1,13 @@
   @Test
-  void test_failure_invalid_classpath() throws Exception {
+  void should_log_warning_when_jasper_fails() throws Exception {
     SensorContextTester ctx = jspContext("<html>\n" +
       "<body>\n" +
       "<h2>Hello World!</h2>\n" +
       "</body>\n" +
       "</html>");
     Jasper jasper = spy(new Jasper());
-    doThrow(new IllegalStateException()).when(jasper).initClassLoader(emptyList());
+    // we make Jasper#getJasperOptions blowup
+    doThrow(new IllegalStateException()).when(jasper).getJasperOptions(any(), any());
     Collection<GeneratedFile> generatedFiles = jasper.generateFiles(ctx, emptyList());
     assertThat(generatedFiles).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).contains("Failed to transpile JSP files.");

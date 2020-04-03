@@ -1,0 +1,11 @@
+  private static void transpileJsp(Path jsp, Path uriRoot, ClassLoader classLoader, JspCServletContext servletContext,
+                                   JasperOptions options, JspRuntimeContext runtimeContext) throws Exception {
+    LOG.debug("Transpiling JSP: {}", jsp);
+    String jspUri = "/" + uriRoot.relativize(jsp).toString();
+    JspCompilationContext compilationContext = new JspCompilationContext(jspUri, options, servletContext, null,
+      runtimeContext);
+    compilationContext.setClassLoader(classLoader);
+    Compiler compiler = compilationContext.createCompiler();
+    compiler.compile(false, true);
+  }
+

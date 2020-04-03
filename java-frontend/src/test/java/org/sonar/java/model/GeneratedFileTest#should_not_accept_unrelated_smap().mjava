@@ -11,7 +11,7 @@
       "1,6:116,0\n" +
       "*E\n";
 
-    SmapFile smapFile = new SmapFile(tmp.resolve("index_jsp.class.smap"), new Scanner(smap));
+    SmapFile smapFile = new SmapFile(tmp.resolve("index_jsp.class.smap"), Paths.get(""), new Scanner(smap));
     GeneratedFile generatedFile = new GeneratedFile(tmp.resolve("index_jsp.java"));
     generatedFile.addSmap(smapFile);
 
@@ -26,7 +26,7 @@
       "1,6:116,0\n" +
       "*E\n";
 
-    SmapFile unrelated = new SmapFile(tmp.resolve("index_jsp.class.smap"), new Scanner(unrelatedSmap));
+    SmapFile unrelated = new SmapFile(tmp.resolve("index_jsp.class.smap"), Paths.get(""), new Scanner(unrelatedSmap));
     generatedFile.addSmap(unrelated);
     assertThat(generatedFile.smapFiles).containsExactly(smapFile);
     assertThat(logTester.logs(LoggerLevel.WARN)).containsExactly(format("Invalid smap %s for %s.", tmp.resolve("unrelated.java"), tmp.resolve("index_jsp.java")));

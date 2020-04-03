@@ -1,0 +1,18 @@
+  @Test
+  void test_with_classpath() throws Exception {
+    SensorContextTester ctx = jspContext("<%@ taglib prefix=\"spring\" uri=\"http://www.springframework.org/tags\" %> \n" +
+      "<html>\n" +
+      "<body>\n" +
+      "<h2>Hello World!</h2>\n" +
+      "<spring:url value=\"/url/path\" />\n" +
+      "</body>\n" +
+      "</html>");
+    File springJar = Paths.get("target/test-jars/spring-webmvc-5.2.3.RELEASE.jar").toFile();
+    Collection<GeneratedFile> generatedFiles = new Jasper().generateFiles(ctx, singletonList(springJar));
+
+    assertThat(generatedFiles).hasSize(1);
+    InputFile generatedFile = generatedFiles.iterator().next();
+    List<String> generatedCode = Files.readAllLines(generatedFile.path());
+    assertThat(generatedCode).contains("    org.springframework.web.servlet.tags.UrlTag _jspx_th_spring_005furl_005f0 = new org.springframework.web.servlet.tags.UrlTag();");
+  }
+
