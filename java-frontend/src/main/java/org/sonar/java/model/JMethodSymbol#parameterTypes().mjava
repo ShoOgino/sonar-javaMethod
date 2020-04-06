@@ -1,7 +1,8 @@
   @Override
   public List<Type> parameterTypes() {
-    return Arrays.stream(methodBinding().getParameterTypes())
-      .map(sema::type)
-      .collect(Collectors.toList());
+    if (parameterTypes == null) {
+      parameterTypes = sema.types(methodBinding().getParameterTypes());
+    }
+    return parameterTypes;
   }
 

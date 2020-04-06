@@ -1,7 +1,8 @@
   @Override
   public List<Type> thrownTypes() {
-    return Arrays.stream(methodBinding().getExceptionTypes())
-      .map(sema::type)
-      .collect(Collectors.toList());
+    if (thrownTypes == null) {
+      thrownTypes = sema.types(methodBinding().getExceptionTypes());
+    }
+    return thrownTypes;
   }
 
