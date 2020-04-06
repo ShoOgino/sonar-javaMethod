@@ -1,7 +1,8 @@
   @Override
   public List<Type> interfaces() {
-    return Arrays.stream(typeBinding().getInterfaces())
-      .map(sema::type)
-      .collect(Collectors.toList());
+    if (interfaces == null) {
+      interfaces = sema.types(typeBinding().getInterfaces());
+    }
+    return interfaces;
   }
 
