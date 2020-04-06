@@ -1,0 +1,12 @@
+  @CheckForNull
+  private Type convertSuperClass() {
+    if (typeBinding().isInterface() || typeBinding().isArray()) {
+      return sema.type(Objects.requireNonNull(sema.resolveType("java.lang.Object")));
+    } else if (typeBinding().getSuperclass() == null) {
+      // java.lang.Object
+      return null;
+    } else {
+      return sema.type(typeBinding().getSuperclass());
+    }
+  }
+
