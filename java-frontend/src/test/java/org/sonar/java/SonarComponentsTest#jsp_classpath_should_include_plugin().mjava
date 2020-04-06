@@ -1,0 +1,15 @@
+  @Test
+  public void jsp_classpath_should_include_plugin() throws Exception {
+    SensorContextTester sensorContextTester = SensorContextTester.create(new File(""));
+    DefaultFileSystem fs = sensorContextTester.fileSystem();
+
+    JavaClasspath javaClasspath = mock(JavaClasspath.class);
+    File someJar = new File("some.jar");
+    when(javaClasspath.getElements()).thenReturn(Collections.singletonList(someJar));
+
+    File plugin = new File("target/classes");
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, mock(JavaTestClasspath.class), checkFactory, null);
+    List<String> jspClassPath = sonarComponents.getJspClasspath().stream().map(File::getAbsolutePath).collect(Collectors.toList());
+    assertThat(jspClassPath).containsExactly(plugin.getAbsolutePath(), someJar.getAbsolutePath());
+  }
+
