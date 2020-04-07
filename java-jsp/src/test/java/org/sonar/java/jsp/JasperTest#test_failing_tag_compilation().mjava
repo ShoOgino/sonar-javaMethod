@@ -1,0 +1,14 @@
+  @Test
+  void test_failing_tag_compilation() throws Exception {
+    String tagLib = "<%@ taglib prefix=\"t\" tagdir=\"/WEB-INF/tags\" %>";
+    SensorContextTester ctx = jspContext(tagLib +
+      "<t:mytag />");
+    createJspFile(tagLib + "<% new Missing(); %> ", webInf.resolve("tags/mytag.tag"));
+    Map<String, GeneratedFile> generatedFiles = new Jasper().generateFiles(ctx, emptyList()).
+      stream().collect(Collectors.toMap(GeneratedFile::filename, f -> f));
+
+    assertThat(generatedFiles).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Error transpiling " +
+      webInf.resolve("jsp/test.jsp").toAbsolutePath());
+  }
+
