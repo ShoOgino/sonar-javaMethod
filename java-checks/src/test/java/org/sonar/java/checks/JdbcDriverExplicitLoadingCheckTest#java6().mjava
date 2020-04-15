@@ -1,6 +1,15 @@
   @Test
   public void java6() {
-    JavaCheckVerifier.verify(FILENAME, new JdbcDriverExplicitLoadingCheck(), 6);
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME, new JdbcDriverExplicitLoadingCheck(), 6);
+    JavaCheckVerifier.newVerifier()
+      .onFile(FILENAME)
+      .withCheck(new JdbcDriverExplicitLoadingCheck())
+      .withJavaVersion(6)
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(FILENAME)
+      .withCheck(new JdbcDriverExplicitLoadingCheck())
+      .withJavaVersion(6)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

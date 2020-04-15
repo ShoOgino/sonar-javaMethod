@@ -1,6 +1,13 @@
   @Test
   public void testEnclosed() {
-    JavaCheckVerifier.verify("src/test/files/checks/NoTestInTestClassCheckEnclosed.java", new NoTestInTestClassCheck());
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic("src/test/files/checks/NoTestInTestClassCheckEnclosed.java", new NoTestInTestClassCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/NoTestInTestClassCheckEnclosed.java")
+      .withCheck(new NoTestInTestClassCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/NoTestInTestClassCheckEnclosed.java")
+      .withCheck(new NoTestInTestClassCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

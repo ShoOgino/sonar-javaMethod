@@ -1,6 +1,6 @@
   @Test
   public void simple_assignment_should_preserve_value_on_stack() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SimpleAssignmentExecution.java", new SECheck() {
+    SECheck check = new SECheck() {
 
       private SymbolicValue rhsValue;
 
@@ -23,6 +23,11 @@
         }
         return state;
       }
-    });
+    };
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SimpleAssignmentExecution.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

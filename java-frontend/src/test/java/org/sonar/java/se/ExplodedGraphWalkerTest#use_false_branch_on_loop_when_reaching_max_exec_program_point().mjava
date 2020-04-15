@@ -1,7 +1,7 @@
   @Test
   public void use_false_branch_on_loop_when_reaching_max_exec_program_point() {
     ProgramPoint[] programPoints = new ProgramPoint[2];
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestMaxExecProgramPoint.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
 
       private ExplodedGraphWalker explodedGraphWalker = null;
 
@@ -37,7 +37,13 @@
         MethodTree methodTree = (MethodTree) tree;
         explodedGraphWalker.visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
       }
-    });
+    };
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SeEngineTestMaxExecProgramPoint.java")
+      .withCheck(
+        sev)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
 
     // we reached the max number of execution of a program point
     assertThat(programPoints[0]).isNotNull();

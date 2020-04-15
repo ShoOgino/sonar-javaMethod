@@ -1,6 +1,15 @@
   @Test
   public void java8() {
-    JavaCheckVerifier.verify(FILENAME, new ReplaceLambdaByMethodRefCheck(), 8);
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME, new ReplaceLambdaByMethodRefCheck(), 8);
+    JavaCheckVerifier.newVerifier()
+      .onFile(FILENAME)
+      .withCheck(new ReplaceLambdaByMethodRefCheck())
+      .withJavaVersion(8)
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(FILENAME)
+      .withCheck(new ReplaceLambdaByMethodRefCheck())
+      .withJavaVersion(8)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

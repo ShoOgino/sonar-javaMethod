@@ -1,6 +1,13 @@
   @Test
   public void test() {
-    JavaCheckVerifier.verify("src/test/files/checks/spring/SpringAutoConfigurationCheck.java", new SpringAutoConfigurationCheck());
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic("src/test/files/checks/spring/SpringAutoConfigurationCheck.java", new SpringAutoConfigurationCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/spring/SpringAutoConfigurationCheck.java")
+      .withCheck(new SpringAutoConfigurationCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/spring/SpringAutoConfigurationCheck.java")
+      .withCheck(new SpringAutoConfigurationCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

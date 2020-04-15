@@ -1,6 +1,13 @@
   @Test
   public void simple_case() {
-    JavaCheckVerifier.verify(testSourcesPath("checks/ClassFieldCountCheck/SimpleDefaultCase.java"), new ClassFieldCountCheck());
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic(testSourcesPath("checks/ClassFieldCountCheck/SimpleDefaultCase.java"), new ClassFieldCountCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/ClassFieldCountCheck/SimpleDefaultCase.java"))
+      .withCheck(new ClassFieldCountCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/ClassFieldCountCheck/SimpleDefaultCase.java"))
+      .withCheck(new ClassFieldCountCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

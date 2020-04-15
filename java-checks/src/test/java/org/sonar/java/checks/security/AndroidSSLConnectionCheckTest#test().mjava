@@ -1,6 +1,13 @@
   @Test
   public void test() {
-    JavaCheckVerifier.verify("src/test/files/checks/security/AndroidSSLConnection.java", new AndroidSSLConnectionCheck());
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic("src/test/files/checks/security/AndroidSSLConnection.java", new AndroidSSLConnectionCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/security/AndroidSSLConnection.java")
+      .withCheck(new AndroidSSLConnectionCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/security/AndroidSSLConnection.java")
+      .withCheck(new AndroidSSLConnectionCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

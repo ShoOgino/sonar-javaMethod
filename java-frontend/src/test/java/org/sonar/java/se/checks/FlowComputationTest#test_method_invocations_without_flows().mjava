@@ -1,5 +1,9 @@
   @Test
   public void test_method_invocations_without_flows() throws Exception {
-    JavaCheckVerifier.verify("src/test/files/se/MethodInvocationWithoutFlows.java", new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck(), new DivisionByZeroCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MethodInvocationWithoutFlows.java")
+      .withChecks(new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck(), new DivisionByZeroCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

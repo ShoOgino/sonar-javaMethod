@@ -1,5 +1,9 @@
   @Test
   public void test() throws Exception {
-    JavaCheckVerifier.verify("src/test/files/se/FlowComputation.java", new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/FlowComputation.java")
+      .withChecks(new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

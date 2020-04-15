@@ -2,7 +2,14 @@
   public void check() {
     DisallowedClassCheck visitor = new DisallowedClassCheck();
     visitor.disallowedClass = "java.lang.String";
-    JavaCheckVerifier.verify("src/test/files/checks/DisallowedClassCheck.java", visitor);
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic("src/test/files/checks/DisallowedClassCheck.java", visitor);
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/DisallowedClassCheck.java")
+      .withCheck(visitor)
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/DisallowedClassCheck.java")
+      .withCheck(visitor)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

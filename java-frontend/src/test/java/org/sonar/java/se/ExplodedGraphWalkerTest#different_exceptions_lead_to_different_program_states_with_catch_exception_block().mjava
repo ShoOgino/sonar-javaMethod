@@ -2,8 +2,7 @@
   public void different_exceptions_lead_to_different_program_states_with_catch_exception_block() {
     Set<Type> encounteredExceptions = new HashSet<>();
     int[] tested = {0};
-
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/ExceptionalSymbolicValueStacked.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
 
       private ExplodedGraphWalker explodedGraphWalker;
 
@@ -49,7 +48,14 @@
           super.visitNode(methodTree);
         }
       };
-    });
+    };
+
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/ExceptionalSymbolicValueStacked.java")
+      .withCheck(
+        sev)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
 
     assertThat(encounteredExceptions).hasSize(2);
     assertThat(tested[0]).isEqualTo(2);

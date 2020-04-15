@@ -3,13 +3,20 @@
     PackageInfoCheck check = new PackageInfoCheck();
     String expectedMessage = "Add a 'package-info.java' file to document the '../java-checks-test-sources/src/main/java/checks/packageInfo/nopackageinfo' package"
       .replace('/', File.separatorChar);
-    JavaCheckVerifier.verifyIssueOnProject(testSourcesPath("checks/packageInfo/nopackageinfo/nopackageinfo.java"), expectedMessage, check);
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/packageInfo/nopackageinfo/nopackageinfo.java"))
+      .withCheck(check)
+      .verifyIssueOnProject(expectedMessage);
 
     Set<File> set = check.directoriesWithoutPackageFile;
     assertThat(set).hasSize(1);
     assertThat(set.iterator().next().getName()).isEqualTo("nopackageinfo");
 
     // only one issue per package
-    JavaCheckVerifier.verifyNoIssue(testSourcesPath("checks/packageInfo/nopackageinfo/HelloWorld.java"), check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/packageInfo/nopackageinfo/HelloWorld.java"))
+      .withCheck(check)
+      .verifyNoIssues();
   }
 

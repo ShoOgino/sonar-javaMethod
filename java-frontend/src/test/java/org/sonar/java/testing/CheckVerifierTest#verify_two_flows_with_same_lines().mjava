@@ -1,0 +1,29 @@
+  @Test
+  public void verify_two_flows_with_same_lines() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(4, "error", 5, 11, 15)
+      .flow()
+      .flowItem(4, "line4")
+      .flowItem(5, "f1")
+      .flowItem(6, "line6")
+      .flow()
+      .flowItem(4, "line4")
+      .flowItem(5, "f2")
+      .flowItem(6, "line6")
+      .add()
+      .issueWithFlow(10, "error", 5, 11, 15)
+      .flow()
+      .flowItem(10, "msg1")
+      .flowItem(11, "msg2")
+      .flowItem(12, "msg3")
+      .flow()
+      .flowItem(10, "msg1")
+      .flowItem(11, "msg2")
+      .flowItem(12, "msg3")
+      .add();
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierFlowsWithSameLines.java")
+      .withCheck(fakeVisitor)
+      .verifyIssues();
+  }
+

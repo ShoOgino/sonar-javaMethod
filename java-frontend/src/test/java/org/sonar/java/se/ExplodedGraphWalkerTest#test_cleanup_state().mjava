@@ -1,23 +1,31 @@
   @Test
   public void test_cleanup_state() {
     final int[] steps = new int[2];
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
-      @Override
-      public void visitNode(Tree tree) {
-        ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel(), false);
-        explodedGraphWalker.visitMethod((MethodTree) tree, methodBehaviorForSymbol(((MethodTree) tree).symbol()));
-        steps[0] += explodedGraphWalker.steps;
-      }
-    });
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/SeEngineTestCleanupState.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
-      @Override
-      public void visitNode(Tree tree) {
-        ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
-        MethodTree methodTree = (MethodTree) tree;
-        explodedGraphWalker.visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
-        steps[1] += explodedGraphWalker.steps;
-      }
-    });
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SeEngineTestCleanupState.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+        @Override
+        public void visitNode(Tree tree) {
+          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel(), false);
+          explodedGraphWalker.visitMethod((MethodTree) tree, methodBehaviorForSymbol(((MethodTree) tree).symbol()));
+          steps[0] += explodedGraphWalker.steps;
+        }
+      })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SeEngineTestCleanupState.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+        @Override
+        public void visitNode(Tree tree) {
+          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
+          MethodTree methodTree = (MethodTree) tree;
+          explodedGraphWalker.visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
+          steps[1] += explodedGraphWalker.steps;
+        }
+      })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
     assertThat(steps[0]).isPositive();
     assertThat(steps[0]).isGreaterThan(steps[1]);
   }

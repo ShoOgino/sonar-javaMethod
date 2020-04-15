@@ -1,7 +1,11 @@
   @Test
   public void methods_should_be_evaluated_only_once() throws Exception {
     MethodAsInstruction check = new MethodAsInstruction();
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/EvaluateMethodOnce.java", check);
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/EvaluateMethodOnce.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
     assertThat(check.toStringCall).isEqualTo(1);
   }
 

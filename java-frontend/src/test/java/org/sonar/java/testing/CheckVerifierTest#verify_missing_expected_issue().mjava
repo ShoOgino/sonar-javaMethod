@@ -3,7 +3,10 @@
     IssuableSubscriptionVisitor visitor = new FakeVisitor().withDefaultIssues().withoutIssue(1);
 
     try {
-      JavaCheckVerifier.verify(FILENAME_ISSUES, visitor);
+      CheckVerifier.newVerifier()
+        .onFile(FILENAME_ISSUES)
+        .withCheck(visitor)
+        .verifyIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Expected at [1]");

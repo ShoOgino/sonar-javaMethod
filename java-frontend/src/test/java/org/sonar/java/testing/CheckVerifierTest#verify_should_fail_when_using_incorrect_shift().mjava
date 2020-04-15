@@ -1,7 +1,10 @@
   @Test
   public void verify_should_fail_when_using_incorrect_shift() throws IOException {
     try {
-      JavaCheckVerifier.verifyNoIssue("src/test/files/JavaCheckVerifierIncorrectShift.java", NO_EFFECT_VISITOR);
+      CheckVerifier.newVerifier()
+        .onFile("src/test/files/JavaCheckVerifierIncorrectShift.java")
+        .withCheck(NO_EFFECT_VISITOR)
+        .verifyNoIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Use only '@+N' or '@-N' to shifts messages.");

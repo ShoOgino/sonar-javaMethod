@@ -1,6 +1,6 @@
   @Test
   public void verify_fail_when_same_explicit_order_is_provided() {
-    Throwable throwable = catchThrowable(() -> JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlowsDuplicateExplicitOrder.java", new FakeVisitor()));
+    Throwable throwable = catchThrowable(() -> CheckVerifier.newVerifier().onFile("src/test/files/JavaCheckVerifierFlowsDuplicateExplicitOrder.java").withCheck(new FakeVisitor()).verifyIssues());
     assertThat(throwable)
       .isInstanceOf(AssertionError.class)
       .hasMessageContaining("Same explicit ORDER=1 provided for two comments.")

@@ -1,7 +1,10 @@
   @Test
   public void with_package_info() {
     PackageInfoCheck check = new PackageInfoCheck();
-    JavaCheckVerifier.verifyNoIssue(testSourcesPath("checks/packageInfo/HelloWorld.java"), check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/packageInfo/HelloWorld.java"))
+      .withCheck(check)
+      .verifyNoIssues();
     assertThat(check.directoriesWithoutPackageFile).isEmpty();
   }
 

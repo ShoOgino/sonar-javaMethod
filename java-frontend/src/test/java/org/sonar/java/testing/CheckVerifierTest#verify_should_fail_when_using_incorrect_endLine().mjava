@@ -1,7 +1,10 @@
   @Test
   public void verify_should_fail_when_using_incorrect_endLine() throws IOException {
     try {
-      JavaCheckVerifier.verifyNoIssue("src/test/files/JavaCheckVerifierIncorrectEndLine.java", NO_EFFECT_VISITOR);
+      CheckVerifier.newVerifier()
+        .onFile("src/test/files/JavaCheckVerifierIncorrectEndLine.java")
+        .withCheck(NO_EFFECT_VISITOR)
+        .verifyNoIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("endLine attribute should be relative to the line and must be +N with N integer");

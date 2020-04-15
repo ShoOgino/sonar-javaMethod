@@ -1,6 +1,10 @@
   @Test
   public void reporting_getting_wrong_parent() {
     // Checks flow iterating through the correct parent
-    JavaCheckVerifier.verify("src/test/files/se/ConditionAlwaysTrueOrFalseCheckParentLoop.java", new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/ConditionAlwaysTrueOrFalseCheckParentLoop.java")
+      .withChecks(new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

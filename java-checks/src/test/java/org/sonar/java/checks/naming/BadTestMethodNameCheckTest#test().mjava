@@ -1,10 +1,20 @@
   @Test
   public void test() {
     BadTestMethodNameCheck check = new BadTestMethodNameCheck();
-    JavaCheckVerifier.verify("src/test/files/checks/naming/BadTestMethodNameCheck.java", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/naming/BadTestMethodNameCheck.java")
+      .withCheck(check)
+      .verifyIssues();
     // test with same instance to cover reuse of regexp pattern (lazy initialization).
-    JavaCheckVerifier.verify("src/test/files/checks/naming/BadTestMethodNameCheck.java", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/naming/BadTestMethodNameCheck.java")
+      .withCheck(check)
+      .verifyIssues();
 
-    JavaCheckVerifier.verifyNoIssueWithoutSemantic("src/test/files/checks/naming/BadTestMethodNameCheck.java", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile("src/test/files/checks/naming/BadTestMethodNameCheck.java")
+      .withCheck(check)
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

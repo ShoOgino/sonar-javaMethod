@@ -4,6 +4,10 @@
       .filter(file -> file.getName().startsWith("spring-core-") || file.getName().startsWith("spring-web-"))
       .collect(Collectors.toList());
     classpath.add(new File("target/test-classes"));
-    JavaCheckVerifier.verify("src/test/files/se/SpringNullableAndNonNullAnnotationsWithoutJSR305.java", new BooleanGratuitousExpressionsCheck(), classpath);
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SpringNullableAndNonNullAnnotationsWithoutJSR305.java")
+      .withCheck(new BooleanGratuitousExpressionsCheck())
+      .withClassPath(classpath)
+      .verifyIssues();
   }
 

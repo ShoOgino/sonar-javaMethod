@@ -5,7 +5,7 @@
     visitor.disallowedClass = "java.lang(";
 
     AnalysisException e = assertThrows(AnalysisException.class,
-      () -> JavaCheckVerifier.verify("src/test/files/checks/DisallowedClassCheckRegex.java", visitor));
+      () -> JavaCheckVerifier.newVerifier().onFile("src/test/files/checks/DisallowedClassCheckRegex.java").withCheck(visitor).verifyIssues());
     assertThat(e.getCause()).isInstanceOf(IllegalArgumentException.class);
   }
 

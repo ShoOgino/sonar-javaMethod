@@ -1,6 +1,10 @@
   @Test
   public void relationships_transitivity_should_take_known_relationships_into_account() throws Exception {
     // Testcase in that file can fail with a stackoverflow if known relations in program state are not taken into account.
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/InifiniteTransitiveRelationshipConstraintCopy.java", new NullDereferenceCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/InifiniteTransitiveRelationshipConstraintCopy.java")
+      .withCheck(new NullDereferenceCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

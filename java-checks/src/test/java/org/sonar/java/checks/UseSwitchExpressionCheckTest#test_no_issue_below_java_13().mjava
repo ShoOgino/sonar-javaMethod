@@ -1,6 +1,14 @@
   @Test
   public void test_no_issue_below_java_13() {
-    JavaCheckVerifier.verifyNoIssue(testSourcesPath("checks/UseSwitchExpressionCheck_java11.java"), new UseSwitchExpressionCheck(), 11);
-    JavaCheckVerifier.verifyNoIssue(testSourcesPath("checks/UseSwitchExpressionCheck_java11.java"), new UseSwitchExpressionCheck(), 12);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/UseSwitchExpressionCheck_java11.java"))
+      .withCheck(new UseSwitchExpressionCheck())
+      .withJavaVersion(11)
+      .verifyNoIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/UseSwitchExpressionCheck_java11.java"))
+      .withCheck(new UseSwitchExpressionCheck())
+      .withJavaVersion(12)
+      .verifyNoIssues();
   }
 

@@ -1,5 +1,9 @@
   @Test
   public void test_transitivity() throws Exception {
-    JavaCheckVerifier.verify("src/test/files/se/Transitivity.java", new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/Transitivity.java")
+      .withChecks(new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

@@ -3,24 +3,39 @@
     FileHeaderCheck check = new FileHeaderCheck();
     check.headerFormat = "^// copyright \\d\\d\\d";
     check.isRegularExpression = true;
-    JavaCheckVerifier.verifyIssueOnFile(testSourcesPath("checks/FileHeaderCheck/Regex1.java"), "Add or update the header of this file.", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/FileHeaderCheck/Regex1.java"))
+      .withCheck(check)
+      .verifyIssueOnFile("Add or update the header of this file.");
     // Check that the regular expression is compiled once
-    JavaCheckVerifier.verifyIssueOnFile(testSourcesPath("checks/FileHeaderCheck/Regex1.java"), "Add or update the header of this file.", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/FileHeaderCheck/Regex1.java"))
+      .withCheck(check)
+      .verifyIssueOnFile("Add or update the header of this file.");
 
     check = new FileHeaderCheck();
     check.headerFormat = "// copyright \\d{4}\\n// mycompany";
     check.isRegularExpression = true;
 
-    JavaCheckVerifier.verifyIssueOnFile(testSourcesPath("checks/FileHeaderCheck/Regex2.java"), "Add or update the header of this file.", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/FileHeaderCheck/Regex2.java"))
+      .withCheck(check)
+      .verifyIssueOnFile("Add or update the header of this file.");
 
     check = new FileHeaderCheck();
     check.headerFormat = "// copyright \\d{4}\\r?\\n// mycompany";
     check.isRegularExpression = true;
-    JavaCheckVerifier.verifyNoIssue(testSourcesPath("checks/FileHeaderCheck/Regex3.java"), check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/FileHeaderCheck/Regex3.java"))
+      .withCheck(check)
+      .verifyNoIssues();
 
     check = new FileHeaderCheck();
     check.headerFormat = "// copyright \\d{4}\\n// mycompany";
     check.isRegularExpression = true;
-    JavaCheckVerifier.verifyIssueOnFile(testSourcesPath("checks/FileHeaderCheck/Regex4.java"), "Add or update the header of this file.", check);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/FileHeaderCheck/Regex4.java"))
+      .withCheck(check)
+      .verifyIssueOnFile("Add or update the header of this file.");
   }
 

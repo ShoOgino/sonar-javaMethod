@@ -1,16 +1,20 @@
   @Test
   public void test_maximum_steps_reached() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxSteps.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
-      @Override
-      public void visitNode(Tree tree) {
-        try {
-          MethodTree methodTree = (MethodTree) tree;
-          new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
-          fail("Too many states were processed !");
-        } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
-          assertThat(exception.getMessage()).startsWith("reached limit of 16000 steps for method");
-        }
-      }
-    });
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MaxSteps.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+        @Override
+        public void visitNode(Tree tree) {
+          try {
+            MethodTree methodTree = (MethodTree) tree;
+            new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
+            fail("Too many states were processed !");
+          } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
+            assertThat(exception.getMessage()).startsWith("reached limit of 16000 steps for method");
+          }
+          }
+        })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

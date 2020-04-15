@@ -1,7 +1,8 @@
   @Test
   public void test_max_number_starting_states() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxStartingStates.java",
-      new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MaxStartingStates.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
         @Override
         public void visitNode(Tree tree) {
           try {
@@ -12,6 +13,8 @@
             assertThat(exception.getMessage()).startsWith("reached maximum number of 1024 starting states for method");
           }
         }
-      });
+      })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

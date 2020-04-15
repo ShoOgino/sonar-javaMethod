@@ -2,6 +2,9 @@
   public void verify_issue_on_file() {
     String expectedMessage = "messageOnFile";
     IssuableSubscriptionVisitor visitor = new FakeVisitor().withIssueOnFile(expectedMessage);
-    JavaCheckVerifier.verifyIssueOnFile(FILENAME_ISSUES, expectedMessage, visitor);
+    CheckVerifier.newVerifier()
+      .onFile(FILENAME_ISSUES)
+      .withCheck(visitor)
+      .verifyIssueOnFile(expectedMessage);
   }
 

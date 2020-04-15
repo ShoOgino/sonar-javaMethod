@@ -6,7 +6,14 @@
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/SpringBootApplication/AnotherSpringBoot.java",
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/SpringBootApplication/AnotherOk.java",
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/SpringBootApplication/Ok.java");
-    MultipleFilesJavaCheckVerifier.verify(files, new SpringBeansShouldBeAccessibleCheck());
-    MultipleFilesJavaCheckVerifier.verifyNoIssueWithoutSemantic(files, new SpringBeansShouldBeAccessibleCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFiles(files)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFiles(files)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

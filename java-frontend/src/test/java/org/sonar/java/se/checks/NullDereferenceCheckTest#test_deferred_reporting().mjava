@@ -1,5 +1,9 @@
   @Test
   public void test_deferred_reporting() throws Exception {
-    JavaCheckVerifier.verify("src/test/files/se/NPE_deferred.java", new NullDereferenceCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/NPE_deferred.java")
+      .withCheck(new NullDereferenceCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

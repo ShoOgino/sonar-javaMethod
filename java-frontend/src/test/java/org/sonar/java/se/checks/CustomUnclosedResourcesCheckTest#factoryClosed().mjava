@@ -3,6 +3,10 @@
     CustomUnclosedResourcesCheck check = new CustomUnclosedResourcesCheck();
     check.factoryMethod = "org.sonar.custom.ResourceFactory#createResource(java.lang.String)";
     check.closingMethod = "org.sonar.custom.GenericResource#closeResource(java.lang.String)";
-    JavaCheckVerifier.verify("src/test/files/se/customresources/FactoryClosed.java", check);
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/customresources/FactoryClosed.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

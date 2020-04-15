@@ -9,6 +9,10 @@
     CustomUnclosedResourcesCheck check2 = new CustomUnclosedResourcesCheck();
     check2.constructor = "org.sonar.custom.GenericResource(java.lang.String)";
     check2.closingMethod = "org.sonar.custom.GenericResource#closeResource(java.lang.String)";
-    JavaCheckVerifier.verify("src/test/files/se/customresources/ConstructorClosed.java", check1, check2);
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/customresources/ConstructorClosed.java")
+      .withChecks(check1, check2)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

@@ -2,6 +2,10 @@
   public void testWithExcludedTypes() {
     UnclosedResourcesCheck unclosedResourcesCheck = new UnclosedResourcesCheck();
     unclosedResourcesCheck.excludedTypes = "java.io.FileInputStream, java.sql.Statement";
-    JavaCheckVerifier.verify("src/test/files/se/ExcludedResourcesTestFile.java", unclosedResourcesCheck);
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/ExcludedResourcesTestFile.java")
+      .withCheck(unclosedResourcesCheck)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

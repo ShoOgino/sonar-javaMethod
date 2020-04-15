@@ -2,14 +2,18 @@
   public void verify_missing_flows() {
     FakeVisitor fakeVisitor = new FakeVisitor()
       .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here", 5, 11, 15)
-        .flow()
-          .flowItem(7, "b is assigned to null here", 7, 15)
-        .add()
+      .flow()
+      .flowItem(7, "b is assigned to null here", 7, 15)
+      .add()
       .issueWithFlow(20)
-        .flow(17, "msg", 19, null)
-        .add();
+      .flow(17, "msg", 19, null)
+      .add();
     try {
-      JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor);
+      CheckVerifier.newVerifier()
+        .onFile("src/test/files/JavaCheckVerifierFlows.java")
+        .withCheck(fakeVisitor)
+        .verifyIssues();
+      Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Missing flows: npe1 [9,3].");
     }

@@ -10,7 +10,14 @@
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/ComponentScan/Y2.java",
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/ComponentScan/Z2.java",
       "src/test/files/checks/spring/SpringBeansShouldBeAccessibleCheck/ComponentScan/ComponentScan.java");
-    MultipleFilesJavaCheckVerifier.verify(files, new SpringBeansShouldBeAccessibleCheck());
-    MultipleFilesJavaCheckVerifier.verifyNoIssueWithoutSemantic(files, new SpringBeansShouldBeAccessibleCheck());
+    JavaCheckVerifier.newVerifier()
+      .onFiles(files)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFiles(files)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
   }
 

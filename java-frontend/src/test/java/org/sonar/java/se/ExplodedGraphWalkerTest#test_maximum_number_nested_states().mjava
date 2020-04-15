@@ -1,16 +1,20 @@
   @Test
   public void test_maximum_number_nested_states() throws Exception {
-    JavaCheckVerifier.verifyNoIssue("src/test/files/se/MaxNestedStates.java", new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
-      @Override
-      public void visitNode(Tree tree) {
-        try {
-          MethodTree methodTree = (MethodTree) tree;
-          new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
-          fail("Too many states were processed !");
-        } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
-          assertThat(exception.getMessage()).startsWith("reached maximum number of 10000 branched states");
-        }
-      }
-    });
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MaxNestedStates.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
+        @Override
+        public void visitNode(Tree tree) {
+          try {
+            MethodTree methodTree = (MethodTree) tree;
+            new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
+            fail("Too many states were processed !");
+          } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
+            assertThat(exception.getMessage()).startsWith("reached maximum number of 10000 branched states");
+          }
+          }
+        })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
   }
 

@@ -1,0 +1,19 @@
+  @Test
+  public void verify_flow_locations() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here", 5, 11, 15)
+      .flow()
+      .flowItem(3, "a is assigned to null here", 6, 20)
+      .flowItem(9, "a is assigned to b here", 7, 12)
+      .flow()
+      .flowItem(7, "b is assigned to null here", 7, 15)
+      .add()
+      .issueWithFlow(20)
+      .flow(17, "msg", 19, null)
+      .add();
+    Throwable throwable = catchThrowable(() -> CheckVerifier.newVerifier().onFile("src/test/files/JavaCheckVerifierFlows.java").withCheck(fakeVisitor).verifyIssues());
+    assertThat(throwable)
+      .isInstanceOf(AssertionError.class)
+      .hasMessage("line 3 attribute mismatch for 'START_COLUMN'. Expected: '12', but was: '6'");
+  }
+

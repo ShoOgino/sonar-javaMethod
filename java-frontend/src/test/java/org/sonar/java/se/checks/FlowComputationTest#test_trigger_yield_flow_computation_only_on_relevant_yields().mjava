@@ -1,5 +1,9 @@
   @Test
   public void test_trigger_yield_flow_computation_only_on_relevant_yields() throws Exception {
-    JavaCheckVerifier.verify("src/test/files/se/UselessFlowComputation.java",  new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck());
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/se/UselessFlowComputation.java")
+      .withChecks(new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
   }
 

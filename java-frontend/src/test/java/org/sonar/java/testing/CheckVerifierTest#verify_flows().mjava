@@ -1,0 +1,30 @@
+  @Test
+  public void verify_flows() {
+    FakeVisitor fakeVisitor = new FakeVisitor()
+      .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here", 5, 11, 15)
+      .flow()
+      .flowItem(3, "a is assigned to null here", 12, 20)
+      .flowItem(9, "a is assigned to b here", 7, 12)
+      .flow()
+      .flowItem(7, "b is assigned to null here", 7, 15)
+      .add()
+      .issueWithFlow(20)
+      .flow(17, "msg", 19, null)
+      .add()
+      .issueWithFlow(27)
+      .flow(24, "common", 25, "msg1")
+      .flow(24, "common", 26, "msg2")
+      .add()
+      .issueWithFlow(36)
+      .flow(31, "When", 32, "Given")
+      .add()
+      .issueWithFlow(46)
+      .flow(41, "When", 42, "Given")
+      .add();
+
+    CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierFlows.java")
+      .withCheck(fakeVisitor)
+      .verifyIssues();
+  }
+

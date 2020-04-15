@@ -2,16 +2,16 @@
   public void verify_flow_messages() {
     FakeVisitor fakeVisitor = new FakeVisitor()
       .issueWithFlow(11, "A \"NullPointerException\" could be thrown; \"b\" is nullable here", 5, 11, 15)
-        .flow()
-          .flowItem(3, "invalid 1", 12, 20)
-          .flowItem(9, "invalid 2", 7, 12)
-        .flow()
-          .flowItem(7, "b is assigned to null here", 7, 15)
-        .add()
+      .flow()
+      .flowItem(3, "invalid 1", 12, 20)
+      .flowItem(9, "invalid 2", 7, 12)
+      .flow()
+      .flowItem(7, "b is assigned to null here", 7, 15)
+      .add()
       .issueWithFlow(20)
-        .flow(17, "msg", 19, null)
-        .add();
-    Throwable throwable = catchThrowable(() -> JavaCheckVerifier.verify("src/test/files/JavaCheckVerifierFlows.java", fakeVisitor));
+      .flow(17, "msg", 19, null)
+      .add();
+    Throwable throwable = catchThrowable(() -> CheckVerifier.newVerifier().onFile("src/test/files/JavaCheckVerifierFlows.java").withCheck(fakeVisitor).verifyIssues());
     assertThat(throwable)
       .isInstanceOf(AssertionError.class)
       .hasMessage("Wrong messages in flow npe1 [9,3]. Expected: [\"a is assigned to b here\", \"a is assigned to null here\"] but was: [\"invalid 2\", \"invalid 1\"]");
