@@ -1,0 +1,16 @@
+  @ParameterizedTest
+  @MethodSource("data")
+  public void test_binary_sv_from_bytecode_inst(int opcode, RelationalSymbolicValue.Kind relKind, boolean reversed) throws Exception {
+    SymbolicValue sv1 = new SymbolicValue();
+    SymbolicValue sv2 = new SymbolicValue();
+    SymbolicValue binarySV = createBinarySV(opcode, sv1, sv2);
+
+    if (reversed) {
+      assertThat(binarySV.computedFrom()).containsExactly(sv1, sv2);
+    } else {
+      assertThat(binarySV.computedFrom()).containsExactly(sv2, sv1);
+    }
+    assertThat(((RelationalSymbolicValue) binarySV).kind()).isSameAs(relKind);
+
+  }
+
