@@ -1,7 +1,8 @@
-  @Test
-  public void test() throws Exception {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void test(TestInput testInput, Instruction expected) throws Exception {
     if (isJumpInstruction(testInput.opcode)) {
-      test_jumps();
+      test_jumps(testInput, expected);
       return;
     }
     BytecodeCFG cfg = new Instructions().cfg(testInput.opcode, testInput.operandOrVar, testInput.type, testInput.fieldOrMethod);
