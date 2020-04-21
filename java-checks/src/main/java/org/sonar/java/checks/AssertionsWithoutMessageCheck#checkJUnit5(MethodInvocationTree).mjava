@@ -4,17 +4,14 @@
       return;
     }
 
-    if (JUNIT5_ASSERT_METHODS_WITH_ONE_PARAM.contains(methodName)) {
-      if (mit.arguments().size() == 1) {
-        reportIssue(mit, MESSAGE);
-      }
-    } else if (mit.arguments().size() == 2) {
+    if (mit.arguments().isEmpty()) {
       reportIssue(mit, MESSAGE);
-    } else if (JUNIT5_ASSERT_METHODS_WITH_DELTA.contains(methodName) && mit.arguments().size() == 3) {
-      Type thirdArgumentType = mit.arguments().get(2).symbolType();
-      if (thirdArgumentType.isPrimitive(DOUBLE) || thirdArgumentType.isPrimitive(FLOAT)) {
+    } else if (methodName.equals("fail")) {
+      if (mit.arguments().size() == 1 && mit.arguments().get(0).symbolType().isSubtypeOf("java.lang.Throwable")) {
         reportIssue(mit, MESSAGE);
       }
+    } else {
+      checkJUnit5Assertions(mit);
     }
   }
 
