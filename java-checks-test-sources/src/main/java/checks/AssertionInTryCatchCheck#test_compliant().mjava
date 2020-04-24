@@ -1,0 +1,49 @@
+  @Test
+  public void test_compliant() {
+    assertThrows(AssertionError.class, () -> throwAssertionError()); // Compliant
+
+    //JUnit 4
+    try {
+      org.junit.Assert.fail("Expected an AssertionError!"); // Compliant, we are testing the properties
+      org.junit.Assert.assertEquals(0,0); // Compliant
+    } catch (AssertionError e) {
+      Assert.assertThat(e.getMessage(), is("Assertion error"));
+    }
+
+    //JUnit 5
+    try {
+      fail("Expected an IllegalStateException!"); // Compliant, we are expecting a IllegalStateException
+      assertEquals(0,0); // Compliant
+    } catch (IllegalStateException e) {
+    }
+
+    try {
+      throwAssertionError(); // Compliant, we are not using fail in body
+    } catch (AssertionError e) {
+    }
+
+    try {
+      fail("Expected an AssertionError!"); // Compliant, we are testing the properties
+    } catch (AssertionError e) {
+      Assert.assertThat(e.getMessage(), is("Assertion error"));
+    }
+
+    try {
+      org.junit.Assert.fail("Expected an AssertionError!"); // Compliant, FN, we are not testing error properties correctly
+    } catch (AssertionError e) {
+      System.out.println(e.getMessage());
+    }
+
+    try {
+      Runnable r = () -> fail(); // Compliant, nested assertions are not reported
+      class Nested {
+        Void f = fail(); // Compliant
+        void f() {
+          fail(); // Compliant
+        }
+      }
+    } catch (AssertionError e) {
+    }
+
+  }
+

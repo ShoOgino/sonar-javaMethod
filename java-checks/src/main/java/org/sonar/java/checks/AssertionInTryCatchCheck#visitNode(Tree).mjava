@@ -1,0 +1,8 @@
+  @Override
+  public void visitNode(Tree tree) {
+    TryStatementTree tryStatementTree = (TryStatementTree) tree;
+    getUnusedCatchAssertionErrorParameter(tryStatementTree.catches()).ifPresent(catchTree ->
+      tryStatementTree.block().accept(new TryBodyVisitor(catchTree))
+    );
+  }
+

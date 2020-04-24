@@ -1,0 +1,12 @@
+  private static Optional<VariableTree> getUnusedCatchAssertionErrorParameter(List<CatchTree> catches) {
+    return catches.stream()
+      .map(CatchTree::parameter)
+      .filter(param -> {
+        Type symbolType = param.type().symbolType();
+        return param.symbol().usages().isEmpty() &&
+          (symbolType.isSubtypeOf("java.lang.AssertionError")
+            || symbolType.is("java.lang.Error")
+            || symbolType.is("java.lang.Throwable"));
+      }).findFirst();
+  }
+
