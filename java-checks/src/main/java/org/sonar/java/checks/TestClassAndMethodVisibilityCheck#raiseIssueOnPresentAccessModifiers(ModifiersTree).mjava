@@ -1,0 +1,8 @@
+  private void raiseIssueOnPresentAccessModifiers(ModifiersTree modifierTree) {
+    modifierTree.modifiers().stream()
+      .filter(modifierKeyword -> NON_COMPLIANT_MODIFIERS.contains(modifierKeyword.modifier()))
+      .map(modifierKeywordTree -> (Tree) modifierKeywordTree)
+      .findFirst()
+      .ifPresent(modifierKeyword -> reportIssue(modifierKeyword, "Remove this access modifier"));
+  }
+

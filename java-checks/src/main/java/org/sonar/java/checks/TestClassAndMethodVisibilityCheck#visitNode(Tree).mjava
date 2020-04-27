@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (!hasSemantic()) {
+      return;
+    }
+
+    ClassTree classTree = (ClassTree) tree;
+    List<MethodTree> testMethods = classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .filter(UnitTestUtils::hasJUnit5TestAnnotation)
+      .collect(Collectors.toList());
+
+    testMethods.stream().map(MethodTree::modifiers).forEach(this::raiseIssueOnPresentAccessModifiers);
+
+    if (!testMethods.isEmpty()) {
+      raiseIssueOnPresentAccessModifiers(classTree.modifiers());
+    }
+  }
+
