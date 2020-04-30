@@ -1,5 +1,5 @@
   public Collection<GeneratedFile> generateFiles(SensorContext sensorContext, List<File> javaClasspath) {
-    List<Path> jspFiles = jspFiles(sensorContext.fileSystem());
+    List<InputFile> jspFiles = jspFiles(sensorContext.fileSystem());
     LOG.debug("Found {} JSP files.", jspFiles.size());
     if (jspFiles.isEmpty()) {
       return Collections.emptyList();
@@ -21,9 +21,11 @@
       JspRuntimeContext runtimeContext = new JspRuntimeContext(servletContext, options);
 
       boolean errorTranspiling = false;
-      for (Path jsp : jspFiles) {
+      Map<Path, GeneratedFile> generatedJavaFiles = new HashMap<>();
+      for (InputFile jsp : jspFiles) {
         try {
-          transpileJsp(jsp, uriRoot, classLoader, servletContext, options, runtimeContext);
+          Path generatedFile = transpileJsp(jsp.path(), uriRoot, classLoader, servletContext, options, runtimeContext);
+          generatedJavaFiles.put(generatedFile, new GeneratedFile(generatedFile, jsp));
         } catch (Exception e) {
           errorTranspiling = true;
           LOG.debug("Error transpiling " + jsp, e);
@@ -32,7 +34,14 @@
       if (errorTranspiling) {
         LOG.warn("Some JSP pages failed to transpile. Enable debug log for details.");
       }
-      return findGeneratedFiles(outputDir, uriRoot);
+      runtimeContext.getSmaps().values().forEach(smap -> {
+        SmapFile smapFile = createSmapFile(smap);
+        GeneratedFile generatedFile = generatedJavaFiles.get(smapFile.getGeneratedFile());
+        if (generatedFile != null) {
+          generatedFile.addSmap(smapFile);
+        }
+      });
+      return generatedJavaFiles.values();
     } catch (Exception e) {
       LOG.warn("Failed to transpile JSP files.", e);
       return Collections.emptyList();

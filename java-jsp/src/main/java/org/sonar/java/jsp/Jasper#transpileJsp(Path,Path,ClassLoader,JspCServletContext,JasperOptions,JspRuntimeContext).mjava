@@ -1,4 +1,4 @@
-  private static void transpileJsp(Path jsp, Path uriRoot, ClassLoader classLoader, JspCServletContext servletContext,
+  private static Path transpileJsp(Path jsp, Path uriRoot, ClassLoader classLoader, JspCServletContext servletContext,
                                    JasperOptions options, JspRuntimeContext runtimeContext) throws Exception {
     LOG.debug("Transpiling JSP: {}", jsp);
     // on windows we need to replace \ in path to / to form uri (see org.apache.jasper.JspC#processFile)
@@ -8,5 +8,6 @@
     compilationContext.setClassLoader(classLoader);
     Compiler compiler = compilationContext.createCompiler();
     compiler.compile(false, true);
+    return Paths.get(compilationContext.getServletJavaFileName());
   }
 

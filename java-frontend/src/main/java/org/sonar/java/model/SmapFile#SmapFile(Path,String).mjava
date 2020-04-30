@@ -1,12 +1,11 @@
-  SmapFile(Path sourceMapPath, Path uriRoot, Scanner scanner) {
-    this.uriRoot = uriRoot;
-    this.sc = scanner;
+  public SmapFile(Path rootDir, String smapString) {
+    this.sc = new Scanner(smapString);
     String header = sc.nextLine();
     if (!"SMAP".equals(header)) {
       throw new IllegalStateException("Not a source map");
     }
     String generatedFileName = sc.nextLine();
-    generatedFile = sourceMapPath.resolveSibling(generatedFileName);
+    generatedFile = rootDir.resolve(generatedFileName);
     String defaultStratum = sc.nextLine();
     if (!"JSP".equals(defaultStratum)) {
       throw new IllegalStateException("Not a JSP source map");

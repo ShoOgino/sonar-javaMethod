@@ -17,10 +17,8 @@
       "160#2,3:300,2\n" +
       "160,3:300,2\n" +
       "*E\n";
-    Path path = temporaryFolder.newFile("test_jsp.class.smap").toPath();
-    Files.write(path, sourceMap.getBytes(StandardCharsets.UTF_8));
-    SmapFile smap = SmapFile.fromPath(path, Paths.get(""));
-    assertThat(smap.getGeneratedFile()).isEqualTo(path.resolveSibling("test_jsp.java"));
+    SmapFile smap = new SmapFile(temporaryFolder, sourceMap);
+    assertThat(smap.getGeneratedFile()).isEqualTo(temporaryFolder.resolve("test_jsp.java"));
     assertThat(smap.getFileSection()).containsExactly(
       entry(0, new SmapFile.FileInfo(0, "test.jsp", "WEB-INF/test.jsp")),
       entry(2, new SmapFile.FileInfo(2, "Incl.xyz", null))
