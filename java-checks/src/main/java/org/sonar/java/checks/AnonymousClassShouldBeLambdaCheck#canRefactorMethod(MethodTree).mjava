@@ -1,0 +1,8 @@
+  private static boolean canRefactorMethod(MethodTree methodTree) {
+    // if overriden method declares to throw an exception, refactoring to a lambda might prove tricky
+    // if it is annotated with something else than @Override, it is not possible to refactor the code
+    return methodTree.throwsClauses().isEmpty()
+      && methodTree.symbol().metadata().annotations().stream()
+      .allMatch(annotation -> annotation.symbol().type().is("java.lang.Override"));
+  }
+
