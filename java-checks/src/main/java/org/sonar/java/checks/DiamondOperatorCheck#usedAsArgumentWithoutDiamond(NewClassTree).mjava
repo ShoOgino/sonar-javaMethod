@@ -1,0 +1,38 @@
+  private static boolean usedAsArgumentWithoutDiamond(NewClassTree newClassTree) {
+    Tree parent = newClassTree.parent();
+    if (!parent.is(Tree.Kind.ARGUMENTS)) {
+      // not part of an invocation
+      return false;
+    }
+
+    Tree invocation = parent.parent();
+    Symbol symbol = null;
+    // arguments are only used in METHOD_INVOCATION, NEW_CLASS_TREE and ANNOTATION
+    // however annotations values can not store parameterized types
+    if (invocation.is(Tree.Kind.METHOD_INVOCATION)) {
+      symbol = ((MethodInvocationTree) invocation).symbol();
+    } else {
+      symbol = ((NewClassTree) invocation).constructorSymbol();
+    }
+
+    if (!symbol.isMethodSymbol()) {
+      // unresolved invocation
+      return false;
+    }
+
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
+    int index = getArgIndex(newClassTree, (Arguments) parent);
+    if (index >= methodSymbol.parameterTypes().size()) {
+      // killing the noise - varargs
+      return false;
+    }
+
+    if (JUtils.isParametrizedMethod(methodSymbol)) {
+      // killing the noise - might be required for inference on nested method calls
+      return false;
+    }
+
+    Type parameterType = methodSymbol.parameterTypes().get(index);
+    return parameterType.isParameterized();
+  }
+

@@ -2,14 +2,16 @@
   public void visitNode(Tree tree) {
     NewClassTree newClassTree = (NewClassTree) tree;
     TypeTree newTypeTree = newClassTree.identifier();
-    if (newClassTree.classBody() == null && isParameterizedType(newTypeTree)) {
-      TypeTree type = getTypeFromExpression(tree.parent(), expressionKindsToCheck);
-      if (type != null && isParameterizedType(type)) {
-        reportIssue(
-          ((ParameterizedTypeTree) newTypeTree).typeArguments(),
-          "Replace the type specification in this constructor call with the diamond operator (\"<>\")." +
-            context.getJavaVersion().java7CompatibilityMessage());
-      }
+    if (!isParameterizedType(newTypeTree) || newClassTree.classBody() != null) {
+      return;
+    }
+    TypeTree type = getTypeFromExpression(tree.parent(), expressionKindsToCheck);
+    if ((type != null && isParameterizedType(type))
+      || usedAsArgumentWithoutDiamond(newClassTree)) {
+      reportIssue(
+        ((ParameterizedTypeTree) newTypeTree).typeArguments(),
+        "Replace the type specification in this constructor call with the diamond operator (\"<>\")." +
+          context.getJavaVersion().java7CompatibilityMessage());
     }
   }
 
