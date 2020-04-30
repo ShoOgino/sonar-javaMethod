@@ -9,7 +9,7 @@
     if (hasTestAnnotation(methodTree)) {
       SoftAssertionsVisitor softAssertionsVisitor = new SoftAssertionsVisitor();
       methodTree.accept(softAssertionsVisitor);
-      if (softAssertionsVisitor.assertThatCalled) {
+      if (softAssertionsVisitor.assertThatCalled && !isSoftAssertionsExtension(methodTree)) {
         context.reportIssue(this, methodTree.block().closeBraceToken(), "Add a call to 'assertAll' after all 'assertThat'.");
       }
     }
