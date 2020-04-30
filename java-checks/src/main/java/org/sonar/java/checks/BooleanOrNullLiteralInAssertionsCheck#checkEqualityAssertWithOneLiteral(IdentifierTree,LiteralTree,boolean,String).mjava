@@ -1,0 +1,23 @@
+  private void checkEqualityAssertWithOneLiteral(IdentifierTree methodName, LiteralTree literal, boolean flipped, String assertOrIs) {
+    String predicate;
+    if (literal.is(Tree.Kind.NULL_LITERAL)) {
+      predicate = flipped ? "NotNull" : "Null";
+    } else {
+      Optional<Boolean> value = literal.asConstant(Boolean.class);
+      if (!value.isPresent()) {
+        return;
+      }
+      if (Boolean.TRUE.equals(value.get())) {
+        predicate = flipped ? "False" : "True";
+      } else {
+        predicate = flipped ? "True" : "False";
+      }
+    }
+    String recommendedAssertMethod = assertOrIs + predicate;
+    List<JavaFileScannerContext.Location> secondaryLocation = Collections.singletonList(
+      new JavaFileScannerContext.Location("This literal can be avoided by using a different assertion method.", literal)
+    );
+    String mainMessage = String.format(MESSAGE_WITH_ALTERNATIVE, recommendedAssertMethod);
+    reportIssue(methodName, mainMessage, secondaryLocation, null);
+  }
+

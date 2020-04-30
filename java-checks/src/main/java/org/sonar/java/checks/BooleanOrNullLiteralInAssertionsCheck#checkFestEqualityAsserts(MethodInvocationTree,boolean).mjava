@@ -1,0 +1,15 @@
+  private void checkFestEqualityAsserts(MethodInvocationTree mit, boolean flipped) {
+    if (mit.arguments().isEmpty()) {
+      return;
+    }
+    Optional<LiteralTree> expectedLiteral = getBoolOrNullLiteral(mit.arguments().get(0));
+    Optional<LiteralTree> actualLiteral = findActualLiteralForFest(mit);
+    IdentifierTree methodName = ExpressionUtils.methodName(mit);
+    if (expectedLiteral.isPresent() && actualLiteral.isPresent()) {
+      reportDefaultMessage(methodName, Arrays.asList(expectedLiteral.get(), actualLiteral.get()));
+    } else {
+      expectedLiteral.ifPresent(literal -> checkEqualityAssertWithOneLiteral(methodName, literal, flipped, IS));
+      actualLiteral.ifPresent(literal -> checkEqualityAssertWithOneLiteral(methodName, literal, flipped, IS));
+    }
+  }
+

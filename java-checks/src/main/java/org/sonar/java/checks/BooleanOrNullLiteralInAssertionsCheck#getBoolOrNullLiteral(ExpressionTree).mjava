@@ -1,0 +1,14 @@
+  /**
+   * Tests whether an expression is a boolean or null literal, possibly embedded in a sequence of casts (because null
+   * literals often need to be cast to avoid overloading ambiguities), and return the null literal if so.
+   */
+  private static Optional<LiteralTree> getBoolOrNullLiteral(ExpressionTree expr) {
+    if (expr.is(Tree.Kind.TYPE_CAST)) {
+      return getBoolOrNullLiteral(((TypeCastTree) expr).expression());
+    } else if (expr.is(Tree.Kind.NULL_LITERAL) || expr.is(Tree.Kind.BOOLEAN_LITERAL)) {
+      return Optional.of((LiteralTree) expr);
+    } else {
+      return Optional.empty();
+    }
+  }
+

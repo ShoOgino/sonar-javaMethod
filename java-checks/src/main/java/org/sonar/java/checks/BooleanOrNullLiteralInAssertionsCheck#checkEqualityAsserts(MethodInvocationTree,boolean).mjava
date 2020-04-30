@@ -1,0 +1,10 @@
+  private void checkEqualityAsserts(MethodInvocationTree mit, boolean flipped) {
+    List<LiteralTree> literals = findLiterals(mit.arguments());
+    IdentifierTree methodName = ExpressionUtils.methodName(mit);
+    if (literals.size() > 1) {
+      reportDefaultMessage(methodName, literals);
+    } else if (literals.size() == 1) {
+      checkEqualityAssertWithOneLiteral(methodName, literals.get(0), flipped, ASSERT);
+    }
+  }
+

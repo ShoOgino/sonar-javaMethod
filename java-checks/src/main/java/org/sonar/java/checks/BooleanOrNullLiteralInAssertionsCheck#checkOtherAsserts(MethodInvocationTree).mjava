@@ -1,0 +1,9 @@
+  private void checkOtherAsserts(MethodInvocationTree mit) {
+    List<LiteralTree> literals = findLiterals(mit.arguments());
+    Optional<LiteralTree> festActualLiteral = findActualLiteralForFest(mit);
+    festActualLiteral.ifPresent(literals::add);
+    if (!literals.isEmpty()) {
+      reportDefaultMessage(ExpressionUtils.methodName(mit), literals);
+    }
+  }
+

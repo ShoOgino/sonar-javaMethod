@@ -1,0 +1,29 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    switch (mit.symbol().name()) {
+      case "assertEquals":
+      case "assertSame":
+        checkEqualityAsserts(mit, false);
+        break;
+
+      case "assertNotEquals":
+      case "assertNotSame":
+        checkEqualityAsserts(mit, true);
+        break;
+
+      case "isEqualTo":
+      case "isSameAs":
+        checkFestEqualityAsserts(mit, false);
+        break;
+
+      case "isNotEqualTo":
+      case "isNotSameAs":
+        checkFestEqualityAsserts(mit, true);
+        break;
+
+      default:
+        checkOtherAsserts(mit);
+        break;
+    }
+  }
+
