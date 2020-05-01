@@ -1,0 +1,16 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    MethodTree enclosingMethod = ExpressionUtils.getEnclosingMethod(mit);
+    BlockTree methodBody = enclosingMethod != null ? enclosingMethod.block() : null;
+    if (methodBody == null) {
+      return;
+    }
+    IdentifierTree methodIdentifier = ExpressionUtils.methodName(mit);
+    int collectAfterLine = methodIdentifier.identifierToken().line();
+    AssertionCollector assertionCollector = new AssertionCollector(collectAfterLine);
+    methodBody.accept(assertionCollector);
+    if (!assertionCollector.assertions.isEmpty()) {
+      reportIssue(methodIdentifier, MESSAGE, assertionCollector.assertions, null);
+    }
+  }
+
