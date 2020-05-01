@@ -1,0 +1,13 @@
+  @ParameterizedTest
+  @ValueSource(strings = {
+    "AssertJ",
+    "Custom"
+  })
+  void testNonCompilingCode(String framework) {
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/tests/AssertionsInTestsCheck/" + framework +
+        ".java"))
+      .withCheck(check)
+      .verifyIssues();
+  }
+
