@@ -1,0 +1,14 @@
+  private static boolean isTryCatchFail(TryStatementTree tree) {
+    List<StatementTree> statementTrees = tree.block().body();
+    if (!statementTrees.isEmpty()) {
+      StatementTree lastElement = statementTrees.get(statementTrees.size() - 1);
+      if (lastElement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+        ExpressionTree expressionTree = ((ExpressionStatementTree) lastElement).expression();
+        if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+          return JUNIT_FAIL_MATCHER.matches((MethodInvocationTree) expressionTree);
+        }
+      }
+    }
+    return false;
+  }
+

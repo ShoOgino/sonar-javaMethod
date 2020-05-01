@@ -1,0 +1,90 @@
+  @Test
+  public void testGTryCatchIdiom() {
+    try { // Noncompliant [[sc=5;ec=8;secondary=53,54]] {{Refactor the body of this try/catch in order to have only one invocation throwing an expected exception.}}
+      throwIOException2(
+        throwIOException(1)
+      );
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IOException e) {
+      // Test exception message...
+    }
+
+    try { // Noncompliant
+      throwIOException2(throwIOException(1));
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IllegalStateException e) { // IllegalStateException is a RuntimeException
+    } catch (IOException e) {
+    }
+
+    try { // Noncompliant
+      throwIOException2(1);
+      throwExecutionException(1);
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IOException e) {
+    } catch (ExecutionException e) {
+    }
+
+    try { // Noncompliant
+      throwIOException(throwException(1));
+      org.junit.jupiter.api.Assertions.fail();
+    } catch (Exception e) {
+      // Test exception message...
+    }
+
+    try { // Compliant, only one method can throw IOException
+      throwNothing(throwIOException2(1));
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IOException e) {
+      // Test exception message...
+    }
+
+    try { // Compliant, not a checked exception
+      throwRuntimeException();
+      throwRuntimeException();
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IllegalStateException e) { // IllegalStateException is a RuntimeException
+    }
+
+    try { // Compliant, not a checked exception
+      throwError();
+      throwError();
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (Error e) { // Error not checked
+    }
+
+    try { // Compliant, not a try catch idiom
+      throwIOException2(throwIOException(1));
+    } catch (IOException e) {
+    }
+
+    try { // Compliant, not a try catch idiom
+      throwIOException2(throwIOException(1));
+      boolean fail = true;
+    } catch (IOException e) {
+    }
+
+    try { // Compliant, not a try catch idiom
+      throwIOException2(throwIOException(1));
+      boolean fail;
+      fail = true;
+    } catch (IOException e) {
+    }
+
+    try { // Compliant
+      // Empty
+    } catch (IllegalStateException e) {
+    }
+
+    try { // Compliant, only one method can actually raise the exception.
+      throwIOException(1);
+      class Nested {
+        void f() throws IOException {
+          throwIOException2(1);
+        }
+      }
+      assertNull((Executable)(() -> throwIOException2(throwIOException(1))));
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IOException e) {
+    }
+  }
+

@@ -1,0 +1,11 @@
+  private static Optional<IdentifierTree> getExpectedException(ExpressionTree expectedType) {
+    if (expectedType.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelect = ((MemberSelectExpressionTree) expectedType);
+      ExpressionTree expression = memberSelect.expression();
+      if ("class".equals(memberSelect.identifier().name()) && expression.is(Tree.Kind.IDENTIFIER)) {
+        return Optional.of((IdentifierTree) expression);
+      }
+    }
+    return Optional.empty();
+  }
+
