@@ -1,0 +1,75 @@
+  @Test
+  public void testGTryCatchIdiom() {
+    try { // Noncompliant [[sc=5;ec=8;secondary=48,49]] {{Refactor the body of this try/catch to have only one invocation throwing an exception.}}
+      foo(
+        foo(1)
+      );
+      Assert.fail("Expected an IllegalStateException to be thrown");
+    } catch (IllegalStateException e) {
+      // Test exception message...
+    }
+
+    try { // Noncompliant
+      foo(foo(1));
+      org.junit.jupiter.api.Assertions.fail();
+    } catch (Error e) {
+      // Test exception message...
+    }
+
+    try { // Noncompliant
+      foo(1);
+      throwCheckedException(1);
+      Assert.fail("Expected an IOException or a IllegalStateException to be thrown");
+    } catch (IllegalStateException e) {
+    } catch (IOException e) {
+    }
+
+    try { // Compliant, not a unchecked exception
+      throwCheckedException(1);
+      throwCheckedException(1);
+      Assert.fail("Expected an IOException to be thrown");
+    } catch (IOException e) {
+    }
+
+    try { // Compliant, only one method can throw IOException
+      foo(1);
+      Assert.fail("Expected an IllegalStateException to be thrown");
+    } catch (IllegalStateException e) {
+      // Test exception message...
+    }
+
+    try { // Compliant, not a try catch idiom
+      foo(foo(1));
+    } catch (IllegalStateException e) {
+    }
+
+    try { // Compliant, not a try catch idiom
+      foo(foo(1));
+      boolean fail = true;
+    } catch (IllegalStateException e) {
+    }
+
+    try { // Compliant, not a try catch idiom
+      foo(foo(1));
+      boolean fail;
+      fail = true;
+    } catch (IllegalStateException e) {
+    }
+
+    try { // Compliant
+      // Empty
+    } catch (IllegalStateException e) {
+    }
+
+    try { // Compliant, only one method (assertNull) can actually raise the exception.
+      class Nested {
+        void f() throws IOException {
+          foo(1);
+        }
+      }
+      assertNull((Executable)(() -> foo(foo(1))));
+      Assert.fail("Expected an IllegalStateException to be thrown");
+    } catch (IllegalStateException e) {
+    }
+  }
+

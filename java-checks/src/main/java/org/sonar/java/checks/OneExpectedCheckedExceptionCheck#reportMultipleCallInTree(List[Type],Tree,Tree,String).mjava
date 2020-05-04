@@ -1,0 +1,21 @@
+  @Override
+  void reportMultipleCallInTree(List<Type> expectedExceptions, Tree treeToVisit, Tree reportLocation, String placeToRefactor) {
+    List<Type> checkedTypes = expectedExceptions.stream()
+      .filter(AbstractOneExpectedExceptionRule::isChecked)
+      .collect(Collectors.toList());
+
+    if (checkedTypes.isEmpty()) {
+      return;
+    }
+
+    MethodInvocationCollector visitor = new MethodInvocationCollector(symbol -> throwExpectedException(symbol, checkedTypes));
+    treeToVisit.accept(visitor);
+    List<Tree> invocationTree = visitor.invocationTree;
+    if (invocationTree.size() > 1) {
+      reportIssue(reportLocation,
+        String.format("Refactor the %s to have only one invocation throwing an exception.", placeToRefactor),
+        secondaryLocations(invocationTree),
+        null);
+    }
+  }
+
