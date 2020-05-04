@@ -1,0 +1,41 @@
+  /**
+   * Returns the assertX method that should be used instead of assertTrue, if applicable.
+   *
+   * @param argumentExpression the boolean expression passed to assertTrue
+   * @return the assertion method to be used instead of assertTrue, or {@code null} if no better assertion method was determined
+   */
+  private static Optional<Assertion> getReplacementAssertion(ExpressionTree argumentExpression) {
+    Assertion assertion = null;
+
+    switch (argumentExpression.kind()) {
+      case EQUAL_TO:
+        if (isCheckForNull((BinaryExpressionTree) argumentExpression)) {
+          assertion = Assertion.NULL;
+        } else if (isPrimitiveComparison((BinaryExpressionTree) argumentExpression)) {
+          assertion = Assertion.EQUALS;
+        } else {
+          assertion = Assertion.SAME;
+        }
+        break;
+      case NOT_EQUAL_TO:
+        if (isCheckForNull((BinaryExpressionTree) argumentExpression)) {
+          assertion = Assertion.NOT_NULL;
+        } else if (isPrimitiveComparison((BinaryExpressionTree) argumentExpression)) {
+          assertion = Assertion.NOT_EQUALS;
+        } else {
+          assertion = Assertion.NOT_SAME;
+        }
+        break;
+      case METHOD_INVOCATION:
+        if (EQUALS_METHODS.matches((MethodInvocationTree) argumentExpression)) {
+          assertion = Assertion.EQUALS;
+        }
+        break;
+      case LOGICAL_COMPLEMENT:
+        return getReplacementAssertion(((UnaryExpressionTree) argumentExpression).expression()).map(COMPLEMENTS::get);
+      default:
+    }
+
+    return Optional.ofNullable(assertion);
+  }
+

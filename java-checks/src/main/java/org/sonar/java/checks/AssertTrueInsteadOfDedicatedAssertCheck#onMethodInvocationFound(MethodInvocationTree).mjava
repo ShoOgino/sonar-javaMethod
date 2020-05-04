@@ -1,0 +1,8 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    mit.arguments().stream()
+      .filter(argument -> argument.symbolType().isPrimitive(Type.Primitives.BOOLEAN))
+      .findFirst()
+      .ifPresent(argument -> checkBooleanExpressionInAssertMethod(ExpressionUtils.methodName(mit), argument));
+  }
+

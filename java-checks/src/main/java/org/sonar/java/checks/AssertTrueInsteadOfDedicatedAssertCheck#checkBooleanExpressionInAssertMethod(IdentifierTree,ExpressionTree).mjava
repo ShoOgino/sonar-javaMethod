@@ -1,0 +1,13 @@
+  private void checkBooleanExpressionInAssertMethod(IdentifierTree problematicAssertionCallIdentifier, ExpressionTree argumentExpression) {
+    Optional<Assertion> replacementAssertionOpt = getReplacementAssertion(argumentExpression);
+    if (problematicAssertionCallIdentifier.name().equals("assertFalse")) {
+      replacementAssertionOpt = replacementAssertionOpt.map(COMPLEMENTS::get);
+    }
+
+    replacementAssertionOpt.ifPresent(replacementAssertion -> reportIssue(
+      problematicAssertionCallIdentifier,
+      replacementAssertion.useInsteadMessage,
+      Collections.singletonList(new JavaFileScannerContext.Location(replacementAssertion.secondaryExplanationMessage, argumentExpression)),
+      null));
+  }
+
