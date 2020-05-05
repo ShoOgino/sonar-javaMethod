@@ -1,0 +1,17 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree method = (MethodTree) tree;
+    findExpectedException(method.modifiers().annotations()).ifPresent(expected -> {
+      AssertionCollector assertionCollector = new AssertionCollector();
+      method.accept(assertionCollector);
+      if (!assertionCollector.assertions.isEmpty()) {
+        reportIssue(
+          expected,
+          "Move assertions into separate method or use assertThrows or try-catch instead.",
+          assertionCollector.assertions,
+          null
+        );
+      }
+    });
+  }
+
