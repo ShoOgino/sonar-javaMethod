@@ -1,10 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      if(tree.symbol().isMethodSymbol()) {
-        Type type = tree.symbol().owner().type();
-        if (isCheckedType(type)) {
-          reportIssue(ExpressionUtils.methodName(tree), "Remove this assertion.");
-        }
+      if (COMMON_ASSERTION_MATCHER.matches(tree)) {
+        reportIssue(ExpressionUtils.methodName(tree), "Remove this assertion.");
       }
       super.visitMethodInvocation(tree);
     }
