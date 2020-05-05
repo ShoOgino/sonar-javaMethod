@@ -1,8 +1,8 @@
   @Test
-  public void bad_regex() {
+  void bad_regex() {
     CommentRegularExpressionCheck check = new CommentRegularExpressionCheck();
     check.regularExpression = "[[";
-    assertThrows(AnalysisException.class,
-      () -> JavaCheckVerifier.newVerifier().onFile("src/test/files/checks/CommentRegularExpressionCheck.java").withCheck(check).verifyIssues());
+    CheckVerifier verifier = JavaCheckVerifier.newVerifier().onFile("src/test/files/checks/CommentRegularExpressionCheck.java").withCheck(check);
+    assertThrows(AnalysisException.class, verifier::verifyIssues);
   }
 
