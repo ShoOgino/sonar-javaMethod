@@ -1,0 +1,18 @@
+  @Override
+  public void visitNode(Tree tree) {
+    Symbol symbol;
+    Arguments arguments;
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      symbol = mit.symbol();
+      arguments = mit.arguments();
+    } else {
+      NewClassTree nct = (NewClassTree) tree;
+      symbol = nct.constructorSymbol();
+      arguments = nct.arguments();
+    }
+    if (symbol.isMethodSymbol()) {
+      checkConfusingVararg((Symbol.MethodSymbol) symbol, arguments);
+    }
+  }
+
