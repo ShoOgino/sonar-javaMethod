@@ -1,0 +1,11 @@
+  private void checkAnnotation(AnnotationTree annotation) {
+    if (annotation.symbolType().is("org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")) {
+      annotation.arguments().stream()
+        .map(DebugFeatureEnabledCheck::getDebugArgument)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .filter(assignment -> Boolean.TRUE.equals(ExpressionsHelper.getConstantValueAsBoolean(assignment.expression()).value()))
+        .ifPresent(assignment -> reportIssue(assignment, MESSAGE));
+    }
+  }
+

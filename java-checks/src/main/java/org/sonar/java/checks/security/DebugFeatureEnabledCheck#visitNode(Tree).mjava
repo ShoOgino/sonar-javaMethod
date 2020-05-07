@@ -1,13 +1,16 @@
   @Override
   public void visitNode(Tree tree) {
-    AnnotationTree annotation = (AnnotationTree) tree;
-    if (annotation.symbolType().is("org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")) {
-      annotation.arguments().stream()
-        .map(DebugFeatureEnabledCheck::getDebugArgument)
-        .filter(Objects::nonNull)
-        .findFirst()
-        .filter(assignment -> Boolean.TRUE.equals(ExpressionsHelper.getConstantValueAsBoolean(assignment.expression()).value()))
-        .ifPresent(assignment -> reportIssue(assignment, MESSAGE));
+    switch (tree.kind()) {
+      case ANNOTATION:
+        checkAnnotation((AnnotationTree) tree);
+        break;
+      case METHOD_INVOCATION:
+        checkMethodInvocation((MethodInvocationTree) tree);
+        break;
+      default:
+        ClassTree classTree = (ClassTree) tree;
+        enclosingClass.push(classTree.symbol());
+        break;
     }
   }
 
