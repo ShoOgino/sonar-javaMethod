@@ -1,0 +1,31 @@
+  @Override
+  public void visitNode(Tree tree) {
+    TryStatementTree tryStatementTree = (TryStatementTree) tree;
+    typeToCatchToken.clear();
+    Multimap<Type, Type> baseToDerived = getBaseTypeCaughtAfterDerivedType(tryStatementTree.catches());
+
+    if (baseToDerived.isEmpty()) {
+      return;
+    }
+
+    ThrownExceptionCollector collector = new ThrownExceptionCollector();
+    tryStatementTree.block().accept(collector);
+    List<Type> thrownTypes = collector.thrownTypes;
+
+    baseToDerived.asMap().forEach((baseType, derivedTypes) -> {
+      // Catching a derived type before the base type is fine if the body of the try throws an exception which is a subtype of the base type,
+      // but not of the derived type. We have to make sure that we are not in this situation before reporting an issue.
+      List<Type> derivedTypesHiding = derivedTypes.stream()
+        .filter(derivedType -> isHidden(baseType, derivedType, thrownTypes))
+        .collect(Collectors.toList());
+
+      if (!derivedTypesHiding.isEmpty()) {
+        reportIssue(typeToCatchToken.get(baseType),
+          "Remove this catch block because it is unreachable as hidden by previous catch blocks.",
+          derivedTypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToCatchToken.get(type)))
+          .collect(Collectors.toList()),
+          null);
+      }
+    });
+  }
+

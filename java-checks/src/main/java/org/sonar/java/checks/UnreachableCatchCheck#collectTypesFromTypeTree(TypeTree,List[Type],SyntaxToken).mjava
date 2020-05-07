@@ -1,0 +1,10 @@
+  private void collectTypesFromTypeTree(TypeTree typeTree, List<Type> types, SyntaxToken correspondingCatch) {
+    if (typeTree.is(Tree.Kind.UNION_TYPE)) {
+      ((UnionTypeTree) typeTree).typeAlternatives().forEach(t -> collectTypesFromTypeTree(t, types, correspondingCatch));
+    } else {
+      Type type = typeTree.symbolType();
+      typeToCatchToken.put(type, correspondingCatch);
+      types.add(type);
+    }
+  }
+
