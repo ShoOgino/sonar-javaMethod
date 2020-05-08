@@ -1,10 +1,7 @@
-  private static String expectedAnnotation(Symbol.MethodSymbol symbol, int jUnitVersion) {
-    String expected;
-    if (JUNIT_SETUP.equals(symbol.name())) {
-      expected = ORG_JUNIT_BEFORE;
-    } else {
-      expected = ORG_JUNIT_AFTER;
+  private static Optional<String> expectedAnnotation(Symbol.MethodSymbol symbol, int jUnitVersion) {
+    if (JUNIT_SETUP.equals(symbol.name()) || symbol.metadata().isAnnotatedWith(ORG_JUNIT_BEFORE)) {
+      return Optional.of(jUnitVersion == 4 ? ORG_JUNIT_BEFORE : "org.junit.jupiter.api.BeforeEach");
     }
-    return jUnitVersion == 4 ? expected : JUNIT4_TO_JUNIT5.get(expected);
+    return Optional.of(jUnitVersion == 4 ? ORG_JUNIT_AFTER : "org.junit.jupiter.api.AfterEach");
   }
 

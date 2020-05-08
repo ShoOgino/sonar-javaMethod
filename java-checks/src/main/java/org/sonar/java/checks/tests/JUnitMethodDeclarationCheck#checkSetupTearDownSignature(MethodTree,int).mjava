@@ -3,24 +3,9 @@
       reportIssue(methodTree, "This method does not accept parameters.");
     } else if (jUnitVersion > 3) {
       Symbol.MethodSymbol symbol = methodTree.symbol();
-      if (symbol.overriddenSymbol() != null) {
-        return;
-      }
-      SymbolMetadata metadata = symbol.metadata();
-      if (jUnitVersion == 5) {
-        Optional<String> wrongJUnit4Annotation = JUNIT4_ANNOTATIONS.stream().filter(metadata::isAnnotatedWith).findFirst();
-        if (wrongJUnit4Annotation.isPresent()) {
-          String jUnit4Annotation = wrongJUnit4Annotation.get();
-          reportIssue(methodTree, String.format("Annotate this method with JUnit5 '@%s' instead of JUnit4 '@%s'.",
-            JUNIT4_TO_JUNIT5.get(jUnit4Annotation),
-            jUnit4Annotation.substring(jUnit4Annotation.lastIndexOf('.') + 1)));
-          return;
-        }
-      }
-      if (JUNIT4_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith) || JUNIT5_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith)) {
-        return;
-      }
-      reportIssue(methodTree, String.format("Annotate this method with JUnit%d '@%s' or remove it.", jUnitVersion, expectedAnnotation(symbol, jUnitVersion)));
+      expectedAnnotation(symbol, jUnitVersion)
+        .filter(annotation -> !symbol.metadata().isAnnotatedWith(annotation))
+        .ifPresent(annotation -> reportWrongAnnotation(methodTree, jUnitVersion, annotation));
     }
   }
 
