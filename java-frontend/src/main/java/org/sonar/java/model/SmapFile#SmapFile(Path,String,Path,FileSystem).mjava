@@ -1,4 +1,4 @@
-  public SmapFile(Path rootDir, String smapString) {
+  public SmapFile(Path rootDir, String smapString, Path uriRoot, FileSystem fileSystem) {
     this.sc = new Scanner(smapString);
     String header = sc.nextLine();
     if (!"SMAP".equals(header)) {
@@ -12,7 +12,7 @@
     }
     findSection("*S JSP");
     findSection("*F");
-    fileSection = readFileSection();
+    fileSection = readFileSection(uriRoot, fileSystem);
     findSection("*L");
     lineSection = readLineSection();
   }

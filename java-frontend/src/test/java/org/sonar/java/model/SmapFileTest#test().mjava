@@ -17,11 +17,14 @@
       "160#2,3:300,2\n" +
       "160,3:300,2\n" +
       "*E\n";
-    SmapFile smap = new SmapFile(temporaryFolder, sourceMap);
+    DefaultFileSystem fs = new DefaultFileSystem(temporaryFolder);
+    DefaultInputFile inputFile = TestInputFileBuilder.create("module", temporaryFolder.toFile(), temporaryFolder.resolve("WEB-INF/test.jsp").toFile()).build();
+    fs.add(inputFile);
+    SmapFile smap = new SmapFile(temporaryFolder, sourceMap, temporaryFolder, fs);
     assertThat(smap.getGeneratedFile()).isEqualTo(temporaryFolder.resolve("test_jsp.java"));
     assertThat(smap.getFileSection()).containsExactly(
-      entry(0, new SmapFile.FileInfo(0, "test.jsp", "WEB-INF/test.jsp")),
-      entry(2, new SmapFile.FileInfo(2, "Incl.xyz", null))
+      entry(0, new SmapFile.FileInfo(0, "test.jsp", "WEB-INF/test.jsp", null)),
+      entry(2, new SmapFile.FileInfo(2, "Incl.xyz", null, null))
       );
     assertThat(smap.getLineSection()).containsExactly(
       new SmapFile.LineInfo(1, 0, 5, 116, 0),

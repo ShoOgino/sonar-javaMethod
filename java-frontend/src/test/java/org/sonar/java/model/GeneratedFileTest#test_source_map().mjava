@@ -15,9 +15,10 @@
       "160,3:300,2\n" +
       "*E\n";
 
-    SmapFile smapFile = new SmapFile(tmp, smap);
-    InputFile inputFile = inputFileFromPath(Paths.get("src/main/webapp/index.jsp"));
-    GeneratedFile generatedFile = new GeneratedFile(tmp.resolve("index_jsp.java"), inputFile);
+    InputFile inputFile = inputFileFromPath(tmp.resolve("src/main/webapp/index.jsp"));
+    fs.add(inputFile);
+    SmapFile smapFile = new SmapFile(tmp, smap, tmp.resolve("src/main/webapp"), fs);
+    GeneratedFile generatedFile = new GeneratedFile(tmp.resolve("index_jsp.java"));
     generatedFile.addSmap(smapFile);
 
     GeneratedFile.SourceMapImpl sourceMap = ((GeneratedFile.SourceMapImpl) generatedFile.sourceMap());

@@ -1,4 +1,4 @@
-  private Map<Integer, FileInfo> readFileSection() {
+  private Map<Integer, FileInfo> readFileSection(Path uriRoot, FileSystem fileSystem) {
     Map<Integer, FileInfo> result = new HashMap<>();
     while (sc.hasNext() && !sc.hasNext("\\*.")) {
       if (sc.hasNext("\\+")) {
@@ -7,11 +7,13 @@
         String file = sc.next();
         sc.nextLine();
         String path = sc.nextLine();
-        result.put(fileId, new FileInfo(fileId, file, path));
+        InputFile inputFile = findFileWithPath(uriRoot.resolve(path), fileSystem);
+        result.put(fileId, new FileInfo(fileId, file, path, inputFile));
       } else {
         int fileId = sc.nextInt();
         String file = sc.next();
-        result.put(fileId, new FileInfo(fileId, file, null));
+        InputFile inputFile = findFileWithPath(uriRoot.resolve(file), fileSystem);
+        result.put(fileId, new FileInfo(fileId, file, null, inputFile));
       }
     }
     return result;

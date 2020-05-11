@@ -1,0 +1,39 @@
+  @Test
+  void test_multiple_files() {
+    String smap = "SMAP\n" +
+      "index_jsp.java\n" +
+      "JSP\n" +
+      "*S JSP\n" +
+      "*F\n" +
+      "+ 0 index.jsp\n" +
+      "index.jsp\n" +
+      "+ 1 index2.jsp\n" +
+      "index2.jsp\n" +
+      "*L\n" +
+      "1:1\n" +
+      "2#1:2\n" +
+      "*E\n";
+
+    Path uriRoot = tmp.resolve("src/main/webapp");
+    InputFile indexJsp = inputFileFromPath(uriRoot.resolve("index.jsp"));
+    InputFile index2Jsp = inputFileFromPath(uriRoot.resolve("index2.jsp"));
+    fs.add(indexJsp);
+    fs.add(index2Jsp);
+    SmapFile smapFile = new SmapFile(tmp, smap, uriRoot, fs);
+    GeneratedFile generatedFile = new GeneratedFile(tmp.resolve("index_jsp.java"));
+    generatedFile.addSmap(smapFile);
+
+    GeneratedFile.SourceMapImpl sourceMap = ((GeneratedFile.SourceMapImpl) generatedFile.sourceMap());
+
+    Optional<SourceMap.Location> loc1 = sourceMap.getLocation(1, 1);
+    assertThat(loc1.get().file()).isEqualTo(indexJsp);
+    assertLocation(loc1, 1, 1);
+
+    Optional<SourceMap.Location> loc2 = sourceMap.getLocation(2, 2);
+    assertThat(loc2.get().file()).isEqualTo(index2Jsp);
+    assertLocation(loc2, 2, 2);
+
+    // spanning two input files would return start file
+    assertThat(sourceMap.getLocation(1, 2).get().file()).isEqualTo(indexJsp);
+  }
+

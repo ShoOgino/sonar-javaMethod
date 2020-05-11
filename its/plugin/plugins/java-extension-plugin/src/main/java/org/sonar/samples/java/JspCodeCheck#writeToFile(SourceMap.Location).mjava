@@ -1,0 +1,10 @@
+  private void writeToFile(SourceMap.Location location) {
+    try {
+      Path path = context.getWorkingDirectory().toPath().resolve("JspCodeCheck.txt");
+      String data = format("%s %d:%d%n", location.file().filename(), location.startLine(), location.endLine());
+      Files.write(path, data.getBytes(), APPEND, CREATE);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
