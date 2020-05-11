@@ -1,11 +1,12 @@
   @Test
   void verify_should_fail_when_using_incorrect_secondaryLocation() throws IOException {
     IssuableSubscriptionVisitor visitor = new FakeVisitor().withDefaultIssues();
+    CheckVerifier verifier = CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierIncorrectSecondaryLocation.java")
+      .withCheck(visitor);
+
     try {
-      CheckVerifier.newVerifier()
-        .onFile("src/test/files/JavaCheckVerifierIncorrectSecondaryLocation.java")
-        .withCheck(visitor)
-        .verifyIssues();
+      verifier.verifyIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Secondary locations: expected: [] unexpected: [3]. In JavaCheckVerifierIncorrectSecondaryLocation.java:10");

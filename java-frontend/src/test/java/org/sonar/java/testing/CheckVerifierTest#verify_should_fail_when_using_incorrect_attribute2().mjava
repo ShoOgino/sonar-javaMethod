@@ -1,10 +1,11 @@
   @Test
   void verify_should_fail_when_using_incorrect_attribute2() throws IOException {
+    CheckVerifier verifier = CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierIncorrectAttribute2.java")
+      .withCheck(NO_EFFECT_VISITOR);
+
     try {
-      CheckVerifier.newVerifier()
-        .onFile("src/test/files/JavaCheckVerifierIncorrectAttribute2.java")
-        .withCheck(NO_EFFECT_VISITOR)
-        .verifyNoIssues();
+      verifier.verifyNoIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("// Noncompliant attributes not valid: 'invalid=1=2'");

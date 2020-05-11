@@ -8,11 +8,12 @@
       .issueWithFlow(20)
       .flow(17, "msg", 19, null)
       .add();
+    CheckVerifier verifier = CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierFlows.java")
+      .withCheck(fakeVisitor);
+
     try {
-      CheckVerifier.newVerifier()
-        .onFile("src/test/files/JavaCheckVerifierFlows.java")
-        .withCheck(fakeVisitor)
-        .verifyIssues();
+      verifier.verifyIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Missing flows: npe1 [9,3].");

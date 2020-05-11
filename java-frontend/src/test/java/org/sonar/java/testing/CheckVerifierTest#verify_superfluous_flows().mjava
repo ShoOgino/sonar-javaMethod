@@ -6,11 +6,12 @@
       .flowItem(3, "a is assigned to null here", 12, 20)
       .flowItem(9, "a is assigned to b here", 7, 12)
       .add();
+    CheckVerifier verifier = CheckVerifier.newVerifier()
+      .onFile("src/test/files/JavaCheckVerifierFlowsSuperfluous.java")
+      .withCheck(fakeVisitor);
+
     try {
-      CheckVerifier.newVerifier()
-        .onFile("src/test/files/JavaCheckVerifierFlowsSuperfluous.java")
-        .withCheck(fakeVisitor)
-        .verifyIssues();
+      verifier.verifyIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Following flow comments were observed, but not referenced by any issue: {superfluous=8,6,4, npe2=7}");

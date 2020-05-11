@@ -1,12 +1,10 @@
   @Test
   void verify_combined_missing_expected_and_unexpected_issues() {
     IssuableSubscriptionVisitor visitor = new FakeVisitor().withDefaultIssues().withIssue(4, "extra message").withoutIssue(1);
+    CheckVerifier verifier = CheckVerifier.newVerifier().onFile(FILENAME_ISSUES).withCheck(visitor);
 
     try {
-      CheckVerifier.newVerifier()
-        .onFile(FILENAME_ISSUES)
-        .withCheck(visitor)
-        .verifyIssues();
+      verifier.verifyIssues();
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Expected at [1], Unexpected at [4]");
