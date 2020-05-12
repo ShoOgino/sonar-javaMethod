@@ -1,0 +1,9 @@
+  private static boolean isHiding(Type derivedType, List<Type> thrownTypes) {
+    return thrownTypes.stream().allMatch(thrownType ->
+      // Only throwing a subtype of the first caught exception, hiding the base one
+      thrownType.isSubtypeOf(derivedType) ||
+      // Or throwing an unrelated exception
+      !derivedType.isSubtypeOf(thrownType)
+    );
+  }
+

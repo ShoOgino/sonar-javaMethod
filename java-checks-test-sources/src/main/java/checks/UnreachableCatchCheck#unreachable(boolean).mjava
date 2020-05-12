@@ -35,9 +35,9 @@
       throwCustomDerivedDerivedException();
     } catch (CustomDerivedDerivedException e) {
       // ...
-    } catch (CustomDerivedException e) { // Noncompliant [[secondary=43]]
+    } catch (CustomDerivedException e) { // Noncompliant [[secondary=46]]
       // ...
-    } catch (CustomException e) { // Noncompliant [[secondary=43,45]]
+    } catch (CustomException e) { // Noncompliant [[secondary=46,48]]
       // ...
     }
 
@@ -47,7 +47,7 @@
       // ...
     } catch (CustomDerivedException e) {
       // ...
-    } catch (CustomException e) { // Noncompliant [[secondary=55]]
+    } catch (CustomException e) { // Noncompliant [[secondary=58]]
       // ...
     }
 
@@ -58,7 +58,7 @@
       // ...
     } catch (IOException e) { // Compliant
       // ...
-    } catch (CustomException e) { // Noncompliant [[sc=7;ec=12;secondary=64]]
+    } catch (CustomException e) { // Noncompliant [[sc=7;ec=12;secondary=67]]
       // ...
     }
 
@@ -102,6 +102,25 @@
       // ...
     }
 
+    try {
+      throwCustomException();
+    } catch (CustomDerivedDerivedException e) {
+      // ...
+    } catch (CustomDerivedException e) { // Compliant, throwCustomException can throw one of his subtype
+      // ...
+    } catch (CustomException e) {
+      // ...
+    }
+
+    try {
+      throw new Exception();
+    } catch (CustomDerivedDerivedException e) {
+      // ...
+    } catch (CustomDerivedException e) { // Compliant, FN in this case, but Exception could be one of his subtype
+      // ...
+    } catch (Exception e) {
+      // ...
+    }
 
     try {
       throwCustomDerivedException();
@@ -139,6 +158,30 @@
       throwCustomException();
     } catch (CustomException e) { // Compliant
       // ...
+    }
+
+    try(InputStream input = new FileInputStream("reportFileName")) {
+      throwCustomDerivedException();
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) { // Compliant, close throws an IOException
+    } catch (CustomDerivedException e) {
+      // ...
+    } catch (CustomException e) { // FN
+      // ...
+    }
+
+    class B implements Closeable {
+      @Override
+      public void close() throws FileNotFoundException {
+        throw new RuntimeException();
+      }
+    }
+
+    try (B a = new B()) {
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) { // FN: this can happen only if the class implementing Closable specify a subtype of IOException in the declaration.
+      e.printStackTrace();
     }
 
     try {
