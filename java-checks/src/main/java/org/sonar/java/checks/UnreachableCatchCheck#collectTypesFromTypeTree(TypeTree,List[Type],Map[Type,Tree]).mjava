@@ -1,0 +1,10 @@
+  private static void collectTypesFromTypeTree(TypeTree typeTree, List<Type> types, Map<Type, Tree> typeToTypeTree) {
+    if (typeTree.is(Tree.Kind.UNION_TYPE)) {
+      ((UnionTypeTree) typeTree).typeAlternatives().forEach(t -> collectTypesFromTypeTree(t, types, typeToTypeTree));
+    } else {
+      Type type = typeTree.symbolType();
+      typeToTypeTree.put(type, typeTree);
+      types.add(type);
+    }
+  }
+

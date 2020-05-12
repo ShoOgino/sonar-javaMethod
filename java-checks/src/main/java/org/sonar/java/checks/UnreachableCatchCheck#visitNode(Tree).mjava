@@ -6,8 +6,8 @@
       // Supporting potential problems is not worth since it is really unlikely that something wrong happen.
       return;
     }
-    typeToCatchToken.clear();
-    Multimap<Type, Type> baseToDerived = getBaseTypeCaughtAfterDerivedType(tryStatementTree.catches());
+    Map<Type, Tree> typeToTypeTree = new HashMap<>();
+    Multimap<Type, Type> baseToDerived = getBaseTypeCaughtAfterDerivedType(tryStatementTree.catches(), typeToTypeTree);
 
     if (baseToDerived.isEmpty()) {
       return;
@@ -23,9 +23,9 @@
         .collect(Collectors.toList());
 
       if (!derivedTypesHiding.isEmpty()) {
-        reportIssue(typeToCatchToken.get(baseType),
-          "Remove this catch block because it is unreachable as hidden by previous catch blocks.",
-          derivedTypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToCatchToken.get(type)))
+        reportIssue(typeToTypeTree.get(baseType),
+          "Remove this type because it is unreachable as hidden by previous catch blocks.",
+          derivedTypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
           .collect(Collectors.toList()),
           null);
       }

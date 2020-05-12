@@ -1,9 +1,9 @@
-  private Multimap<Type, Type> getBaseTypeCaughtAfterDerivedType(List<CatchTree> catches) {
+  private static Multimap<Type, Type> getBaseTypeCaughtAfterDerivedType(List<CatchTree> catches, Map<Type, Tree> typeToTypeTree) {
     Multimap<Type, Type> baseAfterDerived = HashMultimap.create();
     List<Type> catchTypes = catches.stream()
       .flatMap(c -> {
         List<Type> types = new ArrayList<>();
-        collectTypesFromTypeTree(c.parameter().type(), types, c.catchKeyword());
+        collectTypesFromTypeTree(c.parameter().type(), types, typeToTypeTree);
         return types.stream();
       })
       .filter(UnreachableCatchCheck::isChecked)
