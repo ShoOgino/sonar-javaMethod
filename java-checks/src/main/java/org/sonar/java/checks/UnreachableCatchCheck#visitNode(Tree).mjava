@@ -7,9 +7,9 @@
       return;
     }
     Map<Type, Tree> typeToTypeTree = new HashMap<>();
-    Multimap<Type, Type> baseToDerived = getBaseTypeCaughtAfterDerivedType(tryStatementTree.catches(), typeToTypeTree);
+    Multimap<Type, Type> baseToSubtype = getBaseTypeCaughtAfterSubtype(tryStatementTree.catches(), typeToTypeTree);
 
-    if (baseToDerived.isEmpty()) {
+    if (baseToSubtype.isEmpty()) {
       return;
     }
 
@@ -23,16 +23,16 @@
 
     List<Type> thrownTypes = collector.thrownTypes;
 
-    baseToDerived.asMap().forEach((baseType, derivedTypes) -> {
-      List<Type> derivedTypesHiding = derivedTypes.stream()
-        .filter(derivedType -> isHiding(derivedType, thrownTypes))
+    baseToSubtype.asMap().forEach((baseType, subtypes) -> {
+      List<Type> subtypesHiding = subtypes.stream()
+        .filter(subtype -> isHiding(subtype, thrownTypes))
         .collect(Collectors.toList());
 
-      if (!derivedTypesHiding.isEmpty()) {
+      if (!subtypesHiding.isEmpty()) {
         reportIssue(typeToTypeTree.get(baseType),
           "Remove this type because it is unreachable as hidden by previous catch blocks.",
-          derivedTypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
-          .collect(Collectors.toList()),
+          subtypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
+            .collect(Collectors.toList()),
           null);
       }
     });
