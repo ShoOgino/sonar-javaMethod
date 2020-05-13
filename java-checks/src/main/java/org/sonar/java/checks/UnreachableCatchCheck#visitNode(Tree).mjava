@@ -15,6 +15,12 @@
 
     ThrownExceptionCollector collector = new ThrownExceptionCollector();
     tryStatementTree.block().accept(collector);
+
+    if (collector.unknownVisited || collector.thrownTypes.isEmpty()) {
+      // Unknown method can throw anything, we can not tell anything about it.
+      return;
+    }
+
     List<Type> thrownTypes = collector.thrownTypes;
 
     baseToDerived.asMap().forEach((baseType, derivedTypes) -> {
