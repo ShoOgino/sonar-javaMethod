@@ -58,7 +58,7 @@
       // ...
     } catch (IOException e) { // Compliant
       // ...
-    } catch (CustomException e) { // Noncompliant [[sc=14;ec=29;secondary=67]]
+    } catch (CustomException e) { // FN, line 67 hide this catch, but we don't support correctly the presence of another type of Exception
       // ...
     }
 
@@ -67,7 +67,7 @@
       throwIOException();
     } catch (CustomDerivedException | IOException e) {
       // ...
-    } catch (CustomException e) { // Noncompliant
+    } catch (CustomException e) { // FN, we don't support correctly the presence of another type of Exception
       // ...
     }
 
@@ -202,6 +202,23 @@
     } catch (Error e) {
       // ...
     } catch (RuntimeException e) { // Compliant, not a checked exception
+      // ...
+    }
+
+    try {
+      throwCustomDerivedException();
+      throwOtherCustomDerivedException();
+    } catch (CustomDerivedException e) {
+      // ...
+    } catch (CustomException e) { // Compliant
+      // ...
+    }
+
+    try {
+      throwBoth();
+    } catch (CustomDerivedException e) {
+      // ...
+    } catch (CustomException e) { // Compliant
       // ...
     }
 
