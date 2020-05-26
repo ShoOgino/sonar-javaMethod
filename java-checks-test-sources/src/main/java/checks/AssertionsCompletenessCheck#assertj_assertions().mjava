@@ -1,0 +1,42 @@
+  @Test
+  public void assertj_assertions() {
+    org.assertj.core.api.Assertions.assertThat(1).isGreaterThan(0);
+    org.assertj.core.api.Assertions.assertThat(1); // Noncompliant
+    org.assertj.core.api.Assertions.assertThat(1).withThreadDumpOnError().isGreaterThan(0);
+    org.assertj.core.api.Assertions.assertThat(1).withThreadDumpOnError(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThat(1).overridingErrorMessage("error").isGreaterThan(0);
+    org.assertj.core.api.Assertions.assertThat(1).overridingErrorMessage("error"); // Noncompliant
+    org.assertj.core.api.Assertions.assertThat(1).usingDefaultComparator().isGreaterThan(0);
+    org.assertj.core.api.Assertions.assertThat(1).usingDefaultComparator(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatObject(null).extracting("name"); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatObject(null).extracting("name").isEqualTo("Paul");
+    org.assertj.core.api.Assertions.assertThatThrownBy(() -> {}).describedAs(""); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatThrownBy(() -> {}).describedAs("").hasMessage("42");
+    org.assertj.core.api.Assertions.assertThatThrownBy(() -> {}, "desc", 42).usingComparator(null); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatThrownBy(() -> {}, "desc", 42).usingComparator(null).isInstanceOf(IllegalStateException.class);
+    org.assertj.core.api.Assertions.assertThatCode(() -> {}); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatCode(() -> {}).isInstanceOf(IllegalStateException.class);
+    org.assertj.core.api.Assertions.assertThatExceptionOfType(IllegalStateException.class); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {});
+    org.assertj.core.api.Assertions.assertThatNullPointerException(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatNullPointerException().isThrownBy(() -> {});
+    org.assertj.core.api.Assertions.assertThatIllegalArgumentException(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatIllegalArgumentException().isThrownBy(() -> {});
+    org.assertj.core.api.Assertions.assertThatIOException(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatIOException().isThrownBy(() -> {});
+    org.assertj.core.api.Assertions.assertThatIllegalStateException(); // Noncompliant
+    org.assertj.core.api.Assertions.assertThatIllegalStateException().isThrownBy(() -> {});
+
+    Comparator customComparator = null;
+    org.assertj.core.api.Assertions.assertThat(1).usingComparator(customComparator).isGreaterThanOrEqualTo(0);
+    org.assertj.core.api.Assertions.assertThat(1).usingComparator(customComparator); // Noncompliant
+    org.assertj.core.api.Assertions.assertThat("a").asString().hasSize(1);
+    org.assertj.core.api.Assertions.assertThat("a").asString(); // Noncompliant
+    List a = null;
+    org.assertj.core.api.Assertions.assertThat(a).asList().hasSize(0);
+    org.assertj.core.api.Assertions.assertThat(a).asList(); // Noncompliant
+    org.assertj.core.api.SoftAssertions softly = new org.assertj.core.api.SoftAssertions();
+    softly.assertThat((Path) null); // Noncompliant
+    softly.assertAll();
+  }
+
