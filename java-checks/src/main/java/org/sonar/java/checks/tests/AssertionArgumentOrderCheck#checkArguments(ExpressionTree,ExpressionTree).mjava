@@ -1,0 +1,13 @@
+  private void checkArguments(ExpressionTree expectedArgument, ExpressionTree actualArgument) {
+    if (actualArgument.is(LITERAL_KINDS)) {
+      // When we have a literal as actual, we are sure to have an issue
+      if (expectedArgument.is(LITERAL_KINDS)) {
+        reportIssue(expectedArgument, actualArgument, MESSAGE_TWO_LITERALS);
+      } else {
+        reportIssue(expectedArgument, actualArgument, MESSAGE_SWAP);
+      }
+    } else if (isExpectedPattern(actualArgument) && !isExpectedPattern(expectedArgument)) {
+      reportIssue(expectedArgument, actualArgument, MESSAGE_SWAP);
+    }
+  }
+
