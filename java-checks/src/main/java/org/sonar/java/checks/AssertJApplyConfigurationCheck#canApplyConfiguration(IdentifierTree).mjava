@@ -1,0 +1,14 @@
+  private static boolean canApplyConfiguration(IdentifierTree identifier) {
+    Tree parent = identifier.parent();
+    if (parent == null) {
+      return false;
+    }
+
+    if (parent.is(Tree.Kind.MEMBER_SELECT)) {
+      String methodName = ((MemberSelectExpressionTree) parent).identifier().name();
+      return "apply".equals(methodName) || "applyAndDisplay".equals(methodName);
+    }
+    // The configuration can be applied when passed as argument.
+    return parent.is(Tree.Kind.ARGUMENTS);
+  }
+

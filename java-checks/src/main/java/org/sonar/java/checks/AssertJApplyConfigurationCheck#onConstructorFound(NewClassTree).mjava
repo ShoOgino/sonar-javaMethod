@@ -1,0 +1,11 @@
+  @Override
+  protected void onConstructorFound(NewClassTree newClassTree) {
+    Tree parent = newClassTree.parent();
+    if (parent != null && parent.is(Tree.Kind.VARIABLE)) {
+      VariableTree variableTree = ((VariableTree) parent);
+      if (variableTree.symbol().usages().stream().noneMatch(AssertJApplyConfigurationCheck::canApplyConfiguration)) {
+        reportIssue(variableTree.simpleName(), "Apply this configuration with apply() or applyAndDisplay().");
+      }
+    }
+  }
+
