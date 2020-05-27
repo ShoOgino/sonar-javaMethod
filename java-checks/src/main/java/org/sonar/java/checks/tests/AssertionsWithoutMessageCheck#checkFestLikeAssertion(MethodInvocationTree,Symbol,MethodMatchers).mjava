@@ -1,0 +1,11 @@
+  private void checkFestLikeAssertion(MethodInvocationTree mit, Symbol symbol, MethodMatchers messageMethods) {
+    if (isConstructor(symbol)) {
+      return;
+    }
+    FestLikeVisitor visitor = new FestLikeVisitor(messageMethods);
+    mit.methodSelect().accept(visitor);
+    if (!visitor.useDescription) {
+      reportIssue(mit, MESSAGE);
+    }
+  }
+

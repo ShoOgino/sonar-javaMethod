@@ -1,16 +1,19 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     Symbol symbol = mit.symbol();
-    if (symbol.owner().type().isSubtypeOf(GENERIC_ASSERT) && !FEST_AS_METHOD.matches(mit)) {
-      if (isConstructor(symbol)) {
-        return;
-      }
-      FestVisitor visitor = new FestVisitor();
-      mit.methodSelect().accept(visitor);
-      if (!visitor.useDescription) {
-        reportIssue(mit, MESSAGE);
-      }
-    } else if (symbol.owner().type().is("org.junit.jupiter.api.Assertions")) {
+    Type type = symbol.owner().type();
+
+    if (FEST_MESSAGE_METHODS.matches(mit) || ASSERTJ_MESSAGE_METHODS.matches(mit)) {
+      // If we can establish that the currently tested method is the one adding a message,
+      // we have very easily shown that this rule does not apply.
+      return;
+    }
+
+    if (type.isSubtypeOf(FEST_GENERIC_ASSERT)) {
+      checkFestLikeAssertion(mit, symbol, FEST_MESSAGE_METHODS);
+    } else if (type.isSubtypeOf(ASSERTJ_ABSTRACT_ASSERT)) {
+      checkFestLikeAssertion(mit, symbol, ASSERTJ_MESSAGE_METHODS);
+    } else if (type.is("org.junit.jupiter.api.Assertions")) {
       checkJUnit5(mit);
     } else if (mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
       reportIssue(mit, MESSAGE);
