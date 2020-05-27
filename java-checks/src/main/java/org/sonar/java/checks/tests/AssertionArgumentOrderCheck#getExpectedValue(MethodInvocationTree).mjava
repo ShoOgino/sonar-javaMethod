@@ -1,0 +1,20 @@
+  /**
+   * Find the related expected value from an assertThat, if the expression is "simple enough":
+   * - exactly one subsequent method call
+   * - one argument
+   */
+  private static Optional<ExpressionTree> getExpectedValue(MethodInvocationTree mit) {
+    Tree parentOfParent = mit.parent();
+    parentOfParent = parentOfParent == null ? null : parentOfParent.parent();
+    if (parentOfParent == null || !parentOfParent.is(Tree.Kind.METHOD_INVOCATION)) {
+      return Optional.empty();
+    }
+    MethodInvocationTree secondInvocation = (MethodInvocationTree) parentOfParent;
+    Tree secondInvocationParent = secondInvocation.parent();
+
+    if (secondInvocationParent != null && secondInvocationParent.is(Tree.Kind.EXPRESSION_STATEMENT) && secondInvocation.arguments().size() == 1) {
+      return Optional.of(secondInvocation.arguments().get(0));
+    }
+    return Optional.empty();
+  }
+

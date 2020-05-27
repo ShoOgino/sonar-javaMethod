@@ -1,10 +1,18 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     if (mit.symbol().owner().type().is(ORG_JUNIT5_ASSERTIONS)) {
-      checkArguments(mit.arguments().get(0), mit.arguments().get(1));
-    } else {
+      checkArguments(mit.arguments().get(0), mit.arguments().get(1), "expected value, actual value");
+    } else if (mit.symbol().owner().type().is(ORG_JUNIT_ASSERT)) {
       ExpressionTree argToCheck = getActualArgument(mit);
-      checkArguments(previousArg(argToCheck, mit), argToCheck);
+      checkArguments(previousArg(argToCheck, mit), argToCheck, "expected value, actual value");
+    } else {
+      Optional<ExpressionTree> expectedValue = getExpectedValue(mit);
+      ExpressionTree actualValue = mit.arguments().get(0);
+      if (expectedValue.isPresent()) {
+        checkArguments(expectedValue.get(), actualValue, "actual value, expected value");
+      } else {
+        checkArgument(actualValue);
+      }
     }
   }
 
