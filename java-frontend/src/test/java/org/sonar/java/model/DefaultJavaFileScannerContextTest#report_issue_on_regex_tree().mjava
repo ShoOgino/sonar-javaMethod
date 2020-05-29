@@ -1,0 +1,20 @@
+  @Test
+  void report_issue_on_regex_tree() {
+    RegexCheck regexCheck = new RegexCheck() {};
+    String regex = "x{42}|y{23}";
+    RegexTree regexTree = RegexParserTestUtils.parseRegex(regex);
+    DisjunctionTree disjunctionTree = (DisjunctionTree) regexTree;
+    RepetitionTree y23 = (RepetitionTree) disjunctionTree.getAlternatives().get(1);
+    CurlyBraceQuantifier rep23 = (CurlyBraceQuantifier) y23.getQuantifier();
+
+    int cost = 42;
+
+    context.reportIssue(regexCheck, rep23, "regexMsg", cost, Collections.emptyList());
+
+    assertThat(reportedMessage.getMessage()).isEqualTo("regexMsg");
+    assertThat(reportedMessage.getCost()).isEqualTo(Double.valueOf(cost));
+    assertThat(reportedMessage.flows).isEmpty();
+
+    assertMessagePosition(reportedMessage, 3, 7, 3, 11);
+  }
+

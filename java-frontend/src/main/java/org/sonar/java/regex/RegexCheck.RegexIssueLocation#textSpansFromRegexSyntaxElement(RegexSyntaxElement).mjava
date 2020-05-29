@@ -1,0 +1,12 @@
+    private static List<AnalyzerMessage.TextSpan> textSpansFromRegexSyntaxElement(RegexSyntaxElement tree) {
+      return tree.getLocations().stream()
+        .map(location -> {
+          AnalyzerMessage.TextSpan result = AnalyzerMessage.textSpanFor(location.getJavaTree());
+          return new AnalyzerMessage.TextSpan(
+            result.startLine,
+            result.startCharacter + location.getBeginningOffset(),
+            result.endLine,
+            result.startCharacter + location.getEndingOffset());
+        }).collect(Collectors.toList());
+    }
+
