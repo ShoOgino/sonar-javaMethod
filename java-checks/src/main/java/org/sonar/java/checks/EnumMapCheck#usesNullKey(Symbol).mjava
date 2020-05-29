@@ -1,11 +1,10 @@
   private static boolean usesNullKey(Symbol symbol) {
     List<IdentifierTree> usages = symbol.usages();
     for (IdentifierTree usage : usages) {
-      if (usage.parent().is(Tree.Kind.MEMBER_SELECT) && usage.parent().parent().is(Tree.Kind.METHOD_INVOCATION)) {
-        MethodInvocationTree mit = (MethodInvocationTree) usage.parent().parent();
-        if (mapPut.matches(mit) && mit.arguments().get(0).is(Tree.Kind.NULL_LITERAL)) {
-          return true;
-        }
+      if (MethodTreeUtils.consecutiveMethodInvocation(usage)
+        .filter(mit -> mapPut.matches(mit) && mit.arguments().get(0).is(Tree.Kind.NULL_LITERAL))
+        .isPresent()) {
+        return true;
       }
     }
     return false;

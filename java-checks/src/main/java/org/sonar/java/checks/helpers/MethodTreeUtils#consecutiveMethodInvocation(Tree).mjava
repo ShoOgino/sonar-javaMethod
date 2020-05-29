@@ -1,0 +1,17 @@
+  public static Optional<MethodInvocationTree> consecutiveMethodInvocation(Tree tree) {
+    Tree memberSelectExpression = tree;
+    Tree memberSelectExpressionParent = memberSelectExpression.parent();
+    while (hasKind(memberSelectExpressionParent, Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      memberSelectExpression = memberSelectExpressionParent;
+      memberSelectExpressionParent = memberSelectExpressionParent.parent();
+    }
+    if (hasKind(memberSelectExpressionParent, Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) memberSelectExpressionParent;
+      Tree memberSelectParent = memberSelect.parent();
+      if (hasKind(memberSelectParent, Tree.Kind.METHOD_INVOCATION) && memberSelect.expression() == memberSelectExpression) {
+        return Optional.of((MethodInvocationTree) memberSelectParent);
+      }
+    }
+    return Optional.empty();
+  }
+

@@ -1,11 +1,11 @@
   private static List<StringConstant> collectAntPatterns(MethodInvocationTree method) {
     List<StringConstant> antPatterns = new ArrayList<>();
-    MethodInvocationTree parentMethod = parentMethodInvocation(method);
-    while (parentMethod != null) {
-      if (ANT_MATCHERS.matches(parentMethod)) {
-        antPatterns.addAll(antMatchersPatterns(parentMethod));
+    Optional<MethodInvocationTree> parentMethod = MethodTreeUtils.consecutiveMethodInvocation(method);
+    while (parentMethod.isPresent()) {
+      if (ANT_MATCHERS.matches(parentMethod.get())) {
+        antPatterns.addAll(antMatchersPatterns(parentMethod.get()));
       }
-      parentMethod = parentMethodInvocation(parentMethod);
+      parentMethod = MethodTreeUtils.consecutiveMethodInvocation(parentMethod.get());
     }
     return antPatterns;
   }
