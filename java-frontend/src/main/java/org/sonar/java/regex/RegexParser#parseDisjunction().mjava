@@ -1,0 +1,12 @@
+  private RegexTree parseDisjunction() {
+    List<RegexTree> alternatives = new ArrayList<>();
+    RegexTree first = parseSequence();
+    alternatives.add(first);
+    while (currentChar() == '|') {
+      index++;
+      RegexTree next = parseSequence();
+      alternatives.add(next);
+    }
+    return combineTrees(alternatives, (range, elements) -> new DisjunctionTree(source, range, elements));
+  }
+

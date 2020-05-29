@@ -1,0 +1,14 @@
+  @CheckForNull
+  private RegexTree parseRepetition() {
+    RegexTree element = parsePrimaryExpression();
+    if (element == null) {
+      return null;
+    }
+    Quantifier quantifier = parseQuantifier();
+    if (quantifier == null) {
+      return element;
+    } else {
+      return new RepetitionTree(source, element.getRange().merge(quantifier.getRange()), element, quantifier);
+    }
+  }
+

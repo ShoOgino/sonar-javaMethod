@@ -1,0 +1,24 @@
+  @CheckForNull
+  private Quantifier parseQuantifier() {
+    int startIndex = index;
+    SimpleQuantifier.Kind kind;
+    switch (currentChar()) {
+      case '*':
+        kind = SimpleQuantifier.Kind.STAR;
+        break;
+      case '+':
+        kind = SimpleQuantifier.Kind.PLUS;
+        break;
+      case '?':
+        kind = SimpleQuantifier.Kind.QUESTION_MARK;
+        break;
+      case '{':
+        return parseCurlyBraceQuantifier();
+      default:
+        return null;
+    }
+    index++;
+    Quantifier.Modifier modifier = parseQuantifierModifier();
+    return new SimpleQuantifier(source, new IndexRange(startIndex, index), modifier, kind);
+  }
+

@@ -1,0 +1,15 @@
+  private RegexTree parseSequence() {
+    int startIndex = index;
+    List<RegexTree> elements = new ArrayList<>();
+    RegexTree element = parseRepetition();
+    while (element != null) {
+      elements.add(element);
+      element = parseRepetition();
+    }
+    if (elements.size() == 1) {
+      return elements.get(0);
+    } else {
+      return new SequenceTree(source, new IndexRange(startIndex, index), elements);
+    }
+  }
+

@@ -1,0 +1,33 @@
+  CurlyBraceQuantifier parseCurlyBraceQuantifier() {
+    int startIndex = index;
+    // Discard '{'
+    index++;
+    RegexToken lowerBound = parseInteger();
+    if (lowerBound == null) {
+      expected("integer");
+      return null;
+    }
+    RegexToken comma = null;
+    RegexToken upperBound = null;
+    if (currentChar() == ',') {
+      comma = new RegexToken(source, new IndexRange(index, index + 1));
+      index++;
+      upperBound = parseInteger();
+    }
+    Quantifier.Modifier modifier;
+    if (currentChar() == '}') {
+      index++;
+    } else {
+      if (comma == null) {
+        expected("',' or '}'");
+      } else if (upperBound == null) {
+        expected("integer or '}'");
+      } else {
+        expected("'}'");
+      }
+    }
+    modifier = parseQuantifierModifier();
+    IndexRange range = new IndexRange(startIndex, index);
+    return new CurlyBraceQuantifier(source, range, modifier, lowerBound, comma, upperBound);
+  }
+

@@ -1,0 +1,12 @@
+  @Test
+  void testCurlyBracedQuantifierWithNoUpperBound() {
+    RegexTree regex = assertSuccessfulParse("x{42,}");
+    RepetitionTree repetition = assertType(RepetitionTree.class, regex);
+    assertPlainCharacter('x', repetition.getElement());
+    CurlyBraceQuantifier quantifier = assertType(CurlyBraceQuantifier.class, repetition.getQuantifier());
+    assertEquals(42, quantifier.getMinimumRepetitions(), "Lower bound should be 42.");
+    assertNull(quantifier.getMaximumRepetitions(), "Quantifier should be open ended.");
+    assertTrue(quantifier.isOpenEnded(), "Quantifier should be open ended.");
+    assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be greedy.");
+  }
+

@@ -1,0 +1,14 @@
+  private GroupTree parseGroup() {
+    int startIndex = index;
+    // Discard '('
+    index++;
+    RegexTree inner = parseDisjunction();
+    if (currentChar() == ')') {
+      index++;
+    } else {
+      error("')' expected");
+    }
+    IndexRange range = new IndexRange(startIndex, index);
+    return new GroupTree(source, range, inner);
+  }
+
