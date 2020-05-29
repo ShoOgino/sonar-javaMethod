@@ -1,0 +1,11 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (isLastCallInStatement(mit)) {
+      // Report only when it's the last call, if we have anything after, it's either:
+      // - an assertion: compliant solution
+      // - a method setting context: we will report on this other one instead (if problematic), to avoid reporting multiple times.
+      // - not in a statement, meaning that it can be asserted somewhere else (assertion returned, assigned, ...)
+      reportIssue(ExpressionUtils.methodName(mit), "Add an assertion predicate after calling this method.");
+    }
+  }
+
