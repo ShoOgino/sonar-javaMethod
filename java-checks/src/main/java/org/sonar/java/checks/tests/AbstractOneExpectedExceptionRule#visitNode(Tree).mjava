@@ -1,20 +1,9 @@
   @Override
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
-      MethodInvocationTree mit = (MethodInvocationTree) tree;
-      Arguments arguments = mit.arguments();
-      IdentifierTree identifierTree = ExpressionUtils.methodName(mit);
-      if (JUNIT4_ASSERT_THROWS_WITH_MESSAGE.matches(mit)) {
-        processAssertThrowsArguments(identifierTree, arguments.get(1), arguments.get(2));
-      } else if (arguments.size() >= 2 && ALL_ASSERT_THROWS_MATCHER.matches(mit)) {
-        processAssertThrowsArguments(identifierTree, arguments.get(0), arguments.get(1));
-      }
+      visitMethodInvocation((MethodInvocationTree) tree);
     } else {
-      TryStatementTree tryStatementTree = (TryStatementTree) tree;
-      if (isTryCatchFail(tryStatementTree)) {
-        List<Type> expectedTypes = tryStatementTree.catches().stream().map(c -> c.parameter().type().symbolType()).collect(Collectors.toList());
-        reportMultipleCallInTree(expectedTypes, tryStatementTree.block(), tryStatementTree.tryKeyword(), "body of this try/catch");
-      }
+      visitTryStatement((TryStatementTree) tree);
     }
   }
 

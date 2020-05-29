@@ -1,0 +1,21 @@
+  private void visitMethodInvocation(MethodInvocationTree mit) {
+    Arguments arguments = mit.arguments();
+    if (arguments.isEmpty()) {
+      return;
+    }
+    IdentifierTree identifierTree = ExpressionUtils.methodName(mit);
+    if (ASSERTJ_CATCH_THROWABLE_OF_TYPE.matches(mit)) {
+      processAssertThrowsArguments(identifierTree, arguments.get(1), arguments.get(0));
+    } else if (ASSERTJ_ASSERT_CODE.matches(mit)) {
+      subsequentMethodInvocation(mit, ASSERTJ_INSTANCE_OF_PREDICATES)
+        .ifPresent(isInstanceOf -> processAssertThrowsArguments(identifierTree, isInstanceOf.arguments(), arguments.get(0)));
+    } else if (ASSERTJ_ASSERT_THAT_EXCEPTION_OF_TYPE.matches(mit)) {
+      subsequentMethodInvocation(mit, ASSERTJ_IS_THROWN_BY)
+        .ifPresent(isThrownBy -> processAssertThrowsArguments(ExpressionUtils.methodName(isThrownBy), arguments.get(0), isThrownBy.arguments().get(0)));
+    } else if (JUNIT4_ASSERT_THROWS_WITH_MESSAGE.matches(mit)) {
+      processAssertThrowsArguments(identifierTree, arguments.get(1), arguments.get(2));
+    } else if (arguments.size() >= 2 && ALL_ASSERT_THROWS_MATCHER.matches(mit)) {
+      processAssertThrowsArguments(identifierTree, arguments.get(0), arguments.get(1));
+    }
+  }
+

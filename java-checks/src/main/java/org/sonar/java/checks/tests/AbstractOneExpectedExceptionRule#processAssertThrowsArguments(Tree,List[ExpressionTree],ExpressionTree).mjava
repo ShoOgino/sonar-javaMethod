@@ -1,0 +1,16 @@
+  private void processAssertThrowsArguments(Tree reportLocation, List<ExpressionTree> expectedTypes, ExpressionTree executable) {
+    if (!expectedTypes.isEmpty() && executable.is(Tree.Kind.LAMBDA_EXPRESSION)) {
+      List<Type> expectedExceptions = expectedTypes.stream()
+        .map(AbstractOneExpectedExceptionRule::getExpectedException)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(ExpressionTree::symbolType)
+        .collect(Collectors.toList());
+
+      if (!expectedExceptions.isEmpty()) {
+        Tree lambda = ((LambdaExpressionTree) executable).body();
+        reportMultipleCallInTree(expectedExceptions, lambda, reportLocation, "code of the lambda");
+      }
+    }
+  }
+

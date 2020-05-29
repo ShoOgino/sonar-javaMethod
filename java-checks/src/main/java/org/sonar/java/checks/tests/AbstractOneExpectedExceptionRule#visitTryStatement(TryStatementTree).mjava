@@ -1,0 +1,7 @@
+  private void visitTryStatement(TryStatementTree tryStatementTree) {
+    if (isTryCatchFail(tryStatementTree)) {
+      List<Type> expectedTypes = tryStatementTree.catches().stream().map(c -> c.parameter().type().symbolType()).collect(Collectors.toList());
+      reportMultipleCallInTree(expectedTypes, tryStatementTree.block(), tryStatementTree.tryKeyword(), "body of this try/catch");
+    }
+  }
+

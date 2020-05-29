@@ -1,0 +1,7 @@
+  private static Optional<MethodInvocationTree> subsequentMethodInvocation(MethodInvocationTree mit, MethodMatchers methodMatchers) {
+    return consecutiveMethodInvocation(mit)
+      .map(consecutiveMethod ->
+        methodMatchers.matches(consecutiveMethod) ?
+          consecutiveMethod : subsequentMethodInvocation(consecutiveMethod, methodMatchers).orElse(null));
+  }
+
