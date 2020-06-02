@@ -1,0 +1,12 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    Arguments args = mit.arguments();
+    if (args.isEmpty()) {
+      return;
+    }
+    ExpressionTree arg0 = args.get(0);
+    if (arg0.is(Tree.Kind.STRING_LITERAL)) {
+      checkRegex(((DefaultJavaFileScannerContext) context).regexForLiterals((LiteralTree) arg0), mit);
+    }
+  }
+

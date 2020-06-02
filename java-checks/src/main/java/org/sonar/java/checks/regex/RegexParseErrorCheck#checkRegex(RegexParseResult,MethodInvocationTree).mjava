@@ -1,0 +1,20 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, MethodInvocationTree mit) {
+    List<SyntaxError> syntaxErrors = regexForLiterals.getSyntaxErrors();
+    if (syntaxErrors.isEmpty()) {
+      return;
+    }
+    String msg;
+    if (syntaxErrors.size() > 1) {
+      msg = String.format(ERROR_MESSAGE, PLURAL);
+    } else {
+      msg = String.format(ERROR_MESSAGE, SINGULAR);
+    }
+    List<RegexIssueLocation> secondaries = syntaxErrors.stream()
+      .map(error -> new RegexCheck.RegexIssueLocation(error.getOffendingSyntaxElement(), error.getMessage()))
+      .collect(Collectors.toList());
+
+    // report on the first issue
+    reportIssue(syntaxErrors.get(0).getOffendingSyntaxElement(), msg, null, secondaries);
+  }
+
