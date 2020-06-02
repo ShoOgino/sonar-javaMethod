@@ -4,9 +4,13 @@
     RepetitionTree repetition = assertType(RepetitionTree.class, regex);
     assertPlainCharacter('x', repetition.getElement());
     CurlyBraceQuantifier quantifier = assertType(CurlyBraceQuantifier.class, repetition.getQuantifier());
+    assertLocation(2,4, quantifier.getMinimumRepetitionsToken());
+    assertLocation(4,5, quantifier.getCommaToken());
+    assertLocation(5,7, quantifier.getMaximumRepetitionsToken());
     assertEquals(23, quantifier.getMinimumRepetitions(), "Lower bound should be 23.");
     assertEquals(42, quantifier.getMaximumRepetitions(), "Upper bound should be 42.");
     assertFalse(quantifier.isOpenEnded(), "Quantifier should not be open ended.");
+    assertFalse(quantifier.isSingleNumber(), "Quantifier should not be marked as only having a single number.");
     assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be greedy.");
   }
 

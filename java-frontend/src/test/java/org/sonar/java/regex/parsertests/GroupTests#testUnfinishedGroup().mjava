@@ -1,0 +1,12 @@
+  @Test
+  void testUnfinishedGroup() {
+    RegexParseResult result = new RegexParser(makeSource("(x")).parse();
+    assertEquals(1, result.getSyntaxErrors().size(), "Expected exactly one error.");
+    SyntaxError error = result.getSyntaxErrors().get(0);
+    assertEquals("Expected ')', but found the end of the regex", error.getMessage(), "Error should have the right message.");
+    List<Location> locations = error.getLocations();
+    assertEquals(1, locations.size(), "Error should only have one location.");
+    assertEquals(new IndexRange(2,2), locations.get(0).getIndexRange(), "Error should have the right location.");
+    assertTrue(locations.get(0).getIndexRange().isEmpty(), "Error location should be empty range.");
+  }
+

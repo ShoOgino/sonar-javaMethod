@@ -1,0 +1,13 @@
+  @Test
+  void testGreedyQuestionMark() {
+    RegexTree regex = assertSuccessfulParse("x?");
+    RepetitionTree repetition = assertType(RepetitionTree.class, regex);
+    assertPlainCharacter('x', repetition.getElement());
+    SimpleQuantifier quantifier = assertType(SimpleQuantifier.class, repetition.getQuantifier());
+    assertEquals(SimpleQuantifier.Kind.QUESTION_MARK, quantifier.getKind(), "Quantifier should be a question mark.");
+    assertEquals(0, quantifier.getMinimumRepetitions(), "Lower bound should be 0.");
+    assertEquals(1, quantifier.getMaximumRepetitions(), "The upper bound of a question mark quantifier should be 1.");
+    assertFalse(quantifier.isOpenEnded(), "Question mark should not be open ended.");
+    assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be greedy.");
+  }
+
