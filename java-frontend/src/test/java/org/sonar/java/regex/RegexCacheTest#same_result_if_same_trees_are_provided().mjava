@@ -1,0 +1,24 @@
+  @Test
+  void same_result_if_same_trees_are_provided() throws Exception {
+    CompilationUnitTree cut = JParserTestUtils.parse(
+      "class A {\n"
+        + "  String s0 = \"abc\";\n"
+        + "  String s1 = \"abc\";\n"
+        + "}");
+    ClassTree a = (ClassTree) cut.types().get(0);
+    List<Tree> fields = a.members();
+    LiteralTree s0 = (LiteralTree) ((VariableTree) fields.get(0)).initializer();
+    LiteralTree s1 = (LiteralTree) ((VariableTree) fields.get(1)).initializer();
+
+    RegexCache cache = new RegexCache();
+    RegexParseResult resultForS0S1 = cache.getRegexForLiterals(s0, s1);
+    RegexParseResult resultForS1S0 = cache.getRegexForLiterals(s1, s0);
+
+    assertThat(s0.value() + s1.value()).isEqualTo(s1.value() + s0.value());
+    assertThat(resultForS0S1).isNotEqualTo(resultForS1S0);
+
+    // same order of input, same result
+    assertThat(resultForS0S1).isSameAs(cache.getRegexForLiterals(s0, s1));
+    assertThat(resultForS1S0).isSameAs(cache.getRegexForLiterals(s1, s0));
+  }
+
