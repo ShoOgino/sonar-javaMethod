@@ -1,0 +1,14 @@
+  private static boolean consecutiveInvocationTestSize(MethodInvocationTree mit) {
+    Optional<MethodInvocationTree> consecutiveMethodInvocation = MethodTreeUtils.consecutiveMethodInvocation(mit);
+    if (consecutiveMethodInvocation.isPresent()) {
+      MethodInvocationTree consecutiveInvocation = consecutiveMethodInvocation.get();
+      if (ASSERTJ_NOT_TESTING_SIZE.matches(consecutiveInvocation)) {
+        return consecutiveInvocationTestSize(consecutiveInvocation);
+      } else {
+        // To avoid FP, only every others methods not explicitly listed as not testing size, will be considered as testing size
+        return true;
+      }
+    }
+    return false;
+  }
+

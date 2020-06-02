@@ -1,0 +1,16 @@
+  private static Optional<ExpressionTree> getSubjectArgumentNotTestedForSize(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree memberSelectExpression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (memberSelectExpression.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTree childMit = (MethodInvocationTree) memberSelectExpression;
+        if (ASSERT_THAT_MATCHER.matches(childMit)) {
+          return Optional.of(childMit.arguments().get(0));
+        } else if (ASSERTJ_NOT_TESTING_SIZE.matches(childMit)) {
+          return getSubjectArgumentNotTestedForSize(childMit);
+        }
+      }
+    }
+    return Optional.empty();
+  }
+

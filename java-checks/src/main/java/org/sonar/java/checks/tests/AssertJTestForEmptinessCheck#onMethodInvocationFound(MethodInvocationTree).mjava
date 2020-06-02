@@ -1,0 +1,11 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (consecutiveInvocationTestSize(mit)) {
+      return;
+    }
+
+    getSubjectArgumentNotTestedForSize(mit)
+      .filter(AssertJTestForEmptinessCheck::isNotUsedSomewhereElse)
+      .ifPresent(arg -> reportIssueWithSecondary(mit, arg));
+  }
+
