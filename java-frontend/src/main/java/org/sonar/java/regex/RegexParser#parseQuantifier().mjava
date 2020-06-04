@@ -1,8 +1,7 @@
   @CheckForNull
   private Quantifier parseQuantifier() {
-    int startIndex = index;
     SimpleQuantifier.Kind kind;
-    switch (currentChar()) {
+    switch (characters.getCurrentChar()) {
       case '*':
         kind = SimpleQuantifier.Kind.STAR;
         break;
@@ -17,8 +16,10 @@
       default:
         return null;
     }
-    index++;
+    JavaCharacter current = characters.getCurrent();
+    characters.moveNext();
     Quantifier.Modifier modifier = parseQuantifierModifier();
-    return new SimpleQuantifier(source, new IndexRange(startIndex, index), modifier, kind);
+    IndexRange range = current.getRange().extendTo(characters.getCurrentStartIndex());
+    return new SimpleQuantifier(source, range, modifier, kind);
   }
 

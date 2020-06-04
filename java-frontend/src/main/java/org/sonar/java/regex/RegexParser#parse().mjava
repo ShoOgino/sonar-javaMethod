@@ -3,12 +3,11 @@
     do {
       RegexTree result = parseDisjunction();
       results.add(result);
-      if (index < sourceText.length()) {
-        char offendingChar = sourceText.charAt(index);
-        error("Unexpected '" + offendingChar + "'");
-        index++;
+      if (characters.isNotAtEnd()) {
+        error("Unexpected '" + characters.getCurrent().getCharacter() + "'");
+        characters.moveNext();
       }
-    } while (currentChar() != EOF);
+    } while (characters.isNotAtEnd());
     RegexTree result = combineTrees(results, (range, elements) -> new SequenceTree(source, range, elements));
     return new RegexParseResult(result, errors);
   }

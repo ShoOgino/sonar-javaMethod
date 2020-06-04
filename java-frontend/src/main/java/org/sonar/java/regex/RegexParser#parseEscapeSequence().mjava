@@ -1,0 +1,14 @@
+  private RegexTree parseEscapeSequence() {
+    JavaCharacter backslash = characters.getCurrent();
+    characters.moveNext();
+    if (characters.isAtEnd()) {
+      expected("any character");
+      return new PlainCharacterTree(source, backslash.getRange(), backslash);
+    } else {
+      // TODO: Properly handle escape sequences that aren't escaped metacharacters
+      JavaCharacter character = characters.getCurrent();
+      characters.moveNext();
+      return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
+    }
+  }
+

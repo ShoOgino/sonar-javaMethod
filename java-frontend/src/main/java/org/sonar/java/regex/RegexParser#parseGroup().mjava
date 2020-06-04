@@ -1,14 +1,13 @@
   private GroupTree parseGroup() {
-    int startIndex = index;
-    // Discard '('
-    index++;
+    JavaCharacter openingParen = characters.getCurrent();
+    characters.moveNext();
     RegexTree inner = parseDisjunction();
-    if (currentChar() == ')') {
-      index++;
+    if (characters.currentIs(')')) {
+      characters.moveNext();
     } else {
       expected("')'");
     }
-    IndexRange range = new IndexRange(startIndex, index);
+    IndexRange range = openingParen.getRange().extendTo(characters.getCurrentStartIndex());
     return new GroupTree(source, range, inner);
   }
 

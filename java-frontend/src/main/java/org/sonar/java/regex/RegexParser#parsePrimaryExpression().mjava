@@ -1,9 +1,13 @@
   @CheckForNull
   private RegexTree parsePrimaryExpression() {
-    if (currentChar() == '(') {
+    if (characters.currentIs('(')) {
       return parseGroup();
-    } else if (isPlainTextCharacter(currentChar())) {
-      return parsePlainText();
+    } else if (characters.currentIs('\\')) {
+      return parseEscapeSequence();
+    } else if (isPlainTextCharacter(characters.getCurrentChar())) {
+      JavaCharacter character = characters.getCurrent();
+      characters.moveNext();
+      return new PlainCharacterTree(source, character.getRange(), character);
     } else {
       return null;
     }

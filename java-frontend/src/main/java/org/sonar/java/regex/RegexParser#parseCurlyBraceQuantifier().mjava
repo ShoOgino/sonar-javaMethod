@@ -1,7 +1,6 @@
   CurlyBraceQuantifier parseCurlyBraceQuantifier() {
-    int startIndex = index;
-    // Discard '{'
-    index++;
+    JavaCharacter openingBrace = characters.getCurrent();
+    characters.moveNext();
     RegexToken lowerBound = parseInteger();
     if (lowerBound == null) {
       expected("integer");
@@ -9,14 +8,14 @@
     }
     RegexToken comma = null;
     RegexToken upperBound = null;
-    if (currentChar() == ',') {
-      comma = new RegexToken(source, new IndexRange(index, index + 1));
-      index++;
+    if (characters.currentIs(',')) {
+      comma = new RegexToken(source, characters.getCurrent().getRange());
+      characters.moveNext();
       upperBound = parseInteger();
     }
     Quantifier.Modifier modifier;
-    if (currentChar() == '}') {
-      index++;
+    if (characters.currentIs('}')) {
+      characters.moveNext();
     } else {
       if (comma == null) {
         expected("',' or '}'");
@@ -27,7 +26,7 @@
       }
     }
     modifier = parseQuantifierModifier();
-    IndexRange range = new IndexRange(startIndex, index);
+    IndexRange range = openingBrace.getRange().extendTo(characters.getCurrentStartIndex());
     return new CurlyBraceQuantifier(source, range, modifier, lowerBound, comma, upperBound);
   }
 
