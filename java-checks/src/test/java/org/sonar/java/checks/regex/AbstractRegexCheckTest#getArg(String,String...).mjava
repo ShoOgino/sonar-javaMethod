@@ -1,0 +1,16 @@
+  private static TestCase getArg(String expression, String... preStatements) {
+    CompilationUnitTree cut = JParserTestUtils.parse(String.format(JAVA_CODE, Arrays.stream(preStatements).collect(Collectors.joining("\n")), expression));
+    ClassTree a = (ClassTree) cut.types().get(0);
+    MethodTree m = (MethodTree) a.members().get(0);
+    List<StatementTree> statements = m.block().body();
+    ExpressionStatementTree lastStatement = (ExpressionStatementTree) statements.get(statements.size() - 1);
+
+    ExpressionTree expr = ((MethodInvocationTree) lastStatement.expression()).arguments().get(0);
+
+    if (statements.size() > 1) {
+      statements.remove(statements.size() - 1);
+      return new TestCase(expr, statements);
+    }
+    return new TestCase(expr);
+  }
+

@@ -1,0 +1,15 @@
+  @Test
+  void test_GetLiterals_final_variable() {
+    TestCase testcase = getArg("a", "final String a = \"abc\";");
+    ExpressionTree expr = testcase.expr;
+    ExpressionTree initializer = ((VariableTree) testcase.preStatements.get(0)).initializer();
+
+    Optional<LiteralTree[]> result = getLiterals(expr);
+    assertThat(result).isPresent();
+
+    assertThat(result.get())
+      .hasSize(1)
+      .allMatch(t -> t.is(Tree.Kind.STRING_LITERAL))
+      .containsExactly((LiteralTree) initializer);
+  }
+

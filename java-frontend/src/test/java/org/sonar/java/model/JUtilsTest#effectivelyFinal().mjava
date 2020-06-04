@@ -1,0 +1,16 @@
+  @Test
+  void effectivelyFinal() {
+    JavaTree.CompilationUnitTreeImpl cu = test("class A { void foo(Object o) { int i = 42; int j = 43; j++; foo(i); } }");
+    ClassTreeImpl a = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) a.members().get(0);
+    List<StatementTree> body = m.block().body();
+    VariableTreeImpl i = (VariableTreeImpl) body.get(0);
+    VariableTreeImpl j = (VariableTreeImpl) body.get(1);
+
+    assertThat(i.symbol().isVariableSymbol()).isTrue();
+    assertThat(JUtils.isEffectivelyFinal((Symbol.VariableSymbol) i.symbol())).isTrue();
+
+    assertThat(j.symbol().isVariableSymbol()).isTrue();
+    assertThat(JUtils.isEffectivelyFinal((Symbol.VariableSymbol) j.symbol())).isFalse();
+  }
+

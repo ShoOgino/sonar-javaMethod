@@ -1,0 +1,19 @@
+  @Test
+  void test_GetLiterals_string_concatenation_with_constant() {
+    TestCase testcase = getArg("\"a\" + b + \"c\"", "final String b = \"q\";");
+    ExpressionTree expr = testcase.expr;
+
+    BinaryExpressionTree ab = (BinaryExpressionTree) ((BinaryExpressionTree) expr).leftOperand();
+    ExpressionTree a = ab.leftOperand();
+    ExpressionTree b = ((VariableTree) (testcase.preStatements.get(0))).initializer();
+    ExpressionTree c = ((BinaryExpressionTree) expr).rightOperand();
+
+    Optional<LiteralTree[]> result = getLiterals(expr);
+    assertThat(result).isPresent();
+
+    assertThat(result.get())
+      .hasSize(3)
+      .allMatch(t -> t.is(Tree.Kind.STRING_LITERAL))
+      .containsExactly((LiteralTree) a, (LiteralTree) b, (LiteralTree) c);
+  }
+

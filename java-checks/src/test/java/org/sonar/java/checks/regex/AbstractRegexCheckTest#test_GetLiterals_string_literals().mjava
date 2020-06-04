@@ -1,0 +1,13 @@
+  @Test
+  void test_GetLiterals_string_literals() {
+    ExpressionTree expr = getArg("\"hello\"").expr;
+
+    Optional<LiteralTree[]> result = getLiterals(expr);
+    assertThat(result).isPresent();
+
+    assertThat(result.get())
+      .hasSize(1)
+      .allMatch(t -> t.is(Tree.Kind.STRING_LITERAL))
+      .containsExactly((LiteralTree) expr);
+  }
+

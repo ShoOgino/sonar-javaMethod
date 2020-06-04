@@ -1,0 +1,13 @@
+  private static Optional<LiteralTree[]> getLiteralsFromStringConcatenation(BinaryExpressionTree expr) {
+    Optional<LiteralTree[]> leftLiterals = getLiterals(expr.leftOperand());
+    if (!leftLiterals.isPresent()) {
+      return Optional.empty();
+    }
+    Optional<LiteralTree[]> rightLiterals = getLiterals(expr.rightOperand());
+    if (!rightLiterals.isPresent()) {
+      return Optional.empty();
+    }
+    LiteralTree[] combined = Streams.concat(Arrays.stream(leftLiterals.get()), Arrays.stream(rightLiterals.get())).toArray(LiteralTree[]::new);
+    return Optional.of(combined);
+  }
+

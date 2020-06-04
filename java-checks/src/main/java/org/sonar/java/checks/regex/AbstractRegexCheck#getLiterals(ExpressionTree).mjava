@@ -1,0 +1,16 @@
+  @VisibleForTesting
+  protected static Optional<LiteralTree[]> getLiterals(ExpressionTree expr) {
+    switch (expr.kind()) {
+      case PLUS:
+        return getLiteralsFromStringConcatenation((BinaryExpressionTree) expr);
+      case IDENTIFIER:
+        return getLiteralsFromFinalVariables((IdentifierTree) expr);
+      case PARENTHESIZED_EXPRESSION:
+        return getLiterals(ExpressionUtils.skipParentheses(expr));
+      case STRING_LITERAL:
+        return Optional.of(new LiteralTree[] {(LiteralTree) expr});
+      default:
+        return Optional.empty();
+    }
+  }
+
