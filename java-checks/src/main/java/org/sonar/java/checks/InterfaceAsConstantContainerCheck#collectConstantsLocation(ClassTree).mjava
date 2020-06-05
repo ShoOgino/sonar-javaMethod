@@ -1,0 +1,9 @@
+  private static List<JavaFileScannerContext.Location> collectConstantsLocation(ClassTree tree) {
+    return tree.members().stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .map(VariableTree::simpleName)
+      .map(id -> new JavaFileScannerContext.Location("", id))
+      .collect(Collectors.toList());
+  }
+
