@@ -1,0 +1,10 @@
+  public static void assertFailParsing(String regex, String expectedError) {
+    RegexSource source = makeSource(regex);
+    RegexParseResult result = new RegexParser(source).parse();
+    List<SyntaxError> errors = result.getSyntaxErrors();
+    if (errors.isEmpty()) {
+      throw new AssertionFailedError("Expected error in parsing");
+    }
+    assertThat(errors.stream().map(SyntaxError::getMessage)).contains(expectedError);
+  }
+

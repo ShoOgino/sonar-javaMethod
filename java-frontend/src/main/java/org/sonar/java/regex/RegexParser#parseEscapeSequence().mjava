@@ -5,8 +5,15 @@
       expected("any character");
       return plainCharacter(backslash);
     } else {
-      // TODO: Properly handle escape sequences that aren't escaped metacharacters
       JavaCharacter character = characters.getCurrent();
+      switch (character.getCharacter()) {
+        case 'p':
+        case 'P':
+          return parseProperty();
+        default:
+          // TODO other kind of escape sequences such as boundary markers
+          break;
+      }
       characters.moveNext();
       return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
     }
