@@ -1,0 +1,26 @@
+  @Test
+  void backReferences() {
+    assertBackReference("\\\\k<group1>", "group1");
+    assertBackReference("\\\\k<ALPHA>", "ALPHA");
+    assertBackReference("\\\\k<0invalid>", "0invalid");
+
+    assertBackReference("\\\\1", 1);
+    assertBackReference("\\\\42", 42);
+    // octal
+    assertBackReference("\\\\042", 34);
+
+    RegexTree regex = assertSuccessfulParse("\\\\42.");
+    assertThat(regex.is(RegexTree.Kind.SEQUENCE)).isTrue();
+    SequenceTree seq = (SequenceTree) regex;
+    assertThat(seq.getItems()).hasSize(2);
+    assertThat(seq.getItems().get(0)).isInstanceOf(BackReferenceTree.class);
+    assertThat(seq.getItems().get(1)).isInstanceOf(DotTree.class);
+
+    RegexTree regex2 = assertSuccessfulParse("\\\\42a");
+    assertThat(regex2.is(RegexTree.Kind.SEQUENCE)).isTrue();
+    SequenceTree seq2 = (SequenceTree) regex2;
+    assertThat(seq2.getItems()).hasSize(2);
+    assertThat(seq2.getItems().get(0)).isInstanceOf(BackReferenceTree.class);
+    assertThat(seq2.getItems().get(1)).isInstanceOf(PlainCharacterTree.class);
+  }
+

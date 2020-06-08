@@ -1,0 +1,11 @@
+  private static void assertBackReference(String regex, String expectedGroupName) {
+    RegexTree tree = assertSuccessfulParse(regex);
+    assertThat(tree).isInstanceOf(BackReferenceTree.class);
+
+    BackReferenceTree backReferenceTree = (BackReferenceTree) tree;
+    assertThat(backReferenceTree.isNamedGroup()).isTrue();
+    assertThat(backReferenceTree.groupName()).isEqualTo(expectedGroupName);
+    assertThat(backReferenceTree.groupNumber()).isEqualTo(-1);
+    assertThat(backReferenceTree.isNumerical()).isFalse();
+  }
+

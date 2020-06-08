@@ -1,0 +1,27 @@
+  private RegexTree parseEscapedSequence(char opener, char closer, String expected, Function<EscapedSequenceDataHolder, RegexTree> builder) {
+    JavaCharacter marker = characters.getCurrent();
+    characters.moveNext();
+
+    if (!characters.currentIs(opener)) {
+      expected(("'" + opener + "'"));
+      return plainCharacter(marker);
+    }
+    JavaCharacter openerChar = characters.getCurrent();
+    boolean atLeastOneChar = false;
+    do {
+      characters.moveNext();
+      if (characters.isAtEnd()) {
+        expected(atLeastOneChar ? ("'" + closer + "'") : expected);
+        return plainCharacter(openerChar);
+      }
+      if (!atLeastOneChar && characters.currentIs(closer)) {
+        expected(expected);
+        return plainCharacter(openerChar);
+      }
+      atLeastOneChar = true;
+    } while (!characters.currentIs(closer));
+    JavaCharacter closerChar = characters.getCurrent();
+    characters.moveNext();
+    return builder.apply(new EscapedSequenceDataHolder(marker, openerChar, closerChar));
+  }
+

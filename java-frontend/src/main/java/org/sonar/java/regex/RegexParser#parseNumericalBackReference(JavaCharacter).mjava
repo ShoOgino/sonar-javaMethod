@@ -1,0 +1,18 @@
+  private RegexTree parseNumericalBackReference(JavaCharacter backslash) {
+    JavaCharacter firstDigit = characters.getCurrent();
+    JavaCharacter lastDigit = firstDigit;
+    do {
+      characters.moveNext();
+      if (!characters.isAtEnd()) {
+        JavaCharacter currentChar = characters.getCurrent();
+        char asChar = currentChar.getCharacter();
+        if (asChar >= '0' && asChar <= '9') {
+          lastDigit = currentChar;
+        } else {
+          break;
+        }
+      }
+    } while (!characters.isAtEnd());
+    return new BackReferenceTree(source, backslash, null, firstDigit, lastDigit);
+  }
+
