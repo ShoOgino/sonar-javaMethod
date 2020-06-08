@@ -1,17 +1,24 @@
   @CheckForNull
   private RegexTree parsePrimaryExpression() {
-    if (characters.currentIs('(')) {
-      return parseGroup();
-    } else if (characters.currentIs('\\')) {
-      return parseEscapeSequence();
-    } else if (characters.currentIs('[')) {
-      return parseCharacterClass();
-    } else if (isPlainTextCharacter(characters.getCurrentChar())) {
-      JavaCharacter character = characters.getCurrent();
-      characters.moveNext();
-      return plainCharacter(character);
-    } else {
-      return null;
+    switch (characters.getCurrentChar()) {
+      case '(':
+        return parseGroup();
+      case '\\':
+        return parseEscapeSequence();
+      case '[':
+        return parseCharacterClass();
+      case '.':
+        DotTree tree = new DotTree(source, characters.getCurrentIndexRange());
+        characters.moveNext();
+        return tree;
+      default:
+        if (isPlainTextCharacter(characters.getCurrentChar())) {
+          JavaCharacter character = characters.getCurrent();
+          characters.moveNext();
+          return plainCharacter(character);
+        } else {
+          return null;
+        }
     }
   }
 
