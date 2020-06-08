@@ -1,0 +1,13 @@
+  @Test
+  void unionOfRangesAndSingleCharacters() {
+    RegexTree regex = assertSuccessfulParse("[a-z0-9_.^]");
+    CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, assertCharacterClass(false, regex));
+    assertListElements(union.getCharacterClasses(),
+      first -> assertCharacterRange('a', 'z', first),
+      second -> assertCharacterRange('0', '9', second),
+      third -> assertPlainCharacter('_', third),
+      fourth -> assertPlainCharacter('.', fourth),
+      fifth -> assertPlainCharacter('^', fifth)
+    );
+  }
+

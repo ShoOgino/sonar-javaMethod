@@ -4,10 +4,12 @@
       return parseGroup();
     } else if (characters.currentIs('\\')) {
       return parseEscapeSequence();
+    } else if (characters.currentIs('[')) {
+      return parseCharacterClass();
     } else if (isPlainTextCharacter(characters.getCurrentChar())) {
       JavaCharacter character = characters.getCurrent();
       characters.moveNext();
-      return new PlainCharacterTree(source, character.getRange(), character);
+      return plainCharacter(character);
     } else {
       return null;
     }

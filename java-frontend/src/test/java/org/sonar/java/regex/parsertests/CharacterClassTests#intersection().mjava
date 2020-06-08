@@ -1,0 +1,16 @@
+  @Test
+  void intersection() {
+    RegexTree regex = assertSuccessfulParse("[a-z&&[^g-i]&]");
+    CharacterClassIntersectionTree intersection = assertType(CharacterClassIntersectionTree.class, assertCharacterClass(false, regex));
+    assertListElements(intersection.getCharacterClasses(),
+      first -> assertCharacterRange('a', 'z', first),
+      second -> {
+        CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, second);
+        assertListElements(union.getCharacterClasses(),
+          first -> assertCharacterRange('g', 'i', assertCharacterClass(true, first)),
+          last -> assertPlainCharacter('&', last)
+        );
+      }
+    );
+  }
+

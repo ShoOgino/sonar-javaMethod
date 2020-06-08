@@ -1,0 +1,10 @@
+  @Test
+  void trailingDash() {
+    RegexTree regex = assertSuccessfulParse("[a-]");
+    CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, assertCharacterClass(false, regex));
+    assertListElements(union.getCharacterClasses(),
+      firstChar -> assertPlainCharacter('a', firstChar),
+      secondChar -> assertPlainCharacter('-', secondChar)
+    );
+  }
+

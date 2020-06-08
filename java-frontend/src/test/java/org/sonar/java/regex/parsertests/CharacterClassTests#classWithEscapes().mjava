@@ -1,0 +1,11 @@
+  @Test
+  void classWithEscapes() {
+    RegexTree regex = assertSuccessfulParse("[\\\\[\\\\-\\\\]]");
+    CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, assertCharacterClass(false, regex));
+    assertListElements(union.getCharacterClasses(),
+      first -> assertPlainCharacter('[', first),
+      second -> assertPlainCharacter('-', second),
+      third -> assertPlainCharacter(']', third)
+    );
+  }
+

@@ -1,0 +1,18 @@
+  private RegexTree parseCharacterClass() {
+    JavaCharacter openingBracket = characters.getCurrent();
+    characters.moveNext();
+    boolean negated = false;
+    if (characters.currentIs('^')) {
+      characters.moveNext();
+      negated = true;
+    }
+    RegexTree contents = parseCharacterClassIntersection();
+    if (characters.currentIs(']')) {
+      characters.moveNext();
+    } else {
+      expected("]");
+    }
+    IndexRange range = openingBracket.getRange().extendTo(characters.getCurrentStartIndex());
+    return new CharacterClassTree(source, range, negated, contents);
+  }
+
