@@ -1,0 +1,13 @@
+    Argument(MethodInvocationTree mit, int argumentIndex) {
+      expression = mit.arguments().get(argumentIndex);
+      expressionType = expression.symbolType().erasure();
+      Type expectedType = expectedArgumentType(mit, argumentIndex);
+      if (expectedType.isUnknown()) {
+        type = expressionType;
+      } else if (expectedType.isPrimitive()) {
+        type = expectedType;
+      } else {
+        type = wrapperType(expressionType);
+      }
+    }
+

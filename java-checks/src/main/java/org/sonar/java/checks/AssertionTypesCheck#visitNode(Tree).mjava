@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    if (ASSERT_NULLABLE_FIRST_ARGUMENT.matches(mit)) {
+      checkNullableAssertion(new Argument(mit, 0));
+    } else if (ASSERT_NULLABLE_SECOND_ARGUMENT.matches(mit)) {
+      checkNullableAssertion(new Argument(mit, 1));
+    } else if (ASSERT_EQUALS_FIRST_AND_SECOND_ARGUMENTS.matches(mit)) {
+      checkCompatibleTypes(new Argument(mit, 1), new Argument(mit, 0), Option.ACCEPT_DISSIMILAR_INTERFACE);
+    } else if (ASSERT_EQUALS_SECOND_AND_THIRD_ARGUMENTS.matches(mit)) {
+      checkCompatibleTypes(new Argument(mit, 2), new Argument(mit, 1), Option.ACCEPT_DISSIMILAR_INTERFACE);
+    } else if (ASSERT_NOT_EQUALS_FIRST_AND_SECOND_ARGUMENTS.matches(mit)) {
+      checkCompatibleTypes(new Argument(mit, 1), new Argument(mit, 0), Option.REJECT_DISSIMILAR_INTERFACE);
+    } else if (ASSERT_NOT_EQUALS_SECOND_AND_THIRD_ARGUMENTS.matches(mit)) {
+      checkCompatibleTypes(new Argument(mit, 2), new Argument(mit, 1), Option.REJECT_DISSIMILAR_INTERFACE);
+    } else if (ASSERTJ_ASSERT_THAT.matches(mit)) {
+      checkSubsequentAssertJPredicateCompatibleTypes(new Argument(mit, 0), mit);
+    }
+  }
+

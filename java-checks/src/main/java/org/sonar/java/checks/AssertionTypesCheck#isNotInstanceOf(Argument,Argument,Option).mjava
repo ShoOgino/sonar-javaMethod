@@ -1,0 +1,23 @@
+  private static boolean isNotInstanceOf(Argument argumentA, Argument argumentB, Option option) {
+    if (argumentA.type.isPrimitive() && argumentB.type.isPrimitive()) {
+      return false;
+    }
+    Type typeA = wrapperType(argumentA.type);
+    Type typeB = wrapperType(argumentB.type);
+    if (typeA.isUnknown() || typeB.isUnknown() || !typeA.isClass() || !typeB.isClass()) {
+      return false;
+    } else if (typeA.symbol().isInterface() && typeB.symbol().isInterface()) {
+      return option == Option.REJECT_DISSIMILAR_INTERFACE && !typeA.isSubtypeOf(typeB);
+    } else if (typeB.symbol().isInterface()) {
+      // typeA is not an interface
+      return (option == Option.REJECT_DISSIMILAR_INTERFACE || typeA.symbol().isFinal()) &&
+        !typeA.isSubtypeOf(typeB);
+    } else if (typeA.symbol().isInterface()) {
+      // typeB is not an interface
+      return true;
+    } else {
+      // typeA and typeB are not interfaces
+      return !typeA.isSubtypeOf(typeB);
+    }
+  }
+

@@ -1,0 +1,16 @@
+  @Test
+  void arguments_of_unknown_method() {
+    MethodTree method = JParserTestUtils.methodTree(JParserTestUtils.newCode(
+      "void foo() {",
+      "  foo('a');",
+      "}"
+    ));
+    ExpressionStatementTree statement = (ExpressionStatementTree) method.block().body().get(0);
+    MethodInvocationTree asList = (MethodInvocationTree) statement.expression();
+    Argument firstArgument = new Argument(asList, 0);
+    assertThat(firstArgument.isPrimitive()).isTrue();
+    assertThat(firstArgument.type.isPrimitive()).isTrue();
+    assertThat(firstArgument.expressionType.fullyQualifiedName()).isEqualTo("char");
+    assertThat(firstArgument.type.fullyQualifiedName()).isEqualTo("char");
+  }
+

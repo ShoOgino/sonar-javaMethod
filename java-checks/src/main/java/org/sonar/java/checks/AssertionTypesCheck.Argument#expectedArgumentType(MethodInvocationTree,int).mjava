@@ -1,0 +1,11 @@
+    static Type expectedArgumentType(MethodInvocationTree mit, int argumentIndex) {
+      if (!mit.symbol().isMethodSymbol()) {
+        return Symbols.unknownType;
+      }
+      List<Type> parameterTypes = ((Symbol.MethodSymbol) mit.symbol()).parameterTypes();
+      if (argumentIndex >= parameterTypes.size()) {
+        return Symbols.unknownType;
+      }
+      return parameterTypes.get(argumentIndex).erasure();
+    }
+

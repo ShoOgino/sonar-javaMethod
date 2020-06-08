@@ -1,0 +1,18 @@
+  private static boolean isNotCompatibleArray(Argument actual, Argument expected, Option option) {
+    if (!actual.isArray() || !expected.isArray()) {
+      return false;
+    }
+    Type actualElementType = ((Type.ArrayType) actual.type).elementType().erasure();
+    Type expectedElementType = ((Type.ArrayType) expected.type).elementType().erasure();
+    if (actualElementType.isUnknown() || expectedElementType.isUnknown()) {
+      return false;
+    }
+    if (actualElementType.isPrimitive() || expectedElementType.isPrimitive()) {
+      return !actualElementType.name().equals(expectedElementType.name());
+    }
+    return areNotCompatibleTypes(
+      new Argument(actual.expression, actualElementType),
+      new Argument(expected.expression, expectedElementType),
+      option);
+  }
+

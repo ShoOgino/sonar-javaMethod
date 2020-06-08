@@ -1,0 +1,28 @@
+  @Test
+  void expected_argument_types() {
+    MethodTree method = JParserTestUtils.methodTree(JParserTestUtils.newCode(
+      "void foo() {",
+      "  bar('a', 'b', null);",
+      "}",
+      "void bar(char a, Object... b) {}"
+    ));
+    ExpressionStatementTree statement = (ExpressionStatementTree) method.block().body().get(0);
+    MethodInvocationTree asList = (MethodInvocationTree) statement.expression();
+
+    Argument firstArgument = new Argument(asList, 0);
+    assertThat(firstArgument.isPrimitive()).isTrue();
+    assertThat(firstArgument.type.isPrimitive()).isTrue();
+    assertThat(firstArgument.expressionType.fullyQualifiedName()).isEqualTo("char");
+    assertThat(firstArgument.type.fullyQualifiedName()).isEqualTo("char");
+
+    Argument secondArgument = new Argument(asList, 1);
+    assertThat(secondArgument.isPrimitive()).isTrue();
+    assertThat(secondArgument.type.isPrimitive()).isFalse();
+    assertThat(secondArgument.expressionType.fullyQualifiedName()).isEqualTo("char");
+    assertThat(secondArgument.type.fullyQualifiedName()).isEqualTo("java.lang.Character");
+
+    Argument thirdArgument = new Argument(asList, 2);
+    assertThat(thirdArgument.isPrimitive()).isFalse();
+    assertThat(thirdArgument.isNullLiteral()).isTrue();
+  }
+
