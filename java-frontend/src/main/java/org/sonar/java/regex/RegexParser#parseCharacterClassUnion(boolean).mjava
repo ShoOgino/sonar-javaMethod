@@ -1,9 +1,9 @@
   private RegexTree parseCharacterClassUnion(boolean isAtBeginning) {
     List<RegexTree> elements = new ArrayList<>();
-    List<RegexTree> nextElements = parseCharacterClassElement(isAtBeginning);
-    while (!nextElements.isEmpty()) {
-      elements.addAll(nextElements);
-      nextElements = parseCharacterClassElement(false);
+    RegexTree element = parseCharacterClassElement(isAtBeginning);
+    while (element != null) {
+      elements.add(element);
+      element = parseCharacterClassElement(false);
     }
     if (elements.isEmpty()) {
       IndexRange range = new IndexRange(characters.getCurrentStartIndex(), characters.getCurrentStartIndex());

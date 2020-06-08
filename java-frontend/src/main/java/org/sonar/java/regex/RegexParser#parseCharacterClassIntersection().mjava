@@ -1,7 +1,9 @@
   private RegexTree parseCharacterClassIntersection() {
     List<RegexTree> elements = new ArrayList<>();
     elements.add(parseCharacterClassUnion(true));
-    while (characters.isNotAtEnd() && !characters.currentIs(']')) {
+    while (characters.currentIs("&&")) {
+      characters.moveNext();
+      characters.moveNext();
       elements.add(parseCharacterClassUnion(false));
     }
     return combineTrees(elements, (range, items) -> new CharacterClassIntersectionTree(source, range, items));

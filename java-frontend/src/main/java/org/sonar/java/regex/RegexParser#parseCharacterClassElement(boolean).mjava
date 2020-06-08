@@ -1,6 +1,7 @@
-  private List<RegexTree> parseCharacterClassElement(boolean isAtBeginning) {
-    if (characters.isAtEnd()) {
-      return Collections.emptyList();
+  @CheckForNull
+  private RegexTree parseCharacterClassElement(boolean isAtBeginning) {
+    if (characters.isAtEnd() || characters.currentIs("&&")) {
+      return null;
     }
     JavaCharacter startCharacter = characters.getCurrent();
     switch (startCharacter.getCharacter()) {
@@ -9,23 +10,16 @@
         if (escape.is(RegexTree.Kind.PLAIN_CHARACTER)) {
           return parseCharacterRange(((PlainCharacterTree)escape).getContents());
         } else {
-          return Collections.singletonList(escape);
+          return escape;
         }
       case '[':
-        return Collections.singletonList(parseCharacterClass());
-      case '&':
-        characters.moveNext();
-        if (characters.currentIs('&')) {
-          characters.moveNext();
-          return Collections.emptyList();
-        }
-        return parseCharacterRange(startCharacter);
+        return parseCharacterClass();
       case ']':
         if (isAtBeginning) {
           characters.moveNext();
           return parseCharacterRange(startCharacter);
         } else {
-          return Collections.emptyList();
+          return null;
         }
       default:
         characters.moveNext();
