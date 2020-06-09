@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree classTree = (ClassTree) tree;
+
+    List<MethodTree> methods = classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .collect(Collectors.toList());
+
+    int jUnitVersion = getJUnitVersion(methods);
+    if (jUnitVersion > 0) {
+      methods.forEach(methodTree -> checkJUnitMethod(methodTree, jUnitVersion));
+    }
+  }
+
