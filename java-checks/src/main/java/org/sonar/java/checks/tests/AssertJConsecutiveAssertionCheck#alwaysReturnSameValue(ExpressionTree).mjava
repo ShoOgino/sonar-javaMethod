@@ -1,0 +1,10 @@
+  private static boolean alwaysReturnSameValue(ExpressionTree expression) {
+    if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+      // Two method invocation can return different values.
+      return false;
+    } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+      return alwaysReturnSameValue(((MemberSelectExpressionTree) expression).expression());
+    }
+    return true;
+  }
+

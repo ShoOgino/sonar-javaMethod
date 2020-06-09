@@ -1,0 +1,29 @@
+  private void reportConsecutiveAssertions(List<StatementTree> statements) {
+    AssertSubject currentSubject = null;
+    List<MethodInvocationTree> equivalentInvocations = new ArrayList<>();
+
+    for (StatementTree statement : statements) {
+      Optional<AssertSubject> assertThatInvocation = getSimpleAssertSubject(statement);
+
+      if (assertThatInvocation.isPresent()) {
+        AssertSubject assertSubject = assertThatInvocation.get();
+        if (currentSubject == null) {
+          currentSubject = assertSubject;
+        } else if (areEquivalent(currentSubject.arg, assertSubject.arg)) {
+          equivalentInvocations.add(assertSubject.mit);
+        } else {
+          reportIssueIfMultipleCalls(currentSubject, equivalentInvocations);
+          currentSubject = assertSubject;
+          equivalentInvocations.clear();
+        }
+      } else {
+        // We have something else than an assertion subject or a subject returning different values between two calls
+        reportIssueIfMultipleCalls(currentSubject, equivalentInvocations);
+        currentSubject = null;
+        equivalentInvocations.clear();
+      }
+    }
+
+    reportIssueIfMultipleCalls(currentSubject, equivalentInvocations);
+  }
+

@@ -1,0 +1,20 @@
+  private static Optional<AssertSubject> getSimpleAssertSubject(ExpressionTree expressionTree) {
+    if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree memberSelectExpression = ((MemberSelectExpressionTree) expressionTree).expression();
+      if (memberSelectExpression.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTree mit = (MethodInvocationTree) memberSelectExpression;
+        if (ASSERT_THAT_MATCHER.matches(mit)) {
+          ExpressionTree arg = mit.arguments().get(0);
+          if (alwaysReturnSameValue(arg)) {
+            return Optional.of(new AssertSubject(mit, arg));
+          }
+        } else if (ASSERTJ_SET_CONTEXT_METHODS.matches(mit)) {
+          return Optional.empty();
+        } else {
+          return getSimpleAssertSubject(mit.methodSelect());
+        }
+      }
+    }
+    return Optional.empty();
+  }
+

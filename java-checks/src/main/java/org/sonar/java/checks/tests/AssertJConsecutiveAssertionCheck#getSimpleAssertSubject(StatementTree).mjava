@@ -1,0 +1,15 @@
+  /**
+   * A "simple" assertion subject is coming from an assertion chain containing only one assertion predicate
+   * and the assertion subject argument always returning the same value when called multiple times.
+   */
+  private static Optional<AssertSubject> getSimpleAssertSubject(StatementTree statement) {
+    if (statement.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      ExpressionTree expression = ((ExpressionStatementTree) statement).expression();
+      if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+        // First method invocation should be an assertion predicate, if not (incomplete assertion), we will not find anything
+        return getSimpleAssertSubject(((MethodInvocationTree) expression).methodSelect());
+      }
+    }
+    return Optional.empty();
+  }
+

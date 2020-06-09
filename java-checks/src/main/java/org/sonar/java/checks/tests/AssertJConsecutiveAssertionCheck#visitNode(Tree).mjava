@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    if (hasTestAnnotation(methodTree)) {
+      BlockTree block = methodTree.block();
+      if (block != null) {
+        reportConsecutiveAssertions(block.body());
+      }
+    }
+  }
+
