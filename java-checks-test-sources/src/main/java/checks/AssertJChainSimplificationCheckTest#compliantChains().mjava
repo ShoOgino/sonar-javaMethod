@@ -1,0 +1,18 @@
+  void compliantChains() {
+    Comparable x = getBoolean();
+    Object y = getObject();
+
+    assertThat(x.compareTo(y)).isNotEqualTo(0).isNotEqualTo(-1); // Compliant as we have >1 context-dependant predicate
+    assertThat(x.compareTo(y)).isOne();
+    assertThat(x).extracting("test").isEqualTo("test"); // Compliant as we ignore chains containing methods that change the assertion context (too complex)
+    assertThat(true).isTrue();
+    assertThat(getObject()).isNull();
+    assertThat(x).isSameAs(y);
+    assertThat(x).isLessThanOrEqualTo(0);
+    assertThat(x.compareTo(y)).as("message"); // Compliant. Not a proper test, as the predicate is missing, but this is handled elsewhere.
+    assertThat(x).isNotEqualByComparingTo(0);
+    assertThat(x).hasToString("expected");
+    assertThat(x).hasSameHashCodeAs(y);
+    assertThat(x).isInstanceOf(Object.class);
+  }
+

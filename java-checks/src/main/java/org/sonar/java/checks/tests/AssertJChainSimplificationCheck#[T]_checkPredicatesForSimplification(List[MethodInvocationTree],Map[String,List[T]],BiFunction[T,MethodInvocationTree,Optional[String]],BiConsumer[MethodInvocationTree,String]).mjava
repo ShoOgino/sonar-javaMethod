@@ -1,0 +1,27 @@
+  /**
+   * @return {@code true} when an issue was reported, {@code false} otherwise.
+   */
+  private static <T> boolean checkPredicatesForSimplification(
+    List<MethodInvocationTree> predicates,
+    Map<String, List<T>> simplifiers,
+    BiFunction<T, MethodInvocationTree, Optional<String>> simplificationMethod,
+    BiConsumer<MethodInvocationTree, String> reportingMethod) {
+
+    AssertJChainSimplificationHelper.BooleanFlag issueRaised = new AssertJChainSimplificationHelper.BooleanFlag();
+    predicates.forEach(predicate -> {
+      String predicateName = ExpressionUtils.methodName(predicate).name();
+      if (simplifiers.containsKey(predicateName)) {
+        simplifiers.get(predicateName).stream()
+          .map(simplifier -> simplificationMethod.apply(simplifier, predicate))
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .findFirst()
+          .ifPresent(replacement -> {
+            reportingMethod.accept(predicate, replacement);
+            issueRaised.setTrue();
+          });
+      }
+    });
+    return issueRaised.value();
+  }
+

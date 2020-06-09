@@ -1,0 +1,38 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree subjectMit) {
+    List<MethodInvocationTree> predicates = new ArrayList<>();
+    Optional<MethodInvocationTree> nextPredicateOpt = MethodTreeUtils.consecutiveMethodInvocation(subjectMit);
+
+    while (nextPredicateOpt.isPresent()) {
+      MethodInvocationTree nextPredicate = nextPredicateOpt.get();
+      if (!ASSERTION_MESSAGE_METHODS.matches(nextPredicate)) {
+        predicates.add(nextPredicate);
+      }
+      nextPredicateOpt = MethodTreeUtils.consecutiveMethodInvocation(nextPredicate);
+    }
+
+    boolean wasIssueRaised = checkPredicatesForSimplification(
+      predicates, CONTEXT_FREE_SIMPLIFIERS, SimplifierWithoutContext::simplify,
+      (predicate, replacement) -> reportIssue(ExpressionUtils.methodName(predicate),
+        String.format(ISSUE_MESSAGE_FORMAT_STRING, replacement)));
+
+    // We do not continue when we have already raised an issue to avoid potentially conflicting issue reports. If we
+    // have more than one predicate we also avoid continuing to avoid FP on cases such as:
+    // assertThat(Integer.valueOf(1).compareTo(2)).isGreaterThan(1).isLessThan(10)
+    // We also want to ignore all assertion chains that contain methods besides predicates and messages, such as those
+    // that change the assertion context, as that level of complexity is not handled by this rule. The extraction
+    // function is such an example:
+    // assertThat(frodo).extracting("name", as(InstanceOfAssertFactories.STRING)).startsWith("Fro");
+    if (wasIssueRaised || predicates.size() > 1) {
+      return;
+    }
+
+    checkPredicatesForSimplification(
+      predicates, SIMPLIFIERS_WITH_CONTEXT, (simplifier, predicate) -> simplifier.simplify(subjectMit, predicate),
+      (predicate, replacement) -> reportIssue(ExpressionUtils.methodName(predicate),
+        String.format(ISSUE_MESSAGE_FORMAT_STRING, replacement),
+        Collections.singletonList(
+          new JavaFileScannerContext.Location("This can be simplified", subjectMit.arguments().get(0))),
+        null));
+  }
+
