@@ -1,0 +1,12 @@
+  private void checkFestLikeAssertion(MethodInvocationTree mit, Symbol symbol, IdentifierTree reportLocation) {
+    if (isConstructor(symbol)) {
+      return;
+    }
+    if (isFirstAssertingPredicateAfterAssertThat(mit)) {
+      // If we have anything between the current assertion predicate and the assertion subject, it's either
+      // - another assertion predicate: the issue will be raised on this one (if problematic)
+      // - a message: compliant solution
+      reportIssue(reportLocation, MESSAGE_FEST_LIKE);
+    }
+  }
+

@@ -3,20 +3,20 @@
     Symbol symbol = mit.symbol();
     Type type = symbol.owner().type();
 
-    if (FEST_MESSAGE_METHODS.matches(mit) || ASSERTJ_MESSAGE_METHODS.matches(mit)) {
-      // If we can establish that the currently tested method is the one adding a message,
+    if (FEST_LIKE_MESSAGE_METHODS.matches(mit) || ASSERT_SETTING_CONTEXT.matches(mit)) {
+      // If we can establish that the currently tested method is the one adding a message or not an assertion predicate,
       // we have very easily shown that this rule does not apply.
       return;
     }
 
-    if (type.isSubtypeOf(FEST_GENERIC_ASSERT)) {
-      checkFestLikeAssertion(mit, symbol, FEST_MESSAGE_METHODS);
-    } else if (type.isSubtypeOf(ASSERTJ_ABSTRACT_ASSERT)) {
-      checkFestLikeAssertion(mit, symbol, ASSERTJ_MESSAGE_METHODS);
+    IdentifierTree reportLocation = ExpressionUtils.methodName(mit);
+
+    if (type.isSubtypeOf(FEST_GENERIC_ASSERT) || type.isSubtypeOf(ASSERTJ_ABSTRACT_ASSERT)) {
+      checkFestLikeAssertion(mit, symbol, reportLocation);
     } else if (type.is("org.junit.jupiter.api.Assertions")) {
-      checkJUnit5(mit);
+      checkJUnit5(mit, reportLocation);
     } else if (mit.arguments().isEmpty() || !isString(mit.arguments().get(0)) || isAssertingOnStringWithNoMessage(mit)) {
-      reportIssue(mit, MESSAGE);
+      reportIssue(reportLocation, MESSAGE);
     }
   }
 

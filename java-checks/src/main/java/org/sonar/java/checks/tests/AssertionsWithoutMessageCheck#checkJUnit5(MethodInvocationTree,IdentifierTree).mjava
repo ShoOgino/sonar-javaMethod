@@ -1,17 +1,17 @@
-  private void checkJUnit5(MethodInvocationTree mit) {
+  private void checkJUnit5(MethodInvocationTree mit, IdentifierTree reportLocation) {
     String methodName = mit.symbol().name();
     if (JUNIT5_ASSERT_METHODS_IGNORED.contains(methodName)) {
       return;
     }
 
     if (mit.arguments().isEmpty()) {
-      reportIssue(mit, MESSAGE);
+      reportIssue(reportLocation, MESSAGE);
     } else if (methodName.equals("fail")) {
       if (mit.arguments().size() == 1 && mit.arguments().get(0).symbolType().isSubtypeOf("java.lang.Throwable")) {
-        reportIssue(mit, MESSAGE);
+        reportIssue(reportLocation, MESSAGE);
       }
     } else {
-      checkJUnit5Assertions(mit);
+      checkJUnit5Assertions(mit, reportLocation);
     }
   }
 

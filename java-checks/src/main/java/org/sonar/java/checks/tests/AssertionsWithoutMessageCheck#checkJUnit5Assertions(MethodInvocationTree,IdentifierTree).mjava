@@ -1,15 +1,15 @@
-  private void checkJUnit5Assertions(MethodInvocationTree mit) {
+  private void checkJUnit5Assertions(MethodInvocationTree mit, IdentifierTree reportLocation) {
     String methodName = mit.symbol().name();
     if (JUNIT5_ASSERT_METHODS_WITH_ONE_PARAM.contains(methodName)) {
       if (mit.arguments().size() == 1) {
-        reportIssue(mit, MESSAGE);
+        reportIssue(reportLocation, MESSAGE);
       }
     } else if (mit.arguments().size() == 2) {
-      reportIssue(mit, MESSAGE);
+      reportIssue(reportLocation, MESSAGE);
     } else if (JUNIT5_ASSERT_METHODS_WITH_DELTA.contains(methodName) && mit.arguments().size() == 3) {
       Type thirdArgumentType = mit.arguments().get(2).symbolType();
       if (thirdArgumentType.isPrimitive(DOUBLE) || thirdArgumentType.isPrimitive(FLOAT)) {
-        reportIssue(mit, MESSAGE);
+        reportIssue(reportLocation, MESSAGE);
       }
     }
   }

@@ -1,0 +1,16 @@
+  private static boolean isFirstAssertingPredicateAfterAssertThat(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+        MethodInvocationTree childMit = (MethodInvocationTree) expression;
+        if (ASSERT_THAT_MATCHER.matches(childMit)) {
+          return true;
+        } else if (ASSERT_SETTING_CONTEXT.matches(childMit)) {
+          return isFirstAssertingPredicateAfterAssertThat(childMit);
+        }
+      }
+    }
+    return false;
+  }
+
