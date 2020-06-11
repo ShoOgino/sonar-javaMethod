@@ -3,31 +3,23 @@
     // pages are 1-based
     int currentPage = 1;
 
-    Double totalNumberRules;
-    int collectedRulesNumber;
+    long totalNumberRules;
+    long collectedRulesNumber;
     do {
-      HttpResponse response = orchestrator.getServer()
-        .newHttpCall("/api/rules/search")
-        .setMethod(HttpMethod.GET)
-        .setParam("languages", LANGUAGE)
-        .setParam("repositories", REPOSITORY_KEY)
-        .setParam("p", Integer.toString(currentPage))
-        .setParam("ps", Integer.toString(NUMBER_RULES_BY_PAGE)).execute();
+      Rules.SearchResponse searchResponse = newAdminWsClient(orchestrator).rules().search(new SearchRequest()
+        .setLanguages(Collections.singletonList(LANGUAGE))
+        .setRepositories(Collections.singletonList(REPOSITORY_KEY))
+        .setP(Integer.toString(currentPage))
+        .setPs(Integer.toString(NUMBER_RULES_BY_PAGE)));
 
-      @SuppressWarnings("unchecked")
-      Map<Object, Object> jsonObject = GSON.fromJson(response.getBodyAsString(), Map.class);
-
-      @SuppressWarnings("unchecked")
-      List<Map<Object, Object>> jsonRules = (List<Map<Object, Object>>) jsonObject.get("rules");
-
-      jsonRules.stream()
-        .map(jsonRule -> (String) jsonRule.get("key"))
+      searchResponse.getRulesList().stream()
+        .map(Rules.Rule::getKey)
         .map(key -> key.split(":")[1])
         .forEach(ruleKeys::add);
 
       // update number of rules
       collectedRulesNumber = ruleKeys.size();
-      totalNumberRules = (Double) jsonObject.get("total");
+      totalNumberRules = searchResponse.getTotal();
       LOG.info("Collected rule keys: {} / {}", collectedRulesNumber, totalNumberRules);
       // prepare for next page
       currentPage++;

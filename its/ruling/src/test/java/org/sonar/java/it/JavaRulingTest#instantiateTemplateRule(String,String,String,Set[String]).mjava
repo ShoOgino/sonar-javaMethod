@@ -3,49 +3,38 @@
       return;
     }
     activatedRuleKeys.add(instantiationKey);
-    orchestrator.getServer()
-      .newHttpCall("/api/rules/create")
-      .setAdminCredentials()
-      .setMethod(HttpMethod.POST)
-      .setParam("name", instantiationKey)
-      .setParam("markdown_description", instantiationKey)
-      .setParam("severity", "INFO")
-      .setParam("status", "READY")
-      .setParam("template_key", "java:" + ruleTemplateKey)
-      .setParam("custom_key", instantiationKey)
-      .setParam("prevent_reactivation", "true")
-      .setParam("params", "name=\"" + instantiationKey + "\";key=\"" + instantiationKey + "\";markdown_description=\"" + instantiationKey + "\";" + params)
-      .execute();
+    newAdminWsClient(orchestrator)
+      .rules()
+      .create(new CreateRequest()
+      .setName(instantiationKey)
+      .setMarkdownDescription(instantiationKey)
+      .setSeverity("INFO")
+      .setStatus("READY")
+      .setTemplateKey("java:" + ruleTemplateKey)
+      .setCustomKey(instantiationKey)
+      .setPreventReactivation("true")
+      .setParams(Arrays.asList(("name=\"" + instantiationKey + "\";key=\"" + instantiationKey + "\";" +
+        "markdown_description=\"" + instantiationKey + "\";" + params).split(";", 0))));
 
-    String profilesResponse = orchestrator.getServer()
-      .newHttpCall("api/qualityprofiles/search")
-      .setAdminCredentials()
-      .setMethod(HttpMethod.GET)
-      .execute()
-      .getBodyAsString();
-    String profileKey = null;
-    Map map = GSON.fromJson(profilesResponse, Map.class);
-    for (Map qp : ((List<Map>) map.get("profiles"))) {
-      if ("rules".equals(qp.get("name"))) {
-        profileKey = (String) qp.get("key");
-        break;
-      }
-    }
+    String profileKey = newAdminWsClient(orchestrator).qualityprofiles()
+      .search(new SearchRequest())
+      .getProfilesList().stream()
+      .filter(qualityProfile -> "rules".equals(qualityProfile.getName()))
+      .map(QualityProfile::getKey)
+      .findFirst()
+      .orElse(null);
+
     if (StringUtils.isEmpty(profileKey)) {
       LOG.error("Could not retrieve profile key : Template rule " + ruleTemplateKey + " has not been activated");
     } else {
       String ruleKey = "java:" + instantiationKey;
-      HttpResponse activateRuleResponse = orchestrator.getServer()
-        .newHttpCall("api/qualityprofiles/activate_rule")
-        .setAdminCredentials()
-        .setMethod(HttpMethod.POST)
-        .setParam("profile_key", profileKey)
-        .setParam("rule_key", ruleKey)
-        .setParam("severity", "INFO")
-        .setParam("params", "")
-        .execute();
-      String message = activateRuleResponse.isSuccessful() ? "Successfully activated template rule '%s'" : "Failed to activate template rule '%s'";
-      LOG.warn(String.format(message, ruleKey));
+      newAdminWsClient(orchestrator).qualityprofiles()
+        .activateRule(new ActivateRuleRequest()
+          .setKey(profileKey)
+          .setRule(ruleKey)
+          .setSeverity("INFO")
+          .setParams(Collections.emptyList()));
+      LOG.info(String.format("Successfully activated template rule '%s'", ruleKey));
     }
   }
 
