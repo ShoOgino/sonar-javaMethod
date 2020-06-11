@@ -13,7 +13,7 @@
 
     assertThat(getBoolean()).isEqualTo(true); // Noncompliant {{Use isTrue() instead}}
     assertThat(getBoolean()).isEqualTo(false); // Noncompliant {{Use isFalse() instead}}
-    assertThat(x.equals(y)).isTrue(); // Noncompliant [[sc=29;ec=35;secondary=61]] {{Use assertThat(actual).isEqualTo(expected) instead}}
+    assertThat(x.equals(y)).isTrue(); // Noncompliant [[sc=29;ec=35;secondary=71]] {{Use assertThat(actual).isEqualTo(expected) instead}}
     assertThat(x.equals(y)).isFalse(); // Noncompliant {{Use assertThat(actual).isNotEqualTo(expected) instead}}
     assertThat(x == y).isTrue(); // Noncompliant {{Use assertThat(actual).isSameAs(expected) instead}}
     assertThat(x == y).isFalse(); // Noncompliant {{Use assertThat(actual).isNotSameAs(expected) instead}}
@@ -28,21 +28,21 @@
     assertThat(getObject() instanceof String).isTrue(); // Noncompliant {{Use assertThat(actual).isInstanceOf(ExpectedClass.class) instead}}
     assertThat(getObject() instanceof String).isFalse(); // Noncompliant {{Use assertThat(actual).isNotInstanceOf(ExpectedClass.class) instead}}
 
-    assertThat(x.compareTo(y)).isEqualTo(0); // Noncompliant {{Use assertThat(actual).isEqualByComparingTo(expected) instead}}
-    assertThat(x.compareTo(y)).isNotEqualTo(0); // Noncompliant {{Use assertThat(actual).isNotEqualByComparingTo(expected) instead}}
+    assertThat(x.compareTo(y)).isEqualTo(0); // Noncompliant {{Use isZero() instead}}
+    assertThat(x.compareTo(y)).isNotEqualTo(0); // Noncompliant {{Use isNotZero() instead}}
     assertThat(x.compareTo(y)).as("message").isNotEqualTo(0); // Noncompliant
-    assertThat(x.compareTo(y)).isNotEqualTo(0).isNotEqualTo(null).isNotEqualTo(-1); // Noncompliant [[sc=48;ec=60]] - but only raise issue on the 'null' check
+    assertThat(x.compareTo(y)).isNotEqualTo(4).isNotEqualTo(null).isNotEqualTo(-1); // Noncompliant [[sc=48;ec=60]] - but only raise issue on the 'null' check
 
     assertThat(x.compareTo(y)).isZero(); // Noncompliant {{Use assertThat(actual).isEqualByComparingTo(expected) instead}}
     assertThat(x.compareTo(y)).isNotZero(); // Noncompliant {{Use assertThat(actual).isNotEqualByComparingTo(expected) instead}}
-    assertThat(x.compareTo(y)).isGreaterThan(-1); // Noncompliant {{Use assertThat(actual).isGreaterThanOrEqualTo(expected) instead}}
-    assertThat(x.compareTo(y)).isGreaterThan(0); // Noncompliant {{Use assertThat(actual).isGreaterThan(expected) instead}}
-    assertThat(x.compareTo(y)).isGreaterThanOrEqualTo(0); // Noncompliant {{Use assertThat(actual).isGreaterThanOrEqualTo(expected) instead}}
-    assertThat(x.compareTo(y)).isGreaterThanOrEqualTo(1); // Noncompliant {{Use assertThat(actual).isGreaterThan(expected) instead}}
-    assertThat(x.compareTo(y)).isLessThan(1); // Noncompliant {{Use assertThat(actual).isLessThanOrEqualTo(expected) instead}}
-    assertThat(x.compareTo(y)).isLessThan(0); // Noncompliant {{Use assertThat(actual).isLessThan(expected) instead}}
-    assertThat(x.compareTo(y)).isLessThanOrEqualTo(0); // Noncompliant {{Use assertThat(actual).isLessThanOrEqualTo(expected) instead}}
-    assertThat(x.compareTo(y)).isLessThanOrEqualTo(-1); // Noncompliant {{Use assertThat(actual).isLessThan(expected) instead}}
+    assertThat(x.compareTo(y)).isGreaterThan(-1); // Noncompliant {{Use isNotNegative() instead}}
+    assertThat(x.compareTo(y)).isGreaterThan(0); // Noncompliant {{Use isPositive() instead}}
+    assertThat(x.compareTo(y)).isGreaterThanOrEqualTo(0); // Noncompliant {{Use isNotNegative() instead}}
+    assertThat(x.compareTo(y)).isGreaterThanOrEqualTo(1); // Noncompliant {{Use isPositive() instead}}
+    assertThat(x.compareTo(y)).isLessThan(1); // Noncompliant {{Use isNotPositive() instead}}
+    assertThat(x.compareTo(y)).isLessThan(0); // Noncompliant {{Use isNegative() instead}}
+    assertThat(x.compareTo(y)).isLessThanOrEqualTo(0); // Noncompliant {{Use isNotPositive() instead}}
+    assertThat(x.compareTo(y)).isLessThanOrEqualTo(-1); // Noncompliant {{Use isNegative() instead}}
     assertThat(x.compareTo(y)).isNegative(); // Noncompliant {{Use assertThat(actual).isLessThan(expected) instead}}
     assertThat(x.compareTo(y)).isNotNegative(); // Noncompliant {{Use assertThat(actual).isGreaterThanOrEqualTo(expected) instead}}
     assertThat(x.compareTo(y)).isPositive(); // Noncompliant {{Use assertThat(actual).isGreaterThan(expected) instead}}
