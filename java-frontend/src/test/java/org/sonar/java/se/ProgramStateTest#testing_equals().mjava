@@ -2,9 +2,12 @@
   void testing_equals() {
     SymbolicValue sv1 = new SymbolicValue();
     ProgramState state = ProgramState.EMPTY_STATE.addConstraint(sv1, ObjectConstraint.NOT_NULL);
-    assertThat(state.equals(null)).isFalse();
-    assertThat(state.equals(new String())).isFalse();
     ProgramState state2 = ProgramState.EMPTY_STATE.addConstraint(sv1, ObjectConstraint.NOT_NULL);
-    assertThat(state.equals(state2)).isTrue();
+    ProgramState state3 = ProgramState.EMPTY_STATE.addConstraint(sv1, ObjectConstraint.NULL);
+    assertThat(state)
+      .isNotEqualTo(null)
+      .isNotEqualTo(new Object())
+      .isNotEqualTo(state3)
+      .isEqualTo(state2);
   }
 

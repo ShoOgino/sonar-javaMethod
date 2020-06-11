@@ -1,10 +1,10 @@
   @Test
   void rethrow_exception_when_hidden_property_set_to_true_with_SECheck() {
+    VisitorsBridge visitorsBridge = visitorsBridge(Arrays.asList(
+      new SE1_ThrowingNPEPreStatement(),
+      new SE2_ThrowingNPEPostStatement()), true);
     try {
-      visitorsBridge(Arrays.asList(
-        new SE1_ThrowingNPEPreStatement(),
-        new SE2_ThrowingNPEPostStatement()), true)
-        .visitFile(COMPILATION_UNIT_TREE);
+      visitorsBridge.visitFile(COMPILATION_UNIT_TREE);
       Fail.fail("scanning of file should have raise an exception");
     } catch (AnalysisException e) {
       assertThat(e.getMessage()).contains("Failing check");

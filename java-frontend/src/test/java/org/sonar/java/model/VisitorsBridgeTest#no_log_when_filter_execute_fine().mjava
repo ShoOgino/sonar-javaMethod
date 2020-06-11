@@ -1,12 +1,12 @@
   @Test
   void no_log_when_filter_execute_fine() {
+    VisitorsBridge visitorsBridge = visitorsBridge(Arrays.asList(), true, new FilterNothing());
     try {
-      visitorsBridge(Arrays.asList(), true, new FilterNothing())
-        .visitFile(COMPILATION_UNIT_TREE);
+      visitorsBridge.visitFile(COMPILATION_UNIT_TREE);
     } catch (Exception e) {
       e.printStackTrace();
       Fail.fail("No exception should be raised");
     }
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
   }
 

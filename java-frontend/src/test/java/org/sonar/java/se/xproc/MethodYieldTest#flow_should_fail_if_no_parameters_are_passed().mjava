@@ -1,8 +1,10 @@
   @Test
   void flow_should_fail_if_no_parameters_are_passed() throws Exception {
     MethodYield methodYield = new HappyPathYield(null, mockMethodBehavior(1, false));
+    List<Integer> parameters = Collections.emptyList();
+    List<Class<? extends Constraint>> domains = Collections.singletonList(ObjectConstraint.class);
     try {
-      methodYield.flow(Collections.emptyList(), Collections.singletonList(ObjectConstraint.class));
+      methodYield.flow(parameters, domains);
       fail("calling flow with empty list should have failed");
     } catch (IllegalArgumentException iae) {
       assertThat(iae).hasMessage("computing flow on empty symbolic value list should never happen");

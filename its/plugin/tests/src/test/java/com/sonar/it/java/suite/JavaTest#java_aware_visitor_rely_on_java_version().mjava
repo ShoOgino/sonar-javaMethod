@@ -11,13 +11,13 @@
 
     // no java version specified. maven scanner gets maven default version : java 5.
     orchestrator.executeBuild(build);
-    assertThat(getMeasureAsInteger(projectKey, "violations")).isEqualTo(0);
+    assertThat(getMeasureAsInteger(projectKey, "violations")).isZero();
 
     // invalid java version. got issue on java 7 code
     build.setProperty(sonarJavaSource, "jdk_1.6");
     BuildResult buildResult = orchestrator.executeBuild(build);
     // build should not fail
-    assertThat(buildResult.getLastStatus()).isEqualTo(0);
+    assertThat(buildResult.getLastStatus()).isZero();
     // build logs should contains warning related to sources
     assertThat(buildResult.getLogs()).contains("Invalid java version");
     assertThat(getMeasureAsInteger(projectKey, "violations")).isEqualTo(1);
@@ -30,7 +30,7 @@
     // lower version. no issue on java 7 code
     build.setProperty(sonarJavaSource, "1.6");
     orchestrator.executeBuild(build);
-    assertThat(getMeasureAsInteger(projectKey, "violations")).isEqualTo(0);
+    assertThat(getMeasureAsInteger(projectKey, "violations")).isZero();
 
     SonarScanner scan = SonarScanner.create(TestUtils.projectDir("java-version-aware-visitor"))
       .setProperty("sonar.projectKey", "org.example:example-scanner")

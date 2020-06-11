@@ -1,9 +1,12 @@
   @Test
   void test_equals_hashcode() throws Exception {
     ConstraintsByDomain c1 = ConstraintsByDomain.empty();
-    assertThat(c1.equals(null)).isFalse();
     ConstraintsByDomain c2 = c1.put(ObjectConstraint.NOT_NULL);
-    assertThat(c1.equals(c2)).isFalse();
+    assertThat(c1)
+      .isNotEqualTo(null)
+      .isNotEqualTo(new Object())
+      .isNotEqualTo(c2)
+      .isEqualTo(c1);
     assertThat(c1.hashCode()).isNotEqualTo(c2.hashCode());
   }
 

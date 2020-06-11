@@ -1,8 +1,8 @@
   @Test
   void rethrow_exception_when_hidden_property_set_to_true_with_SubscriptionVisitor() {
+    VisitorsBridge visitorsBridge = visitorsBridge(new SV1_ThrowingNPEVisitingClass(), true);
     try {
-      visitorsBridge(new SV1_ThrowingNPEVisitingClass(), true)
-        .visitFile(COMPILATION_UNIT_TREE);
+      visitorsBridge.visitFile(COMPILATION_UNIT_TREE);
       Fail.fail("scanning of file should have raise an exception");
     } catch (AnalysisException e) {
       assertThat(e.getMessage()).contains("Failing check");

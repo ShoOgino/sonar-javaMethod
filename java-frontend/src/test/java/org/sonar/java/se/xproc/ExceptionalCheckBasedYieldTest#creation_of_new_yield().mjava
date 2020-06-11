@@ -14,8 +14,8 @@
 
     assertThat(mb.happyPathYields()).hasSize(1);
     assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == null)).hasSize(1);
-    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE)).hasSize(0);
-    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).hasSize(0);
+    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.TRUE)).isEmpty();
+    assertThat(mb.happyPathYields().filter(y -> y.parametersConstraints.get(0).get(BooleanConstraint.class) == BooleanConstraint.FALSE)).isEmpty();
 
     assertThat(mb.exceptionalPathYields()).hasSize(2);
     assertThat(mb.exceptionalPathYields()).as("All the exceptional yields are runtime exceptions").allMatch(y -> y.exceptionType(semanticModel).isUnknown());
@@ -51,7 +51,7 @@
     assertThat(seCheckExceptionalYield.exceptionType(semanticModel).isSubtypeOf("java.lang.RuntimeException")).isTrue();
     assertThat(seCheckExceptionalYield.generatedByCheck(check)).isTrue();
     assertThat(seCheckExceptionalYield.generatedByCheck(new SECheck() { })).isFalse();
-    assertThat(seCheckExceptionalYield.parameterCausingExceptionIndex()).isEqualTo(0);
+    assertThat(seCheckExceptionalYield.parameterCausingExceptionIndex()).isZero();
 
   }
 

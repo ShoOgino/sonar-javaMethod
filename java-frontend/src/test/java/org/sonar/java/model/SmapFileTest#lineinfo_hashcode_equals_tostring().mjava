@@ -1,20 +1,21 @@
   @Test
   void lineinfo_hashcode_equals_tostring() {
     SmapFile.LineInfo lineInfo = new SmapFile.LineInfo(1, 0, 1, 1, 1);
-    assertThat(lineInfo.toString()).isEqualTo("LineInfo{inputStartLine=1, lineFileId=0, repeatCount=1, outputStartLine=1, outputLineIncrement=1}");
+    assertThat(lineInfo).hasToString("LineInfo{inputStartLine=1, lineFileId=0, repeatCount=1, outputStartLine=1, outputLineIncrement=1}");
 
     Set<SmapFile.LineInfo> set = new HashSet<>();
     set.add(lineInfo);
     SmapFile.LineInfo lineInfo2 = new SmapFile.LineInfo(1, 0, 1, 1, 1);
     assertThat(set.add(lineInfo2)).isFalse();
-    assertThat(lineInfo).isEqualTo(lineInfo);
-    assertThat(lineInfo).isEqualTo(lineInfo2);
-    assertThat(lineInfo).isNotEqualTo(null);
-    assertThat(lineInfo).isNotEqualTo(0);
-    assertThat(lineInfo).isNotEqualTo(new SmapFile.LineInfo(2, 0, 1, 1, 1));
-    assertThat(lineInfo).isNotEqualTo(new SmapFile.LineInfo(1, 2, 1, 1, 1));
-    assertThat(lineInfo).isNotEqualTo(new SmapFile.LineInfo(1, 0, 2, 1, 1));
-    assertThat(lineInfo).isNotEqualTo(new SmapFile.LineInfo(1, 0, 1, 2, 1));
-    assertThat(lineInfo).isNotEqualTo(new SmapFile.LineInfo(1, 0, 1, 1, 2));
+    assertThat(lineInfo)
+      .isNotEqualTo(null)
+      .isNotEqualTo(new Object())
+      .isEqualTo(lineInfo)
+      .isEqualTo(lineInfo2)
+      .isNotEqualTo(new SmapFile.LineInfo(2, 0, 1, 1, 1))
+      .isNotEqualTo(new SmapFile.LineInfo(1, 2, 1, 1, 1))
+      .isNotEqualTo(new SmapFile.LineInfo(1, 0, 2, 1, 1))
+      .isNotEqualTo(new SmapFile.LineInfo(1, 0, 1, 2, 1))
+      .isNotEqualTo(new SmapFile.LineInfo(1, 0, 1, 1, 2));
   }
 

@@ -2,16 +2,17 @@
   void fileinfo_hashcode_equals_tostring() {
     SmapFile.FileInfo fileInfo = new SmapFile.FileInfo(0, "file.jsp", "path/file.jsp", null);
     SmapFile.FileInfo fileInfo2 = new SmapFile.FileInfo(0, "file.jsp", "path/file.jsp", null);
-    assertThat(fileInfo).isEqualTo(fileInfo);
-    assertThat(fileInfo).isEqualTo(fileInfo2);
-    assertThat(fileInfo).isNotEqualTo(null);
-    assertThat(fileInfo).isNotEqualTo(0);
-    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(1, "file.jsp", "path/file.jsp", null));
-    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(0, "file2.jsp", "path/file.jsp", null));
-    assertThat(fileInfo).isNotEqualTo(new SmapFile.FileInfo(0, "file.jsp", "path/file2.jsp", null));
+    assertThat(fileInfo)
+      .isNotEqualTo(null)
+      .isNotEqualTo(new Object())
+      .isEqualTo(fileInfo)
+      .isEqualTo(fileInfo2)
+      .isNotEqualTo(new SmapFile.FileInfo(1, "file.jsp", "path/file.jsp", null))
+      .isNotEqualTo(new SmapFile.FileInfo(0, "file2.jsp", "path/file.jsp", null))
+      .isNotEqualTo(new SmapFile.FileInfo(0, "file.jsp", "path/file2.jsp", null));
     Set<SmapFile.FileInfo> set = new HashSet<>();
     set.add(fileInfo);
     assertThat(set.add(fileInfo2)).isFalse();
-    assertThat(fileInfo.toString()).isEqualTo("FileInfo{fileId=0, sourceName='file.jsp', sourcePath='path/file.jsp'}");
+    assertThat(fileInfo).hasToString("FileInfo{fileId=0, sourceName='file.jsp', sourcePath='path/file.jsp'}");
   }
 

@@ -5,9 +5,11 @@
       .withCheck(new SymbolicExecutionVisitor(Collections.emptyList(), new BehaviorCache(new SquidClassLoader(new ArrayList<>()))) {
         @Override
         public void visitNode(Tree tree) {
+          MethodTree methodTree = (MethodTree) tree;
+          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
+          MethodBehavior methodBehavior = methodBehaviorForSymbol(methodTree.symbol());
           try {
-            MethodTree methodTree = (MethodTree) tree;
-            new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
+            explodedGraphWalker.visitMethod(methodTree, methodBehavior);
             fail("Too many states were processed !");
           } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
             assertThat(exception.getMessage()).startsWith("reached maximum number of 10000 branched states");
