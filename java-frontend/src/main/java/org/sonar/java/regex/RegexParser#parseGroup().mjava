@@ -1,13 +1,34 @@
-  private GroupTree parseGroup() {
+  private RegexTree parseGroup() {
     JavaCharacter openingParen = characters.getCurrent();
     characters.moveNext();
-    RegexTree inner = parseDisjunction();
-    if (characters.currentIs(')')) {
-      characters.moveNext();
+    if (characters.currentIs("?=")) {
+      characters.moveNext(2);
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookAhead(source, range, inner));
+    } else if (characters.currentIs("?<=")) {
+      characters.moveNext(3);
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookBehind(source, range, inner));
+    } else if (characters.currentIs("?!")) {
+      characters.moveNext(2);
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookAhead(source, range, inner));
+    } else if (characters.currentIs("?<!")) {
+      characters.moveNext(3);
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookBehind(source, range, inner));
+    } else if (characters.currentIs("?>")) {
+      characters.moveNext(2);
+      return finishGroup(openingParen, (range, inner) -> new AtomicGroupTree(source, range, inner));
+    } else if (characters.currentIs("?<")) {
+      characters.moveNext(2);
+      String name = parseGroupName();
+      if (characters.currentIs('>')) {
+        characters.moveNext();
+      } else {
+        expected("'>'");
+      }
+      return finishGroup(openingParen, (range, inner) -> new CapturingGroupTree(source, range, name, inner));
+    } else if (characters.currentIs("?")) {
+      return parseNonCapturingGroup(openingParen);
     } else {
-      expected("')'");
+      return finishGroup(openingParen, (range, inner) -> new CapturingGroupTree(source, range, null, inner));
     }
-    IndexRange range = openingParen.getRange().extendTo(characters.getCurrentStartIndex());
-    return new GroupTree(source, range, inner);
   }
 

@@ -16,8 +16,8 @@
     SimpleQuantifier quantifier = assertType(SimpleQuantifier.class, firstPart.getQuantifier());
     assertEquals(SimpleQuantifier.Kind.STAR, quantifier.getKind(), "Quantifier should be a star.");
     assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be greedy.");
-    assertKind(RegexTree.Kind.GROUP, firstPart.getElement());
-    GroupTree repeatedGroup = assertType(GroupTree.class, firstPart.getElement());
+    assertKind(RegexTree.Kind.CAPTURING_GROUP, firstPart.getElement());
+    CapturingGroupTree repeatedGroup = assertType(CapturingGroupTree.class, firstPart.getElement());
     assertKind(RegexTree.Kind.DISJUNCTION, repeatedGroup.getElement());
     DisjunctionTree repeatedDisjunction = assertType(DisjunctionTree.class, repeatedGroup.getElement());
     List<RegexTree> repeatedAlternatives = repeatedDisjunction.getAlternatives();
@@ -25,8 +25,8 @@
     assertPlainString("ab", repeatedAlternatives.get(0));
     assertPlainCharacter('b', repeatedAlternatives.get(1));
 
-    assertKind(RegexTree.Kind.GROUP, items.get(1));
-    GroupTree secondPart = assertType(GroupTree.class, items.get(1));
+    assertKind(RegexTree.Kind.CAPTURING_GROUP, items.get(1));
+    CapturingGroupTree secondPart = assertType(CapturingGroupTree.class, items.get(1));
     assertLocation(7, 11, secondPart);
     assertKind(RegexTree.Kind.DISJUNCTION, secondPart.getElement());
     DisjunctionTree disjunction = assertType(DisjunctionTree.class, secondPart.getElement());

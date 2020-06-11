@@ -1,0 +1,11 @@
+  @Override
+  public final void visitNonCapturingGroup(NonCapturingGroupTree tree) {
+    int oldFlags = activeFlags;
+    activeFlags ^= tree.getEnabledFlags();
+    activeFlags ^= ~tree.getDisabledFlags();
+    doVisitNonCapturingGroup(tree);
+    if (tree.getElement() != null) {
+      activeFlags = oldFlags;
+    }
+  }
+

@@ -1,0 +1,12 @@
+  private RegexTree finishGroup(boolean previousFreeSpacingMode, JavaCharacter openingParen, GroupConstructor groupConstructor) {
+    RegexTree inner = parseDisjunction();
+    characters.setFreeSpacingMode(previousFreeSpacingMode);
+    if (characters.currentIs(')')) {
+      characters.moveNext();
+    } else {
+      expected("')'");
+    }
+    IndexRange range = openingParen.getRange().extendTo(characters.getCurrentStartIndex());
+    return groupConstructor.construct(range, inner);
+  }
+

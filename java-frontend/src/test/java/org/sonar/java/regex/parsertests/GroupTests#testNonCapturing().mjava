@@ -1,0 +1,11 @@
+  @Test
+  void testNonCapturing() {
+    RegexTree regex = assertSuccessfulParse("(?:x)");
+    NonCapturingGroupTree group = assertType(NonCapturingGroupTree.class, regex);
+    RegexTree element = group.getElement();
+    assertNotNull(element, "Group should have a body.");
+    assertPlainCharacter('x', element);
+    assertLocation(0, 5, group);
+    assertLocation(3, 4, group.getElement());
+  }
+

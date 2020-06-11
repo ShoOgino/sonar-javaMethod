@@ -1,0 +1,35 @@
+  private RegexTree parseNonCapturingGroup(JavaCharacter openingParen) {
+    // Discard '?'
+    characters.moveNext();
+    int enabledFlags = parseFlags();
+    int disabledFlags;
+    if (characters.currentIs('-')) {
+      characters.moveNext();
+      disabledFlags = parseFlags();
+    } else {
+      disabledFlags = 0;
+    }
+
+    boolean previousFreeSpacingMode = characters.getFreeSpacingMode();
+    if ((disabledFlags & Pattern.COMMENTS) != 0) {
+      characters.setFreeSpacingMode(false);
+    } else if ((enabledFlags & Pattern.COMMENTS) != 0) {
+      characters.setFreeSpacingMode(true);
+    }
+
+    if (characters.currentIs(')')) {
+      JavaCharacter closingParen = characters.getCurrent();
+      characters.moveNext();
+      IndexRange range = openingParen.getRange().merge(closingParen.getRange());
+      return new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, null);
+    }
+    if (characters.currentIs(':')) {
+      characters.moveNext();
+    } else {
+      expected("flag or ':' or ')'");
+    }
+    return finishGroup(previousFreeSpacingMode, openingParen, (range, inner) ->
+      new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, inner)
+    );
+  }
+
