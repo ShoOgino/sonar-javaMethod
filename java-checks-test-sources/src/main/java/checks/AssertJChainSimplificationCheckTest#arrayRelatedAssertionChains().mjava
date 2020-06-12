@@ -1,0 +1,21 @@
+  void arrayRelatedAssertionChains() {
+    Object[] otherArray = new Object[1];
+    int i = 12;
+    MyClassWithLength myClassWithLength = new MyClassWithLength();
+
+    assertThat(getArray().length).isEqualTo(0); // Noncompliant {{Use isZero() instead}}
+    assertThat(getArray().length).isZero(); // Noncompliant {{Use assertThat(actual).isEmpty() instead}}
+    assertThat(getArray().length).isEqualTo(i); // Noncompliant {{Use assertThat(actual).hasSize(expected) instead}}
+    assertThat(getArray().length).isPositive(); // Noncompliant {{Use assertThat(actual).isNotEmpty() instead}}
+    assertThat(getArray().length).isNotZero(); // Noncompliant {{Use assertThat(actual).isNotEmpty() instead}}
+    assertThat(getArray().length).isEqualTo(otherArray.length); // Noncompliant {{Use assertThat(actual).hasSameSizeAs(expected) instead}}
+
+    assertThat(getArray().length).isLessThanOrEqualTo(i); // Noncompliant {{Use assertThat(actual).hasSizeLessThanOrEqualTo(expected) instead}}
+    assertThat(getArray().length).isLessThan(i); // Noncompliant {{Use assertThat(actual).hasSizeLessThan(expected) instead}}
+    assertThat(getArray().length).isGreaterThan(i); // Noncompliant {{Use assertThat(actual).hasSizeGreaterThan(expected) instead}}
+    assertThat(getArray().length).isGreaterThanOrEqualTo(i); // Noncompliant {{Use assertThat(actual).hasSizeGreaterThanOrEqualTo(expected) instead}}
+
+    assertThat(getArray().length).isGreaterThan(0); // Noncompliant {{Use isPositive() instead}}
+    assertThat(myClassWithLength.length).isGreaterThanOrEqualTo(i); // Compliant
+  }
+

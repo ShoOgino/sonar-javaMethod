@@ -1,0 +1,25 @@
+  void collectionsRelatedAssertionChains() {
+    int length = 42;
+    String something = "";
+    Collection<Object> otherCollection = new ArrayList<>();
+    assertThat(getCollection()).hasSize(0); // Noncompliant {{Use isEmpty() instead}}
+    assertThat(getCollection().isEmpty()).isTrue(); // Noncompliant {{Use assertThat(actual).isEmpty() instead}}
+    assertThat(getCollection().isEmpty()).isFalse(); // Noncompliant {{Use assertThat(actual).isNotEmpty() instead}}
+    assertThat(getCollection().size()).isZero(); // Noncompliant {{Use assertThat(actual).isEmpty() instead}}
+
+    assertThat(getCollection().size()).isEqualTo(length); // Noncompliant {{Use assertThat(actual).hasSize(expected) instead}}
+    assertThat(getCollection().size()).isEqualTo(otherCollection.size()); // Noncompliant {{Use assertThat(actual).hasSameSizeAs(expected) instead}}
+    assertThat(getCollection().size()).isEqualTo(getArray().length); // Noncompliant {{Use assertThat(actual).hasSize(expected) instead}}
+    assertThat(getCollection().size()).isEqualTo(something.length()); // Noncompliant {{Use assertThat(actual).hasSize(expected) instead}}
+    assertThat(getCollection()).hasSameSizeAs(getArray().length); // Compliant
+    assertThat(getCollection().size()).isLessThanOrEqualTo(length); // Noncompliant {{Use assertThat(actual).hasSizeLessThanOrEqualTo(expected) instead}}
+    assertThat(getCollection().size()).isLessThan(length); // Noncompliant {{Use assertThat(actual).hasSizeLessThan(expected) instead}}
+    assertThat(getCollection().size()).isGreaterThan(length); // Noncompliant {{Use assertThat(actual).hasSizeGreaterThan(expected) instead}}
+    assertThat(getCollection().size()).isGreaterThanOrEqualTo(length); // Noncompliant {{Use assertThat(actual).hasSizeGreaterThanOrEqualTo(expected) instead}}
+
+    assertThat(getCollection().contains(something)).isTrue(); // Noncompliant {{Use assertThat(actual).contains(expected) instead}}
+    assertThat(getCollection().contains(something)).isFalse(); // Noncompliant {{Use assertThat(actual).doesNotContain(expected) instead}}
+    assertThat(getCollection().containsAll(otherCollection)).isTrue(); // Noncompliant {{Use assertThat(actual).containsAll(expected) instead}}
+    assertThat(getCollection().containsAll(otherCollection)).isFalse(); // Compliant, no method "doesNotContainsAll"
+  }
+
