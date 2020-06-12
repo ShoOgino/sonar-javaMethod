@@ -1,8 +1,9 @@
   @Test
   void test_issues_with_no_semantic() {
+    List<String> files = Arrays.asList(FILENAME_ISSUES_FIRST, FILENAME_NO_ISSUE);
+    FakeVisitor visitor = new JavaCheckVerifierTest.FakeVisitor().withDefaultIssues();
     try {
-      MultipleFilesJavaCheckVerifier.verifyNoIssueWithoutSemantic(Arrays.asList(FILENAME_ISSUES_FIRST, FILENAME_NO_ISSUE),
-        new JavaCheckVerifierTest.FakeVisitor().withDefaultIssues());
+      MultipleFilesJavaCheckVerifier.verifyNoIssueWithoutSemantic(files, visitor);
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e.getMessage()).contains("No issues expected but got 10 issue(s):");

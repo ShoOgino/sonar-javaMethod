@@ -1,7 +1,8 @@
   @Test
   void verify_issue_on_file_incorrect() {
+    FakeVisitor visitor = new FakeVisitor().withDefaultIssues();
     try {
-      JavaCheckVerifier.verifyIssueOnFile(FILENAME_ISSUES, "messageOnFile", new FakeVisitor().withDefaultIssues());
+      JavaCheckVerifier.verifyIssueOnFile(FILENAME_ISSUES, "messageOnFile", visitor);
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("A single issue is expected on the file, but 10 issues have been raised");

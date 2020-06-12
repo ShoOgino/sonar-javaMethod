@@ -1,8 +1,9 @@
   @Test
   void verify_unexpected_issue() {
     IssuableSubscriptionVisitor visitor = new JavaCheckVerifierTest.FakeVisitor().withDefaultIssues().withIssue(4, "extra message");
+    List<String> files = Arrays.asList(FILENAME_ISSUES_FIRST, FILENAME_NO_ISSUE);
     try {
-      MultipleFilesJavaCheckVerifier.verify(Arrays.asList(FILENAME_ISSUES_FIRST, FILENAME_NO_ISSUE), visitor);
+      MultipleFilesJavaCheckVerifier.verify(files, visitor);
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e).hasMessage("Unexpected at [4]");

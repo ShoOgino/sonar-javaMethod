@@ -3,8 +3,9 @@
     IssuableSubscriptionVisitor noIssueVisitor = new FakeVisitor();
     JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME_ISSUES, noIssueVisitor);
     JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME_NO_ISSUE, noIssueVisitor);
+    FakeVisitor visitor = new FakeVisitor().withDefaultIssues();
     try {
-      JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME_ISSUES, new FakeVisitor().withDefaultIssues());
+      JavaCheckVerifier.verifyNoIssueWithoutSemantic(FILENAME_ISSUES, visitor);
       Fail.fail("Should have failed");
     } catch (AssertionError e) {
       assertThat(e.getMessage()).contains("No issues expected but got 10 issue(s):");
