@@ -1,0 +1,22 @@
+  @Test
+  void test_object() {
+    Object actual = new Object();
+    Object expected = new Object();
+    assertThat(actual).isEqualTo(expected); // Compliant
+    assertThat(
+      actual
+      ).isEqualTo(actual); // Noncompliant [[sc=19;ec=25;secondary=22]] {{Replace this assertion to not have the same actual and expected expression.}}
+    assertThatObject(actual).as("message").isEqualTo(actual);   // Noncompliant
+    assertThat(actual).describedAs("message").isEqualTo(actual);   // Noncompliant
+    assertThat(actual).withFailMessage("message", 1, 2).isEqualTo(actual);   // Noncompliant
+    assertThat(actual).overridingErrorMessage("message", 1, 2).isEqualTo(actual);   // Noncompliant
+    assertThat(getRandomObjects()).isEqualTo(getRandomObjects()); // Compliant, actual and expected could be different
+    assertThat(getRandomObjects().length).isEqualTo(getRandomObjects().length); // Compliant
+    assertThat(new Random()).isEqualTo(new Random()); // Compliant
+    assertThatObject(null).isEqualTo(null); // Noncompliant
+    assertThat(actual).extracting("name").isEqualTo(actual); // Compliant, contain's "extracting"
+
+    ObjectAssert<Object> assertion = assertThat(actual);
+    assertion.isEqualTo(actual);   // false-negative, only support chained methods
+  }
+

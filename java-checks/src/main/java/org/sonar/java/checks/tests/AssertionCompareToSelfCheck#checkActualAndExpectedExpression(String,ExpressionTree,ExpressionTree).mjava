@@ -1,0 +1,9 @@
+  private void checkActualAndExpectedExpression(String predicateMethodName, ExpressionTree actualExpression, ExpressionTree expectedExpression) {
+    if (ExpressionsHelper.alwaysReturnSameValue(actualExpression) &&
+      SyntacticEquivalence.areEquivalent(actualExpression, expectedExpression) &&
+      !isLegitimateSelfComparison(predicateMethodName, actualExpression)) {
+      List<Location> secondaryLocations = Collections.singletonList(new Location("actual", actualExpression));
+      reportIssue(expectedExpression, MESSAGE, secondaryLocations, null);
+    }
+  }
+

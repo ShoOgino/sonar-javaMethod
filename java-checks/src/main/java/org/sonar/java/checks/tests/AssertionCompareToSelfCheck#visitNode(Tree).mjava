@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    if (JUNIT4_ASSERTIONS_WITH_MESSAGE.matches(mit)) {
+      checkActualAndExpectedExpression(methodName(mit).name(), mit.arguments().get(2), mit.arguments().get(1));
+    } else if (JUNIT4_ASSERTIONS_WITHOUT_MESSAGE.matches(mit) || JUNIT5_ASSERTIONS.matches(mit)) {
+      checkActualAndExpectedExpression(methodName(mit).name(), mit.arguments().get(1), mit.arguments().get(0));
+    } else if (ASSERTJ_AND_FEST_ASSERT_SUBJECT_METHODS.matches(mit)) {
+      ExpressionTree actualExpression = mit.arguments().get(0);
+      consecutiveMethodIgnoringMessageDescription(mit)
+        .filter(ASSERTJ_AND_FEST_ASSERT_PREDICATES::matches)
+        .ifPresent(predicate -> checkActualAndExpectedExpression(methodName(predicate).name(), actualExpression, predicate.arguments().get(0)));
+    }
+  }
+

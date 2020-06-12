@@ -1,0 +1,11 @@
+  private static boolean isLegitimateSelfComparison(String comparisonMethodName, ExpressionTree actualExpression) {
+    // In a unit test validating "equals" and "hashCode" methods, it's legitimate to compare an object to itself.
+    // In other kinds of tests, it's a bug. But it's complicated to know if a unit test is about validating the
+    // "equals" method or not. The following trade-off allows the self-comparison of an object if the unit test
+    // name contains a keyword like "equals", "hash_code", ...
+    Type actualExpressionType = actualExpression.symbolType();
+    return EQUALS_HASH_CODE_METHODS.contains(comparisonMethodName) &&
+      !isPrimitiveOrNull(actualExpressionType) &&
+      isUnitTestNameContainsObjectMethodNames(ExpressionUtils.getEnclosingMethod(actualExpression));
+  }
+
