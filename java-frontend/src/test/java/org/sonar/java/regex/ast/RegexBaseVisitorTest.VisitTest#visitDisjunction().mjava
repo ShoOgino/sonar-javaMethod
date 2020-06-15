@@ -1,0 +1,23 @@
+    @Test
+    void visitDisjunction() {
+      List<RegexTree> items = new ArrayList<>();
+
+      RegexBaseVisitor visitor = new RegexBaseVisitor() {
+        @Override
+        public void visitPlainCharacter(PlainCharacterTree tree) {
+          items.add(tree);
+          // does nothing
+          super.visitPlainCharacter(tree);
+        }
+      };
+
+      RegexTree tree = RegexParserTestUtils.assertSuccessfulParse("a|b|c");
+      tree.accept(visitor);
+
+      assertThat(tree).isInstanceOf(DisjunctionTree.class);
+      assertThat(((DisjunctionTree) tree).getAlternatives())
+        .hasSize(3)
+        .allMatch(PlainCharacterTree.class::isInstance);
+      assertThat(items).hasSize(3);
+    }
+

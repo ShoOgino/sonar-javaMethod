@@ -1,0 +1,23 @@
+    @Test
+    void visitSequence() {
+      List<RegexTree> items = new ArrayList<>();
+
+      RegexBaseVisitor visitor = new RegexBaseVisitor() {
+        @Override
+        public void visitPlainCharacter(PlainCharacterTree tree) {
+          items.add(tree);
+          // does nothing
+          super.visitPlainCharacter(tree);
+        }
+      };
+
+      RegexTree tree = RegexParserTestUtils.assertSuccessfulParse("abc");
+      tree.accept(visitor);
+
+      assertThat(tree).isInstanceOf(SequenceTree.class);
+      assertThat(((SequenceTree) tree).getItems())
+        .hasSize(3)
+        .allMatch(PlainCharacterTree.class::isInstance);
+      assertThat(items).hasSize(3);
+    }
+

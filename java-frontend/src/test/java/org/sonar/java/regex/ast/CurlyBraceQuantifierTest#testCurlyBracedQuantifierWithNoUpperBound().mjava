@@ -2,6 +2,7 @@
   void testCurlyBracedQuantifierWithNoUpperBound() {
     RegexTree regex = assertSuccessfulParse("x{42,}");
     RepetitionTree repetition = assertType(RepetitionTree.class, regex);
+    assertKind(RegexTree.Kind.REPETITION, repetition);
     assertPlainCharacter('x', repetition.getElement());
     CurlyBraceQuantifier quantifier = assertType(CurlyBraceQuantifier.class, repetition.getQuantifier());
     assertEquals(42, quantifier.getMinimumRepetitions(), "Lower bound should be 42.");
