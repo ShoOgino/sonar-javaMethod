@@ -1,0 +1,10 @@
+  private void reportSyntaxErrors(List<SyntaxError> syntaxErrors) {
+    // report on the first issue
+    RegexSyntaxElement tree = syntaxErrors.get(0).getOffendingSyntaxElement();
+    List<RegexIssueLocation> secondaries = syntaxErrors.stream()
+      .map(error -> new RegexCheck.RegexIssueLocation(error.getOffendingSyntaxElement(), error.getMessage()))
+      .collect(Collectors.toList());
+
+    reportIssue(tree, secondaries, "syntax");
+  }
+
