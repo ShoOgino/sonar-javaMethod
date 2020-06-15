@@ -1,4 +1,4 @@
-  private RegexTree parseGroup() {
+  private GroupTree parseGroup() {
     JavaCharacter openingParen = characters.getCurrent();
     characters.moveNext();
     if (characters.currentIs("?=")) {
@@ -24,11 +24,11 @@
       } else {
         expected("'>'");
       }
-      return finishGroup(openingParen, (range, inner) -> new CapturingGroupTree(source, range, name, inner));
+      return finishGroup(openingParen, newCapturingGroup(name));
     } else if (characters.currentIs("?")) {
       return parseNonCapturingGroup(openingParen);
     } else {
-      return finishGroup(openingParen, (range, inner) -> new CapturingGroupTree(source, range, null, inner));
+      return finishGroup(openingParen, newCapturingGroup(null));
     }
   }
 
