@@ -1,0 +1,19 @@
+    void processRange(List<RegexTree> duplicates, TreeMap<Character, Boolean> inCharacterClass, char from, char to, RegexTree tree) {
+      if (to < from) {
+        return;
+      }
+      from = caseFold(from);
+      to = caseFold(to);
+      if (containsOverlap(inCharacterClass, from, to)) {
+        duplicates.add(tree);
+      }
+      inCharacterClass.put(from, true);
+      for (Map.Entry<Character, Boolean> entry : inCharacterClass.subMap(from, true, to, true).entrySet()) {
+        entry.setValue(true);
+      }
+      char next = (char) (to + 1);
+      if (!inCharacterClass.containsKey(next)) {
+        inCharacterClass.put(next, false);
+      }
+    }
+
