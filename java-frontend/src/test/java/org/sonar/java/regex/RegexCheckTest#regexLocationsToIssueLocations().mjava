@@ -1,0 +1,33 @@
+  @Test
+  void regexLocationsToIssueLocations() {
+    // force a separation
+    RegexTree regex = assertSuccessfulParse("A\" + \n  \"B");
+    assertKind(RegexTree.Kind.SEQUENCE, regex);
+
+    List<RegexTree> items = ((SequenceTree) regex).getItems();
+    assertThat(items)
+      .hasSize(2)
+      .allMatch(tree -> tree.is(RegexTree.Kind.PLAIN_CHARACTER));
+    assertThat(regex.getLocations())
+      .hasSize(2)
+      .allMatch(loc -> !loc.isEmpty());
+
+    assertThat(correspondingTextSpans(regex)).hasSize(2);
+
+    PlainCharacterTree char1 = (PlainCharacterTree) items.get(0);
+    List<Location> char1Locs = char1.getLocations();
+    assertThat(char1Locs).hasSize(2);
+    assertThat(char1Locs.get(0).isEmpty()).isFalse();
+    assertThat(char1Locs.get(1).isEmpty()).isTrue();
+
+    // empty filtered out
+    assertThat(correspondingTextSpans(char1)).hasSize(1);
+
+    PlainCharacterTree char2 = (PlainCharacterTree) items.get(1);
+    List<Location> char2Locs = char2.getLocations();
+    assertThat(char2Locs)
+      .hasSize(1)
+      .allMatch(loc -> !loc.isEmpty());
+    assertThat(correspondingTextSpans(char2)).hasSize(1);
+  }
+

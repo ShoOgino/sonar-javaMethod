@@ -1,6 +1,9 @@
   public static RegexSource makeSource(String content) {
     CompilationUnitTree tree = JParserTestUtils.parse(String.format(JAVA_CODE, content));
-    LiteralTree literal = (LiteralTree) ((VariableTree)((ClassTree)tree.types().get(0)).members().get(0)).initializer();
-    return new RegexSource(Collections.singletonList(literal));
+    ClassTree foo = (ClassTree) tree.types().get(0);
+    VariableTree str = (VariableTree) foo.members().get(0);
+    LiteralCollector visitor = new LiteralCollector();
+    str.initializer().accept(visitor);
+    return new RegexSource(visitor.stringLiterals);
   }
 
