@@ -1,0 +1,45 @@
+  void noncompliant(String input) {
+
+    Matcher m0 = p0.matcher(input);
+    if (m0.matches()) {
+      m0.group(1); // Noncompliant [[secondary=8]] {{Directly use 'g1' instead of its group number.}}
+    }
+
+    Pattern p1 = Pattern
+      .compile(
+      "(?<g1>[0-9]+)"
+        + ":"
+        + "(?<g2>[0-9]+)");
+    Matcher m1 = p1.matcher(input);
+    if (m1.matches()) {
+      m1.group("g3"); // Noncompliant [[secondary=19,21]] {{There is no group named 'g3' in the regular expression.}}
+    }
+
+    Pattern p2 = Pattern.compile(
+      "(?<month>[0-9]{2})"
+        + "/"
+        + "(?<year>[0-9]{2})");
+    Matcher m2 = p2.matcher(input);
+    if (m2.matches()) {
+        m2.group(
+          1 // Noncompliant [[secondary=28]] {{Directly use 'month' instead of its group number.}}
+        );
+        m2.group(
+          2 // Noncompliant [[secondary=30]] {{Directly use 'year' instead of its group number.}}
+        );
+    }
+
+    Pattern p3 = Pattern.compile(
+      "(?<g1>[a-z]+)" // Noncompliant [[secondary=42,44,46]] {{Use the named groups of this regex or remove the names.}}
+        + ":"
+        + "(?<g2>[0-9]+)"
+        + "="
+        + "(?<g3>[a-zA-Z0-9]+)");
+    Matcher m3 = p3.matcher(input);
+    if (m3.matches()) {
+      System.out.println(input);
+    }
+
+    return;
+  }
+

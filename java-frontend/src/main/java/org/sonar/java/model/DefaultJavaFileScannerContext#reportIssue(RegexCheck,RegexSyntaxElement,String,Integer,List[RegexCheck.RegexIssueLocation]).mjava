@@ -1,23 +1,16 @@
   @Override
   public void reportIssue(RegexCheck regexCheck, RegexSyntaxElement regexTree, String message, @Nullable Integer cost, List<RegexCheck.RegexIssueLocation> secondaries) {
-    List<List<RegexCheck.RegexIssueLocation>> secondariesAsFlows = new ArrayList<>();
+    List<RegexCheck.RegexIssueLocation> completedSecondaries = new ArrayList<>();
 
     List<RegexCheck.RegexIssueLocation> mainLocations = new RegexCheck.RegexIssueLocation(regexTree, message).toSingleLocationItems();
     if (mainLocations.size() > 1) {
       // handle other main locations as secondaries with same message
       mainLocations.subList(1, mainLocations.size())
         .stream()
-        .map(Collections::singletonList)
-        .forEach(secondariesAsFlows::add);
+        .forEach(completedSecondaries::add);
     }
+    completedSecondaries.addAll(secondaries);
 
-    secondaries.stream()
-      .flatMap(regexIssueLocation -> regexIssueLocation.toSingleLocationItems().stream())
-      .map(Collections::singletonList)
-      .forEach(secondariesAsFlows::add);
-
-    AnalyzerMessage analyzerMessage = new AnalyzerMessage(regexCheck, inputFile, mainLocations.get(0).locations().get(0), message, cost != null ? cost : 0);
-    completeAnalyzerMessageWithFlows(analyzerMessage, secondariesAsFlows, ril -> ril.locations().get(0), RegexCheck.RegexIssueLocation::message);
-    reportIssue(analyzerMessage);
+    reportIssue(regexCheck, mainLocations.get(0).locations().get(0), message, cost, completedSecondaries);
   }
 

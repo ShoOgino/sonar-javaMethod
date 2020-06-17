@@ -1,0 +1,15 @@
+  private void checkUsingNumberInsteadOfName(KnownGroupsCollector knownGroups, ExpressionTree arg0) {
+    Optional<Integer> groupNumber = arg0.asConstant(Integer.class);
+    if (!groupNumber.isPresent()) {
+      return;
+    }
+    Integer groupNumberValue = groupNumber.get();
+    CapturingGroupTree capturingGroupTree = knownGroups.groupsByNumber.get(groupNumberValue);
+    if (capturingGroupTree == null) {
+      return;
+    }
+    String message = String.format(ISSUE_USE_NAME_INSTEAD_OF_NUMBER, capturingGroupTree.getName().orElse("?"));
+    RegexIssueLocation secondary = toLocation(capturingGroupTree, "Group %d", g -> groupNumberValue);
+    reportIssue(arg0, message, null, Collections.singletonList(secondary));
+  }
+

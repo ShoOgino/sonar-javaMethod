@@ -1,0 +1,15 @@
+  private void checkNotUsingAnyNamedGroup() {
+    knownPatternsWithGroups.entrySet().stream()
+      .filter(e -> isNotReturned(e.getKey()))
+      .map(Map.Entry::getValue)
+      .filter(this::isNotCallingGroups)
+      .filter(UnusedGroupNamesCheck::isNotUsingBackReferences)
+      .forEach(knownGroups -> {
+        List<CapturingGroupTree> namedGroups = new ArrayList<>(knownGroups.groupsByName.values());
+        List<RegexIssueLocation> secondaries = namedGroups.stream()
+          .map(group -> toLocation(group, "Named group '%s'", g -> g.getName().get()))
+          .collect(Collectors.toList());
+        reportIssue(namedGroups.get(0), ISSUE_USE_GROUPS_OR_REMOVE, null, secondaries);
+      });
+  }
+

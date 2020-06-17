@@ -1,0 +1,9 @@
+  private void collectPattern(MethodInvocationTree mit) {
+    for (Symbol.VariableSymbol knownPattern : knownPatternsWithGroups.keySet()) {
+      if (ExpressionUtils.isInvocationOnVariable(mit, knownPattern, false)) {
+        getAssignedPrivateVariable(mit).ifPresent(knownMatcher -> matcherToPattern.put(knownMatcher, knownPattern));
+        break;
+      }
+    }
+  }
+

@@ -1,0 +1,16 @@
+  private void checkNoSuchName(KnownGroupsCollector knownGroups, ExpressionTree arg0) {
+    Optional<String> groupName = arg0.asConstant(String.class);
+    if (!groupName.isPresent()) {
+      return;
+    }
+    String groupNameValue = groupName.get();
+    if (!knownGroups.groupsByName.keySet().contains(groupNameValue)) {
+      String message = String.format(ISSUE_NO_GROUP_WITH_SUCH_NAME, groupNameValue);
+      List<RegexIssueLocation> secondaries = knownGroups.groupsByName.values()
+        .stream()
+        .map(group -> toLocation(group, "Named group '%s'", g -> g.getName().get()))
+        .collect(Collectors.toList());
+      reportIssue(arg0, message, null, secondaries);
+    }
+  }
+

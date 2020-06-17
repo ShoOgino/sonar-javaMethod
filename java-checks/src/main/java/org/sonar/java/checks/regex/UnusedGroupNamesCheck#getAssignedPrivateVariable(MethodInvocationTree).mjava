@@ -1,0 +1,17 @@
+  private static Optional<Symbol.VariableSymbol> getAssignedPrivateVariable(MethodInvocationTree mit) {
+    Tree parent = mit.parent();
+    Symbol symbol = null;
+    if (parent.is(Tree.Kind.VARIABLE)) {
+      symbol = ((VariableTree) parent).symbol();
+    } else if (parent.is(Tree.Kind.ASSIGNMENT)) {
+      ExpressionTree variable = ((AssignmentExpressionTree) parent).variable();
+      if (variable.is(Tree.Kind.IDENTIFIER)) {
+        symbol = ((IdentifierTree) variable).symbol();
+      }
+    }
+    if (symbol == null || !isPrivateEffectivelyFinalVariable(symbol)) {
+      return Optional.empty();
+    }
+    return Optional.of((Symbol.VariableSymbol) symbol);
+  }
+

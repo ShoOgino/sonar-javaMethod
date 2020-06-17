@@ -1,0 +1,14 @@
+  private void collectReturnedVariables(@Nullable ExpressionTree returnedExpression) {
+    if (returnedExpression == null || !returnedExpression.is(Tree.Kind.IDENTIFIER)) {
+      return;
+    }
+    Symbol returnedSymbol = ((IdentifierTree) returnedExpression).symbol();
+    if (!isPrivateEffectivelyFinalVariable(returnedSymbol)) {
+      return;
+    }
+    Type returnedType = returnedSymbol.type();
+    if (returnedType.is(JAVA_UTIL_REGEX_MATCHER) || returnedType.is(JAVA_UTIL_REGEX_PATTERN)) {
+      returnedVariables.add((Symbol.VariableSymbol) returnedSymbol);
+    }
+  }
+

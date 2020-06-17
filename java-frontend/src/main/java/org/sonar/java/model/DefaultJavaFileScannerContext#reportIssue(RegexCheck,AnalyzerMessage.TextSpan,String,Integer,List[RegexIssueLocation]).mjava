@@ -1,0 +1,13 @@
+  private void reportIssue(RegexCheck regexCheck, AnalyzerMessage.TextSpan mainLocation, String message, @Nullable Integer cost, List<RegexIssueLocation> secondaries) {
+    List<List<RegexCheck.RegexIssueLocation>> secondariesAsFlows = new ArrayList<>();
+
+    secondaries.stream()
+      .flatMap(regexIssueLocation -> regexIssueLocation.toSingleLocationItems().stream())
+      .map(Collections::singletonList)
+      .forEach(secondariesAsFlows::add);
+
+    AnalyzerMessage analyzerMessage = new AnalyzerMessage(regexCheck, inputFile, mainLocation, message, cost != null ? cost : 0);
+    completeAnalyzerMessageWithFlows(analyzerMessage, secondariesAsFlows, ril -> ril.locations().get(0), RegexCheck.RegexIssueLocation::message);
+    reportIssue(analyzerMessage);
+  }
+
