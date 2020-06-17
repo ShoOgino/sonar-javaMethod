@@ -4,9 +4,6 @@
    *         flags) otherwise.
    */
   protected static int getFlags(MethodInvocationTree mit) {
-    if (mit.symbol().name().equals("compile") && mit.arguments().size() == 2) {
-      return mit.arguments().get(1).asConstant(Integer.class).orElse(0);
-    }
-    return 0;
+    return getFlagsTree(mit).flatMap(tree -> tree.asConstant(Integer.class)).orElse(0);
   }
 
