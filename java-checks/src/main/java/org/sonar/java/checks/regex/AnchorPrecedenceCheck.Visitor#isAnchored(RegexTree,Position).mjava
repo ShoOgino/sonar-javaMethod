@@ -1,0 +1,15 @@
+    private boolean isAnchored(RegexTree tree, Position position) {
+      if (!tree.is(RegexTree.Kind.SEQUENCE)) {
+        return false;
+      }
+      SequenceTree sequence = (SequenceTree) tree;
+      List<RegexTree> items = sequence.getItems().stream()
+        .filter(item -> !isFlagSetter(item))
+        .collect(Collectors.toList());
+      if (items.isEmpty()) {
+        return false;
+      }
+      int index = position == Position.BEGINNING ? 0 : (items.size() - 1);
+      return items.get(index).is(RegexTree.Kind.BOUNDARY);
+    }
+

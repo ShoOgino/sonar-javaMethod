@@ -1,0 +1,9 @@
+    @Override
+    public void visitDisjunction(DisjunctionTree tree) {
+      List<RegexTree> alternatives = tree.getAlternatives();
+      if (onlyAnchoredAt(alternatives, Position.BEGINNING) || onlyAnchoredAt(alternatives, Position.END)) {
+        reportIssue(tree, "Group the alternatives together to get the intended precedence.", null, Collections.emptyList());
+      }
+      super.visitDisjunction(tree);
+    }
+
