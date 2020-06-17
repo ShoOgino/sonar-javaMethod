@@ -1,0 +1,17 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, MethodInvocationTree mit) {
+    if (!regexForLiterals.hasSyntaxErrors()) {
+      Visitor visitor = new Visitor();
+      visitor.setActiveFlags(getFlags(mit));
+      visitor.visit(regexForLiterals.getResult());
+      if (visitor.problematicFlagSetOutsideOfRegex) {
+        getFlagsTree(mit).ifPresent( flagsTree ->
+          reportIssue(flagsTree, String.format(MESSAGE, "\"Pattern.UNICODE_CASE\""))
+        );
+      }
+      for (JavaCharacter flag : visitor.problematicFlags) {
+        reportIssue(flag, String.format(MESSAGE, "the \"u\" flag"), null, Collections.emptyList());
+      }
+    }
+  }
+
