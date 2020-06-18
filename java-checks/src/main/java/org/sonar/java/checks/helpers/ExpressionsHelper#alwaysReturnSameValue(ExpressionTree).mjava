@@ -4,6 +4,10 @@
       return false;
     } else if (expression.is(Tree.Kind.MEMBER_SELECT)) {
       return alwaysReturnSameValue(((MemberSelectExpressionTree) expression).expression());
+    } else if (expression.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      return alwaysReturnSameValue(((ParenthesizedTree) expression).expression());
+    } else if (expression.is(Tree.Kind.NEW_ARRAY)) {
+      return ((NewArrayTree) expression).initializers().stream().allMatch(ExpressionsHelper::alwaysReturnSameValue);
     }
     return true;
   }
