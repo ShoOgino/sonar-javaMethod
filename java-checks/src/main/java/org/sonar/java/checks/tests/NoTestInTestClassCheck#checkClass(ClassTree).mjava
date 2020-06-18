@@ -7,16 +7,12 @@
         checkTestNGmembers(simpleName, members);
       } else {
         boolean isJunit3TestClass = classSymbol.type().isSubtypeOf("junit.framework.TestCase");
-        if (isJunit3TestClass) {
-          checkJunit3TestClass(simpleName, members);
-        } else {
-          if (runWitZohhak(classSymbol)) {
-            testMethodAnnotations.add("com.googlecode.zohhak.api.TestWith");
-          } else if (isArchUnitTestClass(classSymbol)) {
-            testMethodAnnotations.add(ARCH_UNIT_TEST);
-            testFieldAnnotations.add(ARCH_UNIT_TEST);
-          }
-          checkJunit4AndAboveTestClass(simpleName, classSymbol, members);
+        List<Symbol> membersList = members.collect(Collectors.toList());
+        if (isJunit3TestClass && containsJUnit3Tests(membersList)) {
+          return;
+        }
+        if (isJunit3TestClass || classSymbol.name().endsWith("Test")) {
+          checkJunit4AndAboveTestClass(simpleName, classSymbol, membersList);
         }
       }
     }
