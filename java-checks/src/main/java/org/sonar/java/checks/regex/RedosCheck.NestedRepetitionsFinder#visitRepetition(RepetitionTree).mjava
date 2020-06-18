@@ -1,0 +1,17 @@
+    @Override
+    public void visitRepetition(RepetitionTree tree) {
+      boolean isPotentiallyProblematic = tree.getQuantifier().isOpenEnded()
+        && tree.getQuantifier().getModifier() != Quantifier.Modifier.POSSESSIVE;
+      if (isPotentiallyProblematic) {
+        if (isInsideRepetition) {
+          offendingRepetitions.add(new RegexIssueLocation(tree, SECONDARY_MESSAGE));
+          return;
+        }
+        isInsideRepetition = true;
+      }
+      super.visitRepetition(tree);
+      if (isPotentiallyProblematic) {
+        isInsideRepetition = false;
+      }
+    }
+
