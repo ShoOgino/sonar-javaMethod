@@ -1,0 +1,29 @@
+    @Override
+    protected void after(RegexParseResult regexParseResult) {
+      BackReferenceTree firstWrongBackReference = null;
+      List<RegexIssueLocation> secondaries = new ArrayList<>();
+
+      for (Map.Entry<String, BackReferenceTree> backReference : backReferenceNames.entrySet()) {
+        String key = backReference.getKey();
+        BackReferenceTree backReferenceTree = backReference.getValue();
+
+        CapturingGroupTree capturingGroupTree = groupNames.get(key);
+        String groupName = backReferenceTree.groupName();
+        boolean reported = false;
+        if (capturingGroupTree == null) {
+          secondaries.add(new RegexIssueLocation(backReferenceTree, String.format("There is no group named '%s'.", groupName)));
+          reported = true;
+        } else if (isBefore(backReferenceTree, capturingGroupTree)) {
+          secondaries.add(new RegexIssueLocation(backReferenceTree, String.format("The group named '%s' is not yet declared at this position.", groupName)));
+          reported = true;
+        }
+        if (reported && firstWrongBackReference == null) {
+          firstWrongBackReference = backReferenceTree;
+        }
+      }
+
+      if (firstWrongBackReference != null) {
+        reportIssue(firstWrongBackReference, secondaries, "back reference");
+      }
+    }
+

@@ -11,9 +11,10 @@
         }
       };
 
-      RegexTree tree = RegexParserTestUtils.assertSuccessfulParse("abc");
-      tree.accept(visitor);
+      RegexParseResult result = RegexParserTestUtils.assertSuccessfulParseResult("abc");
+      visitor.visit(result);
 
+      RegexTree tree = result.getResult();
       assertThat(tree).isInstanceOf(SequenceTree.class);
       assertThat(((SequenceTree) tree).getItems())
         .hasSize(3)

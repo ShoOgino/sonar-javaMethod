@@ -1,9 +1,10 @@
   /**
    * @param mit A method call constructing a regex.
-   * @return The flags with which the regex is created if flags are supplied and can be determined statically. 0 (no
-   *         flags) otherwise.
+   * @return A FlagSet containing the flags with which the regex is created if flags are supplied and can be determined
+   *         statically. An empty FlagSet otherwise.
    */
-  protected static int getFlags(MethodInvocationTree mit) {
-    return getFlagsTree(mit).flatMap(tree -> tree.asConstant(Integer.class)).orElse(0);
+  private static FlagSet getFlags(MethodInvocationTree mit) {
+    int flags = getFlagsTree(mit).flatMap(tree -> tree.asConstant(Integer.class)).orElse(0);
+    return new FlagSet(flags);
   }
 

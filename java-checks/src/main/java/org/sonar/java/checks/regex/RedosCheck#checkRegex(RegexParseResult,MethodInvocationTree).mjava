@@ -1,12 +1,5 @@
   @Override
   public void checkRegex(RegexParseResult regexForLiterals, MethodInvocationTree mit) {
-    if (!regexForLiterals.hasSyntaxErrors()) {
-      RegexTree regex = regexForLiterals.getResult();
-      NestedRepetitionsFinder visitor = new NestedRepetitionsFinder();
-      visitor.visit(regex);
-      if (!visitor.offendingRepetitions.isEmpty()) {
-        reportIssue(regex, MESSAGE, null, visitor.offendingRepetitions);
-      }
-    }
+    new NestedRepetitionsFinder().visit(regexForLiterals);
   }
 

@@ -4,11 +4,10 @@
     if (args.isEmpty()) {
       return;
     }
-    int flags = getFlags(mit);
-    if ((flags & Pattern.LITERAL) == 0) {
-      boolean freeSpacingMode = (flags & Pattern.COMMENTS) != 0;
+    FlagSet flags = getFlags(mit);
+    if (!flags.contains(Pattern.LITERAL)) {
       getLiterals(args.get(0))
-        .map(literals -> regexContext.regexForLiterals(freeSpacingMode, literals))
+        .map(literals -> regexContext.regexForLiterals(flags, literals))
         .ifPresent(result -> checkRegex(result, mit));
     }
   }
