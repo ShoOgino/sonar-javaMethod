@@ -1,6 +1,10 @@
-  private static boolean isScopeSingleton(SymbolMetadata clazzMeta) {
-    List<AnnotationValue> values = clazzMeta.valuesForAnnotation(SCOPE_ANNOTATION_FQN);
-    for (AnnotationValue annotationValue : values) {
+  public static boolean isScopeSingleton(SymbolMetadata clazzMeta) {
+    List<SymbolMetadata.AnnotationValue> values = clazzMeta.valuesForAnnotation(SPRING_SCOPE_ANNOTATION);
+    if (values == null) {
+      // Scope is singleton by default
+      return true;
+    }
+    for (SymbolMetadata.AnnotationValue annotationValue : values) {
       if ("value".equals(annotationValue.name()) || "scopeName".equals(annotationValue.name())) {
         Object value = annotationValue.value();
         String stringValue = null;
