@@ -1,0 +1,28 @@
+    private Optional<String> findNegatedCharacterClassFor(RegexTree tree) {
+      String result;
+      switch (tree.kind()) {
+        case PLAIN_CHARACTER:
+          result = "[^" + tree.getText() + "]";
+          break;
+        case ESCAPED_CHARACTER_CLASS:
+          EscapedCharacterClassTree escapedClass = (EscapedCharacterClassTree) tree;
+          result = "\\\\" + negateEscapedCharacterClassType(escapedClass.getType());
+          if (escapedClass.isProperty()) {
+            result += "{" + escapedClass.property() + "}";
+          }
+          break;
+        case CHARACTER_CLASS:
+          CharacterClassTree characterClass = (CharacterClassTree) tree;
+          String body = characterClass.getContents().getText();
+          if (characterClass.isNegated()) {
+            result = "[" + body + "]";
+          } else {
+            result = "[^" + body + "]";
+          }
+          break;
+        default:
+          return Optional.empty();
+      }
+      return Optional.of(result);
+    }
+
