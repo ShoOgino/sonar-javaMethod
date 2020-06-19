@@ -30,12 +30,22 @@
         case 'Z':
         case 'z':
           return parseBoundary(backslash);
+        case 'w':
+        case 'W':
+        case 'd':
+        case 'D':
+        case 'S':
+        case 's':
+        case 'h':
+        case 'H':
+        case 'v':
+        case 'V':
+          return parseEscapedCharacterClass(backslash);
         default:
-          // TODO other kind of escape sequences such as quotations
-          break;
+          // TODO other kind of escape sequences such as quotations, special characters, N, x, u, R or X
+          characters.moveNext();
+          return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
       }
-      characters.moveNext();
-      return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
     }
   }
 

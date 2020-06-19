@@ -1,0 +1,12 @@
+    private void assertEscapedProperty(String regex, String expectedProperty, boolean isNegation) {
+      RegexTree tree = assertSuccessfulParse(regex);
+      assertThat(tree).isInstanceOf(EscapedCharacterClassTree.class);
+      assertKind(RegexTree.Kind.ESCAPED_CHARACTER_CLASS, tree);
+
+      EscapedCharacterClassTree escapedProperty = (EscapedCharacterClassTree) tree;
+      assertThat(escapedProperty.isProperty()).isTrue();
+      assertThat(escapedProperty.getType()).isEqualTo(isNegation ? 'P' : 'p');
+      assertThat(escapedProperty.property()).isNotNull().isEqualTo(expectedProperty);
+      assertThat(escapedProperty.isNegation()).isEqualTo(isNegation);
+    }
+
