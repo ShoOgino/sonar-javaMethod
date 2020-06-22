@@ -1,27 +1,27 @@
-  private RegexTree parseCharacterRange(JavaCharacter startCharacter) {
+  private RegexTree parseCharacterRange(JavaCharacter startCharacter, IndexRange startRange) {
     if (characters.currentIs('-')) {
       int lookAhead = characters.lookAhead(1);
       if (lookAhead == EOF || lookAhead == ']') {
-        return plainCharacter(startCharacter);
+        return plainCharacter(startCharacter, startRange);
       } else if (lookAhead == '\\') {
         characters.moveNext();
         JavaCharacter backslash = characters.getCurrent();
         RegexTree escape = parseEscapeSequence();
         if (escape.is(RegexTree.Kind.PLAIN_CHARACTER)) {
           JavaCharacter endCharacter = ((PlainCharacterTree) escape).getContents();
-          return characterRange(startCharacter, endCharacter);
+          return characterRange(startCharacter, startRange, endCharacter);
         } else {
           expected("simple character");
-          return characterRange(startCharacter, backslash);
+          return characterRange(startCharacter, startRange, backslash);
         }
       } else {
         characters.moveNext();
         JavaCharacter endCharacter = characters.getCurrent();
         characters.moveNext();
-        return characterRange(startCharacter, endCharacter);
+        return characterRange(startCharacter, startRange, endCharacter);
       }
     } else {
-      return plainCharacter(startCharacter);
+      return plainCharacter(startCharacter, startRange);
     }
   }
 

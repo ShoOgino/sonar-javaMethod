@@ -8,7 +8,7 @@
       case '\\':
         RegexTree escape = parseEscapeSequence();
         if (escape.is(RegexTree.Kind.PLAIN_CHARACTER)) {
-          return parseCharacterRange(((PlainCharacterTree)escape).getContents());
+          return parseCharacterRange(((PlainCharacterTree)escape).getContents(), escape.getRange());
         } else {
           return escape;
         }
@@ -17,13 +17,13 @@
       case ']':
         if (isAtBeginning) {
           characters.moveNext();
-          return parseCharacterRange(startCharacter);
+          return parseCharacterRange(startCharacter, startCharacter.getRange());
         } else {
           return null;
         }
       default:
         characters.moveNext();
-        return parseCharacterRange(startCharacter);
+        return parseCharacterRange(startCharacter, startCharacter.getRange());
     }
   }
 
