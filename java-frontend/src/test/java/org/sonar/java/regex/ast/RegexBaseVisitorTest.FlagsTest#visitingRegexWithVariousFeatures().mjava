@@ -1,7 +1,11 @@
     @Test
     void visitingRegexWithVariousFeatures() {
-      PlainCharCollector visitor = new PlainCharCollector();
-      visitor.visit(RegexParserTestUtils.assertSuccessfulParseResult("[ab&&[^c]]+|d"));
-      assertThat(visitor.visitedCharacters()).isEqualTo("abcd");
+      LeafCollector visitor = new LeafCollector();
+      visitor.visit(RegexParserTestUtils.assertSuccessfulParseResult(
+        "^[ab&&[^c]]+|(?<x>d)[e-f].\\\\1\\\\k<x>\\\\w$")
+      );
+      assertThat(visitor.visitedCharacters()).isEqualTo(
+        "<boundary:^>abcd<range:e-f><dot><backref:1><backref:x><char-class-escape:\\\\w><boundary:$>"
+      );
     }
 

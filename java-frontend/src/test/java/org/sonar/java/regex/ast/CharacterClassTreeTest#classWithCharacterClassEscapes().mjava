@@ -1,0 +1,10 @@
+  @Test
+  void classWithCharacterClassEscapes() {
+    RegexTree regex = assertSuccessfulParse("[\\\\w\\\\s]");
+    CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, assertCharacterClass(false, regex));
+    assertListElements(union.getCharacterClasses(),
+      first -> assertEquals('w', assertType(EscapedCharacterClassTree.class, first).getType()),
+      second -> assertEquals('s', assertType(EscapedCharacterClassTree.class, second).getType())
+    );
+  }
+

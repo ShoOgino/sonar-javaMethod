@@ -1,0 +1,11 @@
+  @Test
+  void emptyIntersectionOperands() {
+    RegexTree regex = assertSuccessfulParse("[&&x]");
+    CharacterClassTree characterClass = assertType(CharacterClassTree.class, regex);
+    CharacterClassIntersectionTree intersection = assertType(CharacterClassIntersectionTree.class, characterClass.getContents());
+    assertListElements(intersection.getCharacterClasses(),
+      first -> assertListSize(0, assertType(CharacterClassUnionTree.class, first).getCharacterClasses()),
+      second -> assertPlainCharacter('x', second)
+    );
+  }
+
