@@ -1,8 +1,9 @@
     @Override
     public void visitDisjunction(DisjunctionTree tree) {
       List<RegexTree> alternatives = tree.getAlternatives();
-      if (onlyAnchoredAt(alternatives, Position.BEGINNING) || onlyAnchoredAt(alternatives, Position.END)) {
-        reportIssue(tree, "Group the alternatives together to get the intended precedence.", null, Collections.emptyList());
+      if ((anchoredAt(alternatives, Position.BEGINNING) || anchoredAt(alternatives, Position.END))
+        && notAnchoredElseWhere(alternatives)) {
+        reportIssue(tree, "Group parts of the regex together to make the intended operator precedence explicit.", null, Collections.emptyList());
       }
       super.visitDisjunction(tree);
     }
