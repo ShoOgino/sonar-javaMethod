@@ -1,0 +1,14 @@
+    @Override
+    protected void after(RegexParseResult regexParseResult) {
+      unicodeUnawareRange.forEach(unawareRange -> reportIssue(unawareRange,
+        "Replace this character range with a Unicode-aware character class.", null, Collections.emptyList()));
+
+      if (!unicodeAwareWithFlag.isEmpty() && !containsUnicodeCharacterFlag) {
+        List<RegexCheck.RegexIssueLocation> secondaries = unicodeAwareWithFlag.stream()
+          .map(tree -> new RegexIssueLocation(tree, "Predefined/POSIX character class"))
+          .collect(Collectors.toList());
+        reportIssue(ExpressionUtils.methodName(mit),
+          "Enable the \"UNICODE_CHARACTER_CLASS\" flag or use a Unicode-aware alternative.", null, secondaries);
+      }
+    }
+
