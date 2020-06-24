@@ -1,0 +1,21 @@
+  void compliant(String str) {
+    Pattern.compile("e"); // Compliant, does not contains anything subject to normalization
+    Pattern.compile("e|a"); // Compliant, does not contains anything subject to normalization
+    Pattern.compile("̀"); // Compliant, target the mark alone
+    // With escaped unicode, one know exactly what to match
+    Pattern.compile("c\\u0308"); // Compliant
+    Pattern.compile("e\u0300"); // Compliant
+    Pattern.compile("\\u0308"); // Compliant
+    Pattern.compile("c\u0308̀"); // Compliant (letter, escaped mark, non-escaped mark)
+
+    Pattern.compile("a|e|̀|a"); // Compliant, mark alone (look closely...)
+    Pattern.compile("\\d̀"); // Compliant
+
+    Pattern.compile("e\u20DD̀"); // Compliant, can not be canonically combined
+    Pattern.compile("e⃝"); // Compliant, can not be canonically combined
+
+    Pattern.compile("[ée]"); // Compliant, CANON_EQ will not solve the problem, S5868 will target it.
+    Pattern.compile("é", Pattern.CANON_EQ); // Compliant, flag is set
+    Pattern.compile("é", Pattern.CANON_EQ | Pattern.MULTILINE); // Compliant
+  }
+

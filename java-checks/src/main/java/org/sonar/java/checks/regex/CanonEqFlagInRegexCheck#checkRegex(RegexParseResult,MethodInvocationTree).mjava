@@ -1,0 +1,24 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, MethodInvocationTree mit) {
+    if (regexForLiterals.getInitialFlags().contains(Pattern.CANON_EQ)) {
+      return;
+    }
+    PlainCharacterVisitor visitor = new PlainCharacterVisitor();
+    visitor.visit(regexForLiterals);
+
+    if (!visitor.subjectToNormalization.isEmpty()) {
+      String endOfMessage;
+      if (STRING_MATCHES.matches(mit) || PATTERN_MATCHES.matches(mit)) {
+        endOfMessage = "\"Pattern.compile(regex, CANON_EQ).matcher(input).matches()\"";
+      } else if (STRING_REPLACE_ALL.matches(mit)) {
+        endOfMessage = "\"Pattern.compile(pattern, CANON_EQ).matcher(input).replaceAll(replacement)\"";
+      } else if (STRING_REPLACE_FIRST.matches(mit)) {
+        endOfMessage = "\"Pattern.compile(pattern, CANON_EQ).matcher(input).replaceFirst(replacement)\"";
+      } else {
+        endOfMessage = "this pattern";
+      }
+
+      reportIssue(regexForLiterals.getResult(), String.format("Use the CANON_EQ flag with %s.", endOfMessage), null, visitor.subjectToNormalization);
+    }
+  }
+
