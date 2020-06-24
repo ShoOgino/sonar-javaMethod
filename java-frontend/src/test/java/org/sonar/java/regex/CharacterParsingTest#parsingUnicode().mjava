@@ -1,0 +1,19 @@
+  @Test
+  void parsingUnicode() {
+    // "\t\u1234"
+    LiteralTree source = literals.get(0);
+    assertThat(source.value()).isEqualTo("\"\\t\\u1234\"");
+
+    RegexSource regexSource = new RegexSource(Collections.singletonList(source));
+
+    List<JavaCharacter> unicodeCharacters = parseUnicode(regexSource);
+    assertThat(unicodeCharacters.stream().map(JavaCharacter::getCharacter))
+      .hasSize(3)
+      .containsExactly('\\', 't', '\u1234');
+
+    List<JavaCharacter> javaCharacters = parseJavaCharacters(regexSource);
+    assertThat(javaCharacters.stream().map(JavaCharacter::getCharacter))
+      .hasSize(2)
+      .containsExactly('\t', '\u1234');
+  }
+

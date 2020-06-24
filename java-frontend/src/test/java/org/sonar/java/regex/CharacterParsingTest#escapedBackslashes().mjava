@@ -1,0 +1,19 @@
+  @Test
+  void escapedBackslashes() {
+    // "\\\\u+[a-fA-F0-9]{4}"
+    LiteralTree source = literals.get(1);
+    assertThat(source.value()).isEqualTo("\"\\\\\\\\u+[a-fA-F0-9]{4}\"");
+
+    RegexSource regexSource = new RegexSource(Collections.singletonList(source));
+
+    List<JavaCharacter> unicodeCharacters = parseUnicode(regexSource);
+    assertThat(unicodeCharacters.stream().map(JavaCharacter::getCharacter))
+      .hasSize(20)
+      .startsWith('\\', '\\', '\\', '\\', 'u', '+', '[');
+
+    List<JavaCharacter> javaCharacters = parseJavaCharacters(regexSource);
+    assertThat(javaCharacters.stream().map(JavaCharacter::getCharacter))
+      .hasSize(18)
+      .startsWith('\\', '\\', 'u', '+', '[');
+  }
+
