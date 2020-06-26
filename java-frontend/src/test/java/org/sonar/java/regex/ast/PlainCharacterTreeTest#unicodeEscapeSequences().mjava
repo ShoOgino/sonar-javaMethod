@@ -1,7 +1,13 @@
   @Test
   void unicodeEscapeSequences() {
-    assertPlainCharacter('\t', "\\u0009");
-    assertPlainCharacter('D', "\\u0044");
-    assertPlainCharacter('ö', "\\u00F6");
+    RegexTree u1 = assertSuccessfulParse("\\u0009");
+    assertPlainCharacter('\t', u1);
+    assertTrue(((PlainCharacterTree) u1).getContents().isEscapedUnicode());
+    RegexTree u2 = assertSuccessfulParse("\\u0044");
+    assertPlainCharacter('D', u2);
+    assertTrue(((PlainCharacterTree) u2).getContents().isEscapedUnicode());
+    RegexTree u3 = assertSuccessfulParse("\\u00F6");
+    assertPlainCharacter('ö', u3);
+    assertTrue(((PlainCharacterTree) u3).getContents().isEscapedUnicode());
   }
 
