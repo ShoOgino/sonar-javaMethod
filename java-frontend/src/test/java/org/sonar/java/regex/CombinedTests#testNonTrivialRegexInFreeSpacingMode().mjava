@@ -1,6 +1,8 @@
   @Test
   void testNonTrivialRegexInFreeSpacingMode() {
-    RegexTree regex = assertSuccessfulParse("(ab | b ) #this is a comment\\n*\\\\#(||)#this is another comment", true);
+    RegexParseResult parseResult = assertSuccessfulParseResult("(ab | b ) #this is a comment\\n*\\\\#(||)#this is another comment", true);
+    assertTrue(parseResult.containsComments());
+    RegexTree regex = parseResult.getResult();
     assertLocation(0, 62, regex);
     assertKind(RegexTree.Kind.SEQUENCE, regex);
     assertFalse(regex.is(RegexTree.Kind.DISJUNCTION), "`is` should return false when kinds don't match");

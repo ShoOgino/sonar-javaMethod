@@ -2,8 +2,11 @@
   void testNamedGroup() {
     RegexTree regex = assertSuccessfulParse("(?<foo>x)");
     CapturingGroupTree group = assertType(CapturingGroupTree.class, regex);
+    assertNotNull(group.getGroupHeader());
+    assertToken(0, "(?<foo>", group.getGroupHeader());
     assertKind(RegexTree.Kind.CAPTURING_GROUP, group);
     assertThat(group.getName()).hasValue("foo");
+    assertNotNull(group.getElement());
     assertPlainCharacter('x', group.getElement());
   }
 

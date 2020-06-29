@@ -1,6 +1,8 @@
   @Test
   void testNonTrivialRegex() {
-    RegexTree regex = assertSuccessfulParse("(ab|b)*(||)");
+    RegexParseResult parseResult = assertSuccessfulParseResult("(ab|b)*(||)");
+    assertFalse(parseResult.containsComments());
+    RegexTree regex = parseResult.getResult();
     assertLocation(0, 11, regex);
     assertKind(RegexTree.Kind.SEQUENCE, regex);
     assertFalse(regex.is(RegexTree.Kind.DISJUNCTION), "`is` should return false when kinds don't match");

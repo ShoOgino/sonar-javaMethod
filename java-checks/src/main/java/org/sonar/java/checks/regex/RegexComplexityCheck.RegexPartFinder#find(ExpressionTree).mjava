@@ -1,0 +1,23 @@
+    void find(ExpressionTree expr) {
+      switch (expr.kind()) {
+        case PLUS:
+          List<LiteralTree> literals = new ArrayList<>();
+          findInStringConcatenation(expr, literals);
+          if (!literals.isEmpty()) {
+            parts.add(literals.toArray(new LiteralTree[0]));
+          }
+          break;
+        case IDENTIFIER:
+          getFinalVariableInitializer((IdentifierTree) expr).ifPresent(this::find);
+          break;
+        case PARENTHESIZED_EXPRESSION:
+          find(ExpressionUtils.skipParentheses(expr));
+          break;
+        case STRING_LITERAL:
+          parts.add(new LiteralTree[] {(LiteralTree) expr});
+          break;
+        default:
+          // Do nothing
+      }
+    }
+

@@ -1,0 +1,19 @@
+    void findInStringConcatenation(ExpressionTree expr, List<LiteralTree> literals) {
+      if (expr.is(Tree.Kind.STRING_LITERAL)) {
+        LiteralTree literal = (LiteralTree) expr;
+        if (isCommented(literal)) {
+          parts.add(new LiteralTree[] {literal});
+        } else {
+          literals.add(literal);
+        }
+      } else if (expr.is(Tree.Kind.PLUS)) {
+        BinaryExpressionTree binExpr = (BinaryExpressionTree) expr;
+        findInStringConcatenation(binExpr.leftOperand(), literals);
+        findInStringConcatenation(binExpr.rightOperand(), literals);
+      } else if (expr.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+        findInStringConcatenation(ExpressionUtils.skipParentheses(expr), literals);
+      } else {
+        find(expr);
+      }
+    }
+

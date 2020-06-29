@@ -1,0 +1,14 @@
+    // Intersections in character classes are a different matter though
+    @Override
+    public void visitCharacterClassIntersection(CharacterClassIntersectionTree tree) {
+      // Subtract one from nesting because we want to treat [a-z&&0-9] as nesting level 1 and [[a-z&&0-9]otherstuff] as
+      // nesting level 2
+      increaseComplexity(tree.getAndOperators().get(0), nesting - 1);
+      for (RegexToken andOperator : tree.getAndOperators().subList(1, tree.getAndOperators().size())) {
+        increaseComplexity(andOperator, 1);
+      }
+      nesting++;
+      super.visitCharacterClassIntersection(tree);
+      nesting--;
+    }
+

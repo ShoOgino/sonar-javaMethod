@@ -1,0 +1,16 @@
+  void noncompliantDespiteComments(String str) {
+    // Noncompliant@+3 {{Simplify this regular expression to reduce its complexity from 2 to the 1 allowed.}}
+    // Noncompliant@+3 {{Simplify this regular expression to reduce its complexity from 2 to the 1 allowed.}}
+    str.matches(
+      "x*y+" + // lots of xs and ys
+        "a*b+" // lots of as and bs
+    );
+
+    // Noncompliant@+3 {{Simplify this regular expression to reduce its complexity from 2 to the 1 allowed.}}
+    // Noncompliant@+3 {{Simplify this regular expression to reduce its complexity from 2 to the 1 allowed.}}
+    String pattern =
+      "x*y+ # lots of xs and ys" +
+        "a*b+ # lots of as and bs";
+    str.matches("(?x)" + pattern);
+  }
+

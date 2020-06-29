@@ -1,21 +1,4 @@
   private static Optional<LiteralTree[]> getLiteralsFromFinalVariables(IdentifierTree identifier) {
-    Symbol symbol = identifier.symbol();
-    if (!symbol.isVariableSymbol()) {
-      return Optional.empty();
-    }
-
-    Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) symbol;
-    if (!(variableSymbol.isFinal() || JUtils.isEffectivelyFinal(variableSymbol))) {
-      return Optional.empty();
-    }
-    VariableTree declaration = variableSymbol.declaration();
-    if (declaration == null) {
-      return Optional.empty();
-    }
-    ExpressionTree initializer = declaration.initializer();
-    if (initializer == null) {
-      return Optional.empty();
-    }
-    return getLiterals(initializer);
+    return getFinalVariableInitializer(identifier).flatMap(AbstractRegexCheck::getLiterals);
   }
 

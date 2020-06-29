@@ -1,0 +1,12 @@
+  @Override
+  public void leaveFile(JavaFileScannerContext context) {
+    for (RegexConstructionInfo regexInfo : regexConstructions) {
+      FlagSet flags = regexInfo.initialFlags;
+      for (LiteralTree[] regexPart : findRegexParts(regexInfo)) {
+        new ComplexityCalculator().visit(regexForLiterals(flags, regexPart));
+      }
+    }
+    regexConstructions.clear();
+    commentedLines.clear();
+  }
+

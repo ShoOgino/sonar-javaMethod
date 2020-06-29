@@ -1,12 +1,14 @@
   private RegexTree parseDisjunction() {
     List<RegexTree> alternatives = new ArrayList<>();
+    List<JavaCharacter> orOperators = new ArrayList<>();
     RegexTree first = parseSequence();
     alternatives.add(first);
     while (characters.currentIs('|')) {
+      orOperators.add(characters.getCurrent());
       characters.moveNext();
       RegexTree next = parseSequence();
       alternatives.add(next);
     }
-    return combineTrees(alternatives, (range, elements) -> new DisjunctionTree(source, range, elements));
+    return combineTrees(alternatives, (range, elements) -> new DisjunctionTree(source, range, elements, orOperators));
   }
 
