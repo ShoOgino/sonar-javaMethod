@@ -7,6 +7,11 @@
       ExpressionTree variable = ((AssignmentExpressionTree) parent).variable();
       if (variable.is(Tree.Kind.IDENTIFIER)) {
         symbol = ((IdentifierTree) variable).symbol();
+      } else if (variable.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) variable;
+        if (ExpressionUtils.isSelectOnThisOrSuper(mset)) {
+          symbol = mset.identifier().symbol();
+        }
       }
     }
     if (symbol == null || !isPrivateEffectivelyFinalVariable(symbol)) {
