@@ -408,6 +408,9 @@
       }
       case ASTNode.INSTANCEOF_EXPRESSION: {
         InstanceofExpression e = (InstanceofExpression) node;
+        if (e.getAST().isPreviewEnabled() && e.getPatternVariable() != null) {
+          throw new IllegalStateException();
+        }
         return new InstanceOfTreeImpl(
           firstTokenAfter(e.getLeftOperand(), TerminalTokens.TokenNameinstanceof),
           convertType(e.getRightOperand())
