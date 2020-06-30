@@ -1,0 +1,19 @@
+  private static List<Tree> getStringNotTestedForEmpty(MethodInvocationTree mit) {
+    Tree parent = mit.parent();
+    if (parent != null && parent.is(Tree.Kind.VARIABLE)) {
+      // Pattern stored in a variable, check all usage for possibly empty string
+      return ((VariableTree) parent).symbol().usages().stream()
+        .map(EmptyLineRegexCheck::getStringInMatcherFind)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(EmptyLineRegexCheck::canBeEmpty)
+        .collect(Collectors.toList());
+    } else {
+      // Pattern can be used directly
+      return getStringInMatcherFind(mit)
+        .filter(EmptyLineRegexCheck::canBeEmpty)
+        .map(Collections::singletonList)
+        .orElseGet(Collections::emptyList);
+    }
+  }
+

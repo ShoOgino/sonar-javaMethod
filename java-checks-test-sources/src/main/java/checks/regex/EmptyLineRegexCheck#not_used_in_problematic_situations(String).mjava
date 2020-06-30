@@ -1,0 +1,54 @@
+  void not_used_in_problematic_situations(String str) {
+    Pattern p1 = Pattern.compile("^$"); // Compliant, not a multiline
+    boolean b1 = p1.matcher(str).find();
+
+    Pattern p2 = Pattern.compile("^$", Pattern.LITERAL); // Compliant, not a multiline
+    boolean b2 = p2.matcher(str).matches();
+
+    Pattern p2_2 = Pattern.compile("^$", 0x10); // Compliant, not a multiline
+    boolean b2_2 = p2_2.matcher(str).matches();
+
+    Pattern p2_3 = Pattern.compile("^$", this.MY_FLAG); // Compliant, not a multiline
+    boolean b2_3 = p2_3.matcher(str).matches();
+
+    Pattern.compile("^$").matcher(str).find(); // Compliant, no multiline flag
+
+    Pattern p3 = Pattern.compile("^$", Pattern.MULTILINE); // Compliant, not used with find
+    boolean b3 = p3.matcher(str).matches();
+
+    Pattern p4 = Pattern.compile("(?m)^$"); // Compliant, not used with find
+    boolean b4 = p4.matcher(str).matches();
+
+    Pattern p5 = Pattern.compile("regex", Pattern.MULTILINE); // Compliant, not empty line regex
+    boolean b5 = p5.matcher(str).find();
+
+    Pattern.compile("^$", Pattern.MULTILINE).matcher(str).matches(); // Compliant, not used with find
+
+    Pattern.compile("^|$", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("e^|$e", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("^$e", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("^e$", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("e^$", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("e(^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("ee(^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(^$)e", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(^$)ee", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(e)(^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(e)(^)($)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("[a-c]^$", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("[a-c](^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("e(?m:^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("ee(?m:^$)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(?m:e^)(?m:$e)", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(?m)(e^$)").matcher(str).find(); // Compliant
+    Pattern.compile("^^", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("$$", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("$\\B", Pattern.MULTILINE).matcher(str).find(); // Compliant
+    Pattern.compile("(?m:(?-m:^$))").matcher(str).find(); // Compliant
+
+    // 3 FN, we don't expect anyone writing this.
+    Pattern.compile("(?:^)(?:$)", Pattern.MULTILINE).matcher(str).find(); // FN
+    Pattern.compile("(?m:^)(?m:$)").matcher(str).find(); // FN
+    Pattern.compile("(^)($)", Pattern.MULTILINE).matcher(str).find(); // FN
+  }
+

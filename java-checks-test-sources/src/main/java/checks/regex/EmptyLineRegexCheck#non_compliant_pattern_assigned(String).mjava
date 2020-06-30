@@ -1,0 +1,12 @@
+  void non_compliant_pattern_assigned(String str) {
+    Pattern p1 = Pattern.compile("^$", Pattern.MULTILINE); // Noncompliant [[sc=34;ec=38;secondary=13,14]] {{Remove MULTILINE mode or change the regex.}}
+    p1.matcher(str).find();
+    p1.matcher((str)).find();
+
+    Pattern p2 = Pattern.compile("(?m)^$"); // Noncompliant [[sc=34;ec=42]]
+    p2.matcher(str).find();
+
+    Pattern p3 = Pattern.compile("(?m)^$", Pattern.MULTILINE); // Noncompliant
+    p3.matcher(str).find();
+  }
+

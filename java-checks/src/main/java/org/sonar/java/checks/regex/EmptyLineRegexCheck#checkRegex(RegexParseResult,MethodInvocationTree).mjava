@@ -1,0 +1,21 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, MethodInvocationTree mit) {
+    EmptyLineMultilineVisitor visitor = new EmptyLineMultilineVisitor();
+    visitor.visit(regexForLiterals);
+    if (visitor.containEmptyLine) {
+      if (PATTERN_COMPILE.matches(mit)) {
+        List<Tree> stringNotTestedForEmpty = getStringNotTestedForEmpty(mit);
+        if (!stringNotTestedForEmpty.isEmpty()) {
+          reportWithSecondaries(mit.arguments().get(0), stringNotTestedForEmpty);
+        }
+      } else {
+        // STRING_REPLACE case
+        ExpressionTree methodSelect = mit.methodSelect();
+        if (methodSelect.is(Tree.Kind.MEMBER_SELECT)
+          && canBeEmpty(((MemberSelectExpressionTree) methodSelect).expression())) {
+          reportIssue(mit.arguments().get(0), MESSAGE);
+        }
+      }
+    }
+  }
+

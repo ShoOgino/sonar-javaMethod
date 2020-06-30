@@ -1,0 +1,17 @@
+  void non_compliant_pattern_directly_used(String str) {
+    Pattern.compile("^$", Pattern.MULTILINE).matcher(str).find(); // Noncompliant [[sc=21;ec=25]]
+    Pattern.compile("(^$)", Pattern.MULTILINE).matcher(str).find(); // Noncompliant
+    Pattern.compile("(?:^$)", Pattern.MULTILINE).matcher(str).find(); // Noncompliant
+    Pattern.compile("(?m)^$").matcher(str).find(); // Noncompliant
+    Pattern.compile("(?m)(?x)^$").matcher(str).find(); // Noncompliant
+    Pattern.compile("(?m)(^$)").matcher(str).find(); // Noncompliant
+    Pattern.compile("(?m)^$", Pattern.MULTILINE).matcher(str).find(); // Noncompliant
+    Pattern.compile("(?mx)^$").matcher(str).find(); // Noncompliant
+    Pattern.compile("(?mi)^$").matcher(str).find(); // Noncompliant
+    Pattern.compile("(?m:^$)").matcher(str).find(); // Noncompliant
+    Pattern.compile("^$", Pattern.MULTILINE | Pattern.COMMENTS).matcher(str).find(); // Noncompliant
+    Pattern.compile("^ $", Pattern.MULTILINE | Pattern.COMMENTS).matcher(str).find(); // Noncompliant
+    Pattern.compile("^$|empty", Pattern.MULTILINE).matcher(str).find(); // Noncompliant
+    Pattern.compile("(e)(^$)|(?m)^$").matcher(str).find(); // Noncompliant
+  }
+

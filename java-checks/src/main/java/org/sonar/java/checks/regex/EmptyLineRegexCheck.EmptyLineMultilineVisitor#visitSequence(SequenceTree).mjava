@@ -1,0 +1,15 @@
+    @Override
+    public void visitSequence(SequenceTree tree) {
+      List<RegexTree> items = tree.getItems().stream()
+        .filter(item -> !isNonCapturingWithoutChild(item))
+        .collect(Collectors.toList());
+
+      if (items.size() == 1 && items.get(0).is(RegexTree.Kind.CAPTURING_GROUP)) {
+        super.visitSequence(tree);
+      } else if (items.size() == 2 && items.get(0).is(RegexTree.Kind.BOUNDARY) && items.get(1).is(RegexTree.Kind.BOUNDARY)) {
+        super.visitSequence(tree);
+        containEmptyLine |= visitedEndAfterStart;
+      }
+      visitedStart = false;
+    }
+
