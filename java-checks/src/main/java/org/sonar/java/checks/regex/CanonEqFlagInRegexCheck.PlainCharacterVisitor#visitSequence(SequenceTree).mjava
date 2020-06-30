@@ -1,22 +1,6 @@
     @Override
     public void visitSequence(SequenceTree tree) {
-      char previousChar = 0;
-
-      for (RegexTree element : tree.getItems()) {
-        if (element.is(RegexTree.Kind.PLAIN_CHARACTER)) {
-          JavaCharacter currentCharacter = ((PlainCharacterTree) element).getContents();
-
-          if (!currentCharacter.isEscapedUnicode()) {
-            if (canCanonicallyCombine(previousChar, currentCharacter.getCharacter())) {
-              subjectToNormalization.add(new RegexIssueLocation(tree, ""));
-            }
-            previousChar = currentCharacter.getCharacter();
-            continue;
-          }
-        }
-        previousChar = 0;
-      }
-
+      subjectToNormalization.addAll(getGraphemeInList(tree.getItems()));
       super.visitSequence(tree);
     }
 
