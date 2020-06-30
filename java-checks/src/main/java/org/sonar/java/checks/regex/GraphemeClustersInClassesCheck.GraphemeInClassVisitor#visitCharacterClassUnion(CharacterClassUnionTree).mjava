@@ -1,27 +1,6 @@
     @Override
     public void visitCharacterClassUnion(CharacterClassUnionTree tree) {
-      RegexSyntaxElement startGrapheme = null;
-      RegexSyntaxElement endGrapheme = null;
-      for (RegexTree child : tree.getCharacterClasses()) {
-        if (child.is(RegexTree.Kind.PLAIN_CHARACTER)) {
-          JavaCharacter currentCharacter = ((PlainCharacterTree) child).getContents();
-          if (!currentCharacter.isEscapedUnicode()) {
-            if (!isMark(currentCharacter)) {
-              addCurrentGrapheme(startGrapheme, endGrapheme);
-              startGrapheme = child;
-              endGrapheme = null;
-            } else if (startGrapheme != null) {
-              endGrapheme = child;
-            }
-            continue;
-          }
-        }
-        addCurrentGrapheme(startGrapheme, endGrapheme);
-        startGrapheme = null;
-        endGrapheme = null;
-      }
-      addCurrentGrapheme(startGrapheme, endGrapheme);
-
+      graphemeClusters.addAll(getGraphemeInList(tree.getCharacterClasses()));
       super.visitCharacterClassUnion(tree);
     }
 

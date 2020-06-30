@@ -1,0 +1,26 @@
+  public static List<RegexCheck.RegexIssueLocation> getGraphemeInList(List<RegexTree> trees) {
+    List<RegexCheck.RegexIssueLocation> result = new ArrayList<>();
+    RegexSyntaxElement startGrapheme = null;
+    RegexSyntaxElement endGrapheme = null;
+    for (RegexTree child : trees) {
+      if (child.is(RegexTree.Kind.PLAIN_CHARACTER)) {
+        JavaCharacter currentCharacter = ((PlainCharacterTree) child).getContents();
+        if (!currentCharacter.isEscapedUnicode()) {
+          if (!isMark(currentCharacter)) {
+            addCurrentGrapheme(result, startGrapheme, endGrapheme);
+            startGrapheme = child;
+            endGrapheme = null;
+          } else if (startGrapheme != null) {
+            endGrapheme = child;
+          }
+          continue;
+        }
+      }
+      addCurrentGrapheme(result, startGrapheme, endGrapheme);
+      startGrapheme = null;
+      endGrapheme = null;
+    }
+    addCurrentGrapheme(result, startGrapheme, endGrapheme);
+    return result;
+  }
+
