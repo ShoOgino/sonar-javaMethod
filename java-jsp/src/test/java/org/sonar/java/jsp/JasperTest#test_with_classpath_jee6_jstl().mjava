@@ -1,0 +1,17 @@
+  @Test
+  void test_with_classpath_jee6_jstl() throws Exception {
+    SensorContextTester ctx = jspContext(
+      "<%@ taglib uri = \"http://java.sun.com/jsp/jstl/core\" prefix = \"c\" %>\n" +
+      "<html>\n" +
+      "<body>\n" +
+      "<h2>Hello World!</h2>\n" +
+      "<c:if test=\"true\">what-if</c:if>\n" +
+      "</body>\n" +
+      "</html>");
+    Collection<GeneratedFile> generatedFiles = new Jasper().generateFiles(ctx, asList(jee6Jar, jstlJar));
+
+    assertThat(generatedFiles).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).matches(logs -> logs.stream().anyMatch(line ->
+      line.startsWith("Error transpiling src/main/webapp/WEB-INF/jsp/test.jsp. Error:\njava.lang.ClassFormatError")));
+  }
+

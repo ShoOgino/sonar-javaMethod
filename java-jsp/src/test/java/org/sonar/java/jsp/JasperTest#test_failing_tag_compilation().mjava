@@ -8,6 +8,9 @@
       stream().collect(Collectors.toMap(GeneratedFile::filename, f -> f));
 
     assertThat(generatedFiles).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Error transpiling src/main/webapp/WEB-INF/jsp/test.jsp");
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
+      .matches(logs -> logs.stream().anyMatch(line ->
+      line.startsWith("Error transpiling src/main/webapp/WEB-INF/jsp/test.jsp. Error:\norg.apache.jasper.JasperException:")));
+
   }
 

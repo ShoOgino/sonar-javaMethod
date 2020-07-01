@@ -26,9 +26,11 @@
         try {
           Path generatedFile = transpileJsp(jsp.path(), uriRoot, classLoader, servletContext, options, runtimeContext);
           generatedJavaFiles.put(generatedFile, new GeneratedFile(generatedFile));
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
           errorTranspiling = true;
-          LOG.debug("Error transpiling " + jsp, e);
+          StringWriter w = new StringWriter();
+          e.printStackTrace(new PrintWriter(w));
+          LOG.debug("Error transpiling {}. Error:\n{}", jsp, w.toString());
         }
       }
       if (errorTranspiling) {
