@@ -1,0 +1,20 @@
+    private boolean matchEmptyString(RegexTree element) {
+      switch (element.kind()) {
+        case SEQUENCE:
+          return ((SequenceTree) element).getItems().stream().allMatch(this::matchEmptyString);
+        case DISJUNCTION:
+          return ((DisjunctionTree) element).getAlternatives().stream().anyMatch(this::matchEmptyString);
+        case REPETITION:
+          return ((RepetitionTree) element).getQuantifier().getMinimumRepetitions() == 0;
+        case LOOK_AROUND:
+        case BOUNDARY:
+          return true;
+        default:
+          if (element instanceof GroupTree) {
+            RegexTree nestedElement = ((GroupTree) element).getElement();
+            return nestedElement == null || matchEmptyString(nestedElement);
+          }
+          return false;
+      }
+    }
+
