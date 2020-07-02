@@ -1,0 +1,9 @@
+  private boolean supportJspTranspilation(Context context) {
+    if (context.getRuntime().getProduct() != SonarProduct.SONARQUBE) {
+      return false;
+    }
+    SonarEdition edition = context.getRuntime().getEdition();
+    boolean greaterThan83 = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(8, 3));
+    return edition != SonarEdition.COMMUNITY && greaterThan83;
+  }
+
