@@ -3,9 +3,9 @@
     RegexSyntaxElement startGrapheme = null;
     RegexSyntaxElement endGrapheme = null;
     for (RegexTree child : trees) {
-      if (child.is(RegexTree.Kind.PLAIN_CHARACTER)) {
-        JavaCharacter currentCharacter = ((PlainCharacterTree) child).getContents();
-        if (!currentCharacter.isEscapedUnicode()) {
+      if (child.is(RegexTree.Kind.PLAIN_CHARACTER, RegexTree.Kind.UNICODE_CODE_POINT)) {
+        CharacterTree currentCharacter = (CharacterTree) child;
+        if (!currentCharacter.isEscapeSequence()) {
           if (!isMark(currentCharacter)) {
             addCurrentGrapheme(result, startGrapheme, endGrapheme);
             startGrapheme = child;

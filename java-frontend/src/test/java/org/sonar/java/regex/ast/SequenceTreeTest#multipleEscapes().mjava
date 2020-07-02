@@ -1,0 +1,15 @@
+  @Test
+  void multipleEscapes() {
+    SequenceTree sequence = assertType(SequenceTree.class, assertSuccessfulParse("\\123\\124"));
+    assertListElements(sequence.getItems(),
+      first -> {
+        assertPlainCharacter('S', first);
+        assertLocation(0, 4, first);
+      },
+      second -> {
+        assertPlainCharacter('T', second);
+        assertLocation(4, 8, second);
+      }
+    );
+  }
+

@@ -11,6 +11,7 @@
         case 'P':
           return parseEscapedProperty(backslash);
         case '0':
+          return parseOctalEscape(backslash);
         case '1':
         case '2':
         case '3':
@@ -41,8 +42,12 @@
         case 'v':
         case 'V':
           return parseEscapedCharacterClass(backslash);
+        case 'u':
+          return parseUnicodeEscape(backslash);
+        case 'x':
+          return parseHexEscape(backslash);
         default:
-          // TODO other kind of escape sequences such as quotations, special characters, N, x, u, R or X
+          // TODO other kind of escape sequences such as quotations, special characters, N, R or X
           characters.moveNext();
           return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
       }
