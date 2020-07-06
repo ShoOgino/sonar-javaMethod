@@ -1,10 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      NewClassTree nct = (NewClassTree) tree;
-      if (nct.symbolType().is("java.math.BigDecimal") && isDoubleConstructor(nct)) {
-        reportIssue(tree, "Use \"BigDecimal.valueOf\" instead.");
-      }
+    if (BIG_DECIMAL_DOUBLE_FLOAT.matches((NewClassTree) tree)) {
+      reportIssue(tree, "Use \"BigDecimal.valueOf\" instead.");
     }
   }
 
