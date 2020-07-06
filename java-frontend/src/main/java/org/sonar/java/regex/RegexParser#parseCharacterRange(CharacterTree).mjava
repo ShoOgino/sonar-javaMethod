@@ -1,0 +1,26 @@
+  private RegexTree parseCharacterRange(CharacterTree startCharacter) {
+    if (characters.currentIs('-')) {
+      int lookAhead = characters.lookAhead(1);
+      if (lookAhead == EOF || lookAhead == ']') {
+        return startCharacter;
+      } else if (lookAhead == '\\') {
+        characters.moveNext();
+        JavaCharacter backslash = characters.getCurrent();
+        RegexTree escape = parseEscapeSequence();
+        if (escape.is(RegexTree.Kind.PLAIN_CHARACTER, RegexTree.Kind.UNICODE_CODE_POINT)) {
+          return characterRange(startCharacter, (CharacterTree) escape);
+        } else {
+          expected("simple character", escape);
+          return characterRange(startCharacter, plainCharacter(backslash));
+        }
+      } else {
+        characters.moveNext();
+        JavaCharacter endCharacter = characters.getCurrent();
+        characters.moveNext();
+        return characterRange(startCharacter, plainCharacter(endCharacter));
+      }
+    } else {
+      return startCharacter;
+    }
+  }
+

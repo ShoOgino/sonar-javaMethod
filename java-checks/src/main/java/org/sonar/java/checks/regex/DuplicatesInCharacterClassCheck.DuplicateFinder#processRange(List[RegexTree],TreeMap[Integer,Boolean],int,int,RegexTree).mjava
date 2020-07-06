@@ -1,4 +1,4 @@
-    void processRange(List<RegexTree> duplicates, TreeMap<Character, Boolean> inCharacterClass, char from, char to, RegexTree tree) {
+    void processRange(List<RegexTree> duplicates, TreeMap<Integer, Boolean> inCharacterClass, int from, int to, RegexTree tree) {
       if (to < from) {
         return;
       }
@@ -8,10 +8,10 @@
         duplicates.add(tree);
       }
       inCharacterClass.put(from, true);
-      for (Map.Entry<Character, Boolean> entry : inCharacterClass.subMap(from, true, to, true).entrySet()) {
+      for (Map.Entry<Integer, Boolean> entry : inCharacterClass.subMap(from, true, to, true).entrySet()) {
         entry.setValue(true);
       }
-      char next = (char) (to + 1);
+      int next = to + 1;
       if (!inCharacterClass.containsKey(next)) {
         inCharacterClass.put(next, false);
       }
