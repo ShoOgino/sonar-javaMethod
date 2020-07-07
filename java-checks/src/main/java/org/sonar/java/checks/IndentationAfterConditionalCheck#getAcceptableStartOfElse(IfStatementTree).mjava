@@ -1,0 +1,12 @@
+  private static Tree getAcceptableStartOfElse(IfStatementTree ifStatement) {
+    StatementTree thenStatement = ifStatement.thenStatement();
+    SyntaxToken elseKeyword = ifStatement.elseKeyword();
+    if (thenStatement.is(Tree.Kind.BLOCK)) {
+      SyntaxToken closeBrace = ((BlockTree) thenStatement).closeBraceToken();
+      if (closeBrace.line() == elseKeyword.line()) {
+        return closeBrace;
+      }
+    }
+    return elseKeyword;
+  }
+
