@@ -2,7 +2,13 @@
   public void leaveNode(Tree tree) {
     Tree reportTree = null;
     if (tree.is(Tree.Kind.METHOD)) {
-      reportTree = ((MethodTree) tree).simpleName();
+      MethodTree method = (MethodTree) tree;
+      if (MethodTreeUtils.isEqualsMethod(method)) {
+        methods.pop();
+      } else {
+        reportTree = method.simpleName();
+      }
+
     } else if (tree.is(Tree.Kind.LAMBDA_EXPRESSION)) {
       reportTree = ((LambdaExpressionTree) tree).arrowToken();
     }
