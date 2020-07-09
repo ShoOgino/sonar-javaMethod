@@ -1,0 +1,18 @@
+  @Override
+  public void visitClass(ClassTree tree) {
+    SymbolMetadata classMetadata = tree.symbol().metadata();
+
+    boolean isAnnotatedWithAutoValue = classMetadata.isAnnotatedWith(AUTO_VALUE_ANNOTATION);
+
+    if (isAnnotatedWithAutoValue) {
+      excludeLines(tree, EqualsOverridenWithHashCodeCheck.class);
+      excludeLines(tree, EqualsNotOverridenWithCompareToCheck.class);
+    }
+
+    if (isAnnotatedWithAutoValue || AUTO_ANNOTATIONS.stream().anyMatch(classMetadata::isAnnotatedWith)){
+      excludeLines(tree.simpleName(), AbstractClassNoFieldShouldBeInterfaceCheck.class);
+    }
+
+    super.visitClass(tree);
+  }
+
