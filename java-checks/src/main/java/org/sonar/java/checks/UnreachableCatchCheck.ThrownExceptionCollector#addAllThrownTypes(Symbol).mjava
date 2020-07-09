@@ -1,6 +1,8 @@
     private void addAllThrownTypes(Symbol symbol) {
       if (symbol.isMethodSymbol()) {
-        thrownTypes.addAll(((Symbol.MethodSymbol) symbol).thrownTypes());
+        List<Type> newThrownTypes = ((Symbol.MethodSymbol) symbol).thrownTypes();
+        thrownTypes.addAll(newThrownTypes);
+        unknownVisited = unknownVisited || newThrownTypes.stream().anyMatch(Type::isUnknown);
       } else if (symbol.isUnknown()) {
         unknownVisited = true;
       }

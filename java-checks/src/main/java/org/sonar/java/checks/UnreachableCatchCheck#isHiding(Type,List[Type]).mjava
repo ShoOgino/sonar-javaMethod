@@ -1,8 +1,6 @@
   private static boolean isHiding(Type subtype, List<Type> thrownTypes) {
-    // All thrown exceptions are caught by the subtype exception, hiding the base one
-    // This logic could be improved to remove FN, but it's not trivial and source of FP.
     return thrownTypes.stream()
-      .allMatch(thrownType ->
+      .anyMatch(thrownType ->
         thrownType.isSubtypeOf(subtype)
       );
   }

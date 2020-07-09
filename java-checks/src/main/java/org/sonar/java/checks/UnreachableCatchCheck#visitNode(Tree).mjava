@@ -28,7 +28,7 @@
         .filter(subtype -> isHiding(subtype, thrownTypes))
         .collect(Collectors.toList());
 
-      if (!subtypesHiding.isEmpty()) {
+      if (isUnreachable(baseType, subtypesHiding, thrownTypes)) {
         reportIssue(typeToTypeTree.get(baseType),
           "Remove this type because it is unreachable as hidden by previous catch blocks.",
           subtypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
