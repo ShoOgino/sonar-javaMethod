@@ -38,6 +38,9 @@
       case ASTNode.TYPE_DECLARATION:
         kind = ((TypeDeclaration) e).isInterface() ? Tree.Kind.INTERFACE : Tree.Kind.CLASS;
         break;
+      case ASTNode.RECORD_DECLARATION:
+        kind = Tree.Kind.RECORD;
+        break;
       default:
         throw new IllegalStateException();
     }
@@ -62,6 +65,10 @@
         t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameinterface));
         t.completeIdentifier(convertSimpleName(e.getName()));
         break;
+      case RECORD:
+        t.completeDeclarationKeyword(firstTokenBefore(e.getName(), TerminalTokens.TokenNameIdentifier));
+        t.completeIdentifier(convertSimpleName(e.getName()));
+        break;
       case ANNOTATION_TYPE:
         t.complete(
           firstTokenBefore(e.getName(), TerminalTokens.TokenNameAT),
@@ -78,6 +85,22 @@
       t.completeTypeParameters(
         convertTypeParameters(ee.typeParameters())
       );
+    } else if (kind == Tree.Kind.RECORD) {
+      RecordDeclaration ee = (RecordDeclaration) e;
+      t.completeTypeParameters(
+        convertTypeParameters(ee.typeParameters())
+      );
+
+      List<VariableTree> recordComponents = new ArrayList<>();
+      for (int i = 0; i < ee.recordComponents().size(); i++) {
+        SingleVariableDeclaration o = (SingleVariableDeclaration) ee.recordComponents().get(i);
+        VariableTreeImpl recordComponent = createVariable(o);
+        if (i < ee.recordComponents().size() - 1) {
+          recordComponent.setEndToken(firstTokenAfter(o, TerminalTokens.TokenNameCOMMA));
+        }
+        recordComponents.add(recordComponent);
+      }
+      t.completeRecordComponents(recordComponents);
     }
 
     switch (kind) {
@@ -93,8 +116,9 @@
         // fall through
       }
       case INTERFACE:
+      case RECORD:
       case ENUM: {
-        List superInterfaceTypes = kind == Tree.Kind.ENUM ? ((EnumDeclaration) e).superInterfaceTypes() : ((TypeDeclaration) e).superInterfaceTypes();
+        List superInterfaceTypes = superInterfaceTypes(e);
         if (!superInterfaceTypes.isEmpty()) {
           QualifiedIdentifierListTreeImpl superInterfaces = new QualifiedIdentifierListTreeImpl(
             new ArrayList<>(),

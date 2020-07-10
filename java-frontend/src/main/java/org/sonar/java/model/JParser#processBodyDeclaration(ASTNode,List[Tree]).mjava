@@ -4,6 +4,7 @@
     switch (node.getNodeType()) {
       case ASTNode.ANNOTATION_TYPE_DECLARATION:
       case ASTNode.ENUM_DECLARATION:
+      case ASTNode.RECORD_DECLARATION:
       case ASTNode.TYPE_DECLARATION: {
         members.add(convertTypeDeclaration((AbstractTypeDeclaration) node));
         lastTokenIndex = tokenManager.lastIndexIn(node, TerminalTokens.TokenNameRBRACE);
@@ -55,12 +56,18 @@
       case ASTNode.METHOD_DECLARATION: {
         MethodDeclaration e = (MethodDeclaration) node;
 
-        FormalParametersListTreeImpl parameters = new FormalParametersListTreeImpl(
-          firstTokenAfter(e.getName(), TerminalTokens.TokenNameLPAREN),
-          firstTokenAfter(
-            e.parameters().isEmpty() ? e.getName() : (ASTNode) e.parameters().get(e.parameters().size() - 1),
-            TerminalTokens.TokenNameRPAREN
-          ));
+        final FormalParametersListTreeImpl parameters;
+        if (e.getAST().isPreviewEnabled() && e.isCompactConstructor()) {
+          parameters = new FormalParametersListTreeImpl(null, null);
+        } else {
+          parameters = new FormalParametersListTreeImpl(
+            firstTokenAfter(e.getName(), TerminalTokens.TokenNameLPAREN),
+            firstTokenAfter(
+              e.parameters().isEmpty() ? e.getName() : (ASTNode) e.parameters().get(e.parameters().size() - 1),
+              TerminalTokens.TokenNameRPAREN
+            ));
+        }
+
         for (int i = 0; i < e.parameters().size(); i++) {
           SingleVariableDeclaration o = (SingleVariableDeclaration) e.parameters().get(i);
           VariableTreeImpl parameter = createVariable(o);
