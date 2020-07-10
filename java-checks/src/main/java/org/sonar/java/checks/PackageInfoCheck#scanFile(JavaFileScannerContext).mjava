@@ -1,12 +1,20 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
+    this.context = context;
+
+    PackageDeclarationTree packageDeclaration = context.getTree().packageDeclaration();
+    if (packageDeclaration == null) {
+      // default package
+      return;
+    }
+
+    String packageName = ExpressionsHelper.concatenate(packageDeclaration.packageName());
+
     File parentFile = context.getInputFile().file().getParentFile();
-    if (!new File(parentFile, "package-info.java").isFile() && !directoriesWithoutPackageFile.contains(parentFile)) {
-      Path baseDirAbsolutePath = ((DefaultJavaFileScannerContext) context).getBaseDirectory().getAbsoluteFile().toPath();
-      Path parentDirAbsolutePath = parentFile.getAbsoluteFile().toPath();
-      Path relativize = baseDirAbsolutePath.relativize(parentDirAbsolutePath);
-      context.addIssueOnProject(this, "Add a 'package-info.java' file to document the '" + relativize.toString() + "' package");
-      directoriesWithoutPackageFile.add(parentFile);
+    if (!new File(parentFile, "package-info.java").isFile()) {
+      missingPackageWithoutPackageFile.add(packageName);
+    } else {
+      knownPackageWithPackageFile.add(packageName);
     }
   }
 
