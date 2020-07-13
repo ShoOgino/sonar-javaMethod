@@ -1,0 +1,22 @@
+    void getBaseTypeCaughtAfterSubtype(List<CatchTree> catches) {
+      List<Type> catchTypes = catches.stream()
+        .flatMap(c -> {
+          List<Type> types = new ArrayList<>();
+          collectTypesFromTypeTree(c.parameter().type(), types);
+          catchClauses.add(new CatchClauseInfo(types, c));
+          return types.stream();
+        })
+        .filter(UnreachableCatchCheck::isChecked)
+        .collect(Collectors.toList());
+
+      for (int i = 0; i < catchTypes.size() - 1; i++) {
+        Type topType = catchTypes.get(i);
+        for (int j = i + 1; j < catchTypes.size(); j++) {
+          Type bottomType = catchTypes.get(j);
+          if (topType.isSubtypeOf(bottomType)) {
+            baseToSubtype.put(bottomType, topType);
+          }
+        }
+      }
+    }
+

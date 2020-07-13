@@ -1,0 +1,13 @@
+    void reportWholeCatchClause(CatchClauseInfo catchClause) {
+      List<Type> subtypesHiding = catchClause.types.stream()
+        .flatMap(type -> baseToSubtype.get(type).stream())
+        .filter(subtype -> isHiding(subtype, thrownTypes))
+        .collect(Collectors.toList());
+
+      reportIssue(catchClause.tree.catchKeyword(),
+        "Remove or refactor this catch clause because it is unreachable as hidden by previous catch blocks.",
+        subtypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
+          .collect(Collectors.toList()),
+        null);
+    }
+

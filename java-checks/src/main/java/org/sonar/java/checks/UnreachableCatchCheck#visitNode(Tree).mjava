@@ -6,35 +6,7 @@
       // Supporting potential problems is not worth since it is really unlikely that something wrong happen.
       return;
     }
-    Map<Type, Tree> typeToTypeTree = new HashMap<>();
-    Multimap<Type, Type> baseToSubtype = getBaseTypeCaughtAfterSubtype(tryStatementTree.catches(), typeToTypeTree);
 
-    if (baseToSubtype.isEmpty()) {
-      return;
-    }
-
-    ThrownExceptionCollector collector = new ThrownExceptionCollector();
-    tryStatementTree.block().accept(collector);
-
-    if (collector.unknownVisited || collector.thrownTypes.isEmpty()) {
-      // Unknown method can throw anything, we can not tell anything about it.
-      return;
-    }
-
-    List<Type> thrownTypes = collector.thrownTypes;
-
-    baseToSubtype.asMap().forEach((baseType, subtypes) -> {
-      List<Type> subtypesHiding = subtypes.stream()
-        .filter(subtype -> isHiding(subtype, thrownTypes))
-        .collect(Collectors.toList());
-
-      if (isUnreachable(baseType, subtypesHiding, thrownTypes)) {
-        reportIssue(typeToTypeTree.get(baseType),
-          "Remove this type because it is unreachable as hidden by previous catch blocks.",
-          subtypesHiding.stream().map(type -> new JavaFileScannerContext.Location("Already catch the exception", typeToTypeTree.get(type)))
-            .collect(Collectors.toList()),
-          null);
-      }
-    });
+    new UnreachableCatchFinder(tryStatementTree).find();
   }
 

@@ -1,0 +1,31 @@
+    void find() {
+      getBaseTypeCaughtAfterSubtype(tryStatementTree.catches());
+      if (baseToSubtype.isEmpty()) {
+        return;
+      }
+
+      ThrownExceptionCollector collector = new ThrownExceptionCollector();
+      tryStatementTree.block().accept(collector);
+
+      if (collector.unknownVisited || collector.thrownTypes.isEmpty()) {
+        // Unknown method can throw anything, we can not tell anything about it.
+        return;
+      }
+
+      thrownTypes = collector.thrownTypes;
+
+      for (CatchClauseInfo catchClause : catchClauses) {
+        List<Type> hiddenTypes = catchClause.types.stream()
+          .filter(type -> isUnreachable(type, baseToSubtype.get(type), thrownTypes))
+          .collect(Collectors.toList());
+
+        if (hiddenTypes.size() == catchClause.types.size()) {
+          reportWholeCatchClause(catchClause);
+        } else {
+          for (Type hiddenType : hiddenTypes) {
+            reportSingleType(hiddenType);
+          }
+        }
+      }
+    }
+
