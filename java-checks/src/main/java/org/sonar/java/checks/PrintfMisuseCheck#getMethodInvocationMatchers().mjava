@@ -1,0 +1,11 @@
+  @Override
+  protected MethodMatchers getMethodInvocationMatchers() {
+    ArrayList<MethodMatchers> matchers = new ArrayList<>(slf4jMethods());
+    matchers.add(super.getMethodInvocationMatchers());
+    // Add log methods as they only apply to misuse and not error.
+    matchers.add(log4jMethods());
+    matchers.add(JAVA_UTIL_LOGGER_LOG_LEVEL_STRING);
+    matchers.add(JAVA_UTIL_LOGGER_LOG_LEVEL_STRING_ANY);
+    return MethodMatchers.or(matchers);
+  }
+

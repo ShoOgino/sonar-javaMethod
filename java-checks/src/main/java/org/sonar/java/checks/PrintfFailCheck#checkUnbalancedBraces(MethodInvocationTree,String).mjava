@@ -1,4 +1,4 @@
-  private boolean checkUnbalancedBraces(MethodInvocationTree mit, String formatString) {
+  private void checkUnbalancedBraces(MethodInvocationTree mit, String formatString) {
     String withoutParam = MESSAGE_FORMAT_PATTERN.matcher(formatString).replaceAll("");
     int numberOpenBrace = 0;
     for (int i = 0; i < withoutParam.length(); ++i) {
@@ -14,10 +14,8 @@
           break;
       }
     }
-    boolean unbalancedBraces = numberOpenBrace > 0;
-    if (unbalancedBraces) {
+    if (numberOpenBrace > 0) {
       reportIssue(mit.arguments().get(0), "Single left curly braces \"{\" must be escaped.");
     }
-    return unbalancedBraces;
   }
 

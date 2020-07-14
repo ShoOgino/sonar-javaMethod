@@ -1,14 +1,6 @@
   @Override
   protected void handleMessageFormat(MethodInvocationTree mit, String formatString, List<ExpressionTree> args) {
     String newFormatString = cleanupDoubleQuote(formatString);
-    Set<Integer> indexes = getMessageFormatIndexes(newFormatString, mit);
-    List<ExpressionTree> transposedArgs = transposeArgumentArrayAndRemoveThrowable(mit, args);
-    if (transposedArgs == null
-      || checkArgumentNumber(mit, indexes.size(), transposedArgs.size())
-      || checkUnbalancedQuotes(mit, newFormatString)
-      || checkUnbalancedBraces(mit, newFormatString)) {
-      return;
-    }
-    verifyParameters(mit, transposedArgs, indexes);
+    checkUnbalancedBraces(mit, newFormatString);
   }
 

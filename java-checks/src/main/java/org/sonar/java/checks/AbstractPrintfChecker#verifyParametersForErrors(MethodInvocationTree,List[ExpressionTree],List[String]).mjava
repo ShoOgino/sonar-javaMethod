@@ -1,6 +1,5 @@
-  private void verifyParameters(MethodInvocationTree mit, List<ExpressionTree> args, List<String> params) {
+  protected void verifyParametersForErrors(MethodInvocationTree mit, List<ExpressionTree> args, List<String> params) {
     int index = 0;
-    List<ExpressionTree> unusedArgs = new ArrayList<>(args);
     for (String rawParam : params) {
       String param = rawParam;
       int argIndex = index;
@@ -17,14 +16,14 @@
         index++;
       }
       if (argIndex >= args.size()) {
-        // indexes are obviously wrong - will be caught by S2275 (PrintfFailCheck)
+        int formatIndex = argIndex + 1;
+        reportIssue(mit, "Not enough arguments to feed formater at index " + formatIndex + ": '%" + formatIndex + "$'.");
         return;
       }
       ExpressionTree argExpressionTree = args.get(argIndex);
-      unusedArgs.remove(argExpressionTree);
       Type argType = argExpressionTree.symbolType();
-      checkBoolean(mit, param, argType);
+      checkNumerical(mit, param, argType);
+      checkTimeConversion(mit, param, argType);
     }
-    reportUnusedArgs(mit, args, unusedArgs);
   }
 

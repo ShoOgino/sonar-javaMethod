@@ -1,19 +1,14 @@
   @Override
   protected MethodMatchers getMethodInvocationMatchers() {
-    ArrayList<MethodMatchers> matchers = new ArrayList<>(slf4jMethods());
-    matchers.add(log4jMethods());
-    matchers.addAll(Arrays.asList(
-      MethodMatchers.create().ofTypes(JAVA_LANG_STRING).names(FORMAT_METHOD_NAME).withAnyParameters().build(),
+    return MethodMatchers.or(
+      MethodMatchers.create()
+        .ofTypes(JAVA_LANG_STRING).names(FORMAT_METHOD_NAME).withAnyParameters().build(),
       MethodMatchers.create()
         .ofTypes("java.util.Formatter").names(FORMAT_METHOD_NAME).withAnyParameters().build(),
       MethodMatchers.create()
         .ofTypes("java.io.PrintStream").names(FORMAT_METHOD_NAME, PRINTF_METHOD_NAME).withAnyParameters().build(),
       MethodMatchers.create()
         .ofTypes("java.io.PrintWriter").names(FORMAT_METHOD_NAME, PRINTF_METHOD_NAME).withAnyParameters().build(),
-      MESSAGE_FORMAT,
-      JAVA_UTIL_LOGGER_LOG_LEVEL_STRING,
-      JAVA_UTIL_LOGGER_LOG_LEVEL_STRING_ANY
-      ));
-    return MethodMatchers.or(matchers);
+      MESSAGE_FORMAT);
   }
 

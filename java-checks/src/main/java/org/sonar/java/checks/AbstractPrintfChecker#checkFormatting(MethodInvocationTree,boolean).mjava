@@ -22,7 +22,8 @@
     if (formatTree.is(Tree.Kind.STRING_LITERAL)) {
       String formatString = LiteralUtils.trimQuotes(((LiteralTree) formatTree).value());
       if (isMessageFormat && isProbablyLog4jFormatterLogger(mit, formatString)) {
-        isMessageFormat = false;
+        handlePrintfFormatCatchingErrors(mit, formatString, args);
+        return;
       }
       if (isMessageFormat) {
         handleMessageFormat(mit, formatString, args);
