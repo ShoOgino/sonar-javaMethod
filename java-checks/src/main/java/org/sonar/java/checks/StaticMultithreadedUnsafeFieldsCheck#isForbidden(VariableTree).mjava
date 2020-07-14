@@ -1,0 +1,12 @@
+  private static boolean isForbidden(VariableTree variableTree) {
+    if (isForbiddenType(variableTree.type().symbolType())) {
+      return true;
+    }
+    ExpressionTree initializer = variableTree.initializer();
+    if (initializer == null || initializer.is(Tree.Kind.NULL_LITERAL)) {
+      return false;
+    }
+    return isForbiddenType(initializer.symbolType())
+      || (initializer.is(Tree.Kind.METHOD_INVOCATION) && GET_DATE_INSTANCE.matches((MethodInvocationTree) initializer));
+  }
+
