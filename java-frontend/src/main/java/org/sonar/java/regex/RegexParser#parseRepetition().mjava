@@ -1,6 +1,9 @@
   @CheckForNull
   private RegexTree parseRepetition() {
     RegexTree element = parsePrimaryExpression();
+    if (characters.isInQuotingMode()) {
+      return element;
+    }
     Quantifier quantifier = parseQuantifier();
     if (element == null) {
       if (quantifier != null) {

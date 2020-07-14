@@ -1,0 +1,10 @@
+  @Test
+  void quotedStringInCharacterIntersection() {
+    RegexTree contents = assertCharacterClass(false, assertSuccessfulParse("[\\\\QA-Z\\\\E&&]"));
+    CharacterClassIntersectionTree union = assertType(CharacterClassIntersectionTree.class, contents);
+    assertListElements(union.getCharacterClasses(),
+      first -> assertPlainCharacterUnion("A-Z", first),
+      second -> assertPlainCharacterUnion("", second)
+    );
+  }
+

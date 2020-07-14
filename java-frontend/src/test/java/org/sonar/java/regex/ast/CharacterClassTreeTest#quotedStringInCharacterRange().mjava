@@ -1,0 +1,13 @@
+  @Test
+  void quotedStringInCharacterRange() {
+    RegexTree contents = assertCharacterClass(false, assertSuccessfulParse("[a-\\\\QzA-Z\\\\E#]"));
+    CharacterClassUnionTree union = assertType(CharacterClassUnionTree.class, contents);
+    assertListElements(union.getCharacterClasses(),
+      first -> assertCharacterRange('a', 'z', first),
+      second -> assertPlainCharacter('A', second),
+      third -> assertPlainCharacter('-', third),
+      fourth -> assertPlainCharacter('Z', fourth),
+      fifth -> assertPlainCharacter('#', fifth)
+    );
+  }
+

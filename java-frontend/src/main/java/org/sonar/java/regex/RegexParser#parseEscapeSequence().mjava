@@ -46,8 +46,11 @@
           return parseUnicodeEscape(backslash);
         case 'x':
           return parseHexEscape(backslash);
+        case 'E':
+          error("\\E used without \\Q");
+          // Fallthrough
         default:
-          // TODO other kind of escape sequences such as quotations, special characters, N, R or X
+          // TODO other kind of escape sequences such as special characters, N, R or X
           characters.moveNext();
           return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
       }

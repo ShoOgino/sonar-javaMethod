@@ -1,5 +1,8 @@
   @CheckForNull
   private RegexTree parsePrimaryExpression() {
+    if (characters.isInQuotingMode() && characters.isNotAtEnd()) {
+      return readPlainCharacter();
+    }
     switch (characters.getCurrentChar()) {
       case '(':
         return parseGroup();
@@ -21,9 +24,7 @@
         return lineEnd;
       default:
         if (isPlainTextCharacter(characters.getCurrentChar())) {
-          JavaCharacter character = characters.getCurrent();
-          characters.moveNext();
-          return plainCharacter(character);
+          return readPlainCharacter();
         } else {
           return null;
         }

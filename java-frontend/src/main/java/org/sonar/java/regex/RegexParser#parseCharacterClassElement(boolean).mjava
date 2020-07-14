@@ -1,5 +1,8 @@
   @CheckForNull
   private RegexTree parseCharacterClassElement(boolean isAtBeginning) {
+    if (characters.isInQuotingMode() && characters.isNotAtEnd()) {
+      return readPlainCharacter();
+    }
     if (characters.isAtEnd() || characters.currentIs("&&")) {
       return null;
     }

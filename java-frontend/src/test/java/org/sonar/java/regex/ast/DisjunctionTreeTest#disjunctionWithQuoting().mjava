@@ -1,0 +1,12 @@
+  @Test
+  void disjunctionWithQuoting() {
+    DisjunctionTree disjunction = assertType(DisjunctionTree.class, assertSuccessfulParse("\\\\Qa\\\\E|b"));
+    assertListElements(disjunction.getAlternatives(),
+      first -> assertPlainCharacter('a', first),
+      second -> assertPlainCharacter('b', second)
+    );
+    assertListElements(disjunction.getOrOperators(),
+      first -> assertJavaCharacter(7, '|', first)
+    );
+  }
+

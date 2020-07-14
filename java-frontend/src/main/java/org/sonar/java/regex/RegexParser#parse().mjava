@@ -8,6 +8,9 @@
         characters.moveNext();
       }
     } while (characters.isNotAtEnd());
+    if (characters.isInQuotingMode()) {
+      expected("'\\E'");
+    }
     RegexTree result = combineTrees(results, (range, elements) -> new SequenceTree(source, range, elements));
     return new RegexParseResult(result, initialFlags, errors, characters.hasComments());
   }
