@@ -1,5 +1,5 @@
   @Nullable
-  private static List<ExpressionTree> transposeArgumentArrayAndRemoveThrowable(MethodInvocationTree mit, List<ExpressionTree> args) {
+  private static List<ExpressionTree> transposeArgumentArrayAndRemoveThrowable(MethodInvocationTree mit, List<ExpressionTree> args, Set<Integer> indexes) {
     List<ExpressionTree> transposedArgs = args;
     if (args.size() == 1) {
       ExpressionTree firstArg = args.get(0);
@@ -12,7 +12,7 @@
         }
       }
     }
-    if (lastArgumentShouldBeIgnored(mit, args, transposedArgs)) {
+    if (lastArgumentShouldBeIgnored(mit, args, transposedArgs, indexes)) {
       transposedArgs = transposedArgs.subList(0, transposedArgs.size() - 1);
     }
     return transposedArgs;

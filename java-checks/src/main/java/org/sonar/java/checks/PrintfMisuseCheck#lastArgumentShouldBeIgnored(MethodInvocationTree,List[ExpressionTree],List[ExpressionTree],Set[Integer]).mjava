@@ -1,0 +1,19 @@
+  private static boolean lastArgumentShouldBeIgnored(MethodInvocationTree mit, List<ExpressionTree> args, List<ExpressionTree> transposedArgs, Set<Integer> indexes) {
+    if (!isLoggingMethod(mit)) {
+      return false;
+    }
+    if (mit.symbol().owner().type().is(JAVA_UTIL_LOGGING_LOGGER)) {
+      // Remove the last argument from the count if it's a throwable, since log(Level level, String msg, Throwable thrown) will be called.
+      // If the argument is an array, any exception in the array will be considered as Object, behaving as any others.
+      return args.size() == 1 && isLastArgumentThrowable(args);
+    }
+    // org.apache.logging.log4j.Logger and org.slf4j.Logger
+    if (transposedArgs.size() == 1) {
+      // Logging methods with only one throwable argument will treat it differently (and should be removed from the count).
+      return isLastArgumentThrowable(transposedArgs);
+    } else {
+      // One extra throwable argument can be consumed by logging methods, it should be removed from the count if it exists.
+      return (transposedArgs.size() > indexes.size()) && isLastArgumentThrowable(transposedArgs);
+    }
+  }
+
