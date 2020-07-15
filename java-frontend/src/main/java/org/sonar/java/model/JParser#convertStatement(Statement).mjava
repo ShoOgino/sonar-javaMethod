@@ -357,14 +357,8 @@
       }
       case ASTNode.YIELD_STATEMENT: {
         YieldStatement e = (YieldStatement) node;
-        if (e.isImplicit()) {
-          return new ExpressionStatementTreeImpl(
-            convertExpression(e.getExpression()),
-            lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
-          );
-        }
-        return new BreakStatementTreeImpl(
-          firstTokenIn(e, ANY_TOKEN),
+        return new YieldStatementTreeImpl(
+          e.isImplicit() ? null : firstTokenIn(e, ANY_TOKEN),
           convertExpression(e.getExpression()),
           lastTokenIn(e, TerminalTokens.TokenNameSEMICOLON)
         );
