@@ -1,7 +1,10 @@
   @Test
   void explore_method_with_recursive_call() throws Exception {
     SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/resources/se/RecursiveCall.java");
-    assertThat(sev.behaviorCache.behaviors.entrySet()).hasSize(1);
-    assertThat(sev.behaviorCache.behaviors.keySet().iterator().next()).contains("#foo");
+    assertThat(sev.behaviorCache.behaviors.entrySet()).hasSize(2);
+    assertThat(sev.behaviorCache.behaviors.keySet()).containsExactly(
+      "java.lang.Class#isInstance(Ljava/lang/Object;)Z",
+      "RecursiveCall#foo(I)I"
+    );
   }
 
