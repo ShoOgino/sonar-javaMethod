@@ -1,0 +1,12 @@
+    private static boolean isInvocationOnClassInstanceField(MethodInvocationTree mit) {
+      ExpressionTree mitExpression = mit.methodSelect();
+      if (mitExpression.is(Tree.Kind.MEMBER_SELECT)) {
+        ExpressionTree expression = ((MemberSelectExpressionTree) mitExpression).expression();
+        if (expression.is(Tree.Kind.MEMBER_SELECT)) {
+          IdentifierTree identifier = ((MemberSelectExpressionTree) expression).identifier();
+          return ProgramState.isField((identifier).symbol());
+        }
+      }
+      return false;
+    }
+
