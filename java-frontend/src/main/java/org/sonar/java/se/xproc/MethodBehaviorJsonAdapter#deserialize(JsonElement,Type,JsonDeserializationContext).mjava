@@ -1,0 +1,20 @@
+  @Override
+  public MethodBehavior deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+    JsonObject jsonMB = (JsonObject) json;
+    MethodBehavior mb = new MethodBehavior(
+      jsonMB.get(JSON_SIGNATURE).getAsString(),
+      jsonMB.get(JSON_VARARGS).getAsBoolean());
+
+    List<String> declaredExceptions = new ArrayList<>();
+    jsonMB.get(JSON_DECLARED_EXCEPTIONS)
+      .getAsJsonArray()
+      .forEach(exception -> declaredExceptions.add(exception.getAsString()));
+
+    jsonMB.get(JSON_YIELDS)
+      .getAsJsonArray()
+      .forEach(yield -> mb.addYield(yieldsFromJson(mb, jsonMB.get(JSON_ARITY).getAsInt(), (JsonObject) yield)));
+
+    mb.completed();
+    return mb;
+  }
+

@@ -1,0 +1,23 @@
+  private JsonElement toJson(MethodYield methodYield, int arity) {
+    JsonObject yield = new JsonObject();
+    JsonArray jsonParameterConstraints = new JsonArray();
+    for (int i = 0; i < arity; i++) {
+      jsonParameterConstraints.add(toJson(methodYield.parametersConstraints.get(i)));
+    }
+    yield.add(JSON_PARAMETERS_CONSTRAINTS, jsonParameterConstraints);
+    boolean isExceptional = false;
+    if (methodYield instanceof HappyPathYield) {
+      HappyPathYield happyPathYield = (HappyPathYield) methodYield;
+      yield.addProperty(JSON_RESULT_INDEX, happyPathYield.resultIndex());
+      yield.add(JSON_RESULT_CONSTRAINTS, toJson(happyPathYield.resultConstraint()));
+    } else if (methodYield instanceof ExceptionalYield) {
+      ExceptionalYield exceptionalYield = (ExceptionalYield) methodYield;
+      isExceptional = true;
+      yield.addProperty(JSON_THROWN_EXCEPTION, exceptionalYield.exceptionType(sema).fullyQualifiedName());
+    } else {
+      throw new IllegalStateException("Generated yields should only be happy or exceptional");
+    }
+    yield.addProperty(JSON_IS_EXCEPTIONAL, isExceptional);
+    return yield;
+  }
+

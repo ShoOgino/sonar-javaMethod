@@ -1,0 +1,23 @@
+  @Override
+  public JsonElement serialize(MethodBehavior src, Type typeOfSrc, JsonSerializationContext context) {
+    Preconditions.checkState(src.isComplete());
+
+    JsonObject mb = new JsonObject();
+    mb.addProperty(JSON_SIGNATURE, src.signature());
+    mb.addProperty(JSON_ARITY, src.methodArity());
+    mb.addProperty(JSON_VARARGS, src.isMethodVarArgs());
+
+    List<String> declaredExceptions = src.getDeclaredExceptions();
+    JsonArray jsonDeclaredExceptions = new JsonArray(declaredExceptions.size());
+    declaredExceptions.forEach(jsonDeclaredExceptions::add);
+    mb.add(JSON_DECLARED_EXCEPTIONS, jsonDeclaredExceptions);
+
+    List<MethodYield> yields = src.yields();
+    JsonArray jsonYields = new JsonArray(yields.size());
+    yields.forEach(my -> jsonYields.add(toJson(my, src.methodArity())));
+
+    mb.add(JSON_YIELDS, jsonYields);
+
+    return mb;
+  }
+

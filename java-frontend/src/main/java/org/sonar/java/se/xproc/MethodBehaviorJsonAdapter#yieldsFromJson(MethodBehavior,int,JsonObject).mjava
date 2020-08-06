@@ -1,0 +1,15 @@
+  private static MethodYield yieldsFromJson(MethodBehavior behavior, int arity, JsonObject methodYield) {
+    MethodYield result;
+    if (methodYield.get(JSON_IS_EXCEPTIONAL).getAsBoolean()) {
+      ExceptionalYield exceptionalYield = new ExceptionalYield(behavior);
+      exceptionalYield.setExceptionType(methodYield.get(JSON_THROWN_EXCEPTION).getAsString());
+      result = exceptionalYield;
+    } else {
+      HappyPathYield happyPathYield = new HappyPathYield(behavior);
+      happyPathYield.setResult(methodYield.get(JSON_RESULT_INDEX).getAsInt(), constraintsByDomainFromJson(methodYield.get(JSON_RESULT_CONSTRAINTS)));
+      result = happyPathYield;
+    }
+    result.parametersConstraints.addAll(constraintsFromJson(arity, methodYield.get(JSON_PARAMETERS_CONSTRAINTS).getAsJsonArray()));
+    return result;
+  }
+

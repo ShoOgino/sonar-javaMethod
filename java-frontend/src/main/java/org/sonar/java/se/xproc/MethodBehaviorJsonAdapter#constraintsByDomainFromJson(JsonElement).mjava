@@ -1,0 +1,27 @@
+  @CheckForNull
+  private static ConstraintsByDomain constraintsByDomainFromJson(JsonElement jsonConstraintsByDomain) {
+    if (jsonConstraintsByDomain.isJsonNull()) {
+      return null;
+    }
+    JsonArray constraintsByDomainJsonArray = jsonConstraintsByDomain.getAsJsonArray();
+    ConstraintsByDomain constraintsByDomain = ConstraintsByDomain.empty();
+    for (int i = 0; i < constraintsByDomainJsonArray.size(); i++) {
+      String domainConstraint = constraintsByDomainJsonArray.get(i).getAsString();
+      int delimiterPosition = domainConstraint.indexOf(JSON_CONSTRAINT_DELIMITER);
+      Preconditions.checkState(delimiterPosition != -1 && delimiterPosition == domainConstraint.lastIndexOf(JSON_CONSTRAINT_DELIMITER));
+      String domain = domainConstraint.substring(0, delimiterPosition);
+      String constraint = domainConstraint.substring(delimiterPosition + 1);
+      switch (domain) {
+        case "ObjectConstraint":
+          constraintsByDomain = constraintsByDomain.put(ObjectConstraint.valueOf(constraint));
+          break;
+        case "BooleanConstraint":
+          constraintsByDomain = constraintsByDomain.put(BooleanConstraint.valueOf(constraint));
+          break;
+        default:
+          throw new IllegalStateException("Unsupported Domain constraint");
+      }
+    }
+    return constraintsByDomain;
+  }
+

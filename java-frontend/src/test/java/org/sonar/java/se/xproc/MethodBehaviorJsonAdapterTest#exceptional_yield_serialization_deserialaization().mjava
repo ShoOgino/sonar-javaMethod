@@ -1,0 +1,26 @@
+  @Test
+  void exceptional_yield_serialization_deserialaization() {
+    MethodBehavior mb = new MethodBehavior("org.foo.A.bar(Ljava/lang/Object;)Z");
+    ExceptionalYield yield = new ExceptionalYield(mb);
+    yield.setExceptionType("java.lang.Exception");
+    yield.parametersConstraints.add(ConstraintsByDomain.empty().put(ObjectConstraint.NULL));
+    mb.addYield(yield);
+    mb.completed();
+
+    String serialized = gson.toJson(mb);
+    assertThat(serialized).contains("\"yields\": [\n"
+      + "    {\n"
+      + "      \"parametersConstraints\": [\n"
+      + "        [\n"
+      + "          \"ObjectConstraint.NULL\"\n"
+      + "        ]\n"
+      + "      ],\n"
+      + "      \"exception\": \"java.lang.Exception\",\n"
+      + "      \"isExceptional\": true\n"
+      + "    }\n"
+      + "  ]");
+
+    MethodBehavior deserialized = gson.fromJson(serialized, MethodBehavior.class);
+    assertThat(deserialized).isEqualTo(mb);
+  }
+
