@@ -1,0 +1,9 @@
+  public void properHandling2(String url, String query) throws SQLException {
+    try (Connection connection = DriverManager.getConnection(url);) {
+      try (Statement statement = connection.createStatement();) {
+        ResultSet result = statement.executeQuery("SELECT a FROM tbl"); // Compliant, will be closed when the next result set is retrieved or the statement is closed
+        String name = result.getString(0);
+      }
+    }
+  }
+

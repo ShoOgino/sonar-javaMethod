@@ -1,9 +1,9 @@
-  public void properHandlingWithMoreResults(String url, String query) {
+  public void properHandlingWithMoreResults(String url, String query) throws SQLException {
     try (Connection connection = DriverManager.getConnection(url);) {
       try (Statement statement = connection.createStatement();) {
         boolean hasResultSets = statement.execute(query);
         while (hasResultSets) {
-          ResultSet result = statement.getResultSet(); // Noncompliant {{Use try-with-resources or close this "ResultSet" in a "finally" clause.}}
+          ResultSet result = statement.getResultSet(); // same
           String name = result.getString(0);
           hasResultSets = statement.getMoreResults();
         }

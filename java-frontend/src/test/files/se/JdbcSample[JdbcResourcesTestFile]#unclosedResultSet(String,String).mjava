@@ -1,9 +1,9 @@
-  public void unclosedResultSet(String url, String query) {
+  public void unclosedResultSet(String url, String query) throws SQLException {
     try (Connection connection = DriverManager.getConnection(url);) {
       Statement statement = connection.createStatement(); // Noncompliant {{Use try-with-resources or close this "Statement" in a "finally" clause.}}
       PreparedStatement preparedStatement = connection.prepareStatement("SELECT"); // Noncompliant {{Use try-with-resources or close this "PreparedStatement" in a "finally" clause.}}
-      ResultSet result = statement.executeQuery(query); // Noncompliant {{Use try-with-resources or close this "ResultSet" in a "finally" clause.}}
-      ResultSet result2 = preparedStatement.executeQuery(); // Noncompliant {{Use try-with-resources or close this "ResultSet" in a "finally" clause.}}
+      ResultSet result = statement.executeQuery(query); // Compliant because closing the Statement will close the ResultSet, so it's enough to tell the user to close the Statement
+      ResultSet result2 = preparedStatement.executeQuery(); // Ditto
       String name = result.getString(0);
     }
   }
