@@ -1,6 +1,6 @@
     @Override
     public void visitNewClass(NewClassTree syntaxNode) {
-      final SymbolicValue instanceValue = programState.peekValue();
+      SymbolicValue instanceValue = Objects.requireNonNull(programState.peekValue());
       if (isOpeningResource(syntaxNode) && !passedCloseableParameter(instanceValue)) {
         programState = programState.addConstraintTransitively(instanceValue, OPEN);
       }

@@ -1,7 +1,7 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree syntaxNode) {
       if (methodOpeningResource(syntaxNode)) {
-        SymbolicValue peekedValue = programState.peekValue();
+        SymbolicValue peekedValue = Objects.requireNonNull(programState.peekValue());
         programState = programState.addConstraintTransitively(peekedValue, OPEN);
         // returned resource is not null
         programState = programState.addConstraint(peekedValue, ObjectConstraint.NOT_NULL);

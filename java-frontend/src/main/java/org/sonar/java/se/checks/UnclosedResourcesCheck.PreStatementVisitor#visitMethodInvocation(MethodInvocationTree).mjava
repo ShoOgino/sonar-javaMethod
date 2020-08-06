@@ -4,12 +4,14 @@
       if (symbol.isMethodSymbol() && syntaxNode.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
         String methodName = symbol.name();
         SymbolicValue value = getTargetValue(syntaxNode);
-        if (CLOSE.equals(methodName)) {
-          closeResource(value);
-        } else if (GET_MORE_RESULTS.equals(methodName)) {
-          closeResultSetsRelatedTo(value);
-        } else if (GET_RESULT_SET.equals(methodName)) {
-          constraintManager.setValueFactory(new WrappedValueFactory(value));
+        if (value != null) {
+          if (CLOSE.equals(methodName)) {
+            closeResource(value);
+          } else if (GET_MORE_RESULTS.equals(methodName)) {
+            closeResultSetsRelatedTo(value);
+          } else if (GET_RESULT_SET.equals(methodName)) {
+            constraintManager.setValueFactory(new WrappedValueFactory(value));
+          }
         }
       }
       // close any resource used as argument, even for unknown methods

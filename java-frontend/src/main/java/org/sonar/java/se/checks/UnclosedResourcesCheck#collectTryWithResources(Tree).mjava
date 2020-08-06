@@ -1,0 +1,10 @@
+  private void collectTryWithResources(Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.TRY_STATEMENT)) {
+      TryStatementTree tryStatementTree = (TryStatementTree) syntaxNode;
+      ListTree<Tree> resourceList = tryStatementTree.resourceList();
+      if (!resourceList.isEmpty() && visitedTryWithResourcesTrees.add(tryStatementTree)) {
+        knownResources.addAll(ResourcesCollector.collect(resourceList));
+      }
+    }
+  }
+
