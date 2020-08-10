@@ -1,14 +1,14 @@
   @Test
   void test_enqueueing_of_catch_blocks() {
-    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/java/org/sonar/java/bytecode/se/testdata/ExceptionEnqueue.java");
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/java/org/sonar/java/resolve/targets/se/ExceptionEnqueue.java");
 
     MethodBehavior mb = sev.behaviorCache.behaviors
-      .get("org.sonar.java.bytecode.se.testdata.ExceptionEnqueue#testCatchBlockEnqueue(Lorg/sonar/java/bytecode/se/testdata/ExceptionEnqueue;)Z");
+      .get("org.sonar.java.resolve.targets.se.ExceptionEnqueue#testCatchBlockEnqueue(Lorg/sonar/java/resolve/targets/se/ExceptionEnqueue;)Z");
     List<HappyPathYield> happyPathYields = mb.happyPathYields().collect(Collectors.toList());
     assertThat(happyPathYields).hasSize(1);
     assertThat(happyPathYields.get(0).resultConstraint()).isNull();
 
-    mb = sev.behaviorCache.behaviors.get("org.sonar.java.bytecode.se.testdata.ExceptionEnqueue#testCatchBlockEnqueue2()Z");
+    mb = sev.behaviorCache.behaviors.get("org.sonar.java.resolve.targets.se.ExceptionEnqueue#testCatchBlockEnqueue2()Z");
     happyPathYields = mb.happyPathYields().collect(Collectors.toList());
     assertThat(happyPathYields).hasSize(1);
     // correctly result constraint should be TRUE, but we enqueue also unreachable catch block which creates yield with FALSE result

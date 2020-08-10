@@ -1,7 +1,12 @@
-  private Map<String, MethodBehavior> hardcodedBehaviors() {
-    if (defaultHardcodedBehaviors == null) {
-      defaultHardcodedBehaviors = loadHardcodedBehaviors();
+  @VisibleForTesting
+  Map<String, MethodBehavior> hardcodedBehaviors() {
+    if (semanticModel == null) {
+      // defensive, the method should be called only after #setFileContext() has been called
+      return Collections.emptyMap();
     }
-    return new LinkedHashMap<>(defaultHardcodedBehaviors);
+    if (hardcodedBehaviors == null) {
+      hardcodedBehaviors = HardcodedMethodBehaviors.load(semanticModel);
+    }
+    return hardcodedBehaviors;
   }
 

@@ -25,12 +25,11 @@
           Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) ((MethodInvocationTree) syntaxNode).symbol();
           String methodName = symbol.name();
           MethodBehavior peekMethodBehavior = ((CheckerDispatcher) context).peekMethodBehavior(symbol);
-          assertThat(peekMethodBehavior).isNotNull();
           if ("foo".equals(methodName) || "isBlank".equals(methodName)) {
             // foo should have been computed
             assertThat(peekMethodBehavior.isComplete()).isTrue();
           } else if ("bar".equals(methodName)) {
-            assertThat(peekMethodBehavior.isComplete()).isFalse();
+            assertThat(peekMethodBehavior).isNull();
           }
           testedPost.add(methodName);
         }
@@ -41,7 +40,7 @@
 
     assertThat(sev.behaviorCache.peek("org.apache.commons.lang.StringUtils#isBlank(Ljava/lang/String;)Z").isComplete()).isTrue();
     assertThat(sev.behaviorCache.peek("org.foo.A#foo()Z").isComplete()).isTrue();
-    assertThat(sev.behaviorCache.peek("org.foo.A#bar()Z").isComplete()).isFalse();
+    assertThat(sev.behaviorCache.peek("org.foo.A#bar()Z")).isNull();
     assertThat(sev.behaviorCache.peek("org.foo.A#unknownMethod()Z")).isNull();
     assertThat(sev.behaviorCache.behaviors.keySet()).containsOnly("org.foo.A#foo()Z");
 

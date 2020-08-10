@@ -1,0 +1,21 @@
+  /**
+   * Adapted from org.objectweb.asm.Type.getReturnTypeOffset(String) method
+   * to get corresponding type as String, instead of asm Type.
+   */
+  private static String getReturnType(String methodDescriptor) {
+    // Skip the first character, which is always a '('.
+    int currentOffset = 1;
+    // Skip the argument types, one at a each loop iteration.
+    while (methodDescriptor.charAt(currentOffset) != ')') {
+      while (methodDescriptor.charAt(currentOffset) == '[') {
+        currentOffset++;
+      }
+      if (methodDescriptor.charAt(currentOffset++) == 'L') {
+        // Skip the argument descriptor content.
+        int semiColumnOffset = methodDescriptor.indexOf(';', currentOffset);
+        currentOffset = Math.max(currentOffset, semiColumnOffset + 1);
+      }
+    }
+    return methodDescriptor.substring(currentOffset + 1);
+  }
+
