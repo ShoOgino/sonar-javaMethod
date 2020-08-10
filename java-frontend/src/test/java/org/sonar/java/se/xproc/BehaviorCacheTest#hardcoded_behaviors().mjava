@@ -1,0 +1,33 @@
+  @Test
+  void hardcoded_behaviors() throws Exception {
+    BehaviorCache behaviorCache = new BehaviorCache(SETestUtils.CLASSLOADER, false);
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Collections.singletonList(new NullDereferenceCheck()), behaviorCache);
+
+    List<InputFile> inputFiles = Arrays.asList(
+      "src/test/files/se/JavaLangMathMethods.java",
+      "src/test/files/se/CommonsLang3StringUtilsMethods.java",
+      "src/test/files/se/CommonsLang2StringUtilsMethods.java",
+      "src/test/files/se/GuavaPreconditionsMethods.java",
+      "src/test/files/se/ObjectsMethodsMethodBehaviors.java",
+      "src/test/files/se/GuavaCommonStrings.java",
+      "src/test/files/se/GuavaVerifyMethods.java",
+      "src/test/files/se/CollectionUtilsIsEmpty.java",
+      "src/test/files/se/CommonsLangValidate.java",
+      "src/test/files/se/Log4jAssert.java",
+      "src/test/files/se/SpringAssert.java",
+      "src/test/files/se/EclipseAssert.java")
+      .stream()
+      .map(File::new)
+      .map(TestUtils::inputFile)
+      .collect(Collectors.toList());
+
+    for (InputFile inputFile : inputFiles) {
+      CompilationUnitTreeImpl cut = (CompilationUnitTreeImpl) JParserTestUtils.parse("test", inputFile.contents(), SETestUtils.CLASS_PATH);
+      JavaFileScannerContext context = new DefaultJavaFileScannerContext(cut, inputFile, cut.sema, null, new JavaVersionImpl(8), true);
+      sev.scanFile(context);
+    }
+
+    assertThat(behaviorCache.behaviors).isEmpty();
+    assertThat(behaviorCache.hardcodedBehaviors).hasSize(81);
+  }
+

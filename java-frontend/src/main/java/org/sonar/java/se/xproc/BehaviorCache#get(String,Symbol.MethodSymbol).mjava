@@ -13,13 +13,14 @@
     }
 
     // disabled x-file analysis, behavior based on source code can still be used
-    if (!crossFileEnabled && !isKnownSignature(signature)) {
+    if (!crossFileEnabled && !hardcodedBehaviors.containsKey(signature)) {
       return null;
     }
 
-    if (!bytecodeBehaviors.containsKey(signature)) {
+    if (!hardcodedBehaviors.containsKey(signature)) {
+      // TODO remove me
       new BytecodeEGWalker(this, semanticModel).getMethodBehavior(signature, classLoader);
     }
-    return bytecodeBehaviors.get(signature);
+    return hardcodedBehaviors.get(signature);
   }
 

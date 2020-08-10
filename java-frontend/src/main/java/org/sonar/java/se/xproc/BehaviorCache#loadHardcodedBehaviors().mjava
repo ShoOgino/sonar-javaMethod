@@ -1,0 +1,24 @@
+  private Map<String, MethodBehavior> loadHardcodedBehaviors() {
+    Map<String, MethodBehavior> result = new LinkedHashMap<>();
+    Gson gson = MethodBehaviorJsonAdapter.gson(semanticModel);
+    // one of the method behavior list, as resource target
+    URL hardcodedMethodBehaviorsURL = BehaviorCache.class.getResource("java.lang.json");
+    if (hardcodedMethodBehaviorsURL == null || !new File(hardcodedMethodBehaviorsURL.getPath()).exists()) {
+      LOG.debug("Unable to load hardcoded method behaviors");
+      return Collections.emptyMap();
+    }
+    File[] serializedMethodBehaviors = new File(hardcodedMethodBehaviorsURL.getPath())
+      .getParentFile()
+      .listFiles((dir, filename) -> filename.endsWith(".json"));
+    for (File serialized : serializedMethodBehaviors) {
+      try (Reader reader = Files.newBufferedReader(serialized.toPath(), StandardCharsets.UTF_8)) {
+        List<MethodBehavior> deserialized = gson.fromJson(reader, LIST_OF_METHOD_BEHAVIORS_TYPE);
+        deserialized.forEach(methodBehavior -> result.put(methodBehavior.signature(), methodBehavior));
+      } catch (IOException e) {
+        LOG.error(String.format("Unable to load hardcoded method behaviors of \"%s\". Defaulting to no hardcoded method behaviors.", serialized.getName()), e);
+        return Collections.emptyMap();
+      }
+    }
+    return result;
+  }
+
