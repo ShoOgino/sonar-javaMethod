@@ -1,0 +1,13 @@
+  void closeInFinally(javax.jms.Connection connection) throws JMSException {
+    try {
+      Session sess = connection.createSession(1);
+      MessageProducer producer = sess.createProducer(null); // Compliant
+      MessageConsumer consumer = sess.createConsumer(null); // Compliant
+      MessageConsumer durableConsumer = sess.createDurableConsumer(null, ""); // Compliant
+      MessageConsumer sharedConsumer = sess.createSharedConsumer(null, ""); // Compliant
+      MessageConsumer sharedDurableConsumer = sess.createSharedDurableConsumer(null, ""); // Compliant
+    } finally {
+      connection.close();
+    }
+  }
+
