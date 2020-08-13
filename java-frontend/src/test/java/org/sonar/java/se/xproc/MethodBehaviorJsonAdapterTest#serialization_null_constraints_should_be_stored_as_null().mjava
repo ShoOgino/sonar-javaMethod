@@ -1,0 +1,14 @@
+  @Test
+  void serialization_null_constraints_should_be_stored_as_null() {
+    MethodBehavior mb = new MethodBehavior("org.bar.A#foo()Z");
+    HappyPathYield happyPathYield = new HappyPathYield(mb);
+    happyPathYield.setResult(-1, null);
+
+    mb.addYield(happyPathYield);
+    mb.completed();
+
+    assertThat(gson.toJson(mb))
+      .contains("\"resultConstaint\": null,")
+      .contains("\"parametersConstraints\": [],");
+  }
+

@@ -1,0 +1,8 @@
+  @Test
+  void log_when_unable_to_load_resources_with_invalid_method_behaviors() throws Exception {
+    CompilationUnitTreeImpl cut = (CompilationUnitTreeImpl) JParserTestUtils.parse("class A { }");
+    Map<String, MethodBehavior> result = BehaviorCache.HardcodedMethodBehaviors.loadHardcodedBehaviors(cut.sema, () -> BehaviorCacheTest.class.getResource("invalid.json"));
+    assertThat(result).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Unable to load hardcoded method behaviors of \"invalid.json\". Defaulting to no hardcoded method behaviors.");
+  }
+

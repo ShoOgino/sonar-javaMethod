@@ -1,0 +1,22 @@
+  @Test
+  void serialization_unknown_yield_type_should_throw_an_exception() {
+    MethodBehavior mb = new MethodBehavior("org.bar.A#foo()Z");
+    MethodYield customMethodYield = new MethodYield(mb) {
+      @Override
+      public String toString() {
+        return "CustomYield";
+      }
+
+      @Override
+      public Stream<ProgramState> statesAfterInvocation(List<SymbolicValue> invocationArguments, List<Type> invocationTypes, ProgramState programState,
+        Supplier<SymbolicValue> svSupplier) {
+        return Stream.of(programState);
+      }
+    };
+    mb.addYield(customMethodYield);
+    mb.completed();
+
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> gson.toJson(mb));
+    assertThat(e).hasMessage("Hardcoded yields should only be HappyPathYield or ExceptionalYield.");
+  }
+

@@ -1,0 +1,49 @@
+  @Test
+  void deserialization_wrong_constraint_format() {
+    String wronglySeperated = "BooleanConstraint:TRUE";
+    String invalidMethodBehavior1 = "{\n"
+      + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
+      + "  \"arity\": 1,\n"
+      + "  \"varArgs\": false,\n"
+      + "  \"declaredExceptions\": [],\n"
+      + "  \"yields\": [\n"
+      + "    {\n"
+      + "      \"parametersConstraints\": [\n"
+      + "        []\n"
+      + "      ],\n"
+      + "      \"resultIndex\": -1,\n"
+      + "      \"resultConstaint\": [\"" + wronglySeperated + "\"],\n"
+      + "      \"isExceptional\": false\n"
+      + "    }\n"
+      + "  ]\n"
+      + "}";
+
+    JsonSyntaxException e1 = assertThrows(
+      JsonSyntaxException.class,
+      () -> gson.fromJson(invalidMethodBehavior1, MethodBehavior.class));
+    assertThat(e1).hasRootCauseInstanceOf(IllegalStateException.class);
+
+    String wronglyQualified = "BooleanConstraint..TRUE";
+    String invalidMethodBehavior2 = "{\n"
+      + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
+      + "  \"arity\": 1,\n"
+      + "  \"varArgs\": false,\n"
+      + "  \"declaredExceptions\": [],\n"
+      + "  \"yields\": [\n"
+      + "    {\n"
+      + "      \"parametersConstraints\": [\n"
+      + "        []\n"
+      + "      ],\n"
+      + "      \"resultIndex\": -1,\n"
+      + "      \"resultConstaint\": [\"" + wronglyQualified + "\"],\n"
+      + "      \"isExceptional\": false\n"
+      + "    }\n"
+      + "  ]\n"
+      + "}";
+
+    JsonSyntaxException e2 = assertThrows(
+      JsonSyntaxException.class,
+      () -> gson.fromJson(invalidMethodBehavior2, MethodBehavior.class));
+    assertThat(e2).hasRootCauseInstanceOf(IllegalStateException.class);
+  }
+

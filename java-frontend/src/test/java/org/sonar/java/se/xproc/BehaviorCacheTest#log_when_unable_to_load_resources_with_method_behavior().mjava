@@ -1,0 +1,8 @@
+  @Test
+  void log_when_unable_to_load_resources_with_method_behavior() throws Exception {
+    CompilationUnitTreeImpl cut = (CompilationUnitTreeImpl) JParserTestUtils.parse("class A { }");
+    Map<String, MethodBehavior> result = BehaviorCache.HardcodedMethodBehaviors.loadHardcodedBehaviors(cut.sema, () -> BehaviorCacheTest.class.getResource("unknown"));
+    assertThat(result).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnlyOnce("Unable to load hardcoded method behaviors. Defaulting to no hardcoded method behaviors.");
+  }
+
