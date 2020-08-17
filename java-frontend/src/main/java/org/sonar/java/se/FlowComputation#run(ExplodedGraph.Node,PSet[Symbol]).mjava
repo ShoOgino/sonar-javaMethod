@@ -9,6 +9,9 @@
       ExecutionPath path = workList.pop();
       if (path.finished) {
         flows.add(path.flow);
+        if (flows.size() == FlowComputation.MAX_RETURNED_FLOWS) {
+          return flows;
+        }
       } else {
         path.lastEdge.parent.edges().stream()
           .filter(path::notVisited)
