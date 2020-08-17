@@ -1,0 +1,12 @@
+    @Override
+    public void visitMethodInvocation(MethodInvocationTree tree) {
+      if (BIG_INT_DEC_VALUE_OF.matches(tree)) {
+        ExpressionTree arg = tree.arguments().get(0);
+        if (arg instanceof LiteralTree) {
+          handleLiteral(((LiteralTree) arg));
+          return;
+        }
+      }
+      checkDeferredConstraint();
+    }
+

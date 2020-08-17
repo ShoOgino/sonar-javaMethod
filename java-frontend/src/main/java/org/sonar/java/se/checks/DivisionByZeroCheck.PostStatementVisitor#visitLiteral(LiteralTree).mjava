@@ -1,11 +1,5 @@
     @Override
     public void visitLiteral(LiteralTree tree) {
-      String value = tree.value();
-      SymbolicValue sv = programState.peekValue();
-      if (tree.is(Tree.Kind.CHAR_LITERAL) && isNullCharacter(value)) {
-        addZeroConstraint(sv, ZeroConstraint.ZERO);
-      } else if (tree.is(Tree.Kind.INT_LITERAL, Tree.Kind.LONG_LITERAL, Tree.Kind.DOUBLE_LITERAL, Tree.Kind.FLOAT_LITERAL)) {
-        addZeroConstraint(sv, isNumberZero(value) ? ZeroConstraint.ZERO : ZeroConstraint.NON_ZERO);
-      }
+      handleLiteral(tree);
     }
 

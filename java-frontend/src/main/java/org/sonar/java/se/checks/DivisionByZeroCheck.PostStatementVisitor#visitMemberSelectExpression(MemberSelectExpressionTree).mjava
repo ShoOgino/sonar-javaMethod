@@ -1,0 +1,16 @@
+    @Override
+    public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
+      IdentifierTree id = tree.identifier();
+      Type idType = id.symbolType();
+      SymbolicValue sv = programState.peekValue();
+      if (sv != null && (idType.is(BIG_INTEGER) || idType.is(BIG_DECIMAL))) {
+        if ("ZERO".equals(id.name())) {
+          addZeroConstraint(sv, ZeroConstraint.ZERO);
+        } else {
+          addZeroConstraint(sv, ZeroConstraint.NON_ZERO);
+        }
+      }
+
+      super.visitMemberSelectExpression(tree);
+    }
+
