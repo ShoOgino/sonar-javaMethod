@@ -1,4 +1,4 @@
-    Stream<ExecutionPath> addEdge(ExplodedGraph.Edge edge) {
+    Stream<ExecutionPath> addEdge(ExplodedGraph.Edge edge, int maxReturnedFlows) {
       Flow.Builder flowBuilder = Flow.builder();
       flowBuilder.addAll(flow);
 
@@ -32,7 +32,7 @@
       }
 
       Flow currentFlow = flowBuilder.build();
-      Set<Flow> yieldsFlows = flowFromYields(edge);
+      Set<Flow> yieldsFlows = flowFromYields(edge, maxReturnedFlows);
       if (yieldsFlows.isEmpty()) {
         return Stream.of(new ExecutionPath(edge, visited.add(edge), newTrackSymbols, newSameConstraints, Flow.of(currentFlow), endOfPath));
       }

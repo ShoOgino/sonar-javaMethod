@@ -1,0 +1,9 @@
+  private static Set<Flow> collectFlow(Collection<ExplodedGraph.Node> nodes, int maxReturnedFlows) {
+    return nodes.stream()
+      .map(node -> flowFromNode(node, maxReturnedFlows))
+      .flatMap(Set::stream)
+      .limit(maxReturnedFlows)
+      .filter(f -> !f.isEmpty())
+      .collect(Collectors.toSet());
+  }
+

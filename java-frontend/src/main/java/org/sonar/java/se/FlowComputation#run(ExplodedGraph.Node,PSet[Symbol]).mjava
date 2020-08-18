@@ -9,13 +9,13 @@
       ExecutionPath path = workList.pop();
       if (path.finished) {
         flows.add(path.flow);
-        if (flows.size() == FlowComputation.MAX_RETURNED_FLOWS) {
+        if (flows.size() == maxReturnedFlows) {
           return flows;
         }
       } else {
         path.lastEdge.parent.edges().stream()
           .filter(path::notVisited)
-          .flatMap(path::addEdge)
+          .flatMap(edge -> path.addEdge(edge, maxReturnedFlows))
           .forEach(ep -> {
             if(visited.add(ep)) {
               workList.push(ep);

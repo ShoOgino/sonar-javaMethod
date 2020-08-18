@@ -1,4 +1,4 @@
-  private static Set<Flow> flowsForMethodArguments(ExplodedGraph.Node node, MethodInvocationTree mit, int parameterCausingExceptionIndex) {
+  private static Set<Flow> flowsForMethodArguments(ExplodedGraph.Node node, MethodInvocationTree mit, int parameterCausingExceptionIndex, int maxReturnedFlows) {
     ProgramState programState = node.programState;
     List<ProgramState.SymbolicValueSymbol> arguments = Lists.reverse(programState.peekValuesAndSymbols(mit.arguments().size()));
     SymbolicValue parameterCausingExceptionSV = arguments.get(parameterCausingExceptionIndex).symbolicValue();
@@ -16,6 +16,6 @@
       });
 
     List<Class<? extends Constraint>> domains = domainsFromArguments(programState, argSymbolicValues);
-    return FlowComputation.flow(node, argSymbolicValues, c -> true, c -> false, domains, argSymbols);
+    return FlowComputation.flow(node, argSymbolicValues, c -> true, c -> false, domains, argSymbols, maxReturnedFlows);
   }
 

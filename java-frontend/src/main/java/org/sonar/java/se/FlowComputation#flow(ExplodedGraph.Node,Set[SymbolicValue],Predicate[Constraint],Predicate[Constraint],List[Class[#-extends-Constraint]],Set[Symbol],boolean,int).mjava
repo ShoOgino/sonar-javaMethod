@@ -1,5 +1,6 @@
   private static Set<Flow> flow(ExplodedGraph.Node currentNode, Set<SymbolicValue> symbolicValues, Predicate<Constraint> addToFlow,
-    Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains, Set<Symbol> symbols, boolean skipExceptionMessages) {
+    Predicate<Constraint> terminateTraversal, List<Class<? extends Constraint>> domains, Set<Symbol> symbols,
+    boolean skipExceptionMessages, int maxReturnedFlows) {
     Set<SymbolicValue> allSymbolicValues = symbolicValues.stream()
       .map(FlowComputation::computedFrom)
       .flatMap(Set::stream)
@@ -17,7 +18,7 @@
         }
       }
     }
-    FlowComputation flowComputation = new FlowComputation(allSymbolicValues, addToFlow, terminateTraversal, domains, skipExceptionMessages);
+    FlowComputation flowComputation = new FlowComputation(allSymbolicValues, addToFlow, terminateTraversal, domains, skipExceptionMessages, maxReturnedFlows);
     return flowComputation.run(currentNode, trackedSymbols);
   }
 

@@ -1,4 +1,4 @@
-    private Set<Flow> flowFromYields(ExplodedGraph.Edge edge) {
+    private Set<Flow> flowFromYields(ExplodedGraph.Edge edge, int maxReturnedFlows) {
       Set<MethodYield> methodYields = edge.yields();
       if (methodYields.isEmpty()) {
         return Collections.emptySet();
@@ -22,7 +22,7 @@
         return Collections.emptySet();
       }
       return methodYields.stream()
-        .map(y -> y.flow(argumentIndices, domains))
+        .map(y -> y.flow(argumentIndices, domains, maxReturnedFlows))
         .flatMap(Set::stream)
         .filter(f -> !f.isEmpty())
         .map(flowFromYield -> Flow.builder()
