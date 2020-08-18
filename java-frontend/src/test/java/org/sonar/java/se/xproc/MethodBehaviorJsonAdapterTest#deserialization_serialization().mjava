@@ -1,0 +1,53 @@
+  @Test
+  void deserialization_serialization() {
+    MethodBehavior customBehavior = new MethodBehavior("org.bar.A#foo(Ljava/lang/Object;)Z");
+    customBehavior.setDeclaredExceptions(Arrays.asList("org.foo.MyException", "org.bar.MyOtherException"));
+    customBehavior.setVarArgs(true);
+    HappyPathYield hpy = new HappyPathYield(customBehavior);
+    hpy.setResult(-1, ConstraintsByDomain.empty().put(BooleanConstraint.TRUE));
+    hpy.parametersConstraints.add(ConstraintsByDomain.empty().put(ObjectConstraint.NOT_NULL));
+    customBehavior.addYield(hpy);
+    ExceptionalYield ey = new ExceptionalYield(customBehavior);
+    ey.setExceptionType("org.bar.MyOtherException");
+    ey.parametersConstraints.add(ConstraintsByDomain.empty().put(ObjectConstraint.NULL));
+    customBehavior.addYield(ey);
+    customBehavior.completed();
+
+    String serialized = gson.toJson(customBehavior);
+    assertThat(serialized).isEqualTo(
+      "{\n"
+      + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
+      + "  \"arity\": 1,\n"
+      + "  \"varArgs\": true,\n"
+      + "  \"declaredExceptions\": [\n"
+      + "    \"org.foo.MyException\",\n"
+      + "    \"org.bar.MyOtherException\"\n"
+      + "  ],\n"
+      + "  \"yields\": [\n"
+      + "    {\n"
+      + "      \"parametersConstraints\": [\n"
+      + "        [\n"
+      + "          \"ObjectConstraint.NULL\"\n"
+      + "        ]\n"
+      + "      ],\n"
+      + "      \"exception\": \"org.bar.MyOtherException\",\n"
+      + "      \"isExceptional\": true\n"
+      + "    },\n"
+      + "    {\n"
+      + "      \"parametersConstraints\": [\n"
+      + "        [\n"
+      + "          \"ObjectConstraint.NOT_NULL\"\n"
+      + "        ]\n"
+      + "      ],\n"
+      + "      \"resultIndex\": -1,\n"
+      + "      \"resultConstaint\": [\n"
+      + "        \"BooleanConstraint.TRUE\"\n"
+      + "      ],\n"
+      + "      \"isExceptional\": false\n"
+      + "    }\n"
+      + "  ]\n"
+      + "}");
+    MethodBehavior deserialized = gson.fromJson(serialized, MethodBehavior.class);
+    assertThat(deserialized).isEqualTo(customBehavior);
+  }
+
