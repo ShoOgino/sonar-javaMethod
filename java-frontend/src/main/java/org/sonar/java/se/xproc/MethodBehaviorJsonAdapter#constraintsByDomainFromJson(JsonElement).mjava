@@ -6,22 +6,22 @@
     JsonArray constraintsByDomainJsonArray = jsonConstraintsByDomain.getAsJsonArray();
     ConstraintsByDomain constraintsByDomain = ConstraintsByDomain.empty();
     for (int i = 0; i < constraintsByDomainJsonArray.size(); i++) {
-      String domainConstraint = constraintsByDomainJsonArray.get(i).getAsString();
-      int delimiterPosition = domainConstraint.indexOf(JSON_CONSTRAINT_DELIMITER);
-      Preconditions.checkState(delimiterPosition != -1 && delimiterPosition == domainConstraint.lastIndexOf(JSON_CONSTRAINT_DELIMITER));
-      String domain = domainConstraint.substring(0, delimiterPosition);
-      String constraint = domainConstraint.substring(delimiterPosition + 1);
-      switch (domain) {
-        case "ObjectConstraint":
-          constraintsByDomain = constraintsByDomain.put(ObjectConstraint.valueOf(constraint));
+      String constraintAsString = constraintsByDomainJsonArray.get(i).getAsString();
+      Constraint constraint;
+      switch (constraintAsString) {
+        case "NULL":
+        case "NOT_NULL":
+          constraint = ObjectConstraint.valueOf(constraintAsString);
           break;
-        case "BooleanConstraint":
-          constraintsByDomain = constraintsByDomain.put(BooleanConstraint.valueOf(constraint));
+        case "TRUE":
+        case "FALSE":
+          constraint = BooleanConstraint.valueOf(constraintAsString);
           break;
         default:
-          String msg = String.format("Unsupported Domain constraint \"%s\". Only BooleanConstraint (TRUE, FALSE) and ObjectConstraint (NULL, NOT_NULL) are supported.", domain);
+          String msg = String.format("Unsupported constraint \"%s\". Only \"TRUE\", \"FALSE\", \"NULL\", and \"NOT_NULL\" are supported.", constraintAsString);
           throw new IllegalStateException(msg);
       }
+      constraintsByDomain = constraintsByDomain.put(constraint);
     }
     return constraintsByDomain;
   }

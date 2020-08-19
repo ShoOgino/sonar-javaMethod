@@ -3,7 +3,11 @@
       return JsonNull.INSTANCE;
     }
     JsonArray jsonConstraints = new JsonArray();
-    constraints.forEach((domain, constraint) -> jsonConstraints.add(domain.getSimpleName() + JSON_CONSTRAINT_DELIMITER + constraint.toString()));
+    constraints.forEach((domain, constraint) -> {
+      if (constraint instanceof ObjectConstraint || constraint instanceof BooleanConstraint) {
+        jsonConstraints.add(constraint.toString());
+      }
+    });
     return jsonConstraints;
   }
 

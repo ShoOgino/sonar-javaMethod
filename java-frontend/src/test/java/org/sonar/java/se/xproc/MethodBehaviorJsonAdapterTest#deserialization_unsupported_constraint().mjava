@@ -1,9 +1,8 @@
   @Test
   void deserialization_unsupported_constraint() {
-    String wrongConstraint = "MyConstraint.SQUARE";
+    String wrongConstraint = CustomConstraint.SQUARE.name();
     String invalidMethodBehavior = "{\n"
       + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
-      + "  \"arity\": 1,\n"
       + "  \"varArgs\": false,\n"
       + "  \"declaredExceptions\": [],\n"
       + "  \"yields\": [\n"
@@ -12,8 +11,7 @@
       + "        []\n"
       + "      ],\n"
       + "      \"resultIndex\": -1,\n"
-      + "      \"resultConstaint\": [\"" + wrongConstraint + "\"],\n"
-      + "      \"isExceptional\": false\n"
+      + "      \"resultConstraint\": [\"" + wrongConstraint + "\"]\n"
       + "    }\n"
       + "  ]\n"
       + "}";
@@ -24,6 +22,6 @@
     assertThat(e)
       .hasRootCauseInstanceOf(IllegalStateException.class)
       .hasMessage(
-        "java.lang.IllegalStateException: Unsupported Domain constraint \"MyConstraint\". Only BooleanConstraint (TRUE, FALSE) and ObjectConstraint (NULL, NOT_NULL) are supported.");
+        "java.lang.IllegalStateException: Unsupported constraint \"SQUARE\". Only \"TRUE\", \"FALSE\", \"NULL\", and \"NOT_NULL\" are supported.");
   }
 

@@ -5,19 +5,16 @@
       jsonParameterConstraints.add(toJson(methodYield.parametersConstraints.get(i)));
     }
     yield.add(JSON_PARAMETERS_CONSTRAINTS, jsonParameterConstraints);
-    boolean isExceptional = false;
     if (methodYield instanceof HappyPathYield) {
       HappyPathYield happyPathYield = (HappyPathYield) methodYield;
       yield.addProperty(JSON_RESULT_INDEX, happyPathYield.resultIndex());
       yield.add(JSON_RESULT_CONSTRAINTS, toJson(happyPathYield.resultConstraint()));
     } else if (methodYield instanceof ExceptionalYield) {
       ExceptionalYield exceptionalYield = (ExceptionalYield) methodYield;
-      isExceptional = true;
       yield.addProperty(JSON_THROWN_EXCEPTION, exceptionalYield.getExceptionType());
     } else {
       throw new IllegalStateException("Hardcoded yields should only be HappyPathYield or ExceptionalYield.");
     }
-    yield.addProperty(JSON_IS_EXCEPTIONAL, isExceptional);
     return yield;
   }
 

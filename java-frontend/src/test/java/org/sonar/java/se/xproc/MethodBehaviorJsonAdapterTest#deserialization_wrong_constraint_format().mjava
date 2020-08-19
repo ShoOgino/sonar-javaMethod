@@ -3,7 +3,6 @@
     String wronglySeperated = "BooleanConstraint:TRUE";
     String invalidMethodBehavior1 = "{\n"
       + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
-      + "  \"arity\": 1,\n"
       + "  \"varArgs\": false,\n"
       + "  \"declaredExceptions\": [],\n"
       + "  \"yields\": [\n"
@@ -12,8 +11,7 @@
       + "        []\n"
       + "      ],\n"
       + "      \"resultIndex\": -1,\n"
-      + "      \"resultConstaint\": [\"" + wronglySeperated + "\"],\n"
-      + "      \"isExceptional\": false\n"
+      + "      \"resultConstraint\": [\"" + wronglySeperated + "\"]\n"
       + "    }\n"
       + "  ]\n"
       + "}";
@@ -23,10 +21,9 @@
       () -> gson.fromJson(invalidMethodBehavior1, MethodBehavior.class));
     assertThat(e1).hasRootCauseInstanceOf(IllegalStateException.class);
 
-    String wronglyQualified = "BooleanConstraint..TRUE";
+    String wronglyQualified = ".TRUE";
     String invalidMethodBehavior2 = "{\n"
       + "  \"signature\": \"org.bar.A#foo(Ljava/lang/Object;)Z\",\n"
-      + "  \"arity\": 1,\n"
       + "  \"varArgs\": false,\n"
       + "  \"declaredExceptions\": [],\n"
       + "  \"yields\": [\n"
@@ -35,8 +32,7 @@
       + "        []\n"
       + "      ],\n"
       + "      \"resultIndex\": -1,\n"
-      + "      \"resultConstaint\": [\"" + wronglyQualified + "\"],\n"
-      + "      \"isExceptional\": false\n"
+      + "      \"resultConstraint\": [\"" + wronglyQualified + "\"]\n"
       + "    }\n"
       + "  ]\n"
       + "}";
