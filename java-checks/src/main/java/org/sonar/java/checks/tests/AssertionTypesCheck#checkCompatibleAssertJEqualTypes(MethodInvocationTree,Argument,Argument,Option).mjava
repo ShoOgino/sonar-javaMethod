@@ -1,0 +1,10 @@
+  private void checkCompatibleAssertJEqualTypes(MethodInvocationTree mit, Argument actual, Argument expected, Option option) {
+    Type type = mit.symbolType();
+    if (type.isSubtypeOf("org.assertj.core.api.AbstractTemporalAssert")
+      || type.isSubtypeOf("org.assertj.core.api.AbstractDateAssert")) {
+      // AssertJ supports Date/Temporal comparison with String.
+      return;
+    }
+    checkCompatibleTypes(mit, actual, expected, option);
+  }
+

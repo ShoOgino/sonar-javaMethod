@@ -4,9 +4,13 @@
         boolean checkFollowingMethod = true;
         if (ASSERTJ_NULL_AND_NOT_NULL.matches(mit)) {
           checkNullableAssertion(ExpressionUtils.methodName(mit), actual);
-        } else if (ASSERTJ_POSITIVE_PREDICATES.matches(mit)) {
+        } else if (ASSERTJ_EQUAL_TO_PREDICATE.matches(mit)) {
+          checkCompatibleAssertJEqualTypes(mit, actual, new Argument(mit, 0), Option.ACCEPT_DISSIMILAR_INTERFACE);
+        } else if (ASSERTJ_IS_SAME_AS_PREDICATE.matches(mit)) {
           checkCompatibleTypes(mit, actual, new Argument(mit, 0), Option.ACCEPT_DISSIMILAR_INTERFACE);
-        } else if (ASSERTJ_NEGATIVE_PREDICATES.matches(mit)) {
+        } else if (ASSERTJ_IS_NOT_EQUAL_TO_PREDICATE.matches(mit)) {
+          checkCompatibleAssertJEqualTypes(mit, actual, new Argument(mit, 0), Option.REJECT_DISSIMILAR_INTERFACE);
+        } else if (ASSERTJ_IS_NOT_SAME_AS_PREDICATE.matches(mit)) {
           checkCompatibleTypes(mit, actual, new Argument(mit, 0), Option.REJECT_DISSIMILAR_INTERFACE);
         } else if (!ASSERTJ_CONFIGURATION.matches(mit)) {
           // stop checking when methods like: extracting, using*, filtered*
