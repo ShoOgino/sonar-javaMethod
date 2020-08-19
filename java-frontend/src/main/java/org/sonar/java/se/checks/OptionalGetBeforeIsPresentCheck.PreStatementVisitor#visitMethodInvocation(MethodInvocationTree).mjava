@@ -7,7 +7,7 @@
       SymbolicValue peek = programState.peekValue();
       if (OPTIONAL_TEST_METHODS.matches(tree)) {
         constraintManager.setValueFactory(() -> new OptionalTestMethodSymbolicValue(peek, tree.symbol()));
-      } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(peek)) {
+      } else if (OPTIONAL_GET.matches(tree) && presenceHasNotBeenChecked(programState.peekValueSymbol())) {
         context.addExceptionalYield(peek, programState, "java.util.NoSuchElementException", check);
         reportIssue(tree);
         // continue exploration after reporting, assuming the optional is now present (killing any noise after the initial issue)
