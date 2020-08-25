@@ -1,13 +1,17 @@
   private void buildSwitchExpression(SwitchExpressionTree switchExpressionTree, Tree terminator) {
-    if (terminator.is(Tree.Kind.SWITCH_EXPRESSION)) {
-      // force a switch expression in the current block
-      currentBlock.elements.add(terminator);
-    }
     Block switchSuccessor = currentBlock;
     // process condition
     currentBlock = createBlock();
     currentBlock.terminator = terminator;
-    switches.addLast(currentBlock);
+    Block switchBlock = currentBlock;
+    List<ExpressionTree> switchCasesExpressions = switchExpressionTree.cases()
+      .stream()
+      .map(CaseGroupTree::labels)
+      .flatMap(List::stream)
+      .map(CaseLabelTree::expressions)
+      .flatMap(List::stream).collect(Collectors.toList());
+    Lists.reverse(switchCasesExpressions).forEach(this::build);
+
     build(switchExpressionTree.expression());
     Block conditionBlock = currentBlock;
     // process body
@@ -23,26 +27,22 @@
           currentBlock.addSuccessor(switchSuccessor);
         }
         build(caseGroupTree.body());
-        List<CaseLabelTree> labels = caseGroupTree.labels();
-        Lists.reverse(labels).stream()
-          .map(CaseLabelTree::expressions)
-          .map(Lists::reverse)
-          .flatMap(Collection::stream)
-          .forEach(this::build);
+        currentBlock.elements.add(caseGroupTree);
         if (!hasDefaultCase) {
-          hasDefaultCase = containsDefaultCase(labels);
+          hasDefaultCase = containsDefaultCase(caseGroupTree.labels());
+          currentBlock.isDefaultBlock = hasDefaultCase;
         }
         currentBlock.setCaseGroup(caseGroupTree);
-        switches.getLast().addSuccessor(currentBlock);
+        switchBlock.addSuccessor(currentBlock);
         if (!caseGroupTree.equals(firstCase)) {
-          // No block predecessing the first case group.
+          // No block preceding the first case group.
           currentBlock = createBlock(currentBlock);
         }
       }
     }
     breakTargets.removeLast();
     // process condition
-    currentBlock = switches.removeLast();
+    currentBlock = switchBlock;
     if (!hasDefaultCase) {
       currentBlock.addSuccessor(switchSuccessor);
     }

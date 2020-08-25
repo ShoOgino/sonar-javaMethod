@@ -9,6 +9,12 @@
           ExpressionTree ifCondition = ((IfStatementTree) terminator).condition();
           handleBranch(block, cleanupCondition(ifCondition), verifyCondition(ifCondition));
           return;
+        case SWITCH_STATEMENT:
+          handleSwitch(block, ((SwitchStatementTree) terminator).cases());
+          return;
+        case SWITCH_EXPRESSION:
+          handleSwitch(block, ((SwitchExpressionTree) terminator).cases());
+          return;
         case CONDITIONAL_OR:
         case CONDITIONAL_AND:
           handleBranch(block, ((BinaryExpressionTree) terminator).leftOperand());
@@ -56,7 +62,7 @@
           // do nothing by default.
       }
     }
-    // unconditional jumps, for-statement, switch-statement, synchronized:
+    // unconditional jumps, for-statement, synchronized:
     if (exitPath) {
       if (block.exitBlock() != null) {
         enqueue(new ProgramPoint(block.exitBlock()), programState, true);
