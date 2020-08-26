@@ -1,7 +1,8 @@
   @Test
   void log_when_unable_to_load_resources_with_method_behavior() throws Exception {
-    Map<String, MethodBehavior> result = BehaviorCache.HardcodedMethodBehaviors.loadHardcodedBehaviors(() -> BehaviorCacheTest.class.getResource("unknown"));
+    Map<String, MethodBehavior> result = BehaviorCache.HardcodedMethodBehaviors
+      .loadHardcodedBehaviors(() -> Collections.singletonList((InputStream) null));
     assertThat(result).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnlyOnce("Unable to load hardcoded method behaviors. Defaulting to no hardcoded method behaviors.");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnlyOnce("[SE] Unable to load hardcoded method behaviors. Defaulting to no hardcoded method behaviors.");
   }
 

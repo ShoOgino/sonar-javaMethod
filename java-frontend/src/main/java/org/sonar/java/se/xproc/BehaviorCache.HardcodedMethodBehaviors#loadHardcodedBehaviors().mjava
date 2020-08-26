@@ -1,4 +1,7 @@
     private static Map<String, MethodBehavior> loadHardcodedBehaviors() {
-      return loadHardcodedBehaviors(() -> BehaviorCache.class.getResource(JAVA_LANG_METHOD_BEHAVIORS_RESOURCE_NAME));
+      return loadHardcodedBehaviors(
+        () -> Arrays.stream(BEHAVIORS_RESOURCES)
+          .map(BehaviorCache.class::getResourceAsStream)
+          .collect(Collectors.toList()));
     }
 

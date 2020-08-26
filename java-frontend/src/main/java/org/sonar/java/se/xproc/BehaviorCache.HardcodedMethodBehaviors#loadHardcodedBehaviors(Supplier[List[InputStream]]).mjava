@@ -1,0 +1,20 @@
+    @VisibleForTesting
+    static Map<String, MethodBehavior> loadHardcodedBehaviors(Supplier<List<InputStream>> methodBehaviorStreamsSupplier) {
+      Map<String, MethodBehavior> result = new LinkedHashMap<>();
+      Gson gson = MethodBehaviorJsonAdapter.gson();
+      for (InputStream serializedStream : methodBehaviorStreamsSupplier.get()) {
+        if (serializedStream == null) {
+          LOG.debug(UNABLE_LOAD_MSG);
+          return Collections.emptyMap();
+        }
+        try (Reader reader = new InputStreamReader(serializedStream, StandardCharsets.UTF_8)) {
+          List<MethodBehavior> deserialized = gson.fromJson(reader, LIST_OF_METHOD_BEHAVIORS_TYPE);
+          deserialized.forEach(methodBehavior -> result.put(methodBehavior.signature(), methodBehavior));
+        } catch (Exception e) {
+          LOG.error(UNABLE_LOAD_MSG, e);
+          return Collections.emptyMap();
+        }
+      }
+      return Collections.unmodifiableMap(result);
+    }
+
