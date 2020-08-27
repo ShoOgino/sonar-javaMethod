@@ -1,0 +1,27 @@
+  private static Optional<String> getIfDefault(ExpressionTree expression, boolean isPrimitive) {
+    if (!isPrimitive && !expression.is(Tree.Kind.TYPE_CAST)) {
+      return expression.is(Tree.Kind.NULL_LITERAL) ? literalValue(expression) : Optional.empty();
+    }
+    switch (expression.kind()) {
+      case CHAR_LITERAL:
+        return literalValue(expression)
+          .filter(charValue -> "'\\u0000'".equals(charValue) || "'\\0'".equals(charValue));
+      case BOOLEAN_LITERAL:
+        return literalValue(expression)
+          .filter(booleanValue -> LiteralUtils.isFalse(expression));
+      case INT_LITERAL:
+      case LONG_LITERAL:
+        return Optional.ofNullable(LiteralUtils.longLiteralValue(expression))
+          .filter(numericalValue -> numericalValue == 0)
+          .flatMap(numericalValue -> literalValue(expression));
+      case FLOAT_LITERAL:
+      case DOUBLE_LITERAL:
+        return literalValue(expression)
+          .filter(numericalValue -> Double.doubleToLongBits(Double.valueOf(numericalValue)) == 0);
+      case TYPE_CAST:
+        return getIfDefault(((TypeCastTree) expression).expression(), isPrimitive);
+      default:
+        return Optional.empty();
+    }
+  }
+

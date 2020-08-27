@@ -4,10 +4,9 @@
     }
     ExpressionTree initializer = member.initializer();
     if (initializer != null) {
-      initializer = ExpressionUtils.skipParentheses(initializer);
-      if (isDefault(initializer, member.type().symbolType().isPrimitive())) {
-        reportIssue(initializer, "Remove this initialization to \"" + ((LiteralTree) initializer).value() + "\", the compiler will do that for you.");
-      }
+      ExpressionTree cleanedInitializer = ExpressionUtils.skipParentheses(initializer);
+      getIfDefault(cleanedInitializer, member.type().symbolType().isPrimitive())
+        .ifPresent(value -> reportIssue(cleanedInitializer, String.format("Remove this initialization to \"%s\", the compiler will do that for you.", value)));
     }
   }
 

@@ -1,10 +1,9 @@
   @Override
   public void visitNode(Tree tree) {
-    List<Tree> members = ((ClassTree) tree).members();
-    for (Tree member : members) {
-      if (member.is(Kind.VARIABLE)) {
-        checkVariable((VariableTree) member);
-      }
-    }
+    ((ClassTree) tree).members()
+      .stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .forEach(this::checkVariable);
   }
 
