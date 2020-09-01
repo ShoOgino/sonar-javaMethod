@@ -1,13 +1,13 @@
   @Test
   void enforce_CheckList_registration() {
     List<File> files = (List<File>) FileUtils.listFiles(new File("src/main/java/org/sonar/java/checks/"), new String[] {"java"}, false);
-    List<Class> checks = CheckList.getChecks();
+    List<Class<?>> checks = CheckList.getChecks();
     for (File file : files) {
       String name = file.getName();
       if (name.endsWith("Check.java")) {
         String className = name.substring(0, name.length() - 5);
         try {
-          Class aClass = Class.forName("org.sonar.java.checks." + className);
+          Class<?> aClass = Class.forName("org.sonar.java.checks." + className);
           assertThat(checks).as(className + " is not declared in CheckList").contains(aClass);
         } catch (ClassNotFoundException e) {
           Throwables.propagate(e);
