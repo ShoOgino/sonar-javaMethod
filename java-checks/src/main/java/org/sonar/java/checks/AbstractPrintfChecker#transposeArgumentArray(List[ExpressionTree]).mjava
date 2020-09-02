@@ -1,0 +1,15 @@
+  protected static Optional<List<ExpressionTree>> transposeArgumentArray(List<ExpressionTree> args) {
+    if (args.size() == 1) {
+      ExpressionTree firstArg = args.get(0);
+      if (firstArg.symbolType().isArray()) {
+        if (isNewArrayWithInitializers(firstArg)) {
+          args = ((NewArrayTree) firstArg).initializers();
+        } else {
+          // array content is unknown, declared somewhere else, we can not know the size
+          return Optional.empty();
+        }
+      }
+    }
+    return Optional.of(args);
+  }
+
