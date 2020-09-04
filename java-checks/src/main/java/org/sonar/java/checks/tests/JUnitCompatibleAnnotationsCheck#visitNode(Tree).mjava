@@ -1,0 +1,15 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree method = (MethodTree) tree;
+    List<AnnotationTree> annotationTrees = method.modifiers().annotations();
+
+    List<JavaFileScannerContext.Location> locations = annotationTrees.stream()
+      .filter(annotation -> ANNOTATIONS.contains(annotation.annotationType().symbolType().fullyQualifiedName()))
+      .map(annotationTree -> new JavaFileScannerContext.Location("Incompatible annotation", annotationTree))
+      .collect(Collectors.toList());
+
+    if (locations.size() > 1) {
+      reportIssue(method.simpleName(), "Remove one of these conflicting annotations.", locations, null);
+    }
+  }
+
