@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    IdentifierTree identifier = (IdentifierTree) tree;
+
+    Symbol symbol = identifier.symbol();
+    if (symbol.isUnknown() || symbol.metadata().annotations().isEmpty() || reportedSymbols.contains(symbol)) {
+      return;
+    }
+    if (isMisusedVisibleForTesting(symbol)) {
+      List<JavaFileScannerContext.Location> locations = symbol.usages().stream()
+        .filter(identifierTree -> isMisusedVisibleForTesting(identifierTree.symbol()))
+        .map(identifierTree -> new JavaFileScannerContext.Location("usage of @VisibleForTesting in production", identifierTree))
+        .collect(Collectors.toList());
+
+      reportIssue(identifier, String.format("Remove this usage of \"%s\", it is annotated with @VisibleForTesting and should not be accessed from production code.",
+        identifier.name()), locations, null);
+
+      reportedSymbols.add(symbol);
+    }
+  }
+

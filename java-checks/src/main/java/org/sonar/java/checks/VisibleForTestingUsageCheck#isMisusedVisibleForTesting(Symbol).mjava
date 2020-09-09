@@ -1,0 +1,6 @@
+  private static boolean isMisusedVisibleForTesting(Symbol symbol) {
+    Symbol owner = Objects.requireNonNull(symbol.owner(), "Owner is never null if unknown symbols are filtered out");
+    return isFieldMethodOrClass(symbol, owner) && !inTheSameFile(symbol)
+      && ANNOTATIONS.stream().anyMatch(symbol.metadata()::isAnnotatedWith);
+  }
+
