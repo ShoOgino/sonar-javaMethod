@@ -2,12 +2,17 @@
   protected MethodMatchers getMethodInvocationMatchers() {
     return MethodMatchers.or(
       MethodMatchers.create().ofTypes(ORG_JUNIT_ASSERT)
-        .names("assertEquals", "assertSame", "assertNotSame")
+        .names(ASSERT_EQUALS, ASSERT_SAME, ASSERT_NOT_SAME)
+        .withAnyParameters()
+        .build(),
+      // TestNG
+      MethodMatchers.create().ofTypes(ORG_TESTNG_ASSERT)
+        .names(ASSERT_EQUALS, ASSERT_NOT_EQUALS, ASSERT_SAME, ASSERT_NOT_SAME)
         .withAnyParameters()
         .build(),
       // JUnit 5
       MethodMatchers.create().ofTypes(ORG_JUNIT5_ASSERTIONS)
-        .names("assertArrayEquals", "assertEquals", "assertIterableEquals", "assertLinesMatch", "assertNotEquals", "assertNotSame", "assertSame")
+        .names(ASSERT_ARRAY_EQUALS, ASSERT_EQUALS, ASSERT_ITERABLE_EQUALS, ASSERT_LINES_MATCH, ASSERT_NOT_EQUALS, ASSERT_NOT_SAME, ASSERT_SAME)
         .withAnyParameters()
         .build(),
       // AssertJ
