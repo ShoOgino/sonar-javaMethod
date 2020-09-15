@@ -1,0 +1,23 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+
+    List<AnnotationTree> annotations = methodTree.modifiers().annotations();
+    Optional<Arguments> arguments = annotations.stream()
+      .filter(annotationTree -> annotationTree.symbolType().is(ANNOTATION))
+      .map(AnnotationTree::arguments)
+      .findFirst();
+
+    if (arguments.isPresent()) {
+      for (ExpressionTree argument : arguments.get()) {
+        if (argument.is(Tree.Kind.ASSIGNMENT)) {
+          AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) argument;
+          IdentifierTree nameTree = (IdentifierTree) assignmentTree.variable();
+          if (nameTree.name().equals(SUCCESS_PERCENTAGE_NAME) ) {
+            reportIssue(argument, "Make this test stable and remove this \"successPercentage\" argument.");
+          }
+        }
+      }
+    }
+  }
+
