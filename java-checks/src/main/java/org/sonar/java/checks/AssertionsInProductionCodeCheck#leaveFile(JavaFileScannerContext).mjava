@@ -1,0 +1,14 @@
+  @Override
+  public void leaveFile(JavaFileScannerContext context) {
+    if (!assertions.isEmpty()) {
+      final Tree primaryLocation = assertions.get(0);
+      List<Location> secondaryLocations = assertions.stream()
+        .skip(1)
+        .map(expr -> new Location("Assertion", expr))
+        .collect(Collectors.toList());
+      reportIssue(primaryLocation, "Remove this assertion from production code.", secondaryLocations, null);
+    }
+    assertions.clear();
+    super.leaveFile(context);
+  }
+
