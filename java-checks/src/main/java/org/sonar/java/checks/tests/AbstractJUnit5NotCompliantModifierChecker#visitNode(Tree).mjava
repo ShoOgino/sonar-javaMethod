@@ -1,9 +1,5 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
-
     ClassTree classTree = (ClassTree) tree;
     List<MethodTree> testMethods = classTree.members().stream()
       .filter(member -> member.is(Tree.Kind.METHOD))
@@ -11,10 +7,13 @@
       .filter(UnitTestUtils::hasJUnit5TestAnnotation)
       .collect(Collectors.toList());
 
-    testMethods.stream().map(MethodTree::modifiers).forEach(this::raiseIssueOnNotCompliantModifiers);
+    for (MethodTree testMethod : testMethods) {
+      raiseIssueOnNotCompliantModifiers(testMethod.modifiers(), true);
+      raiseIssueOnNotCompliantReturnType(testMethod);
+    }
 
     if (!testMethods.isEmpty()) {
-      raiseIssueOnNotCompliantModifiers(classTree.modifiers());
+      raiseIssueOnNotCompliantModifiers(classTree.modifiers(), false);
     }
   }
 

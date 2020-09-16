@@ -1,0 +1,11 @@
+  @Override
+  protected void raiseIssueOnNotCompliantReturnType(MethodTree methodTree) {
+    TypeTree returnType = methodTree.returnType();
+    // returnType of METHOD is never null (unlike CONSTRUCTOR)
+    Type type = returnType.symbolType();
+    boolean methodReturnAValue = !type.isUnknown() && !type.isVoid();
+    if(methodReturnAValue && !methodTree.symbol().metadata().isAnnotatedWith("org.junit.jupiter.api.TestFactory")) {
+      reportIssue(returnType, "Replace the return type by void.");
+    }
+  }
+
