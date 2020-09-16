@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    if (ModifiersUtils.hasModifier(methodTree.modifiers(), Modifier.ABSTRACT)) {
+      return;
+    }
+
+    if (isUnitTest(methodTree)) {
+      List<Tree> assertionsTree = collectAssertionsInMethod(methodTree.symbol());
+      if (assertionsTree.size() > maximum) {
+        List<JavaFileScannerContext.Location> locations = assertionsTree.stream()
+          .map(assertionTree -> new JavaFileScannerContext.Location("Assertion", assertionTree))
+          .collect(Collectors.toList());
+
+        reportIssue(methodTree.simpleName(), String.format("Refactor this method in order to have less than %d assertions.", maximum), locations, null);
+      }
+    }
+  }
+

@@ -1,4 +1,4 @@
-  private static boolean isUnitTest(MethodTree methodTree) {
+  public static boolean isUnitTest(MethodTree methodTree) {
     Symbol.MethodSymbol symbol = methodTree.symbol();
     while (symbol != null) {
       if (symbol.metadata().isAnnotatedWith("org.junit.Test")) {
@@ -11,7 +11,7 @@
       // contrary to JUnit 4, JUnit 5 Test annotations are not inherited when method is overridden, so no need to check overridden symbols
       return true;
     }
-    Symbol.TypeSymbol enclosingClass = methodTree.symbol().enclosingClass();
-    return enclosingClass != null && enclosingClass.type().isSubtypeOf("junit.framework.TestCase") && methodTree.simpleName().name().startsWith("test");
+    Symbol.TypeSymbol enclosingClass = Objects.requireNonNull(methodTree.symbol().enclosingClass(), "Must not be null for method symbols");
+    return enclosingClass.type().isSubtypeOf("junit.framework.TestCase") && methodTree.simpleName().name().startsWith("test");
   }
 
