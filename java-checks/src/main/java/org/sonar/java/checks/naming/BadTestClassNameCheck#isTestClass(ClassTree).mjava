@@ -1,5 +1,7 @@
   private static boolean isTestClass(ClassTree classTree) {
-    return isTopLevelClass(classTree)
+    Symbol.TypeSymbol classSymbol = classTree.symbol();
+    return !classSymbol.isAbstract()
+      && isTopLevelClass(classSymbol)
       && (hasTestMethod(classTree.members()) || hasNestedClass(classTree));
   }
 
