@@ -1,9 +1,12 @@
-  private static boolean areEquivalent(@Nullable JavaTree leftNode, @Nullable JavaTree rightNode) {
+  private static boolean areEquivalent(@Nullable JavaTree leftNode, @Nullable JavaTree rightNode, BiPredicate<JavaTree, JavaTree> permissiveEquivalence) {
     if (leftNode == rightNode) {
       return true;
     }
     if (leftNode == null || rightNode == null) {
       return false;
+    }
+    if (permissiveEquivalence.test(leftNode, rightNode)) {
+      return true;
     }
     if (leftNode.kind() != rightNode.kind() || leftNode.is(Tree.Kind.OTHER)) {
       return false;
@@ -14,7 +17,7 @@
     Iterator<Tree> iteratorB = rightNode.getChildren().iterator();
 
     while (iteratorA.hasNext() && iteratorB.hasNext()) {
-      if (!areEquivalent(iteratorA.next(), iteratorB.next())) {
+      if (!areEquivalent(iteratorA.next(), iteratorB.next(), permissiveEquivalence)) {
         return false;
       }
     }
