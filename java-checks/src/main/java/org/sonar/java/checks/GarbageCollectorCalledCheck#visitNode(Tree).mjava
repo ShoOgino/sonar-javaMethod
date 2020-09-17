@@ -1,11 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     MethodInvocationTree mit = (MethodInvocationTree) tree;
-    if (mit.arguments().isEmpty() && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-      MemberSelectExpressionTree mset = (MemberSelectExpressionTree) mit.methodSelect();
-      if (isGarbageCollectorCall(mset)) {
-        reportIssue(mset.identifier(), "Don't try to be smarter than the JVM, remove this call to run the garbage collector.");
-      }
+    if (GC_METHOD_MATCHER.matches(mit)) {
+      reportIssue(ExpressionUtils.methodName(mit), "Don't try to be smarter than the JVM, remove this call to run the garbage collector.");
     }
   }
 
