@@ -1,0 +1,21 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    if (MODEL_VIEW_GET_VIEW_NAME.matches(mit)) {
+      getNestingCall(tree).ifPresent(call -> {
+          if (ASSERT_EQUALS_MATCHER.matches(call) ||
+            (ASSERT_THAT.matches(call) && subsequentMethodInvocation(call, IS_EQUAL_TO).isPresent())) {
+            reportIssue(ExpressionUtils.methodName(call), String.format(MESSAGE_TEMPLATE, "ModelAndViewAssert.assertViewName"));
+          }
+        }
+      );
+    } else if (MODEL_MAP_GET.matches(mit)) {
+      getNestingCall(tree).ifPresent(call -> {
+        if (ASSERT_TRUE_FALSE_EQUALS_MATCHER.matches(call) ||
+          (ASSERT_THAT.matches(call) && subsequentMethodInvocation(call, IS_EQUAL_TO_IS_FALSE_IS_TRUE).isPresent())) {
+          reportIssue(ExpressionUtils.methodName(call), String.format(MESSAGE_TEMPLATE, "ModelAndViewAssert.assertModelAttributeValue"));
+        }
+      });
+    }
+  }
+

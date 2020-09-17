@@ -1,0 +1,14 @@
+  private static Optional<MethodInvocationTree> getNestingCall(Tree nestedTree) {
+    Tree parent = nestedTree.parent();
+    // This pattern should be used with care, since it is not efficient and can hit performance.
+    // It is acceptable in this case though, since we will call this method only when facing Spring methods and
+    // situation that will hardly ever occur compared to common assertions.
+    while (parent != null && !parent.is(Tree.Kind.METHOD)) {
+      if (parent.is(Tree.Kind.METHOD_INVOCATION)) {
+        return Optional.of((MethodInvocationTree) parent);
+      }
+      parent = parent.parent();
+    }
+    return Optional.empty();
+  }
+
