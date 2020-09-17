@@ -1,0 +1,15 @@
+  @Test
+  void test_mocking_MyClass4_through_separate_methods() {
+    MyClass4 myClassMock = mock(MyClass4.class); // FN because we don't track mocking through separate methods
+    mockF(myClassMock);
+    mockG(myClassMock);
+
+    MyClass4 myClassMock2 = mock(MyClass4.class); // FN because we don't track method calls through separate methods
+    when(callF(myClassMock2)).thenReturn(1);
+    when(callG(myClassMock2)).thenReturn(2);
+
+    myClassMockField = mock(MyClass4.class); // FN because we don't track the value of `myClassMockField` through the getter calls
+    when(getMyClass4MockField().f()).thenReturn(1);
+    when(getMyClass4MockField().g()).thenReturn(2);
+  }
+

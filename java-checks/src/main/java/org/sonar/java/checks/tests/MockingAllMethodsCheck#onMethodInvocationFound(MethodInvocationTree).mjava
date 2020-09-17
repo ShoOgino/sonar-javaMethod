@@ -1,0 +1,19 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    ExpressionTree argument = mit.arguments().get(0);
+    if (argument.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mockedMethodCall = (MethodInvocationTree) argument;
+      ExpressionTree methodSelect = mockedMethodCall.methodSelect();
+      if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree mockedMethod = (MemberSelectExpressionTree) methodSelect;
+        ExpressionTree object = mockedMethod.expression();
+        if (object.is(Tree.Kind.IDENTIFIER)) {
+          Symbol objectSymbol = ((IdentifierTree) object).symbol();
+          Symbol method = mockedMethod.identifier().symbol();
+          mockedMethodsPerObject.computeIfAbsent(objectSymbol, key -> new HashSet<>()).add(method);
+          whenCalls.put(method, mit);
+        }
+      }
+    }
+  }
+
