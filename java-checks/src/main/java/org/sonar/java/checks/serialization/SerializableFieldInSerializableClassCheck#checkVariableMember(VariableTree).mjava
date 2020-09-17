@@ -10,7 +10,11 @@
         }
         checkCollectionAssignments(variableTree.symbol().usages());
       } else {
-        reportIssue(simpleName);
+        ExpressionTree initializer = variableTree.initializer();
+        Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) variableTree.symbol();
+        if (initializer == null || !(variableSymbol.isFinal() && implementsSerializable(initializer.symbolType()))) {
+          reportIssue(simpleName);
+        }
       }
     }
   }

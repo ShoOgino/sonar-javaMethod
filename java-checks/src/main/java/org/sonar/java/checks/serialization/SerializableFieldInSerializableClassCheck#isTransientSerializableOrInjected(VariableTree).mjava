@@ -3,6 +3,8 @@
       return true;
     }
     SymbolMetadata metadata = member.symbol().metadata();
-    return metadata.isAnnotatedWith("javax.inject.Inject") || metadata.isAnnotatedWith("javax.ejb.EJB");
+    return metadata.isAnnotatedWith("javax.inject.Inject")
+      || metadata.isAnnotatedWith("javax.ejb.EJB")
+      || metadata.annotations().stream().anyMatch(annotation -> annotation.symbol().isUnknown());
   }
 
