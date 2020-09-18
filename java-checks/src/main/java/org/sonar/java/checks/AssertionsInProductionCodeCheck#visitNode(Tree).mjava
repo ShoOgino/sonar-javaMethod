@@ -1,0 +1,11 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.PACKAGE)) {
+      String packageName = ExpressionsHelper.concatenate(((PackageDeclarationTree) tree).packageName());
+      packageNameNotRelatedToTests = !TEST_PACKAGE_REGEX.matcher(packageName).find();
+    }
+    if (packageNameNotRelatedToTests) {
+      super.visitNode(tree);
+    }
+  }
+
