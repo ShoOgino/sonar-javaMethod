@@ -1,0 +1,12 @@
+  @Test
+  public void mockito() {
+    assertThrows(IllegalStateException.class, () -> bar(Mockito.mock(NestedClass.class, "myMock"))); // Compliant
+    assertThrows(IllegalStateException.class, () -> bar(Mockito.mock(NestedClass.class))); // Compliant
+
+    // these methods require complex configuration of their mocks, and are therefore marked as Noncompliant
+    MockSettings settings = Mockito.withSettings();
+    Answer<NestedClass> answer = invoc -> new NestedClass(42);
+    assertThrows(IllegalStateException.class, () -> bar(Mockito.mock(NestedClass.class, settings))); // Noncompliant
+    assertThrows(IllegalStateException.class, () -> bar(Mockito.mock(NestedClass.class, answer))); // Noncompliant
+  }
+
