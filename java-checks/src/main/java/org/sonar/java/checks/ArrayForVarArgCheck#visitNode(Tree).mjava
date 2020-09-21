@@ -12,9 +12,12 @@
       args = mit.arguments();
     }
 
-    if (sym.isMethodSymbol() && !args.isEmpty()) {
-      ExpressionTree lastArg = args.get(args.size() - 1);
-      checkInvokedMethod((Symbol.MethodSymbol) sym, lastArg);
+    if (sym.isMethodSymbol()) {
+      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) sym;
+      if (isLastArgumentVarargs(methodSymbol, args)) {
+        ExpressionTree lastArg = args.get(args.size() - 1);
+        checkInvokedMethod(methodSymbol, lastArg);
+      }
     }
   }
 

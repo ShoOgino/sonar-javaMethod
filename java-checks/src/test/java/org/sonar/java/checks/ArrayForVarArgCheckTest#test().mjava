@@ -1,7 +1,12 @@
   @Test
   void test() {
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/ArrayForVarArgCheck.java")
+      .onFile(testSourcesPath("checks/ArrayForVarArgCheck.java"))
+      .withCheck(new ArrayForVarArgCheck())
+      .verifyIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/ArrayForVarArgCheck.java"))
       .withCheck(new ArrayForVarArgCheck())
       .verifyIssues();
   }
