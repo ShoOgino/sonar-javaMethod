@@ -19,13 +19,13 @@
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
 
     Multimap<Integer, String> issuesByLines = HashMultimap.create();
-    for (AnalyzerMessage analyzerMessage : testJavaFileScannerContext.getIssues()) {
+    Set<AnalyzerMessage> issues = testJavaFileScannerContext.getIssues();
+    for (AnalyzerMessage analyzerMessage : issues) {
       Integer issueLine = analyzerMessage.getLine();
       String ruleKeyName = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
       RuleKey ruleKey = RuleKey.of("java", ruleKeyName);
 
       if (issueCollector.rejectedIssuesLines.contains(issueLine)) {
-
         assertThat(filter.accept(ruleKey, analyzerMessage))
           .overridingErrorMessage("Line #" + issueLine + " has been marked with 'NoIssue' but issue of rule '" + ruleKey + "' has been accepted!")
           .isFalse();
