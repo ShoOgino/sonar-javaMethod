@@ -1,0 +1,14 @@
+  @ParameterizedTest(name="[{index}] Name of method content {1} should be {2} in method code: {0}")
+  @CsvSource({
+    "public void test() {int i; switch (i) { case 0: break;}}, 1, i",
+    "public void test() {String s; s.length();}, 1, length",
+    "public void test() {int i = checkForNullMethod().length();}, 0, length",
+    "public void test() {int i = checkForNullMethod().length;}, 0, checkForNullMethod",
+  })
+  void testNameOfElementOfBlock(String methodCode, int blockPosition, String name) {
+    MethodTree tree = buildSyntaxTree(methodCode);
+    BlockTree block = tree.block();
+    StatementTree statementTree = block.body().get(blockPosition);
+    assertThat(SyntaxTreeNameFinder.getName(statementTree)).isEqualTo(name);
+  }
+

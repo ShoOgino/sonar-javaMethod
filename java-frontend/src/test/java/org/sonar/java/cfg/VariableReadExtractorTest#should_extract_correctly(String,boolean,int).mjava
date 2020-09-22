@@ -1,0 +1,10 @@
+  @ParameterizedTest(name = "[{index}] With includeFields={1}, {2} read variable should be extracted from method code: {0}]")
+  @MethodSource("provideExtractionTest")
+  void should_extract_correctly(String methodCode, boolean includeFields, int size) {
+    MethodTree methodTree = buildMethodTree(methodCode);
+    StatementTree statementTree = methodTree.block().body().get(0);
+    VariableReadExtractor extractor = new VariableReadExtractor(methodTree.symbol(), includeFields);
+    statementTree.accept(extractor);
+    assertThat(extractor.usedVariables()).hasSize(size);
+  }
+

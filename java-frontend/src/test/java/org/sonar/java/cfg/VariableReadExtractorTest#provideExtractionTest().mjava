@@ -1,0 +1,16 @@
+  private static Stream<Arguments> provideExtractionTest() {
+    return Stream.of(
+      // should extract local variable read
+      Arguments.of("void foo(boolean a) { new Object() { void foo() { System.out.println(a);} };  }", false, 1),
+      // should not extract variable declared, only "a" should be detected
+      Arguments.of("void foo(boolean a) { boolean b = a; }", true, 1),
+      // should not extract fields read: local variable "a" and fields "field1" and "field2"
+      Arguments.of("void foo(int a) { bar(p -> { System.out.println(a + field1); foo(this.field2); }); } void bar(java.util.function.Consumer<Object> consumer) {}"
+        , true, 3),
+      // should not extract fields written: local variable "a" and field "field"
+      Arguments.of("void foo(boolean a) { new Object() { void foo() { new A().field1 = 0; a = false;} };  }", true, 0),
+      // should extract local variable read
+      Arguments.of("void foo(boolean a) { new Object() { void foo() { foo(a); bar(a); } }; }", false, 1)
+    );
+  }
+

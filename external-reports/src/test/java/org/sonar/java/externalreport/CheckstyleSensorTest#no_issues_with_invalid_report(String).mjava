@@ -1,0 +1,10 @@
+  @ParameterizedTest
+  @ValueSource(strings = {"not-checkstyle-file.xml", "checkstyle-with-invalid-line.xml", "invalid-file.xml"})
+  void no_issues_with_invalid_report(String fileName) throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(fileName);
+    assertThat(externalIssues).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+      .startsWith("Failed to import external issues report:")
+      .endsWith(fileName);
+  }
+

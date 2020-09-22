@@ -1,0 +1,9 @@
+  @ParameterizedTest(name = "[{index}] getLiterals({0}) should be empty")
+  @ValueSource(strings = {/* not a String */ "42", "unknown", "\"a\" + unknown", "unknown + \"a\""})
+  void test_GetLiterals_is_empty(String arg) {
+    ExpressionTree expr = getArg(arg).expr;
+
+    Optional<LiteralTree[]> result = getLiterals(expr);
+    assertThat(result).isEmpty();
+  }
+

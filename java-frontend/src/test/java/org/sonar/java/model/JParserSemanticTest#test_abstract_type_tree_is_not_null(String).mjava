@@ -1,0 +1,16 @@
+  @ParameterizedTest(name="[{index}] Type bindings of variable v should not be null in \"{0}\"")
+  @ValueSource(strings = {
+    "interface I { int v; }", // primitive
+    "interface I<T> { I<String> v; }", // parameterized
+    "interface I { I1.I2 v; interface I2 {} }", // simple
+    "interface I1<T> { I1<String>. @Annotation I2 v; interface I2 {} }", // qualified
+    "interface I1 { I1. @Annotation I2 v; interface I2 {} }", // name qualified
+  })
+  void test_abstract_type_tree_is_not_null(String source) {
+    CompilationUnitTree cu = test(source);
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    VariableTreeImpl v = (VariableTreeImpl) c.members().get(0);
+    AbstractTypedTree t = (AbstractTypedTree) v.type();
+    assertThat(t.typeBinding).isNotNull();
+  }
+
