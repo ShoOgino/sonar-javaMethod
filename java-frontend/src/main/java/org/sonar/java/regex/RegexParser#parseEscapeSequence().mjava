@@ -46,11 +46,28 @@
           return parseUnicodeEscape(backslash);
         case 'x':
           return parseHexEscape(backslash);
+        case 't':
+        case 'n':
+        case 'r':
+        case 'f':
+        case 'a':
+        case 'e':
+          characters.moveNext();
+          char c = simpleEscapeToCharacter(character.getCharacter());
+          IndexRange range = backslash.getRange().extendTo(characters.getCurrentStartIndex());
+          return plainCharacter(new JavaCharacter(source, range, c, true));
+        case 'c':
+          return parseControlSequence(backslash);
+        case 'N':
+          return parseNamedUnicodeCharacter(backslash);
+        case 'R':
+        case 'X':
+          characters.moveNext();
+          return new MiscEscapeSequenceTree(source, backslash.getRange().extendTo(characters.getCurrentStartIndex()));
         case 'E':
           error("\\E used without \\Q");
           // Fallthrough
         default:
-          // TODO other kind of escape sequences such as special characters, N, R or X
           characters.moveNext();
           return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
       }

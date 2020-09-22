@@ -1,0 +1,14 @@
+  @Test
+  void testControlCharacters() {
+    assertPlainCharacter('\u0000', true, "\\\\c@");
+    assertPlainCharacter('\u0001', true, "\\\\cA");
+    assertPlainCharacter('\u001A', true, "\\\\cZ");
+    assertPlainCharacter('\u001B', true, "\\\\c[");
+    assertPlainCharacter('\u001C', true, "\\\\c\\\\");
+    assertPlainCharacter('\u001D', true, "\\\\c]");
+    assertPlainCharacter('\u001E', true, "\\\\c^");
+    assertPlainCharacter('\u001F', true, "\\\\c_");
+    assertPlainCharacter('\u007F', true, "\\\\c?");
+    assertFailParsing("\\\\c", "Expected any character, but found the end of the regex");
+  }
+

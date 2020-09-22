@@ -1,0 +1,13 @@
+  private RegexTree parseControlSequence(JavaCharacter backslash) {
+    JavaCharacter c = characters.getCurrent();
+    characters.moveNext();
+    if (characters.isAtEnd()) {
+      expected("any character");
+      return plainCharacter(c);
+    }
+    char controlCharacter = (char) (0x40 ^ characters.getCurrentChar());
+    characters.moveNext();
+    IndexRange range = backslash.getRange().extendTo(characters.getCurrentStartIndex());
+    return plainCharacter(new JavaCharacter(source, range, controlCharacter, true));
+  }
+
