@@ -2,6 +2,10 @@
   public void visitVariable(VariableTree variable) {
     if (isOptionalType(variable.type())) {
       checkNullableAnnotation(variable.modifiers(), "\"Optional\" variables should not be \"@Nullable\".");
+      ExpressionTree initializer = variable.initializer();
+      if (initializer != null && isNull(initializer)) {
+        context.reportIssue(this, initializer, "Replace this null literal by an \"Optional\" object.");
+      }
     }
 
     super.visitVariable(variable);
