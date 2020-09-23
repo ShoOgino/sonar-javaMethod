@@ -1,0 +1,12 @@
+  private MethodYield newHappyPathYield(ExplodedGraph.Node nodeForYield, boolean expectReturnValue, @Nullable SymbolicValue resultSV) {
+    HappyPathYield happyPathYield = new HappyPathYield(nodeForYield, this);
+    if (expectReturnValue) {
+      ConstraintsByDomain cleanup = cleanup(nodeForYield.programState.getConstraints(resultSV), -1);
+      if (cleanup.isEmpty()) {
+        cleanup = null;
+      }
+      happyPathYield.setResult(parameters.indexOf(resultSV), cleanup);
+    }
+    return happyPathYield;
+  }
+

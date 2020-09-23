@@ -1,4 +1,14 @@
   public void createYield(ExplodedGraph.Node node) {
-    createYield(node, true);
+    boolean expectReturnValue = !(SignatureUtils.isConstructor(signature) || SignatureUtils.isVoidMethod(signature));
+    SymbolicValue resultSV = node.programState.exitValue();
+
+    MethodYield yield;
+    if ((resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
+      yield = newExceptionalYield(node, resultSV);
+    } else {
+      yield = newHappyPathYield(node, expectReturnValue, resultSV);
+    }
+    addParameterConstraints(node, yield);
+    yields.add(yield);
   }
 
