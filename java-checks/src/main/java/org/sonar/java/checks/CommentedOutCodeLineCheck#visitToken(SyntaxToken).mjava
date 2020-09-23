@@ -1,0 +1,18 @@
+  @Override
+  public void visitToken(SyntaxToken syntaxToken) {
+    List<AnalyzerMessage> issues = new ArrayList<>();
+    AnalyzerMessage previousRelatedIssue = null;
+    int previousCommentLine = -1;
+    for (SyntaxTrivia syntaxTrivia : syntaxToken.trivias()) {
+      if (syntaxTrivia.startLine() != previousCommentLine + 1 && syntaxTrivia.startLine() != previousCommentLine) {
+        previousRelatedIssue = null;
+      }
+      if (!isHeader(syntaxTrivia) && !isJavadoc(syntaxTrivia.comment()) && !isJSNI(syntaxTrivia.comment())) {
+        previousRelatedIssue = collectIssues(issues, syntaxTrivia, previousRelatedIssue);
+        previousCommentLine = syntaxTrivia.startLine();
+      }
+    }
+    DefaultJavaFileScannerContext scannerContext = (DefaultJavaFileScannerContext) this.context;
+    issues.forEach(scannerContext::reportIssue);
+  }
+

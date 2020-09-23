@@ -1,0 +1,19 @@
+  public AnalyzerMessage collectIssues(List<AnalyzerMessage> issues, SyntaxTrivia syntaxTrivia, @Nullable AnalyzerMessage previousRelatedIssue) {
+    String[] lines = syntaxTrivia.comment().split("\r\n?|\n");
+    AnalyzerMessage issue = previousRelatedIssue;
+    for (int lineOffset = 0; lineOffset < lines.length; lineOffset++) {
+      String line = lines[lineOffset];
+      if (!isJavadocLink(line) && codeRecognizer.isLineOfCode(line)) {
+        int startLine = syntaxTrivia.startLine() + lineOffset;
+        int startColumn = (lineOffset == 0 ? syntaxTrivia.column() : 0);
+        if (issue != null) {
+          issue.flows.add(Collections.singletonList(createAnalyzerMessage(startLine, startColumn, line, "Code")));
+        } else {
+          issue = createAnalyzerMessage(startLine, startColumn, line, MESSAGE);
+          issues.add(issue);
+        }
+      }
+    }
+    return issue;
+  }
+
