@@ -2,9 +2,9 @@
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
     findRequestMappingAnnotation(classTree.modifiers())
-      .flatMap(SpringRequestMappingMethodCheck::findRequestMethod)
-      .filter(SpringRequestMappingMethodCheck::hasMoreThanOneValue)
-      .ifPresent(assignment -> reportIssue(assignment.expression(), "Consider narrowing this list of methods to one."));
+      .flatMap(SpringRequestMappingMethodCheck::findRequestMethods)
+      .filter(SpringRequestMappingMethodCheck::mixSafeAndUnsafeMethods)
+      .ifPresent(methods -> reportIssue(methods, "Make sure allowing safe and unsafe HTTP methods is safe here."));
 
     classTree.members().stream()
       .filter(member -> member.is(Tree.Kind.METHOD))

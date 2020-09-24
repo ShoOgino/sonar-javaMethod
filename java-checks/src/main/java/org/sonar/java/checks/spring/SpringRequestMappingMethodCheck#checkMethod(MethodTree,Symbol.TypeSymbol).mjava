@@ -1,12 +1,12 @@
   private void checkMethod(MethodTree method, Symbol.TypeSymbol classSymbol) {
     Optional<AnnotationTree> requestMappingAnnotation = findRequestMappingAnnotation(method.modifiers());
-    Optional<AssignmentExpressionTree> requestMethod = requestMappingAnnotation
-      .flatMap(SpringRequestMappingMethodCheck::findRequestMethod);
+    Optional<ExpressionTree> requestMethods = requestMappingAnnotation
+      .flatMap(SpringRequestMappingMethodCheck::findRequestMethods);
 
-    if (requestMethod.isPresent()) {
-      requestMethod
-        .filter(SpringRequestMappingMethodCheck::hasMoreThanOneValue)
-        .ifPresent(assignment -> reportIssue(assignment.expression(), "Consider narrowing this list of methods to one."));
+    if (requestMethods.isPresent()) {
+      requestMethods
+        .filter(SpringRequestMappingMethodCheck::mixSafeAndUnsafeMethods)
+        .ifPresent(methods -> reportIssue(methods, "Make sure allowing safe and unsafe HTTP methods is safe here."));
     } else if (requestMappingAnnotation.isPresent() && !inheritRequestMethod(classSymbol)) {
       reportIssue(requestMappingAnnotation.get().annotationType(), "Add a \"method\" parameter to this \"@RequestMapping\" annotation.");
     }

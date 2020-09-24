@@ -1,0 +1,9 @@
+  private static Optional<ExpressionTree> findRequestMethods(AnnotationTree annotation) {
+    return annotation.arguments().stream()
+      .filter(argument -> argument.is(Tree.Kind.ASSIGNMENT))
+      .map(AssignmentExpressionTree.class::cast)
+      .filter(assignment -> REQUEST_METHOD.equals(((IdentifierTree) assignment.variable()).name()))
+      .map(AssignmentExpressionTree::expression)
+      .findFirst();
+  }
+
