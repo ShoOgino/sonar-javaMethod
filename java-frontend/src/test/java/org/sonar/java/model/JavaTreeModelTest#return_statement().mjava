@@ -1,20 +1,11 @@
-  /**
-   * 14.17. The return Statement
-   */
   @Test
   void return_statement() {
-    ReturnStatementTree tree = (ReturnStatementTree) firstMethodFirstStatement("class T { boolean m() { return ; } }");
-    assertThat(tree.is(Tree.Kind.RETURN_STATEMENT)).isTrue();
-    assertThat(tree.returnKeyword().text()).isEqualTo("return");
-    assertThat(tree.expression()).isNull();
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 2);
-
-    tree = (ReturnStatementTree) firstMethodFirstStatement("class T { boolean m() { return true; } }");
-    assertThat(tree.is(Tree.Kind.RETURN_STATEMENT)).isTrue();
-    assertThat(tree.returnKeyword().text()).isEqualTo("return");
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 3);
+    ReturnStatementTree tree = (ReturnStatementTree) firstMethodFirstStatement("class T { boolean m() { return true; } }");
+    assertThat(tree)
+      .is(Tree.Kind.RETURN_STATEMENT)
+      .hasChildrenSize(3);
+    assertThat(tree.returnKeyword()).is("return");
+    assertThat(tree.expression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.semicolonToken()).is(";");
   }
 

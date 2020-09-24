@@ -1,0 +1,12 @@
+  @Test
+  void empty_statement_after_imports() {
+    CompilationUnitTree tree = compilationUnit("import foo; import bar; ; class Foo {} class Bar {}");
+    assertThat(tree)
+      .is(Tree.Kind.COMPILATION_UNIT)
+      .hasChildrenSize(6);
+    assertThat(tree.packageDeclaration()).isNull();
+    assertThat(tree.imports()).hasSize(3);
+    assertThat(tree.imports().get(2)).is(Tree.Kind.EMPTY_STATEMENT);
+    assertThat(tree.types()).hasSize(2);
+  }
+

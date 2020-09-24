@@ -1,0 +1,21 @@
+    @Test
+    void two_dimension_but_one_annotated() {
+      VariableTree field = (VariableTree) firstTypeMember("class T { int[] @Foo [] a; }");
+      assertThat(field).hasChildrenSize(4);
+      assertThat(field.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) field.type();
+      assertThat(arrayTypeTree)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+
+      ArrayTypeTree childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+      assertThat(childArrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(childArrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

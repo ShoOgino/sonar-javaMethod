@@ -1,0 +1,33 @@
+    @Test
+    void enum_constant() {
+      List<Tree> declarations = firstType("enum T { C1, C2(2) { }; }").members();
+      assertThat(declarations).hasSize(2);
+
+      EnumConstantTree c1 = (EnumConstantTree) declarations.get(0);
+      assertThat(c1)
+        .is(Tree.Kind.ENUM_CONSTANT)
+        .hasChildrenSize(3);
+      assertThat(c1.simpleName()).hasName("C1");
+      assertThat(c1.separatorToken()).is(",");
+      NewClassTree c1Initializer = c1.initializer();
+      assertThat(c1Initializer.arguments()).isEmpty();
+      assertThat(c1Initializer.classBody()).isNull();
+      assertThat(c1Initializer.newKeyword()).isNull();
+      assertThat(c1Initializer).hasChildrenSize(2);
+
+      EnumConstantTree c2 = (EnumConstantTree) declarations.get(1);
+      assertThat(c2)
+        .is(Tree.Kind.ENUM_CONSTANT)
+        .hasChildrenSize(3);
+      assertThat(c2.simpleName()).hasName("C2");
+      assertThat(c2.separatorToken()).is(";");
+      NewClassTree c2Initializer = c2.initializer();
+      assertThat(c2Initializer.arguments().openParenToken()).is("(");
+      assertThat(c2Initializer.arguments()).hasSize(1);
+      assertThat(c2Initializer.arguments().closeParenToken()).is(")");
+      assertThat(c2Initializer.classBody()).is(Tree.Kind.CLASS);
+      assertThat(c2Initializer.classBody().openBraceToken()).is("{");
+      assertThat(c2Initializer.newKeyword()).isNull();
+      assertThat(c2Initializer).hasChildrenSize(3);
+    }
+

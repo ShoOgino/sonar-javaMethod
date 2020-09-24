@@ -1,0 +1,15 @@
+    @Test
+    void foreach_statement() {
+      ForEachStatement tree = (ForEachStatement) firstMethodFirstStatement("class T { void m() { for (Object o : objects) ; } }");
+      assertThat(tree)
+        .is(Tree.Kind.FOR_EACH_STATEMENT)
+        .hasChildrenSize(7);
+      assertThat(tree.forKeyword()).is("for");
+      assertThat(tree.openParenToken()).is("(");
+      assertThat(tree.variable()).is(Tree.Kind.VARIABLE);
+      assertThat(tree.colonToken()).is(":");
+      assertThat(tree.expression()).is(Tree.Kind.IDENTIFIER);
+      assertThat(tree.closeParenToken()).is(")");
+      assertThat(tree.statement()).is(Tree.Kind.EMPTY_STATEMENT);
+    }
+

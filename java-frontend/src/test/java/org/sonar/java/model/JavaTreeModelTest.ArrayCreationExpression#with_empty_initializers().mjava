@@ -1,0 +1,12 @@
+    @Test
+    void with_empty_initializers() {
+      NewArrayTree tree = (NewArrayTree) ((VariableTree) firstMethodFirstStatement("class T { void m() { int[] a = {,}; }}")).initializer();
+      assertThat(tree).is(Tree.Kind.NEW_ARRAY);
+      assertThat(tree.type()).isNull();
+      assertThat(tree.dimensions()).isEmpty();
+      assertThat(tree.initializers())
+        // FIXME missing separator
+        .hasEmptySeparators()
+        .isEmpty();
+    }
+

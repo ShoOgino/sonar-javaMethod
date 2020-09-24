@@ -3,17 +3,18 @@
    */
   @Test
   void postfix_expression() {
-    UnaryExpressionTree tree;
-    tree = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { i++; } }"))).expression();
-    assertThat(tree.is(Tree.Kind.POSTFIX_INCREMENT)).isTrue();
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("++");
-    assertThatChildrenIteratorHasSize(tree, 2);
+    UnaryExpressionTree postfixIncrement = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { i++; } }"))).expression();
+    assertThat(postfixIncrement)
+      .is(Tree.Kind.POSTFIX_INCREMENT)
+      .hasChildrenSize(2);
+    assertThat(postfixIncrement.expression()).is(Tree.Kind.IDENTIFIER);
+    assertThat(postfixIncrement.operatorToken()).is("++");
 
-    tree = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { i--; } }"))).expression();
-    assertThat(tree.is(Tree.Kind.POSTFIX_DECREMENT)).isTrue();
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("--");
-    assertThatChildrenIteratorHasSize(tree, 2);
+    UnaryExpressionTree postfixDecrement = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { i--; } }"))).expression();
+    assertThat(postfixDecrement)
+      .is(Tree.Kind.POSTFIX_DECREMENT)
+      .hasChildrenSize(2);
+    assertThat(postfixDecrement.expression()).is(Tree.Kind.IDENTIFIER);
+    assertThat(postfixDecrement.operatorToken()).is("--");
   }
 

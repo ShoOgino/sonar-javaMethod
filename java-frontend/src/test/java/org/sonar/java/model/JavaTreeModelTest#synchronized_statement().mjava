@@ -4,12 +4,13 @@
   @Test
   void synchronized_statement() {
     SynchronizedStatementTree tree = (SynchronizedStatementTree) firstMethodFirstStatement("class T { void m() { synchronized(e) { } } }");
-    assertThat(tree.is(Tree.Kind.SYNCHRONIZED_STATEMENT)).isTrue();
-    assertThat(tree.synchronizedKeyword().text()).isEqualTo("synchronized");
-    assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.closeParenToken().text()).isEqualTo(")");
-    assertThat(tree.block()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 5);
+    assertThat(tree)
+      .is(Tree.Kind.SYNCHRONIZED_STATEMENT)
+      .hasChildrenSize(5);
+    assertThat(tree.synchronizedKeyword()).is("synchronized");
+    assertThat(tree.openParenToken()).is("(");
+    assertThat(tree.expression()).is(Tree.Kind.IDENTIFIER);
+    assertThat(tree.closeParenToken()).is(")");
+    assertThat(tree.block()).is(Tree.Kind.BLOCK);
   }
 

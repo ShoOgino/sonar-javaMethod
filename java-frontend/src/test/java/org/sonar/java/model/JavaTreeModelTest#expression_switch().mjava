@@ -7,17 +7,12 @@
   @Test
   void expression_switch() {
     SwitchExpressionTree tree = (SwitchExpressionTree) expressionOfReturnStatement("class T { Object m() { return switch (0) { default -> 0; case 0 -> 0; }; } }");
-    assertThat(tree.kind()).isEqualTo(Tree.Kind.SWITCH_EXPRESSION);
+    assertThat(tree).is(Tree.Kind.SWITCH_EXPRESSION);
     assertThat(tree.cases()).hasSize(2);
-    YieldStatementTree statement = (YieldStatementTree) tree.cases().get(0).body().get(0);
-    assertThat(statement.yieldKeyword()).as("implicit yield-statement").isNull();
-    assertThat(statement.expression().kind()).isEqualTo(Tree.Kind.INT_LITERAL);
 
-    tree = (SwitchExpressionTree) expressionOfReturnStatement("class T { Object m() { return switch (0) { default: yield 0; case 0: yield 0; }; } }");
-    assertThat(tree.kind()).isEqualTo(Tree.Kind.SWITCH_EXPRESSION);
-    assertThat(tree.cases()).hasSize(2);
-    statement = (YieldStatementTree) tree.cases().get(0).body().get(0);
-    assertThat(statement.yieldKeyword().text()).isEqualTo("yield");
-    assertThat(statement.expression().kind()).isEqualTo(Tree.Kind.INT_LITERAL);
+    YieldStatementTree statement = (YieldStatementTree) tree.cases().get(0).body().get(0);
+    assertThat(statement).is(Tree.Kind.YIELD_STATEMENT);
+    assertThat(statement.yieldKeyword()).as("implicit yield-statement").isNull();
+    assertThat(statement.expression()).is(Tree.Kind.INT_LITERAL);
   }
 

@@ -1,0 +1,20 @@
+    @Test
+    void annotated_extends_wildcard() {
+      VariableTree variableTree = (VariableTree) firstMethodFirstStatement("public class T { void m() { ClassType<@Foo ? extends A> var; } }");
+      ParameterizedTypeTree parameterizedTypeTree = (ParameterizedTypeTree) variableTree.type();
+      assertThat(parameterizedTypeTree).hasChildrenSize(2);
+
+      TypeArguments typeArguments = parameterizedTypeTree.typeArguments();
+      assertThat(typeArguments).hasChildrenSize(3);
+
+      WildcardTree wildcard = (WildcardTree) typeArguments.get(0);
+      assertThat(wildcard)
+        .is(Tree.Kind.EXTENDS_WILDCARD)
+        .hasChildrenSize(4);
+      assertThat(wildcard.bound()).is(Tree.Kind.IDENTIFIER);
+      assertThat(wildcard.queryToken()).is("?");
+      assertThat(wildcard.annotations()).hasSize(1);
+      assertThat(wildcard.extendsOrSuperToken()).is("extends");
+
+    }
+

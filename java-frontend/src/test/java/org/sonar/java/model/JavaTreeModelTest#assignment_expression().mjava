@@ -5,10 +5,11 @@
   void assignment_expression() {
     String code = "class T { void m() { a += 42; } }";
     AssignmentExpressionTree tree = (AssignmentExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(code)).expression();
-    assertThat(tree.is(Tree.Kind.PLUS_ASSIGNMENT)).isTrue();
-    assertThat(tree.variable()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("+=");
-    assertThat(tree.expression()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
+    assertThat(tree)
+      .is(Tree.Kind.PLUS_ASSIGNMENT)
+      .hasChildrenSize(3);
+    assertThat(tree.variable()).is(Tree.Kind.IDENTIFIER);
+    assertThat(tree.operatorToken()).is("+=");
+    assertThat(tree.expression()).is(Tree.Kind.INT_LITERAL);
   }
 

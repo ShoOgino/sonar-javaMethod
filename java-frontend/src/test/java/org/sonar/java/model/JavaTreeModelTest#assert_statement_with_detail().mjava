@@ -1,0 +1,13 @@
+  @Test
+  void assert_statement_with_detail() {
+    AssertStatementTree tree = (AssertStatementTree) firstMethodFirstStatement("class T { void m() { assert true : \"detail\"; } }");
+    assertThat(tree)
+      .is(Tree.Kind.ASSERT_STATEMENT)
+      .hasChildrenSize(5);
+    assertThat(tree.assertKeyword()).is("assert");
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.colonToken()).is(":");
+    assertThat(tree.detail()).is(Tree.Kind.STRING_LITERAL);
+    assertThat(tree.semicolonToken()).is(";");
+  }
+

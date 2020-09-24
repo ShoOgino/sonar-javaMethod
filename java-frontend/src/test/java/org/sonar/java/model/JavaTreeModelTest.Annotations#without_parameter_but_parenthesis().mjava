@@ -1,0 +1,17 @@
+    @Test
+    void without_parameter_but_parenthesis() {
+      List<AnnotationTree> annotations = annotations("@Target( ) class U {}");
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.atToken()).is("@");
+
+      Arguments arguments = annotation.arguments();
+      assertThat(arguments)
+        .hasEmptySeparators()
+        .isEmpty();
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments.closeParenToken()).is(")");
+    }
+

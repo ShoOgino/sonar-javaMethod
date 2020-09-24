@@ -1,0 +1,16 @@
+    @Test
+    void annotated_intersection_type_with_multiple_bounds() {
+      TypeCastTree tree = (TypeCastTree) expressionOfReturnStatement("class T { boolean m() { return (Foo<T> & @Gul Bar & Qix & Plop) true; } }");
+      assertThat(tree)
+        .is(Tree.Kind.TYPE_CAST)
+        .hasChildrenSize(6);
+      assertThat(tree.openParenToken()).is("(");
+      assertThat(tree.type()).is(Tree.Kind.PARAMETERIZED_TYPE);
+      assertThat(tree.andToken()).is("&");
+      assertThat(tree.bounds())
+        .hasSize(3)
+        .hasSeparatorsSize(2);
+      assertThat(tree.closeParenToken()).is(")");
+      assertThat(tree.expression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    }
+

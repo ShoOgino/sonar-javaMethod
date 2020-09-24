@@ -1,0 +1,16 @@
+    @Test
+    void super_invocation() {
+      MethodInvocationTree tree = firstMethodInvocation("class T { T() { super.identifier(true, false); } }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD_INVOCATION)
+        .hasChildrenSize(2);
+      assertThat(tree.arguments()).hasSize(2);
+      assertThat(tree.typeArguments()).isNull();
+
+      MemberSelectExpressionTree memberSelectExpression = (MemberSelectExpressionTree) tree.methodSelect();
+      assertThat(memberSelectExpression).hasChildrenSize(3);
+      assertThat(memberSelectExpression.identifier()).hasName("identifier");
+      assertThat(memberSelectExpression.operatorToken()).is(".");
+      assertThat(((IdentifierTree) memberSelectExpression.expression())).hasName("super");
+    }
+

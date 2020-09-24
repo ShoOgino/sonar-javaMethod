@@ -1,0 +1,21 @@
+    @Test
+    void method_varArg() {
+      MethodTree tree = (MethodTree) firstTypeMember("class T { public int[] m(int p1, int... p2)[] throws Exception1, Exception2 {} }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(11);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.returnType()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat(((ArrayTypeTree) tree.returnType()).type()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat(((ArrayTypeTree) ((ArrayTypeTree) tree.returnType()).type()).type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).hasSize(2);
+      assertThat(tree.parameters().get(0).type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.parameters().get(1).type()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat(tree.throwsClauses())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.defaultValue()).isNull();
+    }
+

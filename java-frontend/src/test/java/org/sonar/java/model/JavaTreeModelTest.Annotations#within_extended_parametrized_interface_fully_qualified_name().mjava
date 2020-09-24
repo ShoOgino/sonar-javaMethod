@@ -1,0 +1,23 @@
+    @Test
+    void within_extended_parametrized_interface_fully_qualified_name() {
+      ClassTree classTree = firstType("class T extends a.b. @Foo C<Integer> {}");
+      assertThat(classTree).hasChildrenSize(9);
+      assertThat(classTree.modifiers()).isEmpty();
+
+      TypeTree superClass = classTree.superClass();
+      assertThat(superClass)
+        .is(Tree.Kind.PARAMETERIZED_TYPE)
+        .hasChildrenSize(2);
+      assertThat(superClass.annotations()).isEmpty();
+
+      TypeTree abC = ((ParameterizedTypeTree) superClass).type();
+      assertThat(abC)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(abC.annotations()).isEmpty();
+
+      TypeTree fooC = ((MemberSelectExpressionTree) abC).identifier();
+      assertThat(fooC).hasChildrenSize(2);
+      assertThat(fooC.annotations()).hasSize(1);
+    }
+

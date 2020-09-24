@@ -1,0 +1,16 @@
+  @Test
+  void type_parameters() {
+    ParameterizedTypeTree tree = (ParameterizedTypeTree) firstType("class Foo<E> extends List<E> {}").superClass();
+    assertThat(tree)
+      .is(Tree.Kind.PARAMETERIZED_TYPE)
+      .hasChildrenSize(2);
+    TypeArguments typeArguments = tree.typeArguments();
+    assertThat(typeArguments)
+      .is(Tree.Kind.TYPE_ARGUMENTS)
+      .hasSize(1)
+      .hasChildrenSize(3)
+      .hasEmptySeparators();
+    assertThat(typeArguments.openBracketToken()).is("<");
+    assertThat(typeArguments.closeBracketToken()).is(">");
+  }
+

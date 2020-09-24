@@ -1,0 +1,14 @@
+    @Test
+    void annotation_method() {
+      MethodTree tree = (MethodTree) firstTypeMember("@interface T { int m() default 0; }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(9);
+      assertThat(tree.returnType()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).isEmpty();
+      assertThat(tree.throwsClauses()).isEmpty();
+      assertThat(tree.block()).isNull();
+      assertThat(tree.defaultValue()).is(Tree.Kind.INT_LITERAL);
+    }
+

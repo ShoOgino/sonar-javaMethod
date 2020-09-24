@@ -1,0 +1,9 @@
+    @Test
+    void super_invocation() {
+      MethodInvocationTree tree = firstConstructorInvocation("class T { T() { super(true, false); } }");
+      assertThat(tree).is(Tree.Kind.METHOD_INVOCATION);
+      assertThat(((IdentifierTree) tree.methodSelect())).hasName("super");
+      assertThat(tree.arguments()).hasSize(2);
+      assertThat(tree.typeArguments()).isNull();
+    }
+

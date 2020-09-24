@@ -1,0 +1,12 @@
+    @Test
+    void array_class() {
+      MemberSelectExpressionTree tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { m() { return int[].class; } }");
+      assertThat(tree)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(tree.expression()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat((ArrayTypeTree) tree.expression()).isDeclaredArrayDimension();
+      assertThat(tree.identifier()).hasName("class");
+      assertThat(tree.operatorToken()).is(".");
+    }
+

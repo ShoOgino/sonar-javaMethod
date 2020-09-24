@@ -1,0 +1,25 @@
+    @Test
+    @SuppressWarnings("deprecation")
+    @Disabled("ECJ does not count number of labels correctly")
+    void switch_expression() {
+       ReturnStatementTree rst = (ReturnStatementTree) firstMethodFirstStatement("class T {\n" +
+       "  int m(int e) {\n" +
+       "    return switch (e) {\n" +
+       "      case 1 -> 0;\n" +
+       "      case 2, 3 -> 1;\n" +
+       "      default -> 42;\n" +
+       "    };\n" +
+       "  }\n" +
+       "}");
+       SwitchExpressionTree switchExpression = (SwitchExpressionTree) rst.expression();
+       assertThat(switchExpression.cases()).hasSize(3);
+       CaseGroupTree c = switchExpression.cases().get(1);
+       assertThat(c.labels()).hasSize(2); // fails here
+       CaseLabelTree caseLabelTree = c.labels().get(1);
+       assertThat(caseLabelTree.isFallThrough()).isFalse();
+       assertThat(caseLabelTree.caseOrDefaultKeyword()).is("case");
+       assertThat(caseLabelTree.expression()).is(Tree.Kind.BLOCK);
+       assertThat(caseLabelTree.colonOrArrowToken()).is("->");
+       assertThat(c.body()).hasSize(1);
+    }
+

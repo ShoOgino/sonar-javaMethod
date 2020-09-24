@@ -1,0 +1,11 @@
+    @Test
+    void on_variable_fully_qualifed_type() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void m() { @Foo java.lang.Integer foo; } }");
+      assertThat(variable).hasChildrenSize(4);
+      assertThat(variable.modifiers().annotations()).hasSize(1);
+
+      TypeTree type = variable.type();
+      assertThat(type).is(Tree.Kind.MEMBER_SELECT);
+      assertThat(type.annotations()).isEmpty();
+    }
+

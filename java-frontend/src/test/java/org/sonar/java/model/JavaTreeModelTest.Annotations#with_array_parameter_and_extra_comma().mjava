@@ -1,0 +1,22 @@
+    @Test
+    void with_array_parameter_and_extra_comma() {
+      List<AnnotationTree> annotations = annotations("@SuppressWarnings({\"hello\",}) class U {}");
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.atToken()).is("@");
+
+      Arguments arguments = annotation.arguments();
+      assertThat(arguments).hasSize(1);
+      assertThat(arguments.get(0)).is(Tree.Kind.NEW_ARRAY);
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments.closeParenToken()).is(")");
+
+      ListTree<ExpressionTree> initializers = ((NewArrayTree) arguments.get(0)).initializers();
+      assertThat(initializers)
+        .hasSeparatorsSize(1)
+        .hasSize(1);
+      assertThat(initializers.get(0)).is(Tree.Kind.STRING_LITERAL);
+    }
+

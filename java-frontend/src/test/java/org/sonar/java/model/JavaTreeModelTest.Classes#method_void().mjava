@@ -1,0 +1,17 @@
+    @Test
+    void method_void() {
+      MethodTree tree = (MethodTree) firstTypeMember("class T { public void m(int p) throws Exception1, Exception2 {} }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(10);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.typeParameters()).isEmpty();
+      assertThat(tree.returnType()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).hasSize(1);
+      assertThat(tree.parameters().get(0).endToken()).isNull();
+      assertThat(tree.throwsClauses()).hasSize(2);
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.defaultValue()).isNull();
+    }
+

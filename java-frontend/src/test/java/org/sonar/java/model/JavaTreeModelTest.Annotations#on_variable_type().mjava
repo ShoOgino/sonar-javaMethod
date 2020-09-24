@@ -1,0 +1,15 @@
+    @Test
+    void on_variable_type() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void meth() { @Foo String str; } }");
+      assertThat(variable).hasChildrenSize(4);
+
+      List<AnnotationTree> annotations = variable.modifiers().annotations();
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.annotationType()).is(Tree.Kind.IDENTIFIER);
+      assertThat(annotation.atToken()).is("@");
+      assertThat(annotation.arguments()).isEmpty();
+    }
+

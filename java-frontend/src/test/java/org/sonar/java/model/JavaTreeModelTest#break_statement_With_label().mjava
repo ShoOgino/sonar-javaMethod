@@ -1,0 +1,13 @@
+  @Test
+  @SuppressWarnings("deprecation")
+  void break_statement_With_label() {
+    BreakStatementTree tree = (BreakStatementTree) firstMethodFirstStatement("class T { void m() { break label ; } }");
+    assertThat(tree)
+      .is(Tree.Kind.BREAK_STATEMENT)
+      .hasChildrenSize(3);
+    assertThat(tree.breakKeyword()).is("break");
+    assertThat(tree.label()).hasName("label");
+    assertThat(((IdentifierTree) tree.value())).hasName("label");
+    assertThat(tree.semicolonToken()).is(";");
+  }
+

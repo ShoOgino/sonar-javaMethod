@@ -1,33 +1,53 @@
   @Test
   void method_reference_expression_should_not_break_AST() throws Exception {
-    String code = "class T { public void meth(){IntStream.range(1,12).map(new MethodReferences()::<String>square).map(super::myMethod).map(int[]::new).forEach(System.out::println);}}";
-    MethodInvocationTree mit = (MethodInvocationTree) ((ExpressionStatementTree) firstMethodFirstStatement(code)).expression();
+    String code = "class T { public void meth() {"
+      + "  IntStream.range(1,12)"
+      + "    .map(new MethodReferences()::<String>square)"
+      + "    .map(super::myMethod)"
+      + "    .map(int[]::new)"
+      + "    .forEach(System.out::println);"
+      + "  }"
+      + "}";
+    MethodInvocationTree forEach = (MethodInvocationTree) ((ExpressionStatementTree) firstMethodFirstStatement(code)).expression();
 
-    MethodReferenceTree mrt = (MethodReferenceTree) mit.arguments().get(0);
-    assertThat(mrt.expression().is(Kind.MEMBER_SELECT)).isTrue();
-    assertThat(mrt.doubleColon()).isNotNull();
-    assertThatChildrenIteratorHasSize(mrt, 3);
+    MethodReferenceTree systemOutPrintln = (MethodReferenceTree) forEach.arguments().get(0);
+    assertThat(systemOutPrintln)
+      .is(Tree.Kind.METHOD_REFERENCE)
+      .hasChildrenSize(3);
+    assertThat(systemOutPrintln.expression()).is(Tree.Kind.MEMBER_SELECT);
+    assertThat(systemOutPrintln.typeArguments());
+    assertThat(systemOutPrintln.doubleColon()).is("::");
+    assertThat(systemOutPrintln.method()).hasName("println");
 
-    mit = (MethodInvocationTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression();
-    mrt = (MethodReferenceTree) mit.arguments().get(0);
-    assertThat(mrt.expression().is(Kind.ARRAY_TYPE)).isTrue();
-    assertThat(mrt.doubleColon()).isNotNull();
-    assertThat(mrt.method().name()).isEqualTo("new");
-    assertThatChildrenIteratorHasSize(mrt, 3);
+    MethodInvocationTree map3 = (MethodInvocationTree) ((MemberSelectExpressionTree) forEach.methodSelect()).expression();
+    MethodReferenceTree intNew = (MethodReferenceTree) map3.arguments().get(0);
+    assertThat(intNew)
+      .is(Tree.Kind.METHOD_REFERENCE)
+      .hasChildrenSize(3);
+    assertThat(intNew.expression()).is(Tree.Kind.ARRAY_TYPE);
+    assertThat(intNew.typeArguments()).isNull();
+    assertThat(intNew.doubleColon()).is("::");
+    assertThat(intNew.method()).hasName("new");
 
-    mit = (MethodInvocationTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression();
-    mrt = (MethodReferenceTree) mit.arguments().get(0);
-    assertThat(mrt.expression().is(Kind.IDENTIFIER)).isTrue();
-    assertThat(((IdentifierTree) mrt.expression()).name()).isEqualTo("super");
-    assertThat(mrt.doubleColon()).isNotNull();
-    assertThatChildrenIteratorHasSize(mrt, 3);
+    MethodInvocationTree map2 = (MethodInvocationTree) ((MemberSelectExpressionTree) map3.methodSelect()).expression();
+    MethodReferenceTree superMyMethod = (MethodReferenceTree) map2.arguments().get(0);
+    assertThat(superMyMethod)
+      .is(Tree.Kind.METHOD_REFERENCE)
+      .hasChildrenSize(3);
+    assertThat(superMyMethod.expression()).is(Tree.Kind.IDENTIFIER);
+    assertThat(((IdentifierTree) superMyMethod.expression())).hasName("super");
+    assertThat(superMyMethod.typeArguments()).isNull();
+    assertThat(superMyMethod.doubleColon()).is("::");
+    assertThat(superMyMethod.method()).hasName("myMethod");
 
-    mit = (MethodInvocationTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression();
-    mrt = (MethodReferenceTree) mit.arguments().get(0);
-    assertThat(mrt.expression().is(Kind.NEW_CLASS)).isTrue();
-    assertThat(mrt.doubleColon()).isNotNull();
-    assertThat(mrt.typeArguments()).isNotNull();
-    assertThat(mrt.method().name()).isEqualTo("square");
-    assertThatChildrenIteratorHasSize(mrt, 4);
+    MethodInvocationTree map1 = (MethodInvocationTree) ((MemberSelectExpressionTree) map2.methodSelect()).expression();
+    MethodReferenceTree methodReferenceSquar = (MethodReferenceTree) map1.arguments().get(0);
+    assertThat(methodReferenceSquar)
+      .is(Tree.Kind.METHOD_REFERENCE)
+      .hasChildrenSize(4);
+    assertThat(methodReferenceSquar.expression()).is(Tree.Kind.NEW_CLASS);
+    assertThat(methodReferenceSquar.typeArguments()).is(Tree.Kind.TYPE_ARGUMENTS);
+    assertThat(methodReferenceSquar.doubleColon()).is("::");
+    assertThat(methodReferenceSquar.method()).hasName("square");
   }
 

@@ -1,0 +1,13 @@
+    @Test
+    void on_new_array_dimension() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void m() { int[] foo = new @Foo int[42]; } }");
+      assertThat(variable).hasChildrenSize(6);
+      assertThat(variable.modifiers()).isEmpty();
+
+      TypeTree type = ((NewArrayTree) variable.initializer()).type();
+      assertThat(type)
+        .is(Tree.Kind.PRIMITIVE_TYPE)
+        .hasChildrenSize(2);
+      assertThat(type.annotations()).hasSize(1);
+    }
+

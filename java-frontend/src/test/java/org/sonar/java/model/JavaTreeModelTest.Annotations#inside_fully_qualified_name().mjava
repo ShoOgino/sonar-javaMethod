@@ -1,0 +1,12 @@
+    @Test
+    void inside_fully_qualified_name() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void m() { java.lang.@Foo Integer foo; } }");
+      assertThat(variable).hasChildrenSize(4);
+      assertThat(variable.modifiers()).isEmpty();
+
+      TypeTree type = variable.type();
+      assertThat(type).is(Tree.Kind.MEMBER_SELECT);
+      assertThat(type.annotations()).isEmpty();
+      assertThat(((MemberSelectExpressionTree) type).identifier().annotations()).hasSize(1);
+    }
+

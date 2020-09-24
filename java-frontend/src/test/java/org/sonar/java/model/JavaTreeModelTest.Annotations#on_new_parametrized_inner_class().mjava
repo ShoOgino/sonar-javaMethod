@@ -1,0 +1,19 @@
+    @Test
+    void on_new_parametrized_inner_class() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void m() { a.B.C<Integer> foo = a.B.new @Foo C<Integer>(); }}");
+      assertThat(variable).hasChildrenSize(6);
+      assertThat(variable.modifiers()).isEmpty();
+
+      TypeTree type = ((NewClassTree) variable.initializer()).identifier();
+      assertThat(type)
+        .is(Tree.Kind.PARAMETERIZED_TYPE)
+        .hasChildrenSize(2);
+      assertThat(type.annotations()).isEmpty();
+
+      TypeTree abc = ((ParameterizedTypeTree) type).type();
+      assertThat(abc)
+        .is(Tree.Kind.IDENTIFIER)
+        .hasChildrenSize(2);
+      assertThat(abc.annotations()).hasSize(1);
+    }
+

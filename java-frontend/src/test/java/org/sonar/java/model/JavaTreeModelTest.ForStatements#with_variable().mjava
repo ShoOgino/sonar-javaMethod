@@ -1,0 +1,13 @@
+    @Test
+    void with_variable() {
+      ForStatementTree tree = (ForStatementTree) firstMethodFirstStatement("class T { void m() { for (i = 0; i < 42; i ++) ; } }");
+      assertThat(tree)
+        .is(Tree.Kind.FOR_STATEMENT)
+        .hasChildrenSize(9);
+      assertThat(tree.initializer()).hasSize(1);
+      assertThat(tree.initializer().get(0)).is(Tree.Kind.EXPRESSION_STATEMENT);
+      assertThat(tree.condition()).is(Tree.Kind.LESS_THAN);
+      assertThat(tree.update()).is(Tree.Kind.LIST);
+      assertThat(tree.statement()).is(Tree.Kind.EMPTY_STATEMENT);
+    }
+

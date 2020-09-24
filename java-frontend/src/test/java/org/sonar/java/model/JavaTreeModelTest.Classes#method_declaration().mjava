@@ -1,0 +1,11 @@
+    @Test
+    void method_declaration() {
+      MethodTree tree = (MethodTree) firstTypeMember("class T { public int m(int p[][]){} }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(8);
+      assertThat(tree.parameters()).hasSize(1);
+      assertThat(tree.parameters().get(0).type()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat(((ArrayTypeTree) tree.parameters().get(0).type()).type()).is(Tree.Kind.ARRAY_TYPE);
+    }
+

@@ -1,0 +1,16 @@
+  @Test
+  void type_parameters_multiple() {
+    ParameterizedTypeTree tree = (ParameterizedTypeTree) firstType("class Mop<K,V> implements Map<K,V> {}").superInterfaces().get(0);
+    assertThat(tree)
+      .is(Tree.Kind.PARAMETERIZED_TYPE)
+      .hasChildrenSize(2);
+    TypeArguments typeArguments = tree.typeArguments();
+    assertThat(typeArguments)
+      .is(Tree.Kind.TYPE_ARGUMENTS)
+      .hasSize(2)
+      .hasSeparatorsSize(1)
+      .hasChildrenSize(5);
+    assertThat(typeArguments.openBracketToken()).is("<");
+    assertThat(typeArguments.closeBracketToken()).is(">");
+  }
+

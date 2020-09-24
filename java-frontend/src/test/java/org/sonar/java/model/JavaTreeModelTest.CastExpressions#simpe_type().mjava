@@ -1,0 +1,12 @@
+    @Test
+    void simpe_type() {
+      TypeCastTree tree = (TypeCastTree) expressionOfReturnStatement("class T { boolean m() { return (Boolean) true; } }");
+      assertThat(tree)
+        .is(Tree.Kind.TYPE_CAST)
+        .hasChildrenSize(5);
+      assertThat(tree.openParenToken()).is("(");
+      assertThat(tree.type()).is(Tree.Kind.IDENTIFIER);
+      assertThat(tree.closeParenToken()).is(")");
+      assertThat(tree.expression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    }
+

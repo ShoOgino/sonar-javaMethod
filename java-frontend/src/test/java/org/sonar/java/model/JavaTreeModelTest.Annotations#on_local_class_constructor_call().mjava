@@ -1,0 +1,13 @@
+    @Test
+    void on_local_class_constructor_call() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("class T { private void m() { a.B.C foo = a.B.new @Foo C(); } }");
+      assertThat(variable).hasChildrenSize(6);
+      assertThat(variable.modifiers()).isEmpty();
+
+      TypeTree type = ((NewClassTree) variable.initializer()).identifier();
+      assertThat(type)
+        .is(Tree.Kind.IDENTIFIER)
+        .hasChildrenSize(2);
+      assertThat(type.annotations()).hasSize(1);
+    }
+

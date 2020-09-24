@@ -1,24 +1,26 @@
   @Test
   void type_parameters_and_bounds() {
     TypeParameterListTreeImpl tree = (TypeParameterListTreeImpl) firstType("class Foo<T, U extends Object & Number> {}").typeParameters();
-    assertThat(tree.openBracketToken().text()).isEqualTo("<");
-    assertThat(tree.closeBracketToken().text()).isEqualTo(">");
-    assertThat(tree).hasSize(2);
-    assertThat(tree.separators()).hasSize(1);
-    assertThatChildrenIteratorHasSize(tree, 5);
+    assertThat(tree.openBracketToken()).is("<");
+    assertThat(tree.closeBracketToken()).is(">");
+    assertThat(tree)
+      .hasSize(2)
+      .hasSeparatorsSize(1)
+      .hasChildrenSize(5);
 
-    TypeParameterTree param = tree.get(0);
-    assertThat(param.identifier().name()).isEqualTo("T");
-    assertThat(param.bounds()).isEmpty();
-    assertThat(param.bounds().separators()).isEmpty();
-    assertThatChildrenIteratorHasSize(param, 1);
+    TypeParameterTree paramT = tree.get(0);
+    assertThat(paramT.identifier()).hasName("T");
+    assertThat(paramT.bounds()).isEmpty();
+    assertThat(paramT.bounds().separators()).isEmpty();
+    assertThat(paramT).hasChildrenSize(1);
 
-    param = tree.get(1);
-    assertThat(param.identifier().name()).isEqualTo("U");
-    assertThat(param.bounds()).hasSize(2);
-    assertThat(param.bounds().separators()).hasSize(1);
-    assertThat(((IdentifierTree) param.bounds().get(0)).name()).isEqualTo("Object");
-    assertThat(((IdentifierTree) param.bounds().get(1)).name()).isEqualTo("Number");
-    assertThatChildrenIteratorHasSize(param, 3);
+    TypeParameterTree paramU = tree.get(1);
+    assertThat(paramU.identifier()).hasName("U");
+    assertThat(paramU.bounds())
+      .hasSize(2)
+      .hasSeparatorsSize(1);
+    assertThat(((IdentifierTree) paramU.bounds().get(0))).hasName("Object");
+    assertThat(((IdentifierTree) paramU.bounds().get(1))).hasName("Number");
+    assertThat(paramU).hasChildrenSize(3);
   }
 

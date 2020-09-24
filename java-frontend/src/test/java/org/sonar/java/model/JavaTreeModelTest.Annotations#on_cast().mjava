@@ -1,0 +1,12 @@
+    @Test
+    void on_cast() {
+      TypeCastTree typeCast = (TypeCastTree) ((ReturnStatementTree) firstMethodFirstStatement("class T { private long m(int a) { return (@Foo long) a; } }")).expression();
+      assertThat(typeCast).hasChildrenSize(5);
+
+      TypeTree type = typeCast.type();
+      assertThat(type)
+        .is(Tree.Kind.PRIMITIVE_TYPE)
+        .hasChildrenSize(2);
+      assertThat(type.annotations()).hasSize(1);
+    }
+

@@ -1,0 +1,14 @@
+    @Test
+    void within_catch_clause() {
+      VariableTree variable = ((TryStatementTree) firstMethodFirstStatement("class T { private void m() { try{ } catch (@Foo E1 | E2 e) {}; } }")).catches().get(0).parameter();
+      assertThat(variable).hasChildrenSize(3);
+      assertThat(variable.modifiers()).hasSize(1);
+
+      TypeTree type = variable.type();
+      assertThat(type)
+        .is(Tree.Kind.UNION_TYPE)
+        .hasChildrenSize(1);
+      assertThat(type.annotations()).isEmpty();
+      assertThat(((UnionTypeTree) type).typeAlternatives()).hasSeparatorsSize(1);
+    }
+

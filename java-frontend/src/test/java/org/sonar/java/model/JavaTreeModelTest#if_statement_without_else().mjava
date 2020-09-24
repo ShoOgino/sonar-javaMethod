@@ -1,0 +1,18 @@
+  /**
+   * 14.9. The if Statement
+   */
+  @Test
+  void if_statement_without_else() {
+    IfStatementTree tree = (IfStatementTree) firstMethodFirstStatement("class T { void m() { if (true) { } } }");
+    assertThat(tree)
+      .is(Tree.Kind.IF_STATEMENT)
+      .hasChildrenSize(5);
+    assertThat(tree.ifKeyword()).is("if");
+    assertThat(tree.openParenToken()).is("(");
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.closeParenToken()).is(")");
+    assertThat(tree.thenStatement()).is(Tree.Kind.BLOCK);
+    assertThat(tree.elseKeyword()).isNull();
+    assertThat(tree.elseStatement()).isNull();
+  }
+

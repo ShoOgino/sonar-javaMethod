@@ -1,0 +1,22 @@
+    @Test
+    void different_dimension_position_with_annotation() {
+      VariableTree field = (VariableTree) firstTypeMember("class T { int[] a @Foo []; }");
+      assertThat(field).hasChildrenSize(4);
+      assertThat(field.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) field.type();
+      assertThat(arrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+
+      ArrayTypeTree childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+      assertThat(childArrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(childArrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

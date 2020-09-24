@@ -1,0 +1,12 @@
+    @Test
+    void simple() {
+      MethodTree method = (MethodTree) firstTypeMember("class T { int[] m(); }");
+      assertThat(method.returnType()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) method.returnType();
+      assertThat(arrayTypeTree)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

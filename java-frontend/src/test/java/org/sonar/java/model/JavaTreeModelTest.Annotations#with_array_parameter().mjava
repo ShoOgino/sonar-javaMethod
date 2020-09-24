@@ -1,0 +1,18 @@
+    @Test
+    void with_array_parameter() {
+      List<AnnotationTree> annotations = annotations("@Target({ElementType.METHOD}) class U {}");
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.atToken()).is("@");
+
+      Arguments arguments = annotation.arguments();
+      assertThat(arguments)
+        .hasEmptySeparators()
+        .hasSize(1);
+      assertThat(arguments.get(0)).is(Tree.Kind.NEW_ARRAY);
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments.closeParenToken()).is(")");
+    }
+

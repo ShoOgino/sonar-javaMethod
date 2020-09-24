@@ -1,0 +1,11 @@
+  @Test
+  void continue_statement_with_label() {
+    ContinueStatementTree tree = (ContinueStatementTree) firstMethodFirstStatement("class T { void m() { continue label ; } }");
+    assertThat(tree)
+      .is(Tree.Kind.CONTINUE_STATEMENT)
+      .hasChildrenSize(3);
+    assertThat(tree.continueKeyword()).is("continue");
+    assertThat(tree.label()).hasName("label");
+    assertThat(tree.semicolonToken()).is(";");
+  }
+

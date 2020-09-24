@@ -1,0 +1,44 @@
+    @Test
+    void with_initializers() {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[][]{{1}, {2, 3}}; } }");
+      assertThat(tree)
+        .is(Tree.Kind.NEW_ARRAY)
+        .hasChildrenSize(7);
+      assertThat(tree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.newKeyword()).is("new");
+
+      ArrayDimensionTree dim1 = tree.dimensions().get(0);
+      assertThat(dim1)
+        .is(Tree.Kind.ARRAY_DIMENSION)
+        .hasChildrenSize(2);
+      assertThat(dim1.annotations()).isEmpty();
+      assertThat(dim1.openBracketToken()).is("[");
+      assertThat(dim1.expression()).isNull();
+      assertThat(dim1.closeBracketToken()).is("]");
+
+      ArrayDimensionTree dim2 = tree.dimensions().get(1);
+      assertThat(dim2)
+        .is(Tree.Kind.ARRAY_DIMENSION)
+        .hasChildrenSize(2);
+      assertThat(dim2.annotations()).isEmpty();
+      assertThat(dim2.openBracketToken()).is("[");
+      assertThat(dim2.expression()).isNull();
+      assertThat(dim2.closeBracketToken()).is("]");
+
+      NewArrayTree firstDim = (NewArrayTree) tree.initializers().get(0);
+      assertThat(firstDim.initializers())
+        .hasSize(1)
+        .hasEmptySeparators();
+      assertThat(firstDim).hasChildrenSize(3);
+
+      NewArrayTree secondDim = (NewArrayTree) tree.initializers().get(1);
+      assertThat(secondDim.initializers())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(secondDim).hasChildrenSize(3);
+    }
+

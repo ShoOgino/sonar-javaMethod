@@ -4,17 +4,20 @@
   @Test
   void relational_expression() {
     String code = "class T { boolean m() { return 1 < 2 > 3; } }";
-    BinaryExpressionTree tree = (BinaryExpressionTree) expressionOfReturnStatement(code);
-    assertThat(tree.is(Tree.Kind.GREATER_THAN)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo(">");
-    assertThat(tree.rightOperand()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
-    tree = (BinaryExpressionTree) tree.leftOperand();
-    assertThat(tree.is(Kind.LESS_THAN)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("<");
-    assertThat(tree.rightOperand()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
+    BinaryExpressionTree parent = (BinaryExpressionTree) expressionOfReturnStatement(code);
+    assertThat(parent)
+      .is(Tree.Kind.GREATER_THAN)
+      .hasChildrenSize(3);
+    assertThat(parent.leftOperand()).is(Tree.Kind.LESS_THAN);
+    assertThat(parent.operatorToken()).is(">");
+    assertThat(parent.rightOperand()).is(Tree.Kind.INT_LITERAL);
+
+    BinaryExpressionTree leftChild = (BinaryExpressionTree) parent.leftOperand();
+    assertThat(leftChild)
+      .is(Tree.Kind.LESS_THAN)
+      .hasChildrenSize(3);
+    assertThat(leftChild.leftOperand()).is(Tree.Kind.INT_LITERAL);
+    assertThat(leftChild.operatorToken()).is("<");
+    assertThat(leftChild.rightOperand()).is(Tree.Kind.INT_LITERAL);
   }
 

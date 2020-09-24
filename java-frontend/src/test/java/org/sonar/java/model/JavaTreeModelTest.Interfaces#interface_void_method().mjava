@@ -1,0 +1,17 @@
+    @Test
+    void interface_void_method() {
+      MethodTree tree = (MethodTree) firstTypeMember("interface T { void m(int p) throws Exception1, Exception2; }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(10);
+      assertThat(tree.typeParameters()).isEmpty();
+      assertThat(tree.returnType()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).hasSize(1);
+      assertThat(tree.throwsClauses())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.block()).isNull();
+      assertThat(tree.defaultValue()).isNull();
+    }
+

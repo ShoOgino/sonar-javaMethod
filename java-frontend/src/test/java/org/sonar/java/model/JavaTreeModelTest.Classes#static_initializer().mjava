@@ -1,0 +1,13 @@
+    @Test
+    void static_initializer() {
+      BlockTree tree = (BlockTree) firstTypeMember("class T { static { ; ; } }");
+      assertThat(tree)
+        .is(Tree.Kind.STATIC_INITIALIZER)
+        .hasChildrenSize(5);
+      StaticInitializerTree staticInitializerTree = (StaticInitializerTree) tree;
+      assertThat(staticInitializerTree.body()).hasSize(2);
+      assertThat(staticInitializerTree.staticKeyword()).is("static");
+      assertThat(staticInitializerTree.openBraceToken()).is("{");
+      assertThat(staticInitializerTree.closeBraceToken()).is("}");
+    }
+

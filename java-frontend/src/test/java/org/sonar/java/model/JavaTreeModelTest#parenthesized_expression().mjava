@@ -4,10 +4,11 @@
   @Test
   void parenthesized_expression() {
     ParenthesizedTree tree = (ParenthesizedTree) expressionOfReturnStatement("class T { boolean m() { return (true); } }");
-    assertThat(tree.is(Tree.Kind.PARENTHESIZED_EXPRESSION)).isTrue();
-    assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.closeParenToken().text()).isEqualTo(")");
-    assertThatChildrenIteratorHasSize(tree, 3);
+    assertThat(tree)
+      .is(Tree.Kind.PARENTHESIZED_EXPRESSION)
+      .hasChildrenSize(3);
+    assertThat(tree.openParenToken()).is("(");
+    assertThat(tree.expression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.closeParenToken()).is(")");
   }
 

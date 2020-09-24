@@ -4,14 +4,15 @@
   @Test
   void do_statement() {
     DoWhileStatementTree tree = (DoWhileStatementTree) firstMethodFirstStatement("class T { void m() { do ; while (true); } }");
-    assertThat(tree.is(Tree.Kind.DO_STATEMENT)).isTrue();
-    assertThat(tree.doKeyword().text()).isEqualTo("do");
-    assertThat(tree.statement()).isNotNull();
-    assertThat(tree.whileKeyword().text()).isEqualTo("while");
-    assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.condition()).isNotNull();
-    assertThat(tree.closeParenToken().text()).isEqualTo(")");
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 7);
+    assertThat(tree)
+      .is(Tree.Kind.DO_STATEMENT)
+      .hasChildrenSize(7);
+    assertThat(tree.doKeyword()).is("do");
+    assertThat(tree.statement()).is(Tree.Kind.EMPTY_STATEMENT);
+    assertThat(tree.whileKeyword()).is("while");
+    assertThat(tree.openParenToken()).is("(");
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.closeParenToken()).is(")");
+    assertThat(tree.semicolonToken()).is(";");
   }
 

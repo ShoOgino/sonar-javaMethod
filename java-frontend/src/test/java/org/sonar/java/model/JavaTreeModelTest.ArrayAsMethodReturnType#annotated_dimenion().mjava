@@ -1,0 +1,13 @@
+    @Test
+    void annotated_dimenion() {
+      MethodTree method = (MethodTree) firstTypeMember("class T { int @Foo [] m(); }");
+      assertThat(method.returnType()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) method.returnType();
+      assertThat(arrayTypeTree)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

@@ -4,12 +4,13 @@
   @Test
   void while_statement() {
     WhileStatementTree tree = (WhileStatementTree) firstMethodFirstStatement("class T { void m() { while (true) ; } }");
-    assertThat(tree.is(Tree.Kind.WHILE_STATEMENT)).isTrue();
-    assertThat(tree.whileKeyword().text()).isEqualTo("while");
-    assertThat(tree.openParenToken().text()).isEqualTo("(");
-    assertThat(tree.condition()).isNotNull();
-    assertThat(tree.closeParenToken().text()).isEqualTo(")");
-    assertThat(tree.statement()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 5);
+    assertThat(tree)
+      .is(Tree.Kind.WHILE_STATEMENT)
+      .hasChildrenSize(5);
+    assertThat(tree.whileKeyword()).is("while");
+    assertThat(tree.openParenToken()).is("(");
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.closeParenToken()).is(")");
+    assertThat(tree.statement()).is(Tree.Kind.EMPTY_STATEMENT);
   }
 

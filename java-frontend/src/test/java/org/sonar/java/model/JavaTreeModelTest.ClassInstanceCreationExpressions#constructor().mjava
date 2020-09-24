@@ -1,0 +1,19 @@
+    @Test
+    void constructor() {
+      NewClassTree tree = (NewClassTree) expressionOfReturnStatement("class T { T m() { return new T(true, false) {}; } }");
+      assertThat(tree)
+        .is(Tree.Kind.NEW_CLASS)
+        .hasChildrenSize(4);
+      assertThat(tree.enclosingExpression()).isNull();
+      assertThat(tree.dotToken()).isNull();
+      assertThat(tree.arguments().openParenToken()).is("(");
+      assertThat(tree.arguments())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.arguments().closeParenToken()).is(")");
+      assertThat(tree.identifier()).is(Tree.Kind.IDENTIFIER);
+      assertThat(tree.classBody()).is(Tree.Kind.CLASS);
+      assertThat(tree.newKeyword()).is("new");
+      assertThat(tree.typeArguments()).isNull();
+    }
+

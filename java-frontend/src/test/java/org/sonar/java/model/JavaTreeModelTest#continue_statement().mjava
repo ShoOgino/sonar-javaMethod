@@ -4,17 +4,11 @@
   @Test
   void continue_statement() {
     ContinueStatementTree tree = (ContinueStatementTree) firstMethodFirstStatement("class T { void m() { continue ; } }");
-    assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
-    assertThat(tree.continueKeyword().text()).isEqualTo("continue");
+    assertThat(tree)
+      .is(Tree.Kind.CONTINUE_STATEMENT)
+      .hasChildrenSize(2);
+    assertThat(tree.continueKeyword()).is("continue");
     assertThat(tree.label()).isNull();
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 2);
-
-    tree = (ContinueStatementTree) firstMethodFirstStatement("class T { void m() { continue label ; } }");
-    assertThat(tree.is(Tree.Kind.CONTINUE_STATEMENT)).isTrue();
-    assertThat(tree.continueKeyword().text()).isEqualTo("continue");
-    assertThat(tree.label().name()).isEqualTo("label");
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 3);
+    assertThat(tree.semicolonToken()).is(";");
   }
 

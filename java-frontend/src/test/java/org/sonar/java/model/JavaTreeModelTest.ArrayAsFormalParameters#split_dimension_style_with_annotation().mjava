@@ -1,0 +1,22 @@
+    @Test
+    void split_dimension_style_with_annotation() {
+      VariableTree variable = firstMethodParameter("interface T { void m(int[] a @Foo []); }");
+      assertThat(variable).hasChildrenSize(3);
+      assertThat(variable.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) variable.type();
+      assertThat(arrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+
+      ArrayTypeTree childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+      assertThat(childArrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(childArrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

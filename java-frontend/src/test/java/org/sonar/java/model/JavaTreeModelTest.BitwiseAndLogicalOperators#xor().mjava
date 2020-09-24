@@ -1,0 +1,20 @@
+    @Test
+    void xor() {
+      String code = "class T { int m() { return 1 ^ 2 ^ 3; } }";
+      BinaryExpressionTree parent = (BinaryExpressionTree) expressionOfReturnStatement(code);
+      assertThat(parent)
+        .is(Tree.Kind.XOR)
+        .hasChildrenSize(3);
+      assertThat(parent.leftOperand()).is(Tree.Kind.XOR);
+      assertThat(parent.operatorToken()).is("^");
+      assertThat(parent.rightOperand()).is(Tree.Kind.INT_LITERAL);
+
+      BinaryExpressionTree leftChild = (BinaryExpressionTree) parent.leftOperand();
+      assertThat(leftChild)
+        .is(Tree.Kind.XOR)
+        .hasChildrenSize(3);
+      assertThat(leftChild.leftOperand()).is(Tree.Kind.INT_LITERAL);
+      assertThat(leftChild.operatorToken()).is("^");
+      assertThat(leftChild.rightOperand()).is(Tree.Kind.INT_LITERAL);
+    }
+

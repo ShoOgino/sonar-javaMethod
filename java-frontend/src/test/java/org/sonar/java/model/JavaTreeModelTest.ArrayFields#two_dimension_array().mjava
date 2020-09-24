@@ -1,0 +1,20 @@
+    @Test
+    void two_dimension_array() {
+      VariableTree field = (VariableTree) firstTypeMember("class T { int[][] a; }");
+      assertThat(field).hasChildrenSize(4);
+      assertThat(field.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) field.type();
+      assertThat(arrayTypeTree)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+      assertThat(childArrayTypeTree)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(childArrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

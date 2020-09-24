@@ -1,0 +1,19 @@
+  @Test
+  void conditional_expression_nested() {
+    ConditionalExpressionTree tree = (ConditionalExpressionTree) expressionOfReturnStatement("class T { boolean m() { return true ? true : false ? true : false; } }");
+    assertThat(tree)
+      .is(Tree.Kind.CONDITIONAL_EXPRESSION)
+      .hasChildrenSize(5);
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.trueExpression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.falseExpression()).is(Tree.Kind.CONDITIONAL_EXPRESSION);
+
+    ConditionalExpressionTree nested = (ConditionalExpressionTree) tree.falseExpression();
+    assertThat(nested)
+      .is(Tree.Kind.CONDITIONAL_EXPRESSION)
+      .hasChildrenSize(5);
+    assertThat(nested.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(nested.trueExpression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(nested.falseExpression()).is(Tree.Kind.BOOLEAN_LITERAL);
+  }
+

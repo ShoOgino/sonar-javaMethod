@@ -5,11 +5,10 @@
   void local_class_declaration() {
     BlockTree block = ((MethodTree) firstTypeMember("class T { void m() { abstract class Local { } } }")).block();
     ClassTree tree = (ClassTree) block.body().get(0);
-    assertThat(tree.is(Tree.Kind.CLASS)).isTrue();
-    assertThat(tree.simpleName().identifierToken().text()).isEqualTo("Local");
-    assertThat(tree.modifiers().modifiers()).hasSize(1);
-    assertThat(tree.modifiers().modifiers().get(0).modifier()).isEqualTo(Modifier.ABSTRACT);
-    assertThat(tree).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 7);
+    assertThat(tree)
+      .is(Tree.Kind.CLASS)
+      .hasChildrenSize(7);
+    assertThat(tree.simpleName().identifierToken()).is("Local");
+    assertThat(tree.modifiers()).hasModifiers(Modifier.ABSTRACT);
   }
 

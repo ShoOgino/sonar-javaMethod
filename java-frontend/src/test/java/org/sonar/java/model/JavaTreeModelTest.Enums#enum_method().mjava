@@ -1,0 +1,18 @@
+    @Test
+    void enum_method() {
+      MethodTree tree = (MethodTree) firstType("enum T { ; int m(int p1, int... p2) throws Exception1, Exception2 {} }").members().get(1);
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(11);
+      assertThat(tree.returnType()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).hasSize(2);
+      assertThat(tree.parameters().get(0).type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat((ArrayTypeTree) tree.parameters().get(1).type()).isVarArg();
+      assertThat(tree.throwsClauses())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.defaultValue()).isNull();
+    }
+

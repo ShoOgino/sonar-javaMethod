@@ -1,0 +1,23 @@
+    @Test
+    void try_with_multiple_resources() {
+      TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try (Resource r1 = open(); Resource r2 = open()) { } catch (Exception e) { } finally { } } }");
+      assertThat(tree).is(Tree.Kind.TRY_STATEMENT);
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.catches()).hasSize(1);
+      assertThat(tree.finallyKeyword()).is("finally");
+      assertThat(tree.catches().get(0)).hasChildrenSize(5);
+      assertThat(tree.finallyBlock()).is(Tree.Kind.BLOCK);
+      assertThat(tree.openParenToken()).is("(");
+      assertThat(tree.resourceList()).hasSize(2).hasSeparatorsSize(1);
+      assertThat(tree.closeParenToken()).is(")");
+
+      VariableTree r1 = (VariableTree) tree.resourceList().get(0);
+      assertThat(r1.simpleName()).hasName("r1");
+      assertThat(r1.initializer()).is(Tree.Kind.METHOD_INVOCATION);
+
+      VariableTree r2 = (VariableTree) tree.resourceList().get(1);
+      assertThat(r2.simpleName()).hasName("r2");
+      assertThat(r2.initializer()).is(Tree.Kind.METHOD_INVOCATION);
+      assertThat(tree).hasChildrenSize(8);
+    }
+

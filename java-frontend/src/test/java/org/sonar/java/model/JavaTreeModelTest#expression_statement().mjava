@@ -4,9 +4,10 @@
   @Test
   void expression_statement() {
     ExpressionStatementTree tree = (ExpressionStatementTree) firstMethodFirstStatement("class T { void m() { i++; } }");
-    assertThat(tree.is(Tree.Kind.EXPRESSION_STATEMENT)).isTrue();
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.semicolonToken().text()).isEqualTo(";");
-    assertThatChildrenIteratorHasSize(tree, 2);
+    assertThat(tree)
+      .is(Tree.Kind.EXPRESSION_STATEMENT)
+      .hasChildrenSize(2);
+    assertThat(tree.expression()).is(Tree.Kind.POSTFIX_INCREMENT);
+    assertThat(tree.semicolonToken()).is(";");
   }
 

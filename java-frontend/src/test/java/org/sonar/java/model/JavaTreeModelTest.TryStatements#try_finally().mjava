@@ -1,0 +1,13 @@
+    @Test
+    void try_finally() {
+      TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } finally { } } }");
+      assertThat(tree)
+        .is(Tree.Kind.TRY_STATEMENT)
+        .hasChildrenSize(4);
+      assertThat(tree.resourceList()).isEmpty();
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.catches()).isEmpty();
+      assertThat(tree.finallyKeyword()).is("finally");
+      assertThat(tree.finallyBlock()).is(Tree.Kind.BLOCK);
+    }
+

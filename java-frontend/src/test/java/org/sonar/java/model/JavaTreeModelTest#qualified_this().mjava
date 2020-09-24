@@ -4,10 +4,11 @@
   @Test
   void qualified_this() {
     MemberSelectExpressionTree tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { Object m() { return ClassName.this; } }");
-    assertThat(tree.is(Tree.Kind.MEMBER_SELECT)).isTrue();
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.identifier().identifierToken().text()).isEqualTo("this");
-    assertThat(tree.identifier().name()).isEqualTo("this");
-    assertThatChildrenIteratorHasSize(tree, 3);
+    assertThat(tree)
+      .is(Tree.Kind.MEMBER_SELECT)
+      .hasChildrenSize(3);
+    assertThat(tree.expression()).is(Tree.Kind.IDENTIFIER);
+    assertThat(tree.identifier()).hasName("this");
+    assertThat(tree.identifier().identifierToken()).is("this");
   }
 

@@ -4,34 +4,23 @@
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     ReturnStatementTreeImpl s = (ReturnStatementTreeImpl) Objects.requireNonNull(m.block()).body().get(0);
+
     AbstractTypedTree e = Objects.requireNonNull((AbstractTypedTree) s.expression());
-    JType nullType = cu.sema.type(Objects.requireNonNull(e.typeBinding));
-
-    assertThat(nullType.name())
-      .isEqualTo(e.symbolType().name())
-      .isEqualTo("<nulltype>");
-    assertThat(nullType.fullyQualifiedName())
-      .isEqualTo(e.symbolType().fullyQualifiedName())
-      .isEqualTo("<nulltype>");
-    assertThat(nullType.is("<nulltype>"))
-      .isEqualTo(e.symbolType().is("<nulltype>"))
-      .isTrue();
-
-    JType classType = cu.sema.type(Objects.requireNonNull(c.typeBinding));
-    assertThat(nullType.isSubtypeOf(classType))
-      .isSameAs(e.symbolType().isSubtypeOf(c.symbol().type()))
-      .isTrue();
-
     AbstractTypedTree primitive = (AbstractTypedTree) m.parameters().get(0).type();
-    JType primitiveType = cu.sema.type(Objects.requireNonNull(primitive.typeBinding));
-    assertThat(nullType.isSubtypeOf(primitiveType))
-      .isSameAs(e.symbolType().isSubtypeOf(primitive.symbolType()))
-      .isFalse();
-
     AbstractTypedTree array = (AbstractTypedTree) m.parameters().get(1).type();
+
+    JType nullType = cu.sema.type(Objects.requireNonNull(e.typeBinding));
+    JType classType = cu.sema.type(Objects.requireNonNull(c.typeBinding));
+    JType primitiveType = cu.sema.type(Objects.requireNonNull(primitive.typeBinding));
     JType arrayType = cu.sema.type(Objects.requireNonNull(array.typeBinding));
-    assertThat(nullType.isSubtypeOf(arrayType))
-      .isSameAs(e.symbolType().isSubtypeOf(array.symbolType()))
-      .isTrue();
+
+    assertThat(nullType)
+      .hasSameNameAs(e.symbolType())
+      .hasName("<nulltype>")
+      .is(e.symbolType().fullyQualifiedName())
+      .is("<nulltype>")
+      .isSubtypeOf(classType)
+      .isSubtypeOf(arrayType)
+      .isNotSubtypeOf(primitiveType);
   }
 

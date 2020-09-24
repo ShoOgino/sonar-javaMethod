@@ -3,17 +3,18 @@
    */
   @Test
   void unary_operators() {
-    UnaryExpressionTree tree;
-    tree = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { ++i; } }"))).expression();
-    assertThat(tree.is(Tree.Kind.PREFIX_INCREMENT)).isTrue();
-    assertThat(tree.operatorToken().text()).isEqualTo("++");
-    assertThat(tree.expression()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 2);
+    UnaryExpressionTree prefixIncrement = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { ++i; } }"))).expression();
+    assertThat(prefixIncrement)
+      .is(Tree.Kind.PREFIX_INCREMENT)
+      .hasChildrenSize(2);
+    assertThat(prefixIncrement.operatorToken()).is("++");
+    assertThat(prefixIncrement.expression()).is(Tree.Kind.IDENTIFIER);
 
-    tree = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { --i; } }"))).expression();
-    assertThat(tree.is(Tree.Kind.PREFIX_DECREMENT)).isTrue();
-    assertThat(tree.operatorToken().text()).isEqualTo("--");
-    assertThat(tree.expression()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 2);
+    UnaryExpressionTree prefixDecrement = (UnaryExpressionTree) ((ExpressionStatementTree) firstMethodFirstStatement(("class T { void m() { --i; } }"))).expression();
+    assertThat(prefixDecrement)
+      .is(Tree.Kind.PREFIX_DECREMENT)
+      .hasChildrenSize(2);
+    assertThat(prefixDecrement.operatorToken()).is("--");
+    assertThat(prefixDecrement.expression()).is(Tree.Kind.IDENTIFIER);
   }
 

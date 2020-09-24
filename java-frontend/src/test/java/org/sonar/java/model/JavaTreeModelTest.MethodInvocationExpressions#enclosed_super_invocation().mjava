@@ -1,0 +1,20 @@
+    @Test
+    void enclosed_super_invocation() {
+      MethodInvocationTree tree = firstMethodInvocation("class T { T() { TypeName.super.identifier(true, false); } }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD_INVOCATION)
+        .hasChildrenSize(2);
+      assertThat(tree.arguments()).hasSize(2);
+      assertThat(tree.typeArguments()).isNull();
+
+      MemberSelectExpressionTree firstMemberSelect = (MemberSelectExpressionTree) tree.methodSelect();
+      assertThat(firstMemberSelect.identifier()).hasName("identifier");
+      assertThat(firstMemberSelect.operatorToken()).is(".");
+
+      MemberSelectExpressionTree secondMemberSelect = (MemberSelectExpressionTree) firstMemberSelect.expression();
+      assertThat(secondMemberSelect).hasChildrenSize(3);
+      assertThat(secondMemberSelect.identifier()).hasName("super");
+      assertThat(secondMemberSelect.operatorToken()).is(".");
+      assertThat(((IdentifierTree) secondMemberSelect.expression())).hasName("TypeName");
+    }
+

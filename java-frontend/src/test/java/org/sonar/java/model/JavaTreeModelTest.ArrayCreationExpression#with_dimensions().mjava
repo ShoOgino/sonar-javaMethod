@@ -1,0 +1,21 @@
+    @Test
+    void with_dimensions() {
+      NewArrayTree tree = (NewArrayTree) expressionOfReturnStatement("class T { int[][] m() { return new int[2][2]; } }");
+      assertThat(tree)
+        .is(Tree.Kind.NEW_ARRAY)
+        .hasChildrenSize(5);
+      assertThat(tree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.dimensions()).hasSize(2);
+      assertThat(tree.initializers()).isEmpty();
+      assertThat(tree.newKeyword()).is("new");
+
+      ArrayDimensionTree dimension = tree.dimensions().get(0);
+      assertThat(dimension)
+        .is(Tree.Kind.ARRAY_DIMENSION)
+        .hasChildrenSize(3);
+      assertThat(dimension.annotations()).isEmpty();
+      assertThat(dimension.openBracketToken()).is("[");
+      assertThat(dimension.expression()).is(Tree.Kind.INT_LITERAL);
+      assertThat(dimension.closeBracketToken()).is("]");
+    }
+

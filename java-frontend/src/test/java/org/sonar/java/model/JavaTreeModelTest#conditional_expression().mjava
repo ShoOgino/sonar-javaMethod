@@ -3,27 +3,14 @@
    */
   @Test
   void conditional_expression() {
-    ConditionalExpressionTree tree;
-    tree = (ConditionalExpressionTree) expressionOfReturnStatement("class T { boolean m() { return true ? true : false; } }");
-    assertThat(tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)).isTrue();
-    assertThat(tree.condition()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.questionToken().text()).isEqualTo("?");
-    assertThat(tree.trueExpression()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.colonToken().text()).isEqualTo(":");
-    assertThat(tree.falseExpression()).isInstanceOf(LiteralTree.class);
-    assertThatChildrenIteratorHasSize(tree, 5);
-
-    tree = (ConditionalExpressionTree) expressionOfReturnStatement("class T { boolean m() { return true ? true : false ? true : false; } }");
-    assertThat(tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)).isTrue();
-    assertThat(tree.condition()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.trueExpression()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.falseExpression()).isInstanceOf(ConditionalExpressionTree.class);
-    assertThatChildrenIteratorHasSize(tree, 5);
-    tree = (ConditionalExpressionTree) tree.falseExpression();
-    assertThat(tree.is(Tree.Kind.CONDITIONAL_EXPRESSION)).isTrue();
-    assertThat(tree.condition()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.trueExpression()).isInstanceOf(LiteralTree.class);
-    assertThat(tree.falseExpression()).isInstanceOf(LiteralTree.class);
-    assertThatChildrenIteratorHasSize(tree, 5);
+    ConditionalExpressionTree tree = (ConditionalExpressionTree) expressionOfReturnStatement("class T { boolean m() { return true ? true : false; } }");
+    assertThat(tree)
+      .is(Tree.Kind.CONDITIONAL_EXPRESSION)
+      .hasChildrenSize(5);
+    assertThat(tree.condition()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.questionToken()).is("?");
+    assertThat(tree.trueExpression()).is(Tree.Kind.BOOLEAN_LITERAL);
+    assertThat(tree.colonToken()).is(":");
+    assertThat(tree.falseExpression()).is(Tree.Kind.BOOLEAN_LITERAL);
   }
 

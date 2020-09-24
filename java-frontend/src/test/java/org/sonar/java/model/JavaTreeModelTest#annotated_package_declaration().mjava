@@ -1,0 +1,12 @@
+  @Test
+  void annotated_package_declaration() {
+    PackageDeclarationTree tree = JParserTestUtils.parsePackage("@Foo @Bar package org.myPackage;").packageDeclaration();
+    assertThat(tree)
+      .is(Tree.Kind.PACKAGE)
+      .hasChildrenSize(5);
+    assertThat(tree.annotations()).hasSize(2);
+    assertThat(tree.packageKeyword()).is("package");
+    assertThat(tree.packageName()).is(Tree.Kind.MEMBER_SELECT);
+    assertThat(tree.semicolonToken()).is(";");
+  }
+

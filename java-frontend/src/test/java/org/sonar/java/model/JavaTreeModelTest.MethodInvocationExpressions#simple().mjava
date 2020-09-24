@@ -1,0 +1,15 @@
+    @Test
+    void simple() {
+      MethodInvocationTree tree = firstMethodInvocation("class T { void m() { identifier(true, false); } }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD_INVOCATION)
+        .hasChildrenSize(2);
+      assertThat(((IdentifierTree) tree.methodSelect())).hasName("identifier");
+      Arguments arguments = tree.arguments();
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments)
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(arguments.closeParenToken()).is(")");
+    }
+

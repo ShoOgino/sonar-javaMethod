@@ -1,0 +1,26 @@
+    @Test
+    void enum_field() {
+      List<Tree> declarations = firstType("enum T { ; public int f1 = 42, f2[]; }").members();
+      assertThat(declarations).hasSize(3);
+
+      assertThat(declarations.get(0)).is(Tree.Kind.EMPTY_STATEMENT);
+
+      VariableTree f1 = (VariableTree) declarations.get(1);
+      assertThat(f1)
+        .is(Tree.Kind.VARIABLE)
+        .hasChildrenSize(6);
+      assertThat(f1.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(f1.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(f1.simpleName()).hasName("f1");
+      assertThat(f1.initializer()).is(Tree.Kind.INT_LITERAL);
+
+      VariableTree f2 = (VariableTree) declarations.get(2);
+      assertThat(f2)
+        .is(Tree.Kind.VARIABLE)
+        .hasChildrenSize(4);
+      assertThat(f2.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(f2.simpleName()).hasName("f2");
+      assertThat(f2.initializer()).isNull();
+      assertThat((ArrayTypeTree) f2.type()).isDeclaredArrayDimension();
+    }
+

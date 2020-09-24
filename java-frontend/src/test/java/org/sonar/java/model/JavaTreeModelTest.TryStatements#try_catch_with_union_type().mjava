@@ -1,0 +1,15 @@
+    @Test
+    void try_catch_with_union_type() {
+      TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (Exception1 | Exception2 e) { } } }");
+      assertThat(tree).hasChildrenSize(3);
+
+      VariableTree parameterTree = tree.catches().get(0).parameter();
+      assertThat(parameterTree).hasChildrenSize(3);
+
+      UnionTypeTree type = (UnionTypeTree) parameterTree.type();
+      assertThat(type).hasChildrenSize(1);
+      assertThat(type.typeAlternatives())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+    }
+

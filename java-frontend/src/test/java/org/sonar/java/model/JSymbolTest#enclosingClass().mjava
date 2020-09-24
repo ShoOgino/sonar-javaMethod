@@ -8,28 +8,28 @@
     VariableTreeImpl p = (VariableTreeImpl) m.parameters().get(0);
     ClassTreeImpl c3 = (ClassTreeImpl) m.block().body().get(0);
 
-    assertThat(cu.sema.typeSymbol(c1.typeBinding).enclosingClass())
+    assertThat(cu.sema.typeSymbol(c1.typeBinding))
       .as("of top-level class")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
 
-    assertThat(cu.sema.typeSymbol(c2.typeBinding).enclosingClass())
+    assertThat(cu.sema.typeSymbol(c2.typeBinding))
       .as("of nested class")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
 
-    assertThat(cu.sema.typeSymbol(c3.typeBinding).enclosingClass())
+    assertThat(cu.sema.typeSymbol(c3.typeBinding))
       .as("of local class")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
 
-    assertThat(cu.sema.methodSymbol(m.methodBinding).enclosingClass())
+    assertThat(cu.sema.methodSymbol(m.methodBinding))
       .as("of method")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
 
-    assertThat(cu.sema.variableSymbol(f.variableBinding).enclosingClass())
+    assertThat(cu.sema.variableSymbol(f.variableBinding))
       .as("of field")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
 
-    assertThat(cu.sema.variableSymbol(p.variableBinding).enclosingClass())
+    assertThat(cu.sema.variableSymbol(p.variableBinding))
       .as("of method parameter")
-      .isSameAs(cu.sema.typeSymbol(c1.typeBinding));
+      .hasEnclosingClass(cu.sema.typeSymbol(c1.typeBinding));
   }
 

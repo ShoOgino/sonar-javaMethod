@@ -1,0 +1,17 @@
+    @Test
+    void within_extended_interface_fully_qualified_name() {
+      ClassTree classTree = firstType("class T extends a.b.@Foo C {}");
+      assertThat(classTree).hasChildrenSize(9);
+      assertThat(classTree.modifiers()).isEmpty();
+
+      TypeTree type = classTree.superClass();
+      assertThat(type)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(type.annotations()).isEmpty();
+
+      TypeTree abC = ((MemberSelectExpressionTree) type).identifier();
+      assertThat(abC).hasChildrenSize(2);
+      assertThat(abC.annotations()).hasSize(1);
+    }
+

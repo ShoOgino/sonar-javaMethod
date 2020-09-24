@@ -1,0 +1,23 @@
+    @Test
+    void on_extended_interface() {
+      ClassTree classTree = (ClassTree) firstMethodFirstStatement("class MyClass<A, B, C> { void foo() { class MyOtherClass extends @Foo MyClass<A, B, C>.MyInnerClass {} } class MyInnerClass {}}");
+      assertThat(classTree).hasChildrenSize(9);
+      assertThat(classTree.modifiers()).isEmpty();
+
+      TypeTree type = classTree.superClass();
+      assertThat(type).is(Tree.Kind.MEMBER_SELECT);
+      assertThat(type.annotations()).isEmpty();
+
+      TypeTree myInnerClass = (ParameterizedTypeTree) ((MemberSelectExpressionTree) type).expression();
+      assertThat(myInnerClass)
+        .is(Tree.Kind.PARAMETERIZED_TYPE)
+        .hasChildrenSize(2);
+      assertThat(myInnerClass.annotations()).isEmpty();
+
+      TypeTree myClass = ((ParameterizedTypeTree) myInnerClass).type();
+      assertThat(myClass)
+        .is(Tree.Kind.IDENTIFIER)
+        .hasChildrenSize(2);
+      assertThat(myClass.annotations()).hasSize(1);
+    }
+

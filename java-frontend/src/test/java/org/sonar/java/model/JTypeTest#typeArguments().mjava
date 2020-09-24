@@ -6,9 +6,9 @@
     ExpressionStatementTreeImpl s = (ExpressionStatementTreeImpl) Objects.requireNonNull(m.block()).body().get(0);
     AbstractTypedTree e = Objects.requireNonNull((AbstractTypedTree) s.expression());
 
-    assertThat(cu.sema.type(e.typeBinding).typeArguments().toString())
-      .isEqualTo(e.symbolType().typeArguments().toString())
-      .isEqualTo("[Integer, String]");
+    assertThat(cu.sema.type(e.typeBinding).typeArguments())
+      .hasToString(e.symbolType().typeArguments().toString())
+      .hasToString("[Integer, String]");
 
     assertThat(cu.sema.type(c.typeBinding).typeArguments())
       .isEqualTo(c.symbol().type().typeArguments())

@@ -1,0 +1,11 @@
+  @Test
+  void compilation_unit_in_named_package() {
+    CompilationUnitTree tree = compilationUnit("package pkg; import foo; import bar; class Foo {} class Bar {}");
+    assertThat(tree)
+      .is(Tree.Kind.COMPILATION_UNIT)
+      .hasChildrenSize(6);
+    assertThat(tree.packageDeclaration()).is(Tree.Kind.PACKAGE);
+    assertThat(tree.imports()).hasSize(2);
+    assertThat(tree.types()).hasSize(2);
+  }
+

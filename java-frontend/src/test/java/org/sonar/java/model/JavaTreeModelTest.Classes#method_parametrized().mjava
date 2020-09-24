@@ -1,0 +1,22 @@
+    @Test
+    void method_parametrized() {
+      MethodTree tree = (MethodTree) firstTypeMember("class T { public <T> int m(@Annotate int p1, int... p2) throws Exception1, Exception2 {} }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(11);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.typeParameters()).isNotEmpty();
+      assertThat(tree.returnType()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.simpleName()).hasName("m");
+      assertThat(tree.parameters()).hasSize(2);
+      assertThat(tree.parameters().get(0).type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(tree.parameters().get(0).modifiers()).hasAnnotations("@Annotate");
+      assertThat(tree.parameters().get(1).type()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat(tree.parameters().get(1).endToken()).isNull();
+      assertThat(tree.throwsClauses())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.defaultValue()).isNull();
+    }
+

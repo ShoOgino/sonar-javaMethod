@@ -1,0 +1,13 @@
+    @Test
+    void vararg_parameter() {
+      VariableTree variable = firstMethodParameter("interface T { void m(int... a); }");
+      assertThat(variable).hasChildrenSize(3);
+      assertThat(variable.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) variable.type();
+      assertThat(arrayTypeTree)
+        .isVarArg()
+        .hasChildrenSize(2);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

@@ -4,23 +4,28 @@
   @Test
   void shift_expression() {
     String code = "class T { int m() { return 1 >> 2 << 3 >>> 4; } }";
-    BinaryExpressionTree tree = (BinaryExpressionTree) expressionOfReturnStatement(code);
-    assertThat(tree.is(Tree.Kind.UNSIGNED_RIGHT_SHIFT)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo(">>>");
-    assertThat(tree.rightOperand()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
-    tree = (BinaryExpressionTree) tree.leftOperand();
-    assertThat(tree.is(Tree.Kind.LEFT_SHIFT)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo("<<");
-    assertThat(tree.rightOperand()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
-    tree = (BinaryExpressionTree) tree.leftOperand();
-    assertThat(tree.is(Kind.RIGHT_SHIFT)).isTrue();
-    assertThat(tree.leftOperand()).isNotNull();
-    assertThat(tree.operatorToken().text()).isEqualTo(">>");
-    assertThat(tree.rightOperand()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
+    BinaryExpressionTree parent = (BinaryExpressionTree) expressionOfReturnStatement(code);
+    assertThat(parent)
+      .is(Tree.Kind.UNSIGNED_RIGHT_SHIFT)
+      .hasChildrenSize(3);
+    assertThat(parent.leftOperand()).is(Tree.Kind.LEFT_SHIFT);
+    assertThat(parent.operatorToken()).is(">>>");
+    assertThat(parent.rightOperand()).is(Tree.Kind.INT_LITERAL);
+
+    BinaryExpressionTree leftChild = (BinaryExpressionTree) parent.leftOperand();
+    assertThat(leftChild)
+      .is(Tree.Kind.LEFT_SHIFT)
+      .hasChildrenSize(3);
+    assertThat(leftChild.leftOperand()).is(Tree.Kind.RIGHT_SHIFT);
+    assertThat(leftChild.operatorToken()).is("<<");
+    assertThat(leftChild.rightOperand()).is(Tree.Kind.INT_LITERAL);
+
+    BinaryExpressionTree secondLeftChild = (BinaryExpressionTree) leftChild.leftOperand();
+    assertThat(secondLeftChild)
+      .is(Tree.Kind.RIGHT_SHIFT)
+      .hasChildrenSize(3);
+    assertThat(secondLeftChild.leftOperand()).is(Tree.Kind.INT_LITERAL);
+    assertThat(secondLeftChild.operatorToken()).is(">>");
+    assertThat(secondLeftChild.rightOperand()).is(Tree.Kind.INT_LITERAL);
   }
 

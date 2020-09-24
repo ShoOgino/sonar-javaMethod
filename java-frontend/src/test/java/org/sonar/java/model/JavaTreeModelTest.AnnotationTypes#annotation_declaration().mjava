@@ -1,0 +1,15 @@
+    @Test
+    void annotation_declaration() {
+      ClassTree tree = firstType("public @interface T { }");
+      assertThat(tree)
+        .is(Tree.Kind.ANNOTATION_TYPE)
+        .hasChildrenSize(8);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.simpleName()).hasName("T");
+      assertThat(tree.superClass()).isNull();
+      assertThat(tree.openBraceToken()).is("{");
+      assertThat(tree.closeBraceToken()).is("}");
+      assertThat(tree.superInterfaces()).isEmpty();
+      assertThat(tree.declarationKeyword()).is("interface");
+    }
+

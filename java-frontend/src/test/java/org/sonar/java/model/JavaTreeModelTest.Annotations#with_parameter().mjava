@@ -1,0 +1,19 @@
+    @Test
+    void with_parameter() {
+      List<AnnotationTree> annotations = annotations("@SuppressWarnings(\"unchecked\") class T { }");
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.annotationType()).is(Tree.Kind.IDENTIFIER);
+      assertThat(annotation.atToken()).is("@");
+
+      Arguments arguments = annotation.arguments();
+      assertThat(arguments)
+        .hasEmptySeparators()
+        .hasSize(1);
+      assertThat(arguments.get(0)).is(Tree.Kind.STRING_LITERAL);
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments.closeParenToken()).is(")");
+    }
+

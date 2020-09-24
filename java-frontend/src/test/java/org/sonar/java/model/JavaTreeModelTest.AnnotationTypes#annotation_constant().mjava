@@ -1,0 +1,23 @@
+    @Test
+    void annotation_constant() {
+      List<Tree> members = firstType("@interface T { int c1 = 1, c2[] = { 2 }; }").members();
+      assertThat(members).hasSize(2);
+
+      VariableTree c1 = (VariableTree) members.get(0);
+      assertThat(c1)
+        .is(Tree.Kind.VARIABLE)
+        .hasChildrenSize(6); // 1+5, as empty modifiers are always included
+      assertThat(c1.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(c1.simpleName()).hasName("c1");
+      assertThat(c1.initializer()).is(Tree.Kind.INT_LITERAL);
+
+      VariableTree c2 = (VariableTree) members.get(1);
+      assertThat(c2)
+        .is(Tree.Kind.VARIABLE)
+        .hasChildrenSize(6);
+      assertThat(c2.type()).is(Tree.Kind.ARRAY_TYPE);
+      assertThat((ArrayTypeTree) c2.type()).isDeclaredArrayDimension();
+      assertThat(c2.simpleName()).hasName("c2");
+      assertThat(c2.initializer()).is(Tree.Kind.NEW_ARRAY);
+    }
+

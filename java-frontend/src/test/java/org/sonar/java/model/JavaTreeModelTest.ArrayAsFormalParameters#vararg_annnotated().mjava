@@ -1,0 +1,14 @@
+    @Test
+    void vararg_annnotated() {
+      VariableTree variable = firstMethodParameter("interface T { void m(int @Foo ... a); }");
+      assertThat(variable).hasChildrenSize(3);
+      assertThat(variable.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) variable.type();
+      assertThat(arrayTypeTree)
+        .hasAnnotations(1)
+        .isVarArg()
+        .hasChildrenSize(3);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

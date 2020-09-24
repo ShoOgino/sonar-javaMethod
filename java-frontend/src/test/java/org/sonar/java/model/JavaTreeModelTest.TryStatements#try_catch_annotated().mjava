@@ -1,0 +1,24 @@
+    @Test
+    void try_catch_annotated() {
+      TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (final @Foo Exception e) { } } }");
+      assertThat(tree)
+        .is(Tree.Kind.TRY_STATEMENT)
+        .hasChildrenSize(3);
+      assertThat(tree.resourceList()).isEmpty();
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.catches()).hasSize(1);
+      assertThat(tree.finallyKeyword()).isNull();
+      assertThat(tree.finallyBlock()).isNull();
+
+      CatchTree catchTreeException = tree.catches().get(0);
+      assertThat(catchTreeException).hasChildrenSize(5);
+
+      VariableTree parameterTreeException = catchTreeException.parameter();
+      assertThat(parameterTreeException.modifiers()).hasSize(2);
+      assertThat(parameterTreeException.simpleName()).hasName("e");
+      assertThat(parameterTreeException.type()).is(Tree.Kind.IDENTIFIER);
+      assertThat(parameterTreeException.endToken()).isNull();
+      assertThat(parameterTreeException.initializer()).isNull();
+      assertThat(parameterTreeException).hasChildrenSize(3);
+    }
+

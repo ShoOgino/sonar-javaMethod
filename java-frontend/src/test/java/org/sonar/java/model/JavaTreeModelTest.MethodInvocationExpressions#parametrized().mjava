@@ -1,0 +1,11 @@
+    @Test
+    void parametrized() {
+      MethodInvocationTree tree = firstMethodInvocation("class T { void m() { this.<T>identifier(true, false); } }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD_INVOCATION)
+        .hasChildrenSize(3);
+      MemberSelectExpressionTree memberSelectExpression = (MemberSelectExpressionTree) tree.methodSelect();
+      assertThat(memberSelectExpression.identifier()).hasName("identifier");
+      assertThat(tree.arguments()).hasSize(2);
+    }
+

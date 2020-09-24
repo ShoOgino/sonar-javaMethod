@@ -1,0 +1,23 @@
+    @Test
+    void extended() {
+      ClassTree tree = firstType("public class T<U> extends C implements I1, I2 { }");
+      assertThat(tree).is(Tree.Kind.CLASS);
+      assertThat(tree.modifiers())
+        .hasSize(1)
+        .hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.simpleName()).hasName("T");
+      TypeParameters typeParameters = tree.typeParameters();
+      assertThat(typeParameters)
+        .isNotEmpty()
+        .hasEmptySeparators()
+        .hasChildrenSize(3);
+      assertThat(tree.openBraceToken()).is("{");
+      assertThat(tree.superClass()).is(Tree.Kind.IDENTIFIER);
+      assertThat(tree.superInterfaces())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.superInterfaces().separators().get(0)).is(",");
+      assertThat(tree.closeBraceToken()).is("}");
+      assertThat(tree.declarationKeyword()).is("class");
+    }
+

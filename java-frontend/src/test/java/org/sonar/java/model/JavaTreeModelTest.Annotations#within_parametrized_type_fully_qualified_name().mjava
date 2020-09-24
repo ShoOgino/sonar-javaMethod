@@ -1,0 +1,23 @@
+    @Test
+    void within_parametrized_type_fully_qualified_name() {
+      VariableTree variable = (VariableTree) firstMethodFirstStatement("package a.b; class C<T> { private void m() { a.b.C<Integer> foo = new a.b. @Foo C<Integer>(); } }");
+      assertThat(variable).hasChildrenSize(6);
+      assertThat(variable.modifiers()).isEmpty();
+
+      TypeTree type = ((NewClassTree) variable.initializer()).identifier();
+      assertThat(type)
+        .is(Tree.Kind.PARAMETERIZED_TYPE)
+        .hasChildrenSize(2);
+      assertThat(type.annotations()).isEmpty();
+
+      TypeTree abC = ((ParameterizedTypeTree) type).type();
+      assertThat(abC)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(abC.annotations()).isEmpty();
+
+      TypeTree fooC = ((MemberSelectExpressionTree) abC).identifier();
+      assertThat(fooC).hasChildrenSize(2);
+      assertThat(fooC.annotations()).hasSize(1);
+    }
+

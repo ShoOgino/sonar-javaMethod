@@ -1,0 +1,12 @@
+    @Test
+    void method_array_brackets() {
+      MethodTree tree = (MethodTree) firstTypeMember("class T { public int m()[] { return null; } }");
+      assertThat(tree)
+        .is(Tree.Kind.METHOD)
+        .hasChildrenSize(7);
+      assertThat(tree.parameters()).isEmpty();
+      assertThat(tree.returnType())
+        .is(Tree.Kind.ARRAY_TYPE)
+        .isNot(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

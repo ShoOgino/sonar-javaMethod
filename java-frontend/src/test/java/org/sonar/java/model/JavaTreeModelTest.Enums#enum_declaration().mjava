@@ -1,0 +1,13 @@
+    @Test
+    void enum_declaration() {
+      ClassTree tree = firstType("public enum T implements I1, I2 { }");
+      assertThat(tree)
+        .is(Tree.Kind.ENUM)
+        .hasChildrenSize(8);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.simpleName()).hasName("T");
+      assertThat(tree.superClass()).isNull();
+      assertThat(tree.superInterfaces()).hasSize(2);
+      assertThat(tree.declarationKeyword()).is("enum");
+    }
+

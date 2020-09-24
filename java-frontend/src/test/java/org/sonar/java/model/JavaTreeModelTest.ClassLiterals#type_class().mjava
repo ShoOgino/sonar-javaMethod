@@ -1,0 +1,11 @@
+    @Test
+    void type_class() {
+      MemberSelectExpressionTree tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { m() { return T.class; } }");
+      assertThat(tree)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(tree.expression()).is(Tree.Kind.IDENTIFIER);
+      assertThat(tree.identifier()).hasName("class");
+      assertThat(tree.operatorToken()).is(".");
+    }
+

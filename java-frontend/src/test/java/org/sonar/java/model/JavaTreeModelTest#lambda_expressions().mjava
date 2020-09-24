@@ -1,26 +1,31 @@
   @Test
   void lambda_expressions() {
-    String code = "class T { public void meth(){IntStream.range(1,12).map(x->x*x).map((int a)-> {return a*a;});}}";
+    String code = "class T { public void meth() {"
+      + "  IntStream.range(1,12)"
+      + "    .map(x -> x*x)"
+      + "    .map((int a) -> { return a*a; });"
+      + "  }"
+      + "}";
     ExpressionTree expressionTree = ((ExpressionStatementTree) firstMethodFirstStatement(code)).expression();
 
     // parsing not broken by lambda
-    assertThat(expressionTree).isNotNull();
+    assertThat(expressionTree).is(Tree.Kind.METHOD_INVOCATION);
 
     MethodInvocationTree mit = (MethodInvocationTree) expressionTree;
-    LambdaExpressionTree tree = (LambdaExpressionTree) mit.arguments().get(0);
-    assertThat(tree.openParenToken()).isNotNull();
-    assertThat(tree.parameters()).hasSize(1);
-    assertThat(tree.parameters().get(0).is(Tree.Kind.VARIABLE)).isTrue();
-    assertThat(tree.closeParenToken()).isNotNull();
-    assertThat(tree.arrowToken()).isNotNull();
-    assertThat(tree.body().is(Tree.Kind.BLOCK)).isTrue();
+    LambdaExpressionTree aa = (LambdaExpressionTree) mit.arguments().get(0);
+    assertThat(aa.openParenToken()).is("(");
+    assertThat(aa.parameters()).hasSize(1);
+    assertThat(aa.parameters().get(0)).is(Tree.Kind.VARIABLE);
+    assertThat(aa.closeParenToken()).is(")");
+    assertThat(aa.arrowToken()).is("->");
+    assertThat(aa.body()).is(Tree.Kind.BLOCK);
 
-    tree = (LambdaExpressionTree) ((MethodInvocationTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression()).arguments().get(0);
-    assertThat(tree.openParenToken()).isNull();
-    assertThat(tree.parameters()).hasSize(1);
-    assertThat(tree.parameters().get(0).is(Tree.Kind.VARIABLE)).isTrue();
-    assertThat(tree.closeParenToken()).isNull();
-    assertThat(tree.arrowToken()).isNotNull();
-    assertThat(tree.body().is(Tree.Kind.MULTIPLY)).isTrue();
+    LambdaExpressionTree xx = (LambdaExpressionTree) ((MethodInvocationTree) ((MemberSelectExpressionTree) mit.methodSelect()).expression()).arguments().get(0);
+    assertThat(xx.openParenToken()).isNull();
+    assertThat(xx.parameters()).hasSize(1);
+    assertThat(xx.parameters().get(0)).is(Tree.Kind.VARIABLE);
+    assertThat(xx.closeParenToken()).isNull();
+    assertThat(xx.arrowToken()).is("->");
+    assertThat(xx.body()).is(Tree.Kind.MULTIPLY);
   }
 

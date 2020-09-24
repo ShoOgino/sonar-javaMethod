@@ -1,0 +1,14 @@
+    @Test
+    void qualified_super() {
+      MethodInvocationTree tree = firstConstructorInvocation("class T { T() { ClassName.super(true, false); } }");
+      assertThat(tree).is(Tree.Kind.METHOD_INVOCATION);
+      assertThat(tree.arguments()).hasSize(2);
+      assertThat(tree.typeArguments()).isNull();
+
+      MemberSelectExpressionTree methodSelect = (MemberSelectExpressionTree) tree.methodSelect();
+      assertThat(methodSelect).hasChildrenSize(3);
+      assertThat(methodSelect.identifier()).hasName("super");
+      assertThat(methodSelect.operatorToken()).is(".");
+      assertThat(((IdentifierTree) methodSelect.expression())).hasName("ClassName");
+    }
+

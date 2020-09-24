@@ -1,0 +1,38 @@
+    @Test
+    void try_catches() {
+      TryStatementTree tree = (TryStatementTree) firstMethodFirstStatement("class T { void m() { try { } catch (RuntimeException e1) { } catch (Exception e2) { } } }");
+      assertThat(tree)
+        .is(Tree.Kind.TRY_STATEMENT)
+        .hasChildrenSize(4);
+      assertThat(tree.tryKeyword()).is("try");
+      assertThat(tree.openParenToken()).isNull();
+      assertThat(tree.resourceList()).isEmpty();
+      assertThat(tree.closeParenToken()).isNull();
+      assertThat(tree.block()).is(Tree.Kind.BLOCK);
+      assertThat(tree.finallyKeyword()).isNull();
+      assertThat(tree.finallyBlock()).isNull();
+      assertThat(tree.catches()).hasSize(2);
+
+      CatchTree catchTreeRuntimeException = tree.catches().get(0);
+      assertThat(catchTreeRuntimeException.catchKeyword()).is("catch");
+      assertThat(catchTreeRuntimeException.block()).is(Tree.Kind.BLOCK);
+      assertThat(catchTreeRuntimeException.openParenToken()).is("(");
+      assertThat(catchTreeRuntimeException.closeParenToken()).is(")");
+      assertThat(catchTreeRuntimeException).hasChildrenSize(5);
+
+      VariableTree parameterTreeRuntimeException = catchTreeRuntimeException.parameter();
+      assertThat(parameterTreeRuntimeException.type()).is(Tree.Kind.IDENTIFIER);
+      assertThat(parameterTreeRuntimeException.simpleName()).hasName("e1");
+      assertThat(parameterTreeRuntimeException.initializer()).isNull();
+      assertThat(parameterTreeRuntimeException).hasChildrenSize(3);
+
+      CatchTree catchTreeException = tree.catches().get(1);
+      assertThat(catchTreeException).hasChildrenSize(5);
+
+      VariableTree parameterTreeException = catchTreeException.parameter();
+      assertThat(parameterTreeException.type()).is(Tree.Kind.IDENTIFIER);
+      assertThat(parameterTreeException.simpleName()).hasName("e2");
+      assertThat(parameterTreeException.initializer()).isNull();
+      assertThat(parameterTreeException).hasChildrenSize(3);
+    }
+

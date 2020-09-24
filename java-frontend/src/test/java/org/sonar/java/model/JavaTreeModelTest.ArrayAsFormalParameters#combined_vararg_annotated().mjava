@@ -1,0 +1,22 @@
+    @Test
+    void combined_vararg_annotated() {
+      VariableTree variable = firstMethodParameter("interface T { void m(int[] @Foo ... a); }");
+      assertThat(variable).hasChildrenSize(3);
+      assertThat(variable.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree varArgType = (ArrayTypeTree) variable.type();
+
+      assertThat(varArgType)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .hasAnnotations(1)
+        .isVarArg()
+        .hasChildrenSize(3);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) varArgType.type();
+      assertThat(arrayTypeTree)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(varArgType.ellipsisToken().column() > arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

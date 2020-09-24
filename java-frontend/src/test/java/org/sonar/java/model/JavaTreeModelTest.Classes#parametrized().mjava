@@ -1,0 +1,15 @@
+    @Test
+    void parametrized() {
+      ClassTree tree = firstType("class T<U,V> { }");
+      assertThat(tree.modifiers()).isEmpty();
+      assertThat(tree.simpleName()).hasName("T");
+      TypeParameters typeParameters = tree.typeParameters();
+      assertThat(typeParameters)
+        .hasSize(2)
+        .hasSeparatorsSize(1)
+        .hasChildrenSize(5);
+      assertThat(tree.superClass()).isNull();
+      assertThat(tree.superInterfaces()).isEmpty();
+      assertThat(tree.declarationKeyword()).is("class");
+    }
+

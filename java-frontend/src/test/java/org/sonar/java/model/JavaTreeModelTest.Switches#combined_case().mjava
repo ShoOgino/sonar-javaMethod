@@ -1,0 +1,17 @@
+    @Test
+    @SuppressWarnings("deprecation")
+    void combined_case() {
+      CaseLabelTree c23 = firstCaseGroup.labels().get(1);
+      assertThat(c23).hasChildrenSize(4);
+      assertThat(c23.isFallThrough()).isTrue();
+      assertThat(c23.caseOrDefaultKeyword()).is("case");
+      assertThat(c23.expressions()).hasSize(2);
+      assertThat(((LiteralTree) c23.expressions().get(0))).hasValue("2");
+      assertThat(((LiteralTree) c23.expressions().get(1))).hasValue("3");
+      assertThat(c23.colonOrArrowToken()).is(":");
+      assertThat(c23.colonToken()).is(":");
+      assertThat(((LiteralTree) c23.expression()))
+        .is(Tree.Kind.INT_LITERAL)
+        .hasValue("2");
+    }
+

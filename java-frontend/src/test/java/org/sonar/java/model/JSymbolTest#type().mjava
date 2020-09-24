@@ -5,17 +5,16 @@
     VariableTreeImpl field = (VariableTreeImpl) c.members().get(0);
     MethodTreeImpl method = (MethodTreeImpl) c.members().get(1);
 
-    assertThat(cu.sema.typeSymbol(c.typeBinding).owner().type())
-      .isSameAs(c.symbol().owner().type())
-      .isNull();
+    assertThat(cu.sema.typeSymbol(c.typeBinding).owner())
+      .isOfSameTypeAs(c.symbol().owner())
+      .isHavingNullType();
 
-    assertThat(cu.sema.typeSymbol(c.typeBinding).type())
-      .isSameAs(cu.sema.type(c.typeBinding));
+    assertThat(cu.sema.typeSymbol(c.typeBinding))
+      .isOfType(cu.sema.type(c.typeBinding));
 
-    assertThat(cu.sema.variableSymbol(field.variableBinding).type())
-      .isSameAs(cu.sema.type(field.variableBinding.getType()));
+    assertThat(cu.sema.variableSymbol(field.variableBinding))
+      .isOfType(cu.sema.type(field.variableBinding.getType()));
 
-    assertThat(cu.sema.methodSymbol(method.methodBinding).type())
-      .isSameAs(Symbols.unknownType);
+    assertThat(cu.sema.methodSymbol(method.methodBinding)).isOfUnknownType();
   }
 

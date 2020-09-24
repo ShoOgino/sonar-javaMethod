@@ -1,0 +1,11 @@
+    @Test
+    void field_access_expression_in_nested_classes() {
+      MemberSelectExpressionTree tree = (MemberSelectExpressionTree) expressionOfReturnStatement("class T { int m() { return ClassName.super.identifier; } }");
+      assertThat(tree)
+        .is(Tree.Kind.MEMBER_SELECT)
+        .hasChildrenSize(3);
+      assertThat(tree.expression()).is(Tree.Kind.MEMBER_SELECT);
+      assertThat(tree.identifier()).hasName("identifier");
+      assertThat(tree.operatorToken()).is(".");
+    }
+

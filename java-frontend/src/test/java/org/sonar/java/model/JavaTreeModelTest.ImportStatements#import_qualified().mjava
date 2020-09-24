@@ -1,0 +1,10 @@
+    @Test
+    void import_qualified() {
+      ImportTree importTree = (ImportTree) compilationUnit("import foo.Bar;").imports().get(0);
+      assertThat(importTree)
+        .is(Tree.Kind.IMPORT)
+        .hasChildrenSize(3);
+      assertThat(importTree.isStatic()).isFalse();
+      assertThat(importTree.qualifiedIdentifier()).is(Tree.Kind.MEMBER_SELECT);
+    }
+

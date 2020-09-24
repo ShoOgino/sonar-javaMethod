@@ -1,0 +1,19 @@
+    @Test
+    void interface_declaration_with_extensions() {
+      ClassTree tree = firstType("public interface T<U> extends I1, I2 { }");
+      assertThat(tree)
+        .is(Tree.Kind.INTERFACE)
+        .hasChildrenSize(8);
+      assertThat(tree.modifiers()).hasModifiers(Modifier.PUBLIC);
+      assertThat(tree.simpleName()).hasName("T");
+      assertThat(tree.superClass()).isNull();
+      assertThat(tree.superInterfaces())
+        .hasSize(2)
+        .hasSeparatorsSize(1);
+      assertThat(tree.declarationKeyword()).is("interface");
+      TypeParameters typeParameters = tree.typeParameters();
+      assertThat(typeParameters)
+        .hasChildrenSize(3)
+        .isNotEmpty();
+    }
+

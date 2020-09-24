@@ -1,0 +1,19 @@
+    @Test
+    void with_multiple_parameters() {
+      List<AnnotationTree> annotations = annotations("@Target(value={ElementType.METHOD}, value2=\"toto\") class T { }");
+      assertThat(annotations).hasSize(1);
+
+      AnnotationTree annotation = annotations.get(0);
+      assertThat(annotation).hasChildrenSize(3);
+      assertThat(annotation.atToken()).is("@");
+      assertThat(annotation.annotationType()).is(Tree.Kind.IDENTIFIER);
+
+      Arguments arguments = annotation.arguments();
+      assertThat(arguments)
+        .hasSeparatorsSize(1)
+        .hasSize(2);
+      assertThat(arguments.get(0)).is(Tree.Kind.ASSIGNMENT);
+      assertThat(arguments.openParenToken()).is("(");
+      assertThat(arguments.closeParenToken()).is(")");
+    }
+

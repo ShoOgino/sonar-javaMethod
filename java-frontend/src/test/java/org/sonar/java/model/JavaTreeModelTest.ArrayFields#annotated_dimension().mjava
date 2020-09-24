@@ -1,0 +1,14 @@
+    @Test
+    void annotated_dimension() {
+      VariableTree field = (VariableTree) firstTypeMember("class T { int @Foo [] a; }");
+      assertThat(field).hasChildrenSize(4);
+      assertThat(field.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) field.type();
+      assertThat(arrayTypeTree)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+    }
+

@@ -4,10 +4,11 @@
   @Test
   void instanceof_expression() {
     InstanceOfTree tree = (InstanceOfTree) expressionOfReturnStatement("class T { boolean m() { return null instanceof Object; } }");
-    assertThat(tree.is(Tree.Kind.INSTANCE_OF)).isTrue();
-    assertThat(tree.expression()).isNotNull();
-    assertThat(tree.instanceofKeyword().text()).isEqualTo("instanceof");
-    assertThat(tree.type()).isNotNull();
-    assertThatChildrenIteratorHasSize(tree, 3);
+    assertThat(tree)
+      .is(Tree.Kind.INSTANCE_OF)
+      .hasChildrenSize(3);
+    assertThat(tree.expression()).is(Tree.Kind.NULL_LITERAL);
+    assertThat(tree.instanceofKeyword()).is("instanceof");
+    assertThat(tree.type()).is(Tree.Kind.IDENTIFIER);
   }
 

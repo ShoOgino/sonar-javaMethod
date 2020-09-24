@@ -1,0 +1,20 @@
+    @Test
+    void annotation_between_dimensions() {
+      MethodTree method = (MethodTree) firstTypeMember("class T { int[] @Foo [] m(); }");
+      assertThat(method.returnType()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) method.returnType();
+      assertThat(arrayTypeTree)
+        .hasAnnotations(1)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(4);
+
+      ArrayTypeTree childArrayTypeTree = (ArrayTypeTree) arrayTypeTree.type();
+      assertThat(childArrayTypeTree)
+        .is(Tree.Kind.ARRAY_TYPE)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+      assertThat(childArrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(childArrayTypeTree.openBracketToken().column() < arrayTypeTree.openBracketToken().column()).isTrue();
+    }
+

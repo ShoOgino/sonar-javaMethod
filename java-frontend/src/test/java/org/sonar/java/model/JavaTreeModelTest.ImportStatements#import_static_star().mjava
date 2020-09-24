@@ -1,0 +1,10 @@
+    @Test
+    void import_static_star() {
+      ImportTree importTree = (ImportTree) compilationUnit("import static foo.Bar.*;").imports().get(0);
+      assertThat(importTree)
+        .is(Tree.Kind.IMPORT)
+        .hasChildrenSize(4);
+      assertThat(importTree.isStatic()).isTrue();
+      assertThat(importTree.qualifiedIdentifier()).is(Tree.Kind.MEMBER_SELECT);
+    }
+

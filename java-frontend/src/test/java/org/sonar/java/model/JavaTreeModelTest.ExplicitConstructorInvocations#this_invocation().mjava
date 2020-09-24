@@ -1,0 +1,9 @@
+    @Test
+    void this_invocation() {
+      MethodInvocationTree tree = firstConstructorInvocation("class T { T() { this(true, false); } }");
+      assertThat(tree).is(Tree.Kind.METHOD_INVOCATION);
+      assertThat(((IdentifierTree) tree.methodSelect())).hasName("this");
+      assertThat(tree.arguments()).hasSize(2);
+      assertThat(tree.typeArguments()).isNull();
+    }
+

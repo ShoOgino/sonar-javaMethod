@@ -1,0 +1,13 @@
+    @Test
+    void array_formal_parameter() {
+      VariableTree variable = firstMethodParameter("interface T { void m(int[] a); }");
+      assertThat(variable).hasChildrenSize(3); // 1+2, as empty modifiers are always included
+      assertThat(variable.type()).is(Tree.Kind.ARRAY_TYPE);
+
+      ArrayTypeTree arrayTypeTree = (ArrayTypeTree) variable.type();
+      assertThat(arrayTypeTree.type()).is(Tree.Kind.PRIMITIVE_TYPE);
+      assertThat(arrayTypeTree)
+        .isDeclaredArrayDimension()
+        .hasChildrenSize(3);
+    }
+
