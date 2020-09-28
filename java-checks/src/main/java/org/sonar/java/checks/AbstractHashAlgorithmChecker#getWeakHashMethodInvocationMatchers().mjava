@@ -1,5 +1,4 @@
-  @Override
-  protected MethodMatchers getMethodInvocationMatchers() {
+  private static MethodMatchers getWeakHashMethodInvocationMatchers() {
     ArrayList<MethodMatchers> matchers = new ArrayList<>();
     matchers
       .add(MethodMatchers.create()
@@ -8,11 +7,12 @@
         .addParametersMatcher(JAVA_LANG_STRING)
         .build());
 
-    matchers.add(MethodMatchers.create()
-      .ofTypes("org.apache.commons.codec.digest.DigestUtils")
-      .name(ALGORITHM_BY_METHOD_NAME::containsKey)
-      .withAnyParameters()
-      .build());
+    matchers
+      .add(MethodMatchers.create()
+        .ofTypes("org.apache.commons.codec.digest.DigestUtils")
+        .name(ALGORITHM_BY_METHOD_NAME::containsKey)
+        .withAnyParameters()
+        .build());
 
     matchers
       .add(MethodMatchers.create()
@@ -20,6 +20,13 @@
         .names(GET_INSTANCE)
         .addParametersMatcher(JAVA_LANG_STRING)
         .addParametersMatcher(JAVA_LANG_STRING, ANY)
+        .build());
+
+    matchers
+      .add(MethodMatchers.create()
+        .ofTypes("org.springframework.util.DigestUtils")
+        .names("appendMd5DigestAsHex", "md5Digest", "md5DigestAsHex")
+        .withAnyParameters()
         .build());
 
     for (DeprecatedSpringPasswordEncoder pe : DeprecatedSpringPasswordEncoder.values()) {
