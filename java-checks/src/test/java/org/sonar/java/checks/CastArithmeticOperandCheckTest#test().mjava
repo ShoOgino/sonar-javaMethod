@@ -1,7 +1,12 @@
   @Test
   void test() {
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/CastArithmeticOperandCheck.java")
+      .onFile(testSourcesPath(TEST_FILE_PATH))
+      .withCheck(new CastArithmeticOperandCheck())
+      .verifyIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath(TEST_FILE_PATH))
       .withCheck(new CastArithmeticOperandCheck())
       .verifyIssues();
   }
