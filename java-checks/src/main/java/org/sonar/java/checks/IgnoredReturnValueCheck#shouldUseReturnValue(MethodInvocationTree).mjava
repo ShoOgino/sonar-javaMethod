@@ -1,0 +1,8 @@
+  private static boolean shouldUseReturnValue(MethodInvocationTree mit) {
+    Symbol symbol = mit.symbol();
+    return !isVoidOrUnknown(mit.symbolType())
+      && !isConstructor(symbol)
+      && symbol.isPublic()
+      && (isCheckedType(symbol.owner().type()) || COLLECTION_METHODS.matches(symbol));
+  }
+
