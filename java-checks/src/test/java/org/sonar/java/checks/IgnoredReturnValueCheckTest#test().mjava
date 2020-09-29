@@ -1,12 +1,18 @@
   @Test
   void test() {
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/IgnoredReturnValueCheck.java")
-      .withCheck(new IgnoredReturnValueCheck())
+      .onFile(testSourcesPath("checks/S2201_IgnoredReturnValueCheck.java"))
+      .withCheck(CHECK)
       .verifyIssues();
+
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/IgnoredReturnValueCheckInternalCalls.java")
-      .withCheck(new IgnoredReturnValueCheck())
+      .onFile(nonCompilingTestSourcesPath("checks/S2201_IgnoredReturnValueCheck.java"))
+      .withCheck(CHECK)
+      .verifyIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/S2201_IgnoredReturnValueCheckInternalCalls.java"))
+      .withCheck(CHECK)
       .verifyNoIssues();
   }
 
