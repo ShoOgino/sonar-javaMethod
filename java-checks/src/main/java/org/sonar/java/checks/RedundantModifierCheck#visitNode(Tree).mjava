@@ -2,23 +2,28 @@
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
     for (Tree member : classTree.members()) {
-      if (member.is(Tree.Kind.METHOD)) {
-        MethodTree methodTree = (MethodTree) member;
-        ModifiersTree modifiers = methodTree.modifiers();
-        if (isInterfaceOrAnnotation(tree)) {
-          checkRedundantModifier(modifiers, Modifier.ABSTRACT);
-          checkRedundantModifier(modifiers, Modifier.PUBLIC);
-        } else if (ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.FINAL)) {
-          checkRedundantModifier(modifiers, Modifier.FINAL);
-        }
-      } else if (member.is(Tree.Kind.VARIABLE) && isInterfaceOrAnnotation(tree)) {
-        VariableTree variableTree = (VariableTree) member;
-        ModifiersTree modifiers = variableTree.modifiers();
-        checkRedundantModifier(modifiers, Modifier.PUBLIC);
-        checkRedundantModifier(modifiers, Modifier.STATIC);
-        checkRedundantModifier(modifiers, Modifier.FINAL);
-      } else if(member.is(Kind.CONSTRUCTOR) && tree.is(Kind.ENUM)) {
-        checkRedundantModifier(((MethodTree) member).modifiers(), Modifier.PRIVATE);
+      switch (member.kind()) {
+        case METHOD:
+          checkMethod((MethodTree) member, classTree);
+          break;
+        case VARIABLE:
+          checkVariable((VariableTree) member, classTree);
+          break;
+        case CONSTRUCTOR:
+          if (tree.is(Kind.ENUM)) {
+            checkRedundantModifiers(((MethodTree) member).modifiers(), Modifier.PRIVATE);
+          }
+          break;
+        case INTERFACE:
+          ClassTree nestedClass = (ClassTree) member;
+          checkNestedInterface(nestedClass, classTree);
+          checkNestedType(nestedClass, classTree);
+          break;
+        case CLASS:
+          checkNestedType((ClassTree) member, classTree);
+          break;
+        default:
+          // Do nothing for others members
       }
     }
   }

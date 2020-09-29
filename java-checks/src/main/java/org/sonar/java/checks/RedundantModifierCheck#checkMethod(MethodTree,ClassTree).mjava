@@ -1,0 +1,9 @@
+  private void checkMethod(MethodTree methodTree, ClassTree classTree) {
+    ModifiersTree modifiers = methodTree.modifiers();
+    if (isInterfaceOrAnnotation(classTree)) {
+      checkRedundantModifiers(modifiers, Modifier.ABSTRACT, Modifier.PUBLIC);
+    } else if (ModifiersUtils.hasModifier(classTree.modifiers(), Modifier.FINAL)) {
+      checkRedundantModifiers(modifiers, Modifier.FINAL);
+    }
+  }
+
