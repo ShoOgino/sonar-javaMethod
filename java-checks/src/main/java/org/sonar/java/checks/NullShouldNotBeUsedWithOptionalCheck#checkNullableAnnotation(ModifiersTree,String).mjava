@@ -1,8 +1,6 @@
-  private void checkNullableAnnotation(ModifiersTree modifiers, String message) {
-    for (AnnotationTree annotation : modifiers.annotations()) {
-      if (hasNullableAnnotation(annotation)) {
-        context.reportIssue(this, annotation, message);
-      }
-    }
+  private void checkNullableAnnotation(ModifiersTree modifiers, String messageFormat) {
+    NullableAnnotationUtils.nullableAnnotation(modifiers)
+      .ifPresent(annotation -> context.reportIssue(this, annotation,
+        String.format(messageFormat, "@" + annotation.annotationType().symbolType().name())));
   }
 

@@ -4,9 +4,9 @@
     if (isAnnotatedNullable(symbol.metadata())) {
       return null;
     }
-    Optional<String> result = NONNULL_ANNOTATIONS.stream().filter(metadata::isAnnotatedWith).findFirst();
-    if (result.isPresent()) {
-      return result.get();
+    Optional<AnnotationInstance> annotation = findFirst(NONNULL_ANNOTATIONS, metadata);
+    if (annotation.isPresent()) {
+      return annotation.get().symbol().type().fullyQualifiedName();
     }
     String nonNullReturnAnnotation = nonNullReturnTypeAnnotation(symbol);
     if (nonNullReturnAnnotation != null) {

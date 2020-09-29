@@ -1,10 +1,14 @@
   private static boolean isUsingNonNull(Symbol symbol) {
-    if (isNullableThroughNonNull(symbol.metadata())) {
-      return false;
-    }
     SymbolMetadata metadata = symbol.metadata();
-    return NONNULL_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith)
-      || nonNullReturnTypeAnnotation(symbol) != null
-      || nonNullFieldAnnotation(symbol) != null;
+    for (AnnotationInstance annotation : metadata.annotations()) {
+      if (isNullableThroughNonNull(annotation)) {
+        return false;
+      }
+      Type type = annotation.symbol().type();
+      if (NONNULL_ANNOTATIONS.contains(type.fullyQualifiedName())) {
+        return true;
+      }
+    }
+    return nonNullReturnTypeAnnotation(symbol) != null || nonNullFieldAnnotation(symbol) != null;
   }
 

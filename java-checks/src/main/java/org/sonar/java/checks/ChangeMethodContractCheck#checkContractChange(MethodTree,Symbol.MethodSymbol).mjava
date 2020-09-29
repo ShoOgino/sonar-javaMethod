@@ -1,18 +1,16 @@
   private void checkContractChange(MethodTree methodTree, Symbol.MethodSymbol overridee) {
-    if (MethodTreeUtils.isEqualsMethod(methodTree) && methodTree.parameters().get(0).symbol().metadata().isAnnotatedWith(JAVAX_ANNOTATION_NONNULL)) {
-      reportIssue(methodTree.parameters().get(0), "Equals method should accept null parameters and return false.");
+    if (MethodTreeUtils.isEqualsMethod(methodTree)) {
+      NullableAnnotationUtils.nonNullAnnotation(methodTree.parameters().get(0).modifiers())
+        .ifPresent(annotation -> reportIssue(annotation, "Equals method should accept null parameters and return false."));
       return;
     }
     for (int i = 0; i < methodTree.parameters().size(); i++) {
       VariableTree parameter = methodTree.parameters().get(i);
       checkParameter(parameter, JUtils.parameterAnnotations(overridee, i));
     }
-    if (nonNullVsNull(overridee, methodTree.symbol().metadata())) {
-      for (AnnotationTree annotationTree : methodTree.modifiers().annotations()) {
-        if(annotationTree.symbolType().is(JAVAX_ANNOTATION_NULLABLE) || annotationTree.symbolType().is(JAVAX_ANNOTATION_CHECK_FOR_NULL)) {
-          reportIssue(annotationTree, "Remove this \""+ annotationTree.symbolType().name() +"\" annotation to honor the overridden method's contract.");
-        }
-      }
+    if (NullableAnnotationUtils.isAnnotatedNonNull(overridee)) {
+      NullableAnnotationUtils.nullableAnnotation(methodTree.modifiers())
+        .ifPresent(annotation -> reportIssue(annotation, "Remove this \""+ annotation.symbolType().name() +"\" annotation to honor the overridden method's contract."));
     }
   }
 

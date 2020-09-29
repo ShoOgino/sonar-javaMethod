@@ -1,0 +1,11 @@
+  @Test
+  void testNonNullAnnotationOnModifiers() {
+    assertThat(nonNullAnnotation(getMethodTree("foo").modifiers())).isNotPresent();
+    assertThat(nonNullAnnotation(getMethodTree("bar").modifiers())).isNotPresent();
+    assertThat(nonNullAnnotation(getMethodTree("nullable1").modifiers())).isNotPresent();
+    assertThat(nonNullAnnotation(getMethodTree("nullable6").modifiers())).isNotPresent();
+    assertThat(nonNullAnnotation(getMethodTree("nonnull1").modifiers()))
+      .hasValueSatisfying(annotation -> assertThat(annotation.annotationType().symbolType().fullyQualifiedName())
+        .isEqualTo("javax.annotation.Nonnull"));
+  }
+

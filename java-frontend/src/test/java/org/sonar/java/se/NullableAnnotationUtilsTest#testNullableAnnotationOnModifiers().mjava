@@ -1,0 +1,12 @@
+  @Test
+  void testNullableAnnotationOnModifiers() {
+    assertThat(nullableAnnotation(getMethodTree("foo").modifiers())).isNotPresent();
+    assertThat(nullableAnnotation(getMethodTree("bar").modifiers())).isNotPresent();
+    assertThat(nullableAnnotation(getMethodTree("nullable1").modifiers()))
+      .hasValueSatisfying(annotation -> assertThat(annotation.annotationType().symbolType().fullyQualifiedName())
+        .isEqualTo("javax.annotation.Nullable"));
+    assertThat(nullableAnnotation(getMethodTree("nullable2").modifiers()))
+      .hasValueSatisfying(annotation -> assertThat(annotation.annotationType().symbolType().fullyQualifiedName())
+        .isEqualTo("javax.annotation.CheckForNull"));
+  }
+

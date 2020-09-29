@@ -7,8 +7,9 @@
     MethodTree methodTree = (MethodTree) tree;
     TypeTree returnType = methodTree.returnType();
     if (returnType.symbolType().isPrimitive()) {
-      findNullableAnnotation(methodTree)
-        .ifPresent(annotation -> reportIssue(returnType, String.format("\"%s\" annotation should not be used on primitive types", annotation)));
+      NullableAnnotationUtils.nullableAnnotation(methodTree.modifiers())
+        .map(annotation -> annotation.annotationType().symbolType().name())
+        .ifPresent(annotation -> reportIssue(returnType, String.format("\"@%s\" annotation should not be used on primitive types", annotation)));
     }
   }
 

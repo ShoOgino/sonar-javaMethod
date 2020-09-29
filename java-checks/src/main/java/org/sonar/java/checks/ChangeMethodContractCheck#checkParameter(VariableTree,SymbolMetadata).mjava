@@ -1,12 +1,8 @@
   private void checkParameter(VariableTree parameter, SymbolMetadata overrideeParamMetadata) {
-    Tree reportTree = parameter;
-    if (nonNullVsNull(parameter.symbol(), overrideeParamMetadata)) {
-      for (AnnotationTree annotationTree : parameter.modifiers().annotations()) {
-        if(annotationTree.symbolType().is(JAVAX_ANNOTATION_NONNULL)) {
-          reportTree = annotationTree;
-        }
-      }
-      reportIssue(reportTree, "Remove this \"Nonnull\" annotation to honor the overridden method's contract.");
+    if (NullableAnnotationUtils.isAnnotatedNullable(overrideeParamMetadata)) {
+      NullableAnnotationUtils.nonNullAnnotation(parameter.modifiers())
+        .ifPresent(annotation -> reportIssue(annotation,
+          "Remove this \"" + annotation.annotationType().symbolType().name() + "\" annotation to honor the overridden method's contract."));
     }
   }
 

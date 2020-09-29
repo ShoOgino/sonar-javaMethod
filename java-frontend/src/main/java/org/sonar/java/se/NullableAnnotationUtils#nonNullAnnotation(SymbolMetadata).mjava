@@ -3,6 +3,8 @@
     if (isAnnotatedNullable(metadata)) {
       return null;
     }
-    return NONNULL_ANNOTATIONS.stream().filter(metadata::isAnnotatedWith).findFirst().orElse(null);
+    return findFirst(NONNULL_ANNOTATIONS, metadata)
+      .map(annotation -> annotation.symbol().type().fullyQualifiedName())
+      .orElse(null);
   }
 

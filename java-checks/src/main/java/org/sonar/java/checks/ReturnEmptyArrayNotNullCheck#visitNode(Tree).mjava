@@ -5,7 +5,7 @@
     }
     if (tree.is(Tree.Kind.METHOD)) {
       MethodTree methodTree = (MethodTree) tree;
-      if (isAllowingNull(methodTree)) {
+      if (isAnnotatedNullable(methodTree.symbol().metadata()) || requiresReturnNull(methodTree)) {
         returnType.push(Returns.OTHERS);
       } else {
         returnType.push(Returns.getReturnType(methodTree.returnType()));
