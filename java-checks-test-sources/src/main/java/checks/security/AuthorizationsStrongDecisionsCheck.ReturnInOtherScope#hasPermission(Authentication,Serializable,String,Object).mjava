@@ -1,0 +1,19 @@
+    @Override
+    public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) { // Noncompliant
+      if (o.equals(s)) {
+        PermissionEvaluator evaluator = new PermissionEvaluator() {
+          @Override
+          public boolean hasPermission(Authentication authentication, Object o, Object o1) { // Noncompliant
+            return true;
+          }
+
+          @Override
+          public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) { // Compliant
+            return false;
+          }
+        };
+        return true;
+      }
+      return true;
+    }
+

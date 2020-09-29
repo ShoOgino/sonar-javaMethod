@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodTree methodTree = (MethodTree) tree;
+    if (ACCESS_DECISION_VOTER_VOTE.matches(methodTree)) {
+      reportNoStrongDecision(methodTree, AuthorizationsStrongDecisionsCheck::isStrongVoteDecision, "vote", "ACCESS_DENIED");
+    } else if (PERMISSION_EVALUATOR_HAS_PERMISSION.matches(methodTree)) {
+      reportNoStrongDecision(methodTree, AuthorizationsStrongDecisionsCheck::isStrongHasPermissionDecision, "hasPermission", "false");
+    }
+  }
+

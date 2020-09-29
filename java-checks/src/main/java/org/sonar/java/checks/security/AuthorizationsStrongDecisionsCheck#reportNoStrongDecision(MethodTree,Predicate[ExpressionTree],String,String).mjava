@@ -1,0 +1,8 @@
+  private void reportNoStrongDecision(MethodTree methodTree, Predicate<ExpressionTree> isStrongDecision, String methodName, String strongDecision) {
+    ReturnStatementVisitor returnStatementVisitor = new ReturnStatementVisitor(isStrongDecision);
+    methodTree.accept(returnStatementVisitor);
+    if (!returnStatementVisitor.takesStrongDecision()) {
+      reportIssue(methodTree.simpleName(), String.format("\"%s\" method should return at least one time %s.", methodName, strongDecision));
+    }
+  }
+
