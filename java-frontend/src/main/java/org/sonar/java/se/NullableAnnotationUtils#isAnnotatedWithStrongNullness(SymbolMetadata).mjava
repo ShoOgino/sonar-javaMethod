@@ -1,4 +1,7 @@
   public static boolean isAnnotatedWithStrongNullness(SymbolMetadata metadata) {
-    return findFirst(STRONG_NULLABLE_ANNOTATIONS, metadata).isPresent();
+    return metadata.annotations().stream()
+      .map(AnnotationInstance::symbol)
+      .map(Symbol::type)
+      .anyMatch(NullableAnnotationUtils::isStrongNullableAnnotation);
   }
 

@@ -1,9 +1,4 @@
   public static Optional<AnnotationTree> nonNullAnnotation(ModifiersTree modifiers) {
-    for (AnnotationTree annotation : modifiers.annotations()) {
-      if (NONNULL_ANNOTATIONS.contains(annotation.annotationType().symbolType().fullyQualifiedName()) && annotation.arguments().isEmpty()) {
-        return Optional.of(annotation);
-      }
-    }
-    return Optional.empty();
+    return modifiers.annotations().stream().filter(NullableAnnotationUtils::isNonNullAnnotation).findFirst();
   }
 

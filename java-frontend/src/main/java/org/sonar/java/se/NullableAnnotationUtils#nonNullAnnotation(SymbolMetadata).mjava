@@ -3,8 +3,9 @@
     if (isAnnotatedNullable(metadata)) {
       return null;
     }
-    return findFirst(NONNULL_ANNOTATIONS, metadata)
-      .map(annotation -> annotation.symbol().type().fullyQualifiedName())
+    return findFirst(NullableAnnotationUtils::isNonNullAnnotation, metadata)
+      .map(NullableAnnotationUtils::annotationType)
+      .map(Type::fullyQualifiedName)
       .orElse(null);
   }
 

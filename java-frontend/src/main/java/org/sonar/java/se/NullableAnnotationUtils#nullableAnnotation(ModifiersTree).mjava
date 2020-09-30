@@ -1,9 +1,4 @@
   public static Optional<AnnotationTree> nullableAnnotation(ModifiersTree modifiers) {
-    for (AnnotationTree annotation : modifiers.annotations()) {
-      if (NULLABLE_ANNOTATIONS.contains(annotation.annotationType().symbolType().fullyQualifiedName())) {
-        return Optional.of(annotation);
-      }
-    }
-    return Optional.empty();
+    return modifiers.annotations().stream().filter(NullableAnnotationUtils::isNullableAnnotation).findFirst();
   }
 

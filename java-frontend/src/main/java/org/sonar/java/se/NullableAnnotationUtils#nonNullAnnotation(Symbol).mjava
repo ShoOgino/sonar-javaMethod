@@ -1,12 +1,8 @@
   @CheckForNull
   public static String nonNullAnnotation(Symbol symbol) {
-    SymbolMetadata metadata = symbol.metadata();
-    if (isAnnotatedNullable(symbol.metadata())) {
-      return null;
-    }
-    Optional<AnnotationInstance> annotation = findFirst(NONNULL_ANNOTATIONS, metadata);
-    if (annotation.isPresent()) {
-      return annotation.get().symbol().type().fullyQualifiedName();
+    String nonNullAnnotation = nonNullAnnotation(symbol.metadata());
+    if (nonNullAnnotation != null) {
+      return nonNullAnnotation;
     }
     String nonNullReturnAnnotation = nonNullReturnTypeAnnotation(symbol);
     if (nonNullReturnAnnotation != null) {

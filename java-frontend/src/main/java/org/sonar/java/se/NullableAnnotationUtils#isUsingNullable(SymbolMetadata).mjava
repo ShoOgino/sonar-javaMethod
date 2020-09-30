@@ -1,12 +1,5 @@
   private static boolean isUsingNullable(SymbolMetadata metadata) {
-    for (AnnotationInstance annotation : metadata.annotations()) {
-      if (NULLABLE_ANNOTATIONS.contains(annotation.symbol().type().fullyQualifiedName())) {
-        return true;
-      }
-      if (isNullableThroughNonNull(annotation)) {
-        return true;
-      }
-    }
-    return false;
+    return metadata.annotations().stream()
+      .anyMatch(annotation -> isNullableAnnotation(annotationType(annotation)) || isNullableThroughNonNull(annotation));
   }
 
