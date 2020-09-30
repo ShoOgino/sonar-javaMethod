@@ -1,0 +1,9 @@
+  private void reportIssueIfMultipleCalls(@Nullable AssertSubject assertSubject, List<AssertSubject> equivalentAssertions) {
+    if (assertSubject != null && !equivalentAssertions.isEmpty()) {
+      reportIssue(assertSubject.methodName(),
+        "Join these multiple assertions subject to one assertion chain.",
+        equivalentAssertions.stream().map(AssertSubject::toSecondaryLocation).collect(Collectors.toList()),
+        null);
+    }
+  }
+

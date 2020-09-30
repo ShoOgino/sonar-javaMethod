@@ -1,6 +1,6 @@
   private void reportConsecutiveAssertions(List<StatementTree> statements) {
     AssertSubject currentSubject = null;
-    List<MethodInvocationTree> equivalentInvocations = new ArrayList<>();
+    List<AssertSubject> equivalentInvocations = new ArrayList<>();
 
     for (StatementTree statement : statements) {
       Optional<AssertSubject> assertThatInvocation = getSimpleAssertSubject(statement);
@@ -9,8 +9,8 @@
         AssertSubject assertSubject = assertThatInvocation.get();
         if (currentSubject == null) {
           currentSubject = assertSubject;
-        } else if (areEquivalent(currentSubject.arg, assertSubject.arg)) {
-          equivalentInvocations.add(assertSubject.mit);
+        } else if (currentSubject.hasEquivalentArgument(assertSubject)) {
+          equivalentInvocations.add(assertSubject);
         } else {
           reportIssueIfMultipleCalls(currentSubject, equivalentInvocations);
           currentSubject = assertSubject;
