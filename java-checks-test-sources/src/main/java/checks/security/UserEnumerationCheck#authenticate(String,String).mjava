@@ -1,0 +1,14 @@
+  public String authenticate(String username, String password) {
+
+    MyUserDetailsService s1 = new MyUserDetailsService();
+    UserDetails u1 = s1.loadUserByUsername(username);
+    UserDetails u2 = s1.loadUserByUsername(username());
+
+
+    if(u1 == null) {
+      throw new BadCredentialsException(username + " doesn't exist in our database"); // Noncompliant
+    }
+
+    throw new RuntimeException(new StringBuffer(username + " doesn't exist in our database").toString()); // Noncompliant
+  }
+

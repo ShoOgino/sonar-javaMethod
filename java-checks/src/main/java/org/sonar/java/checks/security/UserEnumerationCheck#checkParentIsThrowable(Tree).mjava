@@ -1,0 +1,11 @@
+  private static boolean checkParentIsThrowable(Tree tree) {
+    Tree current = tree.parent();
+    while (current instanceof ExpressionTree || current instanceof Arguments) {
+      if (current.is(Tree.Kind.NEW_CLASS) && ((NewClassTree) current).symbolType().isSubtypeOf(THROWABLE)) {
+        return true;
+      }
+      current = current.parent();
+    }
+    return false;
+  }
+

@@ -1,0 +1,26 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD)) {
+      stack.push(((MethodTree) tree));
+      return;
+    }
+
+    if (tree.is(Tree.Kind.THROW_STATEMENT)) {
+      ThrowStatementTree throwStatementTree = (ThrowStatementTree) tree;
+      if (throwStatementTree.expression().symbolType().is(USERNAME_NOT_FOUND_EXCEPTION) && !isInsideLoadUserByUserName()) {
+        reportIssue(throwStatementTree.expression(), MESSAGE);
+      }
+      return;
+    }
+
+    MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
+    Arguments arguments = methodInvocationTree.arguments();
+    if (arguments.isEmpty()) {
+      return;
+    }
+    ExpressionTree firstArgument = arguments.get(0);
+
+    checkHiddenUserNotFoundException(methodInvocationTree, firstArgument);
+    checkLoadUserArgUsedInExceptions(methodInvocationTree, firstArgument);
+  }
+

@@ -1,0 +1,11 @@
+  public void config() {
+    DaoAuthenticationProvider daoauth = new DaoAuthenticationProvider();
+    daoauth.setUserDetailsService(new MyUserDetailsService());
+    daoauth.setPasswordEncoder(new BCryptPasswordEncoder());
+    daoauth.setHideUserNotFoundExceptions(false); // Noncompliant {{Make sure allowing user enumeration is safe here.}}
+    daoauth.setHideUserNotFoundExceptions(MY_CONSTANT); // Noncompliant {{Make sure allowing user enumeration is safe here.}}
+    boolean variableFalse = false;
+    daoauth.setHideUserNotFoundExceptions(variableFalse); // Compliant, not a constant
+    throw new UsernameNotFoundException("userName not found"); // Noncompliant
+  }
+

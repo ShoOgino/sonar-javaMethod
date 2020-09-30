@@ -1,0 +1,9 @@
+  private void checkLoadUserArgUsedInExceptions(MethodInvocationTree methodInvocationTree, ExpressionTree expression) {
+    if (LOAD_USER_MATCHER.matches(methodInvocationTree) && expression.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) expression;
+      identifierTree.symbol().usages()
+        .stream().filter(UserEnumerationCheck::checkParentIsThrowable)
+        .forEach(value -> reportIssue(value, MESSAGE));
+    }
+  }
+
