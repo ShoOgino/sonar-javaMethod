@@ -1,0 +1,22 @@
+  List<String> foo() {
+    Object obj = null;
+    Object o1 = (List<String>) foo(); // Noncompliant [[sc=18;ec=30]] {{Remove this unnecessary cast to "List".}}
+    Object o2 = (List<? extends String>) foo(); // Noncompliant {{Remove this unnecessary cast to "List".}}
+    Object o3 = (List<? super String>) foo(); // Noncompliant {{Remove this unnecessary cast to "List".}}
+    String s1 = (String) obj; // Compliant
+    String s2 = (String) s1; // Noncompliant {{Remove this unnecessary cast to "String".}}
+    Nested a = (Nested) new ExtendedNested(); // Noncompliant {{Remove this unnecessary cast to "Nested".}}
+    Nested[][] as = (Nested[][]) new ExtendedNested[1][1]; // Noncompliant {{Remove this unnecessary cast to "Nested[][]".}}
+    ExtendedNested b = null;
+    fun(b);
+    fun((ExtendedNested) b); // Noncompliant
+    fun((Nested) b); // Compliant - exception to distinguish the method to call
+    List<ExtendedNested> bees = new java.util.ArrayList<ExtendedNested>();
+    List<Nested> aaas = (List) bees;
+    C c = new C((Nested) null); // Compliant - exception to distinguish the constructor to call
+    foo((List<List<Nested>>) (List<?>) foo2()); // compliant
+
+    String[] stringList = (String[]) list.toArray(new String[0]); // Compliant
+    return null;
+  }
+

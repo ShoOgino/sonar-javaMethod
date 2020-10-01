@@ -1,0 +1,18 @@
+  void main2() {
+    foo((Supplier<String>) Overloaded::f); // Compliant, cast is mandatory
+    foo((Function<String, String>) Overloaded::f); // Compliant, cast is mandatory
+
+    foo((Supplier<String>) Overloaded::fff); // Compliant
+    bar((Supplier<String>) Overloaded::fff); // Compliant
+    bar((Supplier<String>) Overloaded::f); // Compliant
+
+    bar((Supplier<String>) NotOverloaded::notOverloded); // Compliant
+    foo((Supplier<String>) NotOverloaded::notOverloded); // Compliant
+
+    rawBar((Supplier<String>) Overloaded::fff); // Compliant, cast is redundant
+
+
+    foo((Supplier<String>) String::new); // Compliant
+    foo((Function<String, String>) String::new); // Compliant
+  }
+

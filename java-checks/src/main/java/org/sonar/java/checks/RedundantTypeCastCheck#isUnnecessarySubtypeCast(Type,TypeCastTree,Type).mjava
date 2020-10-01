@@ -1,10 +1,13 @@
   private static boolean isUnnecessarySubtypeCast(Type childType, TypeCastTree typeCastTree, Type parentType) {
-    boolean isArgument = skipParentheses(typeCastTree.parent()).is(Tree.Kind.ARGUMENTS);
+    Tree parentTree = skipParentheses(typeCastTree.parent());
+    boolean isArgument = parentTree.is(Tree.Kind.ARGUMENTS);
+
     return !childType.isPrimitive()
       // Exception: subtype cast are tolerated in method or constructor call arguments
       && (typeCastTree.type().symbolType().equals(childType)
         || (isArgument && childType.equals(parentType)) || (!isArgument && childType.isSubtypeOf(parentType)))
       && (!ExpressionUtils.skipParentheses(typeCastTree.expression()).is(Tree.Kind.LAMBDA_EXPRESSION)
-        || isUnnecessaryLambdaCast(childType, parentType));
+        || isUnnecessaryLambdaCast(childType, parentType))
+      && !(isArgument && isMandatoryMethodReferenceCast(typeCastTree, parentTree));
   }
 

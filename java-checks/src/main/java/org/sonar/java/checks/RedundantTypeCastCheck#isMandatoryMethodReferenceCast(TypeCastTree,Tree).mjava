@@ -1,0 +1,13 @@
+  private static boolean isMandatoryMethodReferenceCast(TypeCastTree typeCastTree, Tree parentTree) {
+    Tree preParent = skipParentheses(parentTree.parent());
+    ExpressionTree castExpression = typeCastTree.expression();
+    if (castExpression.is(Tree.Kind.METHOD_REFERENCE) && preParent.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodReferenceTree expression = (MethodReferenceTree) castExpression;
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) preParent;
+      Symbol methodAsArg = expression.method().symbol();
+      Symbol methodCaller = methodInvocationTree.symbol();
+      return hasOverloads(methodAsArg) && hasOverloads(methodCaller);
+    }
+    return false;
+  }
+
