@@ -1,12 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
     ClassTree clazzTree = (ClassTree) tree;
-    SymbolMetadata clazzMeta = clazzTree.symbol().metadata();
     Set<Symbol> symbolsUsedInConstructors = symbolsUsedInConstructors(clazzTree);
 
-    if (isSpringSingletonComponent(clazzMeta)) {
+    if (isSpringSingletonComponent(clazzTree.symbol().metadata())) {
       clazzTree.members().stream().filter(v -> v.is(Kind.VARIABLE))
-        .map(m -> (VariableTree) m)
+        .map(VariableTree.class::cast)
         .filter(v -> !v.symbol().isStatic())
         .filter(v -> !isSpringInjectionAnnotated(v.symbol().metadata()))
         .filter(v -> !isCustomInjectionAnnotated(v.symbol().metadata()))

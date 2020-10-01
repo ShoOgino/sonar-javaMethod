@@ -1,8 +1,6 @@
   private static boolean isSpringSingletonComponent(SymbolMetadata clazzMeta) {
-    return (clazzMeta.isAnnotatedWith("org.springframework.stereotype.Controller")
-      || clazzMeta.isAnnotatedWith("org.springframework.stereotype.Service")
-      || clazzMeta.isAnnotatedWith("org.springframework.stereotype.Component")
-      || clazzMeta.isAnnotatedWith("org.springframework.stereotype.Repository"))
+    return SPRING_SINGLETON_ANNOTATION.stream().anyMatch(clazzMeta::isAnnotatedWith)
+      && !isUsingConfigurationProperties(clazzMeta)
       && isScopeSingleton(clazzMeta);
   }
 
