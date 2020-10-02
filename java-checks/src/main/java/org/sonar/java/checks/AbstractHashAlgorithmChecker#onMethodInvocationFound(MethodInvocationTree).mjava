@@ -1,9 +1,9 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     IdentifierTree methodName = ExpressionUtils.methodName(mit);
-    String message = MESSAGE_PER_CLASS.get(methodName.symbol().owner().type().fullyQualifiedName());
-    if (message != null) {
-      reportIssue(methodName, message);
+    Optional<String> message = getMessageForClass(methodName.symbol().owner().type().fullyQualifiedName());
+    if (message.isPresent()) {
+      reportIssue(methodName, message.get());
       return;
     }
     InsecureAlgorithm algorithm = ALGORITHM_BY_METHOD_NAME.get(methodName.name());
@@ -11,7 +11,7 @@
       algorithm = algorithm(mit.arguments().get(0)).orElse(null);
     }
     if (algorithm != null) {
-      reportIssue(methodName, "Use a stronger hashing algorithm than " + algorithm.toString() + ".");
+      reportIssue(methodName, getMessageForAlgorithm(algorithm.toString()));
     }
   }
 
