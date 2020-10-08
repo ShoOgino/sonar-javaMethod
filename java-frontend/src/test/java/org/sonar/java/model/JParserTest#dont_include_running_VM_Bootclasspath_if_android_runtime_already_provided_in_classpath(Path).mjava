@@ -1,0 +1,11 @@
+  @Test
+  void dont_include_running_VM_Bootclasspath_if_android_runtime_already_provided_in_classpath(@TempDir Path tempFolder) throws IOException {
+    VariableTree s1 = parseAndGetVariable("class C { void m() { String a; } }");
+    assertThat(s1.type().symbolType().fullyQualifiedName()).isEqualTo("java.lang.String");
+
+    Path fakeAndroidSdk = tempFolder.resolve("android.jar");
+    Files.createFile(fakeAndroidSdk);
+    s1 = parseAndGetVariable("class C { void m() { String a; } }", fakeAndroidSdk.toFile());
+    assertThat(s1.type().symbolType().fullyQualifiedName()).isEqualTo("Recovered#typeBindingLString;0");
+  }
+

@@ -1,0 +1,9 @@
+  private VariableTree parseAndGetVariable(String code, File... classpath) {
+    CompilationUnitTree t = JParserTestUtils.parse("Foo.java", code, Arrays.asList(classpath));
+    ClassTree c = (ClassTree) t.types().get(0);
+    MethodTree m = (MethodTree) c.members().get(0);
+    BlockTree s = m.block();
+    assertNotNull(s);
+    return (VariableTree) s.body().get(0);
+  }
+

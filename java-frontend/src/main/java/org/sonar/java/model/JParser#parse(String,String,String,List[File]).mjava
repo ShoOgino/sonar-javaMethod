@@ -18,11 +18,13 @@
 
     astParser.setCompilerOptions(options);
 
+    boolean includeRunningVMBootclasspath = classpath.stream().noneMatch(f -> JRE_JARS.contains(f.getName()));
+
     astParser.setEnvironment(
       classpath.stream().map(File::getAbsolutePath).toArray(String[]::new),
       new String[]{},
       new String[]{},
-      true
+      includeRunningVMBootclasspath
     );
     astParser.setUnitName(unitName);
 
