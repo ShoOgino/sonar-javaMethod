@@ -31,6 +31,15 @@
         .forEach(v -> excludeLines(v, ExceptionsShouldBeImmutableCheck.class));
     }
 
+    // Exclude final fields annotated with @Builder.Default in a @Builder class
+    if (usesAnnotation(tree, Collections.singletonList(LOMBOK_BUILDER))) {
+      tree.members().stream()
+        .filter(t -> t.is(Tree.Kind.VARIABLE))
+        .map(VariableTree.class::cast)
+        .filter(v -> v.symbol().isFinal() && v.symbol().metadata().isAnnotatedWith(LOMBOK_BUILDER_DEFAULT))
+        .forEach(v -> excludeLines(v, ConstantsShouldBeStaticFinalCheck.class));
+    }
+
     super.visitClass(tree);
   }
 
