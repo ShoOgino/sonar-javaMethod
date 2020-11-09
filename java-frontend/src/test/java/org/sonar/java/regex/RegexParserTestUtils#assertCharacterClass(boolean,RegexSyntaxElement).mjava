@@ -1,0 +1,13 @@
+  public static CharacterClassElementTree assertCharacterClass(boolean expectNegated, RegexSyntaxElement actual) {
+    CharacterClassTree characterClass = assertType(CharacterClassTree.class, actual);
+    assertEquals(AutomatonState.TransitionType.CHARACTER, characterClass.incomingTransitionType());
+    assertKind(RegexTree.Kind.CHARACTER_CLASS, characterClass);
+    assertKind(CharacterClassElementTree.Kind.NESTED_CHARACTER_CLASS, characterClass);
+    if (expectNegated) {
+      assertTrue(characterClass.isNegated(), "Character class should be negated.");
+    } else {
+      assertFalse(characterClass.isNegated(), "Character class should not be negated.");
+    }
+    return characterClass.getContents();
+  }
+

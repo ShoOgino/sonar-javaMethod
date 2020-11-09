@@ -10,5 +10,14 @@
       first -> assertJavaCharacter(1, '|', first),
       second -> assertJavaCharacter(3, '|', second)
     );
+
+    FinalState finalState = assertType(FinalState.class, disjunction.continuation());
+    assertEquals(AutomatonState.TransitionType.EPSILON, disjunction.incomingTransitionType());
+    assertEquals(disjunction.getAlternatives(), disjunction.successors());
+    assertListElements(disjunction.successors(),
+      first -> testAlternative(first, finalState),
+      second -> testAlternative(second, finalState),
+      third -> testAlternative(third, finalState)
+    );
   }
 

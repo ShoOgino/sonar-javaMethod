@@ -1,0 +1,16 @@
+  @Test
+  void testZeroZeroCurlyBracedQuantifier() {
+    RegexTree regex = assertSuccessfulParse("x{0,0}");
+    RepetitionTree repetition = assertType(RepetitionTree.class, regex);
+    RegexTree x = repetition.getElement();
+    assertPlainCharacter('x', x);
+    CurlyBraceQuantifier quantifier = assertType(CurlyBraceQuantifier.class, repetition.getQuantifier());
+    assertEquals(0, quantifier.getMinimumRepetitions(), "Lower bound should be 0.");
+    assertEquals(0, quantifier.getMaximumRepetitions(), "Upper bound should be 0.");
+    assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be possessive.");
+
+    FinalState finalState = assertType(FinalState.class, repetition.continuation());
+    assertEquals(AutomatonState.TransitionType.EPSILON, repetition.incomingTransitionType());
+    assertSingleEdge(repetition, finalState, AutomatonState.TransitionType.EPSILON);
+  }
+

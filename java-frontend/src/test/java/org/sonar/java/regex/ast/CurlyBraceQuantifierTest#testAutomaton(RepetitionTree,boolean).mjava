@@ -1,0 +1,21 @@
+  static void testAutomaton(RepetitionTree repetition, boolean reluctant) {
+    RegexTree x = repetition.getElement();
+    FinalState finalState = assertType(FinalState.class, repetition.continuation());
+    assertEquals(AutomatonState.TransitionType.EPSILON, repetition.incomingTransitionType());
+    assertSingleEdge(repetition, x, AutomatonState.TransitionType.CHARACTER);
+    BranchState branch = assertType(BranchState.class, x.continuation());
+    assertSingleEdge(x, branch, AutomatonState.TransitionType.EPSILON);
+    assertSame(finalState, branch.continuation());
+    if (reluctant) {
+      assertListElements(branch.successors(),
+        assertEdge(finalState, AutomatonState.TransitionType.EPSILON),
+        assertEdge(repetition, AutomatonState.TransitionType.EPSILON)
+      );
+    } else {
+      assertListElements(branch.successors(),
+        assertEdge(repetition, AutomatonState.TransitionType.EPSILON),
+        assertEdge(finalState, AutomatonState.TransitionType.EPSILON)
+      );
+    }
+  }
+

@@ -9,5 +9,13 @@
     assertListElements(disjunction.getOrOperators(),
       first -> assertJavaCharacter(expectedCharacterIndex, '|', first)
     );
+
+    FinalState finalState = assertType(FinalState.class, disjunction.continuation());
+    assertEquals(AutomatonState.TransitionType.EPSILON, disjunction.incomingTransitionType());
+    assertEquals(disjunction.getAlternatives(), disjunction.successors());
+    assertListElements(disjunction.successors(),
+      first -> testAlternative(first, finalState),
+      second -> testAlternative(second, finalState)
+    );
   }
 

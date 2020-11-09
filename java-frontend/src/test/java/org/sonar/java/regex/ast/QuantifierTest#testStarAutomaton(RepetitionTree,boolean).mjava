@@ -1,0 +1,18 @@
+  private static void testStarAutomaton(RepetitionTree repetition, boolean reluctant) {
+    FinalState finalState = assertType(FinalState.class, repetition.continuation());
+    RegexTree x = repetition.getElement();
+    assertEquals(AutomatonState.TransitionType.EPSILON, repetition.incomingTransitionType());
+    if (reluctant) {
+      assertListElements(repetition.successors(),
+        assertEdge(finalState, AutomatonState.TransitionType.EPSILON),
+        assertEdge(x, AutomatonState.TransitionType.CHARACTER)
+      );
+    } else {
+      assertListElements(repetition.successors(),
+        assertEdge(x, AutomatonState.TransitionType.CHARACTER),
+        assertEdge(finalState, AutomatonState.TransitionType.EPSILON)
+      );
+    }
+    assertSingleEdge(x, repetition, AutomatonState.TransitionType.EPSILON);
+  }
+
