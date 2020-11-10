@@ -22,20 +22,23 @@
     Set<AnalyzerMessage> issues = testJavaFileScannerContext.getIssues();
     for (AnalyzerMessage analyzerMessage : issues) {
       Integer issueLine = analyzerMessage.getLine();
-      String ruleKeyName = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
-      RuleKey ruleKey = RuleKey.of("java", ruleKeyName);
+      String ruleKey = AnnotationUtils.getAnnotation(analyzerMessage.getCheck().getClass(), Rule.class).key();
+      FilterableIssue issue = mock(FilterableIssue.class);
+      when(issue.ruleKey()).thenReturn(RuleKey.of("java", ruleKey));
+      when(issue.componentKey()).thenReturn(inputFile.key());
+      when(issue.line()).thenReturn(issueLine);
 
       if (issueCollector.rejectedIssuesLines.contains(issueLine)) {
-        assertThat(filter.accept(ruleKey, analyzerMessage))
+        assertThat(filter.accept(issue))
           .overridingErrorMessage("Line #" + issueLine + " has been marked with 'NoIssue' but issue of rule '" + ruleKey + "' has been accepted!")
           .isFalse();
       } else if (issueCollector.acceptedIssuesLines.contains(issueLine)) {
         // force check on accepted issues
-        assertThat(filter.accept(ruleKey, analyzerMessage))
+        assertThat(filter.accept(issue))
           .overridingErrorMessage("Line #" + issueLine + " has been marked with 'WithIssue' but no issue have been raised!")
           .isTrue();
       } else {
-        issuesByLines.put(issueLine, ruleKeyName);
+        issuesByLines.put(issueLine, ruleKey);
       }
     }
 

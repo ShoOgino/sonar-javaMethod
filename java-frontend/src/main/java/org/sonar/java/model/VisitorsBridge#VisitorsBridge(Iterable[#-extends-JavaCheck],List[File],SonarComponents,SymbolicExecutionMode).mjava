@@ -1,5 +1,16 @@
   public VisitorsBridge(Iterable<? extends JavaCheck> visitors, List<File> projectClasspath,
                         @Nullable SonarComponents sonarComponents, SymbolicExecutionMode symbolicExecutionMode) {
-    this(visitors, projectClasspath, sonarComponents, symbolicExecutionMode, null);
+    this.allScanners = new ArrayList<>();
+    for (Object visitor : visitors) {
+      if (visitor instanceof JavaFileScanner) {
+        allScanners.add((JavaFileScanner) visitor);
+      }
+    }
+    this.classpath = projectClasspath;
+    this.executableScanners = allScanners.stream().filter(IS_ISSUABLE_SUBSCRIPTION_VISITOR.negate()).collect(Collectors.toList());
+    this.issuableSubscriptionVisitorsRunner = new IssuableSubsciptionVisitorsRunner(allScanners);
+    this.sonarComponents = sonarComponents;
+    this.symbolicExecutionEnabled = symbolicExecutionMode.isEnabled();
+    this.behaviorCache = new BehaviorCache();
   }
 
