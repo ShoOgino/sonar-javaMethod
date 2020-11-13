@@ -1,0 +1,13 @@
+  void test(Object param) {
+    bar((o) -> (String)o); // Noncompliant {{Replace this lambda with method reference 'String.class::cast'.}}
+    bar(String.class::cast); // Compliant
+
+    bar4((o) -> (TestXXXXXX) o); // Noncompliant {{Replace this lambda with method reference 'TestXXXXXX.class::cast'.}}
+    bar4(TestXXXXXX.class::cast); //Compliant
+    
+    bar4((o) -> (TestXXXXXX<ABC>) o); // Noncompliant {{Replace this lambda with method reference 'TestXXXXXX.class::cast'.}}
+    
+    bar3(List.class::cast); //Compliant
+    bar3((o) -> (List<String>) o); // Noncompliant {{Replace this lambda with method reference 'List.class::cast'.}}
+  }
+

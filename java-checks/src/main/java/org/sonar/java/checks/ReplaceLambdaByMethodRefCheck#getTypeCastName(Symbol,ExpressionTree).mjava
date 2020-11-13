@@ -1,0 +1,10 @@
+  private static Optional<String> getTypeCastName(Symbol symbol, ExpressionTree expr) {
+    if (expr.is(Tree.Kind.TYPE_CAST)) {
+      TypeCastTree typeCastTree = (TypeCastTree) expr;
+      if (isSingleParamCast(typeCastTree.expression(), symbol)) {
+        return Optional.of(typeCastTree.type().symbolType().name());
+      }
+    }
+    return Optional.empty();
+  }
+

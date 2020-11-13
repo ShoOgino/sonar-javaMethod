@@ -1,8 +1,9 @@
   private static Optional<String> getNullCheck(LambdaExpressionTree lambda) {
-    Tree lambdaBody = lambda.body();
-    if (isBlockWithOneStatement(lambdaBody)) {
-      return getNullCheckFromReturn(((BlockTree) lambdaBody).body().get(0), lambda);
-    }
-    return getNullCheck(lambdaBody, lambda);
+    return getLambdaSingleParamSymbol(lambda).flatMap(symbol -> {
+      Tree lambdaBody = lambda.body();
+      return (isBlockWithOneStatement(lambdaBody)) ? 
+        getNullCheckFromReturn(((BlockTree) lambdaBody).body().get(0), symbol) :
+        getNullCheck(lambdaBody, symbol);
+    });
   }
 

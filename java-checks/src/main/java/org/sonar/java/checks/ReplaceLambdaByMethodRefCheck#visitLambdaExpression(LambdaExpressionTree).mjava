@@ -1,12 +1,13 @@
   private void visitLambdaExpression(LambdaExpressionTree tree) {
-    if (isReplaceableSingleMethodInvocation(tree) || isBodyBlockInvokingMethod(tree)) {
-      context.reportIssue(this, tree.arrowToken(), "Replace this lambda with a method reference." + context.getJavaVersion().java8CompatibilityMessage());
+    if (isMethodInvocation(tree.body(), tree) || isBodyBlockInvokingMethod(tree)) {
+      reportIssue(tree.arrowToken(), "Replace this lambda with a method reference." + context.getJavaVersion().java8CompatibilityMessage());
     } else {
+      getTypeCast(tree)
+        .ifPresent(type -> reportIssue(tree.arrowToken(),
+          "Replace this lambda with method reference '" + type + ".class::cast'." + context.getJavaVersion().java8CompatibilityMessage()));
       getNullCheck(tree)
-        .ifPresent(nullMethod ->
-          context.reportIssue(this, tree.arrowToken(),
-            "Replace this lambda with method reference 'Objects::" + nullMethod + "'." + context.getJavaVersion().java8CompatibilityMessage())
-        );
+        .ifPresent(nullMethod -> reportIssue(tree.arrowToken(),
+          "Replace this lambda with method reference 'Objects::" + nullMethod + "'." + context.getJavaVersion().java8CompatibilityMessage()));
     }
   }
 

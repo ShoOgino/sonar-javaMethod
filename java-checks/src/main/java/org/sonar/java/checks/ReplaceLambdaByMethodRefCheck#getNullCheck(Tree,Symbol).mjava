@@ -1,0 +1,14 @@
+  private static Optional<String> getNullCheck(@Nullable Tree statement, Symbol paramSymbol) {
+    return expressionWithoutParentheses(statement).flatMap(expr -> {
+      if (expr.is(Tree.Kind.EQUAL_TO, Tree.Kind.NOT_EQUAL_TO)) {
+        BinaryExpressionTree bet = (BinaryExpressionTree) expr;
+        ExpressionTree leftOperand = ExpressionUtils.skipParentheses(bet.leftOperand());
+        ExpressionTree rightOperand = ExpressionUtils.skipParentheses(bet.rightOperand());
+        if (nullAgainstParam(leftOperand, rightOperand, paramSymbol) || nullAgainstParam(rightOperand, leftOperand, paramSymbol)) {
+          return Optional.of(expr.is(Tree.Kind.EQUAL_TO) ? "isNull" : "nonNull");
+        }
+      }
+      return Optional.empty();
+    });
+  }
+
