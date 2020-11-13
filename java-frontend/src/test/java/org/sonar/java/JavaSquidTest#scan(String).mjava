@@ -1,4 +1,4 @@
-  private InputFile scanForErrors(String code) throws IOException {
+  private InputFile scan(String code) throws IOException {
     File baseDir = temp.getRoot().getAbsoluteFile();
     context = SensorContextTester.create(baseDir);
 
@@ -16,7 +16,7 @@
     javaTestClasspath = mock(JavaTestClasspath.class);
     sonarComponents = new SonarComponents(fileLinesContextFactory, context.fileSystem(), javaClasspath, javaTestClasspath, mock(CheckFactory.class));
     sonarComponents.setSensorContext(context);
-    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), null);
+    JavaSquid javaSquid = new JavaSquid(new JavaVersionImpl(), sonarComponents, new Measurer(context, mock(NoSonarFilter.class)), mock(JavaResourceLocator.class), testIssueFilter);
     javaSquid.scan(Collections.singletonList(inputFile), Collections.emptyList(), Collections.emptyList());
 
     return inputFile;
