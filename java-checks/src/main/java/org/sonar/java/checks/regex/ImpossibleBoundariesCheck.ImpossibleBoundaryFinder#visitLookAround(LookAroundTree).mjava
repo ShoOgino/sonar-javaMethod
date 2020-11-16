@@ -1,0 +1,18 @@
+    @Override
+    public void visitLookAround(LookAroundTree tree) {
+      // Inside a lookaround we consider the end/start of the lookahead/behind respectively as if it were the end/start
+      // of the regex. This avoids false positives for cases like `(?=.*$)foo` or `foo(?<=^...)`.
+      if (tree.getDirection() == LookAroundTree.Direction.BEHIND) {
+        AutomatonState oldStart = start;
+        start = tree;
+        super.visitLookAround(tree);
+        start = oldStart;
+      } else {
+        AutomatonState oldEnd = end;
+        // Set end to the lookaround's end-of-lookaround state
+        end = tree.getElement().continuation();
+        super.visitLookAround(tree);
+        end = oldEnd;
+      }
+    }
+
