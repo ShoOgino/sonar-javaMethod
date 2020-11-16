@@ -11,7 +11,10 @@
 
     FinalState finalState = assertType(FinalState.class, regex.continuation());
     assertEquals(AutomatonState.TransitionType.LOOKAROUND_BACKTRACKING, lookAround.incomingTransitionType());
-    assertSingleEdge(lookAround, x, AutomatonState.TransitionType.CHARACTER);
+    assertListElements(lookAround.successors(),
+      assertEdge(x, AutomatonState.TransitionType.CHARACTER),
+      assertEdge(finalState, AutomatonState.TransitionType.EPSILON)
+    );
     EndOfLookaroundState endOfLookaroundState = assertType(EndOfLookaroundState.class, x.continuation());
     assertSingleEdge(x, endOfLookaroundState, AutomatonState.TransitionType.EPSILON);
     assertSingleEdge(endOfLookaroundState, finalState, AutomatonState.TransitionType.EPSILON);
