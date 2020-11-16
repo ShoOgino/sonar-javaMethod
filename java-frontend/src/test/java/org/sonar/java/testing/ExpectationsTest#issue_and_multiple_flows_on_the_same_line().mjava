@@ -1,16 +1,16 @@
   @Test
   void issue_and_multiple_flows_on_the_same_line() {
     Expectations.Parser.ParsedComment iaf = new Expectations().parser().parseIssue("// Noncompliant [[flows=id]] {{issue msg}} flow@id1,id2 {{flow msg12}} flow@id3 {{flow msg3}}",
-      LINE);
-    assertThat(iaf.issue.get(Expectations.IssueAttribute.MESSAGE)).isEqualTo("issue msg");
+      TEST_LINE);
+    assertThat(iaf.issue.get(MESSAGE)).isEqualTo("issue msg");
     assertThat(iaf.flows).hasSize(3);
     List<Integer> lines = iaf.flows.stream().map(f -> f.line).collect(Collectors.toList());
-    assertThat(lines).isEqualTo(ImmutableList.of(LINE, LINE, LINE));
+    assertThat(lines).isEqualTo(Arrays.asList(TEST_LINE, TEST_LINE, TEST_LINE));
     Map<String, Object> idMsgMap = iaf.flows.stream().collect(Collectors.toMap(f -> f.id, f -> MESSAGE.get(f.attributes)));
-    assertThat(idMsgMap).isEqualTo(ImmutableMap.of(
-      "id1", "flow msg12",
-      "id2", "flow msg12",
-      "id3", "flow msg3"
-    ));
+    assertThat(idMsgMap).isEqualTo(MapBuilder.<String, Object>newMap()
+      .put("id1", "flow msg12")
+      .put("id2", "flow msg12")
+      .put("id3", "flow msg3")
+      .build());
   }
 

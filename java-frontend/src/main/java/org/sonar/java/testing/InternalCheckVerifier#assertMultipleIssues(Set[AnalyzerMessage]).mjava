@@ -4,14 +4,14 @@
     }
     List<Integer> unexpectedLines = new LinkedList<>();
     Expectations.RemediationFunction remediationFunction = Expectations.remediationFunction(issues.iterator().next());
-    Multimap<Integer, Expectations.Issue> expected = expectations.issues;
+    Map<Integer, List<Expectations.Issue>> expected = expectations.issues;
 
     for (AnalyzerMessage issue : issues) {
       validateIssue(expected, unexpectedLines, issue, remediationFunction);
     }
     if (!expected.isEmpty() || !unexpectedLines.isEmpty()) {
       Collections.sort(unexpectedLines);
-      List<Integer> expectedLines = expected.keys().stream().sorted().collect(Collectors.toList());
+      List<Integer> expectedLines = expected.keySet().stream().sorted().collect(Collectors.toList());
       throw new AssertionError(new StringBuilder()
         .append(expectedLines.isEmpty() ? "" : String.format("Expected at %s", expectedLines))
         .append(expectedLines.isEmpty() || unexpectedLines.isEmpty() ? "" : ", ")

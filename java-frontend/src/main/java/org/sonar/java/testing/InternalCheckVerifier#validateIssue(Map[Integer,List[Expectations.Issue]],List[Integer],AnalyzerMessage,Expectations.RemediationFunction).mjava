@@ -1,15 +1,19 @@
   private void validateIssue(
-    Multimap<Integer, Expectations.Issue> expected,
+    Map<Integer, List<Expectations.Issue>> expected,
     List<Integer> unexpectedLines,
     AnalyzerMessage issue,
     @Nullable Expectations.RemediationFunction remediationFunction) {
 
     int line = issue.getLine();
     if (expected.containsKey(line)) {
-      Expectations.Issue attrs = Iterables.getFirst(expected.get(line), null);
+      Expectations.Issue attrs = expected.get(line).get(0);
       validateRemediationFunction(attrs, issue, remediationFunction);
       validateAnalyzerMessageAttributes(attrs, issue);
-      expected.remove(line, attrs);
+      expected.computeIfPresent(line, (l, issues) -> {
+        issues.remove(attrs);
+        // remove the key if nothing remaining
+        return issues.isEmpty() ? null : issues;
+      });
     } else {
       unexpectedLines.add(line);
     }

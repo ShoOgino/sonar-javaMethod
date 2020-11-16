@@ -2,11 +2,11 @@
     void collectExpectedIssues(String comment, int line) {
       if (nonCompliantComment.matcher(comment).find()) {
         ParsedComment parsedComment = parseIssue(comment, line);
-        issues.put(LINE.get(parsedComment.issue), parsedComment.issue);
-        parsedComment.flows.forEach(f -> flows.put(f.id, f));
+        issues.computeIfAbsent(LINE.get(parsedComment.issue), k -> new ArrayList<>()).add(parsedComment.issue);
+        parsedComment.flows.forEach(f -> flows.computeIfAbsent(f.id, k -> newFlowSet()).add(f));
       }
       if (FLOW_COMMENT.matcher(comment).find()) {
-        parseFlows(comment, line).forEach(f -> flows.put(f.id, f));
+        parseFlows(comment, line).forEach(f -> flows.computeIfAbsent(f.id, k -> newFlowSet()).add(f));
       }
     }
 

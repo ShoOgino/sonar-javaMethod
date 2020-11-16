@@ -6,7 +6,10 @@
           addIssue(line, message);
         }
       }
-      for (AnalyzerMessage analyzerMessage : preciseIssues.values()) {
+      List<AnalyzerMessage> anamyerMessages = preciseIssues.values().stream()
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+      for (AnalyzerMessage analyzerMessage : anamyerMessages) {
         Double messageCost = analyzerMessage.getCost();
         Integer cost = messageCost != null ? messageCost.intValue() : null;
         List<JavaFileScannerContext.Location> secLocations = new ArrayList<>();
