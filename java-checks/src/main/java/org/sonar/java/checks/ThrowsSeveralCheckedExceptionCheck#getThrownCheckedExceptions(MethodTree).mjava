@@ -1,10 +1,7 @@
   private static List<String> getThrownCheckedExceptions(MethodTree methodTree) {
-    ImmutableList.Builder<String> builder = ImmutableList.builder();
-    for (Type thrownClass : methodTree.symbol().thrownTypes()) {
-      if (!thrownClass.isUnknown() && !isSubClassOfRuntimeException(thrownClass)) {
-        builder.add(thrownClass.fullyQualifiedName());
-      }
-    }
-    return builder.build();
+    return methodTree.symbol().thrownTypes().stream()
+      .filter(type -> !type.isUnknown() && !isSubClassOfRuntimeException(type))
+      .map(Type::fullyQualifiedName)
+      .collect(Collectors.toList());
   }
 
