@@ -1,7 +1,13 @@
   @Test
   void no_issue_without_semantic() {
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/CompareStringsBoxedTypesWithEqualsCheck.java")
+      .onFile(testSourcesPath("checks/CompareStringsBoxedTypesWithEqualsCheck.java"))
+      .withCheck(new CompareStringsBoxedTypesWithEqualsCheck())
+      .withoutSemantic()
+      .verifyNoIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/CompareStringsBoxedTypesWithEqualsCheck.java"))
       .withCheck(new CompareStringsBoxedTypesWithEqualsCheck())
       .withoutSemantic()
       .verifyNoIssues();
