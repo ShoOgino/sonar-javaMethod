@@ -1,0 +1,12 @@
+    @Test
+    void wrong_message_of_expected_issue_on_same_line_should_fail() {
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile("src/test/files/testing/MultipleIssuesSameLine.java")
+        .withChecks(new MultipleIssuePerLineCheck("msg 1", "wrong message"))
+        .verifyIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("line 4 attribute mismatch for 'MESSAGE'. Expected: 'msg 2', but was: 'wrong message'");
+    }
+

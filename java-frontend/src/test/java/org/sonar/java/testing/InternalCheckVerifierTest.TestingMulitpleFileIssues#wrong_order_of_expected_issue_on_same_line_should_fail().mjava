@@ -1,0 +1,15 @@
+    @Test
+    void wrong_order_of_expected_issue_on_same_line_should_fail() {
+      MultipleIssuePerLineCheck check = new MultipleIssuePerLineCheck();
+      check.flipOrder = true;
+
+      Throwable e = catchThrowable(() -> InternalCheckVerifier.newInstance()
+        .onFile("src/test/files/testing/MultipleIssuesSameLine.java")
+        .withChecks(check)
+        .verifyIssues());
+
+      assertThat(e)
+        .isInstanceOf(AssertionError.class)
+        .hasMessage("line 7 attribute mismatch for 'MESSAGE'. Expected: 'msg 1', but was: 'msg 2'");
+    }
+
