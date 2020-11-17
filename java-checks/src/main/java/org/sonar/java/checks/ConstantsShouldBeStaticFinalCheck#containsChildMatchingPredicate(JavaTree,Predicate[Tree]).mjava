@@ -1,0 +1,14 @@
+  private static boolean containsChildMatchingPredicate(JavaTree tree, Predicate<Tree> predicate) {
+    if (predicate.test(tree)) {
+      return true;
+    }
+    if (!tree.isLeaf()) {
+      for (Tree javaTree : tree.getChildren()) {
+        if (javaTree != null && containsChildMatchingPredicate((JavaTree) javaTree, predicate)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
