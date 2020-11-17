@@ -1,9 +1,7 @@
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree) {
     if (tree.symbol().isMethodSymbol()) {
-      for (Type thrownType : ((Symbol.MethodSymbol) tree.symbol()).thrownTypes()) {
-        exceptionsThrownByMethodInvocations.add(thrownType);
-      }
+      exceptionsThrownByMethodInvocations.addAll(((Symbol.MethodSymbol) tree.symbol()).thrownTypes());
     }
     super.visitMethodInvocation(tree);
   }
