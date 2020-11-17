@@ -1,0 +1,14 @@
+    private void addRange(int from, int to, CharacterClassElementTree tree) {
+      int upperCaseFrom = Character.toUpperCase(from);
+      int upperCaseTo = Character.toUpperCase(to);
+      int lowerCaseFrom = Character.toLowerCase(upperCaseFrom);
+      int lowerCaseTo = Character.toLowerCase(upperCaseTo);
+      if (flagActive(Pattern.CASE_INSENSITIVE) && lowerCaseFrom != upperCaseFrom && lowerCaseTo != upperCaseTo
+        && ((isAscii(from) && isAscii(to)) || flagActive(Pattern.UNICODE_CASE))) {
+        characters.addRange(upperCaseFrom, upperCaseTo, tree);
+        characters.addRange(lowerCaseFrom, lowerCaseTo, tree);
+      } else {
+        characters.addRange(from, to, tree);
+      }
+    }
+

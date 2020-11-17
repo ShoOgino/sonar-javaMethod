@@ -1,0 +1,23 @@
+  public boolean intersects(SimplifiedRegexCharacterClass that, boolean defaultAnswer) {
+    if (defaultAnswer && ((containsUnknownCharacters && !that.isEmpty()) || (!isEmpty() && that.containsUnknownCharacters))) {
+      return true;
+    }
+    Iterator<Map.Entry<Integer, CharacterClassElementTree>> iter = that.contents.entrySet().iterator();
+    if (!iter.hasNext()) {
+      return false;
+    }
+    Map.Entry<Integer, CharacterClassElementTree> entry = iter.next();
+    while (iter.hasNext()) {
+      Map.Entry<Integer, CharacterClassElementTree> nextEntry = iter.next();
+      if (entry.getValue() != null) {
+        Map.Entry<Integer, CharacterClassElementTree> before = contents.floorEntry(entry.getKey());
+        if ((before != null && before.getValue() != null)
+          || !contents.subMap(entry.getKey(), false, nextEntry.getKey(), false).isEmpty()) {
+          return true;
+        }
+      }
+      entry = nextEntry;
+    }
+    return false;
+  }
+

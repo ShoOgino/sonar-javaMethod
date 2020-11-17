@@ -1,0 +1,13 @@
+  public void addRange(int from, int to, CharacterClassElementTree tree) {
+    contents.put(from, tree);
+    for (Map.Entry<Integer, CharacterClassElementTree> entry : contents.subMap(from, true, to, true).entrySet()) {
+      if (entry.getValue() == null) {
+        entry.setValue(tree);
+      }
+    }
+    int next = to + 1;
+    if (!contents.containsKey(next) && next <= Character.MAX_CODE_POINT) {
+      contents.put(next, null);
+    }
+  }
+

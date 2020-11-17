@@ -1,0 +1,72 @@
+    @Override
+    public void visitEscapedCharacterClass(EscapedCharacterClassTree tree) {
+      switch (tree.getType()) {
+        case 'd':
+          characters.addRange('0', '9', tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.containsUnknownCharacters = true;
+          }
+          break;
+        case 'D':
+          characters.addRange(0x00, '0' - 1, tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.addRange('9' + 1, 0xff, tree);
+            characters.containsUnknownCharacters = true;
+          } else {
+            characters.addRange('9' + 1, Character.MAX_CODE_POINT, tree);
+          }
+          break;
+        case 'w':
+          characters.addRange('0', '9', tree);
+          characters.addRange('A', 'Z', tree);
+          characters.addRange('_', '_', tree);
+          characters.addRange('a', 'z', tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.containsUnknownCharacters = true;
+          }
+          break;
+        case 'W':
+          characters.addRange(0x00, '0' - 1, tree);
+          characters.addRange('9' + 1, 'A' - 1, tree);
+          characters.addRange('Z'+1, '_' - 1, tree);
+          characters.addRange('`', '`', tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.addRange('z' + 1, 'µ' - 1, tree);
+            characters.containsUnknownCharacters = true;
+          } else {
+            characters.addRange('z' + 1, Character.MAX_CODE_POINT, tree);
+          }
+          break;
+        case 's':
+          characters.addRange('\t', '\r', tree);
+          characters.addRange(' ', ' ', tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.addRange(0xA0, 0xA0, tree);
+            characters.addRange(0x1680, 0x1680, tree);
+            characters.addRange(0x2000, 0x200A, tree);
+            characters.addRange(0x202F, 0x202F, tree);
+            characters.addRange(0x205F, 0x205F, tree);
+            characters.addRange(0x3000, 0x3000, tree);
+          }
+          break;
+        case 'S':
+          characters.addRange(0x00, '\t' - 1, tree);
+          characters.addRange('\r' + 1, ' ' - 1, tree);
+          if (flagActive(Pattern.UNICODE_CHARACTER_CLASS)) {
+            characters.addRange(' ' + 1, 0x9F, tree);
+            characters.addRange(0xA1, 0x167F, tree);
+            characters.addRange(0x1681, 0x1FFF, tree);
+            characters.addRange(0x200B, 0x202E, tree);
+            characters.addRange(0x2030, 0x205E, tree);
+            characters.addRange(0x2060, 0x2FFF, tree);
+            characters.addRange(0x3001, Character.MAX_CODE_POINT, tree);
+          } else {
+            characters.addRange(' ' + 1, Character.MAX_CODE_POINT, tree);
+          }
+          break;
+        default:
+          characters.containsUnknownCharacters = true;
+          break;
+      }
+    }
+

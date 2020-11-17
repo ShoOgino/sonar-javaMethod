@@ -1,0 +1,30 @@
+    @Override
+    public void visitCharacterClass(CharacterClassTree tree) {
+      if (tree.isNegated()) {
+        SimplifiedRegexCharacterClass old = characters;
+        SimplifiedRegexCharacterClass inner = new SimplifiedRegexCharacterClass();
+        characters = inner;
+        super.visitCharacterClass(tree);
+        characters = old;
+        if (inner.containsUnknownCharacters) {
+          // When negating a class that contains unknown characters, we can't know for sure whether any character is in the
+          // class, so we don't add any known characters to it
+          characters.containsUnknownCharacters = true;
+          characters.contents = new TreeMap<>();
+          return;
+        }
+        if (inner.contents.get(0) == null) {
+          characters.contents.put(0, tree);
+        }
+        for (Map.Entry<Integer, CharacterClassElementTree> entry : inner.contents.entrySet()) {
+          if (entry.getValue() == null) {
+            characters.contents.put(entry.getKey(), tree);
+          } else {
+            characters.contents.put(entry.getKey(), null);
+          }
+        }
+      } else {
+        super.visitCharacterClass(tree);
+      }
+    }
+

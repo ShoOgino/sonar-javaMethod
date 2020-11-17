@@ -1,0 +1,21 @@
+  @Test
+  void testIntersectionWithTrueAsDefaultAnswer() {
+    RegexSource dummySource = new RegexSource(Collections.emptyList());
+    IndexRange dummyRange = new IndexRange(0, 0);
+    CharacterClassElementTree dummyTree = new MiscEscapeSequenceTree(dummySource, dummyRange);
+
+    SimplifiedRegexCharacterClass aToZ = new SimplifiedRegexCharacterClass();
+    aToZ.addRange('a', 'z', dummyTree);
+    SimplifiedRegexCharacterClass unknown = new SimplifiedRegexCharacterClass();
+    unknown.add(dummyTree, new FlagSet());
+    SimplifiedRegexCharacterClass empty = new SimplifiedRegexCharacterClass();
+
+    assertTrue(aToZ.intersects(unknown, true));
+    assertFalse(aToZ.intersects(empty, true));
+    assertFalse(unknown.intersects(empty, true));
+
+    assertTrue(unknown.intersects(aToZ, true));
+    assertFalse(empty.intersects(aToZ, true));
+    assertFalse(empty.intersects(unknown, true));
+  }
+

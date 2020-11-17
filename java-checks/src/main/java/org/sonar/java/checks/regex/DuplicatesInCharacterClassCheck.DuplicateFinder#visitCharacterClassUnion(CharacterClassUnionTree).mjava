@@ -1,17 +1,12 @@
     @Override
     public void visitCharacterClassUnion(CharacterClassUnionTree tree) {
       List<CharacterClassElementTree> duplicates = new ArrayList<>();
-      TreeMap<Integer, Boolean> inCharacterClass = new TreeMap<>();
+      SimplifiedRegexCharacterClass characterClass = new SimplifiedRegexCharacterClass();
       for (CharacterClassElementTree element : tree.getCharacterClasses()) {
-        if (element.is(CharacterClassElementTree.Kind.PLAIN_CHARACTER, CharacterClassElementTree.Kind.UNICODE_CODE_POINT)) {
-          int ch = ((CharacterTree) element).codePointOrUnit();
-          processRange(duplicates, inCharacterClass, ch, ch, element);
-        } else if (element.is(CharacterClassElementTree.Kind.CHARACTER_RANGE)) {
-          CharacterRangeTree range = (CharacterRangeTree) element;
-          int lower = range.getLowerBound().codePointOrUnit();
-          int upper = range.getUpperBound().codePointOrUnit();
-          processRange(duplicates, inCharacterClass, lower, upper, range);
+        if (characterClass.intersects(new SimplifiedRegexCharacterClass(element, getActiveFlagSet()), false)) {
+          duplicates.add(element);
         }
+        characterClass.add(element, getActiveFlagSet());
       }
       if (!duplicates.isEmpty()) {
         List<RegexIssueLocation> secondaries = duplicates.stream()
