@@ -1,13 +1,14 @@
   @Override
   protected void handleOtherFormatTree(MethodInvocationTree mit, ExpressionTree formatTree, List<ExpressionTree> args) {
     if (isIncorrectConcatenation(formatTree)) {
+      boolean lastArgumentThrowable = isLastArgumentThrowable(args);
       if (JAVA_UTIL_LOGGER_LOG_MATCHER.matches(mit)) {
-        if (isLastArgumentThrowable(args)) {
+        if (lastArgumentThrowable) {
           reportIssue(mit, "Lambda should be used to defer string concatenation.");
         } else {
           reportIssue(mit, "Format specifiers or lambda should be used instead of string concatenation.");
         }
-      } else {
+      } else if (!(lastArgumentThrowable && SLF4J_METHOD_MATCHERS.matches(mit))) {
         reportIssue(mit, "Format specifiers should be used instead of string concatenation.");
       }
     }
