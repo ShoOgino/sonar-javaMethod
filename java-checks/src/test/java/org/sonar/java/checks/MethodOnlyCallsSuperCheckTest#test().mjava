@@ -1,7 +1,12 @@
   @Test
   void test() {
     JavaCheckVerifier.newVerifier()
-      .onFile(FILE)
+      .onFile(testSourcesPath("checks/MethodOnlyCallsSuperCheck.java"))
+      .withCheck(new MethodOnlyCallsSuperCheck())
+      .verifyIssues();
+
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("checks/MethodOnlyCallsSuperCheck.java"))
       .withCheck(new MethodOnlyCallsSuperCheck())
       .verifyIssues();
   }

@@ -1,14 +1,14 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
     MethodTree methodTree = (MethodTree) tree;
     if (ALLOWED_METHODS.matches(methodTree)) {
       return;
     }
-    if (isSingleStatementMethod(methodTree) && isUselessSuperCall(methodTree)
-      && !hasAnnotationDifferentFromOverride(methodTree.modifiers().annotations()) && !isFinal(methodTree)) {
+    if (isSingleStatementMethod(methodTree)
+      && isUselessSuperCall(methodTree)
+      && !hasAnnotationDifferentFromOverride(methodTree.modifiers().annotations())
+      && !isFinal(methodTree)
+      && !isClassAnnotatedWithTransactional(methodTree)) {
       reportIssue(methodTree.simpleName(), "Remove this method to simply inherit it.");
     }
   }
