@@ -1,23 +1,26 @@
   private void simpleScan(InputFile inputFile) {
     visitor.setCurrentFile(inputFile);
     try {
-      String fileContent = inputFile.contents();
-      final String version;
-      if (visitor.getJavaVersion() == null || visitor.getJavaVersion().asInt() < 0) {
+      String version;
+      JavaVersion javaVersion = visitor.getJavaVersion();
+      if (javaVersion == null || javaVersion.asInt() < 0) {
+        version = /* default */ JParser.MAXIMUM_SUPPORTED_JAVA_VERSION;
+      } else if ("module-info.java".equals(inputFile.filename()) && javaVersion.asInt() <= 8) {
+        logMisconfiguredVersion(inputFile, javaVersion);
         version = /* default */ JParser.MAXIMUM_SUPPORTED_JAVA_VERSION;
       } else {
-        version = Integer.toString(visitor.getJavaVersion().asInt());
+        version = Integer.toString(javaVersion.asInt());
       }
       Tree ast = JParser.parse(
         version,
         inputFile.filename(),
-        fileContent,
+        inputFile.contents(),
         visitor.getClasspath()
       );
       visitor.visitFile(ast);
     } catch (RecognitionException e) {
       checkInterrupted(e);
-      LOG.error(String.format("Unable to parse source file : '%s'", inputFile));
+      LOG.error(String.format(LOG_ERROR_UNABLE_TO_PARSE_FILE, inputFile));
       LOG.error(e.getMessage());
 
       parseErrorWalkAndVisit(e, inputFile);
@@ -27,7 +30,7 @@
       checkInterrupted(e);
       interruptIfFailFast(e, inputFile);
     } catch (StackOverflowError error) {
-      LOG.error(String.format("A stack overflow error occurred while analyzing file: '%s'", inputFile), error);
+      LOG.error(String.format(LOG_ERROR_STACKOVERFLOW, inputFile), error);
       throw error;
     }
   }
