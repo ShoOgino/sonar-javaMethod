@@ -2,10 +2,7 @@
   public void execute(SensorContext context) {
     sonarComponents.setSensorContext(context);
 
-    List<Class<? extends JavaCheck>> checks = Stream.of(CheckList.getJavaChecks(), CheckList.getDebugChecks())
-      .flatMap(List::stream)
-      .collect(Collectors.toList());
-    sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, checks);
+    sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getJavaChecks());
     sonarComponents.registerTestCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getJavaTestChecks());
 
     Measurer measurer = new Measurer(context, noSonarFilter);
