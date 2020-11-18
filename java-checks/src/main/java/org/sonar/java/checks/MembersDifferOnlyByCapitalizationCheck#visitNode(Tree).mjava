@@ -5,7 +5,7 @@
     }
     ClassTree classTree = (ClassTree) tree;
     List<Symbol> allMembers = retrieveMembers(classTree.symbol());
-    Multimap<String, Symbol> membersByName = sortByName(allMembers);
+    Map<String, List<Symbol>> membersByName = allMembers.stream().collect(Collectors.groupingBy(Symbol::name));
     for (Tree member : classTree.members()) {
       if (member.is(Tree.Kind.METHOD)) {
         MethodTree methodTree = (MethodTree) member;

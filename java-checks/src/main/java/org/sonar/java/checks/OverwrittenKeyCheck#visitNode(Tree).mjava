@@ -4,18 +4,18 @@
       return;
     }
 
-    ListMultimap<CollectionAndKey, Tree> usedKeys = ArrayListMultimap.create();
+    Map<CollectionAndKey, List<Tree>> usedKeys = new HashMap<>();
     for (StatementTree statementTree: ((BlockTree) tree).body()){
       CollectionAndKey mapPut = isMapPut(statementTree);
       if (mapPut != null) {
-        usedKeys.put(mapPut, mapPut.keyTree);
+        usedKeys.computeIfAbsent(mapPut, k -> new ArrayList<>()).add(mapPut.keyTree);
       } else {
         CollectionAndKey arrayAssignment = isArrayAssignment(statementTree);
         if (arrayAssignment != null) {
           if (arrayAssignment.collectionOnRHS()) {
             usedKeys.clear();
           }
-          usedKeys.put(arrayAssignment, arrayAssignment.keyTree);
+          usedKeys.computeIfAbsent(arrayAssignment, k -> new ArrayList<>()).add(arrayAssignment.keyTree);
         } else {
           // sequence of setting collection values is interrupted
           reportOverwrittenKeys(usedKeys);

@@ -1,8 +1,8 @@
   private void computeFilteredLinesForRule(Set<Integer> lines, String ruleKey, boolean excludeLine) {
     if (excludeLine) {
-      excludedLinesByRule.putAll(ruleKey, lines);
+      excludedLinesByRule.computeIfAbsent(ruleKey, k -> new HashSet<>()).addAll(lines);
     } else {
-      excludedLinesByRule.get(ruleKey).removeAll(lines);
+      excludedLinesByRule.getOrDefault(ruleKey, Collections.emptySet()).removeAll(lines);
     }
   }
 

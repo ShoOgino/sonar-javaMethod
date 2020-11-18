@@ -1,7 +1,6 @@
-  private static Map<Symbol, Tree> updatedOnlyOnceWithUnaryExpression(Multimap<Symbol, Tree> updatesInBody, StatementTree forStatementBody) {
+  private static Map<Symbol, Tree> updatedOnlyOnceWithUnaryExpression(Map<Symbol, List<Tree>> updatesInBody, StatementTree forStatementBody) {
     Map<Symbol, Tree> result = new HashMap<>();
-    for (Symbol updatedSymbol : updatesInBody.keySet()) {
-      Collection<Tree> updateTrees = updatesInBody.get(updatedSymbol);
+    updatesInBody.forEach((updatedSymbol, updateTrees) -> {
       if (updateTrees.size() == 1) {
         Tree updateTree = updateTrees.iterator().next();
         if (updateTree.is(Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.POSTFIX_DECREMENT, Tree.Kind.PREFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT)
@@ -10,7 +9,7 @@
           result.put(updatedSymbol, updateTree);
         }
       }
-    }
+    });
     return result;
   }
 

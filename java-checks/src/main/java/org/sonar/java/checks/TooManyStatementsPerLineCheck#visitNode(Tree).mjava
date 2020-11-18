@@ -9,12 +9,11 @@
     if (block != null) {
       StatementVisitor visitor = new StatementVisitor();
       block.accept(visitor);
-      for (Entry<Integer> entry : visitor.statementsPerLine.entrySet()) {
-        int count = entry.getCount();
+      visitor.statementsPerLine.forEach((line, count) -> {
         if (count > 1) {
-          addIssue(entry.getElement(), "At most one statement is allowed per line, but " + count + " statements were found on this line.");
+          addIssue(line, "At most one statement is allowed per line, but " + count + " statements were found on this line.");
         }
-      }
+      });
     }
   }
 

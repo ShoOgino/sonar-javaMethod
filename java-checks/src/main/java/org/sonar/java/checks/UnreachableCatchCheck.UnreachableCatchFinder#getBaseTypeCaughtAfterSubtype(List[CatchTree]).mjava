@@ -14,7 +14,7 @@
         for (int j = i + 1; j < catchTypes.size(); j++) {
           Type bottomType = catchTypes.get(j);
           if (topType.isSubtypeOf(bottomType)) {
-            baseToSubtype.put(bottomType, topType);
+            baseToSubtype.computeIfAbsent(bottomType, k -> new HashSet<>()).add(topType);
           }
         }
       }

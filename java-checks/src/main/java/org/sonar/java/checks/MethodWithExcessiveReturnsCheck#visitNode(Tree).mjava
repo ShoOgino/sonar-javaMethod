@@ -1,7 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
     if (tree.is(Tree.Kind.RETURN_STATEMENT)) {
-      returnStatementCounter.add(methods.peek());
+      returnStatementCounter.compute(methods.peek(), (k, v) -> (v == null) ? 1 : (v + 1));
     } else {
       methods.push(tree);
     }

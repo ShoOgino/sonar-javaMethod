@@ -2,11 +2,11 @@
   public void visitNode(Tree node) {
     if (node.is(Tree.Kind.SWITCH_STATEMENT)) {
       SwitchStatementTree switchStatement = (SwitchStatementTree) node;
-      Multimap<CaseGroupTree, CaseGroupTree> identicalBranches = checkSwitchStatement(switchStatement);
+      Map<CaseGroupTree, Set<CaseGroupTree>> identicalBranches = checkSwitchStatement(switchStatement);
       boolean allBranchesSame = allBranchesSame(identicalBranches, switchStatement.cases().size());
       boolean allBranchesSameWithoutDefault = allBranchesSame && !hasDefaultClause(switchStatement);
       if (!allBranchesSame || allBranchesSameWithoutDefault) {
-        identicalBranches.asMap().forEach((first, others) -> {
+        identicalBranches.forEach((first, others) -> {
           if (!isTrivialCase(first.body()) || allBranchesSameWithoutDefault) {
             others.forEach(other -> createIssue(other, issueMessage("case", first), first));
           }

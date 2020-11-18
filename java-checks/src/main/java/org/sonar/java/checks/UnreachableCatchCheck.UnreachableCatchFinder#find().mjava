@@ -16,7 +16,7 @@
 
       for (CatchClauseInfo catchClause : catchClauses) {
         List<Type> hiddenTypes = catchClause.types.stream()
-          .filter(type -> isUnreachable(type, baseToSubtype.get(type), thrownTypes))
+          .filter(type -> isUnreachable(type, baseToSubtype.getOrDefault(type, Collections.emptySet()), thrownTypes))
           .collect(Collectors.toList());
 
         if (hiddenTypes.size() == catchClause.types.size()) {

@@ -1,8 +1,8 @@
-  private void reportIdenticalIfChainBranches(Multimap<StatementTree, StatementTree> identicalBranches, int totalBranchCount, boolean withElseClause) {
+  private void reportIdenticalIfChainBranches(Map<StatementTree, Set<StatementTree>> identicalBranches, int totalBranchCount, boolean withElseClause) {
     boolean allBranchesSame = allBranchesSame(identicalBranches, totalBranchCount);
     boolean allBranchesSameWithoutElse = allBranchesSame && !withElseClause;
     if (!allBranchesSame || allBranchesSameWithoutElse) {
-      identicalBranches.asMap().forEach((first, others) -> {
+      identicalBranches.forEach((first, others) -> {
         if (!isTrivialIfStatement(first) || allBranchesSameWithoutElse) {
           others.forEach(other -> createIssue(other, issueMessage("branch", first), first));
         }

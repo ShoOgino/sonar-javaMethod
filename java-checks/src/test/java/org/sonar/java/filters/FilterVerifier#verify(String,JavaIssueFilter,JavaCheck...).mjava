@@ -1,16 +1,16 @@
   public static void verify(String filename, JavaIssueFilter filter, JavaCheck... extraJavaChecks) {
     IssueCollector issueCollector = new IssueCollector();
-    ArrayList<JavaCheck> visitors = Lists.<JavaCheck>newArrayList(filter, issueCollector);
+    List<JavaCheck> visitors = new ArrayList<>();
+    visitors.add(filter);
+    visitors.add(issueCollector);
 
     // instantiate the rules filtered by the filter
     visitors.addAll(instantiateRules(filter.filteredRules()));
 
-    for (JavaCheck visitor : extraJavaChecks) {
-      visitors.add(visitor);
-    }
+    visitors.addAll(Arrays.asList(extraJavaChecks));
 
     Collection<File> classpath = FileUtils.listFiles(new File(FilesUtils.DEFAULT_TEST_JARS_DIRECTORY), new String[] {"jar", "zip"}, true);
-    List<File> projectClasspath = Lists.newArrayList(classpath);
+    List<File> projectClasspath = new ArrayList<>(classpath);
     projectClasspath.add(new File("target/test-classes"));
 
     InputFile inputFile = CheckTestUtils.inputFile(filename);
@@ -18,7 +18,7 @@
     JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge);
     VisitorsBridgeForTests.TestJavaFileScannerContext testJavaFileScannerContext = visitorsBridge.lastCreatedTestContext();
 
-    Multimap<Integer, String> issuesByLines = HashMultimap.create();
+    Map<Integer, Set<String>> issuesByLines = new HashMap<>();
     Set<AnalyzerMessage> issues = testJavaFileScannerContext.getIssues();
     for (AnalyzerMessage analyzerMessage : issues) {
       Integer issueLine = analyzerMessage.getLine();
@@ -38,12 +38,12 @@
           .overridingErrorMessage("Line #" + issueLine + " has been marked with 'WithIssue' but no issue have been raised!")
           .isTrue();
       } else {
-        issuesByLines.put(issueLine, ruleKey);
+        issuesByLines.computeIfAbsent(issueLine, k -> new HashSet<>()).add(ruleKey);
       }
     }
 
     if (!issuesByLines.isEmpty()) {
-      List<Integer> lines = Lists.newArrayList(issuesByLines.keySet());
+      List<Integer> lines = new ArrayList<>(issuesByLines.keySet());
       Collections.sort(lines);
       StringBuilder builder = new StringBuilder();
       for (Integer line : lines) {

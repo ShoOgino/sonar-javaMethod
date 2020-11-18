@@ -2,13 +2,14 @@
     public void visitMethodInvocation(MethodInvocationTree tree) {
       Symbol symbol = tree.symbol();
       if(symbol.isUnknown()) {
-        unknownInvocations.put(ExpressionUtils.methodName(tree).name(), tree);
+        String name = ExpressionUtils.methodName(tree).name();
+        unknownInvocations.computeIfAbsent(name, k ->  new HashSet<>()).add(tree);
       } else if (isPrivateMethodOfOuterClass(symbol)) {
         if (JUtils.isParametrizedMethod((Symbol.MethodSymbol) symbol) && symbol.declaration() != null) {
           // generic methods requires to use their declaration symbol rather than the parameterized one
           symbol = ((Symbol.MethodSymbol) symbol).declaration().symbol();
         }
-        usages.add(symbol);
+        usages.compute(symbol, (k, v) -> v == null ? 1 : (v + 1));
       }
       super.visitMethodInvocation(tree);
     }
