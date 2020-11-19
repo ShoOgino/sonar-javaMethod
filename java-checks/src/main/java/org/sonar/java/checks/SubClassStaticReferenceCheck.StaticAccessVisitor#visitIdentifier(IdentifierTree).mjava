@@ -1,7 +1,7 @@
     @Override
     public void visitIdentifier(IdentifierTree tree) {
       Type type = tree.symbolType();
-      if (!sameErasure(type) && type.isSubtypeOf(classType.erasure())) {
+      if (!sameErasure(type) && type.isSubtypeOf(classTypeErasure) && !isNestedSubtype(type)) {
         reportIssue(tree, String.format("Remove this reference to \"%s\".", type.symbol().name()));
       }
     }
