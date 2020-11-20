@@ -1,0 +1,24 @@
+  private void reportUselessEqUsage(Arguments arguments) {
+    List<MethodInvocationTree> eqs = new ArrayList<>();
+
+    for (ExpressionTree arg : arguments) {
+      arg = ExpressionUtils.skipParentheses(arg);
+      if (arg.is(Tree.Kind.METHOD_INVOCATION) && MOCKITO_EQ.matches((MethodInvocationTree) arg)) {
+        eqs.add((MethodInvocationTree) arg);
+      } else {
+        // If arguments contain anything else than a call to eq(...), we do not report an issue
+        return;
+      }
+    }
+
+    if (!eqs.isEmpty()) {
+      reportIssue(ExpressionUtils.methodName(eqs.get(0)), String.format(
+        "Remove this%s useless \"eq(...)\" invocation; pass the values directly.", eqs.size() == 1 ? "" : " and every subsequent"),
+        eqs.stream()
+          .skip(1)
+          .map(eq -> new JavaFileScannerContext.Location("", ExpressionUtils.methodName(eq)))
+          .collect(Collectors.toList()),
+        null);
+    }
+  }
+
