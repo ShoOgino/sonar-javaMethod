@@ -1,13 +1,10 @@
   private static boolean issueShouldNotBeReported(FilterableIssue issue, Map<String, Set<Integer>> excludedLineByRule) {
     RuleKey issueRuleKey = issue.ruleKey();
-    for (String excludedRule : excludedLineByRule.keySet()) {
-      if (("all".equals(excludedRule) || isRuleKey(excludedRule, issueRuleKey)) && !isSuppressWarningRule(issueRuleKey)) {
-        Collection<Integer> excludedLines = excludedLineByRule.get(excludedRule);
-        if (excludedLines.contains(issue.line())) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return excludedLineByRule.entrySet().stream().anyMatch(excludedRule -> {
+      String suppressedWarning = excludedRule.getKey();
+      return ("all".equals(suppressedWarning) || isRuleKey(suppressedWarning, issueRuleKey))
+        && !isSuppressWarningRule(issueRuleKey)
+        && excludedRule.getValue().contains(issue.line());
+    });
   }
 
