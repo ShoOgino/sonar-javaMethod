@@ -1,0 +1,16 @@
+  private static Optional<String> getTypeName(TypeTree type) {
+    if (type.is(Tree.Kind.PARAMETERIZED_TYPE)) {
+      type = ((ParameterizedTypeTree) type).type();
+    }
+    if (type.is(Tree.Kind.IDENTIFIER) && !isGeneric((IdentifierTree) type)) {
+      return Optional.of(((IdentifierTree) type).name());
+    }
+    if (type.is(Tree.Kind.ARRAY_TYPE)) {
+      return getTypeName(((ArrayTypeTree) type).type()).map(x -> x + "[]");
+    }
+    if (type.is(Tree.Kind.PRIMITIVE_TYPE)) {
+      return Optional.of(((PrimitiveTypeTree) type).keyword().text());
+    }
+    return Optional.empty();
+  }
+
