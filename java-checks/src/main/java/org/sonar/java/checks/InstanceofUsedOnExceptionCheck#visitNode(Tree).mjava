@@ -1,13 +1,12 @@
   @Override
   public void visitNode(Tree tree) {
-    if (tree.is(Tree.Kind.CATCH)) {
-      caughtVariables.add(((CatchTree) tree).parameter().simpleName().name());
-    } else {
-      InstanceOfTree instanceOfTree = (InstanceOfTree) tree;
-      if (isLeftOperandAndException(instanceOfTree)
-        && instanceOfTree.type().symbolType().isSubtypeOf("java.lang.Throwable")) {
-        reportIssue(instanceOfTree.instanceofKeyword(), "Replace the usage of the \"instanceof\" operator by a catch block.");
-      }
+    CatchTree catchTree = ((CatchTree) tree);
+
+    String caughtVariable = catchTree.parameter().simpleName().name();
+
+    List<StatementTree> body = catchTree.block().body();
+    if (body.stream().allMatch(statement -> statement.is(Tree.Kind.RETURN_STATEMENT, Tree.Kind.THROW_STATEMENT, Tree.Kind.IF_STATEMENT))) {
+      reportSimpleInstanceOf(body, caughtVariable);
     }
   }
 

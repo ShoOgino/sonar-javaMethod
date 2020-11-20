@@ -1,0 +1,18 @@
+  private static Stream<IfStatementTree> getFollowingElseIf(IfStatementTree ifStatementTree) {
+    List<IfStatementTree> ifStatements = new ArrayList<>();
+    ifStatements.add(ifStatementTree);
+
+    StatementTree elseStatement = ifStatementTree.elseStatement();
+    while (elseStatement != null) {
+      if (elseStatement.is(Tree.Kind.IF_STATEMENT)) {
+        IfStatementTree elseIfStatement = (IfStatementTree) elseStatement;
+        ifStatements.add(elseIfStatement);
+        elseStatement = elseIfStatement.elseStatement();
+      } else {
+        elseStatement = null;
+      }
+    }
+
+    return ifStatements.stream();
+  }
+

@@ -1,0 +1,16 @@
+  private void reportSimpleInstanceOf(List<StatementTree> body, String caughtVariable) {
+    List<ExpressionTree> conditions = body.stream()
+      .filter(statement -> statement.is(Tree.Kind.IF_STATEMENT))
+      .map(IfStatementTree.class::cast)
+      .flatMap(InstanceofUsedOnExceptionCheck::getFollowingElseIf)
+      .map(IfStatementTree::condition)
+      .collect(Collectors.toList());
+
+    if (conditions.stream().allMatch(cond -> cond.is(Tree.Kind.INSTANCE_OF) && isLeftOperandAndException((InstanceOfTree) cond, caughtVariable))) {
+      conditions.stream()
+        .map(InstanceOfTree.class::cast)
+        .forEach(instanceOfTree ->
+          reportIssue(instanceOfTree.instanceofKeyword(), "Replace the usage of the \"instanceof\" operator by a catch block."));
+    }
+  }
+

@@ -1,0 +1,19 @@
+  private int withReturn() {
+    try {
+    } catch (Exception e) {
+      if (e instanceof IOException) {// Noncompliant
+        return 1;
+      }
+      return 2;
+    }
+
+    try {
+    } catch (Exception e) {
+      if (e instanceof IOException && anotherCondition()) { // Compliant, not possible to refactor in a nicer way
+        return 1;
+      }
+      return 2;
+    }
+    return 0;
+  }
+

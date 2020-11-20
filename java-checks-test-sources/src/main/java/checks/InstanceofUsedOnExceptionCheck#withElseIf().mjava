@@ -1,0 +1,22 @@
+  private void withElseIf() {
+    try {
+    } catch (Exception e) {
+      if (e instanceof IOException) { // Noncompliant
+        doSomething();
+      } else if (e instanceof IllegalArgumentException) { // Noncompliant
+        doSomethingElse();
+      }
+    }
+
+    try {
+    } catch (Exception e) {
+      if (e instanceof IOException) { // Compliant
+        doSomething();
+      } else if (e instanceof IllegalArgumentException && anotherCondition()) { // Compliant, not possible to refactor in a nicer way
+        doSomethingElse();
+      } else if (e instanceof MyException) { // Compliant
+        doSomething();
+      }
+    }
+  }
+
