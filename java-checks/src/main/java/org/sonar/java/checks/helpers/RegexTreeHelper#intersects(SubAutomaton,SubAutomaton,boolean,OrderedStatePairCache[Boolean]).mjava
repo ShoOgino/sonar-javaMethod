@@ -1,0 +1,16 @@
+  private static boolean intersects(SubAutomaton auto1, SubAutomaton auto2, boolean defaultAnswer, OrderedStatePairCache<Boolean> cache) {
+    return computeIfAbsentFromCache(auto1, auto2, defaultAnswer, cache,
+      () -> auto1.anySuccessorMatch(successor -> intersects(successor, auto2, defaultAnswer, cache)),
+      () -> auto2.anySuccessorMatch(successor -> intersects(auto1, successor, defaultAnswer, cache)),
+      () -> {
+        if (auto1.start instanceof CharacterClassElementTree && auto2.start instanceof CharacterClassElementTree) {
+          SimplifiedRegexCharacterClass characterClass1 = new SimplifiedRegexCharacterClass((CharacterClassElementTree) auto1.start);
+          SimplifiedRegexCharacterClass characterClass2 = new SimplifiedRegexCharacterClass((CharacterClassElementTree) auto2.start);
+          return characterClass1.intersects(characterClass2, defaultAnswer) &&
+            auto1.anySuccessorMatch(successor1 -> auto2.anySuccessorMatch(successor2 -> intersects(successor1, successor2, defaultAnswer, cache)));
+        } else {
+          return defaultAnswer;
+        }
+      });
+  }
+

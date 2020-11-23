@@ -1,0 +1,15 @@
+  private static boolean hasNotSupportedTransitionType(SubAutomaton auto) {
+    TransitionType transition = auto.start.incomingTransitionType();
+    return transition == LOOKAROUND_BACKTRACKING ||
+      transition == NEGATION ||
+      auto.start instanceof LookAroundTree ||
+      auto.start instanceof BoundaryTree ||
+      // We could support back-references by having a stack of sub-automata, onto which we push the referenced group,
+      // but for now we'll simply bail here
+      transition == BACK_REFERENCE ||
+      // Properly supporting fixed-max loops would require unrolling the automaton, potentially making it huge
+      // Technically the case where min > 1 is unsupported for the same reason, but in that case we treat it
+      // as if min were 1, which should hopefully not produce a lot of FPs
+      isMoreThanOneFiniteRepetition(auto.start);
+  }
+

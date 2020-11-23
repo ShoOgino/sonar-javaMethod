@@ -1,0 +1,20 @@
+  @Test
+  void superset_of_prefix_disjunction() {
+    assertSupersetOf("x(y|z)", false, "xy", true, false).isTrue();
+    assertSupersetOf("x(y|z)", false, "xyy", true, false).isTrue();
+    assertSupersetOf("x(y|z)", false, "xzy", true, false).isTrue();
+    assertSupersetOf("x(y|z)", false, "xxy", true, false).isFalse();
+
+    assertSupersetOf("x(y*)z", false, "x", true, false).isFalse();
+    assertSupersetOf("x(y*)z", false, "xz", true, false).isTrue();
+    assertSupersetOf("x(y*)z", false, "xzx", true, false).isTrue();
+    assertSupersetOf("x(y*)z", false, "xyzx", true, false).isTrue();
+    assertSupersetOf("x(y*)z", false, "xyyyyzx", true, false).isTrue();
+    assertSupersetOf("x(y*)z", false, "xyyyyxx", true, false).isFalse();
+
+    // xy is dead code
+    assertSupersetOf("xy", false, "(xy|ab)", true, false).isFalse();
+    assertSupersetOf("xy|ab", false, "(xy|ab)", true, false).isTrue();
+    assertSupersetOf("xy|a", false, "(xy|ab)", true, false).isTrue();
+  }
+

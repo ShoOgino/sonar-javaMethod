@@ -1,0 +1,23 @@
+  @Test
+  void superset_of_one_character() {
+    assertSupersetOf("a", "a", false).isTrue();
+    assertSupersetOf("a", "b", true).isFalse();
+    assertSupersetOf("a", "(?i)a", false).isFalse();
+    assertSupersetOf("a", "A", false, 0).isFalse();
+    assertSupersetOf("A", "a", false, 0).isFalse();
+    assertSupersetOf("a", "A", false, Pattern.CASE_INSENSITIVE).isTrue();
+    assertSupersetOf("a", "(?i)A", false).isFalse();
+    assertSupersetOf("A", "(?i)a", false).isFalse();
+    assertSupersetOf("(?i)a", "A", false).isTrue();
+    assertSupersetOf("(?i)A", "a", false).isTrue();
+    assertSupersetOf("(?i)A", "(?i)a", false).isTrue();
+    assertSupersetOf("(?<name>X)", "X", false).isTrue();
+    assertSupersetOf("X", "(?<name>X)", false).isTrue();
+    assertSupersetOf("(?:X)", "X", false).isTrue();
+    assertSupersetOf("X", "(?:X)", false).isTrue();
+    assertSupersetOf("(?m:X)", "X", false).isTrue();
+    assertSupersetOf("X", "(?m:X)", false).isTrue();
+    assertSupersetOf("(?>X)", "X", false).isTrue();
+    assertSupersetOf("X", "(?>X)", false).isTrue();
+  }
+

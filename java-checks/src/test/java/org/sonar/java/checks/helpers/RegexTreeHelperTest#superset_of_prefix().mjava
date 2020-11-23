@@ -1,0 +1,23 @@
+  @Test
+  void superset_of_prefix() {
+    assertSupersetOf("x", false, "xy", false, false).isFalse();
+    assertSupersetOf("x", true, "xy", false, false).isFalse();
+    assertSupersetOf("x", false, "xy", true, false).isTrue();
+    assertSupersetOf("x+", false, "xy", true, false).isTrue();
+    assertSupersetOf("xy+", false, "xy", true, false).isTrue();
+    assertSupersetOf("x", false, "x+y", true, false).isTrue();
+    assertSupersetOf("x", false, "x*y", true, false).isFalse();
+    assertSupersetOf("\\d+", false, "789", true, false).isTrue();
+    assertSupersetOf("\\d+", false, "(7|x)89", true, false).isFalse();
+
+    assertSupersetOf("xy", false, "x", false, false).isFalse();
+    assertSupersetOf("xy", true, "x", false, false).isTrue();
+    assertSupersetOf("xy", false, "x", true, false).isFalse();
+
+    assertSupersetOf("abc", false, "abcdef", true, false).isTrue();
+    assertSupersetOf("abc", true, "abcdef", false, false).isFalse();
+
+    assertSupersetOf("[aeoiu]", false, "[a-z]", true, false).isFalse();
+    assertSupersetOf("[a-z]", false, "[aeiou]", true, false).isTrue();
+  }
+

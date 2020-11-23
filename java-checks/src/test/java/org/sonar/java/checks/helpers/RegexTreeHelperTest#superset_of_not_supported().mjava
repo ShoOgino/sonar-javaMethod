@@ -1,0 +1,18 @@
+  @Test
+  void superset_of_not_supported() {
+    // positive lookahead
+    assertSupersetOf("a(?=X)", "a(?=X)", false).isFalse();
+    // negative lookahead
+    assertSupersetOf("a(?!X)", "a(?!X)", false).isFalse();
+    // positive lookbehind
+    assertSupersetOf("\\w+(?<=X)", "\\w+(?<=X)", false).isFalse();
+    // negative lookbehind
+    assertSupersetOf("\\w+(?<!X)", "\\w+(?<!X)", false).isFalse();
+
+    assertSupersetOf(".", "a", true).isTrue();
+    assertSupersetOf(".", "a", false).isFalse();
+
+    assertSupersetOf("a", ".", true).isTrue();
+    assertSupersetOf("a", ".", false).isFalse();
+  }
+

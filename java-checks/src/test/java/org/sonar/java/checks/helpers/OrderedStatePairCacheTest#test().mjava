@@ -1,0 +1,13 @@
+  @Test
+  void test() {
+    for (int i = 0; i < OrderedStatePairCache.MAX_CACHE_SIZE; i++) {
+      OrderedStatePair pair = createPair();
+      assertThat(cache.startCalculation(pair, "default")).isNull();
+      assertThat(cache.startCalculation(pair, "default")).isEqualTo("default");
+      assertThat(cache.save(pair, "foo")).isEqualTo("foo");
+      assertThat(cache.startCalculation(pair, "default")).isEqualTo("foo");
+    }
+    assertThat(cache.startCalculation(createPair(), "default")).isEqualTo("default");
+    assertThat(cache.startCalculation(createPair(), "default")).isEqualTo("default");
+  }
+

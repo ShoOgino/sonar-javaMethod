@@ -1,0 +1,19 @@
+  @Test
+  void superset_of_repetitions() {
+    assertSupersetOf("a{0}", "a|b", false).isFalse();
+    assertSupersetOf("a|b", "a{0}", false).isFalse();
+    assertSupersetOf("a{1}", "a", false).isTrue();
+    assertSupersetOf("a+", "a", false).isTrue();
+    assertSupersetOf("a*", "a", false).isTrue();
+    assertSupersetOf("a|b", "a{1}", false).isTrue();
+    assertSupersetOf("a*b", "aab", false).isTrue();
+    assertSupersetOf("a+b", "aaab", false).isTrue();
+    assertSupersetOf("ab+", "ab", false).isTrue();
+    assertSupersetOf("a{1,}b", "aab", false).isTrue();
+    assertSupersetOf("aab", "a{1,}b", false).isFalse();
+    // finite repetition > 1 not supported
+    assertSupersetOf("aa", "a+", false).isFalse();
+    assertSupersetOf("a{2}", "aa", false).isFalse();
+    assertSupersetOf("aa", "a{2}", false).isFalse();
+  }
+

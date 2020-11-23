@@ -1,0 +1,17 @@
+  @Test
+  void intersects_repetitions() {
+    assertIntersects("a{0}", "a|b", false).isFalse();
+    assertIntersects("a|b", "a{0}", false).isFalse();
+    assertIntersects("a{1}", "a|b", false).isTrue();
+    assertIntersects("a|b", "a{1}", false).isTrue();
+    assertIntersects("a{1,}", "aa", false).isTrue();
+    assertIntersects("aa", "a{1,}", false).isTrue();
+    assertIntersects("a+", "aa", false).isTrue();
+    assertIntersects("aa", "a+", false).isTrue();
+    assertIntersects("a+b", "aa", false).isFalse();
+    assertIntersects("aa", "a+b", false).isFalse();
+    // finite repetition > 1 not supported
+    assertIntersects("a{2}", "aa", false).isFalse();
+    assertIntersects("aa", "a{2}", false).isFalse();
+  }
+

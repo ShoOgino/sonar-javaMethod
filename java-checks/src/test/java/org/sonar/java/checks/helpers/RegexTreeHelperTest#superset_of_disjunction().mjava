@@ -1,0 +1,11 @@
+  @Test
+  void superset_of_disjunction() {
+    assertSupersetOf("a|b|c", "a|b", false).isTrue();
+    assertSupersetOf("a|b|c", "a|b|c", false).isTrue();
+    assertSupersetOf("a|b|c", "a|b|c|d", false).isFalse();
+    assertSupersetOf("((a|(b|c))|(d|e|f))", "a|b", false).isTrue();
+    assertSupersetOf("((a|(b|c))|(d|e|f))", "a|b|c|d|e|f", false).isTrue();
+    assertSupersetOf("((a|(b|c))|(d|e|f))", "a|b|c|X|d|e|f", false).isFalse();
+    assertSupersetOf("((a|(b|c))|(d|e|f))", "((a|f)|(b|e))", false).isTrue();
+  }
+
