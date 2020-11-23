@@ -1,24 +1,24 @@
-    private Optional<String> findNegatedCharacterClassFor(RegexTree tree) {
+    private Optional<String> findNegatedCharacterClassFor(RegexTree tree, @Nullable EscapedCharacterClassTree base) {
+      if (tree instanceof CharacterClassElementTree && hasNoIntersection(((CharacterClassElementTree) tree), base)) {
+        return Optional.empty();
+      }
       String result;
       switch (tree.kind()) {
         case PLAIN_CHARACTER:
         case UNICODE_CODE_POINT:
-          result = "[^" + tree.getText() + "]";
+          result = "[^" + tree.getText() + negateEscapedCharacter(base) + "]";
           break;
         case ESCAPED_CHARACTER_CLASS:
           EscapedCharacterClassTree escapedClass = (EscapedCharacterClassTree) tree;
-          result = "\\\\" + negateEscapedCharacterClassType(escapedClass.getType());
-          if (escapedClass.isProperty()) {
-            result += "{" + escapedClass.property() + "}";
-          }
+          result = escapedCharacterFollowedByEscapedCharacter(escapedClass, negateEscapedCharacter(base));
           break;
         case CHARACTER_CLASS:
           CharacterClassTree characterClass = (CharacterClassTree) tree;
           String body = characterClass.getContents().getText();
           if (characterClass.isNegated()) {
-            result = "[" + body + "]";
+            result = "[" + body + escapedCharacterToString(base) + "]";
           } else {
-            result = "[^" + body + "]";
+            result = "[^" + body + negateEscapedCharacter(base) + "]";
           }
           break;
         default:

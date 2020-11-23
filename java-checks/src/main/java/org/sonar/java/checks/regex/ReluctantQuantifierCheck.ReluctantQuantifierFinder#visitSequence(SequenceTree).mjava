@@ -4,13 +4,13 @@
       List<RegexTree> items = tree.getItems();
       if (items.size() >= 2 && items.get(items.size() - 2).is(RegexTree.Kind.REPETITION)) {
         RepetitionTree repetition = (RepetitionTree) items.get(items.size() - 2);
-        if (isReluctantlyQuantifiedDot(repetition)) {
-          findNegatedCharacterClassFor(items.get(items.size() - 1)).ifPresent(negatedClass -> {
+        getReluctantlyQuantifiedElement(repetition).flatMap(element -> 
+          findNegatedCharacterClassFor(items.get(items.size() - 1), getBaseCharacter(element)))
+          .ifPresent(negatedClass -> {
             String newQuantifier = makePossessive(repetition.getQuantifier());
             String message = String.format("Replace this use of a reluctant quantifier with \"%s%s\".", negatedClass, newQuantifier);
             reportIssue(repetition, String.format(message, negatedClass), null, Collections.emptyList());
           });
-        }
       }
     }
 
