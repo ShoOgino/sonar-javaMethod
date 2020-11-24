@@ -17,19 +17,27 @@
       characters.setFreeSpacingMode(true);
     }
 
+    FlagSet previousFlags = activeFlags;
+    if (!enabledFlags.isEmpty() || !disabledFlags.isEmpty()) {
+      activeFlags = new FlagSet(activeFlags);
+      activeFlags.addAll(enabledFlags);
+      activeFlags.removeAll(disabledFlags);
+    }
     if (characters.currentIs(')')) {
       JavaCharacter closingParen = characters.getCurrent();
       characters.moveNext();
       IndexRange range = openingParen.getRange().merge(closingParen.getRange());
-      return new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, null);
+      return new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, null, activeFlags);
     }
     if (characters.currentIs(':')) {
       characters.moveNext();
     } else {
       expected("flag or ':' or ')'");
     }
-    return finishGroup(previousFreeSpacingMode, openingParen, (range, inner) ->
-      new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, inner)
+    GroupTree group = finishGroup(previousFreeSpacingMode, openingParen, (range, inner) ->
+      new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, inner, activeFlags)
     );
+    activeFlags = previousFlags;
+    return group;
   }
 

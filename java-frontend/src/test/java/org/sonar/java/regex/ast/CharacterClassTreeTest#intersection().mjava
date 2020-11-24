@@ -1,8 +1,10 @@
   @Test
   void intersection() {
-    RegexTree regex = assertSuccessfulParse("[a-z&&[^g-i]&]");
+    RegexTree regex = assertSuccessfulParse("[a-z&&[^g-i]&]", Pattern.MULTILINE);
     CharacterClassIntersectionTree intersection = assertType(CharacterClassIntersectionTree.class, assertCharacterClass(false, regex));
     assertKind(CharacterClassElementTree.Kind.INTERSECTION, intersection);
+    assertThat(intersection.is(CharacterClassElementTree.Kind.UNION)).isFalse();
+    assertThat(intersection.activeFlags().getMask()).isEqualTo(Pattern.MULTILINE);
     assertListElements(intersection.getAndOperators(),
       first -> assertToken(4, "&&", first)
     );

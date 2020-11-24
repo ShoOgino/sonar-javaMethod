@@ -1,0 +1,11 @@
+  public LookAroundTree(RegexSource source, IndexRange range, Polarity polarity, Direction direction, RegexTree element, FlagSet activeFlags) {
+    super(source, RegexTree.Kind.LOOK_AROUND, element, range, activeFlags);
+    this.polarity = polarity;
+    this.direction = direction;
+    element.setContinuation(new EndOfLookaroundState(this));
+    inner = polarity == Polarity.NEGATIVE ? new NegationState(element) : element;
+    if (direction == Direction.BEHIND) {
+      inner = new StartOfLookBehindState(inner);
+    }
+  }
+

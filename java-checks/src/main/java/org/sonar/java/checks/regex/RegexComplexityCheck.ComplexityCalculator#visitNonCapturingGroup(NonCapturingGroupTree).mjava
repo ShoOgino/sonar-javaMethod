@@ -1,0 +1,19 @@
+    // Regular groups, names groups and non-capturing groups without flags don't increase complexity because they don't
+    // do anything by themselves. However lookarounds, atomic groups and non-capturing groups with flags do because
+    // they're more complicated features
+    @Override
+    public void visitNonCapturingGroup(NonCapturingGroupTree tree) {
+      if (tree.getEnabledFlags().isEmpty() && tree.getDisabledFlags().isEmpty()) {
+        super.visitNonCapturingGroup(tree);
+      } else {
+        if (tree.getGroupHeader() == null) {
+          increaseComplexity(tree, nesting);
+        } else {
+          increaseComplexity(tree.getGroupHeader(), nesting);
+        }
+        nesting++;
+        super.visitNonCapturingGroup(tree);
+        nesting--;
+      }
+    }
+

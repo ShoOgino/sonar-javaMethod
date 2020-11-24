@@ -1,12 +1,8 @@
   @Override
-  public final void visitNonCapturingGroup(NonCapturingGroupTree tree) {
-    FlagSet oldFlags = activeFlags;
-    activeFlags = new FlagSet(activeFlags);
-    activeFlags.addAll(tree.getEnabledFlags());
-    activeFlags.removeAll(tree.getDisabledFlags());
-    doVisitNonCapturingGroup(tree);
-    if (tree.getElement() != null) {
-      activeFlags = oldFlags;
+  public void visitNonCapturingGroup(NonCapturingGroupTree tree) {
+    RegexTree element = tree.getElement();
+    if (element != null) {
+      visit(element);
     }
   }
 

@@ -1,0 +1,36 @@
+  @Test
+  void active_flags() {
+    String regex = "(?m:^)(?i:a)(?s:.)(?u:(\\\\d\\\\X))(?d:$)(?U:\\\\x{F6})(?x:[b](?=\\\\p{Lu})|\\\\1)";
+    assertThat(allStates(assertSuccessfulParseResult(regex)).stream()
+      .map(AutomatonStateTest::printClassAndFlags)
+      .collect(Collectors.joining("\n")))
+        .isEqualTo("" +
+          "StartState\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: m:3>\n" +
+          "BoundaryTree<flags: m:3>\n" +
+          "NonCapturingGroupTree<flags: i:9>\n" +
+          "PlainCharacterTree 'a' <flags: i:9>\n" +
+          "NonCapturingGroupTree<flags: s:15>\n" +
+          "DotTree<flags: s:15>\n" +
+          "NonCapturingGroupTree<flags: u:21>\n" +
+          "CapturingGroupTree<flags: u:21>\n" +
+          "SequenceTree\n" +
+          "EscapedCharacterClassTree<flags: u:21>\n" +
+          "MiscEscapeSequenceTree<flags: u:21>\n" +
+          "EndOfCapturingGroupState\n" +
+          "NonCapturingGroupTree<flags: d:34>\n" +
+          "BoundaryTree<flags: d:34>\n" +
+          "NonCapturingGroupTree<flags: U:40>\n" +
+          "UnicodeCodePointTree<flags: U:40>\n" +
+          "NonCapturingGroupTree<flags: x:52>\n" +
+          "DisjunctionTree\n" +
+          "SequenceTree\n" +
+          "CharacterClassTree<flags: x:52>\n" +
+          "LookAroundTree<flags: x:52>\n" +
+          "EscapedCharacterClassTree<flags: x:52>\n" +
+          "EndOfLookaroundState\n" +
+          "FinalState\n" +
+          "BackReferenceTree");
+  }
+

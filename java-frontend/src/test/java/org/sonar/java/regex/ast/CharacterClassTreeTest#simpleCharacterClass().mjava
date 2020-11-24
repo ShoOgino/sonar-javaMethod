@@ -1,7 +1,9 @@
   @Test
   void simpleCharacterClass() {
-    RegexTree regex = assertSuccessfulParse("[a-z]");
-    assertCharacterRange('a', 'z', assertCharacterClass(false, regex));
+    RegexTree regex = assertSuccessfulParse("[a-z]", Pattern.UNIX_LINES);
+    CharacterClassElementTree characterClass = assertCharacterClass(false, regex);
+    assertThat(characterClass.activeFlags().getMask()).isEqualTo(Pattern.UNIX_LINES);
+    assertCharacterRange('a', 'z', characterClass);
     assertJavaCharacter(0, '[', ((CharacterClassTree)regex).getOpeningBracket());
   }
 

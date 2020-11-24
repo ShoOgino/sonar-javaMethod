@@ -1,12 +1,15 @@
     private void testFlags(String regex) {
       FlagChecker visitor = new FlagChecker();
-      visitor.visit(RegexParserTestUtils.assertSuccessfulParseResult(regex));
+      RegexParseResult parseResult = RegexParserTestUtils.assertSuccessfulParseResult(regex);
+      visitor.visit(parseResult);
       assertThat(visitor.visitedCharacters()).isEqualTo("abcdefghi");
-      JavaCharacter iFlag = visitor.getJavaCharacterForFlag(Pattern.CASE_INSENSITIVE);
+      List<RegexTree> items = ((SequenceTree) ((DisjunctionTree) parseResult.getResult()).getAlternatives().get(1)).getItems();
+      FlagSet activeFlags = items.get(items.size() - 1).activeFlags();
+      JavaCharacter iFlag = activeFlags.getJavaCharacterForFlag(Pattern.CASE_INSENSITIVE);
       assertThat(iFlag).isNotNull();
       assertThat(iFlag.getCharacter()).isEqualTo('i');
-      assertThat(visitor.getActiveFlags()).isEqualTo(Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS);
-      JavaCharacter uFlag = visitor.getJavaCharacterForFlag(Pattern.UNICODE_CASE);
+      assertThat(activeFlags.getMask()).isEqualTo(Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS);
+      JavaCharacter uFlag = activeFlags.getJavaCharacterForFlag(Pattern.UNICODE_CASE);
       assertThat(uFlag).isNull();
     }
 

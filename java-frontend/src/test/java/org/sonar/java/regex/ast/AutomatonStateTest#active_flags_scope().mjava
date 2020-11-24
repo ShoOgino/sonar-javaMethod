@@ -1,0 +1,33 @@
+  @Test
+  void active_flags_scope() {
+    String regex = "(?i)a(?u:b)|[c](?-i:d)(?u)e((?-U)f)g(?U)h(?-u)i";
+    assertThat(allStates(assertSuccessfulParseResult(regex)).stream()
+      .map(AutomatonStateTest::printClassAndFlags)
+      .collect(Collectors.joining("\n")))
+        .isEqualTo("" +
+          "StartState\n" +
+          "DisjunctionTree\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: i:3>\n" +
+          "PlainCharacterTree 'a' <flags: i:3>\n" +
+          "NonCapturingGroupTree<flags: i:3 u:8>\n" +
+          "PlainCharacterTree 'b' <flags: i:3 u:8>\n" +
+          "FinalState\n" +
+          "SequenceTree\n" +
+          "CharacterClassTree<flags: i:3>\n" +
+          "NonCapturingGroupTree\n" +
+          "PlainCharacterTree 'd' \n" +
+          "NonCapturingGroupTree<flags: i:3 u:25>\n" +
+          "PlainCharacterTree 'e' <flags: i:3 u:25>\n" +
+          "CapturingGroupTree<flags: i:3 u:25>\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: i:3>\n" +
+          "PlainCharacterTree 'f' <flags: i:3>\n" +
+          "EndOfCapturingGroupState\n" +
+          "PlainCharacterTree 'g' <flags: i:3 u:25>\n" +
+          "NonCapturingGroupTree<flags: i:3 u:25 U:39>\n" +
+          "PlainCharacterTree 'h' <flags: i:3 u:25 U:39>\n" +
+          "NonCapturingGroupTree<flags: i:3 U:39>\n" +
+          "PlainCharacterTree 'i' <flags: i:3 U:39>");
+  }
+

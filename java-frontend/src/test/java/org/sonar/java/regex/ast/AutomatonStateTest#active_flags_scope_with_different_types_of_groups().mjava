@@ -1,0 +1,37 @@
+  @Test
+  void active_flags_scope_with_different_types_of_groups() {
+    String regex = "(?i)a(?:(?u)b)|[c](?>(?-i)d)(?u)e(?=(?-U)f)g(?U)h(?-u)i";
+    assertThat(allStates(assertSuccessfulParseResult(regex)).stream()
+      .map(AutomatonStateTest::printClassAndFlags)
+      .collect(Collectors.joining("\n")))
+        .isEqualTo("" +
+          "StartState\n" +
+          "DisjunctionTree\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: i:3>\n" +
+          "PlainCharacterTree 'a' <flags: i:3>\n" +
+          "NonCapturingGroupTree<flags: i:3>\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: i:3 u:11>\n" +
+          "PlainCharacterTree 'b' <flags: i:3 u:11>\n" +
+          "FinalState\n" +
+          "SequenceTree\n" +
+          "CharacterClassTree<flags: i:3>\n" +
+          "AtomicGroupTree<flags: i:3>\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree\n" +
+          "PlainCharacterTree 'd' \n" +
+          "NonCapturingGroupTree<flags: i:3 u:31>\n" +
+          "PlainCharacterTree 'e' <flags: i:3 u:31>\n" +
+          "LookAroundTree<flags: i:3 u:31>\n" +
+          "SequenceTree\n" +
+          "NonCapturingGroupTree<flags: i:3>\n" +
+          "PlainCharacterTree 'f' <flags: i:3>\n" +
+          "EndOfLookaroundState\n" +
+          "PlainCharacterTree 'g' <flags: i:3 u:31>\n" +
+          "NonCapturingGroupTree<flags: i:3 u:31 U:47>\n" +
+          "PlainCharacterTree 'h' <flags: i:3 u:31 U:47>\n" +
+          "NonCapturingGroupTree<flags: i:3 U:47>\n" +
+          "PlainCharacterTree 'i' <flags: i:3 U:47>");
+  }
+

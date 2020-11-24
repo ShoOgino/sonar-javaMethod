@@ -63,13 +63,13 @@
         case 'R':
         case 'X':
           characters.moveNext();
-          return new MiscEscapeSequenceTree(source, backslash.getRange().extendTo(characters.getCurrentStartIndex()));
+          return new MiscEscapeSequenceTree(source, backslash.getRange().extendTo(characters.getCurrentStartIndex()), activeFlags);
         case 'E':
           error("\\E used without \\Q");
           // Fallthrough
         default:
           characters.moveNext();
-          return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character);
+          return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character, activeFlags);
       }
     }
   }

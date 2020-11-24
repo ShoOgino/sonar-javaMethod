@@ -3,19 +3,19 @@
     characters.moveNext();
     if (characters.currentIs("?=")) {
       characters.moveNext(2);
-      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookAhead(source, range, inner));
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookAhead(source, range, inner, activeFlags));
     } else if (characters.currentIs("?<=")) {
       characters.moveNext(3);
-      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookBehind(source, range, inner));
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.positiveLookBehind(source, range, inner, activeFlags));
     } else if (characters.currentIs("?!")) {
       characters.moveNext(2);
-      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookAhead(source, range, inner));
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookAhead(source, range, inner, activeFlags));
     } else if (characters.currentIs("?<!")) {
       characters.moveNext(3);
-      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookBehind(source, range, inner));
+      return finishGroup(openingParen, (range, inner) -> LookAroundTree.negativeLookBehind(source, range, inner, activeFlags));
     } else if (characters.currentIs("?>")) {
       characters.moveNext(2);
-      return finishGroup(openingParen, (range, inner) -> new AtomicGroupTree(source, range, inner));
+      return finishGroup(openingParen, (range, inner) -> new AtomicGroupTree(source, range, inner, activeFlags));
     } else if (characters.currentIs("?<")) {
       characters.moveNext(2);
       String name = parseGroupName();

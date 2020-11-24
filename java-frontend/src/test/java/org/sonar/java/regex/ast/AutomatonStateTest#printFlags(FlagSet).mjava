@@ -1,0 +1,18 @@
+  private static String printFlags(FlagSet flags) {
+    StringBuilder out = new StringBuilder();
+    if (!flags.isEmpty()) {
+      out.append("<flags:");
+      for (int i = 1; i <= flags.getMask(); i <<= 1) {
+        JavaCharacter characterForFlag = flags.getJavaCharacterForFlag(i);
+        if (characterForFlag != null) {
+          out
+            .append(" ")
+            .append(characterForFlag.getCharacter())
+            .append(":").append(characterForFlag.getRange().getBeginningOffset() + 1);
+        }
+      }
+      out.append(">");
+    }
+    return out.toString();
+  }
+
