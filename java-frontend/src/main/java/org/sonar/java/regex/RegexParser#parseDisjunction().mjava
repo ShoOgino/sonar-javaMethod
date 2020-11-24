@@ -1,4 +1,5 @@
   private RegexTree parseDisjunction() {
+    FlagSet disjunctionFlags = activeFlags;
     List<RegexTree> alternatives = new ArrayList<>();
     List<JavaCharacter> orOperators = new ArrayList<>();
     RegexTree first = parseSequence();
@@ -9,6 +10,6 @@
       RegexTree next = parseSequence();
       alternatives.add(next);
     }
-    return combineTrees(alternatives, (range, elements) -> new DisjunctionTree(source, range, elements, orOperators));
+    return combineTrees(alternatives, (range, elements) -> new DisjunctionTree(source, range, elements, orOperators, disjunctionFlags));
   }
 

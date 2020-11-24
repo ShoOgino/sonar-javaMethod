@@ -1,4 +1,5 @@
   private CharacterClassElementTree parseCharacterClassUnion(boolean isAtBeginning) {
+    FlagSet characterClassFlags = activeFlags;
     List<CharacterClassElementTree> elements = new ArrayList<>();
     CharacterClassElementTree element = parseCharacterClassElement(isAtBeginning);
     while (element != null) {
@@ -7,9 +8,9 @@
     }
     if (elements.isEmpty()) {
       IndexRange range = new IndexRange(characters.getCurrentStartIndex(), characters.getCurrentStartIndex());
-      return new CharacterClassUnionTree(source, range, elements, activeFlags);
+      return new CharacterClassUnionTree(source, range, elements, characterClassFlags);
     } else {
-      return combineTrees(elements, (range, items) -> new CharacterClassUnionTree(source, range, items, activeFlags));
+      return combineTrees(elements, (range, items) -> new CharacterClassUnionTree(source, range, items, characterClassFlags));
     }
   }
 

@@ -1,4 +1,5 @@
   private RegexTree parseSequence() {
+    FlagSet sequenceFlags = activeFlags;
     List<RegexTree> elements = new ArrayList<>();
     RegexTree element = parseRepetition();
     while (element != null) {
@@ -7,9 +8,9 @@
     }
     if (elements.isEmpty()) {
       int index = characters.getCurrentStartIndex();
-      return new SequenceTree(source, new IndexRange(index, index), elements);
+      return new SequenceTree(source, new IndexRange(index, index), elements, sequenceFlags);
     } else {
-      return combineTrees(elements, (range, items) -> new SequenceTree(source, range, items));
+      return combineTrees(elements, (range, items) -> new SequenceTree(source, range, items, sequenceFlags));
     }
   }
 

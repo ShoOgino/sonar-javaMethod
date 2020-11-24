@@ -1,5 +1,6 @@
   @CheckForNull
   private RegexTree parseRepetition() {
+    FlagSet repetitionFlags = activeFlags;
     RegexTree element = parsePrimaryExpression();
     if (characters.isInQuotingMode()) {
       return element;
@@ -14,7 +15,7 @@
     if (quantifier == null) {
       return element;
     } else {
-      return new RepetitionTree(source, element.getRange().merge(quantifier.getRange()), element, quantifier);
+      return new RepetitionTree(source, element.getRange().merge(quantifier.getRange()), element, quantifier, repetitionFlags);
     }
   }
 
