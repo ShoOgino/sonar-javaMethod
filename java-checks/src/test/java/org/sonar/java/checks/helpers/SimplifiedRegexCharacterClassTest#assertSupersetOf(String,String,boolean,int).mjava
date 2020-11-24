@@ -1,0 +1,9 @@
+  private static AbstractBooleanAssert<?> assertSupersetOf(String superset, String subset, boolean defaultAnswer, int flags) {
+    FlagSet flagSet = new FlagSet(flags);
+    RegexTree supersetResult = parseRegex(superset, flagSet).getResult();
+    RegexTree subsetResult = parseRegex(subset, flagSet).getResult();
+    SimplifiedRegexCharacterClass supersetCharacterClass = new SimplifiedRegexCharacterClass((CharacterClassElementTree) supersetResult);
+    SimplifiedRegexCharacterClass subsetCharacterClass = new SimplifiedRegexCharacterClass((CharacterClassElementTree) subsetResult);
+    return assertThat(supersetCharacterClass.supersetOf(subsetCharacterClass, defaultAnswer));
+  }
+

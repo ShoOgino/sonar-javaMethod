@@ -1,0 +1,27 @@
+  @Test
+  void superset_of_characters_or_range() {
+    int flags = 0;
+    assertSupersetOf("a", "a", false, flags).isTrue();
+    assertSupersetOf("a", "b", true, flags).isFalse();
+    assertSupersetOf("[b-d]", "a", true, flags).isFalse();
+    assertSupersetOf("[b-d]", "b", false, flags).isTrue();
+    assertSupersetOf("[b-d]", "c", false, flags).isTrue();
+    assertSupersetOf("[b-d]", "d", false, flags).isTrue();
+    assertSupersetOf("[b-d]", "e", true, flags).isFalse();
+    assertSupersetOf("a", "[a]", false, flags).isTrue();
+    assertSupersetOf("a", "[ab]", true, flags).isFalse();
+    assertSupersetOf("[a-z]", "[b-e]", false, flags).isTrue();
+    assertSupersetOf("[a-z]", "[b-e]", false, flags).isTrue();
+    assertSupersetOf("[a-d]", "[a-e]", true, flags).isFalse();
+    assertSupersetOf("[a-d]", "[b-e]", true, flags).isFalse();
+    assertSupersetOf("[b-d]", "[a-d]", true, flags).isFalse();
+    assertSupersetOf("[a-c]", "[a-c]", false, flags).isTrue();
+    assertSupersetOf("[a-ce-g]", "[a-ce-g]", false, flags).isTrue();
+    assertSupersetOf("[a-g]", "[a-de-g]", false, flags).isTrue();
+    assertSupersetOf("[a-de-g]", "[a-g]", false, flags).isTrue();
+    assertSupersetOf("[b-dg-i]", "[a-dg-i]", true, flags).isFalse();
+    assertSupersetOf("[b-dg-i]", "[b-eg-i]", true, flags).isFalse();
+    assertSupersetOf("[b-dg-i]", "[b-df-i]", true, flags).isFalse();
+    assertSupersetOf("[b-dg-i]", "[b-dg-j]", true, flags).isFalse();
+  }
+
