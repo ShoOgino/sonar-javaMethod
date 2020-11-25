@@ -1,9 +1,6 @@
   private static boolean isValidIPV4Parts(String ip) {
-    for (String numberAsString : Splitter.on('.').split(ip)) {
-      if (Integer.valueOf(numberAsString) > 255) {
-        return false;
-      }
-    }
-    return true;
+    return Arrays.stream(ip.split("\\."))
+      .mapToInt(Integer::parseInt)
+      .allMatch(i -> i < 255);
   }
 
