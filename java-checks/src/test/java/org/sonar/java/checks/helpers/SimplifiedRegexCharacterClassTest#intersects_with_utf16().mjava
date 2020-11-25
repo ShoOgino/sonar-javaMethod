@@ -1,0 +1,17 @@
+  @Test
+  void intersects_with_utf16() {
+    String maxCodePoint = new String(Character.toChars(Character.MAX_CODE_POINT));
+    // two characters
+    assertThat(maxCodePoint).hasSize(2);
+    // but a single code point
+    assertThat(maxCodePoint.codePoints().count()).isEqualTo(1);
+    // and java Pattern support it
+    assertThat(maxCodePoint).matches(".");
+
+    RegexTree result = parseRegex(maxCodePoint, new FlagSet()).getResult();
+    // FIXME result should be a single PlainCharacterTree and not a SequenceTree of two PlainCharacterTree s
+    // In oder to assert: assertIntersects(".", maxCodePoint, false, NO_FLAGS).isTrue();
+    // Instead of:
+    assertThat(result).isInstanceOf(SequenceTree.class);
+  }
+

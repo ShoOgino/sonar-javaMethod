@@ -2,20 +2,20 @@
     if (that.containsUnknownCharacters && !defaultAnswer) {
       return false;
     }
-    Iterator<Map.Entry<Integer, CharacterClassElementTree>> thatIter = that.contents.entrySet().iterator();
+    Iterator<Map.Entry<Integer, RegexSyntaxElement>> thatIter = that.contents.entrySet().iterator();
     if (!thatIter.hasNext()) {
       // that.contents is empty, any set is a superset of it
       return true;
     }
-    Map.Entry<Integer, CharacterClassElementTree> thatEntry = thatIter.next();
+    Map.Entry<Integer, RegexSyntaxElement> thatEntry = thatIter.next();
     while (thatIter.hasNext()) {
-      Map.Entry<Integer, CharacterClassElementTree> thatNextEntry = thatIter.next();
+      Map.Entry<Integer, RegexSyntaxElement> thatNextEntry = thatIter.next();
       if (thatEntry.getValue() != null) {
-        Map.Entry<Integer, CharacterClassElementTree> thisBefore = contents.floorEntry(thatEntry.getKey());
+        Map.Entry<Integer, RegexSyntaxElement> thisBefore = contents.floorEntry(thatEntry.getKey());
         if (thisBefore == null || thisBefore.getValue() == null) {
           return false;
         }
-        NavigableMap<Integer, CharacterClassElementTree> thisSubMap = contents.subMap(thatEntry.getKey(), false, thatNextEntry.getKey(), false);
+        NavigableMap<Integer, RegexSyntaxElement> thisSubMap = contents.subMap(thatEntry.getKey(), false, thatNextEntry.getKey(), false);
         if (thisSubMap.values().stream().anyMatch(Objects::isNull)) {
           return false;
         }

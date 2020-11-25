@@ -1,0 +1,16 @@
+  @Test
+  void intersects_dot_unix_lines() {
+    // only \n excluded when UNIX_LINES is set
+    assertIntersects(".", "\n", false, Pattern.UNIX_LINES).isFalse();
+    assertIntersects(".", "[^a]", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\b", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\t", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\f", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", " ", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\r", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\u0085", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\u2028", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", "\u2029", false, Pattern.UNIX_LINES).isTrue();
+    assertIntersects(".", ".", false, Pattern.UNIX_LINES).isTrue();
+  }
+

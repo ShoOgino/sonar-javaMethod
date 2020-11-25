@@ -1,0 +1,29 @@
+  @Test
+  void superset_of_dot() {
+    assertSupersetOf(".", "a", false).isTrue();
+    assertSupersetOf("a", ".", true).isFalse();
+    assertSupersetOf(".", "[a-z]", false).isTrue();
+    assertSupersetOf("[a-z]+", ".+", false).isFalse();
+
+    // by default [\r\n\u0085\u2028\u2029] excluded from DotTree
+    assertSupersetOf(".", "[^\r\n\u0085\u2028\u2029]", false).isTrue();
+    assertSupersetOf(".+", "\b\f \t", false).isTrue();
+
+    // only \n excluded when UNIX_LINES is set
+    assertSupersetOf(".", "[^\n]", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\n", false, Pattern.UNIX_LINES).isFalse();
+    assertSupersetOf("(?d).", "\n", false).isFalse();
+    assertSupersetOf(".+", "\b\f \t\r\u0085\u2028\u2029", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf("(?d).+", "\b\f \t\r\u0085\u2028\u2029", false).isTrue();
+
+    // no exclusion and UNIX_LINES is ignored when DOTALL is set
+    assertSupersetOf(".", "[^a]", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "a", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\n", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\n", false, Pattern.UNIX_LINES|Pattern.DOTALL).isTrue();
+    assertSupersetOf("(?d).", "\n", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf("(?s).", "\n", false).isTrue();
+    assertSupersetOf("(?ds).", "\n", false).isTrue();
+    assertSupersetOf(".+", "\b\f \t\r\n\u0085\u2028\u2029", false, Pattern.DOTALL).isTrue();
+  }
+

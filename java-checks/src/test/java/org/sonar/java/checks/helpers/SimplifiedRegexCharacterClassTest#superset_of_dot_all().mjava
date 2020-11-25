@@ -1,0 +1,18 @@
+  @Test
+  void superset_of_dot_all() {
+    // no exclusion
+    assertSupersetOf(".", "[^a]", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\r", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\n", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\u0085", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\u2028", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\u2029", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\b", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\f", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", " ", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", "\t", false, Pattern.DOTALL).isTrue();
+    assertSupersetOf(".", ".", false, Pattern.DOTALL).isTrue();
+    // UNIX_LINES is ignored when DOTALL is set
+    assertSupersetOf(".", "\n", false, Pattern.UNIX_LINES|Pattern.DOTALL).isTrue();
+  }
+

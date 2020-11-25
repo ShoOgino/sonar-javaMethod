@@ -1,0 +1,22 @@
+  @Test
+  void superset_of_dot_default() {
+    assertSupersetOf(".", "a", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", "\0", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", "\uFFFF", false, NO_FLAGS).isTrue();
+    assertSupersetOf("a", ".", true, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "[a-z]", false, NO_FLAGS).isTrue();
+    assertSupersetOf("[a-z]", ".", false, NO_FLAGS).isFalse();
+
+    // by default [\r\n\u0085\u2028\u2029] excluded from DotTree
+    assertSupersetOf(".", "[^\r\n\u0085\u2028\u2029]", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", "\r", false, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "\n", false, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "\u0085", false, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "\u2028", false, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "\u2029", false, NO_FLAGS).isFalse();
+    assertSupersetOf(".", "\b", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", "\f", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", " ", false, NO_FLAGS).isTrue();
+    assertSupersetOf(".", "\t", false, NO_FLAGS).isTrue();
+  }
+

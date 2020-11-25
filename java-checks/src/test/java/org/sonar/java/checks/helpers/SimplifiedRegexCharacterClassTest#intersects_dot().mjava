@@ -1,0 +1,18 @@
+  @Test
+  void intersects_dot() {
+    assertIntersects(".", "a", false, NO_FLAGS).isTrue();
+    assertIntersects(".", ".", false, NO_FLAGS).isTrue();
+    assertIntersects(".", "\0", false, NO_FLAGS).isTrue();
+    assertIntersects(".", "\uFFFF", false, NO_FLAGS).isTrue();
+    assertIntersects("a", ".", true, NO_FLAGS).isTrue();
+    assertIntersects(".", "[a-z]", false, NO_FLAGS).isTrue();
+    assertIntersects("[a-z]", ".", false, NO_FLAGS).isTrue();
+
+    // by default [\r\n\u0085\u2028\u2029] excluded from DotTree
+    assertIntersects(".", "[\r\n\u0085\u2028\u2029]", false, NO_FLAGS).isFalse();
+    assertIntersects(".", "\b", false, NO_FLAGS).isTrue();
+    assertIntersects(".", "\f", false, NO_FLAGS).isTrue();
+    assertIntersects(".", " ", false, NO_FLAGS).isTrue();
+    assertIntersects(".", "\t", false, NO_FLAGS).isTrue();
+  }
+

@@ -1,0 +1,16 @@
+  @Test
+  void superset_of_dot_unix_lines() {
+    // only \n excluded when UNIX_LINES is set
+    assertSupersetOf(".", "[^\n]", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\r", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\n", false, Pattern.UNIX_LINES).isFalse();
+    assertSupersetOf(".", "\u0085", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\u2028", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\u2029", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\b", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\f", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", " ", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", "\t", false, Pattern.UNIX_LINES).isTrue();
+    assertSupersetOf(".", ".", false, Pattern.UNIX_LINES).isTrue();
+  }
+

@@ -1,0 +1,9 @@
+  private static AbstractBooleanAssert<?> assertIntersects(String regex1, String regex2, boolean defaultAnswer, int flags) {
+    FlagSet flagSet = new FlagSet(flags);
+    RegexTree tree1 = parseRegex(regex1, flagSet).getResult();
+    RegexTree tree2 = parseRegex(regex2, flagSet).getResult();
+    SimplifiedRegexCharacterClass characterClass1 = SimplifiedRegexCharacterClass.of(tree1);
+    SimplifiedRegexCharacterClass characterClass2 = SimplifiedRegexCharacterClass.of(tree2);
+    return assertThat(characterClass1.intersects(characterClass2, defaultAnswer));
+  }
+

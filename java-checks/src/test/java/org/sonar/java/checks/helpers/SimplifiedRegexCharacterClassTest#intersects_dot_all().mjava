@@ -1,0 +1,17 @@
+  @Test
+  void intersects_dot_all() {
+    // no exclusion and UNIX_LINES is ignored when DOTALL is set
+    assertIntersects(".", "\n", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "[^a]", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\n", false, Pattern.UNIX_LINES | Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\b", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\t", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\f", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", " ", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\r", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\u0085", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\u2028", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", "\u2029", false, Pattern.DOTALL).isTrue();
+    assertIntersects(".", ".", false, Pattern.DOTALL).isTrue();
+  }
+
