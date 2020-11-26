@@ -1,8 +1,11 @@
   private static boolean isLastArgumentThrowable(List<ExpressionTree> arguments) {
-    if (!arguments.isEmpty()) {
-      ExpressionTree lastArgument = arguments.get(arguments.size() - 1);
-      return lastArgument.symbolType().isSubtypeOf(JAVA_LANG_THROWABLE);
+    if (arguments.isEmpty()) {
+      return false;
     }
-    return false;
+    ExpressionTree lastArgument = arguments.get(arguments.size() - 1);
+    if (lastArgument.symbolType().isSubtypeOf(JAVA_LANG_THROWABLE)) {
+      return true;
+    }
+    return hasUnknownExceptionInUnionType(ExpressionUtils.skipParentheses(lastArgument));
   }
 
