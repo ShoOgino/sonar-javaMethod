@@ -2,7 +2,7 @@
     Tree parentTree = skipParentheses(typeCastTree.parent());
     boolean isArgument = parentTree.is(Tree.Kind.ARGUMENTS);
 
-    return !childType.isPrimitive()
+    return !childType.isPrimitive() && !childType.isUnknown()
       // Exception: subtype cast are tolerated in method or constructor call arguments
       && (typeCastTree.type().symbolType().equals(childType)
         || (isArgument && childType.equals(parentType)) || (!isArgument && childType.isSubtypeOf(parentType)))
