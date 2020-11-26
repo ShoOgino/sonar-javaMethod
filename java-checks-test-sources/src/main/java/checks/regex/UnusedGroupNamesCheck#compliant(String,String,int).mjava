@@ -1,11 +1,6 @@
   Object compliant(String input, String groupName, int groupNumber) {
     Pattern invalid = Pattern.compile("[");
 
-    Pattern.matches("(?<group>[a-z])", input); // not passing through pattern and matchers
-
-    Pattern.compile("(?<group>[a-z])"); // non-assigned
-    Pattern.compile("(?<group>[a-z])").matcher(input).group(0); // no variable to follow
-
     visibleFromOutsidePattern = Pattern.compile("(?<group>[a-z])");
     patterns[0] = Pattern.compile("(?<group>[a-z])");
 
@@ -85,6 +80,20 @@
      Pattern p11 = Pattern.compile("\\\\u+[a-fA-F0-9]{4}");
      Matcher m11 = p11.matcher(input);
      m11.group(0);
+
+    if (input.matches("(?<name>test)\\k<name>")) {
+      System.out.println(input);
+    }
+
+    // When a pattern or matcher is passed to another method, we consider its group as used
+    Pattern p12 = Pattern.compile("(?<name>test)");
+    Matcher m12 = p12.matcher(input);
+    someMethod(m12);
+
+    Pattern p13 = Pattern.compile("(?<name>test)");
+    someMethod(p13);
+
+    someOtherMethod().group(1); // This should be ignored since we don't know which regex we're calling group for
 
     return null;
   }

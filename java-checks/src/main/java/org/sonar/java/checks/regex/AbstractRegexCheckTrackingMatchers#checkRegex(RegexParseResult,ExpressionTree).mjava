@@ -1,0 +1,18 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, ExpressionTree methodInvocationOrAnnotation) {
+    if (methodInvocationOrAnnotation.is(Tree.Kind.ANNOTATION)) {
+      methodsCalledOnRegex.put(regexForLiterals, Collections.emptyList());
+      return;
+    }
+    MethodInvocationTree mit = (MethodInvocationTree) methodInvocationOrAnnotation;
+    if (PATTERN_COMPILE.matches(mit)) {
+      handleAssignment(mit, regexForLiterals);
+      methodInvocationToRegex.put(mit, regexForLiterals);
+      methodsCalledOnRegex.put(regexForLiterals, new ArrayList<>());
+    } else if (trackedMethodMatchers().matches(mit)) {
+      methodsCalledOnRegex.put(regexForLiterals, Collections.singletonList(mit));
+    } else {
+      methodsCalledOnRegex.put(regexForLiterals, Collections.emptyList());
+    }
+  }
+

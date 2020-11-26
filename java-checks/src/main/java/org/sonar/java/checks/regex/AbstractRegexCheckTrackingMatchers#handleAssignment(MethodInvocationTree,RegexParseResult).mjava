@@ -1,0 +1,11 @@
+  private void handleAssignment(MethodInvocationTree mit, RegexParseResult regex) {
+    if (mit.parent().is(Tree.Kind.VARIABLE, Tree.Kind.ASSIGNMENT)) {
+      Optional<Symbol> assignedVariable = getAssignedPrivateEffectivelyFinalVariable(mit);
+      if (assignedVariable.isPresent()) {
+        variableToRegex.put(assignedVariable.get(), regex);
+      } else {
+        escapingRegexes.add(regex);
+      }
+    }
+  }
+

@@ -1,0 +1,15 @@
+  @Override
+  protected void onMethodInvocationFound(MethodInvocationTree mit) {
+    if (PATTERN_MATCHER.matches(mit)) {
+      getRegex(mit).ifPresent(regex -> handleAssignment(mit, regex));
+    } else if (REGEX_METHODS.matches(mit)) {
+      super.onMethodInvocationFound(mit);
+    } else if (trackedMethodMatchers().matches(mit)) {
+      getRegex(mit).ifPresent(regex -> methodsCalledOnRegex.get(regex).add(mit));
+    } else {
+      for (ExpressionTree argument : mit.arguments()) {
+        getRegex(argument).ifPresent(escapingRegexes::add);
+      }
+    }
+  }
+

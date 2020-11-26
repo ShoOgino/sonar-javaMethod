@@ -1,0 +1,20 @@
+  @Override
+  public void leaveNode(Tree tree) {
+    if (tree.is(Tree.Kind.RETURN_STATEMENT)) {
+      collectReturnedVariables(((ReturnStatementTree) tree).expression());
+    } else if (tree.is(Tree.Kind.COMPILATION_UNIT)) {
+      for (Map.Entry<RegexParseResult, List<MethodInvocationTree>> entry : methodsCalledOnRegex.entrySet()) {
+        checkRegex(entry.getKey(), entry.getValue(), escapingRegexes.contains(entry.getKey()));
+      }
+      // clear all the structures used during analysis to start fresh in next file
+      variableToRegex.clear();
+      methodInvocationToRegex.clear();
+      methodsCalledOnRegex.clear();
+      escapingRegexes.clear();
+    } else if (tree instanceof MethodInvocationTree && matchers.matches((MethodInvocationTree) tree)) {
+      onMethodInvocationFound((MethodInvocationTree) tree);
+    } else {
+      super.visitNode(tree);
+    }
+  }
+

@@ -1,0 +1,15 @@
+  @Override
+  protected void checkRegex(RegexParseResult regexForLiterals, List<MethodInvocationTree> trackedMethodsCalled, boolean didEscape) {
+    KnownGroupsCollector knownGroups = collectGroups(regexForLiterals);
+    List<CapturingGroupTree> namedGroups = new ArrayList<>(knownGroups.groupsByName.values());
+    if (trackedMethodsCalled.isEmpty() && !didEscape && !namedGroups.isEmpty() && !knownGroups.usesBackReferences) {
+      List<RegexIssueLocation> secondaries = namedGroups.stream()
+        .map(group -> toLocation(group, "Named group '%s'", g -> g.getName().get()))
+        .collect(Collectors.toList());
+      reportIssue(namedGroups.get(0), ISSUE_USE_GROUPS_OR_REMOVE, null, secondaries);
+    }
+    for (MethodInvocationTree groupInvocation : trackedMethodsCalled) {
+      checkGroupUsage(groupInvocation, knownGroups);
+    }
+  }
+

@@ -1,4 +1,4 @@
-  private static Optional<Symbol.VariableSymbol> getAssignedPrivateVariable(MethodInvocationTree mit) {
+  private static Optional<Symbol> getAssignedPrivateEffectivelyFinalVariable(MethodInvocationTree mit) {
     Tree parent = mit.parent();
     Symbol symbol = null;
     if (parent.is(Tree.Kind.VARIABLE)) {
@@ -14,9 +14,6 @@
         }
       }
     }
-    if (symbol == null || !isPrivateEffectivelyFinalVariable(symbol)) {
-      return Optional.empty();
-    }
-    return Optional.of((Symbol.VariableSymbol) symbol);
+    return Optional.ofNullable(symbol).filter(AbstractRegexCheckTrackingMatchers::isPrivateEffectivelyFinalVariable);
   }
 
