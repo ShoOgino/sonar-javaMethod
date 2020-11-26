@@ -1,0 +1,21 @@
+  @Override
+  protected void checkRegex(RegexParseResult regexForLiterals, List<MethodInvocationTree> trackedMethodsCalled, boolean didEscape) {
+    MatchType matchType;
+    if (didEscape) {
+      matchType = MatchType.UNKNOWN;
+    } else {
+      boolean partial = trackedMethodsCalled.stream().anyMatch(PARTIAL_MATCHERS::matches);
+      boolean full = trackedMethodsCalled.stream().anyMatch(FULL_MATCHERS::matches);
+      if (partial && full) {
+        matchType = MatchType.BOTH;
+      } else if (partial) {
+        matchType = MatchType.PARTIAL;
+      } else if (full) {
+        matchType = MatchType.FULL;
+      } else {
+        matchType = MatchType.UNKNOWN;
+      }
+    }
+    checkRegex(regexForLiterals, matchType);
+  }
+

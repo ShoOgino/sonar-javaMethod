@@ -1,0 +1,14 @@
+  Matcher compliant(String str) {
+    str.matches(".*?x");
+    str.matches(".*x?");
+    Matcher m = Pattern.compile(".*?").matcher(str); // Compliant because it's used both for a full match and a partial match
+    m.find();
+    m.matches();
+
+    Pattern.compile(".*?"); // Compliant because unused
+
+    Matcher m2 = Pattern.compile(".*?").matcher(str); // Compliant because the matcher is returned so we may be using it for a full match later
+    m.find();
+    return m2;
+  }
+

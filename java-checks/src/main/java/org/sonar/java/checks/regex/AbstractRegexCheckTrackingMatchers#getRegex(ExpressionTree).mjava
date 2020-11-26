@@ -1,8 +1,8 @@
   private Optional<RegexParseResult> getRegex(ExpressionTree tree) {
     if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) tree;
-      if ((PATTERN_MATCHER.matches(mit) || trackedMethodMatchers().matches(mit)) && mit.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
-        return getRegex(((MemberSelectExpressionTree) mit.methodSelect()).expression());
+      if ((PATTERN_MATCHER.matches(mit) || trackedMethodMatchers().matches(mit))) {
+        return getRegexOperand(mit);
       }
       return Optional.ofNullable(methodInvocationToRegex.get(tree));
     }

@@ -1,0 +1,16 @@
+  private static boolean isAnchoredAtEnd(AutomatonState start, Set<AutomatonState> visited) {
+    if (isEndBoundary(start)) {
+      return true;
+    }
+    if (start instanceof FinalState || visited.contains(start)) {
+      return false;
+    }
+    visited.add(start);
+    for (AutomatonState successor : start.successors()) {
+      if (!isAnchoredAtEnd(successor, visited)) {
+        return false;
+      }
+    }
+    return true;
+  }
+

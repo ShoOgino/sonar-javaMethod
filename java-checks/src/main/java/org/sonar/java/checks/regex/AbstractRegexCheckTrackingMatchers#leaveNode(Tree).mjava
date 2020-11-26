@@ -3,9 +3,9 @@
     if (tree.is(Tree.Kind.RETURN_STATEMENT)) {
       collectReturnedVariables(((ReturnStatementTree) tree).expression());
     } else if (tree.is(Tree.Kind.COMPILATION_UNIT)) {
-      for (Map.Entry<RegexParseResult, List<MethodInvocationTree>> entry : methodsCalledOnRegex.entrySet()) {
-        checkRegex(entry.getKey(), entry.getValue(), escapingRegexes.contains(entry.getKey()));
-      }
+      methodsCalledOnRegex.forEach((regex, invocation) ->
+        checkRegex(regex, invocation, escapingRegexes.contains(regex))
+      );
       // clear all the structures used during analysis to start fresh in next file
       variableToRegex.clear();
       methodInvocationToRegex.clear();
