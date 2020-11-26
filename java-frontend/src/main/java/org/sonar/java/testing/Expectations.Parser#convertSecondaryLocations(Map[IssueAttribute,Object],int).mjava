@@ -1,0 +1,12 @@
+    private static Map<IssueAttribute, Object> convertSecondaryLocations(Map<IssueAttribute, Object> attributes, int line) {
+      List<?> secondaryLocation = (List<?>) attributes.get(SECONDARY_LOCATIONS);
+      if (secondaryLocation != null) {
+        EnumMap<IssueAttribute, Object> copy = new EnumMap<>(attributes);
+        copy.put(SECONDARY_LOCATIONS, secondaryLocation.stream()
+          .map(stringValue -> relativeValueToInt(line, (String) stringValue))
+          .collect(toList()));
+        return copy;
+      }
+      return attributes;
+    }
+
