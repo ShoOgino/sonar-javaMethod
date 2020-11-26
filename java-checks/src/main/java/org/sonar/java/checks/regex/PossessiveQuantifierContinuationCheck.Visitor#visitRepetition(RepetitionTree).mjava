@@ -1,0 +1,10 @@
+    @Override
+    public void visitRepetition(RepetitionTree repetitionTree) {
+      AutomatonState continuation = repetitionTree.continuation();
+      if (doesRepetitionContinuationAlwaysFail(repetitionTree) && continuation instanceof RegexSyntaxElement) {
+        reportIssue((RegexSyntaxElement) continuation, MESSAGE, null,
+            Collections.singletonList(new RegexCheck.RegexIssueLocation(repetitionTree, "Previous possessive repetition")));
+      }
+      super.visitRepetition(repetitionTree);
+    }
+
