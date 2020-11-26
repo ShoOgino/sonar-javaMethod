@@ -1,0 +1,20 @@
+    @Override
+    public void visitRepetition(RepetitionTree tree) {
+      Integer maximumRepetitions = tree.getQuantifier().getMaximumRepetitions();
+      if (maximumRepetitions != null && maximumRepetitions < 2) {
+        super.visitRepetition(tree);
+        return;
+      }
+      Set<BackReferenceTree> originalImpossibleBackReferences = impossibleBackReferences;
+      impossibleBackReferences = new LinkedHashSet<>();
+      Map<String, CapturingGroupTree> originalCapturingGroups = new HashMap<>(capturingGroups);
+      super.visitRepetition(tree);
+      if (!impossibleBackReferences.isEmpty()) {
+        capturingGroups = originalCapturingGroups;
+        findReachableGroups(tree.getElement(), tree.continuation(), impossibleBackReferences, new HashSet<>());
+        // Visit the body of the loop a second time, this time with the groups that could be set in the first iteration
+        impossibleBackReferences = originalImpossibleBackReferences;
+        super.visitRepetition(tree);
+      }
+    }
+

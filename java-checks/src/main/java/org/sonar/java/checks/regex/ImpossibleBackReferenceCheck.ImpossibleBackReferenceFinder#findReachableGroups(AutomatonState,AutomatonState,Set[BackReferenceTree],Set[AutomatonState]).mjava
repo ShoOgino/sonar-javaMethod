@@ -1,0 +1,13 @@
+    private void findReachableGroups(AutomatonState start, AutomatonState stop, Set<BackReferenceTree> preliminaryImpossibleReferences, Set<AutomatonState> visited) {
+      if (start == stop || (start instanceof BackReferenceTree && preliminaryImpossibleReferences.contains(start)) || visited.contains(start)) {
+        return;
+      }
+      visited.add(start);
+      if (start instanceof EndOfCapturingGroupState) {
+        addGroup(((EndOfCapturingGroupState) start).group());
+      }
+      for (AutomatonState successor: start.successors()) {
+        findReachableGroups(successor, stop, preliminaryImpossibleReferences, visited);
+      }
+    }
+

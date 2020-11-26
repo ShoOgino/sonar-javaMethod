@@ -1,0 +1,12 @@
+    @Override
+    public void visitDisjunction(DisjunctionTree tree) {
+      Map<String, CapturingGroupTree> originalCapturingGroups = capturingGroups;
+      Map<String, CapturingGroupTree> allCapturingGroups = new HashMap<>();
+      for (RegexTree alternative : tree.getAlternatives()) {
+        capturingGroups = new HashMap<>(originalCapturingGroups);
+        visit(alternative);
+        allCapturingGroups.putAll(capturingGroups);
+      }
+      capturingGroups = allCapturingGroups;
+    }
+

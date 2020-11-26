@@ -1,0 +1,16 @@
+    @Override
+    protected void after(RegexParseResult regexParseResult) {
+      for (BackReferenceTree backReference : impossibleBackReferences) {
+        String message;
+        List<RegexIssueLocation> secondaries = new ArrayList<>();
+        if (capturingGroups.containsKey(backReference.groupName())) {
+          message = "Fix this backreference, so that it refers to a group that can be matched before it.";
+          CapturingGroupTree group = capturingGroups.get(backReference.groupName());
+          secondaries.add(new RegexIssueLocation(group, "This group is used in a backreference before it is defined"));
+        } else {
+          message = "Fix this backreference - it refers to a capturing group that doesn't exist.";
+        }
+        reportIssue(backReference, message, null, secondaries);
+      }
+    }
+
