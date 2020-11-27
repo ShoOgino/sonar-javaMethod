@@ -1,0 +1,13 @@
+    @Override
+    public void visitDisjunction(DisjunctionTree tree) {
+      RedundantAlternativeCollector collector = new RedundantAlternativeCollector();
+      List<RegexTree> alternatives = tree.getAlternatives();
+      for (int i = 0; i + 1 < alternatives.size(); i++) {
+        for (int j = i + 1; j < alternatives.size(); j++) {
+          collector.evaluate(alternatives.get(i), alternatives.get(j));
+        }
+      }
+      collector.supersetSubsetListMap.forEach(RedundantRegexAlternativesCheck.this::reportRedundantIssue);
+      super.visitDisjunction(tree);
+    }
+

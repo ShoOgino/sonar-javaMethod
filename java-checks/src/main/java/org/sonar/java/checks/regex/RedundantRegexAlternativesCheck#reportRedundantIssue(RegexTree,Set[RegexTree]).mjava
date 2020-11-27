@@ -1,0 +1,12 @@
+  private void reportRedundantIssue(RegexTree supersetAlternative, Set<RegexTree> redundantSubsetAlternatives) {
+    List<RegexTree> redundantAlternatives = new ArrayList<>(redundantSubsetAlternatives);
+    redundantAlternatives.sort(Comparator.comparing(element -> element.getRange().getBeginningOffset()));
+    RegexTree firstRedundantAlternatives = redundantAlternatives.get(0);
+    List<RegexIssueLocation> secondaries = new ArrayList<>();
+    secondaries.add(new RegexIssueLocation(supersetAlternative, "Alternative to keep"));
+    redundantAlternatives.stream().skip(1)
+      .map(otherRedundantAlternatives -> new RegexIssueLocation(otherRedundantAlternatives, "Other redundant alternative"))
+      .forEach(secondaries::add);
+    reportIssue(firstRedundantAlternatives, "Remove or rework this redundant alternative.", null, secondaries);
+  }
+
