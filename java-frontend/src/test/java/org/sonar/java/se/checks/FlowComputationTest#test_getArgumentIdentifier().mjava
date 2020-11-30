@@ -1,6 +1,8 @@
   @Test
   void test_getArgumentIdentifier() throws Exception {
-    MethodInvocationTree mit = (MethodInvocationTree) Result.createForJavaFile("src/test/files/se/FlowComputationGetArgumentIdentifier").referenceTree(6, 5).parent();
+    CompilationUnitTree cut = JParserTestUtils.parse(new File("src/test/files/se/FlowComputationGetArgumentIdentifier.java"));
+    MethodTree foo = (MethodTree) ((ClassTree) cut.types().get(0)).members().get(1);
+    MethodInvocationTree mit = (MethodInvocationTree) ((ExpressionStatementTree) foo.block().body().get(1)).expression();
 
     assertThatThrownBy(() -> FlowComputation.getArgumentIdentifier(mit, -1)).isInstanceOf(IllegalArgumentException.class).hasMessage("index must be within arguments range.");
     assertThat(FlowComputation.getArgumentIdentifier(mit, 0).name()).isEqualTo("localVariable");
