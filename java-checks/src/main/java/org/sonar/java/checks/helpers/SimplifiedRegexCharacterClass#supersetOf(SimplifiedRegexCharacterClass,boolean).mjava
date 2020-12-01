@@ -1,5 +1,5 @@
   public boolean supersetOf(SimplifiedRegexCharacterClass that, boolean defaultAnswer) {
-    if (that.containsUnknownCharacters && !defaultAnswer) {
+    if ((isEmpty() && !that.isEmpty()) || (that.containsUnknownCharacters && !defaultAnswer)) {
       return false;
     }
     Iterator<Map.Entry<Integer, RegexSyntaxElement>> thatIter = that.contents.entrySet().iterator();
@@ -15,13 +15,18 @@
         if (thisBefore == null || thisBefore.getValue() == null) {
           return false;
         }
-        NavigableMap<Integer, RegexSyntaxElement> thisSubMap = contents.subMap(thatEntry.getKey(), false, thatNextEntry.getKey(), false);
+        int to = (thatNextEntry.getValue() == null) ? (thatNextEntry.getKey() - 1) : thatNextEntry.getKey();
+        NavigableMap<Integer, RegexSyntaxElement> thisSubMap = contents.subMap(thatEntry.getKey(), false, to, true);
         if (thisSubMap.values().stream().anyMatch(Objects::isNull)) {
           return false;
         }
       }
       thatEntry = thatNextEntry;
     }
-    return true;
+    if (thatEntry.getValue() == null) {
+      return true;
+    }
+    Map.Entry<Integer, RegexSyntaxElement> lastEntry = contents.lastEntry();
+    return lastEntry.getValue() != null && lastEntry.getKey() <= thatEntry.getKey();
   }
 

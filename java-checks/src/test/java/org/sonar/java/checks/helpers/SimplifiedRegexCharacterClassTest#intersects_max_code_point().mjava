@@ -1,0 +1,27 @@
+  @Test
+  void intersects_max_code_point() {
+    SimplifiedRegexCharacterClass max = new SimplifiedRegexCharacterClass();
+    max.addRange(Character.MAX_CODE_POINT, Character.MAX_CODE_POINT, mock(CharacterClassElementTree.class));
+
+    SimplifiedRegexCharacterClass beforeMax = new SimplifiedRegexCharacterClass();
+    beforeMax.addRange(Character.MAX_CODE_POINT - 1, Character.MAX_CODE_POINT - 1, mock(CharacterClassElementTree.class));
+
+    SimplifiedRegexCharacterClass aToMax = new SimplifiedRegexCharacterClass();
+    aToMax.addRange('a', Character.MAX_CODE_POINT, mock(CharacterClassElementTree.class));
+
+    SimplifiedRegexCharacterClass dot = new SimplifiedRegexCharacterClass(
+      new DotTree(mock(RegexSource.class), mock(IndexRange.class), new FlagSet(Pattern.DOTALL)));
+
+    assertThat(max.intersects(max, false)).isTrue();
+    assertThat(aToMax.intersects(aToMax, false)).isTrue();
+    assertThat(max.intersects(beforeMax, true)).isFalse();
+    assertThat(beforeMax.intersects(max, true)).isFalse();
+    assertThat(aToMax.intersects(max, false)).isTrue();
+    assertThat(max.intersects(aToMax, false)).isTrue();
+    assertThat(dot.intersects(dot, false)).isTrue();
+    assertThat(max.intersects(dot, false)).isTrue();
+    assertThat(dot.intersects(max, false)).isTrue();
+    assertThat(beforeMax.intersects(dot, false)).isTrue();
+    assertThat(dot.intersects(beforeMax, false)).isTrue();
+  }
+

@@ -13,14 +13,18 @@
           characters.contents = new TreeMap<>();
           return;
         }
+        boolean lastInsertedIsNotNull = false;
         if (inner.contents.get(0) == null) {
           characters.contents.put(0, tree);
+          lastInsertedIsNotNull = true;
         }
         for (Map.Entry<Integer, RegexSyntaxElement> entry : inner.contents.entrySet()) {
           if (entry.getValue() == null) {
             characters.contents.put(entry.getKey(), tree);
-          } else {
+            lastInsertedIsNotNull = true;
+          } else if (lastInsertedIsNotNull) {
             characters.contents.put(entry.getKey(), null);
+            lastInsertedIsNotNull = false;
           }
         }
       } else {
