@@ -1,0 +1,12 @@
+  @Nullable
+  private static ExpressionTree getAnnotationValue(ExpressionTree expression, String parameterName) {
+    if(expression.is(Tree.Kind.ASSIGNMENT)) {
+      AssignmentExpressionTree assignment = (AssignmentExpressionTree) expression;
+      ExpressionTree variable = assignment.variable();
+      if (variable.is(Tree.Kind.IDENTIFIER) && ((IdentifierTree) variable).name().equals(parameterName)) {
+        return assignment.expression();
+      }
+    }
+    return null;
+  }
+

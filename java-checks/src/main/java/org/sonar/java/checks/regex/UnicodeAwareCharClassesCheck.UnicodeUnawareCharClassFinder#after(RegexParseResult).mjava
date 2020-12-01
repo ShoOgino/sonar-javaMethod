@@ -18,8 +18,11 @@
         List<RegexCheck.RegexIssueLocation> secondaries = unicodeAwareWithFlag.stream()
           .map(tree -> new RegexIssueLocation(tree, "Predefined/POSIX character class"))
           .collect(Collectors.toList());
-        reportIssue(ExpressionUtils.methodName(mit),
-          "Enable the \"UNICODE_CHARACTER_CLASS\" flag or use a Unicode-aware alternative.", null, secondaries);
+        // Can not propose to use UNICODE_CHARACTER_CLASS for annotation because the matching flag
+        // javax.validation.constraints.Pattern.Flag.UNICODE_CHARACTER_CLASS does not exist in javaee-api <= 8.0
+        String flagName = methodInvocationOrAnnotation.is(Tree.Kind.ANNOTATION) ? "(?U)" : "UNICODE_CHARACTER_CLASS";
+        reportIssue(methodOrAnnotationName(methodInvocationOrAnnotation),
+          "Enable the \"" + flagName + "\" flag or use a Unicode-aware alternative.", null, secondaries);
       }
     }
 

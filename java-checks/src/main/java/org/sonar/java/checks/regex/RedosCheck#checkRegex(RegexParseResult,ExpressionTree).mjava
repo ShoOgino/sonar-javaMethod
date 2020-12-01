@@ -1,0 +1,9 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, ExpressionTree methodInvocationOrAnnotation) {
+    NestedRepetitionsFinder visitor = new NestedRepetitionsFinder();
+    visitor.visit(regexForLiterals);
+    if (visitor.containsOffendingRepetitions) {
+      reportIssue(methodOrAnnotationName(methodInvocationOrAnnotation), MESSAGE, null, Collections.emptyList());
+    }
+  }
+

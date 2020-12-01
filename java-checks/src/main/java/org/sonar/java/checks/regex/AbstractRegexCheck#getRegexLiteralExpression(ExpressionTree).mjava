@@ -1,0 +1,18 @@
+  @Nullable
+  protected ExpressionTree getRegexLiteralExpression(ExpressionTree methodInvocationOrAnnotation) {
+    if (methodInvocationOrAnnotation.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) methodInvocationOrAnnotation;
+      int regexIndex = REGEX_ON_THE_SECOND_ARGUMENT_METHODS.matches(mit) ? 1 : 0;
+      return (regexIndex < mit.arguments().size()) ? mit.arguments().get(regexIndex) : null;
+    } else {
+      AnnotationTree annotation = (AnnotationTree) methodInvocationOrAnnotation;
+      for (ExpressionTree argument : annotation.arguments()) {
+        ExpressionTree expression = getAnnotationValue(argument, "regexp");
+        if (expression != null) {
+          return expression;
+        }
+      }
+    }
+    return null;
+  }
+

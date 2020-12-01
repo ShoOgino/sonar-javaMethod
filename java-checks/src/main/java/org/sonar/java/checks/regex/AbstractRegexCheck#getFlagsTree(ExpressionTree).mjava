@@ -1,0 +1,23 @@
+  /**
+   * @param methodInvocationOrAnnotation A method call or annotation constructing a regex.
+   * @return An optional containing the expression used to set the regex's flag if the regex is created using
+   *         Pattern.compile or "flags" annotation parameter with an argument to set the flags. An empty optional otherwise.
+   */
+  protected static Optional<ExpressionTree> getFlagsTree(ExpressionTree methodInvocationOrAnnotation) {
+    if (methodInvocationOrAnnotation.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) methodInvocationOrAnnotation;
+      if (mit.symbol().name().equals("compile") && mit.arguments().size() == 2) {
+        return Optional.of(mit.arguments().get(1));
+      }
+    } else {
+      AnnotationTree annotation = (AnnotationTree) methodInvocationOrAnnotation;
+      for (ExpressionTree argument : annotation.arguments()) {
+        ExpressionTree expression = getAnnotationValue(argument, "flags");
+        if (expression != null) {
+          return Optional.of(expression);
+        }
+      }
+    }
+    return Optional.empty();
+  }
+

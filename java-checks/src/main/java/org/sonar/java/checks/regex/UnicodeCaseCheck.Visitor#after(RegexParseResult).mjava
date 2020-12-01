@@ -1,8 +1,10 @@
     @Override
     protected void after(RegexParseResult regexParseResult) {
       if (problematicFlagSetOutsideOfRegex) {
-        getFlagsTree(mit).ifPresent( flagsTree ->
-          reportIssue(flagsTree, String.format(MESSAGE, "\"Pattern.UNICODE_CASE\""))
+        boolean isAnnotation = methodInvocationOrAnnotation.is(Tree.Kind.ANNOTATION);
+        String flagName = isAnnotation ? "\"Flag.UNICODE_CASE\"" : "\"Pattern.UNICODE_CASE\"";
+        getFlagsTree(methodInvocationOrAnnotation).ifPresent( flagsTree ->
+          reportIssue(flagsTree, String.format(MESSAGE, flagName))
         );
       }
       for (JavaCharacter flag : problematicFlags) {

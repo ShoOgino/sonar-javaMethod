@@ -1,0 +1,21 @@
+  @Test
+  void match_regex_methods() {
+    @Rule(key = "S000")
+    class IssueOnAllRegexCheck extends AbstractRegexCheck {
+      @Override
+      public void checkRegex(RegexParseResult regexForLiterals, ExpressionTree methodInvocationOrAnnotation) {
+        if (regexForLiterals.getSyntaxErrors().isEmpty()) {
+          int mask = regexForLiterals.getInitialFlags().getMask();
+          String flags = mask == 0 ? "" : ",initialFlags=" + mask;
+          reportIssue(methodInvocationOrAnnotation, regexForLiterals.getResult().getText() + flags);
+        } else {
+          reportIssue(methodInvocationOrAnnotation, regexForLiterals.getSyntaxErrors().get(0).getMessage());
+        }
+      }
+    }
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/regex/AbstractRegexCheck.java"))
+      .withCheck(new IssueOnAllRegexCheck())
+      .verifyIssues();
+  }
+

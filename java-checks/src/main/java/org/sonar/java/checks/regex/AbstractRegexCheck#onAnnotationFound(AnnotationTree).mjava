@@ -1,0 +1,9 @@
+  protected void onAnnotationFound(AnnotationTree annotation) {
+    ExpressionTree regexExpression = getRegexLiteralExpression(annotation);
+    if (regexExpression != null) {
+      getLiterals(regexExpression)
+        .map(literals -> regexForLiterals(getFlags(annotation), literals))
+        .ifPresent(result -> checkRegex(result, annotation));
+    }
+  }
+

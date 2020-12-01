@@ -4,6 +4,9 @@
    *         statically. An empty FlagSet otherwise.
    */
   private static FlagSet getFlags(MethodInvocationTree mit) {
+    if (METHODS_IMPLYING_DOT_ALL_FLAG.matches(mit)) {
+      return new FlagSet(Pattern.DOTALL);
+    }
     int flags = getFlagsTree(mit).flatMap(tree -> tree.asConstant(Integer.class)).orElse(0);
     return new FlagSet(flags);
   }

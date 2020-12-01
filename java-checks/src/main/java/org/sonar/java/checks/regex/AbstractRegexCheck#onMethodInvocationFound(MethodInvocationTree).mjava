@@ -1,14 +1,13 @@
   @Override
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
-    Arguments args = mit.arguments();
-    if (args.isEmpty()) {
-      return;
-    }
-    FlagSet flags = getFlags(mit);
-    if (!flags.contains(Pattern.LITERAL)) {
-      getLiterals(args.get(0))
-        .map(literals -> regexForLiterals(flags, literals))
-        .ifPresent(result -> checkRegex(result, mit));
+    ExpressionTree regexExpression = getRegexLiteralExpression(mit);
+    if (regexExpression != null) {
+      FlagSet flags = getFlags(mit);
+      if (!flags.contains(Pattern.LITERAL)) {
+        getLiterals(regexExpression)
+          .map(literals -> regexForLiterals(flags, literals))
+          .ifPresent(result -> checkRegex(result, mit));
+      }
     }
   }
 
