@@ -10,16 +10,8 @@
     Map.Entry<Integer, RegexSyntaxElement> thatEntry = thatIter.next();
     while (thatIter.hasNext()) {
       Map.Entry<Integer, RegexSyntaxElement> thatNextEntry = thatIter.next();
-      if (thatEntry.getValue() != null) {
-        Map.Entry<Integer, RegexSyntaxElement> thisBefore = contents.floorEntry(thatEntry.getKey());
-        if (thisBefore == null || thisBefore.getValue() == null) {
-          return false;
-        }
-        int to = (thatNextEntry.getValue() == null) ? (thatNextEntry.getKey() - 1) : thatNextEntry.getKey();
-        NavigableMap<Integer, RegexSyntaxElement> thisSubMap = contents.subMap(thatEntry.getKey(), false, to, true);
-        if (thisSubMap.values().stream().anyMatch(Objects::isNull)) {
-          return false;
-        }
+      if (notSupersetOfEntries(thatEntry, thatNextEntry)) {
+        return false;
       }
       thatEntry = thatNextEntry;
     }

@@ -1,0 +1,13 @@
+  private boolean notSupersetOfEntries(Map.Entry<Integer, RegexSyntaxElement> thatEntry, Map.Entry<Integer, RegexSyntaxElement> thatNextEntry) {
+    if (thatEntry.getValue() != null) {
+      Map.Entry<Integer, RegexSyntaxElement> thisBefore = contents.floorEntry(thatEntry.getKey());
+      if (thisBefore == null || thisBefore.getValue() == null) {
+        return true;
+      }
+      int to = (thatNextEntry.getValue() == null) ? (thatNextEntry.getKey() - 1) : thatNextEntry.getKey();
+      return contents.subMap(thatEntry.getKey(), false, to, true).values().stream()
+        .anyMatch(Objects::isNull);
+    }
+    return false;
+  }
+
