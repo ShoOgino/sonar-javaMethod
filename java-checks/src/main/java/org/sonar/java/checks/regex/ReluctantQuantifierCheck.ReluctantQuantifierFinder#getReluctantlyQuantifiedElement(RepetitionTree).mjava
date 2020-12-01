@@ -1,7 +1,14 @@
     private Optional<RegexTree> getReluctantlyQuantifiedElement(RepetitionTree repetition) {
+      RegexTree element = repetition.getElement();
+      while (element.is(RegexTree.Kind.NON_CAPTURING_GROUP)) {
+        element = ((NonCapturingGroupTree) element).getElement();
+        if (element == null) {
+          return Optional.empty();
+        }
+      }
       return (repetition.getQuantifier().getModifier() == Quantifier.Modifier.RELUCTANT
         && !repetition.getQuantifier().isFixed()
-        && (repetition.getElement().is(RegexTree.Kind.DOT) || repetition.getElement().is(RegexTree.Kind.ESCAPED_CHARACTER_CLASS))) ? Optional.of(repetition.getElement())
+        && (element.is(RegexTree.Kind.DOT) || element.is(RegexTree.Kind.ESCAPED_CHARACTER_CLASS))) ? Optional.of(element)
           : Optional.empty();
     }
 
