@@ -3,16 +3,13 @@
     states.add(programState);
     ConstraintsByDomain leftConstraints = programState.getConstraints(from);
     if (leftConstraints == null) {
+      ConstraintsByDomain rightConstraints = programState.getConstraints(to);
+      if (rightConstraints != null) {
+        applyConstraints(from, knownRelations, states, rightConstraints);
+      }
       return states;
     }
-    leftConstraints.forEach((d, c) -> {
-      Constraint constraint = c.copyOver(kind);
-      if (constraint != null) {
-        List<ProgramState> newStates = applyConstraint(constraint, to, states, knownRelations);
-        states.clear();
-        states.addAll(newStates);
-      }
-    });
+    applyConstraints(to, knownRelations, states, leftConstraints);
     return states;
   }
 

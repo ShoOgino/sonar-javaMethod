@@ -1,0 +1,11 @@
+  private void applyConstraints(SymbolicValue symbolicValue, Set<RelationalSymbolicValue> knownRelations, List<ProgramState> states, ConstraintsByDomain constraints) {
+    constraints.forEach((d, c) -> {
+      Constraint constraint = c.copyOver(kind);
+      if (constraint != null) {
+        List<ProgramState> newStates = applyConstraint(constraint, symbolicValue, states, knownRelations);
+        states.clear();
+        states.addAll(newStates);
+      }
+    });
+  }
+

@@ -1,12 +1,13 @@
   private List<ProgramState> addNullConstraintsForBooleanWrapper(ProgramState initialProgramState, List<ProgramState> copiedConstraints) {
     BooleanConstraint leftConstraint = initialProgramState.getConstraint(leftOp, BooleanConstraint.class);
     BooleanConstraint rightConstraint = initialProgramState.getConstraint(rightOp, BooleanConstraint.class);
-    if (leftConstraint != null && rightConstraint == null && !isEquality()) {
-      List<ProgramState> nullConstraints = copiedConstraints.stream()
-        .flatMap(ps -> rightOp.setConstraint(ps, ObjectConstraint.NULL).stream())
-        .map(ps -> ps.removeConstraintsOnDomain(rightOp, BooleanConstraint.class)
-      ).collect(Collectors.toList());
-      return ImmutableList.<ProgramState>builder().addAll(copiedConstraints).addAll(nullConstraints).build();
+    
+    if (shouldAddNullConstraint(leftConstraint, rightConstraint)) {
+      return getProgramStatesWithNullConstraints(copiedConstraints, leftOp);
+    }
+    
+    if (shouldAddNullConstraint(rightConstraint, leftConstraint)) {
+      return getProgramStatesWithNullConstraints(copiedConstraints, rightOp);
     }
     return copiedConstraints;
   }

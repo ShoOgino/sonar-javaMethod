@@ -5,11 +5,11 @@
     }
     List<ProgramState> results = new ArrayList<>();
     List<ProgramState> copiedConstraints = copyConstraintFromTo(leftOp, rightOp, programState, knownRelations);
-    if (Kind.METHOD_EQUALS == kind || Kind.NOT_METHOD_EQUALS == kind) {
-      copiedConstraints = addNullConstraintsForBooleanWrapper(programState, copiedConstraints);
-    }
     for (ProgramState ps : copiedConstraints) {
       List<ProgramState> copiedConstraintsRightToLeft = copyConstraintFromTo(rightOp, leftOp, ps, knownRelations);
+      if (isEqualityCheck() && hasBooleanSymbolicValueAsOperand()) {
+        copiedConstraintsRightToLeft = addNullConstraintsForBooleanWrapper(programState, copiedConstraints);
+      }
       if (copiedConstraintsRightToLeft.size() == 1 && copiedConstraintsRightToLeft.get(0).equals(programState)) {
         results.add(programState.addConstraint(this, BooleanConstraint.TRUE));
       } else {

@@ -1,0 +1,8 @@
+  private static List<ProgramState> getProgramStatesWithNullConstraints(List<ProgramState> copiedConstraints, SymbolicValue operand) {
+    List<ProgramState> nullConstraints = copiedConstraints.stream()
+      .flatMap(ps -> operand.setConstraint(ps, ObjectConstraint.NULL).stream())
+      .map(ps -> ps.removeConstraintsOnDomain(operand, BooleanConstraint.class))
+      .collect(Collectors.toList());
+    return ImmutableList.<ProgramState>builder().addAll(copiedConstraints).addAll(nullConstraints).build();
+  }
+
