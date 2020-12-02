@@ -2,19 +2,6 @@
     if (defaultAnswer && ((containsUnknownCharacters && !that.isEmpty()) || (!isEmpty() && that.containsUnknownCharacters))) {
       return true;
     }
-    Iterator<Map.Entry<Integer, RegexSyntaxElement>> iter = that.contents.entrySet().iterator();
-    if (!iter.hasNext()) {
-      return false;
-    }
-    Map.Entry<Integer, RegexSyntaxElement> entry = iter.next();
-    while (iter.hasNext()) {
-      Map.Entry<Integer, RegexSyntaxElement> nextEntry = iter.next();
-      int to = (nextEntry.getValue() == null) ? (nextEntry.getKey() - 1) : nextEntry.getKey();
-      if (entry.getValue() != null && hasEntryBetween(entry.getKey(), to)) {
-        return true;
-      }
-      entry = nextEntry;
-    }
-    return entry.getValue() != null && hasEntryBetween(entry.getKey(), Character.MAX_CODE_POINT);
+    return !findIntersections(that, true).isEmpty();
   }
 

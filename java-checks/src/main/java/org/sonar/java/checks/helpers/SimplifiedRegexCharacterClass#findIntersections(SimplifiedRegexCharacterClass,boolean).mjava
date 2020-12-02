@@ -1,0 +1,27 @@
+  private List<RegexSyntaxElement> findIntersections(SimplifiedRegexCharacterClass that, boolean stopAtFirst) {
+    Iterator<Map.Entry<Integer, RegexSyntaxElement>> iter = that.contents.entrySet().iterator();
+    List<RegexSyntaxElement> intersections = new ArrayList<>();
+    if (!iter.hasNext()) {
+      return intersections;
+    }
+    Map.Entry<Integer, RegexSyntaxElement> entry = iter.next();
+    while (iter.hasNext()) {
+      Map.Entry<Integer, RegexSyntaxElement> nextEntry = iter.next();
+      int to = (nextEntry.getValue() == null) ? (nextEntry.getKey() - 1) : nextEntry.getKey();
+      RegexSyntaxElement value = entry.getValue();
+      if (value != null && hasEntryBetween(entry.getKey(), to)) {
+        intersections.add(value);
+        if (stopAtFirst) {
+          return intersections;
+        }
+      }
+      entry = nextEntry;
+    }
+
+    RegexSyntaxElement value = entry.getValue();
+    if (value != null && hasEntryBetween(entry.getKey(), Character.MAX_CODE_POINT)) {
+      intersections.add(value);
+    }
+    return intersections;
+  }
+
