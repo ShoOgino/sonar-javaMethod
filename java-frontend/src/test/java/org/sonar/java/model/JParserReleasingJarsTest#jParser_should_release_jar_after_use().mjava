@@ -1,0 +1,24 @@
+  /**
+   * Combined tests: requires a jar to parse correctly, and jar should be released after use
+   *
+   * NOTE: Requires WINDOWS environment to FAIL
+   */
+  @Test
+  void jParser_should_release_jar_after_use() throws Exception {
+    File newJar = new File(temp.newFolder(), "project3.jar");
+    Files.copy(new File(PROJECT_JAR), newJar);
+
+    assertThat(newJar).exists();
+
+    List<File> classPath = Collections.singletonList(newJar);
+    Symbol foo = getFooSymbol(classPath);
+
+    assertThat(foo.isUnknown()).isFalse();
+    assertThat(foo.isMethodSymbol()).isTrue();
+    assertThat(((Symbol.MethodSymbol) foo).signature()).isEqualTo("org.foo.A#foo(Z)I");
+
+    // can be safely deleted
+    assertThat(newJar.delete()).isTrue();
+    assertThat(newJar).doesNotExist();
+  }
+

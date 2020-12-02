@@ -1,0 +1,13 @@
+  /**
+   * Control test: method should be resolved with JAR in class path
+   */
+  @Test
+  void jParser_should_resolve_method_with_jar_in_classPath() {
+    List<File> classPath = Collections.singletonList(new File(PROJECT_JAR));
+    Symbol foo = getFooSymbol(classPath);
+
+    assertThat(foo.isUnknown()).isFalse();
+    assertThat(foo.isMethodSymbol()).isTrue();
+    assertThat(((Symbol.MethodSymbol) foo).signature()).isEqualTo("org.foo.A#foo(Z)I");
+  }
+
