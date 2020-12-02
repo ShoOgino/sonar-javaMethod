@@ -1,6 +1,6 @@
   private static String readResource(URL resource) {
-    try {
-      return Resources.toString(resource, StandardCharsets.UTF_8);
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.openStream(), StandardCharsets.UTF_8))) {
+      return reader.lines().collect(Collectors.joining("\n"));
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read: " + resource, e);
     }
