@@ -1,12 +1,6 @@
-  private static boolean isInsideIfStatementWithNullCheckWithoutElse(MethodInvocationTree mit) {
-    Tree parent = mit.parent();
-    while (parent != null && !parent.is(Tree.Kind.IF_STATEMENT)) {
-      parent = parent.parent();
-    }
-    if (parent == null) {
-      return false;
-    }
-    IfStatementTree ifStatementTree = (IfStatementTree) parent;
-    return ifStatementTree.elseStatement() == null && isNullCheck(ExpressionUtils.skipParentheses(ifStatementTree.condition()));
+  private boolean isInsideIfStatementWithNullCheckWithoutElse(MethodInvocationTree mit) {
+    return getIfStatementParent(mit).map(ifStatementTree -> ifStatementTree.elseStatement() == null
+      && isNullCheck(ExpressionUtils.skipParentheses(ifStatementTree.condition())))
+      .orElse(false);
   }
 

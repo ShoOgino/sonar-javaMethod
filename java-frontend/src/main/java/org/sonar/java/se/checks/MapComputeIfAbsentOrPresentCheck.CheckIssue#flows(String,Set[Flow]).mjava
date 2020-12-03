@@ -1,0 +1,9 @@
+    protected Set<Flow> flows(String methodName, Set<Flow> flows) {
+      // enrich each flow with both map method invocations
+      return flows.stream().map(flow -> Flow.builder()
+        .add(new JavaFileScannerContext.Location("'Map.put()' is invoked with same key.", putInvocation.methodSelect()))
+        .addAll(flow)
+        .add(new JavaFileScannerContext.Location(String.format("'%s' is invoked.", methodName), checkValueInvocation.methodSelect()))
+        .build()).collect(Collectors.toSet());
+    }
+

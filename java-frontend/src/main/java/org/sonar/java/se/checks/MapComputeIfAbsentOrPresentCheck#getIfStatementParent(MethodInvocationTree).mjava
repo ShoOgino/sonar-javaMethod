@@ -1,0 +1,10 @@
+  private Optional<IfStatementTree> getIfStatementParent(MethodInvocationTree mit) {
+    IfStatementTree closestKnownParent = closestIfStatements.get(mit);
+    if (closestKnownParent == null) { 
+      List<Tree> children = new ArrayList<>();
+      children.add(mit);
+      return doGetIfStatementParent(mit.parent(), children);
+    }
+    return Optional.of(closestKnownParent);
+  }
+

@@ -7,13 +7,20 @@
 
         SymbolicValue keySV = ps.peekValue(1);
         SymbolicValue mapSV = ps.peekValue(2);
-        mapGetInvocations.get(mapSV).stream()
-          .filter(getOnSameMap -> getOnSameMap.withSameKey(keySV))
-          .findAny()
+
+        sameMapAndSameKeyInvocation(keySV, mapSV, mapGetInvocations)
           .ifPresent(getOnSameMap -> {
             ObjectConstraint constraint = ps.getConstraint(getOnSameMap.value, ObjectConstraint.class);
             if (constraint != null && isInsideIfStatementWithNullCheckWithoutElse(mit)) {
-              checkIssues.add(new CheckIssue(context.getNode(), getOnSameMap.mit, mit, getOnSameMap.value, constraint));
+              checkIssues.add(new GetMethodCheckIssue(context.getNode(), getOnSameMap.mit, mit, getOnSameMap.value, constraint));
+            }
+          });
+
+        sameMapAndSameKeyInvocation(keySV, mapSV, mapContainsKeyInvocations)
+          .ifPresent(containsKeyOnSameMap -> {
+            BooleanConstraint constraint = ps.getConstraint(containsKeyOnSameMap.value, BooleanConstraint.class);
+            if (constraint != null && isInsideIfStatementWithoutElse(mit)) {
+              checkIssues.add(new ContainsKeyMethodCheckIssue(context.getNode(), containsKeyOnSameMap.mit, mit, containsKeyOnSameMap.value, constraint));
             }
           });
       }

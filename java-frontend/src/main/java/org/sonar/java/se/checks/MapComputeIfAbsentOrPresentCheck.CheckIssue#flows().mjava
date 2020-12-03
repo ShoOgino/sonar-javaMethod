@@ -1,11 +1,2 @@
-    private Set<Flow> flows() {
-      // build nullness flows for value constraint
-      Set<Flow> flows = FlowComputation.flow(node, value, Collections.singletonList(ObjectConstraint.class), FlowComputation.MAX_REPORTED_FLOWS);
-      // enrich each flow with both map method invocations
-      return flows.stream().map(flow -> Flow.builder()
-        .add(new JavaFileScannerContext.Location("'Map.put()' is invoked with same key.", putInvocation.methodSelect()))
-        .addAll(flow)
-        .add(new JavaFileScannerContext.Location("'Map.get()' is invoked.", getInvocation.methodSelect()))
-        .build()).collect(Collectors.toSet());
-    }
+    protected abstract Set<Flow> flows();
 

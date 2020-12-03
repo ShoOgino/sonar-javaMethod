@@ -1,0 +1,12 @@
+  private static void addMapMethodInvocation(CheckerContext context, MethodInvocationTree mit, Map<SymbolicValue, List<MapMethodInvocation>> invocations) {
+    ProgramState psBeforeInvocation = context.getNode().programState;
+    ProgramState psAfterInvocation = context.getState();
+
+    SymbolicValue keySV = psBeforeInvocation.peekValue(0);
+    SymbolicValue mapSV = psBeforeInvocation.peekValue(1);
+    SymbolicValue valueSV = psAfterInvocation.peekValue();
+
+    Objects.requireNonNull(valueSV);
+    invocations.computeIfAbsent(mapSV, k -> new ArrayList<>()).add(new MapMethodInvocation(valueSV, keySV, mit));
+  }
+

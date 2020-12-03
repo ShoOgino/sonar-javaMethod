@@ -3,14 +3,9 @@
     if (syntaxNode.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) syntaxNode;
       if (MAP_GET.matches(mit)) {
-        ProgramState psBeforeInvocation = context.getNode().programState;
-        ProgramState psAfterInvocation = context.getState();
-
-        SymbolicValue keySV = psBeforeInvocation.peekValue(0);
-        SymbolicValue mapSV = psBeforeInvocation.peekValue(1);
-        SymbolicValue valueSV = psAfterInvocation.peekValue();
-
-        mapGetInvocations.put(mapSV, new MapGetInvocation(valueSV, keySV, mit));
+        addMapMethodInvocation(context, mit, mapGetInvocations);
+      } else if (MAP_CONTAINS_KEY.matches(mit)) {
+        addMapMethodInvocation(context, mit, mapContainsKeyInvocations);
       }
     }
     return super.checkPostStatement(context, syntaxNode);
