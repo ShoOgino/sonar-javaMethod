@@ -11,13 +11,15 @@
       } else {
         version = Integer.toString(javaVersion.asInt());
       }
-      Tree ast = JParser.parse(
+      JavaTree.CompilationUnitTreeImpl ast = (JavaTree.CompilationUnitTreeImpl) JParser.parse(
         version,
         inputFile.filename(),
         inputFile.contents(),
         visitor.getClasspath()
       );
       visitor.visitFile(ast);
+      // release environment used for semantic resolution
+      ast.sema.cleanupEnvironment();
     } catch (RecognitionException e) {
       checkInterrupted(e);
       LOG.error(String.format(LOG_ERROR_UNABLE_TO_PARSE_FILE, inputFile));

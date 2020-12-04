@@ -11,11 +11,15 @@
     assertThat(newJar).exists();
 
     List<File> classPath = Collections.singletonList(newJar);
-    Symbol foo = getFooSymbol(classPath);
+    JavaTree.CompilationUnitTreeImpl cu = parse(classPath);
+    Symbol foo = getFooSymbol(cu);
 
     assertThat(foo.isUnknown()).isFalse();
     assertThat(foo.isMethodSymbol()).isTrue();
     assertThat(((Symbol.MethodSymbol) foo).signature()).isEqualTo("org.foo.A#foo(Z)I");
+
+    // force clean
+    cu.sema.cleanupEnvironment();
 
     // can be safely deleted
     assertThat(newJar.delete()).isTrue();
