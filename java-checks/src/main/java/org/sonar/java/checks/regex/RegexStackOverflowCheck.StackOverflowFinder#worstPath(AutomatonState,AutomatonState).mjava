@@ -1,0 +1,23 @@
+    /**
+     * We assume that all paths eventually lead to `end`, i.e. `end` must be the end of a construct, such as the end of
+     * the regex or the continuation of some sub-expression and `start` must be within that construct.
+     */
+    private PathInfo worstPath(AutomatonState start, AutomatonState end) {
+      if (start == end) {
+        return new PathInfo(0, 0);
+      }
+      AutomatonState next = start.continuation();
+      if (start instanceof RegexTree) {
+        if (start instanceof CharacterTree && next instanceof CharacterTree) {
+          // Consecutive characters don't create an extra recursion, so we skip the character edge between them and use
+          // a 1,0 edge instead.
+          return new PathInfo(1, 0).add(worstPath(next, end));
+        }
+        PathInfo path = worstInnerPath((RegexTree) start);
+        path.add(edgeCost(next));
+        path.add(worstPath(next, end));
+        return path;
+      }
+      return edgeCost(next).add(worstPath(next, end));
+    }
+

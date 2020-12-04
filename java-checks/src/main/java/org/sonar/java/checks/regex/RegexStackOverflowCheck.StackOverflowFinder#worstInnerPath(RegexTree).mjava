@@ -1,0 +1,36 @@
+    /**
+     * Find the shortest path from the beginning to the end of a nested construct, such as a group, repetition or
+     * disjunction, and append it to the given path
+     */
+    private PathInfo worstInnerPath(RegexTree tree) {
+      switch (tree.kind()) {
+        case REPETITION:
+          RepetitionTree repetition = (RepetitionTree) tree;
+          if (repetition.getQuantifier().getMinimumRepetitions() == 0) {
+            return new PathInfo(0, 0);
+          }
+          int repetitions = repetition.getQuantifier().getMinimumRepetitions();
+          RegexTree element = repetition.getElement();
+          return edgeCost(element).add(worstPath(element, repetition.continuation())).multiply(repetitions);
+        case DISJUNCTION:
+          return ((DisjunctionTree) tree).getAlternatives().stream()
+            .map(alt -> edgeCost(alt).add(worstInnerPath(alt)))
+            .max(Comparator.comparing(PathInfo::stackConsumptionFactor))
+            .get();
+        case SEQUENCE:
+          List<RegexTree> items = ((SequenceTree) tree).getItems();
+          if (items.isEmpty()) {
+            return new PathInfo(0, 0);
+          }
+          RegexTree first = items.get(0);
+          return edgeCost(first).add(worstPath(first, tree.continuation()));
+        case NON_CAPTURING_GROUP:
+        case CAPTURING_GROUP:
+          return Optional.ofNullable(((GroupTree) tree).getElement())
+            .map(groupElement -> edgeCost(groupElement).add(worstInnerPath(groupElement)))
+            .orElse(new PathInfo(0, 0));
+        default:
+          return new PathInfo(0, 0);
+      }
+    }
+

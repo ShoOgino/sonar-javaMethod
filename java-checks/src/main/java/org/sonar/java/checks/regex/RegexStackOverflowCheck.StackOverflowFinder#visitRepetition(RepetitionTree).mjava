@@ -1,0 +1,15 @@
+    @Override
+    public void visitRepetition(RepetitionTree tree) {
+      if (!isPossessive(tree) && tree.getQuantifier().isOpenEnded()) {
+        if (containsBacktrackableBranch(tree.getElement())
+          && stackConsumption(new StartState(tree.getElement(), tree.activeFlags()), tree.continuation()) > maxStackConsumptionFactor) {
+          reportIssue(tree, MESSAGE, null, Collections.emptyList());
+        }
+      } else {
+        // Only visit the children if this isn't the kind of repetition we check
+        // Otherwise, if the parent doesn't overflow the stack, neither will its children, and if it does overflow
+        // it, there's no point in reporting additional issues for the children
+        super.visitRepetition(tree);
+      }
+    }
+

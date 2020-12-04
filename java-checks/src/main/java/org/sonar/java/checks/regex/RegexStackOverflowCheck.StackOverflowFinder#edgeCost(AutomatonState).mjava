@@ -1,0 +1,15 @@
+    private PathInfo edgeCost(AutomatonState state) {
+      switch (state.incomingTransitionType()) {
+        case EPSILON:
+          // Java's regex implementation does not have an equivalent of SequenceTree, so we consider it zero cost
+          return new PathInfo(0, state instanceof SequenceTree ? 0 : 1);
+        case CHARACTER:
+          return new PathInfo(1, 1);
+        case BACK_REFERENCE:
+          // TODO: Use cached length of capturing group instead of 1 for consumed characters
+          return new PathInfo(1, 1);
+        default:
+          throw new IllegalStateException("Lookaround should have been skipped");
+      }
+    }
+

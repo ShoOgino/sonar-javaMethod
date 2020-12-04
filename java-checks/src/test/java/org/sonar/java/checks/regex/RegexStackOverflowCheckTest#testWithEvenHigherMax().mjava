@@ -1,0 +1,22 @@
+  @Test
+  void testWithEvenHigherMax() {
+    RegexStackOverflowCheck check = new RegexStackOverflowCheck();
+    check.setMaxStackConsumptionFactor(20);
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/regex/RegexStackOverflowCheckWithHighStackConsumption.java"))
+      .withCheck(check)
+      .verifyNoIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/regex/RegexStackOverflowCheckWithMediumStackConsumption.java"))
+      .withCheck(check)
+      .verifyNoIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/regex/RegexStackOverflowCheckWithLowStackConsumption.java"))
+      .withCheck(check)
+      .verifyNoIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(testSourcesPath("checks/regex/RegexStackOverflowCheckWithConstantStackConsumption.java"))
+      .withCheck(check)
+      .verifyNoIssues();
+  }
+
