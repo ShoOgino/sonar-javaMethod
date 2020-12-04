@@ -1,0 +1,8 @@
+    private boolean doesLookaheadContinuationAlwaysFail(LookAroundTree lookAround) {
+      RegexTree lookAroundElement = lookAround.getElement();
+      boolean canLookAroundBeAPrefix = matchType != MatchType.FULL;
+      SubAutomaton lookAroundSubAutomaton = new SubAutomaton(lookAroundElement, lookAroundElement.continuation(), canLookAroundBeAPrefix);
+      SubAutomaton continuationSubAutomaton = new SubAutomaton(lookAround.continuation(), finalState, true);
+      return !RegexTreeHelper.intersects(lookAroundSubAutomaton, continuationSubAutomaton, true);
+    }
+
