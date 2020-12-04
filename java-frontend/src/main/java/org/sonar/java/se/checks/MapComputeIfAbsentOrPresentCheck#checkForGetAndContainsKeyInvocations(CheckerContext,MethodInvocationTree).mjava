@@ -1,0 +1,23 @@
+  private void checkForGetAndContainsKeyInvocations(CheckerContext context, MethodInvocationTree mit) {
+    ProgramState ps = context.getState();
+
+    SymbolicValue keySV = ps.peekValue(1);
+    SymbolicValue mapSV = ps.peekValue(2);
+
+    sameMapAndSameKeyInvocation(keySV, mapSV, mapGetInvocations)
+      .ifPresent(getOnSameMap -> {
+        ObjectConstraint constraint = ps.getConstraint(getOnSameMap.value, ObjectConstraint.class);
+        if (constraint != null && isInsideIfStatementWithNullCheckWithoutElse(mit)) {
+          checkIssues.add(new GetMethodCheckIssue(context.getNode(), getOnSameMap.mit, mit, getOnSameMap.value, constraint));
+        }
+      });
+
+    sameMapAndSameKeyInvocation(keySV, mapSV, mapContainsKeyInvocations)
+      .ifPresent(containsKeyOnSameMap -> {
+        BooleanConstraint constraint = ps.getConstraint(containsKeyOnSameMap.value, BooleanConstraint.class);
+        if (constraint != null && isInsideIfStatementWithoutElse(mit)) {
+          checkIssues.add(new ContainsKeyMethodCheckIssue(context.getNode(), containsKeyOnSameMap.mit, mit, containsKeyOnSameMap.value, constraint));
+        }
+      });
+  }
+
