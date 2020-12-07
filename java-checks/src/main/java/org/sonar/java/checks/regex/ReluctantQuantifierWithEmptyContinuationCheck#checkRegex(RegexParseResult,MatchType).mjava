@@ -1,7 +1,7 @@
   @Override
   protected void checkRegex(RegexParseResult regex, MatchType matchType) {
-    message(matchType).ifPresent(message ->
-      new ReluctantQuantifierWithEmptyContinuationFinder(message).visit(regex)
-    );
+    if (matchType == MatchType.PARTIAL || matchType == MatchType.FULL) {
+      new ReluctantQuantifierWithEmptyContinuationFinder(matchType).visit(regex);
+    }
   }
 

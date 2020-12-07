@@ -1,12 +1,13 @@
     @Override
     public void visitRepetition(RepetitionTree tree) {
       super.visitRepetition(tree);
-      if (tree.getQuantifier().getModifier() == Quantifier.Modifier.RELUCTANT
-        && RegexTreeHelper.canReachWithoutConsumingInput(new StartState(tree.continuation(), tree.activeFlags()), endState)) {
-        if (RegexTreeHelper.isAnchoredAtEnd(tree.continuation())) {
-          reportIssue(tree, FULL_MATCH_MESSAGE, null, Collections.emptyList());
-        } else {
-          reportIssue(tree, message, null, Collections.emptyList());
+      if (tree.getQuantifier().getModifier() == Quantifier.Modifier.RELUCTANT) {
+        if (isAnchoredAtEnd(tree.continuation())) {
+          if (RegexTreeHelper.onlyMatchesEmptySuffix(tree.continuation())) {
+            reportIssue(tree, FULL_MATCH_MESSAGE, null, Collections.emptyList());
+          }
+        } else if (RegexTreeHelper.canReachWithoutConsumingInput(new StartState(tree.continuation(), tree.activeFlags()), endState)) {
+          reportIssue(tree, PARTIAL_MATCH_MESSAGE, null, Collections.emptyList());
         }
       }
     }
