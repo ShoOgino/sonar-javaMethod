@@ -22,6 +22,7 @@
       .matcher(input);
     System.out.println(m2); // Printing the matcher does not count as the matcher escaping the scope because the parameter
                             // type of println is Object, not Matcher, so we can assume that it won't be used as a matcher
+    new Bar(m2); // Same. Bar takes Object as its argument type
     if (m2.matches()) {
         m2.group(
           1 // Noncompliant [[secondary=28]] {{Directly use 'month' instead of its group number.}}
@@ -32,7 +33,7 @@
     }
 
     Pattern p3 = Pattern.compile(
-      "(?<g1>[a-z]+)" // Noncompliant [[secondary=44,46,48]] {{Use the named groups of this regex or remove the names.}}
+      "(?<g1>[a-z]+)" // Noncompliant [[secondary=+0,+2,+4]] {{Use the named groups of this regex or remove the names.}}
         + ":"
         + "(?<g2>[0-9]+)"
         + "="

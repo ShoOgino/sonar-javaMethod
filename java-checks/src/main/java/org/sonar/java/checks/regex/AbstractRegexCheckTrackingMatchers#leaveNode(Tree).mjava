@@ -11,8 +11,12 @@
       methodInvocationToRegex.clear();
       methodsCalledOnRegex.clear();
       escapingRegexes.clear();
-    } else if (tree instanceof MethodInvocationTree && matchers.matches((MethodInvocationTree) tree)) {
+    } else if (tree.is(Tree.Kind.METHOD_INVOCATION) && matchers.matches((MethodInvocationTree) tree)) {
       onMethodInvocationFound((MethodInvocationTree) tree);
+    } else if (tree.is(Tree.Kind.NEW_CLASS)) {
+      if (PATTERN_OR_MATCHER_ARGUMENT.matches((NewClassTree) tree)) {
+        onConstructorFound((NewClassTree) tree);
+      }
     } else {
       super.visitNode(tree);
     }

@@ -1,9 +1,15 @@
   private void handleAssignment(MethodInvocationTree mit, RegexParseResult regex) {
-    if (mit.parent().is(Tree.Kind.VARIABLE, Tree.Kind.ASSIGNMENT)) {
+    Tree parent = mit.parent();
+    if (parent.is(Tree.Kind.VARIABLE, Tree.Kind.ASSIGNMENT)) {
       Optional<Symbol> assignedVariable = getAssignedPrivateEffectivelyFinalVariable(mit);
       if (assignedVariable.isPresent()) {
         variableToRegex.put(assignedVariable.get(), regex);
       } else {
+        escapingRegexes.add(regex);
+      }
+    } else if (parent.is(Tree.Kind.ARGUMENTS)) {
+      Tree grandParent = parent.parent();
+      if (!grandParent.is(Tree.Kind.METHOD_INVOCATION) || !trackedMethodMatchers().matches((MethodInvocationTree) grandParent)) {
         escapingRegexes.add(regex);
       }
     }

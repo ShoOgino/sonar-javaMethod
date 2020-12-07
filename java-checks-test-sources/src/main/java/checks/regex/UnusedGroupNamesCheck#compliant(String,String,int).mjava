@@ -95,6 +95,14 @@
 
     someOtherMethod().group(1); // This should be ignored since we don't know which regex we're calling group for
 
+    Pattern p14 = Pattern.compile("(?<name>test)"); // Compliant because passed to constructor
+    new Foo(p14);
+
+    // When patterns or matchers are directly passed to methods or constructors, they're considered as escaping the scope
+    // even if the parameter type isn't Pattern/Matcher
+    new Bar(Pattern.compile("(?<name>test)"));
+    System.out.println(Pattern.compile("(?<name>test)").matcher(input));
+
     return null;
   }
 
