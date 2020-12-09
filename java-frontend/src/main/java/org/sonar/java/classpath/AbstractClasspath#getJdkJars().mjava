@@ -1,0 +1,8 @@
+  protected List<File> getJdkJars() {
+    return settings.get(ClasspathProperties.SONAR_JAVA_JDK_HOME)
+      .flatMap(AbstractClasspath::existingDirectoryOrLog)
+      .map(File::toPath)
+      .map(JavaSdkUtil::getJdkClassesRoots)
+      .orElse(Collections.emptyList());
+  }
+

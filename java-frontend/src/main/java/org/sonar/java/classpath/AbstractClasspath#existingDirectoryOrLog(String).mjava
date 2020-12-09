@@ -1,0 +1,10 @@
+  private static Optional<File> existingDirectoryOrLog(String path) {
+    File file = new File(path);
+    if (!file.exists() || !file.isDirectory()) {
+      String warning = "Invalid value for '%s' property, defaulting to runtime JDK.%nConfigured location does not exists: '%s'";
+      LOG.warn(String.format(warning, ClasspathProperties.SONAR_JAVA_JDK_HOME, file.getAbsolutePath()));
+      return Optional.empty();
+    }
+    return Optional.of(file);
+  }
+

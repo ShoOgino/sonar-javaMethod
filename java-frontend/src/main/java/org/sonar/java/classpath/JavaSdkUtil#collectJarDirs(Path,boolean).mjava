@@ -1,0 +1,29 @@
+  private static Path[] collectJarDirs(Path home, boolean isMac) {
+    Path[] jarDirs;
+    if (isMac) {
+      Path openJdkRtJar = home.resolve("jre/lib/rt.jar");
+      if (Files.isRegularFile(openJdkRtJar)) {
+        Path libDir = home.resolve("lib");
+        Path classesDir = openJdkRtJar.getParent();
+        Path libExtDir = openJdkRtJar.getParent().resolve("ext");
+        Path libEndorsedDir = libDir.resolve(ENDORSED);
+        jarDirs = new Path[] {libEndorsedDir, libDir, classesDir, libExtDir};
+      } else {
+        Path libDir = home.resolve("lib");
+        Path classesDir = home.getParent().resolve("Classes");
+        Path libExtDir = libDir.resolve("ext");
+        Path libEndorsedDir = libDir.resolve(ENDORSED);
+        jarDirs = new Path[] {libEndorsedDir, libDir, classesDir, libExtDir};
+      }
+    } else {
+      Path libDir = home.resolve("jre/lib");
+      if (!Files.isDirectory(libDir)) {
+        libDir = home.resolve("lib");
+      }
+      Path libExtDir = libDir.resolve("ext");
+      Path libEndorsedDir = libDir.resolve(ENDORSED);
+      jarDirs = new Path[] {libEndorsedDir, libDir, libExtDir};
+    }
+    return jarDirs;
+  }
+

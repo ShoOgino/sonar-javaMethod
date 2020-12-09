@@ -1,0 +1,11 @@
+  @Test
+  void should_include_jdk_in_libraries_when_specified_classic() {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_JDK_HOME, "src/test/jdk/jdk_classic");
+
+    List<File> elements = createJavaClasspath().getElements();
+
+    assertThat(elements)
+      .hasSize(1)
+      .allMatch(file -> file.getName().equals("rt.jar"));
+  }
+
