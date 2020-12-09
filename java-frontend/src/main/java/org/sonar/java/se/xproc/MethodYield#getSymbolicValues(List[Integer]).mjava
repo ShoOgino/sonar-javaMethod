@@ -1,5 +1,5 @@
   private Set<SymbolicValue> getSymbolicValues(List<Integer> parameterIndices) {
-    ImmutableSet.Builder<SymbolicValue> parameterSVs = ImmutableSet.builder();
+    Set<SymbolicValue> parameterSVs = new HashSet<>();
     parameterIndices.stream()
       // Ignore last parameter(s) of a variadic method
       .filter(i -> !behavior.isMethodVarArgs() || i < behavior.methodArity() -1)
@@ -10,6 +10,6 @@
         parameterSVs.add(behavior.parameters().get(parameterIndex));
       }
     });
-    return parameterSVs.build();
+    return Collections.unmodifiableSet(parameterSVs);
   }
 

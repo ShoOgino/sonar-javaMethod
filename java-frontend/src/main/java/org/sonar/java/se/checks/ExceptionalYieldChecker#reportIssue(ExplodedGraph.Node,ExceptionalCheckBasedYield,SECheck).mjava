@@ -21,7 +21,7 @@
     Set<Flow> argumentsFlows = flowsForMethodArguments(node, mit, parameterCausingExceptionIndex, FlowComputation.MAX_REPORTED_FLOWS);
     Set<Flow> exceptionFlows = yield.exceptionFlows(FlowComputation.MAX_REPORTED_FLOWS);
 
-    ImmutableSet.Builder<Flow> flows = ImmutableSet.builder();
+    Set<Flow> flows = new HashSet<>();
     for (Flow argumentFlow : argumentsFlows) {
       for (Flow exceptionFlow : exceptionFlows) {
         flows.add(Flow.builder()
@@ -33,6 +33,6 @@
       }
     }
 
-    check.reportIssue(reportTree, String.format(message, methodName), flows.build());
+    check.reportIssue(reportTree, String.format(message, methodName), Collections.unmodifiableSet(flows));
   }
 
