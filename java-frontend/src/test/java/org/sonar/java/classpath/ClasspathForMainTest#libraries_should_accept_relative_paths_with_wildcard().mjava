@@ -1,0 +1,19 @@
+  @Test
+  void libraries_should_accept_relative_paths_with_wildcard() throws Exception {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "../../files/**/lib");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(9);
+    File jar = javaClasspath.getElements().get(0);
+    assertThat(jar).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").containsExactlyInAnyOrder(
+      "hello.jar",
+      "hello.jar",
+      "world.jar",
+      "emptyFile.jar",
+      "likeJdkJar.jar",
+      "emptyArchive.jar",
+      "lib",
+      "lib",
+      "oklog-1.0.1.aar");
+  }
+

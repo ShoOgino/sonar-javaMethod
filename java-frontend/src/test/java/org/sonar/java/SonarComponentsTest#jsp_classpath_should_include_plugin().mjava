@@ -3,12 +3,12 @@
     SensorContextTester sensorContextTester = SensorContextTester.create(new File(""));
     DefaultFileSystem fs = sensorContextTester.fileSystem();
 
-    JavaClasspath javaClasspath = mock(JavaClasspath.class);
+    ClasspathForMain javaClasspath = mock(ClasspathForMain.class);
     File someJar = new File("some.jar");
     when(javaClasspath.getElements()).thenReturn(Collections.singletonList(someJar));
 
     File plugin = new File("target/classes");
-    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, mock(JavaTestClasspath.class), checkFactory);
+    SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, mock(ClasspathForTest.class), checkFactory);
     List<String> jspClassPath = sonarComponents.getJspClasspath().stream().map(File::getAbsolutePath).collect(Collectors.toList());
     assertThat(jspClassPath).containsExactly(plugin.getAbsolutePath(), someJar.getAbsolutePath());
   }

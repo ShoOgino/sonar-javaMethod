@@ -4,21 +4,21 @@
     List<Object> list = new ArrayList<>();
     
     if (context.getRuntime().getProduct() == SonarProduct.SONARLINT) {
-      list.add(JavaSonarLintClasspath.class);
+      list.add(ClasspathForMainForSonarLint.class);
     } else {
       list.addAll(SurefireExtensions.getExtensions());
       list.add(DroppedPropertiesSensor.class);
       list.add(JavaSonarWayProfile.class);
-      list.add(JavaClasspath.class);
+      list.add(ClasspathForMain.class);
 
       ExternalReportExtensions.define(context);
     }
     if (supportJspTranspilation(context)) {
       list.add(Jasper.class);
     }
-    list.addAll(JavaClasspathProperties.getProperties());
+    list.addAll(ClasspathProperties.getProperties());
     list.addAll(Arrays.asList(
-      JavaTestClasspath.class,
+      ClasspathForTest.class,
       Java.class,
       PropertyDefinition.builder(Java.FILE_SUFFIXES_KEY)
         .defaultValue(Java.DEFAULT_FILE_SUFFIXES)

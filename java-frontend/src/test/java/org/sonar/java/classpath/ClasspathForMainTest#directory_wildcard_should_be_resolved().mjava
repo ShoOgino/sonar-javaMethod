@@ -1,0 +1,10 @@
+  @Test
+  void directory_wildcard_should_be_resolved() {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "**/*.jar");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(3);
+    File jar = javaClasspath.getElements().get(0);
+    assertThat(jar).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar", "foo.jar");
+  }
+

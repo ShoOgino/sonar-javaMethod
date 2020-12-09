@@ -1,0 +1,10 @@
+  @Test
+  void wildcard_directory_should_resolve_libs_in_that_dir() {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "lib/**/*.jar");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(3);
+    File jar = javaClasspath.getElements().get(0);
+    assertThat(jar).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar", "foo.jar");
+  }
+

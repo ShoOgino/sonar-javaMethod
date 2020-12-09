@@ -1,0 +1,27 @@
+  /**
+   * ProjectDefinition class is not available in SonarLint context, so this constructor will never be called when using SonarLint
+   */
+  public SonarComponents(FileLinesContextFactory fileLinesContextFactory, FileSystem fs,
+                         ClasspathForMain javaClasspath, ClasspathForTest javaTestClasspath, CheckFactory checkFactory,
+                         @Nullable CheckRegistrar[] checkRegistrars, @Nullable ProjectDefinition projectDefinition) {
+    this.fileLinesContextFactory = fileLinesContextFactory;
+    this.fs = fs;
+    this.javaClasspath = javaClasspath;
+    this.javaTestClasspath = javaTestClasspath;
+    this.checkFactory = checkFactory;
+    this.projectDefinition = projectDefinition;
+    this.checks = new ArrayList<>();
+    this.testChecks = new ArrayList<>();
+    this.allChecks = new ArrayList<>();
+    if (checkRegistrars != null) {
+      CheckRegistrar.RegistrarContext registrarContext = new CheckRegistrar.RegistrarContext();
+      for (CheckRegistrar checkClassesRegister : checkRegistrars) {
+        checkClassesRegister.register(registrarContext);
+        Iterable<Class<? extends JavaCheck>> checkClasses = registrarContext.checkClasses();
+        Iterable<Class<? extends JavaCheck>> testCheckClasses = registrarContext.testCheckClasses();
+        registerCheckClasses(registrarContext.repositoryKey(), Lists.newArrayList(checkClasses != null ? checkClasses : new ArrayList<>()));
+        registerTestCheckClasses(registrarContext.repositoryKey(), Lists.newArrayList(testCheckClasses != null ? testCheckClasses : new ArrayList<>()));
+      }
+    }
+  }
+

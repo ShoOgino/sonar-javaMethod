@@ -1,0 +1,10 @@
+  @Test
+  void libraries_should_accept_relative_paths() throws Exception {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "../../files/classpath/lib/*.jar");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(2);
+    assertThat(javaClasspath.getElements().get(0)).exists();
+    assertThat(javaClasspath.getElements().get(1)).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar");
+  }
+

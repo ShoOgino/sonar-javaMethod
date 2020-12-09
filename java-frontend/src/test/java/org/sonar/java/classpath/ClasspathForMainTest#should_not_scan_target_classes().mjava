@@ -1,0 +1,10 @@
+  @Test
+  void should_not_scan_target_classes() {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "../../files/classpath/lib/target/classes");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(1);
+    File classes = javaClasspath.getElements().get(0);
+    assertThat(classes).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("classes");
+  }
+

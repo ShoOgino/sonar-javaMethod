@@ -2,7 +2,7 @@
   void test_sonar_components() {
     SensorContextTester sensorContextTester = spy(SensorContextTester.create(new File("")));
     DefaultFileSystem fs = sensorContextTester.fileSystem();
-    JavaTestClasspath javaTestClasspath = mock(JavaTestClasspath.class);
+    ClasspathForTest javaTestClasspath = mock(ClasspathForTest.class);
     List<File> javaTestClasspathList = Collections.emptyList();
     when(javaTestClasspath.getElements()).thenReturn(javaTestClasspathList);
     InputFile inputFile = TestUtils.emptyInputFile("foo.java");
@@ -27,7 +27,7 @@
     verify(sensorContextTester, times(1)).newSymbolTable();
     assertThat(sonarComponents.fileLinesContextFor(inputFile)).isEqualTo(fileLinesContext);
 
-    JavaClasspath javaClasspath = mock(JavaClasspath.class);
+    ClasspathForMain javaClasspath = mock(ClasspathForMain.class);
     List<File> list = mock(List.class);
     when(javaClasspath.getElements()).thenReturn(list);
     sonarComponents = new SonarComponents(fileLinesContextFactory, fs, javaClasspath, javaTestClasspath, checkFactory);

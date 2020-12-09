@@ -1,0 +1,16 @@
+  @Test
+  void both_path_separator_should_be_supported_on_one_JVM() {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "**/*.jar");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(3);
+    File jar = javaClasspath.getElements().get(0);
+    assertThat(jar).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar", "foo.jar");
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_LIBRARIES, "**\\*.jar");
+    javaClasspath = createJavaClasspath();
+    assertThat(javaClasspath.getElements()).hasSize(3);
+    jar = javaClasspath.getElements().get(0);
+    assertThat(jar).exists();
+    assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar", "foo.jar");
+  }
+
