@@ -1,10 +1,10 @@
   private static List<JavaFileScanner> executableScanners(List<JavaFileScanner> scanners, JavaVersion javaVersion) {
-    ImmutableList.Builder<JavaFileScanner> results = ImmutableList.builder();
+    List<JavaFileScanner> results = new ArrayList<>();
     for (JavaFileScanner scanner : scanners) {
       if (!(scanner instanceof JavaVersionAwareVisitor) || ((JavaVersionAwareVisitor) scanner).isCompatibleWithJavaVersion(javaVersion)) {
         results.add(scanner);
       }
     }
-    return results.build();
+    return Collections.unmodifiableList(results);
   }
 

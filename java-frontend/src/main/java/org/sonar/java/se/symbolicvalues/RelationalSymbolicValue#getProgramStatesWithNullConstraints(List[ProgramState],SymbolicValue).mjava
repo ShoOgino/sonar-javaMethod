@@ -3,6 +3,6 @@
       .flatMap(ps -> operand.setConstraint(ps, ObjectConstraint.NULL).stream())
       .map(ps -> ps.removeConstraintsOnDomain(operand, BooleanConstraint.class))
       .collect(Collectors.toList());
-    return ImmutableList.<ProgramState>builder().addAll(copiedConstraints).addAll(nullConstraints).build();
+    return Stream.of(copiedConstraints, nullConstraints).flatMap(List::stream).collect(Collectors.toList());
   }
 

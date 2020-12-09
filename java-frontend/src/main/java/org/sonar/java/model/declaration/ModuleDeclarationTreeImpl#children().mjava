@@ -1,13 +1,14 @@
   @Override
   protected Iterable<Tree> children() {
-    ImmutableList.Builder<Tree> iteratorBuilder = ImmutableList.<Tree>builder();
-    iteratorBuilder.addAll(annotations);
+    List<Tree> list = new ArrayList<>(annotations);
     if (openKeyword != null) {
-      iteratorBuilder.add(openKeyword);
+      list.add(openKeyword);
     }
-    iteratorBuilder.add(moduleKeyword, moduleName, openBraceToken);
-    iteratorBuilder.addAll(moduleDirectives);
-    iteratorBuilder.add(closeBraceToken);
-    return iteratorBuilder.build();
+    list.add(moduleKeyword);
+    list.add(moduleName);
+    list.add(openBraceToken);
+    list.addAll(moduleDirectives);
+    list.add(closeBraceToken);
+    return Collections.unmodifiableList(list);
   }
 
