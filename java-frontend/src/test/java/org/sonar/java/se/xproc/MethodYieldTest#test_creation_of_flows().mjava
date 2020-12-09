@@ -6,10 +6,10 @@
     MethodYield methodYield = mb.happyPathYields()
       .filter(y -> y.resultConstraint() != null && y.resultConstraint().get(ObjectConstraint.class) != ObjectConstraint.NULL).findFirst().get();
 
-    Set<Flow> flowReturnValue = methodYield.flow(Collections.singletonList(-1), Lists.newArrayList(ObjectConstraint.class), FlowComputation.MAX_REPORTED_FLOWS);
+    Set<Flow> flowReturnValue = methodYield.flow(Collections.singletonList(-1), Collections.singletonList(ObjectConstraint.class), FlowComputation.MAX_REPORTED_FLOWS);
     assertThat(flowReturnValue.iterator().next().isEmpty()).isFalse();
 
-    Set<Flow> flowFirstParam = methodYield.flow(Collections.singletonList(0), Lists.newArrayList(ObjectConstraint.class, BooleanConstraint.class), FlowComputation.MAX_REPORTED_FLOWS);
+    Set<Flow> flowFirstParam = methodYield.flow(Collections.singletonList(0), Arrays.asList(ObjectConstraint.class, BooleanConstraint.class), FlowComputation.MAX_REPORTED_FLOWS);
     assertThat(flowFirstParam.iterator().next().isEmpty()).isFalse();
   }
 

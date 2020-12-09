@@ -4,10 +4,10 @@
     JavaCheck expectedTestCheck = new CustomTestCheck();
     CheckRegistrar expectedRegistrar = registrarContext -> registrarContext.registerClassesForRepository(
       REPOSITORY_NAME,
-      Lists.<Class<? extends JavaCheck>>newArrayList(CustomCheck.class),
-      Lists.<Class<? extends JavaCheck>>newArrayList(CustomTestCheck.class));
+      Collections.singletonList(CustomCheck.class),
+      Collections.singletonList(CustomTestCheck.class));
 
-    when(this.checks.all()).thenReturn(Lists.newArrayList(expectedCheck)).thenReturn(Lists.newArrayList(expectedTestCheck));
+    when(this.checks.all()).thenReturn(Collections.singletonList(expectedCheck)).thenReturn(Collections.singletonList(expectedTestCheck));
     SonarComponents sonarComponents = new SonarComponents(fileLinesContextFactory, null, null,
       null, checkFactory, new CheckRegistrar[] {expectedRegistrar});
     sonarComponents.setSensorContext(context);
