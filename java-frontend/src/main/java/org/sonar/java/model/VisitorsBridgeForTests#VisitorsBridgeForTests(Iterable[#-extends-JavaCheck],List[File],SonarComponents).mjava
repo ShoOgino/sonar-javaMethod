@@ -1,4 +1,5 @@
   public VisitorsBridgeForTests(Iterable<? extends JavaCheck> visitors, List<File> projectClasspath, @Nullable SonarComponents sonarComponents) {
-    super(visitors, projectClasspath, sonarComponents, SymbolicExecutionMode.getMode(Iterables.toArray(visitors, JavaCheck.class)));
+    super(visitors, projectClasspath, sonarComponents, SymbolicExecutionMode.getMode(
+      StreamSupport.stream(visitors.spliterator(), false).toArray(JavaCheck[]::new)));
   }
 
