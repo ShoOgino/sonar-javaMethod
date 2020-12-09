@@ -2,7 +2,8 @@
     Set<File> result = new LinkedHashSet<>();
     String fileList = settings.get(property).orElse("");
     if (StringUtils.isNotEmpty(fileList)) {
-      Iterable<String> fileNames = Splitter.on(SEPARATOR).omitEmptyStrings().split(fileList);
+      Iterable<String> fileNames  = Arrays.stream(fileList.split(SEPARATOR))
+        .filter(s -> !s.isEmpty()).collect(Collectors.toList());
       File baseDir = fs.baseDir();
       boolean hasJavaSources = hasJavaSources();
       boolean validateLibs = validateLibraries;

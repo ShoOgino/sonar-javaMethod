@@ -1,0 +1,19 @@
+  /* This method uses a standard 2 pointers algorithm to detect whether there is a cycle in a chain of exception causes */
+  public static Throwable getRootCause(Throwable throwable) {
+    Throwable slowPointer = throwable;
+
+    Throwable cause;
+    Throwable t = throwable;
+    for(boolean advanceSlowPointer = false; (cause = t.getCause()) != null; advanceSlowPointer = !advanceSlowPointer) {
+      t = cause;
+      if (cause == slowPointer) {
+        throw new IllegalArgumentException("Loop in causal chain detected.", cause);
+      }
+
+      if (advanceSlowPointer) {
+        slowPointer = slowPointer.getCause();
+      }
+    }
+    return t;
+  }
+

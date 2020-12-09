@@ -1,0 +1,13 @@
+  @Test
+  void test_get_root_cause_with_cycle() {
+    Exception ex1 = new Exception();
+    Exception ex2 = new Exception(ex1);
+    Exception ex3 = new Exception(ex2);
+    Exception ex4 = new Exception(ex3);
+    Exception ex5 = new Exception(ex4);
+    ex1.initCause(ex3);
+
+    IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> ThrowableUtils.getRootCause(ex5));
+    assertThat(exception).hasMessage("Loop in causal chain detected.");
+  }
+
