@@ -14,7 +14,8 @@
       methodInvariantContext.symbolicValues.add(exitValue);
       ConstraintsByDomain constraints = context.getState().getConstraints(exitValue);
       if (constraints != null) {
-        constraints.forEach(methodInvariantContext.methodConstraints::put);
+        constraints.forEach((clazz, constraint) -> 
+          methodInvariantContext.methodConstraints.computeIfAbsent(clazz, k -> new ArrayList<>()).add(constraint));
       } else {
         // Relational SV or NOT SV : we can't say anything.
         methodInvariantContext.avoidRaisingConstraintIssue = true;

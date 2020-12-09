@@ -12,6 +12,7 @@
     SymbolicValue oldValue = previousState.getValue(assignedSymbol);
     SymbolicValue newValue = assignedVariable.symbolicValue();
     Symbol fromSymbol = previousState.peekValueSymbol().symbol();
-    assignmentsByMethod.peek().put(assignmentExpressionTree, new AssignmentDataHolder(assignedSymbol, oldValue, newValue, fromSymbol, node));
+    assignmentsByMethod.peek().computeIfAbsent(assignmentExpressionTree, 
+      k -> new ArrayList<>()).add(new AssignmentDataHolder(assignedSymbol, oldValue, newValue, fromSymbol, node));
   }
 
