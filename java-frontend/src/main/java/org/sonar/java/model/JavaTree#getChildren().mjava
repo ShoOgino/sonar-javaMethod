@@ -1,12 +1,8 @@
   public List<Tree> getChildren() {
     if(children == null) {
-      children = new ArrayList<>();
-      children().forEach(child -> {
-        // null children are ignored
-        if (child != null) {
-          children.add(child);
-        }
-      });
+      children = children().stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
     }
     return children;
   }
