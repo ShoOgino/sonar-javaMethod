@@ -1,0 +1,10 @@
+  @Override
+  public void onMethodInvocationFound(MethodInvocationTree invocation) {
+    Arguments arguments = invocation.arguments();
+    getNullReturnInLambda(arguments.get(1)).ifPresent(nullReturn ->
+      reportIssue(ExpressionUtils.methodName(invocation),
+        PRIMARY_MESSAGE,
+        Collections.singletonList(new JavaFileScannerContext.Location(SECONDARY_MESSAGE, nullReturn)),
+        null));
+  }
+
