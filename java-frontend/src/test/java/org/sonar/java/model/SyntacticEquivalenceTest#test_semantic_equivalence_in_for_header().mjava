@@ -1,0 +1,21 @@
+  @Test
+  void test_semantic_equivalence_in_for_header() {
+    CompilationUnitTree compilationUnitTree = compilationUnitTree(
+      "class A{" +
+        "  void foo() {}" +
+        "  void f1(Object o) {" +
+        "    for (int i = 0; i < 1; i++) {};" +
+        "  }" +
+        "  void f2(Object o) {" +
+        "    for (int i = 0; i < 1; foo()) {};" +
+        "  }" +
+        "}");
+    List<Tree> members = ((ClassTree) compilationUnitTree.types().get(0)).members();
+    List<StatementTree> f1Body = ((MethodTree) members.get(1)).block().body();
+    List<StatementTree> f2Body = ((MethodTree) members.get(2)).block().body();
+
+    assertThat(SyntacticEquivalence.areEquivalent(f1Body, f2Body)).isFalse();
+    assertThat(SyntacticEquivalence.areSemanticallyEquivalent(f1Body, f2Body)).isFalse();
+    assertThat(SyntacticEquivalence.areSemanticallyEquivalent(f2Body, f1Body)).isFalse();
+  }
+

@@ -1,0 +1,27 @@
+  private static boolean areNotSameMethodCalls(JavaTree leftNode, JavaTree rightNode) {
+    if (!leftNode.is(Tree.Kind.METHOD_INVOCATION) || !rightNode.is(Tree.Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+
+    Symbol leftSymbol = ((MethodInvocationTreeImpl) leftNode).symbol();
+    Symbol rightSymbol = ((MethodInvocationTreeImpl) rightNode).symbol();
+
+    if (!leftSymbol.isMethodSymbol() || !rightSymbol.isMethodSymbol()) {
+      // This can happen when the symbol is unknown. If it is the case, we consider them as not the same to avoid FP.
+      return true;
+    }
+
+    List<Type> leftArguments = ((Symbol.MethodSymbol) leftSymbol).parameterTypes();
+    List<Type> rightArguments = ((Symbol.MethodSymbol) rightSymbol).parameterTypes();
+
+    int leftArgumentsSize = leftArguments.size();
+    if (leftArgumentsSize == rightArguments.size()) {
+      for (int i = 0; i < leftArgumentsSize; i++) {
+        if (!leftArguments.get(i).equals(rightArguments.get(i))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
