@@ -1,0 +1,28 @@
+  private static void testJdk8ProjectWithModularJdk(boolean useJdkHomeProperty) {
+    String projectKey = "use-jdk8-only-api-" + (useJdkHomeProperty ? "with" : "without") + "-jdkHome-property";
+
+    SonarScanner scanner = SonarScanner.create(TestUtils.projectDir("use-jdk8-only-api"))
+      .setProperty("sonar.projectKey", projectKey)
+      .setProperty("sonar.projectName", projectKey)
+      .setProperty("sonar.projectVersion", "1.0-SNAPSHOT")
+      .setProperty("sonar.sources", "src/main/java")
+      .setProperty("sonar.java.binaries", "fakeoutput")
+      .setProperty("sonar.java.source", "8");
+
+    setupEnvironment(scanner, useJdkHomeProperty, true);
+
+    TestUtils.provisionProject(ORCHESTRATOR, projectKey, projectKey, "java", "depends-on-jdk-types");
+    ORCHESTRATOR.executeBuild(scanner);
+
+    String componentKey = projectKey + ":src/main/java/foo/Main.java";
+    String ruleKey = "java:S4551";
+    String issueMessage = "Use \"==\" to perform this enum comparison instead of using \"equals\"";
+
+    List<Issue> issues = TestUtils.issuesForComponent(ORCHESTRATOR, projectKey);
+    assertThat(issues).extracting(Issue::getComponent, Issue::getRule, Issue::getMessage, Issue::getLine)
+      .containsOnly(
+        tuple(componentKey, ruleKey, issueMessage, 11),
+        tuple(componentKey, ruleKey, issueMessage, 16),
+        tuple(componentKey, ruleKey, issueMessage, 21));
+  }
+

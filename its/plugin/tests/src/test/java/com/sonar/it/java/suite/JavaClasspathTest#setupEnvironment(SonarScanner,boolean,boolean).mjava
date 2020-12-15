@@ -1,0 +1,31 @@
+  private static void setupEnvironment(SonarScanner scanner, boolean useJdkHomeProperty, boolean modularRuntime) {
+    Path modularJvmHome = Paths.get(System.getProperty("java.home"));
+    Path jrtFsPath = modularJvmHome.resolve("lib/jrt-fs.jar");
+    assertThat(jrtFsPath).exists();
+
+    Path jre8Home = getJdk8();
+    Path rtJar = jre8Home.resolve("lib/rt.jar");
+    assertThat(rtJar).exists();
+
+    Path runtimeJDK;
+    Path projectJDK;
+    Path libraryJar;
+
+    if (modularRuntime) {
+      runtimeJDK = modularJvmHome;
+      projectJDK = jre8Home;
+      libraryJar = rtJar;
+    } else {
+      runtimeJDK = jre8Home;
+      projectJDK = modularJvmHome;
+      libraryJar = jrtFsPath;
+    }
+
+    scanner.setEnvironmentVariable("JAVA_HOME", runtimeJDK.toAbsolutePath().toString());
+    if (useJdkHomeProperty) {
+      scanner.setProperty("sonar.java.jdkHome", projectJDK.toAbsolutePath().toString());
+    } else {
+      scanner.setProperty("sonar.java.libraries", libraryJar.toAbsolutePath().toString());
+    }
+  }
+
