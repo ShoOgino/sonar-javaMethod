@@ -1,0 +1,11 @@
+    @Override
+    public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+      if (ExpressionUtils.isSelectOnThisOrSuper(tree)) {
+        MemberSelectExpressionTree select = ((MemberSelectExpressionTree) tree.variable());
+        assignedVariables.add(select.identifier().name());
+      } else if (tree.variable().is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifier = ((IdentifierTree) tree.variable());
+        assignedVariables.add(identifier.name());
+      }
+    }
+

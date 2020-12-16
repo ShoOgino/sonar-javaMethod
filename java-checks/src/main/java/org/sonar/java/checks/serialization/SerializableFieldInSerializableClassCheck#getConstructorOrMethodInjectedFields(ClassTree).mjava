@@ -1,0 +1,11 @@
+  private static Set<String> getConstructorOrMethodInjectedFields(ClassTree classTree) {
+    AssignmentsVisitor assignmentsVisitor = new AssignmentsVisitor();
+    classTree.members().stream()
+      .filter(member -> member.is(Tree.Kind.CONSTRUCTOR, Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .filter(methodTree -> isAnnotatedWith(methodTree.symbol().metadata(), JAVAX_INJECT))
+      .forEach(methodTree -> methodTree.accept(assignmentsVisitor));
+    
+    return assignmentsVisitor.getAssignedVariables();
+  }
+

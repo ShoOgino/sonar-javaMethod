@@ -4,11 +4,15 @@
     if (isSerializable(classTree)
       && !SerializableContract.hasSpecialHandlingSerializationMethods(classTree)
       && !classTree.symbol().type().isSubtypeOf("javax.servlet.http.HttpServlet")) {
-      for (Tree member : classTree.members()) {
-        if (member.is(Tree.Kind.VARIABLE)) {
-          checkVariableMember((VariableTree) member);
-        }
-      }
+
+      Set<String> constructorInjectedParams = getConstructorOrMethodInjectedFields(classTree);
+
+      classTree.members().stream()
+        .filter(member -> member.is(Tree.Kind.VARIABLE))
+        .map(VariableTree.class::cast)
+        .filter(variableTree -> !(isExcluded(variableTree) ||
+          constructorInjectedParams.contains(variableTree.simpleName().name())))
+        .forEach(this::checkVariableMember);
     }
   }
 

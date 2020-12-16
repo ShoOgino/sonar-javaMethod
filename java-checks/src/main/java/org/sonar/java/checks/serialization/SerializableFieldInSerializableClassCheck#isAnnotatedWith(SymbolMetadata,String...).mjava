@@ -1,0 +1,7 @@
+  private static boolean isAnnotatedWith(SymbolMetadata metadata, String... fullyQualifiedNames) {
+    Set<String> fullyQualifiedNamesSet = new HashSet<>(Arrays.asList(fullyQualifiedNames));
+    return metadata.annotations().stream()
+      .map(a -> a.symbol().type())
+      .anyMatch(t -> t.isUnknown() || fullyQualifiedNamesSet.contains(t.fullyQualifiedName()));
+  }
+

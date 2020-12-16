@@ -1,21 +1,19 @@
   private void checkVariableMember(VariableTree variableTree) {
-    if (!isExcluded(variableTree)) {
-      IdentifierTree simpleName = variableTree.simpleName();
-      if (isCollectionOfSerializable(variableTree.type())) {
-        if (!ModifiersUtils.hasModifier(variableTree.modifiers(), Modifier.PRIVATE)
-          && !implementsSerializable(variableTree.type().symbolType())) {
-          reportIssue(simpleName, "Make \"" + simpleName.name() + "\" private or transient.");
-        } else if (isUnserializableCollection(variableTree.type().symbolType())
-          || isUnserializableCollection(variableTree.initializer())) {
-          reportIssue(simpleName);
-        }
-        checkCollectionAssignments(variableTree.symbol().usages());
-      } else {
-        ExpressionTree initializer = variableTree.initializer();
-        Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) variableTree.symbol();
-        if (initializer == null || !(variableSymbol.isFinal() && implementsSerializable(initializer.symbolType()))) {
-          reportIssue(simpleName);
-        }
+    IdentifierTree simpleName = variableTree.simpleName();
+    if (isCollectionOfSerializable(variableTree.type())) {
+      if (!ModifiersUtils.hasModifier(variableTree.modifiers(), Modifier.PRIVATE)
+        && !implementsSerializable(variableTree.type().symbolType())) {
+        reportIssue(simpleName, "Make \"" + simpleName.name() + "\" private or transient.");
+      } else if (isUnserializableCollection(variableTree.type().symbolType())
+        || isUnserializableCollection(variableTree.initializer())) {
+        reportIssue(simpleName);
+      }
+      checkCollectionAssignments(variableTree.symbol().usages());
+    } else {
+      ExpressionTree initializer = variableTree.initializer();
+      Symbol.VariableSymbol variableSymbol = (Symbol.VariableSymbol) variableTree.symbol();
+      if (initializer == null || !(variableSymbol.isFinal() && implementsSerializable(initializer.symbolType()))) {
+        reportIssue(simpleName);
       }
     }
   }
