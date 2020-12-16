@@ -1,6 +1,11 @@
   private boolean isSafeBooleanExpression(ExpressionTree tree) {
     ExpressionTree boxedBoolean = findBoxedBoolean(tree);
     if (boxedBoolean != null) {
+      // The rule is relaxed if the first usage of the variable is a test against nullness.
+      // A more thorough approach would require tracing all possible paths to lookup the test using symbolic execution.
+      if (isFirstUsageANullCheck(boxedBoolean)) {
+        return true;
+      }
       context.reportIssue(this, boxedBoolean, "Use the primitive boolean expression here.");
       return false;
     }
