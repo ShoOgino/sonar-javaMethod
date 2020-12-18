@@ -1,15 +1,12 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
     MethodTree methodTree = (MethodTree) tree;
     BlockTree blockTree = methodTree.block();
     if (blockTree == null) {
       return;
     }
-    if (CHECK_MATCHER.matches(methodTree) &&
-      !ThrowExceptionVisitor.throwsException(blockTree)) {
+    if (TRUST_MANAGER_MATCHER.matches(methodTree) &&
+      (blockTree.body().isEmpty() || !ThrowExceptionVisitor.throwsException(blockTree))) {
       reportIssue(methodTree.simpleName(), "Enable server certificate validation on this SSL/TLS connection.");
     }
   }

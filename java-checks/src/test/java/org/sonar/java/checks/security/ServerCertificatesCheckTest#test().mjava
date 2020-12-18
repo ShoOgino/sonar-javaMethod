@@ -1,7 +1,11 @@
   @Test
   void test() {
     JavaCheckVerifier.newVerifier()
-      .onFile(TEST_FILE)
+      .onFile(testSourcesPath(TEST_FILE))
+      .withCheck(new ServerCertificatesCheck())
+      .verifyIssues();
+    JavaCheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath(TEST_FILE))
       .withCheck(new ServerCertificatesCheck())
       .verifyIssues();
   }
