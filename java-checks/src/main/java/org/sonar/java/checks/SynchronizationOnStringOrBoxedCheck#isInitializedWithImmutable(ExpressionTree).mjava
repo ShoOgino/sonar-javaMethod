@@ -1,0 +1,15 @@
+  private static boolean isInitializedWithImmutable(ExpressionTree tree) {
+    if (tree.is(Kind.METHOD_INVOCATION)) {
+      return FORBIDDEN_MATCHERS.matches(((MethodInvocationTree) tree));
+    } else if (tree.is(Kind.IDENTIFIER)) {
+      IdentifierTree identifierTree = (IdentifierTree) tree;
+      return Optional.ofNullable(identifierTree.symbol().declaration())
+        .filter(decl -> decl.is(Kind.VARIABLE))
+        .map(VariableTree.class::cast)
+        .flatMap(variable -> Optional.ofNullable(variable.initializer()))
+        .filter(init -> init.is(Kind.METHOD_INVOCATION) && FORBIDDEN_MATCHERS.matches(((MethodInvocationTree) init)))
+        .isPresent();
+    }
+    return false;
+  }
+

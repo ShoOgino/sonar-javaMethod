@@ -1,9 +1,5 @@
   private static boolean isForbiddenType(Type expressionType) {
-    for (String forbiddenType : FORBIDDEN_TYPES) {
-      if (expressionType.is(forbiddenType)) {
-        return true;
-      }
-    }
-    return false;
+    return FORBIDDEN_TYPES.contains(expressionType.fullyQualifiedName()) 
+      || FORBIDDEN_SUBTYPES.stream().anyMatch(expressionType::isSubtypeOf);
   }
 
