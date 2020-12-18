@@ -14,7 +14,12 @@
     } catch (ExplodedGraphWalker.MaximumStepsReachedException
       | ExplodedGraphWalker.ExplodedGraphTooBigException
       | ExplodedGraphWalker.MaximumStartingStatesException exception) {
-      LOG.debug("Could not complete symbolic execution: ", exception);
+      LOG.debug("Could not complete symbolic execution: {}", exception.getMessage());
+      if (LOG.isTraceEnabled()) {
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        LOG.trace(sw.toString());
+      }
       if (walker.methodBehavior != null) {
         walker.methodBehavior.visited();
       }
