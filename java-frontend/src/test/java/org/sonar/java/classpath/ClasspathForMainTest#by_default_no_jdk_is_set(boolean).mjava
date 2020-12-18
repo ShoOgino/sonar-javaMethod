@@ -1,0 +1,19 @@
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void by_default_no_jdk_is_set(boolean debugEnabled) {
+    if (!debugEnabled) {
+      logTester.setLevel(LoggerLevel.INFO);
+    }
+    List<File> elements = createJavaClasspath().getElements();
+
+    assertThat(elements).isEmpty();
+    List<String> logs = logTester.logs(LoggerLevel.DEBUG);
+    if (debugEnabled) {
+      assertThat(logs).containsExactlyInAnyOrder(
+        "Property 'sonar.java.jdkHome' resolved with:" + System.lineSeparator() + "[]",
+        "Property 'sonar.java.libraries' resolved with:" + System.lineSeparator() + "[]");
+    } else {
+      assertThat(logs).isEmpty();
+    }
+  }
+

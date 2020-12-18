@@ -1,0 +1,18 @@
+  @ParameterizedTest
+  @CsvSource(value = {"jdk_classic,rt.jar", "jdk_modular,jrt-fs.jar"})
+  void should_include_jdk_in_libraries_when_specified(String jdkFolder, String expectedJar) {
+    String pathToJdk = "src/test/jdk/" + jdkFolder;
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_JDK_HOME, pathToJdk);
+
+    List<File> elements = createJavaClasspath().getElements();
+
+    assertThat(elements)
+      .hasSize(1)
+      .allMatch(file -> file.getName().equals(expectedJar));
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
+      .hasSize(3)
+      .allMatch(debug -> (debug.startsWith("Property 'sonar.java.jdkHome' set with:") && debug.contains(jdkFolder))
+        || (debug.startsWith("Property 'sonar.java.jdkHome' resolved with:") && debug.contains(expectedJar))
+        || (debug.equals("Property 'sonar.java.libraries' resolved with:" + System.lineSeparator() + "[]")));
+  }
+

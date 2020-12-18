@@ -1,0 +1,16 @@
+  @ParameterizedTest
+  @ValueSource(strings = {"src/test/jdk/do-not-exists", "src/test/jdk/README.txt"})
+  void wrong_sdk_path_does_not_make_classpath_init_fail(String path) {
+    settings.setProperty(ClasspathProperties.SONAR_JAVA_JDK_HOME, path);
+    String expectedWarning = String.format(
+      "Invalid value for 'sonar.java.jdkHome' property, defaulting to runtime JDK.%sConfigured location does not exists:",
+      System.lineSeparator());
+
+    List<File> elements = createJavaClasspath().getElements();
+
+    assertThat(elements).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN).stream())
+      .filteredOn(warn -> warn.startsWith(expectedWarning))
+      .hasSize(1);
+  }
+

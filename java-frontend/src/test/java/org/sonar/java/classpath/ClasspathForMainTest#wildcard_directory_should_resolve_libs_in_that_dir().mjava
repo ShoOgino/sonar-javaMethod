@@ -6,5 +6,10 @@
     File jar = javaClasspath.getElements().get(0);
     assertThat(jar).exists();
     assertThat(javaClasspath.getElements()).extracting("name").contains("hello.jar", "world.jar", "foo.jar");
+
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
+      .hasSize(2)
+      .allMatch(debug -> (debug.startsWith("Property 'sonar.java.libraries' resolved with:") && debug.contains("world.jar") && debug.contains("hello.jar"))
+        || debug.equals("Property 'sonar.java.jdkHome' resolved with:" + System.lineSeparator() + "[]"));
   }
 
