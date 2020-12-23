@@ -1,0 +1,10 @@
+  @Override
+  public void endOfAnalysis() {
+    unneededPackageInfoFiles.keySet().removeAll(knownPackagesWithOtherFiles);
+    for (JavaFileScannerContext uselessPackageInfoFileContext : unneededPackageInfoFiles.values()) {
+      uselessPackageInfoFileContext.addIssueOnFile(this, "Remove this package.");
+    }
+    unneededPackageInfoFiles.clear();
+    knownPackagesWithOtherFiles.clear();
+  }
+

@@ -1,8 +1,21 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    File file = context.getInputFile().file();
-    if ("package-info.java".equals(file.getName()) && isOnlyFileFromPackage(file)) {
-      context.addIssueOnFile(this, "Remove this package.");
+    PackageDeclarationTree packageDeclaration = context.getTree().packageDeclaration();
+    String packageName = packageDeclaration == null ? null : ExpressionsHelper.concatenate(packageDeclaration.packageName());
+
+    // default package or already processed package
+    if (packageName == null || knownPackagesWithOtherFiles.contains(packageName)) {
+      return;
+    }
+
+    File packageDirectory = context.getInputFile().file().getParentFile();
+    File packageInfoFile = new File(packageDirectory, "package-info.java");
+    boolean hasOtherFiles = !isOnlyFileFromPackage(packageDirectory, packageInfoFile);
+
+    if (hasOtherFiles) {
+      knownPackagesWithOtherFiles.add(packageName);
+    } else if (packageInfoFile.isFile()) {
+      unneededPackageInfoFiles.put(packageName, context);
     }
   }
 
