@@ -1,0 +1,15 @@
+    @Override
+    protected boolean isAssertion(Symbol methodSymbol) {
+      if (!assertionInLocalMethod.containsKey(methodSymbol)) {
+        assertionInLocalMethod.put(methodSymbol, false);
+        Tree declaration = methodSymbol.declaration();
+        if (declaration != null) {
+          AssertionVisitor assertionVisitor = new AssertionVisitor();
+          declaration.accept(assertionVisitor);
+          assertionInLocalMethod.put(methodSymbol, assertionVisitor.hasAssertion());
+        }
+      }
+
+      return assertionInLocalMethod.get(methodSymbol);
+    }
+

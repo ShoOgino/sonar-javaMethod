@@ -1,0 +1,16 @@
+  private boolean hasAssertion(@Nullable ExpressionTree expressionTree) {
+    // if the expression to check cannot be resolved, we assume it has assertions to avoid FP
+    if (expressionTree == null) {
+      return true;
+    }
+
+    if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+      Tree argumentDeclaration = ((IdentifierTree) expressionTree).symbol().declaration();
+      return argumentDeclaration instanceof VariableTree && hasAssertion(((VariableTree) argumentDeclaration).initializer());
+    } else {
+      AssertionVisitor assertionVisitor = new AssertionVisitor();
+      expressionTree.accept(assertionVisitor);
+      return assertionVisitor.hasAssertion();
+    }
+  }
+

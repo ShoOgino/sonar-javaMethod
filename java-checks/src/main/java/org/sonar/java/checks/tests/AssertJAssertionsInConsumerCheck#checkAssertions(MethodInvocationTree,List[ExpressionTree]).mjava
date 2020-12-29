@@ -1,0 +1,16 @@
+  private void checkAssertions(MethodInvocationTree invocation, List<ExpressionTree> argumentsToCheck) {
+    List<Location> argumentsMissingAssertion = argumentsToCheck.stream()
+      .filter(argument -> !hasAssertion(argument))
+      .map(argument -> new Location("Argument missing assertion", argument))
+      .collect(Collectors.toList());
+
+    if (!argumentsMissingAssertion.isEmpty()) {
+      IdentifierTree methodName = ExpressionUtils.methodName(invocation);
+      reportIssue(
+        methodName,
+        "Rework this assertion to assert something inside the Consumer argument.",
+        argumentsMissingAssertion,
+        null);
+    }
+  }
+

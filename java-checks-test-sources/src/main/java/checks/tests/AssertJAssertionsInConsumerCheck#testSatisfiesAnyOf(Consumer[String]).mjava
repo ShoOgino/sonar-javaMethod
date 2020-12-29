@@ -1,0 +1,17 @@
+  @Test
+  public void testSatisfiesAnyOf(Consumer<String> unknownRequirements) {
+    Consumer<String> myPredicateAsConsumer = s -> s.equals("b");
+    Consumer<String> myRequirements = s -> assertThat(s).isEqualTo("b");
+
+    assertThat("a").satisfiesAnyOf("b"::equals, "c"::equals); // Noncompliant [[secondary=54,54]]
+    assertThat("a").satisfiesAnyOf("b"::equals, "c"::equals, "d"::equals); // Noncompliant [[secondary=55,55,55]]
+    assertThat("a").satisfiesAnyOf("b"::equals, "c"::equals, "d"::equals, "e"::equals); // Noncompliant
+    assertThat("a").satisfiesAnyOf("b"::equals, s -> s.equals("b"), myPredicateAsConsumer); // Noncompliant
+    assertThat("a").satisfiesAnyOf(myRequirements, myRequirements, myRequirements, "c"::equals); // Noncompliant [[secondary=58]] - only last argument is missing an assertion
+
+    assertThat("a").satisfiesAnyOf(myRequirements, myRequirements);
+    assertThat("a").satisfiesAnyOf(myRequirements, myRequirements, myRequirements);
+    assertThat("a").satisfiesAnyOf(myRequirements, myRequirements, myRequirements, myRequirements);
+    assertThat("a").satisfiesAnyOf(s -> assertThat(s).isEqualTo("b"), myRequirements, classRequirements, unknownRequirements);
+  }
+

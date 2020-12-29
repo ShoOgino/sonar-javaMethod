@@ -1,0 +1,22 @@
+  @Test
+  public void testIterableSatisfyMethods(Consumer<Object> unknownRequirements) {
+    List<Object> myList = getSomeList();
+    assertThat(myList).allSatisfy("b"::equals); // Noncompliant
+    assertThat(myList).anySatisfy("b"::equals); // Noncompliant
+    assertThat(myList).hasOnlyOneElementSatisfying("b"::equals); // Noncompliant
+    assertThat(myList).noneSatisfy("b"::equals); // Noncompliant
+    assertThat(myList).satisfies("b"::equals); // Noncompliant
+    assertThat(myList).satisfies("b"::equals, atIndex(2)); // Noncompliant
+    assertThat(myList).zipSatisfy(myList, (a, b) -> a.equals(b)); // Noncompliant
+
+    Consumer<Object> myRequirements = s -> assertThat(s).isEqualTo("b");
+    assertThat(myList).allSatisfy(s -> assertThat(s).isEqualTo("b"));
+    assertThat(myList).anySatisfy(myRequirements);
+    assertThat(myList).hasOnlyOneElementSatisfying(unknownRequirements);
+    assertThat(myList).noneSatisfy(myRequirements);
+    assertThat(myList).satisfies(l -> assertThat(l).isNullOrEmpty());
+    assertThat(myList).satisfies(myRequirements, atIndex(2));
+    assertThat(myList).satisfies(new Condition<>("a"::equals, ""));
+    assertThat(myList).zipSatisfy(myList, (a, b) -> assertThat(a).isEqualTo(b));
+  }
+

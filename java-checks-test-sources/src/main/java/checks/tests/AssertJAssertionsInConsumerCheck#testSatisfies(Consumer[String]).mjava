@@ -1,0 +1,17 @@
+  @Test
+  public void testSatisfies(Consumer<String> unknownRequirements) {
+    Consumer<String> myPredicateAsConsumer = s -> s.equals("b");
+    assertThat(getSomeObject()).satisfies("b"::equals); // Noncompliant
+    assertThat("a").satisfies(s -> s.equals("b")); // Noncompliant
+    assertThat("a").satisfies(myPredicateAsConsumer); // Noncompliant
+
+    Consumer<String> myRequirements = s -> assertThat(s).isEqualTo("b");
+    assertThat("a").satisfies(s -> assertThat(s).isEqualTo("b"));
+    assertThat("a").satisfies(myRequirements);
+    assertThat("a").satisfies(classRequirements);
+    assertThat("a").satisfies(unknownRequirements);
+
+    Condition<String> myCondition = new Condition<>("a"::equals, "");
+    assertThat("a").satisfies(myCondition);
+  }
+
