@@ -1,0 +1,12 @@
+  private static Optional<String> getStringLiteralValue(@Nullable Tree declaration) {
+    if (declaration == null || !declaration.is(Tree.Kind.VARIABLE)) {
+      return Optional.empty();
+    }
+    VariableTree variable = (VariableTree) declaration;
+    ExpressionTree initializer = variable.initializer();
+    if (initializer == null || !initializer.is(Tree.Kind.STRING_LITERAL)) {
+      return Optional.empty();
+    }
+    return Optional.of(((LiteralTree) initializer).value());
+  }
+
