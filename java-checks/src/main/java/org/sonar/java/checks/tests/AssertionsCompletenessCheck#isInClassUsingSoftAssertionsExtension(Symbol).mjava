@@ -1,0 +1,11 @@
+  private static boolean isInClassUsingSoftAssertionsExtension(Symbol symbol) {
+    Symbol owner = symbol.owner();
+    if (owner != null && owner.isTypeSymbol()) {
+      List<SymbolMetadata.AnnotationValue> annotationValues = owner.metadata().valuesForAnnotation("org.junit.jupiter.api.extension.ExtendWith");
+      return (annotationValues != null && annotationValues.stream().anyMatch(av -> isSoftAssertionsExtensionClass(av.value())))
+        // Check if nesting class uses SoftAssertionsExtension since it is a valid use case.
+        || isInClassUsingSoftAssertionsExtension(owner);
+    }
+    return false;
+  }
+
