@@ -1,9 +1,5 @@
   @Override
   public boolean accept(FilterableIssue issue) {
-    Map<String, Set<Integer>> excludedLinesByRule = new HashMap<>();
-    if (excludedLinesByComponent.containsKey(issue.componentKey())) {
-      excludedLinesByRule = excludedLinesByComponent.get(issue.componentKey());
-    }
-    return !issueShouldNotBeReported(issue, excludedLinesByRule);
+    return !issueShouldNotBeReported(issue, excludedLinesByComponent.getOrDefault(issue.componentKey(), Collections.emptyMap()));
   }
 
