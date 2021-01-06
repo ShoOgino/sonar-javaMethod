@@ -1,12 +1,11 @@
   @CheckForNull
   public static String nonNullAnnotationOnParameters(Symbol.MethodSymbol method) {
-    if (valuesForGlobalAnnotation(method, JAVAX_ANNOTATION_PARAMETERS_ARE_NONNULL_BY_DEFAULT) != null) {
-      return JAVAX_ANNOTATION_PARAMETERS_ARE_NONNULL_BY_DEFAULT;
-    } else if (valuesForGlobalAnnotation(method, ORG_SPRINGFRAMEWORK_LANG_NON_NULL_API) != null) {
-      return ORG_SPRINGFRAMEWORK_LANG_NON_NULL_API;
-    } else if (isGloballyAnnotatedWithEclipseNonNullByDefault(method, "PARAMETER")) {
+    if (isGloballyAnnotatedWithEclipseNonNullByDefault(method, "PARAMETER")) {
       return ORG_ECLIPSE_JDT_ANNOTATION_NON_NULL_BY_DEFAULT;
     }
-    return null;
+    return useAnyGlobalAnnotation(method,
+      JAVAX_ANNOTATION_PARAMETERS_ARE_NONNULL_BY_DEFAULT,
+      ORG_SPRINGFRAMEWORK_LANG_NON_NULL_API,
+      COM_MONGO_DB_LANG_NON_NULL_API);
   }
 
