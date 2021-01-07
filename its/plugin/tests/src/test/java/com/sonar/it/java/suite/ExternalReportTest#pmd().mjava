@@ -7,17 +7,13 @@
 
     String projectKey = "org.sonarsource.it.projects:pmd-external-report";
     List<Issue> issues = getExternalIssues(projectKey);
-    if (externalIssuesSupported()) {
-      assertThat(issues).hasSize(1);
-      Issue issue = issues.get(0);
-      assertThat(issue.getComponent()).isEqualTo(projectKey + ":src/main/java/Main.java");
-      assertThat(issue.getRule()).isEqualTo("external_pmd:UnusedLocalVariable");
-      assertThat(issue.getLine()).isEqualTo(3);
-      assertThat(issue.getMessage()).isEqualTo("Avoid unused local variables such as 'unused'.");
-      assertThat(issue.getSeverity()).isEqualTo(Severity.MAJOR);
-      assertThat(issue.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.get(0);
+    assertThat(issue.getComponent()).isEqualTo(projectKey + ":src/main/java/Main.java");
+    assertThat(issue.getRule()).isEqualTo("external_pmd:UnusedLocalVariable");
+    assertThat(issue.getLine()).isEqualTo(3);
+    assertThat(issue.getMessage()).isEqualTo("Avoid unused local variables such as 'unused'.");
+    assertThat(issue.getSeverity()).isEqualTo(Severity.MAJOR);
+    assertThat(issue.getDebt()).isEqualTo("5min");
   }
 
