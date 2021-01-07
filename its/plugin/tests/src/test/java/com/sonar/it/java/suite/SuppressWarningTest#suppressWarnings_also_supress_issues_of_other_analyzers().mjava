@@ -1,0 +1,13 @@
+  @Test
+  public void suppressWarnings_also_supress_issues_of_other_analyzers() throws Exception {
+    String projectKey = "org.sonarsource.it.projects:suppress-warnings-pmd";
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("suppress-warnings-pmd"))
+      .setProperty("sonar.scm.disabled", "true")
+      .setCleanPackageSonarGoals();
+    TestUtils.provisionProject(ORCHESTRATOR, projectKey, "suppress-warnings-pmd", "java", "suppress-warnings-pmd");
+
+    ORCHESTRATOR.executeBuild(build);
+
+    assertThat(parseInt(getMeasure(projectKey, "violations").getValue())).isEqualTo(3);
+  }
+
