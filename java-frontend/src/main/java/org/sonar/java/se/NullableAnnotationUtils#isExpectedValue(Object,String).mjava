@@ -1,12 +1,7 @@
   private static boolean isExpectedValue(Object annotationValue, String expectedValue) {
-    if (annotationValue instanceof Tree) {
-      // from sources
-      return containsValue((Tree) annotationValue, expectedValue);
-    }
-    // from binaries
     if (annotationValue instanceof Object[]) {
       return containsValue((Object[]) annotationValue, expectedValue);
     }
-    return expectedValue.equals(((Symbol) annotationValue).name());
+    return annotationValue instanceof Symbol && expectedValue.equals(((Symbol) annotationValue).name());
   }
 
