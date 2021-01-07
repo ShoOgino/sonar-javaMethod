@@ -1,6 +1,15 @@
   @Test
   public void should_detect_package_info_issues() {
-    List<Issue> issues = TestUtils.issuesForComponent(orchestrator, "org.sonarsource.it.projects:package-info");
+    String projectKey = "org.sonarsource.it.projects:package-info";
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("package-info"))
+      .setCleanPackageSonarGoals()
+      .setProperty("sonar.sources", "src/main/java,src/main/other-src")
+      .setProperty("sonar.scm.disabled", "true");
+    TestUtils.provisionProject(orchestrator, projectKey, "package-info", "java", "package-info");
+
+    orchestrator.executeBuild(build);
+
+    List<Issue> issues = TestUtils.issuesForComponent(orchestrator, projectKey);
     List<String> packageInfoRuleKeys = asList("java:S1228", "java:S4032");
 
     assertThat(issues).hasSize(3);
@@ -15,9 +24,9 @@
     List<Issue> s4032Issues = issues.stream().filter(issue -> issue.getRule().equals("java:S4032")).collect(Collectors.toList());
     assertThat(s4032Issues).hasSize(1);
     assertThat(s4032Issues.get(0).getMessage()).isEqualTo("Remove this package.");
-    assertThat(s4032Issues.get(0).getComponent()).isEqualTo("org.sonarsource.it.projects:package-info:src/main/other-src/org/package4/package-info.java");
+    assertThat(s4032Issues.get(0).getComponent()).isEqualTo(projectKey + ":src/main/other-src/org/package4/package-info.java");
 
-    List<Issue> issuesOnTestPackage = TestUtils.issuesForComponent(orchestrator, "org.sonarsource.it.projects:package-info:src/test/java/package1");
+    List<Issue> issuesOnTestPackage = TestUtils.issuesForComponent(orchestrator, projectKey + ":src/test/java/package1");
     assertThat(issuesOnTestPackage).isEmpty();
   }
 
