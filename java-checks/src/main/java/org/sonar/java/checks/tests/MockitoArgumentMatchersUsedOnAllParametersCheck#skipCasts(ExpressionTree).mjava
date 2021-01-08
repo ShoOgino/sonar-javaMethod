@@ -1,0 +1,14 @@
+  /**
+   * Pop the chained casts to return an expression.
+   * @param tree Chained casts
+   * @return The expression behind the last cast in the chain
+   */
+  private static ExpressionTree skipCasts(ExpressionTree tree) {
+    ExpressionTree current = ExpressionUtils.skipParentheses(tree);
+    while (current.is(Tree.Kind.TYPE_CAST)) {
+      TypeCastTree cast = (TypeCastTree) current;
+      current = ExpressionUtils.skipParentheses(cast.expression());
+    }
+    return current;
+  }
+

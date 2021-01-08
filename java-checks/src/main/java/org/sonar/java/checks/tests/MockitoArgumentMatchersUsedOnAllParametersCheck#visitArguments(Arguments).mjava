@@ -1,0 +1,29 @@
+  @Override
+  protected void visitArguments(Arguments arguments) {
+    if (arguments.isEmpty()) {
+      return;
+    }
+    List<Tree> nonMatchers = new ArrayList<>();
+    for (ExpressionTree arg : arguments) {
+      arg = ExpressionUtils.skipParentheses(arg);
+      if (!isArgumentMatcherLike(arg)) {
+        nonMatchers.add(arg);
+      }
+    }
+    int nonMatchersFound = nonMatchers.size();
+
+    if (!nonMatchers.isEmpty() && nonMatchersFound < arguments.size()) {
+      String primaryMessage = String.format(
+        "Add an \"eq()\" argument matcher on %s",
+        nonMatchersFound == 1 ? "this parameter." : "these parameters."
+      );
+      reportIssue(nonMatchers.get(0),
+        primaryMessage,
+        nonMatchers.stream()
+          .skip(1)
+          .map(secondary -> new JavaFileScannerContext.Location("", secondary))
+          .collect(Collectors.toList()),
+        null);
+    }
+  }
+

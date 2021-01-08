@@ -1,0 +1,9 @@
+  private static boolean isArgumentMatcherLike(ExpressionTree tree) {
+    ExpressionTree unpacked = skipCasts(tree);
+    if (!unpacked.is(Tree.Kind.METHOD_INVOCATION)) {
+      return false;
+    }
+    MethodInvocationTree invocation = (MethodInvocationTree) unpacked;
+    return ARGUMENT_CAPTOR.matches(invocation) || ARGUMENT_MARCHER.matches(invocation);
+  }
+
