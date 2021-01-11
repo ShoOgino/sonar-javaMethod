@@ -22,5 +22,10 @@
     verify(foo).bar(anyInt(),
       i1.toString(), // Noncompliant [[sc=7;ec=20]] {{Add an "eq()" argument matcher on this parameter.}}
       any());
+
+    // FP Wrapped argument matcher is masked by behind a method call
+    verify(foo).bar(
+      wrapArgumentMatcher(42), // Noncompliant [[sc=7;ec=30]] {{Add an "eq()" argument matcher on this parameter.}}
+      any(), any());
   }
 

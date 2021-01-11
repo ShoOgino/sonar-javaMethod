@@ -17,6 +17,15 @@
     verify(foo).bar((Integer) (Number) (Integer) captor.capture(), any(), any());
     verify(foo).bar(((Integer) ((Number) ((Integer) captor.capture()))), any(), any());
 
+    // Mix argument checkers from top Mockito and ArgumentMatchers classes
+    verify(foo).bar(Mockito.anyInt(), any(), any());
+    verify(foo).bar(Mockito.intThat(x -> x >= 42), Mockito.any(), any());
+    verify(foo).bar(eq(42), any(), Mockito.notNull());
+
+    // Additional argument checkers
+    verify(foo).bar(gt(42), any(), any());
+    verify(foo).bar(intThat(x -> x >= 42), or(ArgumentMatchers.any(), notNull()), any());
+    verify(foo).bar(eq(42), any(), not(null));
 
     anyInt();
     eq(42);
