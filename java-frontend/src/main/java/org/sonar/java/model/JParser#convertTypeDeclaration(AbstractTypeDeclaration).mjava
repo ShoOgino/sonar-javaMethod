@@ -85,6 +85,17 @@
       t.completeTypeParameters(
         convertTypeParameters(ee.typeParameters())
       );
+
+      if (e.getAST().isPreviewEnabled()) {
+        List<?> permittedTypesToConvert = ((TypeDeclaration) e).permittedTypes();
+        for (int i = 0; i < permittedTypesToConvert.size(); i++) {
+          Type o = (Type) permittedTypesToConvert.get(i);
+          if (i > 0) {
+            t.permittedTypes().separators().add(firstTokenBefore(o, TerminalTokens.TokenNameCOMMA));
+          }
+          t.permittedTypes().add(convertType(o));
+        }
+      }
     } else if (kind == Tree.Kind.RECORD) {
       RecordDeclaration ee = (RecordDeclaration) e;
       t.completeTypeParameters(

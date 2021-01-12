@@ -1,0 +1,24 @@
+  /**
+   * Sealed Classes
+   * (Preview in Java 15) https://openjdk.java.net/jeps/360
+   *
+   * @see org.eclipse.jdt.core.dom.TypeDeclaration
+   */
+  @Test
+  void declaration_sealed_class() {
+    JavaTree.CompilationUnitTreeImpl cu = test("sealed class Shape permits Circle, Rectangle { }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    assertThat(c.modifiers()).hasSize(1);
+    ModifierKeywordTree m = (ModifierKeywordTree) c.modifiers().get(0);
+    assertThat(m.modifier()).isEqualTo(Modifier.SEALED);
+    assertThat(m.firstToken().text()).isEqualTo("sealed");
+    assertThat(c.permittedTypes()).hasSize(2);
+
+    cu = test("non-sealed class Square extends Shape { }");
+    c = (ClassTreeImpl) cu.types().get(0);
+    assertThat(c.modifiers()).hasSize(1);
+    m = (ModifierKeywordTree) c.modifiers().get(0);
+    assertThat(m.modifier()).isEqualTo(Modifier.NON_SEALED);
+    assertThat(c.modifiers().get(0).firstToken().text()).isEqualTo("non-sealed");
+  }
+
