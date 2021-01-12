@@ -1,11 +1,6 @@
   @Override
   public void visitNode(Tree tree) {
-    boolean isLocalVar = false;
-    if (tree.is(Tree.Kind.VARIABLE)) {
-      isLocalVar = currentParent.peek().is(METHOD_KINDS);
-    } else {
-      currentParent.push(tree);
-    }
+    boolean isLocalVar = tree.is(Tree.Kind.VARIABLE) && ((VariableTree) tree).symbol().owner().isMethodSymbol();
 
     AnnotationTree deprecatedAnnotation = deprecatedAnnotation(tree);
     boolean hasDeprecatedAnnotation = deprecatedAnnotation != null;
