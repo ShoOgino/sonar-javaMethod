@@ -1,0 +1,17 @@
+  private static AnalyzerMessage.TextSpan textSpanForTextBlock(SyntaxToken syntaxToken) {
+    String text = syntaxToken.text();
+    String[] lines = text.split("(\\r)?\\n|\\r");
+    int endLine = syntaxToken.line() + lines.length - 1;
+    int endColumn = lines[lines.length - 1].length() - 1;
+    AnalyzerMessage.TextSpan location = new AnalyzerMessage.TextSpan(
+      syntaxToken.line(),
+      syntaxToken.column(),
+      endLine,
+      endColumn
+    );
+    Preconditions.checkState(!location.isEmpty(),
+      "Invalid issue location: Text span is empty when trying reporting on (l:%s, c:%s).",
+      syntaxToken.line(), syntaxToken.column());
+    return location;
+  }
+

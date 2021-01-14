@@ -1,4 +1,7 @@
   public static AnalyzerMessage.TextSpan textSpanFor(Tree syntaxNode) {
+    if (syntaxNode.is(Tree.Kind.TEXT_BLOCK)) {
+      return textSpanForTextBlock(((LiteralTree) syntaxNode).token());
+    }
     SyntaxToken firstSyntaxToken = getNonEmptyTree(syntaxNode).firstToken();
     SyntaxToken lastSyntaxToken = getNonEmptyTree(syntaxNode).lastToken();
     return textSpanBetween(firstSyntaxToken, lastSyntaxToken);
