@@ -4,13 +4,16 @@
 
     boolean successfullyCompleted = false;
     boolean cancelled = false;
+    ExecutionTimeReport executionTimeReport = new ExecutionTimeReport(Clock.systemUTC());
     try {
       for (InputFile inputFile : inputFiles) {
         if (analysisCancelled()) {
           cancelled = true;
           break;
         }
+        executionTimeReport.start(inputFile.toString());
         simpleScan(inputFile);
+        executionTimeReport.end();
         progressReport.nextFile();
       }
       successfullyCompleted = !cancelled;
@@ -20,6 +23,7 @@
       } else {
         progressReport.cancel();
       }
+      executionTimeReport.report();
       visitor.endOfAnalysis();
     }
   }

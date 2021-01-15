@@ -1,0 +1,12 @@
+  @Test
+  void interrupt_the_report() {
+    report.start("f1");
+    clock.addMilliseconds(50_000);
+    // do not call end()
+    report.report();
+    assertThat(logTester.logs(LoggerLevel.TRACE)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.INFO)).containsExactly("Slowest analyzed files:" + NL +
+      "    f1 (50000ms)");
+  }
+

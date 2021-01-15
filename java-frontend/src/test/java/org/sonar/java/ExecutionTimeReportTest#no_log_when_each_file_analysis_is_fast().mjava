@@ -1,0 +1,12 @@
+  @Test
+  void no_log_when_each_file_analysis_is_fast() {
+    for (int i = 0; i < 500; i++) {
+      simulateAnalysis("f" + i, 500);
+    }
+    report.report();
+    assertThat(logTester.logs(LoggerLevel.TRACE)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+    assertThat(report).hasToString("");
+  }
+

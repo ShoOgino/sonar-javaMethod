@@ -1,0 +1,73 @@
+  @Test
+  void log_only_10_slowest_analysis() {
+    simulateAnalysis("f1200", 1200);
+    simulateAnalysis("f1400", 1400);
+    simulateAnalysis("f100", 100);
+    assertThat(report).hasToString("" +
+      "    f1400 (1400ms)" + NL +
+      "    f1200 (1200ms)");
+    simulateAnalysis("f2800", 2800);
+    simulateAnalysis("f1300", 1300);
+    simulateAnalysis("f1700", 1700);
+    simulateAnalysis("f200", 200);
+    simulateAnalysis("f2900", 2900);
+    assertThat(report).hasToString("" +
+      "    f2900 (2900ms)" + NL +
+      "    f2800 (2800ms)" + NL +
+      "    f1700 (1700ms)" + NL +
+      "    f1400 (1400ms)" + NL +
+      "    f1300 (1300ms)" + NL +
+      "    f1200 (1200ms)");
+    simulateAnalysis("f1000", 1000);
+    simulateAnalysis("f2000", 2000);
+    simulateAnalysis("f1500", 1500);
+    simulateAnalysis("f1600", 1600);
+    simulateAnalysis("f1800", 1800);
+    simulateAnalysis("f900", 900);
+    simulateAnalysis("f1100", 1100);
+    simulateAnalysis("f2700", 2700);
+    assertThat(report).hasToString("" +
+      "    f2900 (2900ms)" + NL +
+      "    f2800 (2800ms)" + NL +
+      "    f2700 (2700ms)" + NL +
+      "    f2000 (2000ms)" + NL +
+      "    f1800 (1800ms)" + NL +
+      "    f1700 (1700ms)" + NL +
+      "    f1600 (1600ms)" + NL +
+      "    f1500 (1500ms)" + NL +
+      "    f1400 (1400ms)" + NL +
+      "    f1300 (1300ms)");
+    simulateAnalysis("f2100", 2100);
+    simulateAnalysis("f1900", 1900);
+    simulateAnalysis("f2500", 2500);
+    assertThat(report).hasToString("" +
+      "    f2900 (2900ms)" + NL +
+      "    f2800 (2800ms)" + NL +
+      "    f2700 (2700ms)" + NL +
+      "    f2500 (2500ms)" + NL +
+      "    f2100 (2100ms)" + NL +
+      "    f2000 (2000ms)" + NL +
+      "    f1900 (1900ms)" + NL +
+      "    f1800 (1800ms)" + NL +
+      "    f1700 (1700ms)" + NL +
+      "    f1600 (1600ms)");
+    simulateAnalysis("f2300", 2300);
+    simulateAnalysis("f2200", 2200);
+    simulateAnalysis("f2400", 2400);
+    simulateAnalysis("f2600", 2600);
+    report.report();
+    assertThat(logTester.logs(LoggerLevel.TRACE)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.INFO)).containsExactly("Slowest analyzed files:" + NL +
+      "    f2900 (2900ms)" + NL +
+      "    f2800 (2800ms)" + NL +
+      "    f2700 (2700ms)" + NL +
+      "    f2600 (2600ms)" + NL +
+      "    f2500 (2500ms)" + NL +
+      "    f2400 (2400ms)" + NL +
+      "    f2300 (2300ms)" + NL +
+      "    f2200 (2200ms)" + NL +
+      "    f2100 (2100ms)" + NL +
+      "    f2000 (2000ms)");
+  }
+

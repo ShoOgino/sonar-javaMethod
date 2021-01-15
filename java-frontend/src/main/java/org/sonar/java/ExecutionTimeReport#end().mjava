@@ -1,0 +1,21 @@
+  public void end() {
+    long currentAnalysisTime = clock.millis() - currentFileStartTimeMS;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Analysis time of " + currentFile + " (" + currentAnalysisTime + "ms)");
+    } else if (currentAnalysisTime >= MIN_REPORTED_ANALYSIS_TIME_MS && LOG.isDebugEnabled()) {
+      LOG.debug("Analysis time of " + currentFile + " (" + currentAnalysisTime + "ms)");
+    }
+    if (currentAnalysisTime >= minRecordedOrderedExecutionTime) {
+      recordedOrderedExecutionTime.add(new ExecutionTime(currentFile, currentAnalysisTime));
+      recordedOrderedExecutionTime.sort(ORDER_BY_ANALYSIS_TIME_DESCENDING_AND_FILE_ASCENDING);
+      if (recordedOrderedExecutionTime.size() > MAX_REPORTED_FILES) {
+        recordedOrderedExecutionTime.removeLast();
+        minRecordedOrderedExecutionTime = recordedOrderedExecutionTime.stream()
+          .mapToLong(e -> e.analysisTime)
+          .min()
+          .orElse(MIN_REPORTED_ANALYSIS_TIME_MS);
+      }
+    }
+    this.currentFile = null;
+  }
+

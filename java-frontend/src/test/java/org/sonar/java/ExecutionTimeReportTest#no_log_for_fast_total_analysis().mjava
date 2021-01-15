@@ -1,0 +1,13 @@
+  @Test
+  void no_log_for_fast_total_analysis() {
+    simulateAnalysis("f1", 2000);
+    simulateAnalysis("f2", 2000);
+    report.report();
+    assertThat(logTester.logs(LoggerLevel.TRACE)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+    assertThat(report).hasToString("" +
+      "    f1 (2000ms)" + NL +
+      "    f2 (2000ms)");
+  }
+

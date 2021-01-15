@@ -1,0 +1,15 @@
+  @Test
+  void log_trace_level() {
+    logTester.setLevel(LoggerLevel.TRACE);
+    simulateAnalysis("f1", 50);
+    simulateAnalysis("f2", 2000);
+    report.report();
+    assertThat(logTester.logs(LoggerLevel.TRACE)).containsExactly(
+      "Analysis time of f1 (50ms)",
+      "Analysis time of f2 (2000ms)"
+    );
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+    assertThat(report).hasToString("    f2 (2000ms)");
+  }
+
