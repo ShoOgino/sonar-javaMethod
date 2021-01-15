@@ -4,20 +4,6 @@
       return;
     }
     ExpressionTree expressionTree = newClassTree.arguments().get(0);
-    if (!expressionTree.is(Tree.Kind.STRING_LITERAL)) {
-      return;
-    }
-    String datePattern = LiteralUtils.trimQuotes(((LiteralTree) expressionTree).value());
-    if (!StringUtils.contains(datePattern, 'w')) {
-      int start = datePattern.indexOf('Y');
-      if (start > -1) {
-        int end = start;
-        while (end < datePattern.length() && datePattern.charAt(end) == 'Y') {
-          end++;
-        }
-        String firstYseq = datePattern.substring(start, end);
-        reportIssue(expressionTree, "Make sure that Week Year \"" + firstYseq + "\" is expected here instead of Year \"" + firstYseq.toLowerCase() + "\".");
-      }
-    }
+    inspectPattern(expressionTree);
   }
 

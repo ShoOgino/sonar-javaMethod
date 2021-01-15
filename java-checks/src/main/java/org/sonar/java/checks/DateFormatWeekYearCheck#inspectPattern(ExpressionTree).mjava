@@ -1,0 +1,21 @@
+  private void inspectPattern(ExpressionTree argument) {
+    Optional<String> literal = argument.asConstant(String.class);
+    if (!literal.isPresent()) {
+      return;
+    }
+    String datePattern = literal.get();
+    if (StringUtils.contains(datePattern, 'w')) {
+      return;
+    }
+    int start = datePattern.indexOf('Y');
+    if (start > -1) {
+      int end = start;
+      while (end < datePattern.length() && datePattern.charAt(end) == 'Y') {
+        end++;
+      }
+      String firstYseq = datePattern.substring(start, end);
+      String message = String.format(RECOMMENDATION_YEAR_MESSAGE, firstYseq, firstYseq.toLowerCase(Locale.ENGLISH));
+      reportIssue(argument, message);
+    }
+  }
+
