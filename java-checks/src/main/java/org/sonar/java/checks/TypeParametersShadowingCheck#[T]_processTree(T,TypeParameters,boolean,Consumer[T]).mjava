@@ -1,0 +1,14 @@
+  private <T> void processTree(T tree, TypeParameters typeParameters, boolean isStatic, Consumer<T> visitTree) {
+    Map<String, IdentifierTree> oldScope = currentTypeParametersInScope;
+    if (isStatic) {
+      currentTypeParametersInScope = new HashMap<>();
+    }
+    Map<String, IdentifierTree> declaredTypeParameters = processAndGetTypeParameters(typeParameters);
+    currentTypeParametersInScope.putAll(declaredTypeParameters);
+    visitTree.accept(tree);
+    declaredTypeParameters.forEach(currentTypeParametersInScope::remove);
+    if (isStatic) {
+      currentTypeParametersInScope = oldScope;
+    }
+  }
+

@@ -1,0 +1,21 @@
+  private Map<String, IdentifierTree> processAndGetTypeParameters(TypeParameters typeParameters) {
+    Map<String, IdentifierTree> declaredTypeParameters = new HashMap<>();
+    typeParameters.forEach(typeParameter -> {
+      IdentifierTree id = typeParameter.identifier();
+      String name = id.toString();
+
+      IdentifierTree shadowedId = currentTypeParametersInScope.get(name);
+      if (shadowedId != null) {
+        context.reportIssue(this, id,
+          String.format(ISSUE_MESSAGE, name),
+          Collections.singletonList(new JavaFileScannerContext.Location("Shadowed type parameter", shadowedId)
+        ), null);
+      } else {
+        // Entry added only in the else part, because we want to store only the first and outer most appearance of a type.
+        // If a type is shadowed multiple times, we use only the outer most as secondary location.
+        declaredTypeParameters.put(name, id);
+      }
+    });
+    return declaredTypeParameters;
+  }
+
