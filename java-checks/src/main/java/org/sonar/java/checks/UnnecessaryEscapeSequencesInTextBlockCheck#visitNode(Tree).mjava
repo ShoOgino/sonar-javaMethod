@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    LiteralTree textBlock = (LiteralTree) tree;
+    int startLine = textBlock.token().line();
+    String value = textBlock.value();
+    String[] lines = value.split("\r?\n|\r");
+    
+    for (int i = 0; i < lines.length; ++i) {
+      if (lines[i].contains("\\\"\\\"\\\"")) {
+        addIssue(startLine + i, TRIPLE_QUOTE_MESSAGE);
+      } else {
+        String replaced = lines[i].replace("\\\"\"\"", "");
+        if (ESCAPED.stream().anyMatch(replaced::contains)) {
+          addIssue(startLine + i, MESSAGE);
+        }
+      }
+    }
+  }
+
