@@ -1,6 +1,10 @@
   public static AnalyzerMessage.TextSpan textSpanBetween(Tree startTree, Tree endTree) {
     SyntaxToken firstSyntaxToken = getNonEmptyTree(startTree).firstToken();
     SyntaxToken lastSyntaxToken = getNonEmptyTree(endTree).lastToken();
-    return textSpanBetween(firstSyntaxToken, lastSyntaxToken);
+    Tree lastTree = lastSyntaxToken.parent();
+    Objects.requireNonNull(lastTree);
+    return lastTree.is(Tree.Kind.TEXT_BLOCK) ? 
+      textSpanBetween(firstSyntaxToken, ((LiteralTree) lastTree)) : 
+      textSpanBetween(firstSyntaxToken, lastSyntaxToken);
   }
 
