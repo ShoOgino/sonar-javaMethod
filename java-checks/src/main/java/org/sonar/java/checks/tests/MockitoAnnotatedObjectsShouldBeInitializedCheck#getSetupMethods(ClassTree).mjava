@@ -1,0 +1,8 @@
+  private static List<MethodTree> getSetupMethods(ClassTree tree) {
+    return tree.members().stream()
+      .filter(member -> member.is(Tree.Kind.METHOD))
+      .map(MethodTree.class::cast)
+      .filter(MockitoAnnotatedObjectsShouldBeInitializedCheck::isTaggedWithBefore)
+      .collect(Collectors.toList());
+  }
+

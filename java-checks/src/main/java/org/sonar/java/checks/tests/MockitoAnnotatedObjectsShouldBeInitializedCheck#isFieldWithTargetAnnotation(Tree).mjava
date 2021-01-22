@@ -1,0 +1,9 @@
+  private static boolean isFieldWithTargetAnnotation(Tree tree) {
+    if (!tree.is(Tree.Kind.VARIABLE)) {
+      return false;
+    }
+    VariableTree field = (VariableTree) tree;
+    SymbolMetadata metadata = field.symbol().metadata();
+    return TARGET_ANNOTATIONS.stream().anyMatch(metadata::isAnnotatedWith);
+  }
+

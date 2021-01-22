@@ -1,0 +1,12 @@
+  private static boolean areMocksInitializedInSetup(ClassTree clazz) {
+    List<MethodTree> methods = getSetupMethods(clazz);
+    for (MethodTree method : methods) {
+      SetupMethodVisitor visitor = new SetupMethodVisitor();
+      method.accept(visitor);
+      if (visitor.initMocksIsInvoked) {
+        return true;
+      }
+    }
+    return hasParentClass(clazz);
+  }
+

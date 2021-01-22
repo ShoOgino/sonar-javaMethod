@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    ClassTree testClass = (ClassTree) tree;
+    List<VariableTree> mocksToInitialize = testClass.members().stream()
+      .filter(MockitoAnnotatedObjectsShouldBeInitializedCheck::isFieldWithTargetAnnotation)
+      .map(VariableTree.class::cast)
+      .collect(Collectors.toList());
+    if (!mocksToInitialize.isEmpty() && !mocksAreProperlyInitialized(testClass)) {
+      AnnotationTree firstAnnotation = mocksToInitialize.get(0).modifiers().annotations().get(0);
+      reportIssue(firstAnnotation, MESSAGE);
+    }
+  }
+

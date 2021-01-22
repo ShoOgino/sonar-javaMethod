@@ -1,0 +1,18 @@
+  private static boolean isMockitoJUnitRuleInvoked(ClassTree clazz) {
+    List<VariableTree> collected = clazz.members().stream()
+      .filter(member -> member.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .collect(Collectors.toList());
+    for (VariableTree field : collected) {
+      if (field.type().symbolType().is("org.mockito.junit.MockitoRule")) {
+        ExpressionTree initializer = field.initializer();
+        if (initializer != null && initializer.is(Tree.Kind.METHOD_INVOCATION) &&
+          MOCKITO_JUNIT_RULE.matches((MethodInvocationTree) initializer) &&
+          field.symbol().metadata().isAnnotatedWith(RULE_ANNOTATION)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
