@@ -1,8 +1,6 @@
-  public void run () {
+  public void runInterrupted() {
     try {
-      while (true) {
-        // do stuff
-      }
+      throw  new InterruptedException();
     } catch (InterruptedException e) {
         LOGGER.log(Level.WARN, "Interrupted!", e);
         // clean up state...
@@ -10,12 +8,13 @@
       }
     try {
       while (true) {
+        throw  new InterruptedException();
         // do stuff
       }
     } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
       LOGGER.log(Level.WARN, "Interrupted!", e);
       // clean up state...
-      new Foo().interrupt();
+      new Interruptable().interrupt();
     }
     }
 

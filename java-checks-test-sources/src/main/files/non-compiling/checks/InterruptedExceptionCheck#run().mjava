@@ -1,0 +1,26 @@
+  public void run () throws InterruptedException{
+    try {
+      while (true) {
+        // do stuff
+      }
+    } catch (InterruptedException e) {
+        LOGGER.log(Level.WARN, "Interrupted!", e);
+        // clean up state...
+        throw e;
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+      throw new java.io.IOException();
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+      Exception e1 = new Exception();
+      throw e1;
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+      throw new IllegalStateException("foo", e);
+    } catch (ThreadDeath threadDeath) {
+      throw threadDeath;
+    } catch (ThreadDeath threadDeath) { // Noncompliant {{Either re-interrupt this method or rethrow the "ThreadDeath".}}
+      throw new java.io.IOException();
+  }
+}
+

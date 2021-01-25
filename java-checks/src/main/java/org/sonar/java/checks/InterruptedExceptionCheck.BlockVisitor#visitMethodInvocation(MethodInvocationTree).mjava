@@ -1,10 +1,19 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
-      Symbol symbol = tree.symbol();
-      if (!symbol.isUnknown() && symbol.owner().type().isSubtypeOf("java.lang.Thread") && "interrupt".equals(symbol.name()) && tree.arguments().isEmpty()) {
+      if (threadInterrupted || INTERRUPT_MATCHERS.matches(tree)) {
         threadInterrupted = true;
         return;
       }
+      depth++;
+      Tree declaration = tree.symbol().declaration();
+      if (declaration != null && depth <= MAX_DEPTH) {
+        //Declaration of MethodInvocationTree is MethodTree
+        BlockTree block = ((MethodTree) declaration).block();
+        if (block != null) {
+          block.accept(this);
+        }
+      }
+      depth--;
       super.visitMethodInvocation(tree);
     }
 
