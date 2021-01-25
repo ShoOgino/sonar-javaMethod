@@ -12,10 +12,13 @@
           "Use already-defined constant '" + constant.simpleName() + "' instead of duplicating its value here.",
           secondaryLocations(duplications.subList(1, duplications.size())), literalOccurrence);
       } else if (literalOccurrence >= threshold) {
+        LiteralTree literalTree = literalTrees.iterator().next();
+        String message = literalTree.is(Tree.Kind.TEXT_BLOCK) ? ("Define a constant instead of duplicating this text block " + literalOccurrence + " times.")
+          : ("Define a constant instead of duplicating this literal \"" + key + "\" " + literalOccurrence + " times.");
         context.reportIssue(
           this,
-          literalTrees.iterator().next(),
-          "Define a constant instead of duplicating this literal " + key + " " + literalOccurrence + " times.",
+          literalTree,
+          message,
           secondaryLocations(literalTrees), literalOccurrence);
       }
     });

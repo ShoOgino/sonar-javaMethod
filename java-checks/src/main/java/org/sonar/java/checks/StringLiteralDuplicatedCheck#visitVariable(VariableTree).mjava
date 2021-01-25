@@ -1,10 +1,11 @@
   @Override
   public void visitVariable(VariableTree tree) {
     ExpressionTree initializer = tree.initializer();
-    if (initializer != null && initializer.is(Tree.Kind.STRING_LITERAL)
+    if (initializer != null && initializer.is(Tree.Kind.STRING_LITERAL, Tree.Kind.TEXT_BLOCK)
       && ModifiersUtils.hasModifier(tree.modifiers(), Modifier.STATIC)
       && ModifiersUtils.hasModifier(tree.modifiers(), Modifier.FINAL)) {
-      constants.putIfAbsent(((LiteralTree) initializer).value(), tree);
+      String stringValue = LiteralUtils.getAsStringValue((LiteralTree) initializer).replace("\\n", "\n");
+      constants.putIfAbsent(stringValue, tree);
       return;
     }
     super.visitVariable(tree);

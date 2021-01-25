@@ -1,0 +1,15 @@
+  public static String getAsStringValue(LiteralTree tree) {
+    if (!tree.is(Kind.TEXT_BLOCK)) {
+      return trimQuotes(tree.value());
+    }
+    String[] lines = tree.value().split("\r?\n");
+    int indent = indentationOfTextBlock(lines);
+
+    return Arrays.stream(lines)
+      .skip(1)
+      .map(LiteralUtils::removeTrailingSpaces)
+      .map(s -> stripIndent(indent, s))
+      .collect(Collectors.joining("\n"))
+      .replaceAll("\"\"\"$", "");
+  }
+

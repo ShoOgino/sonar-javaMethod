@@ -1,9 +1,10 @@
   @Override
   public void visitLiteral(LiteralTree tree) {
-    if (tree.is(Tree.Kind.STRING_LITERAL)) {
+    if (tree.is(Tree.Kind.STRING_LITERAL, Tree.Kind.TEXT_BLOCK)) {
       String literal = tree.value();
       if (literal.length() >= MINIMAL_LITERAL_LENGTH) {
-        occurrences.computeIfAbsent(literal, k -> new ArrayList<>()).add(tree);
+        String stringValue = LiteralUtils.getAsStringValue(tree).replace("\\n", "\n");
+        occurrences.computeIfAbsent(stringValue, key -> new ArrayList<>()).add(tree);
       }
     }
   }
