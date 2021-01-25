@@ -1,0 +1,8 @@
+  private static boolean containsWrongIndentation(LiteralTree textBlock) {
+    String[] lines = textBlock.value().split("\r?\n|\r");
+    int indent = LiteralUtils.indentationOfTextBlock(lines);
+    char indentationCharacter = indentationCharacter(lines);
+    return indent> 0 && Arrays.stream(lines).skip(1)
+      .anyMatch(line -> containsWrongIndentation(line, indent, indentationCharacter));
+  }
+
