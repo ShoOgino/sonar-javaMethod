@@ -1,9 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     LiteralTree literal = (LiteralTree) tree;
-    String literalValue = trimQuotes(literal.value());
-    Pattern controlCharacterPattern = isTextBlock(literal.value()) ? TEXT_BLOC_CONTROL_CHARACTERS : NON_TEXT_BLOC_CONTROL_CHARACTERS;
-    Matcher matcher = controlCharacterPattern.matcher(literalValue);
+    String literalValue = LiteralUtils.getAsStringValue(literal);
+    Matcher matcher = CONTROL_CHARACTERS_PATTERN.matcher(literalValue);
     if (matcher.find()) {
       reportIssue(literal,  String.format(MESSAGE_FORMAT, literalValue.codePointAt(matcher.start())));
     }
