@@ -1,0 +1,15 @@
+  private boolean concatStringLiterals(StringBuilder concatenatedContent, Tree tree) {
+    if (tree.is(Tree.Kind.PLUS)) {
+      BinaryExpressionTree binaryExpression = (BinaryExpressionTree) tree;
+      visitedNodes.add(binaryExpression);
+      return concatStringLiterals(concatenatedContent, ExpressionUtils.skipParentheses(binaryExpression.leftOperand())) &&
+        concatStringLiterals(concatenatedContent, ExpressionUtils.skipParentheses(binaryExpression.rightOperand()));
+    } else if (tree instanceof LiteralTree) {
+      String treeValue = LiteralUtils.getAsStringValue(((LiteralTree) tree));
+      concatenatedContent.append(treeValue);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
