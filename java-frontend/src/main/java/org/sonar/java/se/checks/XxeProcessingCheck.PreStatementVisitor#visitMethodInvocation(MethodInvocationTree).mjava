@@ -19,6 +19,9 @@
         for (XxeProperty property : PROPERTIES_TO_CHECK) {
           programState = checkArguments(programState, arguments, property);
         }
+      } else if (ENTITY_RESOLVER_SETTERS.matches(mit)) {
+        SymbolicValue mitResultSV = programState.peekValue(mit.arguments().size());
+        programState = programState.addConstraint(mitResultSV, XxeEntityResolver.CUSTOM_ENTITY_RESOLVER);
       }
 
       // Test if API is used without any protection against XXE.
