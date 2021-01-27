@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    MethodInvocationTree invocation = (MethodInvocationTree) tree;
+    if (APPEND_VALUE_MATCHER.matches(invocation)) {
+      if (depth == 0) {
+        ChainedInvocationVisitor visitor = new ChainedInvocationVisitor();
+        invocation.accept(visitor);
+        if (visitor.usesWeek && visitor.usesYear) {
+          if (visitor.usesWeekBasedYear && !visitor.usesWeekOfWeekBasedYear) {
+            reportIssue(visitor.primary, CHANGE_YEAR_FORMAT_TO_CHRONOFIELD_MESSAGE, visitor.secondaries, null);
+          } else if (!visitor.usesWeekBasedYear && visitor.usesWeekOfWeekBasedYear) {
+            reportIssue(visitor.primary, CHANGE_YEAR_FORMAT_WEEK_BASED_MESSAGE, visitor.secondaries, null);
+          }
+        }
+      }
+      depth++;
+    }
+  }
+

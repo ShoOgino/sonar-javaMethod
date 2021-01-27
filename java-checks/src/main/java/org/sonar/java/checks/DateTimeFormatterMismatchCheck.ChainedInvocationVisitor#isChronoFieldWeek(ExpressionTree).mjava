@@ -1,0 +1,12 @@
+    private static boolean isChronoFieldWeek(ExpressionTree argument) {
+      if (!argument.is(Tree.Kind.MEMBER_SELECT)) {
+        return false;
+      }
+      MemberSelectExpressionTree select = (MemberSelectExpressionTree) argument;
+      if (!select.symbolType().is("java.time.temporal.ChronoField")) {
+        return false;
+      }
+      IdentifierTree identifier = select.identifier();
+      return identifier.name().equals("ALIGNED_WEEK_OF_YEAR");
+    }
+
