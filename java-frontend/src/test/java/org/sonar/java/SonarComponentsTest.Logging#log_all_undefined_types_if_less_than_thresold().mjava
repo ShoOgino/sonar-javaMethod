@@ -1,0 +1,21 @@
+    @Test
+    void log_all_undefined_types_if_less_than_thresold() {
+      String source = generateSource(1);
+
+      // artificially populated the semantic errors with 1 unknown types and 2 errors
+      sonarComponents.collectUndefinedTypes(((JavaTree.CompilationUnitTreeImpl) JParserTestUtils.parse(source)).sema.undefinedTypes());
+
+      // triggers log
+      sonarComponents.logUndefinedTypes();
+
+      List<String> debugLogs = logTester.logs(LoggerLevel.DEBUG);
+      assertThat(debugLogs)
+        .hasSize(2)
+        .startsWith("Unresolved imports/types have been detected during analysis, with following errors:");
+
+      assertThat(debugLogs.get(1))
+        .doesNotContain("- ...")
+        .contains("- A cannot be resolved to a type")
+        .contains("- The import org.package01 cannot be resolved");
+    }
+

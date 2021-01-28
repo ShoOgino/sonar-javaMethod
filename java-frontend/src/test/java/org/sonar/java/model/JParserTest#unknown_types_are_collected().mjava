@@ -1,0 +1,7 @@
+  @Test
+  void unknown_types_are_collected() {
+    // import org.foo missing, type Bar unknown
+    CompilationUnitTree cut = test("import org.foo.Bar;\n class Foo {\n void foo(Bar b) {}\n }\n");
+    assertThat(((CompilationUnitTreeImpl) cut).sema.undefinedTypes).containsExactlyInAnyOrder("The import org.foo cannot be resolved", "Bar cannot be resolved to a type");
+  }
+

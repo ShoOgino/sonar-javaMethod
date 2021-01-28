@@ -6,7 +6,10 @@
         JavaAstScannerTest.this.context.setCancelled(true);
       }
     });
-    SonarComponents sonarComponents = new SonarComponents(null, context.fileSystem(), null, null, null);
+    DefaultFileSystem fileSystem = context.fileSystem();
+    ClasspathForMain classpathForMain = new ClasspathForMain(context.config(), fileSystem);
+    ClasspathForTest classpathForTest = new ClasspathForTest(context.config(), fileSystem);
+    SonarComponents sonarComponents = new SonarComponents(null, fileSystem, classpathForMain, classpathForTest, null);
     sonarComponents.setSensorContext(context);
     JavaAstScanner scanner = new JavaAstScanner(sonarComponents);
     scanner.setVisitorBridge(new VisitorsBridge(Collections.singletonList(visitor), new ArrayList<>(), sonarComponents));

@@ -1,0 +1,29 @@
+    @Test
+    void log_only_50_undefined_types() {
+      String source = generateSource(26);
+
+      // artificially populated the semantic errors with 26 unknown types and 52 errors
+      sonarComponents.collectUndefinedTypes(((JavaTree.CompilationUnitTreeImpl) JParserTestUtils.parse(source)).sema.undefinedTypes());
+
+      // triggers log
+      sonarComponents.logUndefinedTypes();
+
+      List<String> debugLogs = logTester.logs(LoggerLevel.DEBUG);
+      assertThat(debugLogs)
+        .hasSize(2)
+        .startsWith("Unresolved imports/types have been detected during analysis. Logging the 50 first:");
+      String list = debugLogs.get(1);
+
+      assertThat(list)
+        .endsWith("- ...")
+        .doesNotContain("- Y cannot be resolved to a type")
+        .doesNotContain("- Z cannot be resolved to a type");
+      for (int i = 0; i < 26; i++) {
+        char typeName = (char) ('A' + i);
+        assertThat(list).contains(String.format("- The import org.package%s cannot be resolved", formatter.format(i + 1)));
+        if (typeName < 'Y') {
+          assertThat(list).contains(String.format("- %c cannot be resolved to a type", typeName));
+        }
+      }
+    }
+

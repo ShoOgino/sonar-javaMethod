@@ -1,18 +1,15 @@
   @Test
   void should_throw_RecognitionException_in_case_of_syntax_error() {
-    try { // Note that without check for syntax errors will cause IndexOutOfBoundsException
-      test("class C");
-      fail("exception expected");
-    } catch (RecognitionException e) {
-      assertEquals(1, e.getLine());
-      assertEquals("Parse error at line 1 column 6: Syntax error, insert \"ClassBody\" to complete CompilationUnit", e.getMessage());
-    }
-    try { // Note that syntax tree will be correct even in presence of this syntax error
-      // javac doesn't produce error in this case, however this is not allowed according to JLS 12
-      test("import a; ; import b;");
-      fail("exception expected");
-    } catch (RecognitionException e) {
-      assertEquals("Parse error at line 1 column 10: Syntax error on token \";\", delete this token", e.getMessage());
-    }
+    // Note that without check for syntax errors will cause IndexOutOfBoundsException
+    RecognitionException e1 = assertThrows(RecognitionException.class,
+      () -> test("class C"),
+      "Parse error at line 1 column 6: Syntax error, insert \"ClassBody\" to complete CompilationUnit");
+    assertThat(e1.getLine()).isEqualTo(1);
+
+    // Note that syntax tree will be correct even in presence of this syntax error
+    // javac doesn't produce error in this case, however this is not allowed according to JLS 12
+    assertThrows(RecognitionException.class,
+      () -> test("import a; ; import b;"),
+      "Parse error at line 1 column 10: Syntax error on token \";\", delete this token");
   }
 
