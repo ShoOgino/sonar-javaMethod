@@ -8,12 +8,13 @@
       // triggers log
       sonarComponents.logUndefinedTypes();
 
-      List<String> debugLogs = logTester.logs(LoggerLevel.DEBUG);
-      assertThat(debugLogs)
-        .hasSize(2)
-        .startsWith("Unresolved imports/types have been detected during analysis, with following errors:");
+      assertThat(logTester.logs(LoggerLevel.WARN)).containsExactly("Unresolved imports/types have been detected during analysis. Enable DEBUG mode to see them.");
 
-      assertThat(debugLogs.get(1))
+      List<String> debugLogs = logTester.logs(LoggerLevel.DEBUG);
+      assertThat(debugLogs).hasSize(1);
+
+      assertThat(debugLogs.get(0))
+        .startsWith("Unresolved imports/types:")
         .doesNotContain("- ...")
         .contains("- A cannot be resolved to a type")
         .contains("- The import org.package01 cannot be resolved");
