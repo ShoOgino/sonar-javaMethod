@@ -1,0 +1,14 @@
+  private String getTokenSignedWithNone() throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException {
+    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+    DESKeySpec dks = new DESKeySpec("mysuperkey".getBytes());
+    Key key = keyFactory.generateSecret(dks);
+
+    return Jwts.builder() // Compliant, not accepted by JWTK  (throws IllegalArgumentException).
+      .setId("123")
+      .setSubject(LOGIN)
+      .setIssuedAt(new Date())
+      .setExpiration(addMinutes(new Date(), 20))
+      .signWith(SignatureAlgorithm.NONE, key)
+      .compact();
+  }
+

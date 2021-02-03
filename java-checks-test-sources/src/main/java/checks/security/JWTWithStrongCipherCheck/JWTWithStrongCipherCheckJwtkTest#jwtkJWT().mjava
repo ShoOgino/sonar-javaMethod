@@ -1,0 +1,24 @@
+  public void jwtkJWT() {
+    String tokenNotSigned = getTokenNotSigned();
+    String tokenSigned = getTokenSigned();
+
+    // PARSE WITHOUT SIGNATURE TESTCASES
+    Object body1 = Jwts.parser().parse(tokenNotSigned).getBody(); // Noncompliant [[sc=34;ec=39]] {{The JWT signature (JWS) should be verified before using this token.}}
+    Object body2 = Jwts.parser().parse(tokenSigned).getBody(); // Noncompliant
+
+    // Despite the fact that we set a signing key, parse is subject to the none algorithm. See rule description.
+    Object body3 = Jwts.parser().setSigningKey(SECRET_KEY).parse(tokenNotSigned).getBody(); // Noncompliant [[sc=60;ec=65]] {{The JWT signature (JWS) should be verified before using this token.}}
+    Object body4 = Jwts.parser().setSigningKey(SECRET_KEY).parse(tokenSigned).getBody(); // Noncompliant
+
+    // parseClaimsJws WITH SIGNATURE TESTCASES
+    Object body5 = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(tokenNotSigned).getBody(); // Compliant
+    Object body6 = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(tokenSigned).getBody(); // Compliant
+
+    // parseClaimsJwt WITHOUT SIGNATURE TESTCASES
+    Object body7 = Jwts.parser().parseClaimsJwt(tokenNotSigned).getBody(); // Compliant
+    Object body8 = Jwts.parser().parseClaimsJwt(tokenSigned).getBody(); // Compliant
+
+    JwtParser parser = Jwts.parser();
+    parser.parse(tokenSigned); // Noncompliant
+  }
+

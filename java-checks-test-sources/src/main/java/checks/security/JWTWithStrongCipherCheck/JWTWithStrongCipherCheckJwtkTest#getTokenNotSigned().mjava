@@ -1,0 +1,27 @@
+  private static String getTokenNotSigned() {
+    JwtBuilder builder1 = Jwts.builder();
+    builder1.setIssuedAt(new Date());
+    String token1 = builder1.compact(); // Noncompliant
+
+    JwtBuilder builder2 = Jwts.builder().setIssuedAt(new Date());
+    String token2 = builder2.compact(); // Noncompliant
+
+    JwtBuilder builder3 = Jwts.builder();
+    String token3 = builder3.setIssuedAt(new Date()).compact(); // Noncompliant
+
+    JwtBuilder builder4;
+    builder4 = Jwts.builder();
+    String token4 = builder4.compact(); // Noncompliant
+
+    JwtBuilder builder5 = Jwts.builder();
+    builder5 = builder5.setIssuedAt(new Date());
+    String token5 = builder5.compact(); // Noncompliant
+
+    return Jwts.builder()
+      .setId("123")
+      .setSubject(LOGIN)
+      .setIssuedAt(new Date())
+      .setExpiration(addMinutes(new Date(), 20))
+      .compact(); // Noncompliant [[sc=8;ec=15]] {{Sign this token using a strong cipher algorithm.}}
+  }
+

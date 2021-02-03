@@ -1,0 +1,12 @@
+  private static boolean declarationIsSigned(Symbol symbol) {
+    if (isLocalVariable(symbol)) {
+      Tree declaration = symbol.declaration();
+      if (declaration instanceof VariableTree) {
+        ExpressionTree initializer = ((VariableTree) declaration).initializer();
+        return initializer instanceof MethodInvocationTree && isSigned((MethodInvocationTree) initializer);
+      }
+    }
+    // Can be signed anywhere (field, other file), we consider it as signed
+    return true;
+  }
+

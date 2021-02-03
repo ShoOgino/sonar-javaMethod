@@ -1,0 +1,55 @@
+  private static String getTokenSigned() {
+    String token0 = Jwts.builder()
+      .setId("123")
+      .setSubject(LOGIN)
+      .setIssuedAt(new Date())
+      .setExpiration(addMinutes(new Date(), 20))
+      .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+      .compact(); // Compliant
+
+    JwtBuilder builder1 = Jwts.builder();
+    builder1 = builder1.setIssuedAt(new Date());
+    builder1.signWith(SignatureAlgorithm.HS256, SECRET_KEY);
+    String token1 = builder1.compact(); // Compliant
+
+    JwtBuilder builder2 = Jwts.builder();
+    builder2 = signTheToken(builder2);
+    String token2 = builder2.compact(); // Compliant, signed somewhere else.
+
+    JwtBuilder builder3 = Jwts.builder();
+    builder3.setIssuedAt(new Date());
+    if (SECRET_KEY.equals("1234")) {
+      builder3.signWith(SignatureAlgorithm.HS256, SECRET_KEY);
+    }
+    String token3 = builder3.compact(); // Compliant, signed conditionally, we do not report an issue to avoid FP.
+
+    JwtBuilder builder4 = Jwts.builder();
+    builder4 = addDateToToken(builder4);
+    String token4 = builder4.compact(); // Compliant, FN, we do not report an issue to avoid FP.
+
+    JwtBuilder builder5 = Jwts.builder();
+    builder5.signWith(SignatureAlgorithm.HS256, SECRET_KEY);
+    String token5 = builder5.setIssuedAt(new Date()).compact(); // Compliant
+
+    JwtBuilder builder6 = Jwts.builder().setIssuedAt(new Date());
+    String token6 = builder6.signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(); // Compliant
+
+    JwtBuilder builder7 = Jwts.builder();
+    builder7.setIssuedAt(new Date())
+      .signWith(SignatureAlgorithm.HS256, SECRET_KEY);
+    String token7 = builder7.compact(); // Compliant
+
+    JwtBuilder builder8 = Jwts.builder().signWith(SignatureAlgorithm.HS256, SECRET_KEY);
+    builder8.setIssuedAt(new Date());
+    String token8 = builder8.compact(); // Compliant
+
+    JwtBuilder builder9;
+    builder9 = Jwts.builder();
+    String token9 = builder9.signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+
+    String token10 = builderAsField.compact(); // Compliant, field can be signed anywhere
+    String token11 = builderAsFieldNotInitialized.compact(); // Compliant, field can be signed anywhere
+
+    return getTokenBuilder().compact(); // Compliant, FN, created somewhere else.
+  }
+

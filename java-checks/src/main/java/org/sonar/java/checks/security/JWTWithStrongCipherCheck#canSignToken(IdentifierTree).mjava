@@ -1,0 +1,7 @@
+  private static boolean canSignToken(IdentifierTree tokenIdentifier) {
+    Tree parent = tokenIdentifier.parent();
+    // When given as argument, we consider it as signed to avoid FP.
+    return (parent != null && parent.is(Tree.Kind.ARGUMENTS)) ||
+      MethodTreeUtils.subsequentMethodInvocation(tokenIdentifier, JWTK_JJWT_SIGN_WITH).isPresent();
+  }
+

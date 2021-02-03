@@ -1,0 +1,23 @@
+  private static boolean isSigned(MethodInvocationTree mit) {
+    if (JWTK_JJWT_SIGN_WITH.matches(mit)) {
+      return true;
+    }
+    if (JWTK_JJWT_BUILDER.matches(mit)) {
+      // We reach the creation of the builder without signing the token
+      return false;
+    }
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
+        return isSigned((MethodInvocationTree) expression);
+      } else if (expression.is(Tree.Kind.IDENTIFIER)) {
+        Symbol symbol = ((IdentifierTree) expression).symbol();
+        return symbol.usages().stream().anyMatch(JWTWithStrongCipherCheck::canSignToken) || declarationIsSigned(symbol);
+      }
+    }
+
+    // The token is created somewhere else, we consider it as signed to avoid FP.
+    return true;
+  }
+

@@ -1,0 +1,8 @@
+  private void handleJwtkJwt(MethodInvocationTree mit) {
+    if (JWTK_JJWT_PARSE.matches(mit)) {
+      reportIssue(ExpressionUtils.methodName(mit), "The JWT signature (JWS) should be verified before using this token.");
+    } else if (JWTK_JJWT_COMPACT.matches(mit) && !isSigned(mit)) {
+      reportIssue(ExpressionUtils.methodName(mit), "Sign this token using a strong cipher algorithm.");
+    }
+  }
+
