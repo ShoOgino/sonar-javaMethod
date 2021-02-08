@@ -1,0 +1,96 @@
+  /**
+   * https://github.com/samskivert/jmustache
+   */
+  public void jMustache(boolean arg) {
+    Mustache.compiler()
+      .escapeHTML(false) // Noncompliant [[sc=19;ec=24]] {{Make sure disabling auto-escaping feature is safe here.}}
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .escapeHTML(true) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .escapeHTML(arg) // Compliant, unknown value
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(Escapers.NONE) // Noncompliant [[sc=20;ec=33]] {{Make sure disabling auto-escaping feature is safe here.}}
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(NONE) // Noncompliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(com.samskivert.mustache.Escapers.NONE) // Noncompliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(MyConstant.NONE) // Compliant, user defined
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(Escapers.HTML) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(HTML) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(com.samskivert.mustache.Escapers.HTML) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(Escapers.simple()) // Noncompliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(simple()) // Noncompliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(com.samskivert.mustache.Escapers.simple()) // Noncompliant
+      .compile(template)
+      .execute(context);
+
+    String[][] escapes = {{"[", "[["}, {"]", "]]"}};
+    Mustache.compiler()
+      .withEscaper(Escapers.simple(escapes))  // Compliant, as soon as "Escapers.simple" has an argument, as it means that the dev
+                                              // is explicitly listing what he wants to escape or not.
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(new MyEscaper()) // Compliant, user defined escaper
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(MyConstant.mySimple()) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler()
+      .withEscaper(MyConstant.mySimple("a")) // Compliant
+      .compile(template)
+      .execute(context);
+
+    Mustache.compiler() // Compliant, escaped by default.
+      .compile(template)
+      .execute(context);
+  }
+

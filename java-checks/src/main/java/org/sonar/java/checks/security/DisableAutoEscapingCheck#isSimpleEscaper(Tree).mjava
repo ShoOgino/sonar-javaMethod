@@ -1,0 +1,9 @@
+  private static boolean isSimpleEscaper(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      // Escapers.simple has a varargs argument, we have to rely on the list of arguments and cannot use the matcher.
+      return mit.arguments().isEmpty() && MUSTACHE_ESCAPERS_SIMPLE.matches(mit);
+    }
+    return false;
+  }
+

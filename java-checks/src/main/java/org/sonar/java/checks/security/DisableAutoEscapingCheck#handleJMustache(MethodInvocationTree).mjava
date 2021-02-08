@@ -1,0 +1,14 @@
+  private void handleJMustache(MethodInvocationTree mit) {
+    if (MUSTACHE_COMPILER_ESCAPE_HTML.matches(mit)) {
+      ExpressionTree argument = mit.arguments().get(0);
+      argument.asConstant(Boolean.class)
+        .filter(Boolean.FALSE::equals)
+        .ifPresent(cst -> reportIssue(argument, MESSAGE));
+    } else if (MUSTACHE_COMPILER_WITH_ESCAPER.matches(mit)) {
+      ExpressionTree argument = mit.arguments().get(0);
+      if (isSimpleEscaper(argument) || isFieldFromClassWithName(argument, MUSTACHE_ESCAPERS, "NONE")) {
+        reportIssue(argument, MESSAGE);
+      }
+    }
+  }
+
