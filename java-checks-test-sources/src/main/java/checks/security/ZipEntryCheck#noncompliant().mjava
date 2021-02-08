@@ -1,0 +1,15 @@
+  public void noncompliant() throws Exception {
+
+    File f = new File("/home/eric/testzipbomb/zbsm.zip");
+    ZipFile zipFile = new ZipFile(f);
+    Enumeration<? extends ZipEntry> entries = zipFile.entries(); // Noncompliant
+
+    while (entries.hasMoreElements()) {
+      ZipEntry ze = entries.nextElement();
+
+      if (ze.getSize() > 555) { // Noncompliant
+        // die
+      }
+    }
+  }
+

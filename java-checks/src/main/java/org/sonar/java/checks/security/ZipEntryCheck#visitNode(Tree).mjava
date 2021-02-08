@@ -1,0 +1,20 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.METHOD)) {
+      isSafe = false;
+      calls.clear();
+      insideMethod = true;
+    } else {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if (insideMethod && INPUT_STREAM_READ.matches(mit)) {
+        isSafe = true;
+      } else if (SENSITIVE_METHODS.matches(mit)) {
+        if (insideMethod) {
+          calls.add(mit);
+        } else {
+          report(mit);
+        }
+      }
+    }
+  }
+
