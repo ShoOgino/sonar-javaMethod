@@ -1,0 +1,11 @@
+  private static Optional<Symbol> getInvokedSymbol(MethodInvocationTree mit) {
+    ExpressionTree methodSelect = mit.methodSelect();
+    if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+      ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+      if (expression.is(Tree.Kind.IDENTIFIER)) {
+        return Optional.of(((IdentifierTree) expression).symbol());
+      }
+    }
+    return Optional.empty();
+  }
+

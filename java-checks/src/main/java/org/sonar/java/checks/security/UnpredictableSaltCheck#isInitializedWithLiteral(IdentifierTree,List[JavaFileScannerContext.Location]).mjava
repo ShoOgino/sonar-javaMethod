@@ -1,0 +1,20 @@
+  private static boolean isInitializedWithLiteral(IdentifierTree identifier, List<JavaFileScannerContext.Location> locations) {
+    Symbol symbol = identifier.symbol();
+    if (isNotReassigned(symbol)) {
+      Tree declaration = symbol.declaration();
+      if (declaration != null && declaration.is(Tree.Kind.VARIABLE)) {
+        ExpressionTree initializer = ((VariableTree) declaration).initializer();
+        if (initializer == null) {
+          return false;
+        }
+        ExpressionTree bareInitializer = ExpressionUtils.skipParentheses(initializer);
+        if (bareInitializer.is(Tree.Kind.METHOD_INVOCATION)) {
+          MethodInvocationTree methodInvocationTree = (MethodInvocationTree) bareInitializer;
+          locations.add(new JavaFileScannerContext.Location("Salt initialized with a constant.", methodInvocationTree));
+          return isInitializedWithGetBytes(methodInvocationTree);
+        }
+      }
+    }
+    return false;
+  }
+

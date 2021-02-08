@@ -1,0 +1,26 @@
+  public void testNonRandomPBESpec(char[] chars, String str) throws NoSuchAlgorithmException {
+    byte[] salt = "notrandom".getBytes(); // secondary location
+    PBEKeySpec spec = new PBEKeySpec(chars, salt, 1); // Noncompliant [[sc=23;ec=53;secondary=-1]] {{Make this salt unpredictable.}}
+    
+    final byte[] finalSalt = "notrandom".getBytes(); //secondary location
+    PBEKeySpec specFinal = new PBEKeySpec(chars, finalSalt, 1); // Noncompliant [[sc=28;ec=63;secondary=-1]] {{Make this salt unpredictable.}}
+    
+    byte[] salt1 = this.secureSalt();
+    PBEKeySpec spec2 = new PBEKeySpec(chars, salt1, 2); // Compliant
+
+    byte[] salt1111 = secureSalt();
+    PBEKeySpec spec22222 = new PBEKeySpec(chars, salt1111, 2); // Compliant
+
+    byte[] salt2 = this.secureSalt();
+    PBEKeySpec spec3 = new PBEKeySpec(chars, secureSalt(), 2); // Compliant
+
+    byte[] salt3 = new byte[]{};
+    PBEKeySpec spec4 = new PBEKeySpec(chars, salt3, 2); // Compliant
+
+    PBEKeySpec spec5 = new PBEKeySpec(chars, "notrandom".getBytes(), 2); // Noncompliant {{Make this salt unpredictable.}}
+    PBEKeySpec spec5555 = new PBEKeySpec(chars, ("notrandom".getBytes()), 2); // Noncompliant {{Make this salt unpredictable.}}
+    
+    PBEKeySpec spec6 = new PBEKeySpec(chars, new MyMessageDigest("").engineDigest(), 2); // Compliant
+    PBEKeySpec spec666 = new PBEKeySpec(chars, str.getBytes(), 2); // Compliant
+  }
+

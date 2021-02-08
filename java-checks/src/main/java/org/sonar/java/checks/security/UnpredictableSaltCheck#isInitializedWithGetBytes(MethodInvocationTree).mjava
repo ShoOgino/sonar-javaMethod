@@ -1,0 +1,11 @@
+  private static boolean isInitializedWithGetBytes(MethodInvocationTree mit) {
+    if (!GET_BYTES.matches(mit)) {
+      return false;
+    }
+    ExpressionTree methodSelect = (mit).methodSelect();
+    Preconditions.checkState(methodSelect.is(Tree.Kind.MEMBER_SELECT),
+      "'getBytes' method invocation should have a MEMBER_SELECT kind as expression.");
+    ExpressionTree expression = ((MemberSelectExpressionTree) methodSelect).expression();
+    return expression.asConstant().isPresent();
+  }
+
