@@ -8,15 +8,16 @@
       if (sqlStringArg.isPresent()) {
         ExpressionTree sqlArg = sqlStringArg.get();
         if (isDynamicConcatenation(sqlArg)) {
-          reportIssue(sqlArg, "Ensure that string concatenation is required and safe for this SQL query.");
+          reportIssue(sqlArg, MAIN_MESSAGE);
         } else if (sqlArg.is(Tree.Kind.IDENTIFIER)) {
-          Symbol symbol = ((IdentifierTree) sqlArg).symbol();
+          IdentifierTree identifierTree = (IdentifierTree) sqlArg;
+          Symbol symbol = identifierTree.symbol();
           ExpressionTree initializerOrExpression = getInitializerOrExpression(symbol.declaration());
           List<AssignmentExpressionTree> reassignments = getReassignments(symbol.owner().declaration(), symbol.usages());
 
           if ((initializerOrExpression != null && isDynamicConcatenation(initializerOrExpression)) ||
             reassignments.stream().anyMatch(SQLInjectionCheck::isDynamicPlusAssignment)) {
-            reportIssue(sqlArg, "Ensure that string concatenation is required and safe for this SQL query.", secondaryLocations(initializerOrExpression, reassignments), null);
+            reportIssue(sqlArg, MAIN_MESSAGE, secondaryLocations(initializerOrExpression, reassignments, identifierTree.name()), null);
           }
         }
       }
