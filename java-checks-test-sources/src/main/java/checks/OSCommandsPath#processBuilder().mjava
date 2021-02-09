@@ -1,0 +1,39 @@
+  private void processBuilder() {
+    new ProcessBuilder(("make"));  // Noncompliant [[sc=25;ec=31]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("make");  // Noncompliant [[sc=24;ec=30]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("m../ake");   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("mak./e");   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("bin~/make");   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("7:\\\\make");  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("m..\\ake");  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("ma.\\ke");  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("SERVER\\make");  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder("/usr/bin/make");
+    new ProcessBuilder("/usr/bin/make -j8");
+    new ProcessBuilder("/usr/bin/make", "-j8");
+    new ProcessBuilder("../make");
+    new ProcessBuilder("./make");
+    new ProcessBuilder("~/bin/make");
+    new ProcessBuilder("Z:\\make");
+    new ProcessBuilder("..\\make");
+    new ProcessBuilder(".\\make");
+    new ProcessBuilder("\\\\SERVER\\make");
+
+    new ProcessBuilder(NON_COMPLIANT_COMMAND);  // Noncompliant [[sc=24;ec=45]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_UNIX_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_UNIX_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_UNIX_HOME);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_WINDOWS_ABSOLUTE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_WINDOWS_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_WINDOWS_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(NON_COMPLIANT_COMMAND_WINDOWS_NETWORK);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    new ProcessBuilder(COMPLIANT_COMMAND_UNIX_ABSOLUTE);
+    new ProcessBuilder(COMPLIANT_COMMAND_UNIX_PARENT);
+    new ProcessBuilder(COMPLIANT_COMMAND_UNIX_CURRENT);
+    new ProcessBuilder(COMPLIANT_COMMAND_UNIX_HOME);
+    new ProcessBuilder(COMPLIANT_COMMAND_WINDOWS_ABSOLUTE);
+    new ProcessBuilder(COMPLIANT_COMMAND_WINDOWS_PARENT);
+    new ProcessBuilder(COMPLIANT_COMMAND_WINDOWS_CURRENT);
+    new ProcessBuilder(COMPLIANT_COMMAND_WINDOWS_NETWORK);
+  }
+

@@ -1,0 +1,66 @@
+  private void execArray() throws IOException {
+    Runtime.getRuntime().exec((new String[]{"make"}));  // Noncompliant [[sc=32;ec=52]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{("make")});  // Noncompliant [[sc=31;ec=53]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"make"});  // Noncompliant [[sc=31;ec=51]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"usr/bin/make"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"m./ake"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"m../ake"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"bin~/make"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"7:\\\\../ake"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"SERVER\\make"});  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{});
+    Runtime.getRuntime().exec(new String[]{"/usr/bin/make"});
+    Runtime.getRuntime().exec(new String[]{"/usr/bin/make", "-j8"});
+    Runtime.getRuntime().exec(new String[]{"../make"});
+    Runtime.getRuntime().exec(new String[]{"./make"});
+    Runtime.getRuntime().exec(new String[]{"~/bin/make"});
+    Runtime.getRuntime().exec(new String[]{"Z:\\make"});
+    Runtime.getRuntime().exec(new String[]{"..\\make"});
+    Runtime.getRuntime().exec(new String[]{".\\make"});
+    Runtime.getRuntime().exec(new String[]{"\\\\SERVER\\make"});
+    Runtime.getRuntime().exec(new String[]{File.pathSeparator});
+
+
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_UNIX_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_UNIX_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_UNIX_HOME);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_WINDOWS_ABSOLUTE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_WINDOWS_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_WINDOWS_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY_WINDOWS_NETWORK);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_EMPTY);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_UNIX_PARENT);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_UNIX_CURRENT);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_UNIX_HOME);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_WINDOWS_ABSOLUTE);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_WINDOWS_PARENT);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_WINDOWS_CURRENT);
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY_WINDOWS_NETWORK);
+
+    String[] nonCompliantCommandArray = new String[]{"make"};
+    Runtime.getRuntime().exec(nonCompliantCommandArray); // Noncompliant [[sc=31;ec=55]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    String[] compliantCommandArray = new String[]{"/usr/bin/make"};
+    Runtime.getRuntime().exec(compliantCommandArray);
+
+
+    Runtime.getRuntime().exec(new String[]{"make"}, ENVIRONMENT);  // Noncompliant [[sc=31;ec=51]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"/usr/bin/make"}, ENVIRONMENT);
+
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY, ENVIRONMENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY, ENVIRONMENT); // Compliant FN Cannot read from non-final variables
+
+    Runtime.getRuntime().exec(nonCompliantCommandArray, ENVIRONMENT); // Noncompliant [[sc=31;ec=55]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(compliantCommandArray, ENVIRONMENT);
+
+    Runtime.getRuntime().exec(new String[]{"make"}, ENVIRONMENT, FILE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(new String[]{"/usr/bin/make"}, ENVIRONMENT, FILE);
+
+    Runtime.getRuntime().exec(NON_COMPLIANT_COMMAND_ARRAY, ENVIRONMENT, FILE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(COMPLIANT_COMMAND_ARRAY, ENVIRONMENT, FILE); // Compliant FN Cannot read from non-final variables
+
+    Runtime.getRuntime().exec(nonCompliantCommandArray, ENVIRONMENT, FILE); // Noncompliant [[sc=31;ec=55]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    Runtime.getRuntime().exec(compliantCommandArray, ENVIRONMENT, FILE);
+  }
+

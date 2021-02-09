@@ -1,0 +1,16 @@
+  private static boolean isListCommandValid(MethodInvocationTree invocation) {
+    Arguments listArguments = invocation.arguments();
+    if (!LIST_CREATION_MATCHER.matches(invocation) || listArguments.isEmpty()) {
+      return true;
+    }
+    ExpressionTree firstArgument = ExpressionUtils.skipParentheses(listArguments.get(0));
+    if (firstArgument.is(Tree.Kind.STRING_LITERAL)) {
+      return isStringLiteralCommandValid(firstArgument);
+    }
+    if (firstArgument.is(Tree.Kind.IDENTIFIER)) {
+      IdentifierTree identifier = (IdentifierTree) firstArgument;
+      return isIdentifierCommandValid(identifier);
+    }
+    return true;
+  }
+

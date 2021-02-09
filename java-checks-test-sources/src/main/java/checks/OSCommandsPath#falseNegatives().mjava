@@ -1,0 +1,37 @@
+  public void falseNegatives() throws IOException {
+    String nonCompliantCommand = "make";
+    Runtime.getRuntime().exec(nonCompliantCommand); // Compliant FN Cannot read from non-final strings
+    String compliantCommand = "/usr/bin/make";
+    Runtime.getRuntime().exec(compliantCommand);
+    Runtime.getRuntime().exec(nonCompliantCommand, ENVIRONMENT); // Compliant FN Cannot read from non-final strings
+    Runtime.getRuntime().exec(compliantCommand, ENVIRONMENT); // Compliant FN Cannot read from non-final strings
+    Runtime.getRuntime().exec(nonCompliantCommand, ENVIRONMENT, FILE); // Compliant FN Cannot read from non-final strings
+    Runtime.getRuntime().exec(compliantCommand, ENVIRONMENT, FILE); // Compliant FN Cannot read from non-final strings
+    Runtime.getRuntime().exec(new String[]{System.lineSeparator()});  // Compliant FN Not resolving method calls
+
+    String[] nonCompliantCommandArray = new String[]{"make"};
+    nonCompliantCommandArray = new String[]{"make"};
+    Runtime.getRuntime().exec(nonCompliantCommandArray); // Compliant FN Cannot read from non-final variables
+    String[] compliantCommandArray = new String[]{"/usr/bin/make"};
+    compliantCommandArray = new String[]{"/usr/bin/make"};
+    Runtime.getRuntime().exec(compliantCommandArray); // Compliant FN Cannot read from non-final variablesRuntime.getRuntime().exec(nonCompliantCommandArray, ENVIRONMENT); // Compliant FN Cannot read from non-final variables
+    Runtime.getRuntime().exec(compliantCommandArray, ENVIRONMENT); // Compliant FN Cannot read from non-final variables
+    Runtime.getRuntime().exec(nonCompliantCommandArray, ENVIRONMENT, FILE); // Compliant FN Cannot read from non-final variables
+    Runtime.getRuntime().exec(compliantCommandArray, ENVIRONMENT, FILE); // Compliant FN Cannot read from non-final variables
+
+    ProcessBuilder builder = new ProcessBuilder();
+    builder.command(nonCompliantCommand); // Compliant FN Cannot read from non-final strings
+    builder.command(compliantCommand);
+    builder.command(COMPLIANT_COMMAND_LIST_VARIABLE);  // Compliant but we don't look into member select
+    new ProcessBuilder(COMPLIANT_COMMAND_LIST_VARIABLE);  // Compliant but we don't look into member select
+    new ProcessBuilder(Stream.of("make").collect(Collectors.toList()));
+
+    Runtime.getRuntime().exec(NULL_INITIALIZED_COMMAND);
+    Runtime.getRuntime().exec(NULL_INITIALIZED_COMMAND_ARRAY);
+    new ProcessBuilder(NULL_INITIALIZED_COMMAND);
+    new ProcessBuilder(NULL_INITIALIZED_COMMAND_LIST);
+    new ProcessBuilder().command(NULL_INITIALIZED_COMMAND);
+    new ProcessBuilder().command(NULL_INITIALIZED_COMMAND_ARRAY);
+    new ProcessBuilder().command(NULL_INITIALIZED_COMMAND_LIST);
+  }
+

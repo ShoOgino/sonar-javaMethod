@@ -1,0 +1,60 @@
+  private void commandList() {
+    ProcessBuilder builder = new ProcessBuilder();
+    builder.command((Arrays.asList("make")));  // Noncompliant [[sc=22;ec=43]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList(("make")));  // Noncompliant [[sc=21;ec=44]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("make"));  // Noncompliant [[sc=21;ec=42]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("m../ake"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("mak./e"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("bin~/make"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("7:\\\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("m..\\ake"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("ma.\\ke"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("SERVER\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Arrays.asList("/usr/bin/make"));
+    builder.command(Arrays.asList("/usr/bin/make -j8"));
+    builder.command(Arrays.asList("/usr/bin/make", "-j8"));
+    builder.command(Arrays.asList("../make"));
+    builder.command(Arrays.asList("./make"));
+    builder.command(Arrays.asList("~/bin/make"));
+    builder.command(Arrays.asList("Z:\\make"));
+    builder.command(Arrays.asList("..\\make"));
+    builder.command(Arrays.asList(".\\make"));
+    builder.command(Arrays.asList("\\\\SERVER\\make"));
+
+    builder.command(NON_COMPLIANT_COMMAND_LIST);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_UNIX_HOME);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_PARENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(NON_COMPLIANT_COMMAND_LIST_VARIABLE);  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_PARENT);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_CURRENT);
+    builder.command(COMPLIANT_COMMAND_LIST_UNIX_HOME);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_ABSOLUTE);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_PARENT);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_CURRENT);
+    builder.command(COMPLIANT_COMMAND_LIST_WINDOWS_NETWORK);
+
+    builder.command(Collections.singletonList("make"));  // Noncompliant [[sc=21;ec=54]] {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("m../ake"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("mak./e"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("bin~/make"));   // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("7:\\\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("m..\\ake"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("ma.\\ke"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("SERVER\\make"));  // Noncompliant {{Make sure the "PATH" used to find this command includes only what you intend.}}
+    builder.command(Collections.singletonList("/usr/bin/make"));
+    builder.command(Collections.singletonList("/usr/bin/make -j8"));
+    builder.command(Collections.singletonList("../make"));
+    builder.command(Collections.singletonList("./make"));
+    builder.command(Collections.singletonList("~/bin/make"));
+    builder.command(Collections.singletonList("Z:\\make"));
+    builder.command(Collections.singletonList("..\\make"));
+    builder.command(Collections.singletonList(".\\make"));
+    builder.command(Collections.singletonList("\\\\SERVER\\make"));
+  }
+

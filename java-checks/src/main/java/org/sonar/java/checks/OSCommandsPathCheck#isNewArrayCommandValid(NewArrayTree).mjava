@@ -1,0 +1,12 @@
+  private static boolean isNewArrayCommandValid(NewArrayTree newArray) {
+    ListTree<ExpressionTree> initializers = newArray.initializers();
+    if (initializers.isEmpty()) {
+      return true;
+    }
+    ExpressionTree firstArgument = ExpressionUtils.skipParentheses(initializers.get(0));
+    if (firstArgument.is(Tree.Kind.STRING_LITERAL)) {
+      return isStringLiteralCommandValid(firstArgument);
+    }
+    return true;
+  }
+

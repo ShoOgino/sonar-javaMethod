@@ -1,0 +1,13 @@
+  private static Optional<ExpressionTree> extractInitializer(Symbol symbol) {
+    Tree declaration = symbol.declaration();
+    if (declaration == null || !declaration.is(Tree.Kind.VARIABLE)) {
+      return Optional.empty();
+    }
+    VariableTree variable = (VariableTree) declaration;
+    ExpressionTree initializer = variable.initializer();
+    if (initializer == null) {
+      return Optional.empty();
+    }
+    return Optional.of(initializer);
+  }
+

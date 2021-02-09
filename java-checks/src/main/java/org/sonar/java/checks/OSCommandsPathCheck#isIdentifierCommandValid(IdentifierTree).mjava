@@ -1,0 +1,22 @@
+  private static boolean isIdentifierCommandValid(IdentifierTree identifier) {
+    Symbol symbol = identifier.symbol();
+    if (!isNotReassigned(symbol)) {
+      return true;
+    }
+    Type type = symbol.type();
+    if (type.is(STRING_TYPE)) {
+      return isStringLiteralCommandValid(identifier);
+    }
+    Optional<ExpressionTree> extraction = extractInitializer(symbol);
+    if (extraction.isPresent()) {
+      ExpressionTree initializer = extraction.get();
+      if (initializer.is(Tree.Kind.NEW_ARRAY)) {
+        return isNewArrayCommandValid((NewArrayTree) initializer);
+      }
+      if (initializer.is(Tree.Kind.METHOD_INVOCATION)) {
+        return isListCommandValid((MethodInvocationTree) initializer);
+      }
+    }
+    return true;
+  }
+
