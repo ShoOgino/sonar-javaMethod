@@ -1,0 +1,25 @@
+  @Override
+  public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+    ((HttpServletResponse) servletResponse).setHeader("Server", ""); // Noncompliant
+    ((HttpServletResponse) servletResponse).addHeader("x-powered-by", ""); // Noncompliant
+    ((HttpServletResponseWrapper) servletResponse).setHeader("x-powered-by", ""); // Noncompliant
+    ((HttpServletResponseWrapper) servletResponse).addHeader("server", ""); // Noncompliant
+
+    ((org.apache.wicket.request.http.WebResponse) servletResponse).addHeader("x-powered-by",""); // Noncompliant
+    ((org.apache.wicket.request.http.WebResponse) servletResponse).setHeader("Server",""); // Noncompliant
+
+    ((BufferedWebResponse) servletResponse).addHeader("x-powered-by",""); // Noncompliant
+    ((BufferedWebResponse) servletResponse).setHeader("Server",""); // Noncompliant
+
+    ((BufferedWebResponse) servletResponse).addHeader("x-powered-by2",""); // Compliant
+    ((BufferedWebResponse) servletResponse).setHeader("Server2",""); // Compliant
+
+    ((org.apache.wicket.protocol.http.servlet.ServletWebResponse) servletResponse).addHeader("Server",""); // Noncompliant
+    ((org.apache.wicket.protocol.http.servlet.ServletWebResponse) servletResponse).setHeader("x-powered-by",""); // Noncompliant
+
+    ((org.rapidoid.http.Resp) servletResponse).header("SeRver", "XXX"); // Noncopliant
+    ((org.rapidoid.http.Resp) servletResponse).header("x-powered-by", "XXX"); // Noncopliant
+    ((org.rapidoid.http.Resp) servletResponse).header("header", "XXX"); // Compliant
+
+  }
+
