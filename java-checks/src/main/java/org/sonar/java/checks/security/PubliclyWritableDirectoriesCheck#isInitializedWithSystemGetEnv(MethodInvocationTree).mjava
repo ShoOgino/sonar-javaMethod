@@ -1,0 +1,14 @@
+  private static boolean isInitializedWithSystemGetEnv(MethodInvocationTree mit) {
+    return getInvokedSymbol(mit)
+      .filter(ExpressionsHelper::isNotReassigned)
+      .map(Symbol::declaration)
+      .filter(decl -> decl.is(Tree.Kind.VARIABLE))
+      .map(VariableTree.class::cast)
+      .map(VariableTree::initializer)
+      .map(ExpressionUtils::skipParentheses)
+      .filter(initializer -> initializer.is(Tree.Kind.METHOD_INVOCATION))
+      .map(MethodInvocationTree.class::cast)
+      .map(SYSTEM_GETENV::matches)
+      .orElse(false);
+  }
+

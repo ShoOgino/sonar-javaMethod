@@ -1,0 +1,28 @@
+  public String compliant() throws IOException {
+    // File library: https://docs.oracle.com/javase/7/docs/api/java/io/File.html
+    File f1 = new File("/myDirectory"); // Compliant
+    File f2 = File.createTempFile("prefix", "suffix", f1);
+    f2.deleteOnExit();
+    File f3 = File.createTempFile("prefix", "suffix", new File("/myDirectory")); // Compliant
+    f3.deleteOnExit();
+    // Files library: https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html
+    FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("w+"));
+    // As soon as we have an attribute, do not report an issue, even if it is not with correct permission. (probably done on purpose).
+    Path p1 = Files.createTempFile("prefix", "suffix", attr); // Compliant
+    p1.toFile().deleteOnExit();
+    Path p2 = Files.createTempDirectory("prefix", attr); // Compliant
+    p2.toFile().deleteOnExit();
+
+    FileReader fr = new FileReader("/mySafeDirectory/myfile.txt"); // Compliant
+    fr.close();
+
+    Path path = Paths.get("/mySafeDirectory/myfile.txt"); // Compliant
+    Files.readAllLines(path);
+
+    // Get from environment variable
+    Map<String, String> env = System.getenv();
+    env.get("PATH"); // Compliant
+
+    return "thymeleaf/welcome";
+  }
+
