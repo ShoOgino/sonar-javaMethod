@@ -1,14 +1,18 @@
-  private void checkDigestMethod(MethodInvocationTree methodInvocationTree) {
+  private void checkDigestMethod(MethodInvocationTree methodInvocationTree) { 
     if (UPDATE_MESSAGE_DIGEST.matches(methodInvocationTree)) {
-      getInvokedSymbol(methodInvocationTree).ifPresent(symbol -> 
-        updateCalls.compute(symbol, (k, v) -> (v == null) ? 1 : (v + 1)));
+      getInvokedSymbol(methodInvocationTree)
+        .ifPresent(symbol ->  
+          updateCalls.compute(symbol, (k, v) -> (v == null) ? 1 : (v + 1)));
+
     } else if (DIGEST_METHOD.matches(methodInvocationTree)) {
-      getInvokedSymbol(methodInvocationTree).ifPresent(symbol -> {
-        Integer count = updateCalls.get(symbol);
-        if (count == null || (count == 1 && methodInvocationTree.arguments().isEmpty())) {
-          reportIssue(methodInvocationTree, ADD_SALT);
-        }
-      });
+      getInvokedSymbol(methodInvocationTree)
+        .filter(UnpredictableSaltCheck::isStrongDigestAlgorithm)
+        .ifPresent(symbol -> {
+          Integer count = updateCalls.get(symbol);
+          if (count == null || (count == 1 && methodInvocationTree.arguments().isEmpty())) {
+            reportIssue(methodInvocationTree, ADD_SALT);
+          }
+        });
     }
   }
 

@@ -1,0 +1,10 @@
+  private static boolean isStrongDigestAlgorithm(Symbol symbol) {
+    return Optional.ofNullable(getSingleWriteUsage(symbol))
+      .filter(expressionTree -> expressionTree.is(Tree.Kind.METHOD_INVOCATION))
+      .map(MethodInvocationTree.class::cast)
+      .filter(CREATE_DIGEST_METHOD::matches)
+      .flatMap(mit -> mit.arguments().get(0).asConstant(String.class))
+      .filter(arg -> !WEAK_HASH_ALGORITHMS.contains(arg.toUpperCase(Locale.ROOT)))
+      .isPresent();
+  }
+
