@@ -1,11 +1,9 @@
   @Override
   public void visitNode(Tree tree) {
     CaseGroupTree cgt = (CaseGroupTree) tree;
-    for (StatementTree statementTree : cgt.body()) {
-      if (statementTree.is(LABELED_STATEMENT)) {
-        IdentifierTree label = ((LabeledStatementTree) statementTree).label();
-        reportIssue(label, "Remove this misleading \"" + label.name() + "\" label.");
-      }
-    }
+    cgt.body().stream()
+      .flatMap(SwitchWithLabelsCheck::getStatementTreeStream)
+      .map(LabeledStatementTree.class::cast)
+      .forEach(this::reportLabeledStatement);
   }
 

@@ -1,0 +1,11 @@
+  private static Stream<StatementTree> getStatementTreeStream(StatementTree statementTree) {
+    if (statementTree.is(LABELED_STATEMENT)) {
+      return Stream.of(statementTree);
+    }
+    if (statementTree.is(BLOCK)) {
+      return ((BlockTree) statementTree).body().stream()
+        .filter(st -> st.is(LABELED_STATEMENT));
+    }
+    return Stream.empty();
+  }
+
