@@ -1,0 +1,17 @@
+  private static Optional<String> getTypeCastOrInstanceOfName(Symbol symbol, ExpressionTree expr) {
+    if (expr.is(Tree.Kind.TYPE_CAST)) {
+      TypeCastTree typeCastTree = (TypeCastTree) expr;
+      if (isSingleParamExpression(typeCastTree.expression(), symbol)) {
+        return getTypeName(typeCastTree.type())
+          .map(s -> s + ".class::cast");
+      }
+    } else if (expr.is(Tree.Kind.INSTANCE_OF)) {
+      InstanceOfTree instanceOfTree = (InstanceOfTree) expr;
+      if (isSingleParamExpression(instanceOfTree.expression(), symbol)) {
+        return getTypeName(instanceOfTree.type())
+          .map(s -> s + ".class::isInstance");
+      }
+    } 
+    return Optional.empty();
+  }
+

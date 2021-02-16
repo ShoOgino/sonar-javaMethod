@@ -2,9 +2,9 @@
     if (isMethodInvocation(tree.body(), tree) || isBodyBlockInvokingMethod(tree)) {
       reportIssue(tree.arrowToken(), "Replace this lambda with a method reference." + context.getJavaVersion().java8CompatibilityMessage());
     } else {
-      getTypeCast(tree)
-        .ifPresent(type -> reportIssue(tree.arrowToken(),
-          "Replace this lambda with method reference '" + type + ".class::cast'." + context.getJavaVersion().java8CompatibilityMessage()));
+      getTypeCastOrInstanceOf(tree)
+        .ifPresent(methodReference -> reportIssue(tree.arrowToken(),
+          "Replace this lambda with method reference '" + methodReference + "'." + context.getJavaVersion().java8CompatibilityMessage()));
       getNullCheck(tree)
         .ifPresent(nullMethod -> reportIssue(tree.arrowToken(),
           "Replace this lambda with method reference 'Objects::" + nullMethod + "'." + context.getJavaVersion().java8CompatibilityMessage()));
