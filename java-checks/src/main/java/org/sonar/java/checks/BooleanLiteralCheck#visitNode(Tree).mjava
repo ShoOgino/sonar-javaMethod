@@ -1,17 +1,22 @@
   @Override
   public void visitNode(Tree tree) {
-    LiteralTree literal;
-    if(tree.is(Kind.LOGICAL_COMPLEMENT)) {
-      literal = getBooleanLiteral(((UnaryExpressionTree) tree).expression());
+    List<LiteralTree> literalList;
+    if (tree.is(Kind.LOGICAL_COMPLEMENT)) {
+      literalList = getBooleanLiterals(((UnaryExpressionTree) tree).expression());
     } else if (tree.is(Kind.CONDITIONAL_EXPRESSION)) {
       ConditionalExpressionTree expression = (ConditionalExpressionTree) tree;
-      literal = getBooleanLiteral(expression.trueExpression(), expression.falseExpression());
+      literalList = getBooleanLiterals(expression.trueExpression(), expression.falseExpression());
     } else {
       BinaryExpressionTree expression = (BinaryExpressionTree) tree;
-      literal = getBooleanLiteral(expression.leftOperand(), expression.rightOperand());
+      literalList = getBooleanLiterals(expression.leftOperand(), expression.rightOperand());
     }
-    if(literal != null) {
-      reportIssue(literal, "Remove the literal \"" + literal.value() + "\" boolean value.");
+
+    int nLiterals = literalList.size();
+    if (nLiterals > 0) {
+      reportIssue(literalList.get(0),
+        String.format("Remove the unnecessary boolean literal%s.", nLiterals > 1 ? "s" : ""),
+        literalList.stream().skip(1).map(lit -> new JavaFileScannerContext.Location("", lit)).collect(Collectors.toList()),
+        null);
     }
   }
 
