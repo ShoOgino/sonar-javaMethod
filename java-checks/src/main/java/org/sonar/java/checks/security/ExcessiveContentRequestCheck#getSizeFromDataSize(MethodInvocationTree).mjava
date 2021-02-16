@@ -1,0 +1,17 @@
+  private static Optional<Long> getSizeFromDataSize(MethodInvocationTree mit) {
+    if (DATA_SIZE_PARSE.matches(mit)) {
+      return getNumberOfBytes(mit.arguments().get(0));
+    } else if (DATA_SIZE_OF_SOMETHING.matches(mit)) {
+      return getNumberOfBytes(mit.arguments().get(0))
+        .map(b -> b * getMultiplierFromName(ExpressionUtils.methodName(mit).name()));
+    } else if (DATA_SIZE_WITH_UNIT.matches(mit)) {
+      Optional<Long> multiplier = getIdentifierName(mit.arguments().get(1))
+        .map(ExcessiveContentRequestCheck::getMultiplierFromName);
+      if (multiplier.isPresent()) {
+        return getNumberOfBytes(mit.arguments().get(0))
+          .map(l -> l * multiplier.get());
+      }
+    }
+    return Optional.empty();
+  }
+

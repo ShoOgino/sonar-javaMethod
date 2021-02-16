@@ -1,0 +1,45 @@
+  void springMultipartConfigFactory() {
+    MultipartConfigFactory factory = new MultipartConfigFactory();
+
+    // 2.0.2
+    factory.setMaxFileSize(8388609); // Noncompliant
+    factory.setMaxFileSize(8388609l); // Noncompliant
+    factory.setMaxFileSize(8388609L); // Noncompliant
+    factory.setMaxFileSize(8388608); // Compliant
+    factory.setMaxFileSize(8388608l); // Compliant
+    factory.setMaxFileSize(8388608L); // Compliant
+
+    factory.setMaxFileSize("8388609"); // Noncompliant
+    factory.setMaxFileSize("9MB"); // Noncompliant {{The content length limit of 9437184 bytes is greater than the defined limit of 8388608; make sure it is safe here.}}
+    factory.setMaxFileSize("9Mb"); // Noncompliant
+    factory.setMaxFileSize("9000KB"); // Noncompliant
+    factory.setMaxFileSize("8193KB"); // Noncompliant
+
+    factory.setMaxFileSize("8000KB"); // Compliant
+    factory.setMaxFileSize("8001KB"); // Compliant, still less than 8MB
+    factory.setMaxFileSize("8192KB"); // Compliant, equals 8MB
+    factory.setMaxFileSize("900KB"); // Compliant
+    factory.setMaxFileSize("9KB"); // Compliant
+    factory.setMaxFileSize("8388608"); // Compliant
+    factory.setMaxFileSize("8MB"); // Compliant
+    factory.setMaxFileSize("8Mb"); // Compliant
+
+    factory.setMaxFileSize(MAX_SIZE_NON_COMPLIANT); // Noncompliant
+    factory.setMaxFileSize(MAX_SIZE_NON_COMPLIANT_STRING); // Noncompliant
+    factory.setMaxFileSize(MAX_SIZE_NON_COMPLIANT_LONG); // Noncompliant
+    factory.setMaxFileSize(MAX_SIZE_COMPLIANT); // Compliant
+    factory.setMaxFileSize(MAX_SIZE_COMPLIANT_STRING); // Compliant
+    factory.setMaxFileSize(MAX_SIZE_COMPLIANT_LONG); // Compliant
+
+    factory.setMaxFileSize("SomethingElse"); // Compliant
+
+    factory.setMaxFileSize("80000KB123"); // Compliant
+
+    factory.setMaxRequestSize(8388609); // Noncompliant
+    factory.setMaxRequestSize("8388609"); // Noncompliant
+    factory.setMaxRequestSize(8388608);
+    factory.setMaxRequestSize("8388608");
+
+    String s = new String("9000KB"); // Compliant
+  }
+

@@ -1,0 +1,14 @@
+  private static Optional<Long> getNumberOfBytes(ExpressionTree expression) {
+    Optional<Integer> integerOptional = expression.asConstant(Integer.class);
+    if (integerOptional.isPresent()) {
+      return Optional.of(integerOptional.get().longValue());
+    }
+
+    Optional<String> stringOptional = expression.asConstant(String.class);
+    if (stringOptional.isPresent()) {
+      return getLongValueFromString(stringOptional.get());
+    }
+
+    return expression.asConstant(Long.class);
+  }
+

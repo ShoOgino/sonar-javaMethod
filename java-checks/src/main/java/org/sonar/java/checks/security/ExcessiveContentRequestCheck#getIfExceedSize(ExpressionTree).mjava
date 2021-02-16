@@ -1,0 +1,8 @@
+  private Optional<Long> getIfExceedSize(ExpressionTree expressionTree) {
+    if (expressionTree.is(Tree.Kind.METHOD_INVOCATION)) {
+      return getSizeFromDataSize((MethodInvocationTree) expressionTree)
+        .filter(b -> b > fileUploadSizeLimit);
+    }
+    return getNumberOfBytes(expressionTree).filter(b -> b > fileUploadSizeLimit);
+  }
+
