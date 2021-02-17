@@ -1,10 +1,16 @@
   void wildcardImport() {
-    List<String> myList =      // Noncompliant {{Replace this fully qualified name with "List"}}
-      new ArrayList<String>(); // Noncompliant [[startColumn=11;endColumn=30]]
+    java.util.List<String> myList =      // Noncompliant {{Replace this fully qualified name with "List"}}
+      new java.util.ArrayList<String>(); // Noncompliant [[startColumn=11;endColumn=30]]
 
-    ImmutableMap map; // Noncompliant
+    List<String> myList2 =      // Compliant
+      new ArrayList<String>();
+
+    com.google.common.collect.ImmutableMap map; // Noncompliant
+
+    ImmutableMap.builder();
 
     java.awt.image.ImageProducer x; // OK
-    Charset.defaultCharset().name(); // Noncompliant
+    java.nio.charset.Charset.defaultCharset().name(); // Noncompliant
+    Charset.defaultCharset().name(); // Compliant
   }
 
