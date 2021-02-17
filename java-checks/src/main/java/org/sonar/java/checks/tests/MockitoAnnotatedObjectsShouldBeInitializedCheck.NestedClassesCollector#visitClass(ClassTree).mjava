@@ -1,0 +1,11 @@
+    @Override
+    public void visitClass(ClassTree tree) {
+      if (tree.symbol().metadata().isAnnotatedWith(NESTED_ANNOTATION)) {
+        classes.add(tree);
+      }
+      tree.members().stream()
+        .filter(member -> member.is(Tree.Kind.CLASS))
+        .map(ClassTree.class::cast)
+        .forEach(child -> child.accept(this));
+    }
+
