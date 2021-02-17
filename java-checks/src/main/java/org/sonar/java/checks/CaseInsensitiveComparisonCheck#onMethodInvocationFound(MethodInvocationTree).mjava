@@ -1,0 +1,10 @@
+  @Override
+  public void onMethodInvocationFound(MethodInvocationTree tree) {
+    if (tree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) tree.methodSelect();
+      if (ignoresCase(memberSelect.expression(), tree.arguments().get(0))) {
+        reportIssue(tree, "Replace these toUpperCase()/toLowerCase() and equals() calls with a single equalsIgnoreCase() call.");
+      }
+    }
+  }
+
