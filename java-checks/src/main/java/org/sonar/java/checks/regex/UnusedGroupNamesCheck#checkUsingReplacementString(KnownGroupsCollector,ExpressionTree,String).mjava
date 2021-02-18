@@ -1,0 +1,12 @@
+  private void checkUsingReplacementString(KnownGroupsCollector knownGroups, ExpressionTree arg, String replacement) {
+    Matcher indexMatcher = GROUP_NUMBER_REPLACEMENT_REGEX.matcher(replacement);
+    while (indexMatcher.find()) {
+      int groupNumber = Integer.parseInt(indexMatcher.group("number"));
+      checkUsingNumberInsteadOfName(knownGroups, arg, groupNumber, true);
+    }
+    Matcher nameMatcher = GROUP_NAME_REPLACEMENT_REGEX.matcher(replacement);
+    while (nameMatcher.find()) {
+      checkNoSuchName(knownGroups, arg, nameMatcher.group("name"));
+    }
+  }
+

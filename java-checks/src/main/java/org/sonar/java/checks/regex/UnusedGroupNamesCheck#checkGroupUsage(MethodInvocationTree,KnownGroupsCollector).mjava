@@ -1,10 +1,16 @@
   private void checkGroupUsage(MethodInvocationTree mit, KnownGroupsCollector knownGroups) {
-    ExpressionTree arg0 = mit.arguments().get(0);
-    Type arg0Type = arg0.symbolType();
-    if (arg0Type.is("int")) {
-      checkUsingNumberInsteadOfName(knownGroups, arg0);
+    String methodName = ExpressionUtils.methodName(mit).name();
+    if ("group".equals(methodName)) {
+      ExpressionTree arg0 = mit.arguments().get(0);
+      if (arg0.symbolType().is("int")) {
+        arg0.asConstant(Integer.class).ifPresent(index -> checkUsingNumberInsteadOfName(knownGroups, arg0, index, false));
+      } else {
+        arg0.asConstant(String.class).ifPresent(name -> checkNoSuchName(knownGroups, arg0, name));
+      }
     } else {
-      checkNoSuchName(knownGroups, arg0);
+      int argIndex = "appendReplacement".equals(methodName) ? 1 : 0;
+      ExpressionTree arg = mit.arguments().get(argIndex);
+      arg.asConstant(String.class).ifPresent(replacement -> checkUsingReplacementString(knownGroups, arg, replacement));
     }
   }
 

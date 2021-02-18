@@ -1,0 +1,11 @@
+  private void checkUsingNumberInsteadOfName(KnownGroupsCollector knownGroups, ExpressionTree arg0, int groupNumber, boolean dollarReference) {
+    CapturingGroupTree capturingGroupTree = knownGroups.groupsByNumber.get(groupNumber);
+    if (capturingGroupTree == null) {
+      return;
+    }
+    String groupName = capturingGroupTree.getName().map(name -> dollarReference ? ("${" + name + "}") : name).orElse("?");
+    String message = String.format(ISSUE_USE_NAME_INSTEAD_OF_NUMBER, groupName);
+    RegexIssueLocation secondary = toLocation(capturingGroupTree, "Group %d", g -> groupNumber);
+    reportIssue(arg0, message, null, Collections.singletonList(secondary));
+  }
+
