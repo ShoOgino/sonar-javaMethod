@@ -1,16 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
     NewClassTree newClassTree = (NewClassTree) tree;
-    if (NEW_PBE_KEY_SPEC.matches(newClassTree)) {
-      if (newClassTree.arguments().size() <= 1) {
-        reportIssue(newClassTree, ADD_SALT);
-      } else {
-        ExpressionTree saltExpression = ExpressionUtils.skipParentheses(newClassTree.arguments().get(1));
-        List<JavaFileScannerContext.Location> locations = new ArrayList<>();
-        if (isPredictable(saltExpression, locations)) {
-          reportIssue(newClassTree, UNPREDICTABLE_SALT, locations, null);
-        }
+    saltExpression(((NewClassTree) tree))
+    .map(ExpressionUtils::skipParentheses)
+    .ifPresent(salt -> {
+      List<JavaFileScannerContext.Location> locations = new ArrayList<>();
+      if (isPredictable(salt, locations)) {
+        reportIssue(newClassTree, UNPREDICTABLE_SALT, locations, null);
       }
-    }
+    });
   }
 
