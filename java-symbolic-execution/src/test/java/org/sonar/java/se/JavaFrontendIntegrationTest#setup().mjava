@@ -1,0 +1,19 @@
+  @BeforeEach
+  void setup() throws IOException {
+    logTester.clear();
+
+    context = SensorContextTester.create(Paths.get(""));
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)));
+
+    sonarComponents = new SonarComponents(
+      Mockito.mock(FileLinesContextFactory.class),
+      context.fileSystem(),
+      Mockito.mock(ClasspathForMain.class),
+      Mockito.mock(ClasspathForTest.class),
+      Mockito.mock(CheckFactory.class));
+    sonarComponents.setSensorContext(context);
+
+    inputFile = TestUtils.inputFile("src/test/files/se/SimpleClass.java");
+    tree = (CompilationUnitTreeImpl) JParserTestUtils.parse(inputFile.contents());
+  }
+

@@ -1,0 +1,14 @@
+  @Test
+  void catch_class_cast_exception() throws Exception {
+    Map<String, MethodBehavior> behaviorCache = 
+      createSymbolicExecutionVisitor("src/test/files/se/XProcCatchClassCastException.java", new NullDereferenceCheck())
+        .behaviorCache.behaviors;
+    assertThat(behaviorCache.values()).hasSize(1);
+    MethodBehavior methodBehavior = behaviorCache.values().iterator().next();
+    assertThat(methodBehavior.yields()).hasSize(2);
+    MethodYield[] expected = new MethodYield[] {
+      buildMethodYield(0, null),
+      buildMethodYield(-1, ConstraintsByDomain.empty().put(ObjectConstraint.NULL))};
+    assertThat(methodBehavior.yields()).contains(expected);
+  }
+

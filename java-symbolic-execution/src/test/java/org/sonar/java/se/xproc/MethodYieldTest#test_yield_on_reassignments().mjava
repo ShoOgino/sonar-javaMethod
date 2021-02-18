@@ -1,0 +1,10 @@
+  @Test
+  void test_yield_on_reassignments() throws Exception {
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/XProcYieldsReassignments.java",
+      new NullDereferenceCheck());
+    MethodBehavior mb = getMethodBehavior(sev, "foo");
+    assertThat(mb.happyPathYields())
+      .isNotEmpty()
+      .allMatch(y -> y.parametersConstraints.get(0) != null && !ObjectConstraint.NULL.equals(y.parametersConstraints.get(0).get(ObjectConstraint.class)));
+  }
+

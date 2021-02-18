@@ -1,0 +1,20 @@
+    public ExplodedGraphWalkerFactory(List<JavaCheck> scanners) {
+      List<SECheck> checks = scanners.stream()
+        .filter(SECheck.class::isInstance)
+        .map(SECheck.class::cast)
+        .collect(Collectors.toList());
+
+      // This order of the mandatory SE checks is required by the ExplodedGraphWalker
+      seChecks.add(removeOrDefault(checks, new NullDereferenceCheck()));
+      seChecks.add(removeOrDefault(checks, new DivisionByZeroCheck()));
+      seChecks.add(removeOrDefault(checks, new UnclosedResourcesCheck()));
+      seChecks.add(removeOrDefault(checks, new LocksNotUnlockedCheck()));
+      seChecks.add(removeOrDefault(checks, new NonNullSetToNullCheck()));
+      seChecks.add(removeOrDefault(checks, new NoWayOutLoopCheck()));
+      seChecks.add(removeOrDefault(checks, new OptionalGetBeforeIsPresentCheck()));
+      seChecks.add(removeOrDefault(checks, new StreamConsumedCheck()));
+      seChecks.add(removeOrDefault(checks, new RedundantAssignmentsCheck()));
+
+      seChecks.addAll(checks);
+    }
+

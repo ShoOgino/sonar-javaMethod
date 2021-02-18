@@ -1,0 +1,19 @@
+  @Test
+  void xproc_keep_yield_for_reporting() throws Exception {
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/YieldReporting.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList()) {
+        @Override
+        public void visitNode(Tree tree) {
+          MethodTree methodTree = (MethodTree) tree;
+          if ("test".equals(methodTree.symbol().name())) {
+            ExplodedGraphWalker egw = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
+            egw.visitMethod(methodTree, null);
+            assertThat(egw.checkerDispatcher.methodYield).isNull();
+          }
+          }
+        })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+  }
+

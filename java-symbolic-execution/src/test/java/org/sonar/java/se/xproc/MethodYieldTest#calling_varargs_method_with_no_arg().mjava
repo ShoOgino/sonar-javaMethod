@@ -1,0 +1,10 @@
+  @Test
+  void calling_varargs_method_with_no_arg() throws Exception {
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/files/se/VarArgsWithNoArgYield.java",
+      new NullDereferenceCheck());
+    MethodBehavior mb = getMethodBehavior(sev, "toArr");
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(1);
+    assertThat(mb.isMethodVarArgs()).isTrue();
+  }
+

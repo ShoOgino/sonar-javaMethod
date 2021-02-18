@@ -1,0 +1,17 @@
+  @Test
+  void private_method_should_be_visited() {
+    List<String> visitedMethods = new ArrayList<>();
+    SECheck check = new SECheck() {
+      @Override
+      public void init(MethodTree methodTree, CFG cfg) {
+        visitedMethods.add(methodTree.symbol().name());
+      }
+    };
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/XprocIfaceWithPrivateMethod.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+    assertThat(visitedMethods).containsExactly("test", "privateMethod");
+  }
+

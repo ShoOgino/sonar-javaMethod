@@ -1,0 +1,32 @@
+  @Test
+  void method_behavior_yields() {
+    SymbolicExecutionVisitor sev = createSymbolicExecutionVisitor("src/test/resources/se/MethodYields.java",
+      new NullDereferenceCheck());
+
+    MethodBehavior mb = getMethodBehavior(sev, "method");
+    List<MethodYield> yields = mb.yields();
+    assertThat(yields).hasSize(3);
+
+    List<HappyPathYield> trueResults = mb.happyPathYields().filter(my -> BooleanConstraint.TRUE.equals(my.resultConstraint().get(BooleanConstraint.class))).collect(Collectors.toList());
+    assertThat(trueResults).hasSize(1);
+    HappyPathYield trueResult = trueResults.get(0);
+
+    // 'a' has constraint "null"
+    assertThat(((ObjectConstraint) trueResult.parametersConstraints.get(0).get(ObjectConstraint.class)).isNull()).isTrue();
+    // no constraint on 'b'
+    assertThat(((ObjectConstraint) trueResult.parametersConstraints.get(0).get(ObjectConstraint.class)).isNull()).isTrue();
+    // result SV is a different SV than 'a' and 'b'
+    assertThat(trueResult.resultIndex()).isEqualTo(-1);
+
+    List<HappyPathYield> falseResults = mb.happyPathYields().filter(my -> BooleanConstraint.FALSE.equals(my.resultConstraint().get(BooleanConstraint.class))).collect(Collectors.toList());
+    assertThat(falseResults).hasSize(2);
+    // for both "False" results, 'a' has the constraint "not null"
+    assertThat(falseResults.stream().filter(my -> !((ObjectConstraint) my.parametersConstraints.get(0).get(ObjectConstraint.class)).isNull()).count()).isEqualTo(2);
+    // 1) 'b' has constraint "false", result is 'b'
+    assertThat(falseResults.stream().filter(my -> BooleanConstraint.FALSE.equals(my.parametersConstraints.get(1).get(BooleanConstraint.class)) && my.resultIndex() == 1).count()).isEqualTo(1);
+
+    // 2) 'b' is "true", result is a different SV than 'a' and 'b'
+    assertThat(falseResults.stream().filter(my -> BooleanConstraint.TRUE.equals(my.parametersConstraints.get(1).get(BooleanConstraint.class)) && my.resultIndex() == -1).count()).isEqualTo(1);
+
+  }
+

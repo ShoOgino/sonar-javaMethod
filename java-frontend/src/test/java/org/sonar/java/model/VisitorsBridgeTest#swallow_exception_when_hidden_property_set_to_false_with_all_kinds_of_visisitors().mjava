@@ -2,7 +2,6 @@
   void swallow_exception_when_hidden_property_set_to_false_with_all_kinds_of_visisitors() {
     try {
       visitorsBridge(Arrays.asList(
-        new SE1_ThrowingNPEPreStatement(),
         new SV1_ThrowingNPEVisitingClass(),
         new IV1_ThrowingNPEVisitingClass()),
         false)
@@ -11,10 +10,9 @@
       e.printStackTrace();
       Fail.fail("Exceptions should be swallowed when property is not set");
     }
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(3);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(2);
     assertThat(logTester.logs(LoggerLevel.ERROR).stream().map(VisitorsBridgeTest::ruleKeyFromErrorLog))
       .containsExactlyInAnyOrder(
-        "SE",
         "SV1_ThrowingNPEVisitingClass - SV1",
         "IV1_ThrowingNPEVisitingClass - IV1");
   }

@@ -1,0 +1,11 @@
+  @Test
+  void avoid_visiting_equivalent_paths() throws Exception {
+    logTester.setLevel(LoggerLevel.DEBUG);
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/FlowComputationNoOverflowWhenMergingPaths.java")
+      .withChecks(new NullDereferenceCheck(), new ConditionalUnreachableCodeCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).doesNotContain("Flow was not able to complete");
+  }
+

@@ -1,0 +1,22 @@
+  @Test
+  void test_maximum_steps_reached() throws Exception {
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MaxSteps.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList()) {
+        @Override
+        public void visitNode(Tree tree) {
+          MethodTree methodTree = (MethodTree) tree;
+          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
+          MethodBehavior methodBehavior = methodBehaviorForSymbol(methodTree.symbol());
+          try {
+            explodedGraphWalker.visitMethod(methodTree, methodBehavior);
+            fail("Too many states were processed !");
+          } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
+            assertThat(exception.getMessage()).startsWith("reached limit of 16000 steps for method");
+          }
+          }
+        })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+  }
+

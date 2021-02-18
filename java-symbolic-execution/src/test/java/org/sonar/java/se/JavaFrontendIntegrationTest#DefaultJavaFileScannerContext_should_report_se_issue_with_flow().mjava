@@ -1,0 +1,24 @@
+  /**
+   * Extracted from org.sonar.java.model.DefaultJavaFileScannerContextWithSensorContextTest
+   */
+  @Test
+  void DefaultJavaFileScannerContext_should_report_se_issue_with_flow() throws Exception {
+    // fake issue
+    List<JavaFileScannerContext.Location> flow1 = Collections.singletonList(new JavaFileScannerContext.Location("SE flow1", tree));
+    List<JavaFileScannerContext.Location> flow2 = Collections.singletonList(new JavaFileScannerContext.Location("SE flow2", tree));
+    Set<List<JavaFileScannerContext.Location>> flows = SetUtils.immutableSetOf(flow1, flow2);
+
+    // spy getRuleKey call, to avoid mocking CheckFactory and Checks
+    sonarComponents = Mockito.spy(sonarComponents);
+    Mockito.when(sonarComponents.getRuleKey(Mockito.any())).thenReturn(RuleKey.of("repository", "rule"));
+
+    JavaFileScannerContext scannerContext = new DefaultJavaFileScannerContext(tree, inputFile, tree.sema, sonarComponents, null, true);
+    scannerContext.reportIssueWithFlow(new SE0_DoesNothing(), tree, "msg", flows, null);
+
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+
+    Issue issue = issues.iterator().next();
+    assertThat(issue.flows()).hasSize(2);
+  }
+

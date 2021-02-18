@@ -1,0 +1,19 @@
+  @Test
+  void test_limited_loop_execution() throws Exception {
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SeEngineTestCase.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList()) {
+        @Override
+        public void visitNode(Tree tree) {
+          try {
+            MethodTree methodTree = (MethodTree) tree;
+            new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel()).visitMethod(methodTree, methodBehaviorForSymbol(methodTree.symbol()));
+          } catch (ExplodedGraphWalker.MaximumStepsReachedException exception) {
+            fail("loop execution should be limited");
+          }
+          }
+        })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+  }
+

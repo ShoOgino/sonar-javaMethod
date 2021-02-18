@@ -1,0 +1,12 @@
+  @Test
+  void openedClosed() {
+    CustomUnclosedResourcesCheck check = new CustomUnclosedResourcesCheck();
+    check.openingMethod = "org.sonar.custom.GenericResource#open(java.lang.String)";
+    check.closingMethod = "org.sonar.custom.GenericResource#closeResource(java.lang.String)";
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/customresources/OpenedClosed.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
+  }
+

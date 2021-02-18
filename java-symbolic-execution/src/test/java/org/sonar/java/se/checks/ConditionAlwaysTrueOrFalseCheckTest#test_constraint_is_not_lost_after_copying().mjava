@@ -1,0 +1,10 @@
+  @Test
+  void test_constraint_is_not_lost_after_copying() {
+    // see also SONARJAVA-2351
+    SECheckVerifier.newVerifier()
+      .onFile(nonCompilingTestSourcesPath("symbolicexecution/checks/ConstraintCopy.java"))
+      .withChecks(new ConditionalUnreachableCodeCheck(), new BooleanGratuitousExpressionsCheck())
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
+  }
+

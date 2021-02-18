@@ -1,0 +1,16 @@
+  /**
+   * Extracted from org.sonar.java.ast.JavaAstScannerTest
+   */
+  @Test
+  void JavaAstScanner_should_swallow_log_and_report_checks_exceptions_for_symbolic_execution() {
+    VisitorsBridge visitorsBridge = visitorsBridgeWithSymbolicExecution(new SE3_ThrowingNPEInit());
+
+    JavaAstScanner scanner = new JavaAstScanner(sonarComponents);
+    scanner.setVisitorBridge(visitorsBridge);
+
+    scanner.scan(Collections.singletonList(inputFile));
+
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith("Unable to run check class org.sonar.java.se.SymbolicExecutionVisitor");
+  }
+

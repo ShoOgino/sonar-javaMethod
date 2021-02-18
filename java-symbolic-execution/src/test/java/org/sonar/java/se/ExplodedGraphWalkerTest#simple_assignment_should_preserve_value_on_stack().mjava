@@ -1,0 +1,33 @@
+  @Test
+  void simple_assignment_should_preserve_value_on_stack() throws Exception {
+    SECheck check = new SECheck() {
+
+      private SymbolicValue rhsValue;
+
+      @Override
+      public ProgramState checkPreStatement(CheckerContext context, Tree syntaxNode) {
+        ProgramState state = context.getState();
+        if (syntaxNode instanceof AssignmentExpressionTree) {
+          rhsValue = state.peekValue();
+        }
+        return state;
+      }
+
+      @Override
+      public ProgramState checkPostStatement(CheckerContext context, Tree syntaxNode) {
+        ProgramState state = context.getState();
+        if (syntaxNode instanceof AssignmentExpressionTree) {
+          assertThat(state.peekValue()).isEqualTo(rhsValue);
+          // there should be only one value after simple assignment, which is symbolic value of RHS
+          assertThatThrownBy(() -> state.peekValue(1)).isInstanceOf(IllegalStateException.class);
+        }
+        return state;
+      }
+    };
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/SimpleAssignmentExecution.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+  }
+

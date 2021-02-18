@@ -1,0 +1,34 @@
+  @Test
+  void hardcoded_behaviors() throws Exception {
+    BehaviorCache behaviorCache = new BehaviorCache();
+    SymbolicExecutionVisitor sev = new SymbolicExecutionVisitor(Collections.singletonList(new NullDereferenceCheck()));
+
+    List<InputFile> inputFiles = Arrays.asList(
+      "src/test/files/se/Log4jAssert.java",
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/JavaLangMathMethods.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/CommonsLangValidate.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/CommonsLang3StringUtilsMethods.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/CommonsLang2StringUtilsMethods.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/ObjectsMethodsMethodBehaviors.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/GuavaPreconditionsMethods.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/GuavaCommonStrings.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/GuavaVerifyMethods.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/CollectionUtilsIsEmpty.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/SpringAssert.java"),
+      TestUtils.testSourcesPath("symbolicexecution/behaviorcache/EclipseAssert.java"))
+      .stream()
+      .map(File::new)
+      .map(TestUtils::inputFile)
+      .collect(Collectors.toList());
+
+    for (InputFile inputFile : inputFiles) {
+      CompilationUnitTreeImpl cut = (CompilationUnitTreeImpl) JParserTestUtils.parse("test", inputFile.contents(), SETestUtils.CLASS_PATH);
+      JavaFileScannerContext context = new DefaultJavaFileScannerContext(cut, inputFile, cut.sema, null, new JavaVersionImpl(8), true);
+      sev.scanFile(context);
+    }
+
+    assertThat(behaviorCache.behaviors).isEmpty();
+    assertThat(behaviorCache.hardcodedBehaviors()).hasSize(179);
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnly("[SE] Loaded 179 hardcoded method behaviors.");
+  }
+

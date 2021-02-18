@@ -1,0 +1,12 @@
+  @Test
+  void factoryClosedAny() {
+    CustomUnclosedResourcesCheck check = new CustomUnclosedResourcesCheck();
+    check.factoryMethod = "org.sonar.custom.ResourceFactory#createResource";
+    check.closingMethod = "org.sonar.custom.GenericResource#closeResource";
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/customresources/FactoryClosedAny.java")
+      .withCheck(check)
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyIssues();
+  }
+

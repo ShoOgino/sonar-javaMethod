@@ -1,0 +1,46 @@
+  @Test
+  void method_behavior_handling_finally() {
+    Pair<SymbolicExecutionVisitor, Sema> visitorAndSemantic =
+      createSymbolicExecutionVisitorAndSemantic("src/test/resources/se/ReturnAndFinally.java", new NullDereferenceCheck());
+    SymbolicExecutionVisitor sev = visitorAndSemantic.a;
+    Sema semanticModel = visitorAndSemantic.b;
+    assertThat(sev.behaviorCache.behaviors).hasSize(5);
+
+    MethodBehavior foo = getMethodBehavior(sev, "foo");
+    assertThat(foo.yields()).hasSize(4);
+    assertThat(foo.happyPathYields()).hasSize(2);
+    assertThat(foo.exceptionalPathYields()).hasSize(2);
+
+    MethodBehavior qix = getMethodBehavior(sev, "qix");
+    List<MethodYield> qixYield = qix.yields();
+    assertThat(qixYield.stream()
+      .filter(y ->  y.parametersConstraints.get(0).get(ObjectConstraint.class) != ObjectConstraint.NULL)
+      .allMatch(y -> y instanceof ExceptionalYield)).isTrue();
+
+    assertThat(qixYield.stream()
+      .filter(y -> y.parametersConstraints.get(0).get(ObjectConstraint.class) == ObjectConstraint.NULL && y instanceof ExceptionalYield)
+      .count()).isEqualTo(2);
+
+    assertThat(qixYield.stream()
+      .filter(y -> y instanceof HappyPathYield)
+      .allMatch(y -> y.parametersConstraints.get(0).get(ObjectConstraint.class) == ObjectConstraint.NULL)).isTrue();
+
+    MethodBehavior returnInFinally = getMethodBehavior(sev, "returnInFinally");
+    assertThat(returnInFinally.yields()).hasSize(1);
+    assertThat(returnInFinally.happyPathYields()).hasSize(1);
+
+    MethodBehavior returningException = getMethodBehavior(sev, "returningException");
+    assertThat(returningException.yields()).hasSize(3);
+    assertThat(returningException.happyPathYields()).hasSize(2);
+    assertThat(returningException.exceptionalPathYields()).hasSize(1);
+
+    MethodBehavior rethrowingException = getMethodBehavior(sev, "rethrowingException");
+    assertThat(rethrowingException.yields()).hasSize(4);
+    assertThat(rethrowingException.happyPathYields()).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields()).hasSize(3);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel).isUnknown())).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel).is("java.lang.Exception"))).hasSize(1);
+    assertThat(rethrowingException.exceptionalPathYields().filter(y -> y.exceptionType(semanticModel).is("org.foo.MyException"))).hasSize(1);
+
+  }
+

@@ -1,0 +1,22 @@
+  @Test
+  void test_max_number_starting_states() throws Exception {
+    SECheckVerifier.newVerifier()
+      .onFile("src/test/files/se/MaxStartingStates.java")
+      .withCheck(new SymbolicExecutionVisitor(Collections.emptyList()) {
+        @Override
+        public void visitNode(Tree tree) {
+          MethodTree methodTree = (MethodTree) tree;
+          ExplodedGraphWalker explodedGraphWalker = new ExplodedGraphWalker(this.behaviorCache, (Sema) context.getSemanticModel());
+          MethodBehavior methodBehavior = methodBehaviorForSymbol(methodTree.symbol());
+          try {
+            explodedGraphWalker.visitMethod(methodTree, methodBehavior);
+            fail("Too many starting states were generated!!");
+          } catch (ExplodedGraphWalker.MaximumStartingStatesException exception) {
+            assertThat(exception.getMessage()).startsWith("reached maximum number of 1024 starting states for method");
+          }
+        }
+      })
+      .withClassPath(SETestUtils.CLASS_PATH)
+      .verifyNoIssues();
+  }
+
