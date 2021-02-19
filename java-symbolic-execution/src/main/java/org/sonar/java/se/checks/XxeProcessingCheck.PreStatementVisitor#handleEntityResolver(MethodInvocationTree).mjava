@@ -1,0 +1,10 @@
+    private void handleEntityResolver(MethodInvocationTree mit) {
+      SymbolicValue mitResultSV = programState.peekValue(mit.arguments().size());
+      SymbolicValue entityResolverSV = programState.peekValue(0);
+      if (programState.getConstraint(entityResolverSV, ObjectConstraint.class) == ObjectConstraint.NULL) {
+        programState = programState.removeConstraintsOnDomain(mitResultSV, XxeEntityResolver.class);
+      } else {
+        programState = programState.addConstraint(mitResultSV, XxeEntityResolver.CUSTOM_ENTITY_RESOLVER);
+      }
+    }
+

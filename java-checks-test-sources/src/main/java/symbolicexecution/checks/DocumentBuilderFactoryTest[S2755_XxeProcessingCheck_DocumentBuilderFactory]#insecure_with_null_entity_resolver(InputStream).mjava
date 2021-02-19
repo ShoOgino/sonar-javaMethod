@@ -1,0 +1,8 @@
+  void insecure_with_null_entity_resolver(InputStream is) throws Exception {
+    DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = df.newDocumentBuilder(); // Noncompliant [[sc=34;ec=52]]
+    builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+    builder.setEntityResolver(null);
+    Document doc = builder.parse(is);
+  }
+

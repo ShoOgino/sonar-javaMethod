@@ -1,0 +1,9 @@
+  void secure_with_no_op_entity_resolver(InputStream is) throws Exception {
+    DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder1 = df.newDocumentBuilder(); // Compliant thanks to "builder.setEntityResolver"
+    builder1.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+    Document doc1 = builder1.parse(is);
+    DocumentBuilder builder2 = df.newDocumentBuilder(); // Noncompliant [[sc=35;ec=53]]
+    Document doc2 = builder2.parse(is);
+  }
+

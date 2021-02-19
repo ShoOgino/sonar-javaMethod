@@ -1,11 +1,12 @@
     @Override
     public void visitMethodInvocation(MethodInvocationTree mit) {
-
       // Test initialisation of XML processing API
       for (Map.Entry<MethodMatchers, Predicate<ConstraintsByDomain>> entry : CONDITIONS_FOR_SECURED_BY_TYPE.entrySet()) {
         if (entry.getKey().matches(mit)) {
-          constraintManager
-            .setValueFactory(() -> new XxeSymbolicValue(ExpressionUtils.methodName(mit), entry.getValue()));
+          if (!(entry.getKey() == NEW_DOCUMENT_BUILDER && isSecuredDocumentBuilderCreation(mit))) {
+            constraintManager
+              .setValueFactory(() -> new XxeSymbolicValue(ExpressionUtils.methodName(mit), entry.getValue()));
+          }
           break;
         }
       }
@@ -20,8 +21,7 @@
           programState = checkArguments(programState, arguments, property);
         }
       } else if (ENTITY_RESOLVER_SETTERS.matches(mit)) {
-        SymbolicValue mitResultSV = programState.peekValue(mit.arguments().size());
-        programState = programState.addConstraint(mitResultSV, XxeEntityResolver.CUSTOM_ENTITY_RESOLVER);
+        handleEntityResolver(mit);
       }
 
       // Test if API is used without any protection against XXE.
