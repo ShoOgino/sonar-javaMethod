@@ -1,0 +1,29 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    if (implementsSpecificInterface) {
+      List<AnnotationTree> annotations = tree.modifiers().annotations();
+
+      boolean isHavingMandatoryAnnotation = Boolean.FALSE;
+
+      for (AnnotationTree annotationTree : annotations) {
+        TypeTree annotationType = annotationTree.annotationType();
+        if (annotationType.is(Tree.Kind.IDENTIFIER)) {
+          String annotationName = ((IdentifierTree) annotationType).name();
+          LOGGER.info("Method Name {}", annotationName);
+
+          if (annotationName.equals(name)) {
+            isHavingMandatoryAnnotation = Boolean.TRUE;
+          }
+        }
+      }
+      if (!isHavingMandatoryAnnotation) {
+        // report on the method name, not on everything
+        context.reportIssue(this, tree.simpleName(), String.format("Mandatory Annotation not set @%s", name));
+      }
+
+    }
+    // The call to the super implementation allows to continue the visit of the AST.
+    // Be careful to always call this method to visit every node of the tree.
+    super.visitMethod(tree);
+  }
+

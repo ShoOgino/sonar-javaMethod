@@ -1,0 +1,20 @@
+  @Override
+  public void visitMethod(MethodTree tree) {
+    List<AnnotationTree> annotations = tree.modifiers().annotations();
+    for (AnnotationTree annotationTree : annotations) {
+      TypeTree annotationType = annotationTree.annotationType();
+      if (annotationType.is(Tree.Kind.IDENTIFIER)) {
+        IdentifierTree identifier = (IdentifierTree) annotationType;
+        System.out.println(identifier.name());
+
+        if (identifier.name().equals(name)) {
+          context.reportIssue(this, identifier, String.format("Avoid using annotation @%s", name));
+        }
+      }
+    }
+
+    // The call to the super implementation allows to continue the visit of the AST.
+    // Be careful to always call this method to visit every node of the tree.
+    super.visitMethod(tree);
+  }
+

@@ -1,0 +1,15 @@
+  private static void printPackageName(ExpressionTree packageName) {
+    StringBuilder sb = new StringBuilder();
+    ExpressionTree expr = packageName;
+    while (expr.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree mse = (MemberSelectExpressionTree) expr;
+      sb.insert(0, mse.identifier().name());
+      sb.insert(0, mse.operatorToken().text());
+      expr = mse.expression();
+    }
+    IdentifierTree idt = (IdentifierTree) expr;
+    sb.insert(0, idt.name());
+
+    LOGGER.info("PackageName: {}", sb);
+  }
+

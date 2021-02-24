@@ -1,0 +1,14 @@
+  public static List<File> getClassPath(String jarsDirectory) {
+    List<File> classpath = new LinkedList<>();
+    Path testJars = Paths.get(jarsDirectory);
+    if (testJars.toFile().exists()) {
+      classpath = getFilesRecursively(testJars, "jar", "zip");
+    } else if (!DEFAULT_TEST_JARS_DIRECTORY.equals(jarsDirectory)) {
+      throw new AssertionError("The directory to be used to extend class path does not exists ("
+        + testJars.toAbsolutePath()
+        + ").");
+    }
+    classpath.add(new File("target/test-classes"));
+    return classpath;
+  }
+

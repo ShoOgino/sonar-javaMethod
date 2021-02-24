@@ -1,0 +1,9 @@
+    @Test
+    void missing_resource_should_fail() throws Exception {
+      URL fakeFike = new File("doesNotExist.txt").toURI().toURL();
+      assertThatThrownBy(() -> MyJavaRulesDefinition.readResource(fakeFike))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageStartingWith("Failed to read: ")
+        .hasMessageEndingWith("doesNotExist.txt");
+    }
+

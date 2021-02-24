@@ -1,0 +1,10 @@
+    private Rule initRule(Class<? extends JavaCheck> ruleClass, String key) {
+      new RulesDefinitionAnnotationLoader().load(repository, ruleClass);
+      MyJavaRulesDefinition.newRule(ruleClass, repository);
+
+      assertThat(repository.rules()).hasSize(1);
+      repository.done();
+
+      return context.repository("repo").rule(key);
+    }
+

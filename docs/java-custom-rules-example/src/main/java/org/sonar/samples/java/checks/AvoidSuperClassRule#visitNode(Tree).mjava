@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    // Visit CLASS node only => cast could be done
+    ClassTree treeClazz = (ClassTree) tree;
+
+    // No extends => stop to visit class
+    if (treeClazz.superClass() == null) {
+      return;
+    }
+
+    // For 'symbolType' usage, jar in dependencies must be on classpath, !unknownSymbol! result otherwise
+    String superClassName = treeClazz.superClass().symbolType().fullyQualifiedName();
+
+    // Check if superClass avoid
+    if (SUPER_CLASS_AVOID.contains(superClassName)) {
+      reportIssue(tree, String.format("The usage of super class %s is forbidden", superClassName));
+    }
+  }
+
