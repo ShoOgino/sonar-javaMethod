@@ -1,11 +1,16 @@
-  private static Optional<String> handleFunctionInterface(Type parametrizedType, boolean usedAsMethodReference) {
+  private static Optional<String> handleFunctionInterface(Type parametrizedType,
+                                                          List<IdentifierTree> usages) {
     ParameterTypeNameAndTreeType firstArgument = new ParameterTypeNameAndTreeType(parametrizedType, 0);
     ParameterTypeNameAndTreeType secondArgument = new ParameterTypeNameAndTreeType(parametrizedType, 1);
+    boolean usedAsMethodReference = isReferenced(usages);
     if (typeEquals(firstArgument.paramType, secondArgument.paramType)) {
       if (firstArgument.paramTypeName != null && !usedAsMethodReference) {
         return functionalInterfaceName("%sUnaryOperator", firstArgument.paramTypeName);
       }
       return functionalInterfaceName("UnaryOperator<%s>", firstArgument.paramType);
+    }
+    if (usesMethods(usages, Arrays.asList("compose", AND_THEN))) {
+      return Optional.empty();
     }
     if (isBoolean(secondArgument) && !usedAsMethodReference) {
       return functionalInterfaceName("Predicate<%s>", firstArgument.paramType);

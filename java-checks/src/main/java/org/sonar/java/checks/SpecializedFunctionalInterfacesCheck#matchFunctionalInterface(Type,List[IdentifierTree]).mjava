@@ -1,21 +1,21 @@
-  private static Optional<String> matchFunctionalInterface(Type type, boolean usedAsMethodReference) {
+  private static Optional<String> matchFunctionalInterface(Type type, List<IdentifierTree> usages) {
     if (type.isUnknown() || !type.isParameterized()) {
       return Optional.empty();
     }
     switch (type.fullyQualifiedName()) {
       case "java.util.function.Function":
-        return handleFunctionInterface(type, usedAsMethodReference);
+        return handleFunctionInterface(type, usages);
       case "java.util.function.BiFunction":
-        return handleBiFunctionInterface(type);
+        return handleBiFunctionInterface(type, usages);
       case "java.util.function.BiConsumer":
-        return handleBiConsumerInterface(type, usedAsMethodReference);
+        return handleBiConsumerInterface(type, usages);
       case "java.util.function.Supplier":
-        return handleSupplier(type, usedAsMethodReference);
+        return handleSupplier(type, usages);
       case "java.util.function.Consumer":
       case "java.util.function.Predicate":
       case "java.util.function.UnaryOperator":
       case "java.util.function.BinaryOperator":
-        return handleSingleParameterFunctions(type, usedAsMethodReference);
+        return handleSingleParameterFunctions(type, usages);
       default:
         return Optional.empty();
     }

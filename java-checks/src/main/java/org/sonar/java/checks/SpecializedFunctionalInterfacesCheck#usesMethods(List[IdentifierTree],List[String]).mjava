@@ -1,0 +1,10 @@
+  private static boolean usesMethods(List<IdentifierTree> usages, List<String> methods) {
+    return usages.stream()
+      .map(IdentifierTree::parent)
+      .filter(MemberSelectExpressionTree.class::isInstance)
+      .map(MemberSelectExpressionTree.class::cast)
+      .map(MemberSelectExpressionTree::identifier)
+      .map(IdentifierTree::name)
+      .anyMatch(methods::contains);
+  }
+

@@ -1,9 +1,12 @@
-  private static Optional<String> handleBiFunctionInterface(Type parametrizedType) {
+  private static Optional<String> handleBiFunctionInterface(Type parametrizedType, List<IdentifierTree> usages) {
     ParameterTypeNameAndTreeType firstArgument = new ParameterTypeNameAndTreeType(parametrizedType, 0);
     ParameterTypeNameAndTreeType secondArgument = new ParameterTypeNameAndTreeType(parametrizedType, 1);
     ParameterTypeNameAndTreeType thirdArgument = new ParameterTypeNameAndTreeType(parametrizedType, 2);
     if (typeEquals(firstArgument.paramType, secondArgument.paramType) && typeEquals(firstArgument.paramType, thirdArgument.paramType)) {
       return functionalInterfaceName("BinaryOperator<%s>", firstArgument.paramType);
+    }
+    if (usesMethods(usages, Collections.singletonList(AND_THEN))) {
+      return Optional.empty();
     }
     if (isBoolean(thirdArgument)) {
       return functionalInterfaceName("BiPredicate<%s, %s>", firstArgument.paramType, secondArgument.paramType);
