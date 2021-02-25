@@ -1,0 +1,15 @@
+  @Test
+  void one_location_to_single_location_items() {
+    // issue with 1 location
+    RegexTree regexTree = assertSuccessfulParse("A");
+    RegexCheck.RegexIssueLocation issue = new RegexCheck.RegexIssueLocation(regexTree, "My issue message.");
+
+    assertThat(issue.message()).isEqualTo("My issue message.");
+    List<RegexIssueLocation> locations = issue.toSingleLocationItems();
+    assertThat(locations).hasSize(1);
+
+    assertThat(locations.get(0).message()).isEqualTo("My issue message.");
+    assertThat(locations.get(0).locations()).hasSize(1);
+    assertThat(locations.get(0).locations().get(0)).isSameAs(issue.locations().get(0));
+  }
+
