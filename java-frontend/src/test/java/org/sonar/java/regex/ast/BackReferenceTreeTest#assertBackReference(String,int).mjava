@@ -1,10 +1,6 @@
   private static void assertBackReference(String regex, int expectedGroupNumber) {
-    RegexTree tree = assertSuccessfulParse(regex);
-    assertThat(tree).isInstanceOf(BackReferenceTree.class);
-    assertKind(RegexTree.Kind.BACK_REFERENCE, tree);
-    assertThat(tree.incomingTransitionType()).isEqualTo(AutomatonState.TransitionType.BACK_REFERENCE);
-
-    BackReferenceTree backReferenceTree = (BackReferenceTree) tree;
+    BackReferenceTree backReferenceTree = assertSuccessfulParseBackReference(regex);
+    assertThat(backReferenceTree.incomingTransitionType()).isEqualTo(AutomatonState.TransitionType.BACK_REFERENCE);
     assertThat(backReferenceTree.isNumerical()).isTrue();
     assertThat(backReferenceTree.groupNumber()).isEqualTo(expectedGroupNumber);
     assertThat(backReferenceTree.isNamedGroup()).isFalse();
