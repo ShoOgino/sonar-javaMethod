@@ -1,0 +1,71 @@
+  private void h() throws Throwable {
+    Object someContextVariable = null;
+    try {
+      /* ... */
+    } catch (Error e) {                     // Compliant
+      throw com.google.common.base.Throwables.propagate(e);
+    } catch (RuntimeException e) {              // Compliant - propagation
+      throw e;
+    } catch (Exception e) {                     // Noncompliant
+      throw new RuntimeException("context");
+    }
+
+    try {
+      /* ... */
+    } catch (Exception e) {                      // Compliant
+      throw new RuntimeException("context", e);
+    }
+
+    try {
+    } catch (Exception e) {                      // Compliant
+      throw e;
+    } finally {
+    }
+
+    try {
+    } catch (Exception e) {                      // Noncompliant
+      int a;
+    } catch (Throwable e) {                      // Noncompliant
+    }
+
+    try {
+      Files.read("");
+    } catch (IOException e) {                    // Compliant
+      throw com.google.common.base.Throwables.propagate(e);
+    }
+
+    try {
+      Files.read("");
+    } catch (IOException e) {                    // Compliant
+      throw new RuntimeException(e);
+    } catch (Exception e) {                      // Noncompliant
+      throw new RuntimeException(e.getMessage());
+    } catch (Error e) {                      // Compliant
+      throw com.google.common.base.Throwables.propagate(e);
+    }
+
+    try {
+    } catch (RuntimeException e) {                      // Compliant
+      throw e;
+    } catch (Exception ex) {
+      throw new XNIException(ex);
+    }
+
+
+    try {
+      Thread.currentThread().join();
+      if (true) {
+        throw new java.text.ParseException("", 0);
+      } else {
+        throw new MalformedURLException();
+      }
+    } catch (NumberFormatException e) {          // Compliant
+      return;
+    } catch (InterruptedException e) {           // Compliant
+      /* do nothing */
+    } catch (java.text.ParseException e) {                 // Compliant
+    } catch (MalformedURLException e) {          // Compliant
+    } catch (java.time.format.DateTimeParseException e) {          // Compliant
+    }
+  }
+

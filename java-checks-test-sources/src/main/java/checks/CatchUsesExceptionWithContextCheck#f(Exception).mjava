@@ -1,32 +1,46 @@
   private void f(Exception x) {
     try {
     } catch (Exception e) {                     // Noncompliant {{Either log or rethrow this exception.}} [[sc=14;ec=25]]
+    }
+    try {
     } catch (Exception e) {                     // Compliant
       System.out.println(e);
-    } catch (Exception e) {                     // Noncompliant
+    }
+    try {
+    }catch (Exception e) {                     // Noncompliant
       System.out.println("foo: " + e.getMessage());
+    }
+    try {
     } catch (Exception e) {                     // Compliant
       System.out.println("" + e);
+    }
+    try {
     } catch (Exception f) {                     // Noncompliant
       System.out.println("" + x);
+    }
+    try {
     } catch (Exception f) {                     // Compliant
       System.out.println("" + f);
+    }
+    try {
     } catch (Exception e) {                     // Compliant
       System.out.println("" + e);
       try {
       } catch (Exception f) {                   // Noncompliant
       }
-    } catch (Exception e) {
-      try {
-      } catch (Exception f) {                   // Noncompliant {{Either log or rethrow this exception.}}
-        System.out.println("" + e);
-      }
+    }
+    try {
     } catch (RuntimeException e) {
       try {
       } catch (Exception f) {                   // Compliant
         System.out.println("" + f);
       }
       System.out.println("" + e);
+    } catch (Exception e) {
+      try {
+      } catch (Exception f) {                   // Noncompliant {{Either log or rethrow this exception.}}
+        System.out.println("" + e);
+      }
     }
   }
 
