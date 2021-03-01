@@ -7,20 +7,30 @@
         LOGGER.log(Level.WARN, "Interrupted!", e);
         // clean up state...
         throw e;
-    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+    }
+    try {
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.}}
       LOGGER.log(Level.WARN, "Interrupted!", e);
       throw new java.io.IOException();
-    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+    }
+    try {
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.}}
       LOGGER.log(Level.WARN, "Interrupted!", e);
       Exception e1 = new Exception();
       throw e1;
-    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException".}}
+    }
+    try {
+    } catch (InterruptedException e) { // Noncompliant {{Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.}}
       LOGGER.log(Level.WARN, "Interrupted!", e);
       throw new IllegalStateException("foo", e);
+    }
+    try {
     } catch (ThreadDeath threadDeath) {
       throw threadDeath;
-    } catch (ThreadDeath threadDeath) { // Noncompliant {{Either re-interrupt this method or rethrow the "ThreadDeath".}}
+    }
+    try {
+    } catch (ThreadDeath threadDeath) { // Noncompliant {{Either re-interrupt this method or rethrow the "ThreadDeath" that can be caught here.}}
       throw new java.io.IOException();
+   }
   }
-}
 

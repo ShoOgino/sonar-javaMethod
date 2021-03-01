@@ -1,0 +1,26 @@
+  public void catchMultiplesException() throws InterruptedException {
+    try {
+      throwsInterruptedException();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    } catch (Exception e) { // Compliant, correctly handled in the previous catch
+      LOGGER.log(Level.WARN, "Something else!", e);
+    }
+
+    try {
+      throwsInterruptedException();
+    } catch (Exception e) {
+      Thread.currentThread().interrupt();
+    } catch (Throwable e) { // Compliant, correctly handled in the previous catch
+      LOGGER.log(Level.WARN, "Something else!", e);
+    }
+
+    try {
+      throwsInterruptedException();
+    } catch (Exception e) { // Noncompliant
+      LOGGER.log(Level.WARN, "Something else!", e);
+    } catch (Throwable e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+

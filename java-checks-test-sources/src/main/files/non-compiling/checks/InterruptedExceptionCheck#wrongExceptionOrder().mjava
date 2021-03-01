@@ -1,0 +1,27 @@
+  void wrongExceptionOrder() {
+    // Does not compile ("Exception is already caught")
+    try {
+      throwsInterruptedException();
+    } catch (Exception e) { // Noncompliant
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+    } catch (InterruptedException e) {
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+    }
+
+    try {
+      throwsInterruptedException();
+    } catch (Exception e) { // Noncompliant
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+
+    try {
+      throwsInterruptedException();
+    } catch (Exception e) { // Compliant
+      Thread.currentThread().interrupt();
+    } catch (InterruptedException e) {
+      LOGGER.log(Level.WARN, "Interrupted!", e);
+    }
+  }
+

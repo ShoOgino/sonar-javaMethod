@@ -1,0 +1,9 @@
+  private static List<Type> getCaughtTypes(VariableTree parameter) {
+    if (parameter.type().is(Tree.Kind.UNION_TYPE)) {
+      return ((UnionTypeTree) parameter.type()).typeAlternatives().stream()
+        .map(TypeTree::symbolType)
+        .collect(Collectors.toList());
+    }
+    return Collections.singletonList(parameter.symbol().type());
+  }
+

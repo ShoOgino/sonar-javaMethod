@@ -1,16 +1,20 @@
   @Override
   public void visitNode(Tree tree) {
     TryStatementTree tryStatementTree = (TryStatementTree) tree;
+
     withinInterruptingFinally.addFirst(isFinallyInterrupting(tryStatementTree.finallyBlock()));
     for (CatchTree catchTree : tryStatementTree.catches()) {
-      Optional<Type> interruptType = findInterruptingType(catchTree.parameter());
-      if(interruptType.isPresent()) {
-        BlockVisitor blockVisitor = new BlockVisitor(catchTree.parameter().symbol());
-        catchTree.block().accept(blockVisitor);
-        if(!blockVisitor.threadInterrupted && !isWithinInterruptingFinally()) {
-          reportIssue(catchTree.parameter(), "Either re-interrupt this method" +
-            " or rethrow the \""+interruptType.get().name()+"\".");
+      VariableTree catchParameter = catchTree.parameter();
+      List<Type> caughtTypes = getCaughtTypes(catchParameter);
+      Optional<Type> interruptType = caughtTypes.stream().filter(INTERRUPTING_TYPE_PREDICATE).findFirst();
+      if (interruptType.isPresent()) {
+        if (wasNotInterrupted(catchTree)) {
+          reportIssue(catchParameter, String.format(MESSAGE, interruptType.get().name()));
         }
+        return;
+      } else if (caughtTypes.stream().anyMatch(GENERIC_EXCEPTION_PREDICATE)) {
+        reportIfThrowInterruptInBlock(tryStatementTree.block(), catchTree);
+        return;
       }
     }
   }

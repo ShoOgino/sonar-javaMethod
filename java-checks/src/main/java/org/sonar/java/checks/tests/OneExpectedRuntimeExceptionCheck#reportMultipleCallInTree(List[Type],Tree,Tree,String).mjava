@@ -8,9 +8,9 @@
       return;
     }
 
-    MethodInvocationCollector visitor = new MethodInvocationCollector(symbol -> !AUTHORIZED_METHODS.matches(symbol));
+    MethodTreeUtils.MethodInvocationCollector visitor = new MethodTreeUtils.MethodInvocationCollector(symbol -> !AUTHORIZED_METHODS.matches(symbol));
     treeToVisit.accept(visitor);
-    List<Tree> invocationTree = visitor.invocationTree;
+    List<Tree> invocationTree = visitor.getInvocationTree();
     if (invocationTree.size() > 1) {
       reportIssue(reportLocation,
         String.format("Refactor the %s to have only one invocation possibly throwing a runtime exception.", placeToRefactor),
