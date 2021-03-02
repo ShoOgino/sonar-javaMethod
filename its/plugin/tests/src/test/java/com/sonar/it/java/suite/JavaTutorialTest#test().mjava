@@ -1,0 +1,16 @@
+  @Test
+  public void test() {
+    MavenBuild build = MavenBuild.create(TestUtils.projectPom("java-tutorial")).setCleanPackageSonarGoals();
+    TestUtils.provisionProject(orchestrator, "org.sonarsource.it.projects:java-tutorial", "java-tutorial", "java", "java-tutorial");
+    orchestrator.executeBuild(build);
+
+    List<Issue> issues = TestUtils.issuesForComponent(orchestrator, "org.sonarsource.it.projects:java-tutorial");
+    assertThat(issues).hasSize(31);
+
+    assertThat(issuesForRule(issues, "mycompany-java:AvoidTreeList")).hasSize(2);
+    assertThat(issuesForRule(issues, "mycompany-java:AvoidMethodDeclaration")).hasSize(24);
+    assertThat(issuesForRule(issues, "mycompany-java:AvoidBrandInMethodNames")).hasSize(2);
+    assertThat(issuesForRule(issues, "mycompany-java:SecurityAnnotationMandatory")).hasSize(2);
+    assertThat(issuesForRule(issues, "mycompany-java:SpringControllerRequestMappingEntity")).hasSize(1);
+  }
+
