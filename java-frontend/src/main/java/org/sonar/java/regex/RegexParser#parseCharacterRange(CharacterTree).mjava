@@ -7,17 +7,17 @@
         characters.moveNext();
         JavaCharacter backslash = characters.getCurrent();
         RegexTree escape = parseEscapeSequence();
-        if (escape.is(RegexTree.Kind.PLAIN_CHARACTER, RegexTree.Kind.UNICODE_CODE_POINT)) {
+        if (escape.is(RegexTree.Kind.CHARACTER)) {
           return characterRange(startCharacter, (CharacterTree) escape);
         } else {
           expected("simple character", escape);
-          return characterRange(startCharacter, plainCharacter(backslash));
+          return characterRange(startCharacter, characterTree(backslash));
         }
       } else {
         characters.moveNext();
         JavaCharacter endCharacter = characters.getCurrent();
         characters.moveNext();
-        return characterRange(startCharacter, plainCharacter(endCharacter));
+        return characterRange(startCharacter, characterTree(endCharacter));
       }
     } else {
       return startCharacter;

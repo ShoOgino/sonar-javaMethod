@@ -1,0 +1,24 @@
+  private CharacterTree characterTree(JavaCharacter character) {
+    char c1 = character.getCharacter();
+    if (Character.isHighSurrogate(c1)) {
+      // c1 is in the range from '\uD800' to '\uDBFF', it should be the first char of a series of two,
+      // and it is one 'Supplementary Multilingual Plane' character encoded using UTF-16
+      char c2 = (char) characters.getCurrentChar();
+      if (c2 == '\\') {
+        // skip '\\u'
+        characters.moveNext(2);
+        int codePoint = parseFixedAmountOfHexDigits(4);
+        IndexRange newRange = new IndexRange(character.getRange().getBeginningOffset(), character.getRange().getEndingOffset() + 1);
+        return new CharacterTree(character.getSource(), newRange, Character.toCodePoint(c1, (char) codePoint), true, activeFlags);
+      } else if (Character.isLowSurrogate(c2)) {
+        characters.moveNext();
+        // c2 is in the range from '\uDC00' to '\uDFFF' it's the second part of the UTF-16 code point
+        IndexRange newRange = new IndexRange(character.getRange().getBeginningOffset(), character.getRange().getEndingOffset() + 1);
+        return new CharacterTree(character.getSource(), newRange, Character.toCodePoint(c1, c2), true, activeFlags);
+      } else {
+        LOG.warn("Couldn't parse '{}{}', two high surrogate characters in a row. Please check your encoding.", c1, c2);
+      }
+    }
+    return new CharacterTree(source, character.getRange(), character.getCharacter(), character.isEscapeSequence(), activeFlags);
+  }
+

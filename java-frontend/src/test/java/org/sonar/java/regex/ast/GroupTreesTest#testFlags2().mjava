@@ -3,22 +3,22 @@
     RegexTree regex = assertSuccessfulParse("a (?x)b c(?-x) d");
     SequenceTree seq = assertType(SequenceTree.class, regex);
     assertListElements(seq.getItems(),
-      first -> assertPlainCharacter('a', first),
-      second -> assertPlainCharacter(' ', second),
+      first -> assertCharacter('a', first),
+      second -> assertCharacter(' ', second),
       third -> {
         NonCapturingGroupTree group = assertType(NonCapturingGroupTree.class, third);
         assertEquals(Pattern.COMMENTS, group.getEnabledFlags().getMask());
         assertNull(group.getElement(), "Group should not have a body.");
       },
-      fourth -> assertPlainCharacter('b', fourth),
-      fifth -> assertPlainCharacter('c', fifth),
+      fourth -> assertCharacter('b', fourth),
+      fifth -> assertCharacter('c', fifth),
       sixth -> {
         NonCapturingGroupTree group = assertType(NonCapturingGroupTree.class, sixth);
         assertEquals(Pattern.COMMENTS, group.getDisabledFlags().getMask());
         assertNull(group.getElement(), "Group should not have a body.");
       },
-      seventh -> assertPlainCharacter(' ', seventh),
-      eighth -> assertPlainCharacter('d', eighth)
+      seventh -> assertCharacter(' ', seventh),
+      eighth -> assertCharacter('d', eighth)
     );
   }
 

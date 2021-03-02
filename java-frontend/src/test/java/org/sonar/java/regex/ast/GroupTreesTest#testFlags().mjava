@@ -3,8 +3,8 @@
     RegexTree regex = assertSuccessfulParse("a (?x:b c) d");
     SequenceTree seq = assertType(SequenceTree.class, regex);
     assertListElements(seq.getItems(),
-      first -> assertPlainCharacter('a', first),
-      second -> assertPlainCharacter(' ', second),
+      first -> assertCharacter('a', first),
+      second -> assertCharacter(' ', second),
       third -> {
         NonCapturingGroupTree group = assertType(NonCapturingGroupTree.class, third);
         assertNotNull(group.getGroupHeader());
@@ -14,8 +14,8 @@
         assertNotNull(element, "Group should have a body.");
         assertPlainString("bc", element);
       },
-      fourth -> assertPlainCharacter(' ', fourth),
-      fifth -> assertPlainCharacter('d', fifth)
+      fourth -> assertCharacter(' ', fourth),
+      fifth -> assertCharacter('d', fifth)
     );
   }
 

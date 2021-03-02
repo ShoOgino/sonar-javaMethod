@@ -3,7 +3,7 @@
     characters.moveNext();
     if (characters.isAtEnd()) {
       expected("any character");
-      return plainCharacter(backslash);
+      return characterTree(backslash);
     } else {
       JavaCharacter character = characters.getCurrent();
       switch (character.getCharacter()) {
@@ -55,7 +55,7 @@
           characters.moveNext();
           char c = simpleEscapeToCharacter(character.getCharacter());
           IndexRange range = backslash.getRange().extendTo(characters.getCurrentStartIndex());
-          return plainCharacter(new JavaCharacter(source, range, c, true));
+          return characterTree(new JavaCharacter(source, range, c, true));
         case 'c':
           return parseControlSequence(backslash);
         case 'N':
@@ -69,7 +69,8 @@
           // Fallthrough
         default:
           characters.moveNext();
-          return new PlainCharacterTree(source, backslash.getRange().merge(character.getRange()), character, activeFlags);
+          return new CharacterTree(source, backslash.getRange().merge(character.getRange()), character.getCharacter(),
+            character.isEscapeSequence(), activeFlags);
       }
     }
   }

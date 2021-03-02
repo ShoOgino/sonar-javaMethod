@@ -4,7 +4,7 @@
 
     if (!characters.currentIs(opener)) {
       expected(("'" + opener + "'"));
-      return plainCharacter(marker);
+      return characterTree(marker);
     }
     JavaCharacter openerChar = characters.getCurrent();
     boolean atLeastOneChar = false;
@@ -12,11 +12,11 @@
       characters.moveNext();
       if (characters.isAtEnd()) {
         expected(atLeastOneChar ? ("'" + closer + "'") : expected);
-        return plainCharacter(openerChar);
+        return characterTree(openerChar);
       }
       if (!atLeastOneChar && characters.currentIs(closer)) {
         expected(expected);
-        return plainCharacter(openerChar);
+        return characterTree(openerChar);
       }
       atLeastOneChar = true;
     } while (!characters.currentIs(closer));
