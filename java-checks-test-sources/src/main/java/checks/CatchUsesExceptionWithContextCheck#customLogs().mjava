@@ -101,5 +101,23 @@
     } catch (Exception e) { // Noncompliant
       CUSTOM_LOGGER.log(e.getMessage());
     }
+    try {
+      /* ... */
+    } catch (Exception e) { // Compliant
+      String message = "Some context for exception" + e.getMessage();
+      MyCustomLogger.staticallyImportedMethod(message);
+    }
+    try {
+      /* ... */
+    } catch (Exception e) { // Compliant, type contains "log"
+      String message = "Some context for exception" + e.getMessage();
+      staticallyImportedMethod(message);
+    }
+    try {
+      /* ... */
+    } catch (Exception e) { // Noncompliant
+      String message = "Some context for exception" + e.getMessage();
+      staticallyImportedMethodFromProvider(message);
+    }
   }
 
