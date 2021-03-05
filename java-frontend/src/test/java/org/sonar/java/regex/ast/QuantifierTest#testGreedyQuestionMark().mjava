@@ -11,11 +11,11 @@
     assertFalse(quantifier.isOpenEnded(), "Question mark should not be open ended.");
     assertEquals(Quantifier.Modifier.GREEDY, quantifier.getModifier(), "Quantifier should be greedy.");
 
-    FinalState finalState = assertType(FinalState.class, repetition.continuation());
+    EndOfRepetitionState endOfRep = assertType(EndOfRepetitionState.class, repetition.continuation());
     assertListElements(repetition.successors(),
       assertEdge(x, AutomatonState.TransitionType.CHARACTER),
-      assertEdge(finalState, AutomatonState.TransitionType.EPSILON)
+      assertEdge(endOfRep, AutomatonState.TransitionType.EPSILON)
     );
-    assertSingleEdge(x, finalState, AutomatonState.TransitionType.EPSILON);
+    assertSingleEdge(x, endOfRep, AutomatonState.TransitionType.EPSILON);
   }
 

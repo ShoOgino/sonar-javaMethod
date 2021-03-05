@@ -5,7 +5,12 @@
     }
     assertSame(result.getResult(), result.getStartState().continuation());
     assertSingleEdge(result.getStartState(), result.getResult(), result.getResult().incomingTransitionType());
-    assertSame(result.getFinalState(), result.getResult().continuation());
+    AutomatonState finalState = result.getResult().continuation();
+    if (result.getResult() instanceof RepetitionTree) {
+      assertType(EndOfRepetitionState.class, finalState);
+      finalState = finalState.continuation();
+    }
+    assertSame(result.getFinalState(), finalState);
     assertEquals(AutomatonState.TransitionType.EPSILON, result.getFinalState().incomingTransitionType());
     assertEquals(AutomatonState.TransitionType.EPSILON, result.getStartState().incomingTransitionType());
     assertListSize(0, result.getFinalState().successors());
