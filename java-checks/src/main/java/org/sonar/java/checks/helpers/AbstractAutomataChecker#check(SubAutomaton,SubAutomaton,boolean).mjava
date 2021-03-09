@@ -1,0 +1,26 @@
+  public boolean check(SubAutomaton auto1, SubAutomaton auto2, boolean hasConsumedInput) {
+    if (hasUnsupportedTransitionType(auto1) || hasUnsupportedTransitionType(auto2)) {
+      return defaultAnswer;
+    }
+    OrderedAutomataPair entry = new OrderedAutomataPair(auto1, auto2);
+    Boolean cachedValue = cache.startCalculation(entry, defaultAnswer);
+    if (cachedValue != null) {
+      return cachedValue;
+    }
+    boolean answer = hasConsumedInput || defaultAnswer;
+    if (auto1.isAtEnd() && auto2.isAtEnd()) {
+      return cache.save(entry, answer);
+    } else if (auto1.isAtEnd() && auto2.incomingTransitionType() != EPSILON) {
+      return cache.save(entry, auto2.allowPrefix && answer);
+    } else if (auto2.isAtEnd() && auto1.incomingTransitionType() != EPSILON) {
+      return cache.save(entry, auto1.allowPrefix && answer);
+    } else if (auto2.incomingTransitionType() == EPSILON && !auto2.isAtEnd()) {
+      return cache.save(entry, checkAuto2Successors(auto1, auto2, defaultAnswer, hasConsumedInput));
+    } else if (auto1.incomingTransitionType() == EPSILON) {
+      // In this branch auto1 can't be at the end
+      return cache.save(entry, checkAuto1Successors(auto1, auto2, defaultAnswer, hasConsumedInput));
+    } else {
+      return cache.save(entry, checkAuto1AndAuto2Successors(auto1, auto2, defaultAnswer, hasConsumedInput));
+    }
+  }
+

@@ -1,0 +1,26 @@
+  @Test
+  void testEqualsAndHashcode() {
+    SubAutomaton subAutomaton1 = new SubAutomaton(new FinalState(new FlagSet()), new FinalState(new FlagSet()), false);
+    SubAutomaton subAutomaton2 = new SubAutomaton(new FinalState(new FlagSet()), new FinalState(new FlagSet()), false);
+    SubAutomaton subAutomaton3 = new SubAutomaton(subAutomaton1.start, subAutomaton1.end, true);
+    SubAutomaton subAutomaton4 = new SubAutomaton(subAutomaton1.start, subAutomaton1.end, false);
+    SubAutomaton subAutomaton5 = new SubAutomaton(subAutomaton1.start, subAutomaton2.end, false);
+    SubAutomaton subAutomaton6 = new SubAutomaton(subAutomaton2.start, subAutomaton1.end, false);
+
+    assertThat(subAutomaton1)
+      .isNotEqualTo(null)
+      .isNotEqualTo("null")
+      .isNotEqualTo(subAutomaton2)
+      .isNotEqualTo(subAutomaton3)
+      .isNotEqualTo(subAutomaton5)
+      .isNotEqualTo(subAutomaton6)
+      .isEqualTo(subAutomaton4)
+      .isEqualTo(subAutomaton1)
+      .hasSameHashCodeAs(subAutomaton4);
+
+    // isEqualTo() in this case doesn't actually call .equals() method
+    assertThat(subAutomaton1.equals(subAutomaton1)).isTrue();
+    assertThat(subAutomaton1.equals("subAutomaton1")).isFalse();
+    assertThat(subAutomaton1.equals(null)).isFalse();
+  }
+
