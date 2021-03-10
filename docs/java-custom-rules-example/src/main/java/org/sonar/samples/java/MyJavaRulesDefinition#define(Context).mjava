@@ -2,10 +2,12 @@
   public void define(Context context) {
     NewRepository repository = context.createRepository(REPOSITORY_KEY, "java").setName("MyCompany Custom Repository");
 
-    for (Class<? extends JavaCheck> check : RulesList.getChecks()) {
-      new RulesDefinitionAnnotationLoader().load(repository, check);
-      newRule(check, repository);
-    }
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_BASE_PATH);
+
+    ruleMetadataLoader.addRulesByAnnotatedClass(repository, new ArrayList<>(RulesList.getChecks()));
+
+    setTemplates(repository);
+
     repository.done();
   }
 
