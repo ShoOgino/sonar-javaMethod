@@ -1,0 +1,15 @@
+    boolean containsIntersections(List<? extends AutomatonState> alternatives) {
+      for (int i = 0; i < alternatives.size() - 1; i++) {
+        AutomatonState state1 = alternatives.get(i);
+        for (int j = i + 1; j < alternatives.size(); j++) {
+          AutomatonState state2 = alternatives.get(j);
+          SubAutomaton auto1 = new SubAutomaton(state1, endOfLoop, false);
+          SubAutomaton auto2 = new SubAutomaton(state2, endOfLoop, false);
+          if (intersectionChecker.check(auto1, auto2)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+

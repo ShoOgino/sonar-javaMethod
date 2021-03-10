@@ -1,0 +1,21 @@
+    private List<RegexTree> collectSingleCharacters(@Nullable RegexTree tree, List<RegexTree> accumulator) {
+      if (tree == null) {
+        return accumulator;
+      }
+      if (tree instanceof CharacterClassElementTree || tree.is(RegexTree.Kind.DOT)) {
+        accumulator.add(tree);
+      } else if (tree.is(RegexTree.Kind.DISJUNCTION)) {
+        for (RegexTree alternative : ((DisjunctionTree) tree).getAlternatives()) {
+          collectSingleCharacters(alternative, accumulator);
+        }
+      } else if (tree instanceof GroupTree) {
+        collectSingleCharacters(((GroupTree) tree).getElement(), accumulator);
+      } else if (tree.is(RegexTree.Kind.REPETITION)) {
+        RepetitionTree repetition = (RepetitionTree) tree;
+        if (repetition.getQuantifier().getMinimumRepetitions() <= 1) {
+          collectSingleCharacters(repetition.getElement(), accumulator);
+        }
+      }
+      return accumulator;
+    }
+

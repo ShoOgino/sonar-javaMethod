@@ -1,0 +1,24 @@
+  private Optional<String> message() {
+    boolean canBeOptimized = !regexContainsBackReference;
+    boolean optimized = isJava9OrHigher() && canBeOptimized;
+    switch (foundBacktrackingType) {
+      case ALWAYS_EXPONENTIAL:
+        return Optional.of(String.format(MESSAGE, EXP, ""));
+      case QUADRATIC_WHEN_OPTIMIZED:
+        // We only suggest upgrading to Java 9+ when that would make the regex safe (i.e. linear runtime), not if it would
+        // merely improve it from exponential to quadratic.
+        return Optional.of(String.format(MESSAGE, optimized ? QUAD : EXP, ""));
+      case LINEAR_WHEN_OPTIMIZED:
+        if (optimized) {
+          return Optional.empty();
+        } else {
+          return Optional.of(String.format(MESSAGE, EXP, canBeOptimized ? JAVA8_MESSAGE : ""));
+        }
+      case ALWAYS_QUADRATIC:
+        return Optional.of(String.format(MESSAGE, QUAD, ""));
+      case NO_ISSUE:
+        return Optional.empty();
+    }
+    throw new IllegalStateException("This line is not actually reachable");
+  }
+

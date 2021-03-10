@@ -1,0 +1,12 @@
+    @Override
+    public void visitRepetition(RepetitionTree tree) {
+      if (canFail(tree.continuation())) {
+        if (!tree.isPossessive() && tree.getQuantifier().isOpenEnded()) {
+          new BacktrackingFinder(tree.isReluctant(), tree.continuation()).visit(tree.getElement());
+        } else {
+          super.visitRepetition(tree);
+        }
+        checkForOverlappingRepetitions(tree);
+      }
+    }
+

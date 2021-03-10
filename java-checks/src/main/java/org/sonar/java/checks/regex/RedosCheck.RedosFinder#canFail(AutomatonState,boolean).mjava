@@ -1,0 +1,25 @@
+    private boolean canFail(AutomatonState state, boolean succeedOnEnd) {
+      if (canFailCache.containsKey(state)) {
+        return canFailCache.get(state);
+      }
+      canFailCache.put(state, true);
+      if (state.incomingTransitionType() != AutomatonState.TransitionType.EPSILON) {
+        return true;
+      }
+      if (canMatchAnything(state)) {
+        succeedOnEnd = true;
+        state = state.continuation();
+      }
+      if ((succeedOnEnd && canReachWithoutConsumingInput(state, endOfRegex))) {
+        canFailCache.put(state, false);
+        return false;
+      }
+      for (AutomatonState successor : state.successors()) {
+        if (!canFail(successor, succeedOnEnd)) {
+          canFailCache.put(state, false);
+          return false;
+        }
+      }
+      return true;
+    }
+

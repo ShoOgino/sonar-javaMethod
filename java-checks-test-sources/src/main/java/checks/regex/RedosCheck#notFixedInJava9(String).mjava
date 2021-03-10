@@ -1,0 +1,6 @@
+  void notFixedInJava9(String str) {
+    // The back reference prevents the Java 9+ optimization from being applied
+    str.matches("(.?,)*\\1"); // Noncompliant {{Make sure the regex used here, which is vulnerable to exponential runtime due to backtracking, cannot lead to denial of service.}}
+    str.matches("(?:(.?)\\1,)*"); // FN because RegexTreeHelpers.intersects can't currently handle backreferences inside the repetition
+  }
+

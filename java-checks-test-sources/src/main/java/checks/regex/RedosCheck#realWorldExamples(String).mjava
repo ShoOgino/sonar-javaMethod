@@ -1,0 +1,7 @@
+  void realWorldExamples(String str) {
+    String cloudflareAttack = "(?:(?:\"|'|\\]|\\}|\\\\|\\d|(?:nan|infinity|true|false|null|undefined|symbol|math)|\\`|\\-|\\+)+[)]*;?((?:\\s|-|~|!|\\{\\}|\\|\\||\\+)*.*(?:.*=.*)))";
+    String stackOverflowAttack = "^[\\s\\u200c]+|[\\s\\u200c]+$";
+    str.replaceAll(cloudflareAttack, ""); // Noncompliant {{Make sure the regex used here, which is vulnerable to quadratic runtime due to backtracking, cannot lead to denial of service.}}
+    str.replaceAll(stackOverflowAttack, ""); // Noncompliant {{Make sure the regex used here, which is vulnerable to quadratic runtime due to backtracking, cannot lead to denial of service.}}
+  }
+

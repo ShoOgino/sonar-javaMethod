@@ -1,0 +1,12 @@
+    private boolean canMatchAnyCharacter(RegexTree tree) {
+      SimplifiedRegexCharacterClass characterClass = new SimplifiedRegexCharacterClass();
+      for (RegexTree singleCharacter : collectSingleCharacters(tree, new ArrayList<>())) {
+        if (singleCharacter.is(RegexTree.Kind.DOT)) {
+          characterClass.add((DotTree) singleCharacter);
+        } else {
+          characterClass.add((CharacterClassElementTree) singleCharacter);
+        }
+      }
+      return characterClass.matchesAnyCharacter();
+    }
+

@@ -1,0 +1,18 @@
+  @Override
+  public void checkRegex(RegexParseResult regexForLiterals, ExpressionTree methodInvocationOrAnnotation, MatchType matchType) {
+    if (regexForLiterals.getResult().getText().length() > MAX_REGEX_LENGTH) {
+      return;
+    }
+    regexContainsBackReference = false;
+    foundBacktrackingType = BacktrackingType.NO_ISSUE;
+    reachabilityChecker.clearCache();
+    intersectionChecker.clearCache();
+    boolean isUsedForFullMatch = matchType == MatchType.FULL || matchType == MatchType.BOTH;
+    boolean isUsedForPartialMatch = matchType == MatchType.PARTIAL || matchType == MatchType.BOTH;
+    RedosFinder visitor = new RedosFinder(regexForLiterals.getStartState(), regexForLiterals.getFinalState(), isUsedForFullMatch, isUsedForPartialMatch);
+    visitor.visit(regexForLiterals);
+    message().ifPresent(message ->
+      reportIssue(methodOrAnnotationName(methodInvocationOrAnnotation), message, null, Collections.emptyList())
+    );
+  }
+

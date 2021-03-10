@@ -1,0 +1,23 @@
+  public boolean canReach(AutomatonState start, AutomatonState goal) {
+    if (start == goal) {
+      return true;
+    }
+    OrderedStatePair pair = new OrderedStatePair(start, goal);
+    if (cache.containsKey(pair)) {
+      return cache.get(pair);
+    }
+    if (cache.size() >= MAX_CACHE_SIZE) {
+      return defaultAnswer;
+    }
+    cache.put(pair, false);
+    boolean result = false;
+    for (AutomatonState successor : start.successors()) {
+      if (canReach(successor, goal)) {
+        result = true;
+        break;
+      }
+    }
+    cache.put(pair, result);
+    return result;
+  }
+

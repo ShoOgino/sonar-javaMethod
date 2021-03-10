@@ -1,0 +1,13 @@
+    @Override
+    public void visitRepetition(RepetitionTree tree) {
+      if (tree.isPossessive()) {
+        new RedosFinder(tree, tree.continuation(), false, false).visit(tree);
+      } else if (containsIntersections(Arrays.asList(tree.getElement(), tree.continuation()))) {
+        BacktrackingType greedyComplexity = tree.getQuantifier().isOpenEnded() ? BacktrackingType.QUADRATIC_WHEN_OPTIMIZED : BacktrackingType.LINEAR_WHEN_OPTIMIZED;
+        addBacktracking(isReluctant ? BacktrackingType.ALWAYS_EXPONENTIAL : greedyComplexity);
+        super.visitRepetition(tree);
+      } else {
+        super.visitRepetition(tree);
+      }
+    }
+
