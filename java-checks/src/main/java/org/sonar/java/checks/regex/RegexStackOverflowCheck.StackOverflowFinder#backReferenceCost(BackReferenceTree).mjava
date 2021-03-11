@@ -1,0 +1,19 @@
+    private PathInfo backReferenceCost(BackReferenceTree backReference) {
+      Integer consumedCharacters = 0;
+      CapturingGroupTree group = backReference.group();
+      if (group != null) {
+        consumedCharacters = consumedCharactersByCapturingGroupCache.get(group);
+        if (consumedCharacters == null) {
+          // prevent reentrancy while we are computing the value
+          consumedCharactersByCapturingGroupCache.put(group, 1);
+          Comparator<PathInfo> pathLengthComparator = Comparator.comparingInt(p -> p.numberOfConsumedCharacters);
+          RegexTree element = group.getElement();
+          PathInfo pathInfo = edgeCost(element).add(shortestPath(element, element.continuation(), pathLengthComparator));
+          consumedCharacters = pathInfo.numberOfConsumedCharacters;
+          consumedCharactersByCapturingGroupCache.put(group, consumedCharacters);
+        }
+      }
+      // Referencing a capturing group does not increase the stack size as parsing the group would just retrieve a saved string
+      return new PathInfo(consumedCharacters, 0);
+    }
+
