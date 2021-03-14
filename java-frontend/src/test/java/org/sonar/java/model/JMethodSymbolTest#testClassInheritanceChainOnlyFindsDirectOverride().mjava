@@ -1,0 +1,9 @@
+  @Test
+  void testClassInheritanceChainOnlyFindsDirectOverride() {
+    JavaTree.CompilationUnitTreeImpl cu = test("interface AInt { void a() {} } class A implements AInt { public void a() {} } class B extends A { public void a() {}}  class C extends B { public void a() { } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(3);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+    assertThat(symbol.overriddenSymbols()).containsOnly(retrieveMethodSymbol("AInt", "a", cu), retrieveMethodSymbol("B", "a", cu));
+  }
+

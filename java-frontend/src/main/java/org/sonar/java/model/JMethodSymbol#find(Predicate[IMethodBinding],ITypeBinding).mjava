@@ -1,23 +1,12 @@
-  @Nullable
-  private IMethodBinding find(Predicate<IMethodBinding> predicate, ITypeBinding t) {
-    for (IMethodBinding candidate : t.getDeclaredMethods()) {
-      if (predicate.test(candidate)) {
-        return candidate;
-      }
-    }
-    for (ITypeBinding i : t.getInterfaces()) {
-      IMethodBinding r = find(predicate, i);
-      if (r != null) {
-        return r;
-      }
-    }
-    if (t.getSuperclass() != null) {
-      return find(predicate, t.getSuperclass());
-    }
+  private List<IMethodBinding> find(Predicate<IMethodBinding> predicate, ITypeBinding typeBinding) {
+    List<IMethodBinding> bindings = new ArrayList<>();
+
+    addMissing(findSuperclassBindings(predicate, typeBinding.getSuperclass(), true), bindings);
+    addMissing(findInterfaceBindings(predicate, typeBinding.getInterfaces()), bindings);
+
     ITypeBinding objectTypeBinding = Objects.requireNonNull(sema.resolveType("java.lang.Object"));
-    if (t != objectTypeBinding) {
-      return find(predicate, objectTypeBinding);
-    }
-    return null;
+    addMissing(findSuperclassBindings(predicate, objectTypeBinding, true), bindings);
+
+    return bindings;
   }
 

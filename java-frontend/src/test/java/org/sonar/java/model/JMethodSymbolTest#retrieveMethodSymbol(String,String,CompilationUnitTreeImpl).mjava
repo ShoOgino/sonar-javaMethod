@@ -1,0 +1,13 @@
+  private static JMethodSymbol retrieveMethodSymbol(String className, String methodName, CompilationUnitTreeImpl cu) {
+    return cu.sema.methodSymbol(cu.types().stream().filter(a -> a instanceof ClassTreeImpl)
+      .map(a -> (ClassTreeImpl) a)
+      .filter(c -> className.equals(c.simpleName().name()))
+      .flatMap(c -> c.children().stream())
+      .filter(c -> c.is(Tree.Kind.METHOD))
+      .map(m -> (MethodTreeImpl) m)
+      .filter(m -> m.simpleName().name().equals(methodName))
+      .map(m -> m.methodBinding)
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("No method could be found with the given name in the given class")));
+  }
+
