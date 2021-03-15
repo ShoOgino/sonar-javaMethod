@@ -1,0 +1,22 @@
+  private static Optional<IfStatementTree> getParentConditionalBranch(ExpressionTree tree) {
+    Deque<Tree> trees = new ArrayDeque<>();
+    Tree current = tree;
+    IfStatementTree ifStatementTree = null;
+
+    while (current != null && ifStatementTree == null) {
+      if (ifStatementCache.containsKey(tree)) {
+        ifStatementTree = ifStatementCache.get(tree);
+      } else if (current.is(Kind.IF_STATEMENT)) {
+        ifStatementTree = (IfStatementTree) current;
+      }
+      trees.add(current);
+      current = current.parent();
+    }
+
+    while (!trees.isEmpty()) {
+      ifStatementCache.put(trees.pop(), ifStatementTree);
+    }
+
+    return Optional.ofNullable(ifStatementTree);
+  }
+

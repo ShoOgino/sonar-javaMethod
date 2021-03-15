@@ -1,13 +1,26 @@
   private static boolean isFirstUsageANullCheck(ExpressionTree boxedBoolean) {
     if (boxedBoolean.is(Kind.IDENTIFIER)) {
       IdentifierTree identifier = (IdentifierTree) boxedBoolean;
+      // Usages are not guaranteed to be ordered
       List<IdentifierTree> usages = identifier.symbol().usages();
-      if (!usages.isEmpty()) {
-        Tree parent = usages.get(0).parent();
-        if (parent.is(Kind.NOT_EQUAL_TO, Kind.EQUAL_TO) && isNullCheck((ExpressionTree) parent)) {
-          return true;
-        }
+      Tree firstUsage = usages.get(0).parent();
+      // Test if the first usage in our list is a null check
+      if (firstUsage.is(Kind.EQUAL_TO, Kind.NOT_EQUAL_TO) && isNullCheck((ExpressionTree) firstUsage)) {
+        return true;
       }
+      // Return false if the only usage is not a null check
+      if (usages.size() == 1) {
+        return false;
+      }
+      // Fetch the first null check in the usages list
+      Optional<ExpressionTree> firstNullCheck = getFirstNullCheck(identifier.symbol());
+      if (!firstNullCheck.isPresent()) {
+        return false;
+      }
+      // Test if the first null check and the first usage are part of the same higher if structure
+      Optional<IfStatementTree> ifStatementWithNullCheck = getParentConditionalBranch(firstNullCheck.get());
+      Optional<IfStatementTree> ifStatementWithFirstUsage = getParentConditionalBranch((ExpressionTree) firstUsage);
+      return ifStatementWithNullCheck.equals(ifStatementWithFirstUsage);
     }
     return false;
   }
