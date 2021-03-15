@@ -1,0 +1,20 @@
+    private static List<AnalyzerMessage.TextSpan> textSpansFromRegexSyntaxElements(List<RegexSyntaxElement> trees) {
+      JavaRegexSource source = (JavaRegexSource) trees.get(0).getSource();
+      List<AnalyzerMessage.TextSpan> locations = new ArrayList<>();
+      IndexRange current = null;
+      for (RegexSyntaxElement tree : trees) {
+        if (current == null) {
+          current = tree.getRange();
+        } else if (tree.getRange().getBeginningOffset() == current.getEndingOffset()) {
+          current = new IndexRange(current.getBeginningOffset(), tree.getRange().getEndingOffset());
+        } else {
+          locations.addAll(source.textSpansFor(current));
+          current = tree.getRange();
+        }
+      }
+      if (current != null) {
+        locations.addAll(source.textSpansFor(current));
+      }
+      return locations;
+    }
+

@@ -1,0 +1,13 @@
+  private RegexTree parseBoundary(SourceCharacter backslash) {
+    if (characters.currentIs("b{")) {
+      return parseEscapedSequence(
+        '{',
+        '}',
+        "an Unicode extended grapheme cluster",
+        dh -> new BoundaryTree(source, BoundaryTree.Type.UNICODE_EXTENDED_GRAPHEME_CLUSTER, backslash.getRange().merge(dh.closer.getRange()), activeFlags));
+    }
+    SourceCharacter boundary = characters.getCurrent();
+    characters.moveNext();
+    return new BoundaryTree(source, BoundaryTree.Type.forKey(boundary.getCharacter()), backslash.getRange().merge(boundary.getRange()), activeFlags);
+  }
+

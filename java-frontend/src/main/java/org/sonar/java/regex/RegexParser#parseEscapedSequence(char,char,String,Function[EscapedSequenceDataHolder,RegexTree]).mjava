@@ -1,12 +1,12 @@
   private RegexTree parseEscapedSequence(char opener, char closer, String expected, Function<EscapedSequenceDataHolder, RegexTree> builder) {
-    JavaCharacter marker = characters.getCurrent();
+    SourceCharacter marker = characters.getCurrent();
     characters.moveNext();
 
     if (!characters.currentIs(opener)) {
       expected(("'" + opener + "'"));
       return characterTree(marker);
     }
-    JavaCharacter openerChar = characters.getCurrent();
+    SourceCharacter openerChar = characters.getCurrent();
     boolean atLeastOneChar = false;
     do {
       characters.moveNext();
@@ -20,7 +20,7 @@
       }
       atLeastOneChar = true;
     } while (!characters.currentIs(closer));
-    JavaCharacter closerChar = characters.getCurrent();
+    SourceCharacter closerChar = characters.getCurrent();
     characters.moveNext();
     return builder.apply(new EscapedSequenceDataHolder(marker, openerChar, closerChar));
   }

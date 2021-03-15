@@ -1,26 +1,24 @@
   public static List<RegexCheck.RegexIssueLocation> getGraphemeInList(List<? extends RegexSyntaxElement> trees) {
     List<RegexCheck.RegexIssueLocation> result = new ArrayList<>();
-    RegexSyntaxElement startGrapheme = null;
-    RegexSyntaxElement endGrapheme = null;
+    List<RegexSyntaxElement> codePoints = new ArrayList<>();
     for (RegexSyntaxElement child : trees) {
       if (child instanceof CharacterTree) {
         CharacterTree currentCharacter = (CharacterTree) child;
         if (!currentCharacter.isEscapeSequence()) {
           if (!isMark(currentCharacter)) {
-            addCurrentGrapheme(result, startGrapheme, endGrapheme);
-            startGrapheme = child;
-            endGrapheme = null;
-          } else if (startGrapheme != null) {
-            endGrapheme = child;
+            addCurrentGrapheme(result, codePoints);
+            codePoints.clear();
+            codePoints.add(currentCharacter);
+          } else if (!codePoints.isEmpty()) {
+            codePoints.add(currentCharacter);
           }
           continue;
         }
       }
-      addCurrentGrapheme(result, startGrapheme, endGrapheme);
-      startGrapheme = null;
-      endGrapheme = null;
+      addCurrentGrapheme(result, codePoints);
+      codePoints.clear();
     }
-    addCurrentGrapheme(result, startGrapheme, endGrapheme);
+    addCurrentGrapheme(result, codePoints);
     return result;
   }
 

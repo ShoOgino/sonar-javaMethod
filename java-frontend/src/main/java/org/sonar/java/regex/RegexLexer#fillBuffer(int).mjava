@@ -1,9 +1,9 @@
   private void fillBuffer(int size) {
     skipCommentsAndWhiteSpace();
     while (buffer.size() < size && characters.isNotAtEnd()) {
-      JavaCharacter javaCharacter = characters.getCurrent();
+      SourceCharacter sourceCharacter = characters.getCurrent();
       characters.moveNext();
-      if (!escaped && javaCharacter.getCharacter() == '\\') {
+      if (!escaped && sourceCharacter.getCharacter() == '\\') {
         if (readQuotingDelimiter()) {
           skipCommentsAndWhiteSpace();
           continue;
@@ -13,7 +13,7 @@
       } else {
         escaped = false;
       }
-      buffer.add(javaCharacter);
+      buffer.add(sourceCharacter);
       skipCommentsAndWhiteSpace();
     }
   }

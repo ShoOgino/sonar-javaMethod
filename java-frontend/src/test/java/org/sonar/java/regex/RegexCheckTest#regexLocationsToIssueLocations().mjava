@@ -8,26 +8,15 @@
     assertThat(items)
       .hasSize(2)
       .allMatch(tree -> tree.is(RegexTree.Kind.CHARACTER));
-    assertThat(regex.getLocations())
-      .hasSize(2)
-      .allMatch(loc -> !loc.isEmpty());
 
     assertThat(correspondingTextSpans(regex)).hasSize(2);
 
     CharacterTree char1 = (CharacterTree) items.get(0);
-    List<Location> char1Locs = char1.getLocations();
-    assertThat(char1Locs).hasSize(2);
-    assertThat(char1Locs.get(0).isEmpty()).isFalse();
-    assertThat(char1Locs.get(1).isEmpty()).isTrue();
 
     // empty filtered out
     assertThat(correspondingTextSpans(char1)).hasSize(1);
 
     CharacterTree char2 = (CharacterTree) items.get(1);
-    List<Location> char2Locs = char2.getLocations();
-    assertThat(char2Locs)
-      .hasSize(1)
-      .allMatch(loc -> !loc.isEmpty());
     assertThat(correspondingTextSpans(char2)).hasSize(1);
   }
 

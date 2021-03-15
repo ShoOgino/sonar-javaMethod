@@ -4,15 +4,15 @@
     LiteralTree source = literals.get(0);
     assertThat(source.value()).isEqualTo("\"\\t\\u1234\"");
 
-    RegexSource regexSource = new RegexSource(Collections.singletonList(source));
+    RegexSource regexSource = new JavaRegexSource(Collections.singletonList(source));
 
-    List<JavaCharacter> unicodeCharacters = parseUnicode(regexSource);
-    assertThat(unicodeCharacters.stream().map(JavaCharacter::getCharacter))
+    List<SourceCharacter> unicodeCharacters = parseUnicode(regexSource);
+    assertThat(unicodeCharacters.stream().map(SourceCharacter::getCharacter))
       .hasSize(3)
       .containsExactly('\\', 't', '\u1234');
 
-    List<JavaCharacter> javaCharacters = parseJavaCharacters(regexSource);
-    assertThat(javaCharacters.stream().map(JavaCharacter::getCharacter))
+    List<SourceCharacter> sourceCharacters = parseJavaCharacters(regexSource);
+    assertThat(sourceCharacters.stream().map(SourceCharacter::getCharacter))
       .hasSize(2)
       .containsExactly('\t', '\u1234');
   }

@@ -1,11 +1,11 @@
   private RegexTree parseEscapeSequence() {
-    JavaCharacter backslash = characters.getCurrent();
+    SourceCharacter backslash = characters.getCurrent();
     characters.moveNext();
     if (characters.isAtEnd()) {
       expected("any character");
       return characterTree(backslash);
     } else {
-      JavaCharacter character = characters.getCurrent();
+      SourceCharacter character = characters.getCurrent();
       switch (character.getCharacter()) {
         case 'p':
         case 'P':
@@ -55,7 +55,7 @@
           characters.moveNext();
           char c = simpleEscapeToCharacter(character.getCharacter());
           IndexRange range = backslash.getRange().extendTo(characters.getCurrentStartIndex());
-          return characterTree(new JavaCharacter(source, range, c, true));
+          return characterTree(new SourceCharacter(source, range, c, true));
         case 'c':
           return parseControlSequence(backslash);
         case 'N':

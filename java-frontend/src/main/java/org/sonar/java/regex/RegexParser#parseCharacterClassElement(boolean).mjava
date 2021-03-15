@@ -6,7 +6,7 @@
     if (characters.isAtEnd() || characters.currentIs("&&")) {
       return null;
     }
-    JavaCharacter startCharacter = characters.getCurrent();
+    SourceCharacter startCharacter = characters.getCurrent();
     switch (startCharacter.getCharacter()) {
       case '\\':
         RegexTree escape = parseEscapeSequence();
@@ -18,7 +18,7 @@
           errors.add(new SyntaxError(escape, "Invalid escape sequence inside character class"));
           // Produce dummy AST and keep parsing to catch more errors.
           // The 'x' here doesn't matter because we're not going to actually use the AST when there are syntax errors.
-          return characterTree(new JavaCharacter(source, escape.getRange(), 'x'));
+          return characterTree(new SourceCharacter(source, escape.getRange(), 'x'));
         }
       case '[':
         return parseCharacterClass();

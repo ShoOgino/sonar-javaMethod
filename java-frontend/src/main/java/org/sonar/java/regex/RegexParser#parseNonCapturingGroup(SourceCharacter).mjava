@@ -1,0 +1,43 @@
+  private GroupTree parseNonCapturingGroup(SourceCharacter openingParen) {
+    // Discard '?'
+    characters.moveNext();
+    FlagSet enabledFlags = parseFlags();
+    FlagSet disabledFlags;
+    if (characters.currentIs('-')) {
+      characters.moveNext();
+      disabledFlags = parseFlags();
+    } else {
+      disabledFlags = new FlagSet();
+    }
+
+    boolean previousFreeSpacingMode = characters.getFreeSpacingMode();
+    if (disabledFlags.contains(Pattern.COMMENTS)) {
+      characters.setFreeSpacingMode(false);
+    } else if (enabledFlags.contains(Pattern.COMMENTS)) {
+      characters.setFreeSpacingMode(true);
+    }
+
+    FlagSet previousFlags = activeFlags;
+    if (!enabledFlags.isEmpty() || !disabledFlags.isEmpty()) {
+      activeFlags = new FlagSet(activeFlags);
+      activeFlags.addAll(enabledFlags);
+      activeFlags.removeAll(disabledFlags);
+    }
+    if (characters.currentIs(')')) {
+      SourceCharacter closingParen = characters.getCurrent();
+      characters.moveNext();
+      IndexRange range = openingParen.getRange().merge(closingParen.getRange());
+      return new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, null, activeFlags);
+    }
+    if (characters.currentIs(':')) {
+      characters.moveNext();
+    } else {
+      expected("flag or ':' or ')'");
+    }
+    GroupTree group = finishGroup(previousFreeSpacingMode, openingParen, (range, inner) ->
+      new NonCapturingGroupTree(source, range, enabledFlags, disabledFlags, inner, activeFlags)
+    );
+    activeFlags = previousFlags;
+    return group;
+  }
+

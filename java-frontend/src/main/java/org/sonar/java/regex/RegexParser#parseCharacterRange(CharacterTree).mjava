@@ -5,7 +5,7 @@
         return startCharacter;
       } else if (lookAhead == '\\') {
         characters.moveNext();
-        JavaCharacter backslash = characters.getCurrent();
+        SourceCharacter backslash = characters.getCurrent();
         RegexTree escape = parseEscapeSequence();
         if (escape.is(RegexTree.Kind.CHARACTER)) {
           return characterRange(startCharacter, (CharacterTree) escape);
@@ -15,7 +15,7 @@
         }
       } else {
         characters.moveNext();
-        JavaCharacter endCharacter = characters.getCurrent();
+        SourceCharacter endCharacter = characters.getCurrent();
         characters.moveNext();
         return characterRange(startCharacter, characterTree(endCharacter));
       }

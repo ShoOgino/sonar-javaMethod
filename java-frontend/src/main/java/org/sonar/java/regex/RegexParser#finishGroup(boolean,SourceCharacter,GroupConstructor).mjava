@@ -1,0 +1,14 @@
+  private GroupTree finishGroup(boolean previousFreeSpacingMode, SourceCharacter openingParen, GroupConstructor groupConstructor) {
+    FlagSet previousFlagSet = activeFlags;
+    RegexTree inner = parseDisjunction();
+    activeFlags = previousFlagSet;
+    characters.setFreeSpacingMode(previousFreeSpacingMode);
+    if (characters.currentIs(')')) {
+      characters.moveNext();
+    } else {
+      expected("')'");
+    }
+    IndexRange range = openingParen.getRange().extendTo(characters.getCurrentStartIndex());
+    return groupConstructor.construct(range, inner);
+  }
+

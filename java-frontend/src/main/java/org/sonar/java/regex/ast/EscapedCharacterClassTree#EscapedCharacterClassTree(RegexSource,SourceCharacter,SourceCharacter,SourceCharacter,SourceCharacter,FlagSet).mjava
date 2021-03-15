@@ -1,0 +1,17 @@
+  public EscapedCharacterClassTree(RegexSource source, SourceCharacter backslash, SourceCharacter marker, SourceCharacter openingCurlyBrace,
+    SourceCharacter closingCurlyBrace, FlagSet activeFlags) {
+    this(
+      source,
+      backslash.getRange().merge(closingCurlyBrace.getRange()),
+      marker,
+      source.substringAt(
+        new IndexRange(
+          openingCurlyBrace.getRange().getBeginningOffset() + 1,
+          closingCurlyBrace.getRange().getBeginningOffset())),
+      activeFlags
+    );
+    if (!isProperty()) {
+      throw new IllegalArgumentException("Only \\p can have a property string");
+    }
+  }
+

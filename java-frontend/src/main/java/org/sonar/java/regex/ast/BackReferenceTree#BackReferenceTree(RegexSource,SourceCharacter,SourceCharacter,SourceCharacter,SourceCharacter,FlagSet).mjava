@@ -1,0 +1,15 @@
+  public BackReferenceTree(RegexSource source, SourceCharacter backslash, @Nullable SourceCharacter key, SourceCharacter start, SourceCharacter end, FlagSet activeFlags) {
+    super(source, backslash.getRange().merge(end.getRange()), activeFlags);
+    this.key = key;
+    if (start.getCharacter() != '<') {
+      // numerical case
+      this.groupName = source.substringAt(start.getRange().merge(end.getRange()));
+    } else {
+      // named
+      this.groupName = source.substringAt(
+        new IndexRange(
+          start.getRange().getBeginningOffset() + 1,
+          end.getRange().getBeginningOffset()));
+    }
+  }
+
