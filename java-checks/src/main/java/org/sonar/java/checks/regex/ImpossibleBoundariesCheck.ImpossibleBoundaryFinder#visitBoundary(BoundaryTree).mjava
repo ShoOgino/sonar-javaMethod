@@ -5,6 +5,8 @@
         case INPUT_START:
           if (!RegexTreeHelper.canReachWithoutConsumingInput(start, boundaryTree)) {
             reportIssue(boundaryTree, String.format(MESSAGE, "after"), null, Collections.emptyList());
+          } else if (!excluded.contains(boundaryTree) && probablyShouldConsumeInput(start, boundaryTree)) {
+            reportIssue(boundaryTree, String.format(SOFT_MESSAGE, "after"), null, Collections.emptyList());
           }
           break;
         case LINE_END:
@@ -12,6 +14,8 @@
         case INPUT_END_FINAL_TERMINATOR:
           if (!RegexTreeHelper.canReachWithoutConsumingInput(boundaryTree, end)) {
             reportIssue(boundaryTree, String.format(MESSAGE, "before"), null, Collections.emptyList());
+          } else if (!excluded.contains(boundaryTree) && probablyShouldConsumeInput(boundaryTree, end)) {
+            reportIssue(boundaryTree, String.format(SOFT_MESSAGE, "before"), null, Collections.emptyList());
           }
           break;
         default:

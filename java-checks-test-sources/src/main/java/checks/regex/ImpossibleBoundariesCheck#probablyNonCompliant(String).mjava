@@ -1,0 +1,31 @@
+  void probablyNonCompliant(String str) {
+    str.matches("$.*"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+    str.matches("$.?"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+
+    str.matches("$a*"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+    str.matches("$a?"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+    str.matches("$[abc]*"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+    str.matches("$[abc]?"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears before mandatory input.}}
+
+    str.matches(".*^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+    str.matches(".?^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+
+    str.matches("a*^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+    str.matches("a?^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+    str.matches("[abc]*^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+    str.matches("[abc]?^"); // Noncompliant {{Remove or replace this boundary that can only match if the previous part matched the empty string because it appears after mandatory input.}}
+
+    // Noncompliant@+1
+    str.matches("$.*^"); // Noncompliant
+    // Noncompliant@+1
+    str.matches("$.?^"); // Noncompliant
+    // Noncompliant@+1
+    str.matches("$a*^"); // Noncompliant
+    // Noncompliant@+1
+    str.matches("$a?^"); // Noncompliant
+    // Noncompliant@+1
+    str.matches("$[abc]*^"); // Noncompliant
+    // Noncompliant@+1
+    str.matches("$[abc]?^"); // Noncompliant
+  }
+

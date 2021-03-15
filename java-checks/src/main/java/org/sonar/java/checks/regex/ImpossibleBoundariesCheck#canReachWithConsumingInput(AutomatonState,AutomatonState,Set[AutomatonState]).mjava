@@ -1,0 +1,20 @@
+  private boolean canReachWithConsumingInput(AutomatonState start, AutomatonState goal, Set<AutomatonState> visited) {
+    if (start == goal || visited.contains(start)) {
+      return false;
+    }
+    visited.add(start);
+
+    if (start instanceof LookAroundTree) {
+      return canReachWithConsumingInput(start.continuation(), goal, visited);
+    }
+
+    for (AutomatonState successor : start.successors()) {
+      AutomatonState.TransitionType transition = successor.incomingTransitionType();
+      if (((transition == CHARACTER) && regexReachabilityChecker.canReach(successor, goal))
+        || ((transition != CHARACTER) && canReachWithConsumingInput(successor, goal, visited))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
