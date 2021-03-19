@@ -1,0 +1,13 @@
+  void differentPolynomials(String str) {
+    // quadratic (O(n^2))
+    str.matches("x*x*"); // Noncompliant {{Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.}}
+    // cubic (O(n^3))
+    str.matches("x*x*x*"); // Noncompliant {{Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.}}
+    // O(n^4)
+    str.matches("x*x*x*x*"); // Noncompliant {{Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.}}
+    // O(n^5)
+    str.matches("x*x*x*x*x*"); // Noncompliant {{Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.}}
+    // cubic
+    str.matches("[^=]*.*.*=.*"); // Noncompliant {{Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.}}
+  }
+
