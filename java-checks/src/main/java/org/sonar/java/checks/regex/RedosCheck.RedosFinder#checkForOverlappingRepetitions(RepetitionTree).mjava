@@ -2,9 +2,12 @@
       if (tree.getQuantifier().isOpenEnded() && canFail(tree)) {
         for (RepetitionTree repetition : nonPossessiveRepetitions) {
           if (reachabilityChecker.canReach(repetition, tree)) {
-            SubAutomaton auto1 = new SubAutomaton(repetition.getElement(), tree.continuation(), false);
-            SubAutomaton auto2 = new SubAutomaton(repetition.continuation(), tree.continuation(), false);
-            if (intersectionChecker.check(auto1, auto2)) {
+            SubAutomaton repetitionAuto = new SubAutomaton(repetition.getElement(), repetition.continuation(), false);
+            SubAutomaton continuationAuto = new SubAutomaton(repetition.continuation(), tree, false);
+            SubAutomaton treeAuto = new SubAutomaton(tree.getElement(), tree.continuation(), false);
+            if (subAutomatonCanConsume(repetitionAuto, continuationAuto)
+              && automatonIsEmptyOrIntersects(continuationAuto, treeAuto)
+              && intersectionChecker.check(repetitionAuto, treeAuto)) {
               addBacktracking(BacktrackingType.ALWAYS_QUADRATIC);
             }
           }
