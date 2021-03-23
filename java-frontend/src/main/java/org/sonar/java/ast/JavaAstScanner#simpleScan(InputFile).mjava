@@ -1,5 +1,6 @@
   private void simpleScan(InputFile inputFile) {
     visitor.setCurrentFile(inputFile);
+    PerformanceMeasure.Duration parseDuration = PerformanceMeasure.start("JParser");
     try {
       String version;
       JavaVersion javaVersion = visitor.getJavaVersion();
@@ -17,6 +18,7 @@
         inputFile.contents(),
         visitor.getClasspath()
       );
+      parseDuration.stop();
       visitor.visitFile(ast);
       collectUndefinedTypes(ast.sema.undefinedTypes());
       // release environment used for semantic resolution
@@ -35,6 +37,9 @@
     } catch (StackOverflowError error) {
       LOG.error(String.format(LOG_ERROR_STACKOVERFLOW, inputFile), error);
       throw error;
+    } finally {
+      // redundant stop in case of exception
+      parseDuration.stop();
     }
   }
 

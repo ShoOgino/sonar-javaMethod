@@ -1,9 +1,14 @@
   @Override
   public void scanFile(JavaFileScannerContext context) {
-    behaviorCache.cleanup();
-    behaviorCache.setFileContext(this);
-    if (mode.isEnabled()) {
-      super.scanFile(context);
+    PerformanceMeasure.Duration symbolicExecutionVisitorDuration = PerformanceMeasure.start("SymbolicExecutionVisitor");
+    try {
+      behaviorCache.cleanup();
+      behaviorCache.setFileContext(this);
+      if (mode.isEnabled()) {
+        super.scanFile(context);
+      }
+    } finally {
+      symbolicExecutionVisitorDuration.stop();
     }
   }
 

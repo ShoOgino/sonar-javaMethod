@@ -2,7 +2,9 @@
     this.syntaxNode = syntaxNode;
     ProgramState ps;
     for (SECheck checker : checks) {
+      PerformanceMeasure.Duration checkerDuration = PerformanceMeasure.start(checker);
       ps = checker.checkPreStatement(this, syntaxNode);
+      checkerDuration.stop();
       if (ps == null) {
         return false;
       }

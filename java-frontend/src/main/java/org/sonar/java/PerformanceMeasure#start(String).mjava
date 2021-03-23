@@ -1,0 +1,12 @@
+  public static Duration start(String name) {
+    if (currentMeasure == null)  {
+      return NO_OP_DURATION;
+    }
+    if (currentMeasure.name.equals(name)) {
+      // Probably an unexpected second call to start() without a call to stop(), let's ignore the first start()
+      return new RecordedDuration(currentMeasure);
+    }
+    currentMeasure = currentMeasure.getOrCreateChild(name);
+    return new RecordedDuration(currentMeasure);
+  }
+

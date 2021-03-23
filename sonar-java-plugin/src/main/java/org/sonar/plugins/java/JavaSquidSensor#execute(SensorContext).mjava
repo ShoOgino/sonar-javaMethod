@@ -1,5 +1,7 @@
   @Override
   public void execute(SensorContext context) {
+    DurationReport sensorDuration = PerformanceMeasure.start(context.config(), "JavaSquidSensor", System::nanoTime);
+
     sonarComponents.setSensorContext(context);
 
     sonarComponents.registerCheckClasses(CheckList.REPOSITORY_KEY, CheckList.getJavaChecks());
@@ -12,5 +14,7 @@
       new SymbolicExecutionVisitor(Arrays.asList(sonarComponents.checkClasses())),
       sonarComponents.checkClasses());
     squid.scan(getSourceFiles(), getTestFiles(), runJasper(context));
+
+    sensorDuration.stopAndLog(context.fileSystem().workDir());
   }
 

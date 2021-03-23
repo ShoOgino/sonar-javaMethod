@@ -1,0 +1,12 @@
+  private PerformanceMeasure merge(PerformanceMeasure measure) throws IOException {
+    if (!measure.name.equals(name)) {
+      throw new IOException("Incompatible name '" + measure.name + "' and '" + name + "'");
+    }
+    totalDurationNanos += measure.totalDurationNanos;
+    callsCount += measure.callsCount;
+    for (PerformanceMeasure child : measure.children()) {
+      getOrCreateChild(child.name).merge(child);
+    }
+    return this;
+  }
+

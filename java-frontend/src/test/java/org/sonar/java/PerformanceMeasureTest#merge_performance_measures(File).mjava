@@ -1,0 +1,48 @@
+  @Test
+  void merge_performance_measures(@TempDir File workDir) throws IOException {
+    Configuration config = createConfig(true, LoggerLevel.DEBUG);
+    DurationReport duration_1 = PerformanceMeasure.start(config, "root", timeNanos::get);
+    timeNanos.addAndGet(1_382_190L);
+
+    Duration duration_1_1 = PerformanceMeasure.start("child-1");
+    timeNanos.addAndGet(47_442_121L);
+    duration_1_1.stop();
+
+    timeNanos.addAndGet(2_456_121L);
+    duration_1.stopAndLog(workDir);
+
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Performance Measures:\n" +
+      "{ \"name\": \"root\", \"calls\": 1, \"durationNanos\": 51280432, \"children\": [\n" +
+      "    { \"name\": \"child-1\", \"calls\": 1, \"durationNanos\": 47442121 }\n" +
+      "  ]\n" +
+      "}");
+
+    DurationReport duration_2 = PerformanceMeasure.start(config, "root", timeNanos::get);
+    timeNanos.addAndGet(2_176_361L);
+
+    Duration duration_2_1 = PerformanceMeasure.start("child-1");
+    timeNanos.addAndGet(32_478_123L);
+    duration_2_1.stop();
+
+    Duration duration_2_2 = PerformanceMeasure.start("child-2");
+    timeNanos.addAndGet(13_237_123L);
+    duration_2_2.stop();
+
+    timeNanos.addAndGet(12_567_151L);
+    duration_2.stopAndLog(workDir);
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Performance Measures:\n" +
+      "{ \"name\": \"root\", \"calls\": 1, \"durationNanos\": 60458758, \"children\": [\n" +
+      "    { \"name\": \"child-1\", \"calls\": 1, \"durationNanos\": 32478123 },\n" +
+      "    { \"name\": \"child-2\", \"calls\": 1, \"durationNanos\": 13237123 }\n" +
+      "  ]\n" +
+      "}");
+
+    Path jsonPath = workDir.toPath().resolve("sonar.java.performance.measure.json");
+    String jsonContent = new String(Files.readAllBytes(jsonPath), UTF_8);
+    assertThat(jsonContent).isEqualTo("{ \"name\": \"root\", \"calls\": 2, \"durationNanos\": 111739190, \"children\": [\n" +
+      "    { \"name\": \"child-1\", \"calls\": 2, \"durationNanos\": 79920244 },\n" +
+      "    { \"name\": \"child-2\", \"calls\": 1, \"durationNanos\": 13237123 }\n" +
+      "  ]\n" +
+      "}");
+  }
+

@@ -1,0 +1,8 @@
+  public static DurationReport start(Configuration config, String name, Supplier<Long> nanoTimeSupplier) {
+    if (!config.get(PerformanceMeasure.ACTIVATION_PROPERTY).filter("true"::equals).isPresent()) {
+      return NO_OP_DURATION;
+    }
+    currentMeasure = new PerformanceMeasure(currentMeasure, name, nanoTimeSupplier);
+    return new RecordedDuration(currentMeasure);
+  }
+

@@ -1,6 +1,11 @@
   public RegexParseResult getRegexForLiterals(FlagSet initialFlags, LiteralTree... stringLiterals) {
     return cache.computeIfAbsent(
       Arrays.asList(stringLiterals),
-      k -> new RegexParser(new JavaRegexSource(k), initialFlags).parse());
+      k -> {
+        PerformanceMeasure.Duration regexForLiteralsDuration = PerformanceMeasure.start("RegexParser");
+        RegexParseResult result = new RegexParser(new JavaRegexSource(k), initialFlags).parse();
+        regexForLiteralsDuration.stop();
+        return result;
+      });
   }
 

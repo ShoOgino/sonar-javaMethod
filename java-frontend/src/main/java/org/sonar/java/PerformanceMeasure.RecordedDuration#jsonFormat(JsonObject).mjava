@@ -1,0 +1,11 @@
+    private static String jsonFormat(JsonObject jsonObject) {
+      String json = new GsonBuilder()
+        .setPrettyPrinting()
+        .create()
+        .toJson(jsonObject);
+      // reduce the number of lines by inlining some of the properties
+      return json
+        .replaceAll("\n *+(\"(?:name|calls|durationNanos|children)\":)", " $1")
+        .replaceAll("(\\d)\n *+\\}", "$1 }");
+    }
+

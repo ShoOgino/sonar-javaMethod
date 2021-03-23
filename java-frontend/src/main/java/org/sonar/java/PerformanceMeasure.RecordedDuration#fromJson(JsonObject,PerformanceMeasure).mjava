@@ -1,0 +1,13 @@
+    private static PerformanceMeasure fromJson(JsonObject jsonObject, @Nullable PerformanceMeasure parent) {
+      String name = jsonObject.getAsJsonPrimitive("name").getAsString();
+      PerformanceMeasure measure = parent != null ? parent.getOrCreateChild(name) :
+        new PerformanceMeasure(null, name, System::nanoTime);
+      measure.callsCount = jsonObject.getAsJsonPrimitive("calls").getAsLong();
+      measure.totalDurationNanos = jsonObject.getAsJsonPrimitive("durationNanos").getAsLong();
+      JsonArray children = jsonObject.getAsJsonArray("children");
+      if (children != null) {
+        children.forEach(jsonChild -> fromJson(jsonChild.getAsJsonObject(), measure));
+      }
+      return measure;
+    }
+

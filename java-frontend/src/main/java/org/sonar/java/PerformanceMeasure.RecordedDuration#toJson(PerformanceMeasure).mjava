@@ -1,0 +1,15 @@
+    private static JsonObject toJson(PerformanceMeasure measure) {
+      JsonObject jsonObject = new JsonObject();
+      jsonObject.addProperty("name", measure.name);
+      jsonObject.addProperty("calls", measure.callsCount);
+      jsonObject.addProperty("durationNanos", measure.totalDurationNanos);
+      Collection<PerformanceMeasure> children = measure.children();
+      if (!children.isEmpty()) {
+        jsonObject.add("children", children.stream()
+          .sorted(Comparator.comparing(e -> e.name))
+          .map(RecordedDuration::toJson)
+          .collect(JsonArray::new, JsonArray::add, JsonArray::addAll));
+      }
+      return jsonObject;
+    }
+

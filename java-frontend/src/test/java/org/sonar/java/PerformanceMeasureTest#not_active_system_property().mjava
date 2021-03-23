@@ -1,0 +1,12 @@
+  @Test
+  void not_active_system_property() {
+    Configuration config = createConfig(false, LoggerLevel.DEBUG);
+    DurationReport duration_1 = PerformanceMeasure.start(config, "root", timeNanos::get);
+    Duration duration_1_1 = PerformanceMeasure.start("cat-1");
+    duration_1_1.stop();
+    Duration duration_1_2 = PerformanceMeasure.start(arrayList);
+    duration_1_2.stop();
+    duration_1.stopAndLog(null);
+    assertThat(logTester.logs(LoggerLevel.INFO)).isEmpty();
+  }
+
