@@ -1,10 +1,14 @@
   @Override
   public void visitNode(Tree tree) {
     ClassTree classTree = (ClassTree) tree;
+    if (classTree.symbol().isAbstract()) {
+      return;
+    }
     List<MethodTree> testMethods = classTree.members().stream()
       .filter(member -> member.is(Tree.Kind.METHOD))
       .map(MethodTree.class::cast)
       .filter(UnitTestUtils::hasJUnit5TestAnnotation)
+      .filter(AbstractJUnit5NotCompliantModifierChecker::isNotOverriding)
       .collect(Collectors.toList());
 
     for (MethodTree testMethod : testMethods) {
