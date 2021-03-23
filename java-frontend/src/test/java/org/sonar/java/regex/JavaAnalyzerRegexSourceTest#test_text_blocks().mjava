@@ -1,0 +1,24 @@
+  @Test
+  void test_text_blocks() {
+    RegexTree regex = assertSuccessfulParse("\"\"\n    ab\n    cd\"\"");
+    assertKind(RegexTree.Kind.SEQUENCE, regex);
+    List<RegexTree> items = ((SequenceTree) regex).getItems();
+    assertEquals(5, items.size());
+
+    assertCharacter('a', items.get(0));
+    assertCharacter('b', items.get(1));
+    assertCharacter('\n', items.get(2));
+    assertCharacter('c', items.get(3));
+    assertCharacter('d', items.get(4));
+
+    assertTextSpan(4, 4, 5, items.get(0));
+    assertTextSpan(4, 5, 6, items.get(1));
+    assertTextSpan(4, 6, 7, items.get(2));
+    assertTextSpan(5, 4, 5, items.get(3));
+    assertTextSpan(5, 5, 6, items.get(4));
+
+    List<AnalyzerMessage.TextSpan> spans = ((JavaAnalyzerRegexSource) regex.getSource()).textSpansFor(regex.getRange());
+    assertTextSpan(4, 4, 7, spans.get(0));
+    assertTextSpan(5, 4, 6, spans.get(1));
+  }
+

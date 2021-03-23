@@ -1,0 +1,11 @@
+    void addTextBlock(LiteralTree literal) {
+      int indent = LiteralUtils.indentationOfTextBlock(literal.value().split("\n"));
+      String[] lines = getString(literal).split("(?<=\r?\n)");
+      for (int i = 0; i < lines.length; i++) {
+        int line = literal.token().line() + i + 1;
+        int lineLength = lines[i].length();
+        indexToTextSpan.put(index, new TextSpan(line, indent, line, indent + lineLength));
+        index += lineLength;
+      }
+    }
+

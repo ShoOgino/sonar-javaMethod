@@ -1,7 +1,8 @@
     void addLiteral(LiteralTree literal, int length) {
-      TextSpan literalSpan = AnalyzerMessage.textSpanFor(literal);
-      // Create a text span for the string with the quotes stripped out
-      indexToTextSpan.put(index, new TextSpan(literalSpan.startLine, literalSpan.startCharacter + 1, literalSpan.endLine, literalSpan.endCharacter - 1));
-      index += length;
+      if (literal.is(Tree.Kind.TEXT_BLOCK)) {
+        addTextBlock(literal);
+      } else {
+        addStringLiteral(literal, length);
+      }
     }
 
