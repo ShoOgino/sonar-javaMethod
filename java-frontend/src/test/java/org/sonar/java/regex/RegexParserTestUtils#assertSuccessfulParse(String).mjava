@@ -1,4 +1,9 @@
   public static RegexTree assertSuccessfulParse(String regex) {
-    return assertSuccessfulParse(regex, 0);
+    RegexSource source = makeSource(regex);
+    RegexParseResult result = new RegexParser(source, new FlagSet()).parse();
+    if (!result.getSyntaxErrors().isEmpty()) {
+      throw new AssertionFailedError("Parsing should complete with no errors.", "no errors", result.getSyntaxErrors());
+    }
+    return result.getResult();
   }
 
