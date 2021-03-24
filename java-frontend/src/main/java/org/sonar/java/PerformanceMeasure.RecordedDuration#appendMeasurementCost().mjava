@@ -1,0 +1,27 @@
+    private static void appendMeasurementCost() {
+      String[] sampleNames = SAMPLES.get().mapToObj(i -> "m" + i).toArray(String[]::new);
+      Duration totalDuration = start("#MeasurementCost_v1");
+      PerformanceMeasure measurementCost = currentMeasure;
+      Duration temporaryDuration = start(PARENT_OF_THROWAWAY_MEASURES_TO_COMPUTE_OBSERVATION_COST);
+      measurementCost.getOrCreateChild("nanoTime").add(median(SAMPLES.get().mapToLong(i -> {
+        long start = System.nanoTime();
+        return System.nanoTime() - start;
+      })));
+      measurementCost.getOrCreateChild("createChild").add(median(SAMPLES.get().mapToLong(i -> {
+        long start = System.nanoTime();
+        start(sampleNames[i]).stop();
+        return System.nanoTime() - start;
+      })));
+      measurementCost.getOrCreateChild("observationCost").add(median(Arrays.stream(sampleNames)
+        .map(n -> currentMeasure.childrenMap.get(n)).mapToLong(m -> m.totalDurationNanos)));
+      start("measure").stop();
+      measurementCost.getOrCreateChild("incrementChild").add(median(SAMPLES.get().mapToLong(i -> {
+        long start = System.nanoTime();
+        start("measure").stop();
+        return System.nanoTime() - start;
+      })));
+      temporaryDuration.stop();
+      measurementCost.childrenMap.remove(PARENT_OF_THROWAWAY_MEASURES_TO_COMPUTE_OBSERVATION_COST);
+      totalDuration.stop();
+    }
+

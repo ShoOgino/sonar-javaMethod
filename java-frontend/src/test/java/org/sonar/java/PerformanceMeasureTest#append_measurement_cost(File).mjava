@@ -1,0 +1,27 @@
+  @Test
+  void append_measurement_cost(@TempDir File workDir) throws IOException {
+    Configuration config = createConfig(true, LoggerLevel.DEBUG);
+    DurationReport duration_1 = PerformanceMeasure.start(config, "root", System::nanoTime);
+    timeNanos.addAndGet(1_382_190L);
+    duration_1.stopAndLog(workDir, true);
+
+    Path jsonPath = workDir.toPath().resolve("sonar.java.performance.measure.json");
+    String jsonContent = new String(Files.readAllBytes(jsonPath), UTF_8);
+    // measurements may vary from one test to another, but should not be zero
+    jsonContent = jsonContent
+      .replaceAll("\"durationNanos\": 0(?=[, ])", "\"durationNanos\": ZERO")
+      .replaceAll("\"durationNanos\": \\d++(?=[, ])", "\"durationNanos\": NOT_ZERO");
+
+    assertThat(jsonContent).isEqualTo("" +
+      "{ \"name\": \"root\", \"calls\": 1, \"durationNanos\": NOT_ZERO, \"children\": [\n" +
+      "    { \"name\": \"#MeasurementCost_v1\", \"calls\": 1, \"durationNanos\": NOT_ZERO, \"children\": [\n" +
+      "        { \"name\": \"createChild\", \"calls\": 1, \"durationNanos\": NOT_ZERO },\n" +
+      "        { \"name\": \"incrementChild\", \"calls\": 1, \"durationNanos\": NOT_ZERO },\n" +
+      "        { \"name\": \"nanoTime\", \"calls\": 1, \"durationNanos\": NOT_ZERO },\n" +
+      "        { \"name\": \"observationCost\", \"calls\": 1, \"durationNanos\": NOT_ZERO }\n" +
+      "      ]\n" +
+      "    }\n" +
+      "  ]\n" +
+      "}");
+  }
+

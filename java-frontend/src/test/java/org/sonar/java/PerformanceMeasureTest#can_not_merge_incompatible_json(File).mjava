@@ -3,13 +3,13 @@
     Configuration config = createConfig(true, LoggerLevel.DEBUG);
     DurationReport duration_1 = PerformanceMeasure.start(config, "root1", timeNanos::get);
     timeNanos.addAndGet(1_382_190L);
-    duration_1.stopAndLog(workDir);
+    duration_1.stopAndLog(workDir, false);
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
 
     DurationReport duration_2 = PerformanceMeasure.start(config, "root2", timeNanos::get);
     timeNanos.addAndGet(2_176_361L);
-    duration_2.stopAndLog(workDir);
+    duration_2.stopAndLog(workDir, false);
 
     assertThat(logTester.logs(LoggerLevel.ERROR))
       .contains("Can't save performance measure: Incompatible name 'root2' and 'root1'");
