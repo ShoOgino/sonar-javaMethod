@@ -1,0 +1,23 @@
+  public static void generate(Path performanceDirectory) throws IOException {
+    Path performanceJsonFile = performanceDirectory.resolve("sonar.java.performance.measure.json");
+    Measure sensorMeasure = fromJson(performanceJsonFile);
+    MeasurementCost measurementCost = new MeasurementCost(sensorMeasure);
+    measurementCost.subtractObservationCost(sensorMeasure);
+    mergeOnUpperLevel(sensorMeasure, "RegexParser");
+    Map<String, Set<String>> measureCategories = new HashMap<>();
+    categorizeMeasures(sensorMeasure, measureCategories, Collections.emptySet());
+    Map<String, Measure> allChecks = new HashMap<>();
+    Map<Measure, Measure> replacementMeasureByParent = new HashMap<>();
+    extractAllChecks(allChecks, sensorMeasure, measureCategories, replacementMeasureByParent);
+
+    StringBuilder stat = new StringBuilder();
+    stat.append("____________________________\n");
+    stat.append("Sensor Performance (in seconds without observation cost)\n");
+    simplifiedTreeOrderedByDuration(stat, sensorMeasure, "");
+    stat.append("\n____________________________\n");
+    stat.append("Checks Performance (in seconds without observation cost)\n");
+    rankedCheckList(stat, allChecks, measureCategories);
+    Path performanceStatFile = performanceDirectory.resolve("sonar.java.performance.statistics.txt");
+    Files.write(performanceStatFile, stat.toString().getBytes(UTF_8));
+  }
+

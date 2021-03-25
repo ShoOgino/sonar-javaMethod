@@ -1,0 +1,8 @@
+  @Test
+  void ensure_parent_directory_exists(@TempDir Path workDir) throws IOException {
+    assertThatNoException().isThrownBy(() -> ensureParentDirectoryExists(Paths.get("file-without-parent.json")));
+
+    ensureParentDirectoryExists(workDir.resolve("parent-dir/file.json"));
+    assertThat(workDir.resolve("parent-dir")).isDirectory();
+  }
+

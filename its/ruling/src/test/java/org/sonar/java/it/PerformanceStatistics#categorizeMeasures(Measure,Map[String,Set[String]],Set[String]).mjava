@@ -1,0 +1,15 @@
+  private static void categorizeMeasures(Measure measure, Map<String, Set<String>> measureCategories, Set<String> parentCategories) {
+    Set<String> categories = measureCategories.computeIfAbsent(measure.name, name -> new TreeSet<>());
+    categories.addAll(parentCategories);
+    String newCategory = CATEGORY_MAP.get(measure.name);
+    Set<String> childCategories;
+    if (newCategory != null) {
+      categories.add(newCategory);
+      childCategories = new TreeSet<>(parentCategories);
+      childCategories.add(newCategory);
+    } else {
+      childCategories = parentCategories;
+    }
+    measure.children().forEach(child -> categorizeMeasures(child, measureCategories, childCategories));
+  }
+

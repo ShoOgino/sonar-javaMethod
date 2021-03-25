@@ -1,0 +1,17 @@
+  private static void mergeOnUpperLevel(Measure measure, String name) {
+    if (name.equals(measure.name)) {
+      Measure parent = measure.parent;
+      parent.durationNanos -= measure.durationNanos;
+      Measure existing = parent.parent.get(measure.name);
+      if (existing != null) {
+        existing.calls += measure.calls;
+        existing.durationNanos += measure.durationNanos;
+        measure.detach();
+      } else {
+        parent.parent.add(measure);
+      }
+    } else {
+      measure.children().forEach(child -> mergeOnUpperLevel(child, name));
+    }
+  }
+

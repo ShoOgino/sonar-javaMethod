@@ -1,0 +1,10 @@
+  private static Measure createChecksReplacementMeasure(Measure parent, Map<String, Set<String>> measureCategories) {
+    long numberOfCheckToReplace = parent.children().stream().filter(child -> child.name.endsWith("Check")).count();
+    String categories = parent.children().stream().flatMap(child -> measureCategories.get(child.name).stream())
+      .distinct().sorted().collect(Collectors.joining(", ", "(", ")"));
+    String name = "[ " + numberOfCheckToReplace + " checks " + categories + " ]";
+    Measure replacement =  new Measure(name, 0, 0, Collections.emptyList());
+    parent.add(replacement);
+    return replacement;
+  }
+

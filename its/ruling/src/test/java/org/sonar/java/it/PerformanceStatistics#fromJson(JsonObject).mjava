@@ -1,0 +1,13 @@
+  private static Measure fromJson(JsonObject jsonObject) {
+    List<Measure> children = new ArrayList<>();
+    JsonArray childrenArray = jsonObject.getAsJsonArray("children");
+    if (childrenArray != null) {
+      childrenArray.forEach(jsonChild -> children.add(fromJson(jsonChild.getAsJsonObject())));
+    }
+    return new Measure(
+      jsonObject.getAsJsonPrimitive("name").getAsString(),
+      jsonObject.getAsJsonPrimitive("calls").getAsLong(),
+      jsonObject.getAsJsonPrimitive("durationNanos").getAsLong(),
+      children);
+  }
+

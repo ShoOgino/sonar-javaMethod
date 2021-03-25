@@ -1,4 +1,9 @@
   public static DurationReport start(Configuration config, String name, Supplier<Long> nanoTimeSupplier) {
+    performanceMeasureFile = config.get(PerformanceMeasure.FILE_PATH_PROPERTY)
+      .filter(path -> !path.isEmpty())
+      .map(path -> path.replace('\\', File.separatorChar).replace('/', File.separatorChar))
+      .map(Paths::get)
+      .orElse(null);
     if (!config.get(PerformanceMeasure.ACTIVATION_PROPERTY).filter("true"::equals).isPresent()) {
       return NO_OP_DURATION;
     }

@@ -1,0 +1,12 @@
+  @Test
+  void custom_performance_measure_file(@TempDir File workDir) throws IOException {
+    Path customPerformanceFile = workDir.toPath().resolve("new-directory").resolve("custom-path.json");
+    Configuration config = createConfig(true, customPerformanceFile.toString(), LoggerLevel.DEBUG);
+    DurationReport duration_1 = PerformanceMeasure.start(config, "root", timeNanos::get);
+    timeNanos.addAndGet(1_382_190L);
+    duration_1.stopAndLog(workDir, false);
+
+    String jsonContent = new String(Files.readAllBytes(customPerformanceFile), UTF_8);
+    assertThat(jsonContent).isEqualTo("{ \"name\": \"root\", \"calls\": 1, \"durationNanos\": 1382190 }");
+  }
+

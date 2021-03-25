@@ -1,12 +1,15 @@
     private static void saveToFile(@Nullable File workDir, PerformanceMeasure measure) {
+      Path performanceFile = performanceMeasureFile;
+      if (performanceFile == null && workDir == null) {
+        return;
+      }
       try {
-        if (workDir == null) {
-          return;
+        if (performanceFile == null) {
+          if (!workDir.exists()) {
+            throw new IOException("Directory does not exist: " + workDir.toString());
+          }
+          performanceFile = workDir.toPath().resolve(DESTINATION_FILE);
         }
-        if (!workDir.exists()) {
-          throw new IOException("Directory does not exist: " + workDir.toString());
-        }
-        Path performanceFile = workDir.toPath().resolve(DESTINATION_FILE);
         PerformanceMeasure allMeasures;
         if (Files.exists(performanceFile)) {
           LOG.info("Adding performance measures into: " + performanceFile);
@@ -14,6 +17,7 @@
         } else {
           LOG.info("Saving performance measures into: " + performanceFile);
           allMeasures = measure;
+          ensureParentDirectoryExists(performanceFile);
         }
         Files.write(performanceFile, jsonFormat(toJson(allMeasures)).getBytes(UTF_8));
       } catch (IOException e) {

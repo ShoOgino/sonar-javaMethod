@@ -1,0 +1,23 @@
+  private static void extractAllChecks(Map<String, Measure> allChecks, Measure measure,
+    Map<String, Set<String>> measureCategories, Map<Measure, Measure> replacementMeasureByParent) {
+    if (measure.name.endsWith("Check")) {
+      if (!measure.isEmpty()) {
+        throw new IllegalStateException("Unexpected children under " + measure.name);
+      }
+      Measure replacement = replacementMeasureByParent.computeIfAbsent(measure.parent,
+        parent -> createChecksReplacementMeasure(parent, measureCategories));
+      replacement.calls += measure.calls;
+      replacement.durationNanos += measure.durationNanos;
+      measure.detach();
+      Measure existing = allChecks.get(measure.name);
+      if (existing != null) {
+        existing.calls += measure.calls;
+        existing.durationNanos += measure.durationNanos;
+      } else {
+        allChecks.put(measure.name, measure);
+      }
+    } else {
+      measure.children().forEach(child -> extractAllChecks(allChecks, child, measureCategories, replacementMeasureByParent));
+    }
+  }
+

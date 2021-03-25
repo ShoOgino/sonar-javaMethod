@@ -1,0 +1,7 @@
+  private static void simplifiedTreeOrderedByDuration(StringBuilder stat, Measure measure, String indent) {
+    stat.append(indent).append("• ").append(toSeconds(measure.durationNanos)).append(" ").append(measure.name).append("\n");
+    measure.children().stream()
+      .sorted(Comparator.comparing(x -> -x.durationNanos))
+      .forEach(child -> simplifiedTreeOrderedByDuration(stat, child, indent + "    "));
+  }
+

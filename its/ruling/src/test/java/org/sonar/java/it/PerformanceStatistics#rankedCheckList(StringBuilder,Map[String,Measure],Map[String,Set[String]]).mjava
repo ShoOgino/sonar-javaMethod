@@ -1,0 +1,14 @@
+  private static void rankedCheckList(StringBuilder stat, Map<String, Measure> allChecks, Map<String, Set<String>> measureCategories) {
+    long totalDuration = allChecks.values().stream().mapToLong(c -> c.durationNanos).sum();
+    stat.append("Total   ").append(toSeconds(totalDuration)).append("\n");
+    List<Measure> checkMeasures = allChecks.values().stream().sorted(Comparator.comparing(c -> -c.durationNanos)).collect(Collectors.toList());
+    for (int i = 0; i < checkMeasures.size(); i++) {
+      Measure measure = checkMeasures.get(i);
+      stat.append(toRank(i, checkMeasures))
+        .append(" ").append(toSeconds(measure.durationNanos))
+        .append(" ").append(String.format("%-50s", measure.name))
+        .append(" (").append(String.join(", ", measureCategories.get(measure.name))).append(")")
+        .append("\n");
+    }
+  }
+
