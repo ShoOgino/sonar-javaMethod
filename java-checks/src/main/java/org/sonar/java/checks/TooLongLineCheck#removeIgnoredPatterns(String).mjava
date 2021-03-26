@@ -1,8 +1,9 @@
   private static String removeIgnoredPatterns(String line) {
+    if (!line.matches("\\s*(?:\\*|//).*")) return line;
     return line
       // @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#link">@link ...</a>
-      .replaceAll("^(\\s*(\\*|//).*?)\\s*\\{@link [^}]+\\}\\s*", "$1")
+      .replaceFirst("\\{@link [^}]+\\}\\s*", "")
       // @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#see">@see reference</a>
-      .replaceAll("^(\\s*(\\*|//).*?)\\s*@see .+\\s*", "$1");
+      .replaceFirst("@see .+", "");
   }
 
