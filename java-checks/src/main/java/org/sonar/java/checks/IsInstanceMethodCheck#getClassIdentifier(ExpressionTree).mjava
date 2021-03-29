@@ -1,0 +1,13 @@
+  private static Optional<IdentifierTree> getClassIdentifier(ExpressionTree expression) {
+    ExpressionTree originalExpression = ExpressionUtils.skipParentheses(expression);
+    if (originalExpression.is(Tree.Kind.MEMBER_SELECT)) {
+      MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) originalExpression;
+      if (memberSelect.identifier().name().equals("class")) {
+        ExpressionTree selectedExpression = ExpressionUtils.skipParentheses(memberSelect.expression());
+        // ".class" can only be called on type identifier
+        return Optional.of(((IdentifierTree) selectedExpression));
+      }
+    }
+    return Optional.empty();
+  }
+
