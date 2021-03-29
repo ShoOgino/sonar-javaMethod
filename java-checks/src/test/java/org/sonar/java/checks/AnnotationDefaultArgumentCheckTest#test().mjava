@@ -1,7 +1,11 @@
   @Test
   void test() {
+    List<File> classPath = FilesUtils.getClassPath(FilesUtils.DEFAULT_TEST_JARS_DIRECTORY);
+    // Add CustomAnnotation to the classPath
+    classPath.add(new File("../java-checks-test-sources/target/classes/"));
     JavaCheckVerifier.newVerifier()
-      .onFile("src/test/files/checks/AnnotationDefaultArgumentCheck.java")
+      .onFile(testSourcesPath("checks/AnnotationDefaultArgumentCheck.java"))
+      .withClassPath(classPath)
       .withCheck(new AnnotationDefaultArgumentCheck())
       .verifyIssues();
   }
