@@ -1,0 +1,9 @@
+  private static boolean setValueIsSameAsDefaultValue(@Nullable Object defaultValue, ExpressionTree valueSet) {
+    Optional<String> valueAsStringConstant = valueSet.asConstant(String.class);
+    if (valueAsStringConstant.isPresent()) {
+      return valueAsStringConstant.get().equals(defaultValue);
+    }
+    Optional<Integer> valueAsIntConstant = valueSet.asConstant(Integer.class);
+    return valueAsIntConstant.map(integer -> integer.equals(defaultValue)).orElse(false);
+  }
+
