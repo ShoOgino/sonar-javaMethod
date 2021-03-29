@@ -4,8 +4,9 @@
     if (defaultPropertyValue != null) {
       expectedAlgorithm = defaultPropertyValue;
     }
-    if (expectedAlgorithm.is(Tree.Kind.STRING_LITERAL)) {
-      String algorithmName = LiteralUtils.trimQuotes(((LiteralTree) expectedAlgorithm).value());
+    Optional<String> stringConstant = expectedAlgorithm.asConstant(String.class);
+    if (stringConstant.isPresent()) {
+      String algorithmName = stringConstant.get();
       return Arrays.stream(InsecureAlgorithm.values())
         .filter(alg -> alg.match(algorithmName))
         .findFirst();
