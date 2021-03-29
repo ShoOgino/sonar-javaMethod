@@ -5,8 +5,8 @@
     if (defaultPropertyValue == null) {
       defaultPropertyValue = firstArg;
     }
-    if (defaultPropertyValue.is(Tree.Kind.STRING_LITERAL)) {
-      checkIssue(firstArg, (LiteralTree) defaultPropertyValue);
-    }
+    defaultPropertyValue.asConstant(String.class).ifPresent(defaultProperty ->
+      checkIssue(firstArg, defaultProperty)
+    );
   }
 
