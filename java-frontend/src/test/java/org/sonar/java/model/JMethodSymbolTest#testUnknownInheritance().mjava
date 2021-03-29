@@ -1,0 +1,13 @@
+  @Test
+  void testUnknownInheritance() {
+    JavaTree.CompilationUnitTreeImpl cu = test(""
+      + "interface KnownInterface { void a(); }\n"
+      + "class C implements KnownInterface, UnknownInterface { public void a() { } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(1);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+
+    assertThat(symbol.overriddenSymbols()).containsExactly(
+      retrieveMethodSymbol("KnownInterface", "a", cu));
+  }
+

@@ -1,8 +1,10 @@
   @Nullable
   @Override
   public MethodSymbol overriddenSymbol() {
-    return overriddenSymbols().stream()
-      .findFirst()
-      .orElse(null);
+    if (overriddenSymbols == null) {
+      // only compute overridenSymbols once
+      overriddenSymbols();
+    }
+    return firstOverridenSymbol;
   }
 

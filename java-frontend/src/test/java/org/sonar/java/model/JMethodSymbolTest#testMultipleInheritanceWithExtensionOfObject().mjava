@@ -1,11 +1,16 @@
   @Test
   void testMultipleInheritanceWithExtensionOfObject() {
-    JavaTree.CompilationUnitTreeImpl cu = test("interface A { boolean equals(Object other); }  interface B { boolean equals(Object other); } interface Z extends B { } class C implements A, Z { public boolean equals(Object other) { return false;} }");
+    JavaTree.CompilationUnitTreeImpl cu = test(""
+      + "interface A { boolean equals(Object other); }\n"
+      + "interface B { boolean equals(Object other); }\n"
+      + "interface C extends B { }\n"
+      + "class Clazz implements A, C { public boolean equals(Object other) { return false; } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(3);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
-    assertThat(symbol.overriddenSymbols()).containsOnly(
-      new JMethodSymbol(cu.sema, Arrays.stream(cu.sema.resolveType("java.lang.Object").getDeclaredMethods()).filter(a -> a.getName().equals("equals")).findFirst().orElseThrow(() -> new IllegalStateException("Could not find Object#equals"))),
+
+    assertThat(symbol.overriddenSymbols()).containsExactly(
+      objectEqualsMethod(cu.sema),
       retrieveMethodSymbol("A", "equals", cu),
       retrieveMethodSymbol("B", "equals", cu));
   }

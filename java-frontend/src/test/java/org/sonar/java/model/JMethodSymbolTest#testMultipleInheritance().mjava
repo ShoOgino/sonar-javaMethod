@@ -1,10 +1,14 @@
   @Test
   void testMultipleInheritance() {
-    JavaTree.CompilationUnitTreeImpl cu = test("interface A { void a(); }  interface B { void a(); } class C implements A, B { public void a() { } }");
+    JavaTree.CompilationUnitTreeImpl cu = test(""
+      + "interface A { void a(); }\n"
+      + "interface B { void a(); }\n"
+      + "class C implements A, B { public void a() { } }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(2);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
-    assertThat(symbol.overriddenSymbols()).containsOnly(
+
+    assertThat(symbol.overriddenSymbols()).containsExactly(
       retrieveMethodSymbol("A", "a", cu),
       retrieveMethodSymbol("B", "a", cu));
   }

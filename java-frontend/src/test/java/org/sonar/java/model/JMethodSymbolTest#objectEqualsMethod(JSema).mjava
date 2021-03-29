@@ -1,0 +1,8 @@
+  private static JMethodSymbol objectEqualsMethod(JSema sema) {
+    return Arrays.stream(sema.resolveType("java.lang.Object").getDeclaredMethods())
+      .filter(method -> "equals".equals(method.getName()))
+      .findFirst()
+      .map(sema::methodSymbol)
+      .orElseThrow(() -> new IllegalStateException("Could not find Object#equals"));
+  }
+

@@ -1,9 +1,12 @@
   @Test
   void testSingleInheritance() {
-    JavaTree.CompilationUnitTreeImpl cu = test("interface A { void a(); }  class C implements A { public void a() { } }");
+    JavaTree.CompilationUnitTreeImpl cu = test(""
+      + "interface A { void a(); }\n"
+      + "class Clazz implements A { public void a() {} }");
     ClassTreeImpl c = (ClassTreeImpl) cu.types().get(1);
     MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
     JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+
     assertThat(symbol.overriddenSymbols()).containsOnly(retrieveMethodSymbol("A", "a", cu));
   }
 

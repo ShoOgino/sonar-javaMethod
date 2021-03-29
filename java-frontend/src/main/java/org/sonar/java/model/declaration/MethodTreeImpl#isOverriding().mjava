@@ -7,13 +7,10 @@
     if (isAnnotatedOverride()) {
       return true;
     }
-    if (symbol() == null) {
-      return null;
+    List<Symbol.MethodSymbol> overriddenSymbols = symbol().overriddenSymbols();
+    if (overriddenSymbols.isEmpty()) {
+      return false;
     }
-    Symbol.MethodSymbol methodSymbol = symbol().overriddenSymbol();
-    if (methodSymbol != null) {
-      return methodSymbol.isUnknown() ? null : true;
-    }
-    return false;
+    return overriddenSymbols.stream().allMatch(Symbol::isUnknown) ? null : true;
   }
 

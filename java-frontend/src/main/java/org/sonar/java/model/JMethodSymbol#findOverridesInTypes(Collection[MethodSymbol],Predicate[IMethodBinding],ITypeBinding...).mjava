@@ -1,0 +1,13 @@
+  private void findOverridesInTypes(Collection<MethodSymbol> accumulator, Predicate<IMethodBinding> overridesCondition, ITypeBinding... types) {
+    for (ITypeBinding type : types) {
+      // check current type
+      Stream.of(type.getDeclaredMethods())
+        .filter(overridesCondition)
+        .findFirst()
+        .map(sema::methodSymbol)
+        .ifPresent(accumulator::add);
+      // check other inheritance levels
+      findOverridesInParentTypes(accumulator, overridesCondition, type);
+    }
+  }
+

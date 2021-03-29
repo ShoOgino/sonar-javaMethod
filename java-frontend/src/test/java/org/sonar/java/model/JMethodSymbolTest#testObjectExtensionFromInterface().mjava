@@ -1,0 +1,10 @@
+  @Test
+  void testObjectExtensionFromInterface() {
+    JavaTree.CompilationUnitTreeImpl cu = test("interface Interface { boolean equals(Object other) { return false; } }");
+    ClassTreeImpl c = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) c.members().get(0);
+    JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+
+    assertThat(symbol.overriddenSymbols()).containsExactly(objectEqualsMethod(cu.sema));
+  }
+
