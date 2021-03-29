@@ -1,6 +1,10 @@
   void playCookie(play.mvc.Http.Cookie cookie) {
-    play.mvc.Http.Cookie.builder("name", "value"); // Noncompliant [[sc=42;ec=49]]
+    play.mvc.Http.CookieBuilder builder = play.mvc.Http.Cookie.builder("name", "value"); // Noncompliant [[sc=80;ec=87]]
     play.mvc.Http.Cookie.builder("name", "");
+
+    builder.withName("name")
+      .withValue("value")  // Noncompliant
+      .build();
 
     new play.mvc.Http.CookieBuilder()
       .withName("name")
@@ -11,6 +15,7 @@
       .withName("name")
       .withValue(null)
       .build();
+
     cookie.value(); // compliant
   }
 
