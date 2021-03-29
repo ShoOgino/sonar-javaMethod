@@ -1,8 +1,6 @@
   private static boolean isInappropriateRegexpStringLiteral(ExpressionTree firstArg) {
-    if (firstArg.is(Tree.Kind.STRING_LITERAL)) {
-      String regexp = LiteralUtils.trimQuotes(((LiteralTree) firstArg).value());
-      return regexp.matches(INAPPROPRIATE_REGEXPS);
-    }
-    return false;
+    return firstArg.asConstant(String.class)
+      .filter(regexp -> regexp.matches(INAPPROPRIATE_REGEXPS))
+      .isPresent();
   }
 
