@@ -10,7 +10,7 @@
       // remove generic methods, which can not be written as lambda (JLS-11 §15.27)
       .filter(symbol -> !JUtils.isParametrizedMethod(symbol))
       // always take same symbol if method is redeclared over and over in hierarchy
-      .map(symbol -> symbol.overriddenSymbol() != null ? symbol.overriddenSymbol() : symbol)
+      .map(AnonymousClassShouldBeLambdaCheck::overridenSymbolIfAny)
       .collect(Collectors.toSet())
       .size() == 1;
   }

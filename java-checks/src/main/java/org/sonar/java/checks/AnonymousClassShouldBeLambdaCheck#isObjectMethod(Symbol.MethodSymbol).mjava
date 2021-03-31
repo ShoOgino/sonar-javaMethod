@@ -1,5 +1,7 @@
   private static boolean isObjectMethod(Symbol.MethodSymbol methodSymbol) {
-    Symbol overridenSymbol = methodSymbol.overriddenSymbol();
-    return overridenSymbol != null && overridenSymbol.owner().type().is(JAVA_LANG_OBJECT);
+    return methodSymbol.overriddenSymbols().stream()
+      .map(Symbol::owner)
+      .map(Symbol::type)
+      .anyMatch(t -> t.is(JAVA_LANG_OBJECT));
   }
 

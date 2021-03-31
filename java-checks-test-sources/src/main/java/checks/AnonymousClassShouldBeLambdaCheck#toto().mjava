@@ -1,5 +1,7 @@
   void toto() {
-    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda (sonar.java.source not set. Assuming 8 or greater.)}}
+    new MyInterface() {}; // Compliant
+
+    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda}}
       @Override
       public String handle() {
         return "handled";
@@ -25,7 +27,7 @@
       }
     }.handle();
 
-    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda (sonar.java.source not set. Assuming 8 or greater.)}}
+    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda}}
       @Override
       public String handle() {
         class C{
@@ -39,17 +41,17 @@
         return new C().fun();
       }
     };
-    
+
     new Handler(){ // Compliant
       int myVar;
-      
+
       @Override
       public String handle() {
         return "";
       }
     };
-    
-    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda (sonar.java.source not set. Assuming 8 or greater.)}}
+
+    new Handler(){ // Noncompliant {{Make this anonymous inner class a lambda}}
       @Override
       public String handle() {
         return "";
@@ -57,12 +59,28 @@
     };
 
     new
-    Handler // Noncompliant {{Make this anonymous inner class a lambda (sonar.java.source not set. Assuming 8 or greater.)}}
+    Handler // Noncompliant {{Make this anonymous inner class a lambda}}
     (){
       @Override
       public String handle() {
-        return A.this.toStr();
+        return AnonymousClassShouldBeLambdaCheck.this.toString();
       }
     };
+
+    new Handler(){ // Compliant, annotation prevent to transform to a lambda
+      @Override
+      @SuppressWarnings("something")
+      public String handle() {
+        return "handled";
+      }
+    }.handle();
+
+    new Handler(){ // Compliant, annotation prevent to transform to a lambda
+      @SuppressWarnings("something")
+      @Override
+      public String handle() {
+        return "handled";
+      }
+    }.handle();
   }
 
