@@ -1,0 +1,7 @@
+  @Override
+  void checkOverridingMethod(MethodTree methodTree, List<Symbol.MethodSymbol> deprecatedSymbols) {
+    if (deprecatedSymbols.stream().allMatch(this::nonAbstractOrFlaggedForRemoval)) {
+      reportIssue(methodTree.simpleName(), "Don't override a deprecated method or explicitly mark it as \"@Deprecated\".");
+    }
+  }
+

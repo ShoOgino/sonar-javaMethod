@@ -1,8 +1,5 @@
   @Override
   public final void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
     if (nestedDeprecationLevel == 0) {
       if (tree.is(Tree.Kind.IDENTIFIER)) {
         IdentifierTree identifierTree = (IdentifierTree) tree;
@@ -12,7 +9,10 @@
         tryGetDeprecatedSymbol(identifierTree).ifPresent(deprecatedSymbol -> checkDeprecatedIdentifier(identifierTree, deprecatedSymbol));
       } else if (tree.is(Tree.Kind.METHOD)) {
         MethodTree methodTree = (MethodTree) tree;
-        tryGetDeprecatedSymbol(methodTree).ifPresent(deprecatedSymbol -> checkOverridingMethod(methodTree, deprecatedSymbol));
+        List<Symbol.MethodSymbol> deprectatedMethods = deprecatedMethodSymbols(methodTree);
+        if (!deprectatedMethods.isEmpty()) {
+          checkOverridingMethod(methodTree, deprectatedMethods);
+        }
       }
     }
     if (isDeprecatedMethod(tree) || isDeprecatedClassTree(tree)) {

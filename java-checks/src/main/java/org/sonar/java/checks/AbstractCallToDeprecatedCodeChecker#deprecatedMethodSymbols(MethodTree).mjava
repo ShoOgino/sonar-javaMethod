@@ -1,0 +1,11 @@
+  private static List<Symbol.MethodSymbol> deprecatedMethodSymbols(MethodTree methodTree) {
+    Symbol.MethodSymbol methodSymbol = methodTree.symbol();
+    if (methodSymbol.isDeprecated()) {
+      return Collections.emptyList();
+    }
+    return methodSymbol.overriddenSymbols()
+      .stream()
+      .filter(Symbol.MethodSymbol::isDeprecated)
+      .collect(Collectors.toList());
+  }
+
