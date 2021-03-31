@@ -1,6 +1,10 @@
   private void checkMethod(Symbol.MethodSymbol method) {
-    Symbol.MethodSymbol overridee = method.overriddenSymbol();
-    if (overridee != null && overridee.owner().isInterface() && !differentContract(method, overridee)) {
+    List<Symbol.MethodSymbol> overridees = method.overriddenSymbols();
+    if (overridees.isEmpty()) {
+      return;
+    }
+    Symbol.MethodSymbol overridee = overridees.get(0);
+    if (!overridees.isEmpty() && overridee.owner().isInterface() && !differentContract(method, overridee)) {
       reportIssue(method.declaration(), "\"" + method.name() + "\" is defined in the \"" + overridee.owner().name() + "\" interface and can be removed from this class.");
     }
   }
