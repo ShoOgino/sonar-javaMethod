@@ -1,10 +1,6 @@
   public static boolean isUnitTest(MethodTree methodTree) {
-    Symbol.MethodSymbol symbol = methodTree.symbol();
-    while (symbol != null) {
-      if (symbol.metadata().isAnnotatedWith("org.junit.Test")) {
-        return true;
-      }
-      symbol = symbol.overriddenSymbol();
+    if (isOrOverridesJunit4TestMethod(methodTree)) {
+      return true;
     }
 
     if (hasJUnit5TestAnnotation(methodTree)) {

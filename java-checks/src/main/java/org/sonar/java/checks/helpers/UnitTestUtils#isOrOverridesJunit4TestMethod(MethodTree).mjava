@@ -1,0 +1,9 @@
+  private static boolean isOrOverridesJunit4TestMethod(MethodTree methodTree) {
+    Symbol.MethodSymbol symbol = methodTree.symbol();
+    return symbol.metadata().isAnnotatedWith(ORG_JUNIT_TEST)
+      // JUnit 4 considers as test any method overriding another annotated with @Test
+      || symbol.overriddenSymbols().stream()
+        .map(Symbol::metadata)
+        .anyMatch(meta -> meta.isAnnotatedWith(ORG_JUNIT_TEST));
+  }
+
