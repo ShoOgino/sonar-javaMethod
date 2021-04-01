@@ -1,0 +1,27 @@
+  private void reportRedundantKeywords(BlockTree blockTree) {
+    List<StatementTree> body = blockTree.body();
+    int statementsInBody = body.size();
+    StatementTree lastStatement = body.get(statementsInBody - 1);
+
+    if (statementsInBody == 1) {
+      if (lastStatement.is(Tree.Kind.YIELD_STATEMENT)) {
+        SyntaxToken yieldKeyword = ((YieldStatementTree) lastStatement).yieldKeyword();
+        // Yield can never be implicit in a block, still checking it for defensive programming
+        if (yieldKeyword != null) {
+          reportStatementInBlock(yieldKeyword, blockTree, "block and \"yield\"");
+        }
+      } else {
+        reportIssue(blockTree.openBraceToken(),
+          String.format(MESSAGE, "block"),
+          Collections.singletonList(new JavaFileScannerContext.Location("Redundant close brace", blockTree.closeBraceToken())),
+          null);
+      }
+    } else if (lastStatement.is(Tree.Kind.BREAK_STATEMENT)) {
+      if (statementsInBody == 2) {
+        reportStatementInBlock(lastStatement, blockTree, "block and \"break\"");
+      } else {
+        reportIssue(lastStatement, String.format(MESSAGE, "\"break\""));
+      }
+    }
+  }
+

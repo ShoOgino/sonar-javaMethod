@@ -1,0 +1,13 @@
+  @Override
+  public void visitNode(Tree tree) {
+    CaseGroupTree caseGroupTree = (CaseGroupTree) tree;
+    boolean isCaseWithArrow = caseGroupTree.labels().stream().noneMatch(CaseLabelTree::isFallThrough);
+    if (isCaseWithArrow) {
+      caseGroupTree.body().stream()
+        .filter(t -> t.is(Tree.Kind.BLOCK))
+        .map(BlockTree.class::cast)
+        .filter(b -> !b.body().isEmpty())
+        .forEach(this::reportRedundantKeywords);
+    }
+  }
+
