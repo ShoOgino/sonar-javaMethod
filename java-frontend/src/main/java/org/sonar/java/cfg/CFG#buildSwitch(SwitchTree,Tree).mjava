@@ -1,10 +1,10 @@
-  private void buildSwitchExpression(SwitchExpressionTree switchExpressionTree, Tree terminator) {
+  private void buildSwitch(SwitchTree switchTree, Tree terminator) {
     Block switchSuccessor = currentBlock;
     // process condition
     currentBlock = createBlock();
     currentBlock.terminator = terminator;
     Block switchBlock = currentBlock;
-    List<ExpressionTree> switchCasesExpressions = switchExpressionTree.cases()
+    List<ExpressionTree> switchCasesExpressions = switchTree.cases()
       .stream()
       .map(CaseGroupTree::labels)
       .flatMap(List::stream)
@@ -12,16 +12,16 @@
       .flatMap(List::stream).collect(Collectors.toList());
     ListUtils.reverse(switchCasesExpressions).forEach(this::build);
 
-    build(switchExpressionTree.expression());
+    build(switchTree.expression());
     Block conditionBlock = currentBlock;
     // process body
     currentBlock = createBlock(switchSuccessor);
     breakTargets.addLast(switchSuccessor);
     boolean hasDefaultCase = false;
-    if (!switchExpressionTree.cases().isEmpty()) {
-      boolean withoutFallTrough = switchWithoutFallThrough(switchExpressionTree);
-      CaseGroupTree firstCase = switchExpressionTree.cases().get(0);
-      for (CaseGroupTree caseGroupTree : ListUtils.reverse(switchExpressionTree.cases())) {
+    if (!switchTree.cases().isEmpty()) {
+      boolean withoutFallTrough = switchWithoutFallThrough(switchTree);
+      CaseGroupTree firstCase = switchTree.cases().get(0);
+      for (CaseGroupTree caseGroupTree : ListUtils.reverse(switchTree.cases())) {
         if (withoutFallTrough) {
           currentBlock.successors().clear();
           currentBlock.addSuccessor(switchSuccessor);
