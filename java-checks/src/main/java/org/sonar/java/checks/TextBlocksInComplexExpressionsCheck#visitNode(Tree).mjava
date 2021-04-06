@@ -1,0 +1,10 @@
+  @Override
+  public void visitNode(Tree tree) {
+    LambdaExpressionTree lambdaExpressionTree = (LambdaExpressionTree) tree;
+    if (lambdaExpressionTree.parent().is(Tree.Kind.ARGUMENTS)) {
+      TextBlockFinder finder = new TextBlockFinder(linesNumber);
+      lambdaExpressionTree.body().accept(finder);
+      finder.misusedTextBlocks.forEach(textBlock -> reportIssue(textBlock, MESSAGE));
+    }
+  }
+
