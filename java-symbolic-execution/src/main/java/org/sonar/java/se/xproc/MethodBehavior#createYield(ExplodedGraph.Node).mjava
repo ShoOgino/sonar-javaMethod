@@ -2,13 +2,13 @@
     boolean expectReturnValue = !(SignatureUtils.isConstructor(signature) || SignatureUtils.isVoidMethod(signature));
     SymbolicValue resultSV = node.programState.exitValue();
 
-    MethodYield yield;
+    MethodYield methodYield;
     if ((resultSV == null && expectReturnValue) || resultSV instanceof SymbolicValue.ExceptionalSymbolicValue) {
-      yield = newExceptionalYield(node, resultSV);
+      methodYield = newExceptionalYield(node, resultSV);
     } else {
-      yield = newHappyPathYield(node, expectReturnValue, resultSV);
+      methodYield = newHappyPathYield(node, expectReturnValue, resultSV);
     }
-    addParameterConstraints(node, yield);
-    yields.add(yield);
+    addParameterConstraints(node, methodYield);
+    yields.add(methodYield);
   }
 

@@ -1,20 +1,20 @@
   @Override
   public void visitCatch(CatchTree tree) {
     CFG cfg = CFG.buildCFG(tree.block().body(), true);
-    Symbol var = tree.parameter().symbol();
+    Symbol variable = tree.parameter().symbol();
     boolean liveVar = true;
-    if(var.owner().isMethodSymbol()) {
-      cfg.setMethodSymbol((Symbol.MethodSymbol) var.owner());
+    if(variable.owner().isMethodSymbol()) {
+      cfg.setMethodSymbol((Symbol.MethodSymbol) variable.owner());
       LiveVariables analyze = LiveVariables.analyze(cfg);
       Set<Symbol> live = analyze.getIn(cfg.entryBlock());
-      liveVar = live.contains(var);
+      liveVar = live.contains(variable);
     }
     if(!liveVar) {
-      variables.add(var);
+      variables.add(variable);
     }
     super.visitCatch(tree);
     if(!liveVar) {
-      variables.remove(var);
+      variables.remove(variable);
     }
   }
 

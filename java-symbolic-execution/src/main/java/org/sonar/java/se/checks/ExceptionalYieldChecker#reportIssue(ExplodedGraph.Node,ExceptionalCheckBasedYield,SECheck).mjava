@@ -1,4 +1,4 @@
-  private void reportIssue(ExplodedGraph.Node node, ExceptionalCheckBasedYield yield, SECheck check) {
+  private void reportIssue(ExplodedGraph.Node node, ExceptionalCheckBasedYield exceptionalYield, SECheck check) {
     MethodInvocationTree mit = (MethodInvocationTree) node.programPoint.syntaxTree();
     ExpressionTree methodSelect = mit.methodSelect();
     String methodName = mit.symbol().name();
@@ -9,7 +9,7 @@
     }
 
     JavaFileScannerContext.Location methodInvocationMessage;
-    int parameterCausingExceptionIndex = yield.parameterCausingExceptionIndex();
+    int parameterCausingExceptionIndex = exceptionalYield.parameterCausingExceptionIndex();
     IdentifierTree identifierTree = FlowComputation.getArgumentIdentifier(mit, parameterCausingExceptionIndex);
     if (identifierTree != null) {
       methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s' is passed to '%s()'.", identifierTree.name(), methodName), identifierTree);
@@ -17,9 +17,9 @@
       methodInvocationMessage = new JavaFileScannerContext.Location(String.format("'%s()' is invoked.", methodName), reportTree);
     }
 
-    Flow argumentChangingNameFlows = flowsForArgumentsChangingName(yield, mit);
+    Flow argumentChangingNameFlows = flowsForArgumentsChangingName(exceptionalYield, mit);
     Set<Flow> argumentsFlows = flowsForMethodArguments(node, mit, parameterCausingExceptionIndex, FlowComputation.MAX_REPORTED_FLOWS);
-    Set<Flow> exceptionFlows = yield.exceptionFlows(FlowComputation.MAX_REPORTED_FLOWS);
+    Set<Flow> exceptionFlows = exceptionalYield.exceptionFlows(FlowComputation.MAX_REPORTED_FLOWS);
 
     Set<Flow> flows = new HashSet<>();
     for (Flow argumentFlow : argumentsFlows) {
