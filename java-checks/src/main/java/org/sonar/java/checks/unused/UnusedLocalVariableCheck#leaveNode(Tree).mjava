@@ -1,22 +1,20 @@
   @Override
   public void leaveNode(Tree tree) {
-    if (hasSemantic()) {
-      if (tree.is(Tree.Kind.BLOCK, Tree.Kind.STATIC_INITIALIZER)) {
-        BlockTree blockTree = (BlockTree) tree;
-        addVariables(blockTree.body());
-      } else if (tree.is(Tree.Kind.FOR_STATEMENT)) {
-        ForStatementTree forStatementTree = (ForStatementTree) tree;
-        addVariables(forStatementTree.initializer());
-      } else if (tree.is(Tree.Kind.FOR_EACH_STATEMENT)) {
-        ForEachStatement forEachStatement = (ForEachStatement) tree;
-        addVariables(Collections.singletonList(forEachStatement.variable()));
-      } else if (tree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
-        leaveExpressionStatement((ExpressionStatementTree) tree);
-      } else {
-        checkVariableUsages();
-        variables.clear();
-        assignments.clear();
-      }
+    if (tree.is(Tree.Kind.BLOCK, Tree.Kind.STATIC_INITIALIZER)) {
+      BlockTree blockTree = (BlockTree) tree;
+      addVariables(blockTree.body());
+    } else if (tree.is(Tree.Kind.FOR_STATEMENT)) {
+      ForStatementTree forStatementTree = (ForStatementTree) tree;
+      addVariables(forStatementTree.initializer());
+    } else if (tree.is(Tree.Kind.FOR_EACH_STATEMENT)) {
+      ForEachStatement forEachStatement = (ForEachStatement) tree;
+      addVariables(Collections.singletonList(forEachStatement.variable()));
+    } else if (tree.is(Tree.Kind.EXPRESSION_STATEMENT)) {
+      leaveExpressionStatement((ExpressionStatementTree) tree);
+    } else {
+      checkVariableUsages();
+      variables.clear();
+      assignments.clear();
     }
   }
 

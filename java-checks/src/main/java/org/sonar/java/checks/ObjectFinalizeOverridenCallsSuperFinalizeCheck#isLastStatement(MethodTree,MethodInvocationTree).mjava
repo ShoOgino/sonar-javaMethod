@@ -1,7 +1,8 @@
   private static boolean isLastStatement(MethodTree methodTree, MethodInvocationTree lastStatementTree) {
     BlockTree blockTree = methodTree.block();
     if (blockTree != null
-      && blockTree.body().stream().anyMatch(statement -> statement.is(Kind.TRY_STATEMENT) && isLastStatement(((TryStatementTree) statement).finallyBlock(), lastStatementTree))) {
+      && blockTree.body().stream().anyMatch(statement -> 
+        statement.is(Tree.Kind.TRY_STATEMENT)&& isLastStatement(((TryStatementTree) statement).finallyBlock(), lastStatementTree))) {
       return true;
     }
     return isLastStatement(blockTree, lastStatementTree);

@@ -1,11 +1,11 @@
   @CheckForNull
   private static Symbol getField(ExpressionTree tree) {
-    if (tree.is(Kind.IDENTIFIER)) {
+    if (tree.is(Tree.Kind.IDENTIFIER)) {
       Symbol reference = ((IdentifierTree) tree).symbol();
       if (!reference.isUnknown() && reference.owner().isTypeSymbol()) {
         return reference;
       }
-    } else if (tree.is(Kind.MEMBER_SELECT)) {
+    } else if (tree.is(Tree.Kind.MEMBER_SELECT)) {
       MemberSelectExpressionTree mse = (MemberSelectExpressionTree) tree;
       if (isField(mse)) {
         return getField(mse.identifier());

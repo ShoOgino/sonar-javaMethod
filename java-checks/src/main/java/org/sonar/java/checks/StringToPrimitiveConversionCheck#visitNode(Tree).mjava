@@ -1,19 +1,17 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      if (tree.is(Tree.Kind.VARIABLE)) {
-        VariableTree variableTree = (VariableTree) tree;
-        Type variableType = variableTree.type().symbolType();
-        PrimitiveCheck primitiveCheck = getPrimitiveCheck(variableType);
-        ExpressionTree initializer = variableTree.initializer();
-        if (primitiveCheck != null && initializer != null) {
-          primitiveCheck.checkInstantiation(initializer);
-        }
-      } else {
-        MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
-        for (PrimitiveCheck primitiveCheck : primitiveChecks) {
-          primitiveCheck.checkMethodInvocation(methodInvocationTree);
-        }
+    if (tree.is(Tree.Kind.VARIABLE)) {
+      VariableTree variableTree = (VariableTree) tree;
+      Type variableType = variableTree.type().symbolType();
+      PrimitiveCheck primitiveCheck = getPrimitiveCheck(variableType);
+      ExpressionTree initializer = variableTree.initializer();
+      if (primitiveCheck != null && initializer != null) {
+        primitiveCheck.checkInstantiation(initializer);
+      }
+    } else {
+      MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
+      for (PrimitiveCheck primitiveCheck : primitiveChecks) {
+        primitiveCheck.checkMethodInvocation(methodInvocationTree);
       }
     }
   }

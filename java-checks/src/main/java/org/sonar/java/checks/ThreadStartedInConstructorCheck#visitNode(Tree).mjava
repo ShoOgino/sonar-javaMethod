@@ -1,13 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      if (tree.is(Tree.Kind.CLASS)) {
-        inMethodOrStaticInitializerOrFinalClass.push(((ClassTree) tree).symbol().isFinal());
-      } else if (tree.is(Tree.Kind.METHOD, Tree.Kind.STATIC_INITIALIZER)) {
-        inMethodOrStaticInitializerOrFinalClass.push(Boolean.TRUE);
-      } else if (BooleanUtils.isFalse(inMethodOrStaticInitializerOrFinalClass.peek()) && THREAD_START.matches((MethodInvocationTree) tree)) {
-        reportIssue(ExpressionUtils.methodName((MethodInvocationTree) tree), "Move this \"start\" call to another method.");
-      }
+    if (tree.is(Tree.Kind.CLASS)) {
+      inMethodOrStaticInitializerOrFinalClass.push(((ClassTree) tree).symbol().isFinal());
+    } else if (tree.is(Tree.Kind.METHOD, Tree.Kind.STATIC_INITIALIZER)) {
+      inMethodOrStaticInitializerOrFinalClass.push(Boolean.TRUE);
+    } else if (BooleanUtils.isFalse(inMethodOrStaticInitializerOrFinalClass.peek()) && THREAD_START.matches((MethodInvocationTree) tree)) {
+      reportIssue(ExpressionUtils.methodName((MethodInvocationTree) tree), "Move this \"start\" call to another method.");
     }
   }
 

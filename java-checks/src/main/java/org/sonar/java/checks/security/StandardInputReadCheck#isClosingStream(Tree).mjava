@@ -1,7 +1,8 @@
   private static boolean isClosingStream(Tree parentExpression) {
     if (parentExpression.is(Tree.Kind.PARENTHESIZED_EXPRESSION) || parentExpression.is(Tree.Kind.MEMBER_SELECT)) {
       return isClosingStream(parentExpression.parent());
-    } else if (parentExpression.is(Tree.Kind.METHOD_INVOCATION)) {
+    }
+    if (parentExpression.is(Tree.Kind.METHOD_INVOCATION)) {
       return CLOSE_METHOD.matches((MethodInvocationTree) parentExpression);
     } else if (parentExpression.is(Tree.Kind.METHOD_REFERENCE)) {
       return CLOSE_METHOD.matches((MethodReferenceTree) parentExpression);

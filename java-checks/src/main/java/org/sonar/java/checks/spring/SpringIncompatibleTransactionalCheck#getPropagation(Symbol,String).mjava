@@ -4,13 +4,12 @@
     List<AnnotationValue> values = symbol.metadata().valuesForAnnotation(SPRING_TRANSACTIONAL_ANNOTATION);
     if (values != null) {
       return getAnnotationAttributeAsString(values, "propagation", defaultValue);
+    }
+    values = symbol.metadata().valuesForAnnotation(JAVAX_TRANSACTIONAL_ANNOTATION);
+    if (values != null) {
+      return getAnnotationAttributeAsString(values, "value", defaultValue);
     } else {
-      values = symbol.metadata().valuesForAnnotation(JAVAX_TRANSACTIONAL_ANNOTATION);
-      if (values != null) {
-        return getAnnotationAttributeAsString(values, "value", defaultValue);
-      } else {
-        return inheritedPropagation;
-      }
+      return inheritedPropagation;
     }
   }
 

@@ -1,14 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      Symbol.TypeSymbol symbol = ((ClassTree) tree).symbol();
-      if (isSerializable(symbol.type())) {
-        findSerialVersionUid(symbol)
-          .filter(BlindSerialVersionUidCheck::isValidSerialVersionUid)
-          .ifPresent(serialVersionUidSymbol ->
-            reportIssue(serialVersionUidSymbol.declaration().simpleName(), "Remove this \"serialVersionUID\".")
-          );
-      }
+    Symbol.TypeSymbol symbol = ((ClassTree) tree).symbol();
+    if (isSerializable(symbol.type())) {
+      findSerialVersionUid(symbol)
+        .filter(BlindSerialVersionUidCheck::isValidSerialVersionUid)
+        .map(serialVersionUidSymbol -> serialVersionUidSymbol.declaration().simpleName())
+        .ifPresent(declarationTree -> reportIssue(declarationTree, "Remove this \"serialVersionUID\"."));
     }
   }
 

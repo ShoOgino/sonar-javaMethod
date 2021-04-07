@@ -1,14 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
-    if(!hasSemantic()) {
-      return;
-    }
     BlockTree block = (BlockTree) tree;
     List<StatementTree> body = block.body();
     int bodySize = body.size();
     for (int i = 0; i < bodySize; i++) {
       StatementTree statement = body.get(i);
-      if (statement.is(Kind.VARIABLE)) {
+      if (statement.is(Tree.Kind.VARIABLE)) {
         VariableTree variableTree = (VariableTree) statement;
         if (!variableTree.symbol().usages().isEmpty()) {
           check(variableTree, body, bodySize, i + 1);

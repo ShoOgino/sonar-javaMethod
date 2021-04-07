@@ -1,10 +1,7 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
     SynchronizedStatementTree sst = (SynchronizedStatementTree) tree;
-    if(sst.expression().is(Kind.NEW_CLASS)) {
+    if(sst.expression().is(Tree.Kind.NEW_CLASS)) {
       reportIssue(tree, "Synchronizing on a new instance is a no-op.");
       return;
     }

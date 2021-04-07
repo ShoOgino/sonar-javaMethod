@@ -1,10 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
-    if (hasSemantic()) {
-      MethodInvocationTree mit = (MethodInvocationTree) tree;
-      TYPE_CHECKERS.stream()
-        .filter(typeChecker -> typeChecker.methodMatcher.matches(mit))
-        .forEach(typeChecker -> checkMethodInvocation(mit, typeChecker));
-    }
+    MethodInvocationTree mit = (MethodInvocationTree) tree;
+    TYPE_CHECKERS.stream()
+      .filter(typeChecker -> typeChecker.methodMatcher.matches(mit))
+      .forEach(typeChecker -> checkMethodInvocation(mit, typeChecker));
   }
 

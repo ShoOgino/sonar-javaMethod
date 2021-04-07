@@ -1,13 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
-    if (tree.is(Kind.METHOD_INVOCATION)) {
+    if (tree.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
-      if (methodInvocationTree.methodSelect().is(Kind.MEMBER_SELECT)) {
+      if (methodInvocationTree.methodSelect().is(Tree.Kind.MEMBER_SELECT)) {
         MemberSelectExpressionTree mset = (MemberSelectExpressionTree) methodInvocationTree.methodSelect();
-        if (FINALIZE.equals(mset.identifier().name()) && mset.expression().is(Kind.IDENTIFIER) && "super".equals(((IdentifierTree) mset.expression()).name())) {
+        if (FINALIZE.equals(mset.identifier().name()) && mset.expression().is(Tree.Kind.IDENTIFIER) && "super".equals(((IdentifierTree) mset.expression()).name())) {
           lastStatementTree = methodInvocationTree;
         }
       }

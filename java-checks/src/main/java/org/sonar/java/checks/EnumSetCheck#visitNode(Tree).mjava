@@ -1,14 +1,11 @@
   @Override
   public void visitNode(Tree tree) {
-    if (!hasSemantic()) {
-      return;
-    }
     VariableTree variableTree = (VariableTree) tree;
     ExpressionTree initializer = variableTree.initializer();
     if (initializer == null) {
       return;
     }
-    if (initializer.is(Kind.METHOD_INVOCATION)) {
+    if (initializer.is(Tree.Kind.METHOD_INVOCATION)) {
       MethodInvocationTree mit = (MethodInvocationTree) initializer;
       if (COLLECTIONS_UNMODIFIABLE.matches(mit)) {
         // check the collection used as parameter
