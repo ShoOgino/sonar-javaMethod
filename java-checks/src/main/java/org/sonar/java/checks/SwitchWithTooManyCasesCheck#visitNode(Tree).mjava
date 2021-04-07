@@ -1,18 +1,20 @@
   @Override
   public void visitNode(Tree tree) {
-    SwitchStatementTree switchStatementTree = (SwitchStatementTree) tree;
-    if (isSwitchOverEnum(switchStatementTree)) {
+    SwitchTree switchTree = (SwitchTree) tree;
+    if (isSwitchOverEnum(switchTree)) {
       return;
     }
 
-    List<CaseGroupTree> cases = switchStatementTree.cases();
+    List<CaseGroupTree> cases = switchTree.cases();
     int size = cases.size();
     if (size > maximumCases) {
       List<JavaFileScannerContext.Location> secondary = new ArrayList<>();
       for (CaseGroupTree element : cases) {
         secondary.add(new JavaFileScannerContext.Location("+1", element.labels().get(0)));
       }
-      reportIssue(switchStatementTree.switchKeyword(), "Reduce the number of non-empty switch cases from " + size + " to at most " + maximumCases + ".", secondary, null);
+      reportIssue(switchTree.switchKeyword(),
+        String.format("Reduce the number of non-empty switch cases from %d to at most %d.", size, maximumCases),
+        secondary, null);
     }
   }
 
