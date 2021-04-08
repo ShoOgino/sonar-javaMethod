@@ -1,0 +1,13 @@
+  private static boolean isMetaAnnotated(Symbol symbol, String annotation, Set<Symbol> visited) {
+    if (visited.contains(symbol)) {
+      return false;
+    }
+    for (AnnotationInstance a : symbol.metadata().annotations()) {
+      visited.add(symbol);
+      if (a.symbol().type().is(annotation) || isMetaAnnotated(a.symbol(), annotation, visited)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
