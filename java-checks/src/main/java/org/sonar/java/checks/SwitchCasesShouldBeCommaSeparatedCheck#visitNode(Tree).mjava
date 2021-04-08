@@ -1,0 +1,29 @@
+  @Override
+  public void visitNode(Tree tree) {
+    SwitchTree switchExpression = (SwitchTree) tree;
+    if (!usesColons(switchExpression)) {
+      return;
+    }
+    for (CaseGroupTree aCase : switchExpression.cases()) {
+      List<CaseLabelTree> labels = aCase.labels();
+      int size = labels.size();
+      if (size == 1) {
+        continue;
+      }
+
+      Deque<CaseLabelTree> caseLabels = labels.stream()
+        .filter(label -> "case".equals(label.caseOrDefaultKeyword().text()))
+        .collect(Collectors.toCollection(ArrayDeque::new));
+
+      if (caseLabels.size() > 1) {
+        CaseLabelTree lastLabel = caseLabels.removeLast();
+        List<JavaFileScannerContext.Location> secondaries = caseLabels.stream()
+          .map(label -> new JavaFileScannerContext.Location("", label))
+          .collect(Collectors.toList());
+        reportIssue(lastLabel, MESSAGE, secondaries, null);
+      }
+
+    }
+    super.visitNode(tree);
+  }
+
