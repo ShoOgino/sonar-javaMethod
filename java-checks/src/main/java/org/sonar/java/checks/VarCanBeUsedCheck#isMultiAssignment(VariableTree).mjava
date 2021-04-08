@@ -1,0 +1,14 @@
+  private boolean isMultiAssignment(VariableTree variableTree) {
+    SyntaxToken firstToken = variableTree.type().firstToken();
+    if (firstToken == null) {
+      return false;
+    }
+    int line = firstToken.line();
+    if (typeAssignmentLine == line) {
+      return true;
+    }
+    typeAssignmentLine = line;
+    SyntaxToken token = variableTree.endToken();
+    return token != null && token.text().equals(",");
+  }
+

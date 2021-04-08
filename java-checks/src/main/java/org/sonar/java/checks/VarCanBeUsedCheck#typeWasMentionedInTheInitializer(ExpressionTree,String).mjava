@@ -1,0 +1,17 @@
+  private static boolean typeWasMentionedInTheInitializer(ExpressionTree initializer, String type) {
+    if (initializer.is(Tree.Kind.IDENTIFIER) && typeWasMentionedInTheName(((IdentifierTree) initializer), type)) {
+      return true;
+    } else if (initializer.is(Tree.Kind.METHOD_INVOCATION)) {
+      ExpressionTree methodSelect = ExpressionUtils.skipParentheses(((MethodInvocationTree) initializer).methodSelect());
+      if (methodSelect.is(Tree.Kind.IDENTIFIER) && typeWasMentionedInTheName((IdentifierTree) methodSelect, type)) {
+        return true;
+      } else if (methodSelect.is(Tree.Kind.MEMBER_SELECT)) {
+        MemberSelectExpressionTree memberSelectExpressionTree = (MemberSelectExpressionTree) methodSelect;
+        return typeWasMentionedInTheName(memberSelectExpressionTree.identifier(), type) ||
+          (memberSelectExpressionTree.expression().is(Tree.Kind.IDENTIFIER) &&
+            typeWasMentionedInTheName((IdentifierTree) memberSelectExpressionTree.expression(), type));
+      }
+    }
+    return false;
+  }
+
