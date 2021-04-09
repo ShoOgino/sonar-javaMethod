@@ -1,0 +1,17 @@
+  boolean shouldUseLine(TextSpan textSpan, TextSpan newTextSpan) {
+    // is exceeding limits of existing text span
+    if (newTextSpan.endCharacter <= textSpan.endCharacter) {
+      return false;
+    }
+    LiteralTree literal = indexToTextSpan.getLiteral(textSpan);
+    // is not a text block
+    if (literal == null || !literal.is(Tree.Kind.TEXT_BLOCK)) {
+      return false;
+    }
+    int lastLine = literal.token().line()
+      + literal.value().split("\n").length
+      - 1;
+    // last line will benefit from the closing """
+    return textSpan.endLine != lastLine;
+  }
+

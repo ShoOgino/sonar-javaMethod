@@ -1,0 +1,22 @@
+  @Test
+  void test_empty_lines() {
+    RegexTree regex = assertSuccessfulParse(
+      "\"\"\n"                    // line 3: start of textblock
+        + "    [\n"               // line 4: start character-class
+        + "\n"                    // line 5: empty line
+        + "                \r\n"  // line 6: only spaces
+        + "    ]\"\"");           // line 7: end character-class and end of textblock
+    assertKind(RegexTree.Kind.CHARACTER_CLASS, regex);
+    CharacterClassTree characterClass = ((CharacterClassTree) regex);
+    List<CharacterClassElementTree> characterClasses = ((CharacterClassUnionTree) characterClass.getContents()).getCharacterClasses();
+    assertThat(characterClasses).hasSize(3);
+    // only contains endlines
+    assertCharacter('\n', (RegexTree) characterClasses.get(0));
+    assertCharacter('\n', (RegexTree) characterClasses.get(1));
+    assertCharacter('\n', (RegexTree) characterClasses.get(2));
+
+    assertLineTextSpan(4, (RegexTree) characterClasses.get(0));
+    assertLineTextSpan(5, (RegexTree) characterClasses.get(1));
+    assertLineTextSpan(6, (RegexTree) characterClasses.get(2));
+  }
+

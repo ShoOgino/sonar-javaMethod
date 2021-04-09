@@ -12,9 +12,19 @@
     int endOffset = range.getEndingOffset() - endEntry.startIndex;
     TextSpan startSpan = startEntry.textSpan;
     TextSpan endSpan = endEntry.textSpan;
+
     if (startSpan == endSpan) {
-      // This assumes that startSpan.startLine == startSpan.endLine, which should always be the case
-      result.add(new TextSpan(startSpan.startLine, startSpan.startCharacter + startOffset, startSpan.endLine, startSpan.startCharacter + endOffset));
+      if (startSpan.onLine()) {
+        result.add(startSpan);
+      } else {
+        // This assumes that startSpan.startLine == startSpan.endLine, which should always be the case
+        TextSpan newTextSpan = new TextSpan(startSpan.startLine, startSpan.startCharacter + startOffset, startSpan.endLine, startSpan.startCharacter + endOffset);
+        if (shouldUseLine(startSpan, newTextSpan)) {
+          result.add(new TextSpan(newTextSpan.startLine));
+        } else {
+          result.add(newTextSpan);
+        }
+      }
     } else {
       result.add(new TextSpan(startSpan.startLine, startSpan.startCharacter + startOffset, startSpan.endLine, startSpan.endCharacter));
       int indexAfterStartSpan = startEntry.startIndex + startSpan.endCharacter - startSpan.startCharacter;

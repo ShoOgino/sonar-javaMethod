@@ -1,0 +1,16 @@
+  @Test
+  void test_string_literal() {
+    RegexTree regex = assertSuccessfulParse("a\\nb");
+    assertKind(RegexTree.Kind.SEQUENCE, regex);
+    List<RegexTree> items = ((SequenceTree) regex).getItems();
+    assertThat(items).hasSize(3);
+
+    assertCharacter('a', items.get(0));
+    assertCharacter('\n', items.get(1));
+    assertCharacter('b', items.get(2));
+
+    assertTextSpan(3, 1, 2, items.get(0));
+    assertTextSpan(3, 2, 4, items.get(1));
+    assertTextSpan(3, 4, 5, items.get(2));
+  }
+

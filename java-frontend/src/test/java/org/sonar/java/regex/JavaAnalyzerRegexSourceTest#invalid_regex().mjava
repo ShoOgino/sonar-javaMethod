@@ -1,0 +1,14 @@
+  @Test
+  void invalid_regex() {
+    RegexSource source = RegexParserTestUtils.makeSource("(");
+    RegexParseResult result = new RegexParser(source, new FlagSet()).parse();
+    if (result.getSyntaxErrors().isEmpty()) {
+      fail("should have encountered syntax error");
+    }
+    RegexSyntaxElement offendingSyntaxElement = result.getSyntaxErrors().get(0).getOffendingSyntaxElement();
+    List<TextSpan> items = ((JavaAnalyzerRegexSource) offendingSyntaxElement.getSource()).textSpansFor(offendingSyntaxElement.getRange());
+    assertThat(items).hasSize(1);
+
+    assertTextSpan(3, 2, 3, items.get(0));
+  }
+

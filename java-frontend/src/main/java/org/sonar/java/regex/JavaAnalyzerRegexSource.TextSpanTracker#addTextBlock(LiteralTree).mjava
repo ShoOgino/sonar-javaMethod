@@ -1,10 +1,22 @@
     void addTextBlock(LiteralTree literal) {
-      int indent = LiteralUtils.indentationOfTextBlock(literal.value().split("\n"));
-      String[] lines = getString(literal).split("(?<=\r?\n)");
-      for (int i = 0; i < lines.length; i++) {
-        int line = literal.token().line() + i + 1;
-        int lineLength = lines[i].length();
-        indexToTextSpan.put(index, new TextSpan(line, indent, line, indent + lineLength));
+      String[] literalTreeLines = literal.value().split("\n");
+      String[] stringLines = getString(literal).split("(?<=\r?\n)");
+
+      int indent = LiteralUtils.indentationOfTextBlock(literalTreeLines);
+      int textBlockLine = literal.token().line();
+      for (int i = 0; i < stringLines.length; i++) {
+        int line = textBlockLine + i + 1;
+        String stringLine = stringLines[i];
+        int lineLength = stringLine.length();
+        TextSpan textSpan;
+        if (stringLine.trim().isEmpty()) {
+          textSpan = new TextSpan(line);
+        } else {
+          int endLineTrimming = stringLine.endsWith("\n") ? 1 : 0;
+          textSpan = new TextSpan(line, indent, line, indent + lineLength - endLineTrimming);
+        }
+        indexToTextSpan.put(index, textSpan);
+        textSpanToLiteral.put(textSpan, literal);
         index += lineLength;
       }
     }
