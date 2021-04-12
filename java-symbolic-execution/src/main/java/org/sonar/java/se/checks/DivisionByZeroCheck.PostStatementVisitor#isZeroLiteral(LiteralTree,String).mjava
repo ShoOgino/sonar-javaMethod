@@ -1,0 +1,36 @@
+    /**
+     * This method is used to check whether the string value of a given number literal (int, long, float or double)
+     * is zero. As far as this method is considered to be on the hot paths, it requires some performant solution
+     * with early returns rather then computing the value of the literal and than checking it, because that will
+     * require a lot of boxing and unboxing operations.
+     *
+     * asConstant() method is not applicable here because it requires boxing and unboxing to get the value and then
+     * to check it.
+     **/
+    private static boolean isZeroLiteral(LiteralTree literalTree, String value) {
+      if (value.length() == 1) {
+        return value.equals("0");
+      }
+      int startIndex = 0;
+      int endIndex = value.length() - 1;
+      switch (literalTree.kind()) {
+        case LONG_LITERAL:
+          endIndex = value.length() - 2;
+        case INT_LITERAL:
+          if (value.charAt(0) == '0' && (value.charAt(1) == 'x' || value.charAt(1) == 'X' ||
+            value.charAt(1) == 'b' || value.charAt(1) == 'B')) {
+            startIndex = 2;
+          }
+          break;
+        case FLOAT_LITERAL:
+          endIndex = value.length() - 2;
+          break;
+        case DOUBLE_LITERAL:
+          if (value.charAt(endIndex) == 'd' || value.charAt(endIndex) == 'D') {
+            endIndex = value.length() - 2;
+          }
+          break;
+      }
+      return isNumberZero(value, startIndex, endIndex);
+    }
+
