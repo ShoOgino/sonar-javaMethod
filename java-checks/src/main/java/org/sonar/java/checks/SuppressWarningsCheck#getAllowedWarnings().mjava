@@ -1,13 +1,12 @@
-  private List<String> getAllowedWarnings() {
+  private Set<String> getAllowedWarnings() {
     if (allowedWarnings != null) {
       return allowedWarnings;
     }
 
-    allowedWarnings = new ArrayList<>();
-    Arrays.stream(warningsCommaSeparated.split(","))
+    allowedWarnings = Arrays.stream(warningsCommaSeparated.split(","))
       .filter(StringUtils::isNotBlank)
       .map(SuppressWarningsCheck::replaceFormerRepositoryPrefix)
-      .forEach(allowedWarnings::add);
+      .collect(Collectors.toSet());
 
     return allowedWarnings;
   }

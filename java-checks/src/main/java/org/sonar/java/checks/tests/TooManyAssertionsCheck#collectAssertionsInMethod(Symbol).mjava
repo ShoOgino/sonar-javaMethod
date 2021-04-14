@@ -1,11 +1,12 @@
   private List<Tree> collectAssertionsInMethod(Symbol symbol) {
     if (!assertionsInMethod.containsKey(symbol)) {
+      // can not be rewritten with map.computeIfAbsent() because of concurrent modification
       assertionsInMethod.put(symbol, Collections.emptyList());
       Tree declaration = symbol.declaration();
       if (declaration != null) {
         AssertionsCounterVisitor assertionsCounterVisitor = new AssertionsCounterVisitor();
         declaration.accept(assertionsCounterVisitor);
-        assertionsInMethod.put(symbol, assertionsCounterVisitor.assertions);
+        assertionsInMethod.put(symbol, new ArrayList<>(assertionsCounterVisitor.assertions));
       }
     }
 

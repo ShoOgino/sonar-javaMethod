@@ -6,11 +6,9 @@
         return;
       }
     }
-    ArrayList<Symbol> parameters = new ArrayList<>();
-    for (VariableTree variableTree : tree.parameters()) {
-      parameters.add(variableTree.symbol());
-    }
-    parametersStack.push(parameters);
+    parametersStack.push(tree.parameters().stream()
+      .map(VariableTree::symbol)
+      .collect(Collectors.toSet()));
     super.visitMethod(tree);
     parametersStack.pop();
   }
