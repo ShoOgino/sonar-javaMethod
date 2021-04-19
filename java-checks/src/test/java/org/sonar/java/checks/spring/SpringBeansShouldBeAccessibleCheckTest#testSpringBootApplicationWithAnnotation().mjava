@@ -1,0 +1,27 @@
+  @Test
+  void testSpringBootApplicationWithAnnotation() {
+    final String testFolderThirdApp = BASE_PATH + "springBootApplication/thirdApp/";
+    List<String> thirdAppTestFiles = Arrays.asList(
+      testSourcesPath(testFolderThirdApp + "SpringBootApp3.java"),
+      testSourcesPath(testFolderThirdApp + "domain/SomeClass.java"),
+      testSourcesPath(testFolderThirdApp + "controller/Controller.java"));
+
+    JavaCheckVerifier.newVerifier()
+      .onFiles(thirdAppTestFiles)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .verifyIssues();
+
+    final String testFolderFourthApp = BASE_PATH + "springBootApplication/fourthApp/";
+    List<String> fourthAppTestFiles = Arrays.asList(
+      testSourcesPath(testFolderFourthApp + "SpringBootApp4.java"),
+      nonCompilingTestSourcesPath(testFolderFourthApp + "SpringBootApp4b.java"),
+      testSourcesPath(testFolderFourthApp + "domain/SomeClass.java"),
+      testSourcesPath(testFolderFourthApp + "utility/SomeUtilityClass.java"),
+      testSourcesPath(testFolderFourthApp + "controller/Controller.java"));
+
+    JavaCheckVerifier.newVerifier()
+      .onFiles(fourthAppTestFiles)
+      .withCheck(new SpringBeansShouldBeAccessibleCheck())
+      .verifyIssues();
+  }
+

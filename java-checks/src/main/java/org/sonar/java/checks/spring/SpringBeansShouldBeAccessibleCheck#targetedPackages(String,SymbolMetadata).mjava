@@ -1,0 +1,15 @@
+  private static List<String> targetedPackages(String classPackageName, SymbolMetadata classSymbolMetadata) {
+    // annotation is necessarily there already
+    return Objects.requireNonNull(classSymbolMetadata.valuesForAnnotation(SPRING_BOOT_APP_ANNOTATION))
+      .stream()
+      .filter(v -> "scanBasePackages".equals(v.name()))
+      .map(SymbolMetadata.AnnotationValue::value)
+      .findFirst()
+      // list of packages to scan
+      .filter(Object[].class::isInstance)
+      .map(Object[].class::cast)
+      .map(SpringBeansShouldBeAccessibleCheck::asStringList)
+      // Using this annotation without arguments tells Spring to scan the current package and all of its sub-packages.
+      .orElse(Collections.singletonList(classPackageName));
+  }
+
