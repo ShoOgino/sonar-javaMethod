@@ -1,0 +1,19 @@
+  @Override
+  public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.NEW_CLASS)) {
+      NewClassTree newClassTree = (NewClassTree) tree;
+      if (UNSECURE_CLIENTS.matches(newClassTree)) {
+        Protocol protocol = PROTOCOLS.get(newClassTree.symbolType().fullyQualifiedName());
+        String message = String.format(MESSAGE, protocol.protocolName, protocol.alternatives);
+        reportIssue(newClassTree.identifier(), message);
+      } else if (OK_HTTP_CONNECTION_SPEC_BUILDERS.matches(newClassTree)) {
+        reportIfUsesClearText(newClassTree.arguments());
+      }
+    } else {
+      MethodInvocationTree mit = (MethodInvocationTree) tree;
+      if (OK_HTTP_BUILDERS.matches(mit)) {
+        reportIfUsesClearText(mit.arguments());
+      }
+    }
+  }
+
