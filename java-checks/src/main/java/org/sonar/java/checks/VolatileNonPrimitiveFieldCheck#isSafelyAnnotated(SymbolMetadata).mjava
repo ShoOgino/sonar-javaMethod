@@ -1,0 +1,8 @@
+  private static boolean isSafelyAnnotated(SymbolMetadata metadata) {
+    return metadata.annotations().stream()
+      .map(SymbolMetadata.AnnotationInstance::symbol)
+      .map(Symbol::type)
+      .anyMatch(type -> type.is("javax.annotation.concurrent.Immutable")
+        || type.is("javax.annotation.concurrent.ThreadSafe"));
+  }
+
