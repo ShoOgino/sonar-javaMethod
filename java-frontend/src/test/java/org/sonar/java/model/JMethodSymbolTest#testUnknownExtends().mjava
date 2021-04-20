@@ -1,0 +1,10 @@
+  @Test
+  void testUnknownExtends() {
+    JavaTree.CompilationUnitTreeImpl cu = test(""
+      + "class B extends Unknown { public void a() { } }");
+    ClassTreeImpl a = (ClassTreeImpl) cu.types().get(0);
+    MethodTreeImpl m = (MethodTreeImpl) a.members().get(0);
+    JMethodSymbol symbol = cu.sema.methodSymbol(Objects.requireNonNull(m.methodBinding));
+    assertThat(symbol.overriddenSymbols()).isEmpty();
+  }
+
