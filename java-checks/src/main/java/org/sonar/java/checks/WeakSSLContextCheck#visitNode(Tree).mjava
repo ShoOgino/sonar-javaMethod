@@ -9,6 +9,15 @@
           reportIssue(firstArgument, "Change this code to use a stronger protocol.");
         }
       });
+    } else if (OK_HTTP_TLS_VERSION.matches(mit)) {
+      List<Tree> unsecureVersions = getUnsecureVersionsInArguments(arguments);
+      if (!unsecureVersions.isEmpty()) {
+        List<JavaFileScannerContext.Location> secondaries = unsecureVersions.stream()
+          .skip(1)
+          .map(secondary -> new JavaFileScannerContext.Location("Other weak protocol.", secondary))
+          .collect(Collectors.toList());
+        reportIssue(unsecureVersions.get(0), "Change this code to use a stronger protocol.", secondaries, null);
+      }
     }
   }
 

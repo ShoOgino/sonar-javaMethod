@@ -1,0 +1,13 @@
+  private static boolean isUnsecureVersion(ExpressionTree expressionTree) {
+    String argumentValue = null;
+    Optional<String> stringArgument = expressionTree.asConstant(String.class);
+    if (stringArgument.isPresent()) {
+      argumentValue = stringArgument.get();
+    } else if (expressionTree.is(Tree.Kind.IDENTIFIER)) {
+      argumentValue = ((IdentifierTree) expressionTree).name();
+    } else if (expressionTree.is(Tree.Kind.MEMBER_SELECT)) {
+      argumentValue = ((MemberSelectExpressionTree) expressionTree).identifier().name();
+    }
+    return WEAK_FOR_OK_HTTP.contains(argumentValue);
+  }
+
