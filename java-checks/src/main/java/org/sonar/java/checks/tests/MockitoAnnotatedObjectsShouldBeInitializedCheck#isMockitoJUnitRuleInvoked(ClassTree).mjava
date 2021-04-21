@@ -7,8 +7,8 @@
       if (field.type().symbolType().is("org.mockito.junit.MockitoRule")) {
         ExpressionTree initializer = field.initializer();
         if (initializer != null && initializer.is(Tree.Kind.METHOD_INVOCATION) &&
-          MOCKITO_JUNIT_RULE.matches((MethodInvocationTree) initializer) &&
-          field.symbol().metadata().isAnnotatedWith(RULE_ANNOTATION)) {
+          field.symbol().metadata().isAnnotatedWith(RULE_ANNOTATION) &&
+          isInitializedWithRule((MethodInvocationTree) initializer)) {
           return true;
         }
       }
