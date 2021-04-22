@@ -1,0 +1,17 @@
+  @Test
+  void should_interrupt_analysis_when_is_cancelled() throws Exception {
+    InputFile inputFile = TestUtils.inputFile("src/test/files/metrics/NoSonar.java");
+    SonarComponents sonarComponent = new SonarComponents(null, context.fileSystem(), null, null, null);
+    sonarComponent.setSensorContext(context);
+    VisitorsBridge visitorsBridge = new VisitorsBridge(Collections.singletonList(new CheckCancellingAnalysis(context)),
+      new ArrayList<>(),
+      sonarComponent);
+
+    final JavaVersionImpl javaVersion = new JavaVersionImpl();
+    AnalysisException e = assertThrows(AnalysisException.class,
+      () -> JavaAstScanner.scanSingleFileForTests(inputFile, visitorsBridge, javaVersion, sonarComponent));
+    assertThat(e)
+      .hasMessage("Analysis cancelled")
+      .hasCauseInstanceOf(MyCancelException.class);
+  }
+

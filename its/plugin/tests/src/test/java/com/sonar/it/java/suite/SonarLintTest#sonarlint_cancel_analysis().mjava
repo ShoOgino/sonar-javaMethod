@@ -1,0 +1,41 @@
+  @Test
+  public void sonarlint_cancel_analysis() throws Exception {
+    List<LogOutput.Level> logs = new ArrayList<>();
+    StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
+      .addPlugin(JavaTestSuite.JAVA_PLUGIN_LOCATION.getFile().toURI().toURL())
+      .setSonarLintUserHome(temp.newFolder().toPath())
+      .setLogOutput((formattedMessage, level) -> logs.add(level))
+      .build();
+    sonarlintEngine = new StandaloneSonarLintEngineImpl(config);
+
+    ClientInputFile inputFile = prepareInputFile("Foo.java",
+      "public class Foo {\n"
+        + "  @SuppressWarnings(\"java:S106\")\n"
+        + "  public void foo() {\n"
+        + "    int x;\n"
+        + "    System.out.println(\"Foo\");\n"
+        + "    System.out.println(\"Foo\"); //NOSONAR\n"
+        + "  }\n"
+        + "}",
+      false);
+
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFile(inputFile)
+      .build();
+
+    final List<Issue> issues = new ArrayList<>();
+    CancellableProgressMonitor progressMonitor = new CancellableProgressMonitor();
+    assertThatThrownBy(() -> sonarlintEngine.analyze(standaloneAnalysisConfiguration, i -> {
+      if (!issues.isEmpty()) {
+        progressMonitor.isCanceled = true;
+        throw new MyCancelException();
+      }
+      issues.add(i);
+    }, null, progressMonitor)).hasMessage("Analysis cancelled");
+
+    // When any Exception (including user defined) is thrown and the progress is cancelled, no errors should be logged.
+    assertThat(logs).doesNotContain(LogOutput.Level.ERROR);
+    assertThat(issues).hasSize(1);
+  }
+
