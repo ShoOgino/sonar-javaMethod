@@ -1,9 +1,12 @@
   private static void copyDumpSubset(Path srcProjectDir, Path dstProjectDir) {
-    Try.of(() -> Files.createDirectory(dstProjectDir)).orElseThrow(Throwables::propagate);
+    try {
+      Files.createDirectory(dstProjectDir);
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to create directory: " + dstProjectDir.toString());
+    }
     SUBSET_OF_ENABLED_RULES.stream()
       .map(ruleKey -> srcProjectDir.resolve("java-" + ruleKey + ".json"))
       .filter(p -> p.toFile().exists())
-      .forEach(srcJsonFile -> Try.of(() -> Files.copy(srcJsonFile, dstProjectDir.resolve(srcJsonFile.getFileName()), StandardCopyOption.REPLACE_EXISTING))
-        .orElseThrow(Throwables::propagate));
+      .forEach(srcJsonFile -> copyFile(srcJsonFile, dstProjectDir));
   }
 

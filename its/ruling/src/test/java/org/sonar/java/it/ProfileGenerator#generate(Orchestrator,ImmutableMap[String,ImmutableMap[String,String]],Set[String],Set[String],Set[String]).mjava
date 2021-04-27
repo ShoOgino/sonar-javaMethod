@@ -34,12 +34,12 @@
         .append("</profile>");
 
       File file = File.createTempFile("profile", ".xml");
-      Files.write(sb, file, StandardCharsets.UTF_8);
+      Files.asCharSink(file, StandardCharsets.UTF_8).write(sb);
       LOG.info("Restoring profile to SonarQube");
       orchestrator.getServer().restoreProfile(FileLocation.of(file));
       file.delete();
     } catch (IOException e) {
-      throw Throwables.propagate(e);
+      throw new IllegalStateException(e);
     }
   }
 
