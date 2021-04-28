@@ -1,0 +1,35 @@
+  @Test
+  void emptyInputFile() throws Exception {
+    InputFile inputFile = InternalInputFile.emptyInputFile("foo.java", InputFile.Type.TEST);
+
+    assertThat(inputFile.filename()).isEqualTo("foo.java");
+    assertThat(inputFile.file()).isNotNull();
+    assertThat(inputFile.isFile()).isFalse();
+    assertThat(inputFile.key()).isEqualTo(":foo.java");
+    assertThat(inputFile.type()).isEqualTo(InputFile.Type.TEST);
+    assertThat(inputFile.charset()).isEqualTo(StandardCharsets.UTF_8);
+    assertThat(inputFile.contents()).isEmpty();
+    assertThat(inputFile.isEmpty()).isTrue();
+    assertThat(inputFile.language()).isEqualTo("java");
+    assertThat(inputFile.lines()).isEqualTo(-1);
+
+    assertThat(inputFile.path()).hasToString("foo.java");
+    assertThat(inputFile.relativePath()).isEqualTo("foo.java");
+    assertThat(inputFile.absolutePath()).endsWith("foo.java");
+    assertThat(inputFile.uri().toString())
+      .startsWith("file:")
+      .endsWith("foo.java");
+
+    assertThat(inputFile.newPointer(0, 0)).isNotNull();
+    assertThat(inputFile.newRange(TEXT_POINTER, TEXT_POINTER)).isNotNull();
+    assertThat(inputFile.newRange(0, 0, 0, 0)).isNotNull();
+
+    assertThat(inputFile).hasToString("foo.java");
+
+    IOException e = assertThrows(IOException.class, () -> inputFile.inputStream());
+    assertThat(e.getMessage()).matches(m -> NO_SUCH_FILE_MESSAGE_LINUX.equals(m) || NO_SUCH_FILE_MESSAGE_WINDOWS.equals(m));
+
+    assertMethodNotSupported(() -> inputFile.selectLine(0), "InternalInputFile::selectLine(int)");
+    assertMethodNotSupported(() -> inputFile.status(), "InternalInputFile::status()");
+  }
+

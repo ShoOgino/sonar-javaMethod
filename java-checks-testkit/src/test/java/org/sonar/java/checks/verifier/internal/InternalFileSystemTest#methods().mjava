@@ -1,0 +1,18 @@
+  @Test
+  void methods() {
+    FileSystem fs = new InternalFileSystem();
+
+    assertThat(fs.baseDir()).isNotNull();
+    assertThat(fs.encoding()).isEqualTo(StandardCharsets.UTF_8);
+    assertThat(fs.files(null)).isEmpty();
+    assertThat(fs.hasFiles(null)).isFalse();
+    assertThat(fs.languages()).containsOnly("java");
+
+    assertMethodNotSupported(() -> fs.inputDir(null), "InternalFileSystem::inputDir(File)");
+    assertMethodNotSupported(() -> fs.inputFile(null), "InternalFileSystem::inputFile(FilePredicate)");
+    assertMethodNotSupported(() -> fs.inputFiles(null), "InternalFileSystem::inputFiles(FilePredicate)");
+    assertMethodNotSupported(() -> fs.predicates(), "InternalFileSystem::predicates()");
+    assertMethodNotSupported(() -> fs.resolvePath(null), "InternalFileSystem::resolvePath(String)");
+    assertMethodNotSupported(() -> fs.workDir(), "InternalFileSystem::workDir()");
+  }
+

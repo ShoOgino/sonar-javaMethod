@@ -1,13 +1,10 @@
   private static SonarComponents sonarComponents() {
-    SensorContextTester context = SensorContextTester.create(new File(""))
-      .setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(6, 7)));
-    MapSettings settings = new MapSettings();
-    DefaultFileSystem fileSystem = context.fileSystem();
+    SensorContext context = new InternalSensorContext();
+    FileSystem fileSystem = context.fileSystem();
+    Configuration config = context.config();
 
-    context.setSettings(settings.setProperty(SonarComponents.FAIL_ON_EXCEPTION_KEY, true));
-
-    ClasspathForMain classpathForMain = new ClasspathForMain(context.config(), fileSystem);
-    ClasspathForTest classpathForTest = new ClasspathForTest(context.config(), fileSystem);
+    ClasspathForMain classpathForMain = new ClasspathForMain(config, fileSystem);
+    ClasspathForTest classpathForTest = new ClasspathForTest(config, fileSystem);
 
     SonarComponents sonarComponents = new SonarComponents(null, fileSystem, classpathForMain, classpathForTest, null) {
       @Override

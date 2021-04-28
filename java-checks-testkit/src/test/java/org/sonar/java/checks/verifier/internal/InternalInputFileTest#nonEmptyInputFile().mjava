@@ -1,0 +1,34 @@
+  @Test
+  void nonEmptyInputFile() throws Exception {
+    InputFile inputFile = InternalInputFile.inputFile("module", new File("src/test/files/internal/bar.java"));
+
+    assertThat(inputFile.filename()).isEqualTo("bar.java");
+    assertThat(inputFile.file()).isNotNull();
+    assertThat(inputFile.isFile()).isTrue();
+    assertThat(inputFile.key()).isEqualTo("module:bar.java");
+    assertThat(inputFile.type()).isEqualTo(InputFile.Type.MAIN);
+    assertThat(inputFile.charset()).isEqualTo(StandardCharsets.UTF_8);
+    assertThat(inputFile.contents()).startsWith("class A { }");
+    try (InputStream is = inputFile.inputStream()) {
+      assertThat(is).isNotNull();
+    }
+    assertThat(inputFile.isEmpty()).isFalse();
+    assertThat(inputFile.language()).isEqualTo("java");
+    assertThat(inputFile.lines()).isEqualTo(1);
+
+    assertThat(inputFile.path().toString()).endsWith("bar.java");
+    assertThat(inputFile.relativePath()).endsWith("bar.java");
+    assertThat(inputFile.absolutePath()).endsWith("bar.java");
+    assertThat(inputFile.uri()
+      .toString())
+        .startsWith("file:")
+        .endsWith("bar.java");
+
+    assertThat(inputFile.newPointer(0, 0)).isNotNull();
+    assertThat(inputFile.newRange(TEXT_POINTER, TEXT_POINTER)).isNotNull();
+    assertThat(inputFile.newRange(0, 0, 0, 0)).isNotNull();
+
+    assertMethodNotSupported(() -> inputFile.selectLine(0), "InternalInputFile::selectLine(int)");
+    assertMethodNotSupported(() -> inputFile.status(), "InternalInputFile::status()");
+  }
+

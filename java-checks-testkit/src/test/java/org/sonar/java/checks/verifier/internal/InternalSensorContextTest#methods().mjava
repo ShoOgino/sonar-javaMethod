@@ -1,0 +1,41 @@
+  @Test
+  void methods() {
+    SensorContext context = new InternalSensorContext();
+
+    assertThat(context.config())
+      .isNotNull()
+      .isInstanceOf(InternalConfiguration.class);
+    assertThat(context.fileSystem())
+      .isNotNull()
+      .isInstanceOf(InternalFileSystem.class);
+    assertThat(context.getSonarQubeVersion())
+      .isNotNull()
+      .isInstanceOf(Version.class);
+    assertThat(context.runtime())
+      .isNotNull()
+      .isInstanceOf(InternalSonarRuntime.class);
+
+    assertThat(context.isCancelled()).isFalse();
+    assertThat(context.module()).isNotNull();
+    assertThat(context.module().isFile()).isFalse();
+    assertThat(context.module().key()).isEqualTo("module");
+    assertThat(context.project()).isNotNull();
+    assertThat(context.project().isFile()).isFalse();
+    assertThat(context.project().key()).isEqualTo("project");
+
+    assertMethodNotSupported(() -> context.activeRules(), "InternalSensorContext::activeRules()");
+    assertMethodNotSupported(() -> context.addContextProperty(null, null), "InternalSensorContext::addContextProperty(String,String)");
+    assertMethodNotSupported(() -> context.markForPublishing(null), "InternalSensorContext::markForPublishing(InputFile)");
+    assertMethodNotSupported(() -> context.newAdHocRule(), "InternalSensorContext::newAdHocRule()");
+    assertMethodNotSupported(() -> context.newAnalysisError(), "InternalSensorContext::newAnalysisError()");
+    assertMethodNotSupported(() -> context.newCoverage(), "InternalSensorContext::newCoverage()");
+    assertMethodNotSupported(() -> context.newCpdTokens(), "InternalSensorContext::newCpdTokens()");
+    assertMethodNotSupported(() -> context.newExternalIssue(), "InternalSensorContext::newExternalIssue()");
+    assertMethodNotSupported(() -> context.newHighlighting(), "InternalSensorContext::newHighlighting()");
+    assertMethodNotSupported(() -> context.newIssue(), "InternalSensorContext::newIssue()");
+    assertMethodNotSupported(() -> context.newMeasure(), "InternalSensorContext::newMeasure()");
+    assertMethodNotSupported(() -> context.newSignificantCode(), "InternalSensorContext::newSignificantCode()");
+    assertMethodNotSupported(() -> context.newSymbolTable(), "InternalSensorContext::newSymbolTable()");
+    assertMethodNotSupported(() -> context.settings(), "InternalSensorContext::settings()");
+  }
+
