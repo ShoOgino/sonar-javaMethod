@@ -1,0 +1,23 @@
+  @Override
+  public void visitTrivia(SyntaxTrivia syntaxTrivia) {
+    String comment = syntaxTrivia.comment();
+    if (!comment.startsWith("/**")) {
+      return;
+    }
+    Matcher matcher = JAVADOC_REFERENCE.matcher(comment);
+    while (matcher.find()) {
+      String line = matcher.group(0);
+      Set<String> words = NON_WORDS_CHARACTERS.splitAsStream(line)
+        .filter(w -> !w.isEmpty())
+        .collect(Collectors.toSet());
+
+      if (!words.isEmpty()) {
+        importsNames.forEach((fullyQualifiedName, name) -> {
+          if (words.contains(name)) {
+            usedInJavaDoc.add(fullyQualifiedName);
+          }
+        });
+      }
+    }
+  }
+

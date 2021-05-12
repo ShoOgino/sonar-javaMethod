@@ -1,0 +1,19 @@
+  public static Map<Type, List<JWarning>> getWarnings(CompilationUnit astNode) {
+    Map<JWarning.Type, List<JWarning>> results = new EnumMap<>(Type.class);
+    for (IProblem warning : astNode.getProblems()) {
+      for (Type type : Type.values()) {
+        if (type.isMatching(warning)) {
+          JWarning newWarning = new JWarning(
+            warning.getMessage(),
+            type,
+            warning.getSourceLineNumber(),
+            astNode.getColumnNumber(warning.getSourceStart()),
+            astNode.getLineNumber(warning.getSourceEnd()),
+            astNode.getColumnNumber(warning.getSourceEnd()));
+          results.computeIfAbsent(type, k -> new ArrayList<>()).add(newWarning);
+        }
+      }
+    }
+    return results;
+  }
+

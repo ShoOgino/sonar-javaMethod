@@ -1,0 +1,12 @@
+  @Test
+  void report_issue_from_warning() {
+    context.reportIssue(CHECK, ((CompilationUnitTreeImpl) compilationUnitTree).warnings().get(JWarning.Type.UNUSED_IMPORT).get(0), "msg");
+
+    assertThat(reportedMessage.getMessage()).isEqualTo("msg");
+
+    assertThat(reportedMessage.getCost()).isNull();
+    assertThat(reportedMessage.flows).isEmpty();
+
+    assertMessagePosition(reportedMessage, 1, 7, 1, 20);
+  }
+

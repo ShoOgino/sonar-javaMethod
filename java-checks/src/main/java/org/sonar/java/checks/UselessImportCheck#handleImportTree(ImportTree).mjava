@@ -1,0 +1,12 @@
+  private void handleImportTree(ImportTree importTree) {
+    String importName = ExpressionsHelper.concatenate(((ExpressionTree) importTree.qualifiedIdentifier()));
+    if (importsNames.containsKey(importName)) {
+      duplicatedImports.add(importName);
+    } else {
+      importsNames.put(importName, extractLastClassName(importName));
+    }
+    if (isJavaLangImport(importName)) {
+      context.reportIssue(this, importTree, "Remove this unnecessary import: java.lang classes are always implicitly imported.");
+    }
+  }
+
