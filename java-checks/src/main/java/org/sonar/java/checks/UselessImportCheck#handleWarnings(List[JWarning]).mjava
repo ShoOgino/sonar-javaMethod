@@ -1,5 +1,4 @@
-  private void handleWarnings(DefaultJavaFileScannerContext context) {
-    List<JWarning> warnings = ((CompilationUnitTreeImpl) context.getTree()).warnings().getOrDefault(JWarning.Type.UNUSED_IMPORT, Collections.emptyList());
+  private void handleWarnings(List<JWarning> warnings) {
     for (JWarning warning : warnings) {
       Matcher matcher = COMPILER_WARNING.matcher(warning.getMessage());
       Optional<String> fqn = matcher.find() ? Optional.of(matcher.group(1)) : Optional.empty();
@@ -13,7 +12,7 @@
           } else {
             message = "Remove this unused import '" + importName + "'.";
           }
-          context.reportIssue(this, warning, message);
+          ((DefaultJavaFileScannerContext) context).reportIssue(this, warning, message);
         }
       });
     }

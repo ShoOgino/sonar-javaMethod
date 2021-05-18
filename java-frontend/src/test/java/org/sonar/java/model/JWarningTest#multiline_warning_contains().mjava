@@ -1,0 +1,21 @@
+  @Test
+  void multiline_warning_contains() {
+    JWarning warning = new JWarning("message", JWarning.Type.UNUSED_IMPORT, 5, 20, 7, 50);
+
+    SyntaxToken beforeDifferentLine = syntaxToken(4, 5);
+    SyntaxToken beforeSameStartLine = syntaxToken(5, 5);
+    SyntaxToken insideSameStartLine = syntaxToken(5, 25);
+    SyntaxToken inside = syntaxToken(6, 25);
+    SyntaxToken insideSameEndLine = syntaxToken(7, 40);
+    SyntaxToken afterSameEndLine = syntaxToken(7, 51);
+    SyntaxToken afterDifferentLine = syntaxToken(8, 0);
+
+    assertThat(warning.contains(beforeDifferentLine)).isFalse();
+    assertThat(warning.contains(beforeSameStartLine)).isFalse();
+    assertThat(warning.contains(insideSameStartLine)).isTrue();
+    assertThat(warning.contains(inside)).isTrue();
+    assertThat(warning.contains(insideSameEndLine)).isTrue();
+    assertThat(warning.contains(afterSameEndLine)).isFalse();
+    assertThat(warning.contains(afterDifferentLine)).isFalse();
+  }
+

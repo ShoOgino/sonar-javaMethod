@@ -1,0 +1,19 @@
+  public boolean contains(SyntaxToken syntaxToken) {
+    int tokenLine = syntaxToken.line();
+    int tokenStartColumn = syntaxToken.column();
+    int tokendEndColumn = tokenStartColumn + syntaxToken.text().length();
+
+    if (startLine == endLine) {
+      return startLine == tokenLine
+        && startColumn <= tokenStartColumn
+        && endColumn >= tokendEndColumn;
+    }
+    if (startLine == tokenLine) {
+      return startColumn <= tokenStartColumn;
+    }
+    if (endLine == tokenLine) {
+      return endColumn >= tokendEndColumn;
+    }
+    return tokenLine > startLine && tokenLine < endLine;
+  }
+

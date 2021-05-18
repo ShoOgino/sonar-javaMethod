@@ -1,8 +1,15 @@
   @Override
   public void visitNode(Tree tree) {
+    if (tree.is(Tree.Kind.COMPILATION_UNIT)) {
+      warnings.clear();
+      warnings.addAll(((JavaTree.CompilationUnitTreeImpl) tree).warnings(JWarning.Type.ASSIGNMENT_HAS_NO_EFFECT));
+      return;
+    }
     AssignmentExpressionTree node = (AssignmentExpressionTree) tree;
     if (SyntacticEquivalence.areEquivalent(node.expression(), node.variable())) {
-      reportIssue(node.operatorToken(), "Remove or correct this useless self-assignment.");
+      SyntaxToken reportTree = node.operatorToken();
+      reportIssue(reportTree, ISSUE_MESSAGE);
+      updateWarnings(reportTree);
     }
   }
 

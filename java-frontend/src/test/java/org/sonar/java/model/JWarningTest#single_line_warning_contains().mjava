@@ -1,0 +1,18 @@
+  @Test
+  void single_line_warning_contains() {
+    int line = 5;
+    JWarning warning = new JWarning("message", JWarning.Type.UNUSED_IMPORT, line, 20, line, 50);
+
+    SyntaxToken beforeDifferentLine = syntaxToken(line - 1, 0);
+    SyntaxToken beforeSameLine = syntaxToken(line, 0);
+    SyntaxToken inside = syntaxToken(line, 25);
+    SyntaxToken afterSameLine = syntaxToken(line, 51);
+    SyntaxToken afterDifferentLine = syntaxToken(line + 1, 0);
+
+    assertThat(warning.contains(beforeDifferentLine)).isFalse();
+    assertThat(warning.contains(beforeSameLine)).isFalse();
+    assertThat(warning.contains(inside)).isTrue();
+    assertThat(warning.contains(afterSameLine)).isFalse();
+    assertThat(warning.contains(afterDifferentLine)).isFalse();
+  }
+
