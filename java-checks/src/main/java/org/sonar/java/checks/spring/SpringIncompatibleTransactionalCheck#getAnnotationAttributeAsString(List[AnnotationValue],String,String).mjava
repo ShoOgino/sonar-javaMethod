@@ -1,13 +1,15 @@
-  private static String getAnnotationAttributeAsString(List<AnnotationValue> values, String attributeName, String defaultValue) {
+  private static Optional<String> getAnnotationAttributeAsString(List<AnnotationValue> values, String attributeName, String defaultValue) {
     for (AnnotationValue annotationValue : values) {
       if (attributeName.equals(annotationValue.name())) {
         Object value = annotationValue.value();
         if (value instanceof Symbol.VariableSymbol) {
           // expected values are constant from a Enum, translated into variable symbol
-          return ((Symbol.VariableSymbol) value).name();
+          return Optional.of(((Symbol.VariableSymbol) value).name());
+        } else {
+          return Optional.empty();
         }
       }
     }
-    return defaultValue;
+    return Optional.of(defaultValue);
   }
 

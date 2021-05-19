@@ -3,7 +3,9 @@
       ExpressionTree expression = throwStatementTree.expression();
       if (expression.is(Tree.Kind.NEW_CLASS)) {
         NewClassTree newClassTree = (NewClassTree) expression;
-        if (newClassTree.symbolType().is("java.util.NoSuchElementException")) {
+        Type symbolType = newClassTree.symbolType();
+        if (symbolType.is("java.util.NoSuchElementException") || symbolType.isUnknown()) {
+          // Consider any unknown Exception as NoSuchElementException to avoid FP.
           foundThrow = true;
         }
       }

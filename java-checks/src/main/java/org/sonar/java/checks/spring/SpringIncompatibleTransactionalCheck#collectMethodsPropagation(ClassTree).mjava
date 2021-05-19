@@ -1,14 +1,18 @@
   private static Map<Symbol, String> collectMethodsPropagation(ClassTree classTree) {
     Map<Symbol, String> methodPropagationMap = new HashMap<>();
-    String classPropagation = getPropagation(classTree.symbol(), null);
-    for (Tree member : classTree.members()) {
-      if (member.is(Tree.Kind.METHOD)) {
-        MethodTree method = (MethodTree) member;
-        if (method.symbol().isPublic()) {
-          methodPropagationMap.put(method.symbol(), getPropagation(method.symbol(), classPropagation));
+    // When the propagation of the class itself is unknown (incomplete semantic), we do nothing to avoid FP.
+    getPropagationIfKnown(classTree.symbol(), NOT_TRANSACTIONAL).ifPresent(classPropagation -> {
+      for (Tree member : classTree.members()) {
+        if (member.is(Tree.Kind.METHOD)) {
+          MethodTree method = (MethodTree) member;
+          if (method.symbol().isPublic()) {
+            getPropagationIfKnown(method.symbol(), classPropagation).ifPresent(propagation ->
+              methodPropagationMap.put(method.symbol(), propagation)
+            );
+          }
         }
       }
-    }
+    });
     return methodPropagationMap;
   }
 

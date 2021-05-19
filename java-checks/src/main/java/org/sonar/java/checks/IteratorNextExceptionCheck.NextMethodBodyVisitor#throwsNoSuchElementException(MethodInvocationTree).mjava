@@ -1,5 +1,9 @@
     private static boolean throwsNoSuchElementException(MethodInvocationTree methodInvocationTree) {
       Symbol symbol = methodInvocationTree.symbol();
+      if (symbol.isUnknown()) {
+        // Consider that it could throw an Exception to avoid FP.
+        return true;
+      }
       if (!symbol.isMethodSymbol()) {
         return false;
       }

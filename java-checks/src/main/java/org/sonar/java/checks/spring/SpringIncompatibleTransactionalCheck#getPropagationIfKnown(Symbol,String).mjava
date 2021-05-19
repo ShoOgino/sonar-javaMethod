@@ -1,0 +1,21 @@
+  /**
+   * Returns Optional.Empty if the Propagation can not be reliably known: if something has unknown type in the process.
+   */
+  private static Optional<String> getPropagationIfKnown(Symbol symbol, String inheritedPropagation) {
+    String defaultValue = NOT_TRANSACTIONAL.equals(inheritedPropagation) ? REQUIRED : inheritedPropagation;
+    Optional<String> propagation = Optional.of(inheritedPropagation);
+
+    for (SymbolMetadata.AnnotationInstance annotationInstance : symbol.metadata().annotations()) {
+      Symbol annotationSymbol = annotationInstance.symbol();
+      Type annotationType = annotationSymbol.type();
+      if (annotationSymbol.isUnknown()) {
+        return Optional.empty();
+      } else if (annotationType.is(SPRING_TRANSACTIONAL_ANNOTATION)) {
+        propagation = getAnnotationAttributeAsString(annotationInstance.values(), "propagation", defaultValue);
+      } else if (annotationType.is(JAVAX_TRANSACTIONAL_ANNOTATION)) {
+        propagation = getAnnotationAttributeAsString(annotationInstance.values(), "value", defaultValue);
+      }
+    }
+    return propagation;
+  }
+

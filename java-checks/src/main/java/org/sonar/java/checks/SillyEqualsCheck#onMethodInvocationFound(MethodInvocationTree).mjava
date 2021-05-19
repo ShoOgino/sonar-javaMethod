@@ -6,6 +6,11 @@
       argumentType = JUtils.primitiveWrapperType(argumentType);
     }
     Type ownerType = getMethodOwnerType(tree).erasure();
+
+    if (ownerType.isUnknown() || argumentType.isUnknown()) {
+      return;
+    }
+
     IdentifierTree methodInvocationName = ExpressionUtils.methodName(tree);
     if (isLiteralNull(firstArgument)) {
       reportIssue(methodInvocationName, "Remove this call to \"equals\"; comparisons against null always return false; consider using '== null' to check for nullity.");

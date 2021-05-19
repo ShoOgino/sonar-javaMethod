@@ -8,6 +8,9 @@
       public void visitMethodInvocation(MethodInvocationTree methodInvocation) {
         super.visitMethodInvocation(methodInvocation);
         Symbol calleeMethodSymbol = methodInvocation.symbol();
+        if (calleeMethodSymbol.isUnknown()) {
+          return;
+        }
         if (methodsPropagationMap.containsKey(calleeMethodSymbol) && methodInvocationOnThisInstance(methodInvocation)) {
           String calleePropagation = methodsPropagationMap.get(calleeMethodSymbol);
           checkIncompatiblePropagation(methodInvocation, callerPropagation, calleeMethodSymbol, calleePropagation);
