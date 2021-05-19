@@ -1,7 +1,8 @@
   @Override
   public void visitNode(Tree tree) {
     MethodTree methodTree = (MethodTree) tree;
-    if (returnsBoolean(methodTree) && !isAnnotatedNullable(methodTree.symbol().metadata())) {
+    SymbolMetadata metadata = methodTree.symbol().metadata();
+    if (returnsBoolean(methodTree) && !isAnnotatedNullable(metadata) && !hasUnknownAnnotation(metadata)) {
       methodTree.accept(new ReturnStatementVisitor());
     }
   }
