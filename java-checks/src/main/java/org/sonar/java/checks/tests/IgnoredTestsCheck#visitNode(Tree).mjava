@@ -2,7 +2,6 @@
   public void visitNode(Tree tree) {
     MethodTree methodTree = (MethodTree) tree;
     SymbolMetadata symbolMetadata = methodTree.symbol().metadata();
-
     // check for @Ignore or @Disabled annotations
     boolean hasIgnoreAnnotation = isSilentlyIgnored(symbolMetadata, "org.junit.Ignore");
     boolean hasDisabledAnnotation = isSilentlyIgnored(symbolMetadata, "org.junit.jupiter.api.Disabled");
@@ -26,7 +25,7 @@
             "A constant boolean value is passed as argument, causing this test to always be skipped.", mit.arguments()));
 
           reportIssue(ExpressionUtils.methodName(mit), "This assumption is called with a boolean constant; remove it or, to skip this " +
-            "test use an @Ignore/@Disabled annotation in combination with an explanation about why it is skipped.",
+              "test use an @Ignore/@Disabled annotation in combination with an explanation about why it is skipped.",
             secondaryLocation, null);
         });
     }
