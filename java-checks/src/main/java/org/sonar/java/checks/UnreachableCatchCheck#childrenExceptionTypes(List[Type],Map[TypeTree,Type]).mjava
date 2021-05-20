@@ -1,0 +1,15 @@
+  private static List<Location> childrenExceptionTypes(List<Type> targets, Map<TypeTree, Type> exceptionTypes) {
+    List<Location> secondaries = new ArrayList<>();
+    targets.forEach(target -> {
+      for (Map.Entry<TypeTree, Type> exceptionType : exceptionTypes.entrySet()) {
+        TypeTree tree = exceptionType.getKey();
+        Type type = exceptionType.getValue();
+        if (!type.equals(target) && type.isSubtypeOf(target)) {
+          secondaries.add(new Location("Already catch the exception", tree));
+        }
+      }
+    });
+    secondaries.sort(LOCATION_COMAPRATOR);
+    return secondaries;
+  }
+

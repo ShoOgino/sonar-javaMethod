@@ -1,0 +1,13 @@
+  private static List<Location> secondaries(TypeTree type, Map<TypeTree, Type> typeByExceptions) {
+    List<Type> targets;
+    if (type.is(Tree.Kind.UNION_TYPE)) {
+      targets = ((UnionTypeTree) type).typeAlternatives()
+        .stream()
+        .map(typeByExceptions::get)
+        .collect(Collectors.toList());
+    } else {
+      targets = Collections.singletonList(typeByExceptions.get(type));
+    }
+    return childrenExceptionTypes(targets, typeByExceptions);
+  }
+

@@ -1,12 +1,10 @@
   @Override
   public void visitNode(Tree tree) {
-    TryStatementTree tryStatementTree = (TryStatementTree) tree;
-    if (!tryStatementTree.resourceList().isEmpty()) {
-      // Try with resource will call close, throwing by default an Exception or IOException.
-      // Supporting potential problems is not worth since it is really unlikely that something wrong happen.
+    if (tree.is(Tree.Kind.COMPILATION_UNIT)) {
+      warnings.clear();
+      warnings.addAll(((CompilationUnitTreeImpl) tree).warnings(JWarning.Type.MASKED_CATCH));
       return;
     }
-
-    new UnreachableCatchFinder(tryStatementTree).find();
+    checkWarnings((TryStatementTree) tree);
   }
 

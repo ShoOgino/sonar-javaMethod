@@ -1,0 +1,31 @@
+  private void checkWarnings(TryStatementTree tryStatementTree) {
+    List<TypeTree> typesWithWarnings = new ArrayList<>(warnings.size());
+    List<UnionTypeTree> unionTypes = new ArrayList<>();
+    Map<TypeTree, Type> typeByExceptions = new HashMap<>();
+    Map<TypeTree, Tree> reportTrees = new HashMap<>();
+
+    for (CatchTree catchTree : tryStatementTree.catches()) {
+      SyntaxToken catchKeyword = catchTree.catchKeyword();
+      TypeTree caughtException = catchTree.parameter().type();
+
+      boolean withinUnionType = caughtException.is(Tree.Kind.UNION_TYPE);
+      if (withinUnionType) {
+        // in case we need to report on the entire union type
+        reportTrees.put(caughtException, catchKeyword);
+        unionTypes.add((UnionTypeTree) caughtException);
+      }
+
+      for (TypeTree typeTree : caughtExceptionTypes(caughtException)) {
+        typeByExceptions.put(typeTree, typeTree.symbolType());
+        // types from union types should be reported individually
+        reportTrees.put(typeTree, withinUnionType ? typeTree : catchKeyword);
+
+        SyntaxToken typeFirstToken = typeTree.firstToken();
+        warnings.stream()
+          .filter(warning -> warning.contains(typeFirstToken))
+          .forEach(warning -> typesWithWarnings.add(typeTree));
+      }
+    }
+    reportUnreacheableCatch(typesWithWarnings, typeByExceptions, reportTrees, unionTypes);
+  }
+

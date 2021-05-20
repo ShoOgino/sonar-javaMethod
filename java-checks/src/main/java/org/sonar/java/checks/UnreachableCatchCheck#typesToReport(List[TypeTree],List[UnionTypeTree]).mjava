@@ -1,0 +1,12 @@
+  private static List<TypeTree> typesToReport(List<TypeTree> typesWithWarnings, List<UnionTypeTree> unionTypes) {
+    List<TypeTree> typesToReport = new ArrayList<>(typesWithWarnings);
+    for (UnionTypeTree unionType : unionTypes) {
+      List<TypeTree> typeAlternatives = unionType.typeAlternatives();
+      if (typesWithWarnings.containsAll(typeAlternatives)) {
+        typesToReport.add(unionType);
+        typesToReport.removeAll(typeAlternatives);
+      }
+    }
+    return typesToReport;
+  }
+
