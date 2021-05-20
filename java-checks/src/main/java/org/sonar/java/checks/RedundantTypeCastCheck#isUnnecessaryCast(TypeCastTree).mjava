@@ -1,0 +1,8 @@
+  private boolean isUnnecessaryCast(TypeCastTree typeCastTree) {
+    if (skipParentheses(typeCastTree.expression()).is(Tree.Kind.NULL_LITERAL)) {
+      Tree parentTree = skipParentheses(typeCastTree.parent());
+      return !parentTree.is(Tree.Kind.ARGUMENTS);
+    }
+    return warnings.stream().anyMatch(warning -> matchesWarning(warning, typeCastTree));
+  }
+

@@ -9,7 +9,11 @@
     Nested[][] as = (Nested[][]) new ExtendedNested[1][1]; // Noncompliant {{Remove this unnecessary cast to "Nested[][]".}}
     ExtendedNested b = null;
     fun(b);
+
     fun((ExtendedNested) b); // Noncompliant
+    fun(((ExtendedNested) b)); // Noncompliant
+    fun((((ExtendedNested) b))); // Noncompliant
+    fun((Nested) a, (ExtendedNested) a); // Noncompliant [[sc=10;ec=16]]
     fun((Nested) b); // Compliant - exception to distinguish the method to call
     List<ExtendedNested> bees = new java.util.ArrayList<ExtendedNested>();
     List<Nested> aaas = (List) bees;

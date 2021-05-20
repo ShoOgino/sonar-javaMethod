@@ -1,14 +1,13 @@
   @Override
   public void visitNode(Tree tree) {
-    TypeCastTree typeCastTree = (TypeCastTree) tree;
-    Type expressionType = typeCastTree.expression().symbolType();
-    if (isPrimitiveWrapperInConditional(expressionType, typeCastTree) || requiredForMemberAccess(typeCastTree)) {
-      // Primitive wrappers excluded because covered by S2154
+    if (tree.is(Tree.Kind.COMPILATION_UNIT)) {
+      warnings = ((JavaTree.CompilationUnitTreeImpl) tree).warnings(JWarning.Type.REDUNDANT_CAST);
       return;
     }
+
+    TypeCastTree typeCastTree = (TypeCastTree) tree;
     Type cast = typeCastTree.type().symbolType();
-    Type target = targetType(typeCastTree);
-    if (target != null && (isRedundantNumericalCast(cast, expressionType) || isUnnecessarySubtypeCast(expressionType, typeCastTree, target))) {
+    if (isUnnecessaryCast(typeCastTree)) {
       reportIssue(typeCastTree.type(), "Remove this unnecessary cast to \"" + cast.erasure() + "\".");
     }
   }
