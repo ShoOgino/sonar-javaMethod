@@ -10,6 +10,16 @@
       case STRING_LITERAL:
       case TEXT_BLOCK:
         return Optional.of(new LiteralTree[] {(LiteralTree) expr});
+      case METHOD_INVOCATION:
+        // We do not need to consider flags or precedence issues here because Pattern.toString() does not include
+        // the flags passed to Pattern.compile nor does it add any parentheses for precedence - it just returns the
+        // pattern string exactly as it was given to Pattern.compile, so we can simply take that string and work with
+        // it as-is.
+        MethodInvocationTree mit = (MethodInvocationTree) expr;
+        if (PATTERN_COMPILE.matches(mit)) {
+          return getLiterals(mit.arguments().get(0));
+        }
+        // else fall through
       default:
         return Optional.empty();
     }
